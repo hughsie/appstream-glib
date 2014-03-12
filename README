@@ -1,0 +1,4 @@
+AppStream-Glib
+
+This library provides objects and helper methods to help reading and writing
+AppStream metadata. It does not actually parse data to and from XML format.
