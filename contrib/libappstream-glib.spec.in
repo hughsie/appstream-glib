@@ -1,0 +1,67 @@
+%define alphatag                #ALPHATAG#
+
+Summary:   Library for AppStream metadata
+Name:      libappstream-glib
+Version:   #VERSION#
+Release:   0.#BUILD#%{?alphatag}%{?dist}
+License:   LGPLv2+
+URL:       http://people.freedesktop.org/~hughsient/appstream-glib/
+Source0:   http://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-%{version}.tar.xz
+
+BuildRequires: glib2-devel >= 2.16.1
+BuildRequires: libtool
+BuildRequires: docbook-utils
+BuildRequires: gtk-doc
+BuildRequires: gobject-introspection-devel
+
+%description
+This library provides objects and helper methods to help reading and writing
+AppStream metadata. It does not actually parse data to and from XML format.
+
+%package devel
+Summary: GLib Libraries and headers for appstream-glib
+Requires: %{name} = %{version}-%{release}
+
+%description devel
+GLib headers and libraries for appstream-glib.
+
+%prep
+%setup -q -n appstream-glib-%{version}
+
+%build
+%configure \
+        --enable-gtk-doc \
+        --disable-static \
+        --disable-silent-rules \
+        --disable-dependency-tracking
+
+make %{?_smp_mflags}
+
+%install
+make install DESTDIR=$RPM_BUILD_ROOT
+
+rm -f $RPM_BUILD_ROOT%{_libdir}/libappstream-glib*.la
+
+%post -p /sbin/ldconfig
+
+%postun -p /sbin/ldconfig
+
+%files
+%defattr(-,root,root,-)
+%doc README AUTHORS NEWS COPYING
+%{_libdir}/*libappstream-glib*.so.*
+%{_libdir}/girepository-1.0/*.typelib
+
+%files devel
+%defattr(-,root,root,-)
+%{_libdir}/libappstream-glib*.so
+%{_libdir}/pkgconfig/appstream-glib.pc
+%dir %{_includedir}/libappstream-glib
+%{_includedir}/libappstream-glib/*.h
+%{_datadir}/gtk-doc
+%{_datadir}/gir-1.0/*.gir
+
+%changelog
+* #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#
+- Update from git
+
