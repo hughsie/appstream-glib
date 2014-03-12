@@ -27,6 +27,7 @@
 #include <as-app.h>
 #include <as-image.h>
 #include <as-release.h>
+#include <as-screenshot.h>
 #include <as-tag.h>
 #include <as-version.h>
 
