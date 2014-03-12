@@ -25,11 +25,13 @@ libappstream_glib_include_HEADERS =				\
 	appstream-glib.h					\
 	as-app.h						\
 	as-release.h						\
+	as-tag.h						\
 	as-version.h
 
 libappstream_glib_la_SOURCES =					\
 	as-app.c						\
 	as-release.c						\
+	as-tag.c						\
 	as-version.h
 
 CLEANFILES = $(BUILT_SOURCES)

@@ -19,17 +19,53 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef __APPSTREAM_GLIB_H
-#define __APPSTREAM_GLIB_H
+#if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
+#error "Only <appstream-glib.h> can be included directly."
+#endif
 
-#define __APPSTREAM_GLIB_H_INSIDE__
+#ifndef AS_TAG_H
+#define AS_TAG_H
 
-#include <as-app.h>
-#include <as-release.h>
-#include <as-tag.h>
-#include <as-version.h>
+#include <glib.h>
 
-#undef __APPSTREAM_GLIB_H_INSIDE__
+typedef enum {
+	AS_TAG_UNKNOWN,
+	AS_TAG_APPLICATIONS,
+	AS_TAG_APPLICATION,
+	AS_TAG_ID,
+	AS_TAG_PKGNAME,
+	AS_TAG_NAME,
+	AS_TAG_SUMMARY,
+	AS_TAG_DESCRIPTION,
+	AS_TAG_URL,
+	AS_TAG_ICON,
+	AS_TAG_APPCATEGORIES,
+	AS_TAG_APPCATEGORY,
+	AS_TAG_KEYWORDS,
+	AS_TAG_KEYWORD,
+	AS_TAG_MIMETYPES,
+	AS_TAG_MIMETYPE,
+	AS_TAG_PROJECT_GROUP,
+	AS_TAG_PROJECT_LICENSE,
+	AS_TAG_SCREENSHOT,
+	AS_TAG_SCREENSHOTS,
+	AS_TAG_UPDATECONTACT,
+	AS_TAG_IMAGE,
+	AS_TAG_COMPULSORY_FOR_DESKTOP,
+	AS_TAG_PRIORITY,
+	AS_TAG_CAPTION,
+	AS_TAG_LANGUAGES,
+	AS_TAG_LANG,
+	AS_TAG_METADATA,
+	AS_TAG_VALUE,
+	AS_TAG_RELEASES,
+	AS_TAG_RELEASE,
+	AS_TAG_LAST
+} AsTag;
 
-#endif /* __APPSTREAM_GLIB_H */
+AsTag		 as_tag_from_string		(const gchar	*tag);
+const gchar	*as_tag_to_string		(AsTag		 tag);
 
+G_END_DECLS
+
+#endif /* AS_TAG_H */
