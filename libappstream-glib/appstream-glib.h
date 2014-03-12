@@ -25,6 +25,7 @@
 #define __APPSTREAM_GLIB_H_INSIDE__
 
 #include <as-app.h>
+#include <as-release.h>
 #include <as-version.h>
 
 #undef __APPSTREAM_GLIB_H_INSIDE__
