@@ -92,6 +92,7 @@ GPtrArray	*as_app_get_releases		(AsApp		*app);
 GPtrArray	*as_app_get_screenshots		(AsApp		*app);
 GHashTable	*as_app_get_urls		(AsApp		*app);
 const gchar	*as_app_get_icon		(AsApp		*app);
+const gchar	*as_app_get_icon_path		(AsApp		*app);
 const gchar	*as_app_get_id			(AsApp		*app);
 const gchar	*as_app_get_id_full		(AsApp		*app);
 const gchar	*as_app_get_project_group	(AsApp		*app);
@@ -124,6 +125,9 @@ void		 as_app_set_project_license	(AsApp		*app,
 void		 as_app_set_icon		(AsApp		*app,
 						 const gchar	*icon,
 						 gssize		 icon_len);
+void		 as_app_set_icon_path		(AsApp		*app,
+						 const gchar	*icon_path,
+						 gssize		 icon_path_len);
 void		 as_app_set_icon_kind		(AsApp		*app,
 						 AsAppIconKind	 icon_kind);
 void		 as_app_set_name		(AsApp		*app,

@@ -45,6 +45,7 @@ struct _AsAppPrivate
 	GPtrArray	*releases;			/* of AsRelease */
 	GPtrArray	*screenshots;			/* of AsScreenshot */
 	gchar		*icon;
+	gchar		*icon_path;
 	gchar		*id;
 	gchar		*id_full;
 	gchar		*project_group;
@@ -73,6 +74,7 @@ as_app_finalize (GObject *object)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	g_free (priv->icon);
+	g_free (priv->icon_path);
 	g_free (priv->id);
 	g_free (priv->id_full);
 	g_free (priv->project_group);
@@ -326,6 +328,16 @@ as_app_get_icon (AsApp *app)
 }
 
 /**
+ * as_app_get_icon_path:
+ **/
+const gchar *
+as_app_get_icon_path (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->icon_path;
+}
+
+/**
  * as_app_get_name:
  **/
 const gchar *
@@ -487,6 +499,17 @@ as_app_set_icon (AsApp *app, const gchar *icon, gssize icon_len)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_free (priv->icon);
 	priv->icon = as_strndup (icon, icon_len);
+}
+
+/**
+ * as_app_set_icon_path:
+ **/
+void
+as_app_set_icon_path (AsApp *app, const gchar *icon_path, gssize icon_path_len)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_free (priv->icon_path);
+	priv->icon_path = as_strndup (icon_path, icon_path_len);
 }
 
 /**
