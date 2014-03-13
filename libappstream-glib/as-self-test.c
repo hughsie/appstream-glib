@@ -389,15 +389,18 @@ ch_test_node_localized_func (void)
 	n1 = as_node_insert (root, "app", NULL, 0, NULL);
 	hash = g_hash_table_new (g_str_hash, g_str_equal);
 	g_hash_table_insert (hash, (gpointer) "C", (gpointer) "color");
-	g_hash_table_insert (hash, (gpointer) "en_GB", (gpointer) "colour");
+	g_hash_table_insert (hash, (gpointer) "en_XX", (gpointer) "colour");
 	as_node_insert_localized (n1, "name", hash, AS_NODE_INSERT_FLAG_NONE);
 	xml = as_node_to_xml (root, AS_NODE_TO_XML_FLAG_NONE);
 	g_assert (xml != NULL);
 	g_assert_cmpstr (xml->str, ==,
 		"<app><name>color</name>"
-		"<name xml:lang=\"en_GB\">colour</name></app>");
+		"<name xml:lang=\"en_XX\">colour</name></app>");
 	g_string_free (xml, TRUE);
 	g_hash_table_unref (hash);
+
+	/* get the best locale */
+	g_assert_cmpstr (as_node_get_localized_best (n1, "name"), ==, "color");
 
 	/* get something that isn't there */
 	hash = as_node_get_localized (n1, "comment");
@@ -408,7 +411,7 @@ ch_test_node_localized_func (void)
 	g_assert (hash != NULL);
 	g_assert_cmpint (g_hash_table_size (hash), ==, 2);
 	g_assert_cmpstr (g_hash_table_lookup (hash, "C"), ==, "color");
-	g_assert_cmpstr (g_hash_table_lookup (hash, "en_GB"), ==, "colour");
+	g_assert_cmpstr (g_hash_table_lookup (hash, "en_XX"), ==, "colour");
 	g_hash_table_unref (hash);
 
 	as_node_unref (root);

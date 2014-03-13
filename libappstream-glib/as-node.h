@@ -65,6 +65,8 @@ gint		 as_node_get_attribute_as_int	(const GNode	*node,
 						 const gchar	*key);
 GHashTable	*as_node_get_localized		(const GNode	*node,
 						 const gchar	*key);
+const gchar	*as_node_get_localized_best	(const GNode	*node,
+						 const gchar	*key);
 GHashTable	*as_node_get_localized_unwrap	(const GNode	*node,
 						 GError		**error);
 

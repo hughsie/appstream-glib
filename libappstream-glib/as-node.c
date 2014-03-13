@@ -721,7 +721,7 @@ as_node_get_localized (const GNode *node, const gchar *key)
 	data_unlocalized = as_node_get_data (tmp);
 
 	/* find a node called name */
-	hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+	hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 	for (tmp = node->children; tmp != NULL; tmp = tmp->next) {
 		data = tmp->data;
 		if (data == NULL)
@@ -736,10 +736,36 @@ as_node_get_localized (const GNode *node, const gchar *key)
 			continue;
 		g_hash_table_insert (hash,
 				     g_strdup (xml_lang != NULL ? xml_lang : "C"),
-				     g_strdup (data_localized));
+				     (gpointer) data_localized);
 	}
 out:
 	return hash;
+}
+
+/**
+ * as_node_get_localized_best:
+ **/
+const gchar *
+as_node_get_localized_best (const GNode *node, const gchar *key)
+{
+	GHashTable *hash;
+	const gchar *const *locales;
+	const gchar *tmp;
+	guint i;
+
+	hash = as_node_get_localized (node, key);
+	if (hash == NULL)
+		goto out;
+	locales = g_get_language_names ();
+	for (i = 0; locales[i] != NULL; i++) {
+		tmp = g_hash_table_lookup (hash, locales[i]);
+		if (tmp != NULL)
+			return tmp;
+	}
+out:
+	if (hash != NULL)
+		g_hash_table_unref (hash);
+	return NULL;
 }
 
 /**
