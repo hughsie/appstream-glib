@@ -49,11 +49,19 @@ struct _AsAppPrivate
 	gchar		*id_full;
 	gchar		*project_group;
 	gchar		*project_license;
+	gsize		 token_cache_valid;
+	GPtrArray	*token_cache;			/* of AsAppTokenItem */
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsApp, as_app, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (as_app_get_instance_private (o))
+
+typedef struct {
+	gchar		**values_ascii;
+	gchar		**values_utf8;
+	guint		  score;
+} AsAppTokenItem;
 
 /**
  * as_app_finalize:
@@ -82,8 +90,20 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->pkgnames);
 	g_ptr_array_unref (priv->releases);
 	g_ptr_array_unref (priv->screenshots);
+	g_ptr_array_unref (priv->token_cache);
 
 	G_OBJECT_CLASS (as_app_parent_class)->finalize (object);
+}
+
+/**
+ * as_app_token_item_free:
+ */
+static void
+as_app_token_item_free (AsAppTokenItem *token_item)
+{
+	g_strfreev (token_item->values_ascii);
+	g_strfreev (token_item->values_utf8);
+	g_slice_free (AsAppTokenItem, token_item);
 }
 
 /**
@@ -100,6 +120,7 @@ as_app_init (AsApp *app)
 	priv->pkgnames = g_ptr_array_new_with_free_func (g_free);
 	priv->releases = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->screenshots = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	priv->token_cache = g_ptr_array_new_with_free_func ((GDestroyNotify) as_app_token_item_free);
 
 	priv->comments = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->descriptions = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
@@ -1058,6 +1079,100 @@ as_app_node_parse (AsApp *app, GNode *node, GError **error)
 	}
 out:
 	return ret;
+}
+
+/**
+ * as_app_add_tokens:
+ */
+static void
+as_app_add_tokens (AsApp *app,
+		   const gchar *value,
+		   const gchar *locale,
+		   guint score)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsAppTokenItem *token_item;
+
+	/* sanity check */
+	if (value == NULL)
+		return;
+
+	token_item = g_slice_new (AsAppTokenItem);
+	token_item->values_utf8 = g_str_tokenize_and_fold (value,
+							   locale,
+							   &token_item->values_ascii);
+	token_item->score = score;
+	g_ptr_array_add (priv->token_cache, token_item);
+}
+
+/**
+ * as_app_create_token_cache:
+ */
+static void
+as_app_create_token_cache (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	const gchar * const *locales;
+	const gchar *tmp;
+	guint i;
+
+	/* add all the data we have */
+	as_app_add_tokens (app, priv->id, "C", 100);
+	locales = g_get_language_names ();
+	for (i = 0; locales[i] != NULL; i++) {
+		tmp = as_app_get_name (app, locales[i]);
+		if (tmp != NULL)
+			as_app_add_tokens (app, tmp, locales[i], 80);
+		tmp = as_app_get_comment (app, locales[i]);
+		if (tmp != NULL)
+			as_app_add_tokens (app, tmp, locales[i], 60);
+		tmp = as_app_get_description (app, locales[i]);
+		if (tmp != NULL)
+			as_app_add_tokens (app, tmp, locales[i], 20);
+	}
+	for (i = 0; i < priv->keywords->len; i++) {
+		tmp = g_ptr_array_index (priv->keywords, i);
+		as_app_add_tokens (app, tmp, "C", 40);
+	}
+	for (i = 0; i < priv->mimetypes->len; i++) {
+		tmp = g_ptr_array_index (priv->mimetypes, i);
+		as_app_add_tokens (app, tmp, "C", 1);
+	}
+}
+
+/**
+ * as_app_search_matches:
+ */
+guint
+as_app_search_matches (AsApp *app, const gchar *search)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsAppTokenItem *token_item;
+	guint i, j;
+
+	/* nothing to do */
+	if (search == NULL)
+		return 0;
+
+	/* ensure the token cache is created */
+	if (g_once_init_enter (&priv->token_cache_valid)) {
+		as_app_create_token_cache (app);
+		g_once_init_leave (&priv->token_cache_valid, TRUE);
+	}
+
+	/* find the search term */
+	for (i = 0; i < priv->token_cache->len; i++) {
+		token_item = g_ptr_array_index (priv->token_cache, i);
+		for (j = 0; token_item->values_utf8[j] != NULL; j++) {
+			if (g_str_has_prefix (token_item->values_utf8[j], search))
+				return token_item->score;
+		}
+		for (j = 0; token_item->values_ascii[j] != NULL; j++) {
+			if (g_str_has_prefix (token_item->values_utf8[j], search))
+				return token_item->score / 2;
+		}
+	}
+	return 0;
 }
 
 /**

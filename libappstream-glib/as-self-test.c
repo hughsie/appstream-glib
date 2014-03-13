@@ -473,6 +473,22 @@ ch_test_app_subsume_func (void)
 	g_object_unref (donor);
 }
 
+static void
+ch_test_app_search_func (void)
+{
+	AsApp *app;
+
+	app = as_app_new ();
+	as_app_set_name (app, NULL, "GNOME Software", -1);
+	as_app_set_comment (app, NULL, "Install and remove software", -1);
+
+	g_assert_cmpint (as_app_search_matches (app, "software"), ==, 80);
+	g_assert_cmpint (as_app_search_matches (app, "soft"), ==, 80);
+	g_assert_cmpint (as_app_search_matches (app, "install"), ==, 60);
+
+	g_object_unref (app);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -487,6 +503,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/screenshot", ch_test_screenshot_func);
 	g_test_add_func ("/AppStream/app", ch_test_app_func);
 	g_test_add_func ("/AppStream/app{subsume}", ch_test_app_subsume_func);
+	g_test_add_func ("/AppStream/app{search}", ch_test_app_search_func);
 	g_test_add_func ("/AppStream/node", ch_test_node_func);
 	g_test_add_func ("/AppStream/node{xml}", ch_test_node_xml_func);
 	g_test_add_func ("/AppStream/node{hash}", ch_test_node_hash_func);

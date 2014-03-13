@@ -180,6 +180,8 @@ gboolean	 as_app_node_parse		(AsApp		*app,
 						 GError		**error);
 void		 as_app_subsume			(AsApp		*app,
 						 AsApp		*donor);
+guint		 as_app_search_matches		(AsApp		*app,
+						 const gchar	*search);
 
 G_END_DECLS
 
