@@ -25,6 +25,7 @@ libappstream_glib_include_HEADERS =				\
 	appstream-glib.h					\
 	as-app.h						\
 	as-image.h						\
+	as-node.h						\
 	as-release.h						\
 	as-screenshot.h						\
 	as-tag.h						\
@@ -33,6 +34,7 @@ libappstream_glib_include_HEADERS =				\
 libappstream_glib_la_SOURCES =					\
 	as-app.c						\
 	as-image.c						\
+	as-node.c						\
 	as-release.c						\
 	as-screenshot.c						\
 	as-tag.c						\

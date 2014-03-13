@@ -26,6 +26,7 @@
 
 #include <as-app.h>
 #include <as-image.h>
+#include <as-node.h>
 #include <as-release.h>
 #include <as-screenshot.h>
 #include <as-tag.h>
