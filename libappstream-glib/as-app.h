@@ -100,6 +100,8 @@ const gchar	*as_app_get_name		(AsApp		*app,
 						 const gchar	*locale);
 const gchar	*as_app_get_comment		(AsApp		*app,
 						 const gchar	*locale);
+const gchar	*as_app_get_description		(AsApp		*app,
+						 const gchar	*locale);
 const gchar	*as_app_get_language		(AsApp		*app,
 						 const gchar	*locale);
 const gchar	*as_app_get_metadata_item	(AsApp		*app,

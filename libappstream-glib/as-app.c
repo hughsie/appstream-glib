@@ -329,6 +329,18 @@ as_app_get_comment (AsApp *app, const gchar *locale)
 }
 
 /**
+ * as_app_get_description:
+ **/
+const gchar *
+as_app_get_description (AsApp *app, const gchar *locale)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	if (locale == NULL)
+		locale = "C";
+	return g_hash_table_lookup (priv->descriptions, locale);
+}
+
+/**
  * as_app_get_language:
  **/
 const gchar *
