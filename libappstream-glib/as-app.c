@@ -872,9 +872,6 @@ as_app_node_insert (AsApp *app, GNode *parent)
 	}
 
 	/* <url> */
-//		as_node_insert (node_app, "url", priv->homepage_url, 0,
-//				"type", "homepage",
-//				NULL);
 	as_node_insert_hash (node_app, "url", "type", priv->urls, 0);
 
 	/* <project_group> */
