@@ -104,7 +104,7 @@ const gchar	*as_app_get_comment		(AsApp		*app,
 						 const gchar	*locale);
 const gchar	*as_app_get_description		(AsApp		*app,
 						 const gchar	*locale);
-const gchar	*as_app_get_language		(AsApp		*app,
+gint		 as_app_get_language		(AsApp		*app,
 						 const gchar	*locale);
 const gchar	*as_app_get_metadata_item	(AsApp		*app,
 						 const gchar	*key);
@@ -160,9 +160,9 @@ void		 as_app_add_release		(AsApp		*app,
 void		 as_app_add_screenshot		(AsApp		*app,
 						 AsScreenshot	*screenshot);
 void		 as_app_add_language		(AsApp		*app,
+						 gint		 percentage,
 						 const gchar	*locale,
-						 const gchar	*value,
-						 gssize		 value_len);
+						 gssize		 locale_len);
 void		 as_app_add_compulsory_for_desktop (AsApp	*app,
 						 const gchar	*compulsory_for_desktop,
 						 gssize		 compulsory_for_desktop_len);

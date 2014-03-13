@@ -483,6 +483,35 @@ as_node_get_data (const GNode *node)
 }
 
 /**
+ * as_node_get_attribute_as_int:
+ * @node: a #GNode
+ *
+ * Gets a node attribute, e.g. 34
+ *
+ * Return value: integer value
+ **/
+gint
+as_node_get_attribute_as_int (const GNode *node, const gchar *key)
+{
+	const gchar *tmp;
+	gchar *endptr = NULL;
+	guint64 value_tmp;
+	guint value = G_MAXUINT;
+
+	tmp = as_node_get_attribute (node, key);
+	if (tmp == NULL)
+		goto out;
+	value_tmp = g_ascii_strtoll (tmp, &endptr, 10);
+	if (value_tmp == 0 && tmp == endptr)
+		goto out;
+	if (value_tmp > G_MAXINT)
+		goto out;
+	value = value_tmp;
+out:
+	return value;
+}
+
+/**
  * as_node_get_attribute:
  * @node: a #GNode
  *

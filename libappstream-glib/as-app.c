@@ -126,7 +126,7 @@ as_app_init (AsApp *app)
 
 	priv->comments = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->descriptions = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-	priv->languages = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+	priv->languages = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 	priv->metadata = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->names = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->urls = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
@@ -386,13 +386,13 @@ as_app_get_description (AsApp *app, const gchar *locale)
 /**
  * as_app_get_language:
  **/
-const gchar *
+gint
 as_app_get_language (AsApp *app, const gchar *locale)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	if (locale == NULL)
 		locale = "C";
-	return g_hash_table_lookup (priv->languages, locale);
+	return GPOINTER_TO_INT (g_hash_table_lookup (priv->languages, locale));
 }
 
 /**
@@ -698,16 +698,16 @@ as_app_add_pkgname (AsApp *app, const gchar *pkgname, gssize pkgname_len)
  **/
 void
 as_app_add_language (AsApp *app,
+		     gint percentage,
 		     const gchar *locale,
-		     const gchar *value,
-		     gssize value_len)
+		     gssize locale_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	if (locale == NULL)
 		locale = "C";
 	g_hash_table_insert (priv->languages,
-			     g_strdup (locale),
-			     as_strndup (value, value_len));
+			     as_strndup (locale, locale_len),
+			     GINT_TO_POINTER (percentage));
 }
 
 /**
@@ -761,8 +761,8 @@ as_app_subsume (AsApp *app, AsApp *donor)
 	AsAppPrivate *priv = GET_PRIVATE (donor);
 	AsScreenshot *ss;
 	const gchar *tmp;
-	const gchar *value;
 	guint i;
+	gint percentage;
 	GList *l;
 	GList *langs;
 
@@ -784,14 +784,43 @@ as_app_subsume (AsApp *app, AsApp *donor)
 	langs = g_hash_table_get_keys (priv->languages);
 	for (l = langs; l != NULL; l = l->next) {
 		tmp = l->data;
-		value = g_hash_table_lookup (priv->languages, tmp);
-		as_app_add_language (app, tmp, value, -1);
+		percentage = GPOINTER_TO_INT (g_hash_table_lookup (priv->languages, tmp));
+		as_app_add_language (app, percentage, tmp, -1);
 	}
 	g_list_free (langs);
 
 	/* icon */
 	if (priv->icon != NULL)
 		as_app_set_icon (app, priv->icon, -1);
+}
+
+/**
+ * as_app_node_insert_languages:
+ **/
+static void
+as_app_node_insert_languages (AsApp *app, GNode *parent)
+{
+	GNode *node_tmp;
+	GList *langs;
+	GList *l;
+	const gchar *locale;
+	gchar tmp[4];
+	gint percentage;
+
+	node_tmp = as_node_insert (parent, "languages", NULL, 0, NULL);
+	langs = as_app_get_languages (app);
+	for (l = langs; l != NULL; l = l->next) {
+		locale = l->data;
+		percentage = as_app_get_language (app, locale);
+		if (percentage < 0) {
+			as_node_insert (node_tmp, "lang", locale, 0, NULL);
+		} else {
+			g_snprintf (tmp, sizeof (tmp), "%i", percentage);
+			as_node_insert (node_tmp, "lang", locale, 0,
+					"percentage", tmp,
+					NULL);
+		}
+	}
 }
 
 /**
@@ -908,10 +937,8 @@ as_app_node_insert (AsApp *app, GNode *parent)
 	}
 
 	/* <languages> */
-	if (g_hash_table_size (priv->languages) > 0) {
-		node_tmp = as_node_insert (node_app, "languages", NULL, 0, NULL);
-		as_node_insert_hash (node_tmp, "lang", "percentage", priv->languages, TRUE);
-	}
+	if (g_hash_table_size (priv->languages) > 0)
+		as_app_node_insert_languages (app, node_app);
 
 	/* <metadata> */
 	if (g_hash_table_size (priv->metadata) > 0) {
@@ -933,6 +960,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	GString *xml;
 	const gchar *tmp;
 	gboolean ret = TRUE;
+	guint percent;
 
 	/* <id> */
 	tag = as_tag_from_string (as_node_get_name (n));
@@ -1074,8 +1102,9 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c), "lang") != 0)
 				continue;
-			tmp = as_node_get_attribute (c, "percentage");
-			as_app_add_language (app, as_node_get_data (c), tmp, -1);
+			percent = as_node_get_attribute_as_int (c, "percentage");
+			as_app_add_language (app, percent,
+					     as_node_get_data (c), -1);
 		}
 	}
 

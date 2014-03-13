@@ -195,6 +195,10 @@ ch_test_app_func (void)
 		"<releases>"
 		"<release version=\"3.11.90\" timestamp=\"1392724800\"/>"
 		"</releases>"
+		"<languages>"
+		"<lang percentage=\"90\">en_GB</lang>"
+		"<lang>pl</lang>"
+		"</languages>"
 		"<metadata>"
 		"<value key=\"X-Kudo-GTK3\"/>"
 		"</metadata>"
@@ -458,7 +462,7 @@ ch_test_app_subsume_func (void)
 	donor = as_app_new ();
 	as_app_set_icon (donor, "gtk-find", -1);
 	as_app_add_pkgname (donor, "hal", -1);
-	as_app_add_language (donor, "en_GB", "", -1);
+	as_app_add_language (donor, -1, "en_GB", -1);
 
 	/* copy all useful properties */
 	as_app_subsume (app, donor);
