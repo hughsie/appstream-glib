@@ -447,6 +447,32 @@ ch_test_node_localized_wrap_func (void)
 	as_node_unref (root);
 }
 
+static void
+ch_test_app_subsume_func (void)
+{
+	AsApp *app;
+	AsApp *donor;
+	GList *list;
+
+	app = as_app_new ();
+	donor = as_app_new ();
+	as_app_set_icon (donor, "gtk-find", -1);
+	as_app_add_pkgname (donor, "hal", -1);
+	as_app_add_language (donor, "en_GB", "", -1);
+
+	/* copy all useful properties */
+	as_app_subsume (app, donor);
+
+	g_assert_cmpstr (as_app_get_icon (app), ==, "gtk-find");
+	g_assert_cmpint (as_app_get_pkgnames(app)->len, ==, 1);
+	list = as_app_get_languages (app);
+	g_assert_cmpint (g_list_length (list), ==, 1);
+	g_list_free (list);
+
+	g_object_unref (app);
+	g_object_unref (donor);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -460,6 +486,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/image", ch_test_image_func);
 	g_test_add_func ("/AppStream/screenshot", ch_test_screenshot_func);
 	g_test_add_func ("/AppStream/app", ch_test_app_func);
+	g_test_add_func ("/AppStream/app{subsume}", ch_test_app_subsume_func);
 	g_test_add_func ("/AppStream/node", ch_test_node_func);
 	g_test_add_func ("/AppStream/node{xml}", ch_test_node_xml_func);
 	g_test_add_func ("/AppStream/node{hash}", ch_test_node_hash_func);
