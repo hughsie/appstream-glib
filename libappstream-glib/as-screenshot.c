@@ -21,7 +21,11 @@
 
 #include "config.h"
 
+#include <string.h>
+
+#include "as-node.h"
 #include "as-screenshot.h"
+#include "as-tag.h"
 
 typedef struct _AsScreenshotPrivate	AsScreenshotPrivate;
 struct _AsScreenshotPrivate
@@ -162,9 +166,87 @@ as_screenshot_set_caption (AsScreenshot *screenshot,
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	if (locale == NULL)
 		locale = "C";
+	if (caption_length == (gsize) -1)
+		caption_length = strlen (caption);
 	g_hash_table_insert (priv->captions,
 			     g_strdup (locale),
 			     g_strndup (caption, caption_length));
+}
+
+/**
+ * as_screenshot_node_insert:
+ **/
+GNode *
+as_screenshot_node_insert (AsScreenshot *screenshot, GNode *parent)
+{
+	AsImage *image;
+	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	GNode *n;
+	guint i;
+
+	n = as_node_insert (parent, "screenshot", NULL,
+			    AS_NODE_INSERT_FLAG_NONE,
+			    "type", as_screenshot_kind_to_string (priv->kind),
+			    NULL);
+	as_node_insert_localized (n, "caption", priv->captions, 0);
+	for (i = 0; i < priv->images->len; i++) {
+		image = g_ptr_array_index (priv->images, i);
+		as_image_node_insert (image, n);
+	}
+	return n;
+}
+
+/**
+ * as_screenshot_node_parse:
+ **/
+gboolean
+as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
+{
+	AsImage *image;
+	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	GHashTable *captions = NULL;
+	GList *keys;
+	GList *l;
+	GNode *c;
+	const gchar *tmp;
+	gboolean ret = TRUE;
+
+	tmp = as_node_get_attribute (node, "type");
+	if (tmp != NULL) {
+		as_screenshot_set_kind (screenshot,
+					as_screenshot_kind_from_string (tmp));
+	}
+
+	/* add captions */
+	captions = as_node_get_localized (node, "caption");
+	if (captions != NULL) {
+		keys = g_hash_table_get_keys (captions);
+		for (l = keys; l != NULL; l = l->next) {
+			tmp = l->data;
+			as_screenshot_set_caption (screenshot,
+						   tmp,
+						   g_hash_table_lookup (captions, tmp),
+						   -1);
+		}
+		g_list_free (keys);
+	}
+
+	/* add images */
+	for (c = node->children; c != NULL; c = c->next) {
+		if (as_tag_from_string (as_node_get_name (c)) != AS_TAG_IMAGE)
+			continue;
+		image = as_image_new ();
+		ret = as_image_node_parse (image, c, error);
+		if (!ret) {
+			g_object_unref (image);
+			goto out;
+		}
+		g_ptr_array_add (priv->images, image);
+	}
+out:
+	if (captions != NULL)
+		g_hash_table_unref (captions);
+	return ret;
 }
 
 /**

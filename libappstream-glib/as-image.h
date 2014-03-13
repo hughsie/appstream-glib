@@ -60,14 +60,17 @@ typedef enum {
 GType		 as_image_get_type		(void);
 AsImage		*as_image_new			(void);
 
+/* helpers */
 AsImageKind	 as_image_kind_from_string	(const gchar	*kind);
 const gchar	*as_image_kind_to_string	(AsImageKind	 kind);
 
+/* getters */
 const gchar	*as_image_get_url		(AsImage	*image);
 guint		 as_image_get_width		(AsImage	*image);
 guint		 as_image_get_height		(AsImage	*image);
 AsImageKind	 as_image_get_kind		(AsImage	*image);
 
+/* setters */
 void		 as_image_set_url		(AsImage	*image,
 						 const gchar	*url,
 						 gsize		 url_len);
@@ -77,6 +80,13 @@ void		 as_image_set_height		(AsImage	*image,
 						 guint		 height);
 void		 as_image_set_kind		(AsImage	*image,
 						 AsImageKind	 kind);
+
+/* object methods */
+GNode		*as_image_node_insert		(AsImage	*image,
+						 GNode		*parent);
+gboolean	 as_image_node_parse		(AsImage	*image,
+						 GNode		*node,
+						 GError		**error);
 
 G_END_DECLS
 

@@ -21,7 +21,11 @@
 
 #include "config.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "as-image.h"
+#include "as-node.h"
 
 typedef struct _AsImagePrivate	AsImagePrivate;
 struct _AsImagePrivate
@@ -143,6 +147,8 @@ as_image_set_url (AsImage *image, const gchar *url, gsize url_len)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	g_free (priv->url);
+	if (url_len == (gsize) -1)
+		url_len = strlen (url);
 	priv->url = g_strndup (url, url_len);
 }
 
@@ -174,6 +180,57 @@ as_image_set_kind (AsImage *image, AsImageKind kind)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	priv->kind = kind;
+}
+
+/**
+ * as_image_node_insert:
+ **/
+GNode *
+as_image_node_insert (AsImage *image, GNode *parent)
+{
+	AsImagePrivate *priv = GET_PRIVATE (image);
+	GNode *n;
+	gchar tmp_height[6];
+	gchar tmp_width[6];
+
+	if (priv->width > 0 && priv->height > 0) {
+		g_snprintf (tmp_width, sizeof (tmp_width), "%u", priv->width);
+		g_snprintf (tmp_height, sizeof (tmp_height), "%u", priv->height);
+		n = as_node_insert (parent, "image", priv->url,
+				    AS_NODE_INSERT_FLAG_NONE,
+				    "width", tmp_width,
+				    "height", tmp_height,
+				    "type", as_image_kind_to_string (priv->kind),
+				    NULL);
+	} else {
+		n = as_node_insert (parent, "image", priv->url,
+				    AS_NODE_INSERT_FLAG_NONE,
+				    "type", as_image_kind_to_string (priv->kind),
+				    NULL);
+	}
+	return n;
+}
+
+/**
+ * as_image_node_parse:
+ **/
+gboolean
+as_image_node_parse (AsImage *image, GNode *node, GError **error)
+{
+	const gchar *tmp;
+	tmp = as_node_get_attribute (node, "width");
+	if (tmp != NULL)
+		as_image_set_width (image, atoi (tmp));
+	tmp = as_node_get_attribute (node, "height");
+	if (tmp != NULL)
+		as_image_set_height (image, atoi (tmp));
+	tmp = as_node_get_attribute (node, "type");
+	if (tmp != NULL)
+		as_image_set_kind (image, as_image_kind_from_string (tmp));
+	tmp = as_node_get_data (node);
+	if (tmp != NULL)
+		as_image_set_url (image, tmp, -1);
+	return TRUE;
 }
 
 /**

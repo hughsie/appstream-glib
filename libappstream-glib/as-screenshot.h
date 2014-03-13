@@ -62,22 +62,32 @@ typedef enum {
 GType		 as_screenshot_get_type		(void);
 AsScreenshot	*as_screenshot_new		(void);
 
+/* helpers */
 AsScreenshotKind as_screenshot_kind_from_string (const gchar	*kind);
 const gchar	*as_screenshot_kind_to_string	(AsScreenshotKind kind);
 
+/* getters */
 AsScreenshotKind as_screenshot_get_kind		(AsScreenshot	*screenshot);
-const gchar	*as_screenshot_get_caption	(AsScreenshot	*app,
+const gchar	*as_screenshot_get_caption	(AsScreenshot	*screenshot,
 						 const gchar	*locale);
 GPtrArray	*as_screenshot_get_images	(AsScreenshot	*screenshot);
 
+/* setters */
 void		 as_screenshot_set_kind		(AsScreenshot	*screenshot,
 						 AsScreenshotKind kind);
-void		 as_screenshot_set_caption	(AsScreenshot	*app,
+void		 as_screenshot_set_caption	(AsScreenshot	*screenshot,
 						 const gchar	*locale,
 						 const gchar	*caption,
 						 gsize		 caption_length);
 void		 as_screenshot_add_image	(AsScreenshot	*screenshot,
 						 AsImage	*image);
+
+/* object methods */
+GNode		*as_screenshot_node_insert	(AsScreenshot	*screenshot,
+						 GNode		*parent);
+gboolean	 as_screenshot_node_parse	(AsScreenshot	*screenshot,
+						 GNode		*node,
+						 GError		**error);
 
 G_END_DECLS
 

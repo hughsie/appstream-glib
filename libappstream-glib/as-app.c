@@ -22,12 +22,14 @@
 #include "config.h"
 
 #include "as-app.h"
+#include "as-node.h"
+#include "as-tag.h"
 
 typedef struct _AsAppPrivate	AsAppPrivate;
 struct _AsAppPrivate
 {
-	AsAppIconKind	 icon_type;
-	AsAppIdKind	 kind;
+	AsAppIconKind	 icon_kind;
+	AsAppIdKind	 id_kind;
 	GHashTable	*comments;			/* of locale:string */
 	GHashTable	*descriptions;			/* of locale:string */
 	GHashTable	*languages;			/* of locale:string */
@@ -120,19 +122,19 @@ as_app_class_init (AsAppClass *klass)
  * as_app_id_kind_to_string:
  **/
 const gchar *
-as_app_id_kind_to_string (AsAppIdKind kind)
+as_app_id_kind_to_string (AsAppIdKind id_kind)
 {
-	if (kind == AS_APP_ID_KIND_DESKTOP)
+	if (id_kind == AS_APP_ID_KIND_DESKTOP)
 		return "desktop";
-	if (kind == AS_APP_ID_KIND_CODEC)
+	if (id_kind == AS_APP_ID_KIND_CODEC)
 		return "codec";
-	if (kind == AS_APP_ID_KIND_FONT)
+	if (id_kind == AS_APP_ID_KIND_FONT)
 		return "font";
-	if (kind == AS_APP_ID_KIND_INPUT_METHOD)
+	if (id_kind == AS_APP_ID_KIND_INPUT_METHOD)
 		return "inputmethod";
-	if (kind == AS_APP_ID_KIND_WEB_APP)
+	if (id_kind == AS_APP_ID_KIND_WEB_APP)
 		return "webapp";
-	if (kind == AS_APP_ID_KIND_SOURCE)
+	if (id_kind == AS_APP_ID_KIND_SOURCE)
 		return "source";
 	return "unknown";
 }
@@ -141,35 +143,34 @@ as_app_id_kind_to_string (AsAppIdKind kind)
  * as_app_id_kind_from_string:
  **/
 AsAppIdKind
-as_app_id_kind_from_string (const gchar *kind)
+as_app_id_kind_from_string (const gchar *id_kind)
 {
-	if (g_strcmp0 (kind, "desktop") == 0)
+	if (g_strcmp0 (id_kind, "desktop") == 0)
 		return AS_APP_ID_KIND_DESKTOP;
-	if (g_strcmp0 (kind, "codec") == 0)
+	if (g_strcmp0 (id_kind, "codec") == 0)
 		return AS_APP_ID_KIND_CODEC;
-	if (g_strcmp0 (kind, "font") == 0)
+	if (g_strcmp0 (id_kind, "font") == 0)
 		return AS_APP_ID_KIND_FONT;
-	if (g_strcmp0 (kind, "inputmethod") == 0)
+	if (g_strcmp0 (id_kind, "inputmethod") == 0)
 		return AS_APP_ID_KIND_INPUT_METHOD;
-	if (g_strcmp0 (kind, "webapp") == 0)
+	if (g_strcmp0 (id_kind, "webapp") == 0)
 		return AS_APP_ID_KIND_WEB_APP;
-	if (g_strcmp0 (kind, "source") == 0)
+	if (g_strcmp0 (id_kind, "source") == 0)
 		return AS_APP_ID_KIND_SOURCE;
 	return AS_APP_ID_KIND_UNKNOWN;
 }
-
 
 /**
  * as_app_icon_kind_to_string:
  **/
 const gchar *
-as_app_icon_kind_to_string (AsAppIconKind icon_type)
+as_app_icon_kind_to_string (AsAppIconKind icon_kind)
 {
-	if (icon_type == AS_APP_ICON_KIND_CACHED)
+	if (icon_kind == AS_APP_ICON_KIND_CACHED)
 		return "cached";
-	if (icon_type == AS_APP_ICON_KIND_STOCK)
+	if (icon_kind == AS_APP_ICON_KIND_STOCK)
 		return "stock";
-	if (icon_type == AS_APP_ICON_KIND_REMOTE)
+	if (icon_kind == AS_APP_ICON_KIND_REMOTE)
 		return "remote";
 	return "unknown";
 }
@@ -178,13 +179,13 @@ as_app_icon_kind_to_string (AsAppIconKind icon_type)
  * as_app_icon_kind_from_string:
  **/
 AsAppIconKind
-as_app_icon_kind_from_string (const gchar *icon_type)
+as_app_icon_kind_from_string (const gchar *icon_kind)
 {
-	if (g_strcmp0 (icon_type, "cached") == 0)
+	if (g_strcmp0 (icon_kind, "cached") == 0)
 		return AS_APP_ICON_KIND_CACHED;
-	if (g_strcmp0 (icon_type, "stock") == 0)
+	if (g_strcmp0 (icon_kind, "stock") == 0)
 		return AS_APP_ICON_KIND_STOCK;
-	if (g_strcmp0 (icon_type, "remote") == 0)
+	if (g_strcmp0 (icon_kind, "remote") == 0)
 		return AS_APP_ICON_KIND_REMOTE;
 	return AS_APP_ICON_KIND_UNKNOWN;
 }
@@ -279,7 +280,17 @@ AsAppIdKind
 as_app_get_id_kind (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	return priv->kind;
+	return priv->id_kind;
+}
+
+/**
+ * as_app_get_icon_kind:
+ **/
+AsAppIconKind
+as_app_get_icon_kind (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->icon_kind;
 }
 
 /**
@@ -299,6 +310,8 @@ const gchar *
 as_app_get_name (AsApp *app, const gchar *locale)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	if (locale == NULL)
+		locale = "C";
 	return g_hash_table_lookup (priv->names, locale);
 }
 
@@ -309,6 +322,8 @@ const gchar *
 as_app_get_comment (AsApp *app, const gchar *locale)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	if (locale == NULL)
+		locale = "C";
 	return g_hash_table_lookup (priv->comments, locale);
 }
 
@@ -319,6 +334,8 @@ const gchar *
 as_app_get_language (AsApp *app, const gchar *locale)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	if (locale == NULL)
+		locale = "C";
 	return g_hash_table_lookup (priv->languages, locale);
 }
 
@@ -362,6 +379,16 @@ as_app_get_project_group (AsApp *app)
 	return priv->project_group;
 }
 
+/**
+ * as_app_get_project_license:
+ **/
+const gchar *
+as_app_get_project_license (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->project_license;
+}
+
 /******************************************************************************/
 
 /**
@@ -385,10 +412,10 @@ as_app_set_id_full (AsApp *app, const gchar *id_full)
  * as_app_set_id_kind:
  **/
 void
-as_app_set_id_kind (AsApp *app, AsAppIdKind kind)
+as_app_set_id_kind (AsApp *app, AsAppIdKind id_kind)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	priv->kind = kind;
+	priv->id_kind = id_kind;
 }
 
 /**
@@ -428,10 +455,10 @@ as_app_set_icon (AsApp *app, const gchar *icon)
  * as_app_set_icon_kind:
  **/
 void
-as_app_set_icon_kind (AsApp *app, AsAppIconKind icon_type)
+as_app_set_icon_kind (AsApp *app, AsAppIconKind icon_kind)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	priv->icon_type = icon_type;
+	priv->icon_kind = icon_kind;
 }
 
 /**
@@ -610,6 +637,9 @@ void
 as_app_add_metadata (AsApp *app, const gchar *key, const gchar *value)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_return_if_fail (key != NULL);
+	if (value == NULL)
+		value = "";
 	g_hash_table_insert (priv->metadata, g_strdup (key), g_strdup (value));
 }
 
@@ -665,6 +695,326 @@ as_app_subsume (AsApp *app, AsApp *donor)
 	/* icon */
 	if (priv->icon != NULL)
 		as_app_set_icon (app, priv->icon);
+}
+
+/**
+ * as_app_node_insert:
+ **/
+GNode *
+as_app_node_insert (AsApp *app, GNode *parent)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsRelease *rel;
+	AsScreenshot *ss;
+	GNode *node_app;
+	GNode *node_tmp;
+	const gchar *tmp;
+	guint i;
+
+	node_app = as_node_insert (parent, "application", NULL, 0, NULL);
+
+	/* <id> */
+	as_node_insert (node_app, "id", priv->id_full, 0,
+			"type", as_app_id_kind_to_string (priv->id_kind),
+			NULL);
+
+	/* <pkgname> */
+	for (i = 0; i < priv->pkgnames->len; i++) {
+		tmp = g_ptr_array_index (priv->pkgnames, i);
+		as_node_insert (node_app, "pkgname", tmp, 0, NULL);
+	}
+
+	/* <name> */
+	as_node_insert_localized (node_app, "name", priv->names, 0);
+
+	/* <summary> */
+	as_node_insert_localized (node_app, "summary", priv->comments, 0);
+
+	/* <description> */
+	as_node_insert_localized (node_app, "description", priv->descriptions,
+				  AS_NODE_INSERT_FLAG_PRE_ESCAPED);
+
+	/* <icon> */
+	if (priv->icon != NULL) {
+		as_node_insert (node_app, "icon", priv->icon, 0,
+				"type", as_app_icon_kind_to_string (priv->icon_kind),
+				NULL);
+	}
+
+	/* <categories> */
+	if (priv->categories->len > 0) {
+		node_tmp = as_node_insert (node_app, "appcategories", NULL, 0, NULL);
+		for (i = 0; i < priv->categories->len; i++) {
+			tmp = g_ptr_array_index (priv->categories, i);
+			as_node_insert (node_tmp, "appcategory", tmp, 0, NULL);
+		}
+	}
+
+	/* <keywords> */
+	if (priv->keywords->len > 0) {
+		node_tmp = as_node_insert (node_app, "keywords", NULL, 0, NULL);
+		for (i = 0; i < priv->keywords->len; i++) {
+			tmp = g_ptr_array_index (priv->keywords, i);
+			as_node_insert (node_tmp, "keyword", tmp, 0, NULL);
+		}
+	}
+
+	/* <mimetypes> */
+	if (priv->mimetypes->len > 0) {
+		node_tmp = as_node_insert (node_app, "mimetypes", NULL, 0, NULL);
+		for (i = 0; i < priv->mimetypes->len; i++) {
+			tmp = g_ptr_array_index (priv->mimetypes, i);
+			as_node_insert (node_tmp, "mimetype", tmp, 0, NULL);
+		}
+	}
+
+	/* <project_license> */
+	if (priv->project_license != NULL) {
+		as_node_insert (node_app, "project_license",
+				priv->project_license, 0, NULL);
+	}
+
+	/* <url> */
+//		as_node_insert (node_app, "url", priv->homepage_url, 0,
+//				"type", "homepage",
+//				NULL);
+	as_node_insert_hash (node_app, "url", "type", priv->urls, 0);
+
+	/* <project_group> */
+	if (priv->project_group != NULL) {
+		as_node_insert (node_app, "project_group",
+				priv->project_group, 0, NULL);
+	}
+
+	/* <compulsory_for_desktop> */
+	if (priv->compulsory_for_desktop != NULL) {
+		for (i = 0; i < priv->compulsory_for_desktop->len; i++) {
+			tmp = g_ptr_array_index (priv->compulsory_for_desktop, i);
+			as_node_insert (node_app, "compulsory_for_desktop",
+					tmp, 0, NULL);
+		}
+	}
+
+	/* <screenshots> */
+	if (priv->screenshots->len > 0) {
+		node_tmp = as_node_insert (node_app, "screenshots", NULL, 0, NULL);
+		for (i = 0; i < priv->screenshots->len; i++) {
+			ss = g_ptr_array_index (priv->screenshots, i);
+			as_screenshot_node_insert (ss, node_tmp);
+		}
+	}
+
+	/* <releases> */
+	if (priv->releases->len > 0) {
+		node_tmp = as_node_insert (node_app, "releases", NULL, 0, NULL);
+		for (i = 0; i < priv->releases->len && i < 3; i++) {
+			rel = g_ptr_array_index (priv->releases, i);
+			as_release_node_insert (rel, node_tmp);
+		}
+	}
+
+	/* <languages> */
+	if (g_hash_table_size (priv->languages) > 0) {
+		node_tmp = as_node_insert (node_app, "languages", NULL, 0, NULL);
+		as_node_insert_hash (node_tmp, "lang", "percentage", priv->languages, TRUE);
+	}
+
+	/* <metadata> */
+	if (g_hash_table_size (priv->metadata) > 0) {
+		node_tmp = as_node_insert (node_app, "metadata", NULL, 0, NULL);
+		as_node_insert_hash (node_tmp, "value", "key", priv->metadata, FALSE);
+	}
+
+	return node_app;
+}
+
+/**
+ * as_app_node_parse_child:
+ **/
+static gboolean
+as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
+{
+	AsTag tag;
+	GNode *c;
+	GString *xml;
+	const gchar *tmp;
+	gboolean ret = TRUE;
+
+	/* <id> */
+	tag = as_tag_from_string (as_node_get_name (n));
+	if (tag == AS_TAG_ID) {
+		tmp = as_node_get_attribute (n, "type");
+		as_app_set_id_kind (app, as_app_id_kind_from_string (tmp));
+		as_app_set_id_full (app, as_node_get_data (n));
+		goto out;
+	}
+
+	/* <pkgname> */
+	if (tag == AS_TAG_PKGNAME) {
+		as_app_add_pkgname (app, as_node_get_data (n));
+		goto out;
+	}
+
+	/* <name> */
+	if (tag == AS_TAG_NAME) {
+		as_app_set_name (app,
+				 as_node_get_attribute (n, "xml:lang"),
+				 as_node_get_data (n));
+	}
+
+	/* <summary> */
+	if (tag == AS_TAG_SUMMARY) {
+		as_app_set_comment (app,
+				    as_node_get_attribute (n, "xml:lang"),
+				    as_node_get_data (n));
+	}
+
+	/* <description> */
+	if (tag == AS_TAG_DESCRIPTION) {
+		xml = as_node_to_xml (n->children, AS_NODE_TO_XML_FLAG_NONE);
+		as_app_set_description (app,
+					 as_node_get_attribute (n, "xml:lang"),
+					 xml->str);
+		g_string_free (xml, TRUE);
+	}
+
+	/* <icon> */
+	if (tag == AS_TAG_ICON) {
+		tmp = as_node_get_attribute (n, "type");
+		as_app_set_icon_kind (app, as_app_icon_kind_from_string (tmp));
+		as_app_set_icon (app, as_node_get_data (n));
+		goto out;
+	}
+
+	/* <categories> */
+	if (tag == AS_TAG_APPCATEGORIES) {
+		for (c = n->children; c != NULL; c = c->next) {
+			if (g_strcmp0 (as_node_get_name (c),
+				       "appcategory") != 0)
+				continue;
+			as_app_add_category (app, as_node_get_data (c));
+		}
+	}
+
+	/* <keywords> */
+	if (tag == AS_TAG_KEYWORDS) {
+		for (c = n->children; c != NULL; c = c->next) {
+			if (g_strcmp0 (as_node_get_name (c),
+				       "keyword") != 0)
+				continue;
+			as_app_add_keyword (app, as_node_get_data (c));
+		}
+	}
+
+	/* <mimetypes> */
+	if (tag == AS_TAG_MIMETYPES) {
+		for (c = n->children; c != NULL; c = c->next) {
+			if (g_strcmp0 (as_node_get_name (c),
+				       "mimetype") != 0)
+				continue;
+			as_app_add_mimetype (app, as_node_get_data (c));
+		}
+	}
+
+	/* <project_license> */
+	if (tag == AS_TAG_PROJECT_LICENSE) {
+		as_app_set_project_license (app, as_node_get_data (n));
+		goto out;
+	}
+
+	/* <url> */
+	if (tag == AS_TAG_URL) {
+		tmp = as_node_get_attribute (n, "type");
+		as_app_add_url (app, tmp, as_node_get_data (n));
+		goto out;
+	}
+
+	/* <project_group> */
+	if (tag == AS_TAG_PROJECT_GROUP) {
+		as_app_set_project_group (app, as_node_get_data (n));
+		goto out;
+	}
+
+	/* <compulsory_for_desktop> */
+	if (tag == AS_TAG_COMPULSORY_FOR_DESKTOP) {
+		as_app_add_compulsory_for_desktop (app, as_node_get_data (n));
+		goto out;
+	}
+
+	/* <screenshots> */
+	if (tag == AS_TAG_SCREENSHOTS) {
+		AsScreenshot *ss;
+		for (c = n->children; c != NULL; c = c->next) {
+			if (g_strcmp0 (as_node_get_name (c), "screenshot") != 0)
+				continue;
+			ss = as_screenshot_new ();
+			ret = as_screenshot_node_parse (ss, c, error);
+			if (!ret) {
+				g_object_unref (ss);
+				goto out;
+			}
+			as_app_add_screenshot (app, ss);
+			g_object_unref (ss);
+		}
+	}
+
+	/* <releases> */
+	if (tag == AS_TAG_RELEASES) {
+		AsRelease *r;
+		for (c = n->children; c != NULL; c = c->next) {
+			if (g_strcmp0 (as_node_get_name (c), "release") != 0)
+				continue;
+			r = as_release_new ();
+			ret = as_release_node_parse (r, c, error);
+			if (!ret) {
+				g_object_unref (r);
+				goto out;
+			}
+			as_app_add_release (app, r);
+			g_object_unref (r);
+		}
+	}
+
+	/* <languages> */
+	if (tag == AS_TAG_LANGUAGES) {
+		for (c = n->children; c != NULL; c = c->next) {
+			if (g_strcmp0 (as_node_get_name (c), "lang") != 0)
+				continue;
+			tmp = as_node_get_attribute (c, "percentage");
+			as_app_add_language (app, as_node_get_data (c), tmp);
+		}
+	}
+
+	/* <metadata> */
+	if (tag == AS_TAG_METADATA) {
+		for (c = n->children; c != NULL; c = c->next) {
+			if (g_strcmp0 (as_node_get_name (c), "value") != 0)
+				continue;
+			tmp = as_node_get_attribute (c, "key");
+			as_app_add_metadata (app, tmp, as_node_get_data (c));
+		}
+	}
+out:
+	return ret;
+}
+
+/**
+ * as_app_node_parse:
+ **/
+gboolean
+as_app_node_parse (AsApp *app, GNode *node, GError **error)
+{
+	GNode *n;
+	gboolean ret = TRUE;
+
+	/* parse each node */
+	for (n = node->children; n != NULL; n = n->next) {
+		ret = as_app_node_parse_child (app, n, error);
+		if (!ret)
+			goto out;
+	}
+out:
+	return ret;
 }
 
 /**

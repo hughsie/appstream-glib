@@ -76,12 +76,13 @@ GType		 as_app_get_type		(void);
 AsApp		*as_app_new			(void);
 
 /* helpers */
-const gchar	*as_app_id_kind_to_string	(AsAppIdKind	 kind);
-AsAppIdKind	 as_app_id_kind_from_string	(const gchar	*kind);
-const gchar	*as_app_icon_kind_to_string	(AsAppIconKind	 icon_type);
-AsAppIconKind	 as_app_icon_kind_from_string	(const gchar	*icon_type);
+const gchar	*as_app_id_kind_to_string	(AsAppIdKind	 id_kind);
+AsAppIdKind	 as_app_id_kind_from_string	(const gchar	*id_kind);
+const gchar	*as_app_icon_kind_to_string	(AsAppIconKind	 icon_kind);
+AsAppIconKind	 as_app_icon_kind_from_string	(const gchar	*icon_kind);
 
 /* getters */
+AsAppIconKind	 as_app_get_icon_kind		(AsApp		*app);
 AsAppIdKind	 as_app_get_id_kind		(AsApp		*app);
 GList		*as_app_get_languages		(AsApp		*app);
 GPtrArray	*as_app_get_categories		(AsApp		*app);
@@ -94,6 +95,7 @@ const gchar	*as_app_get_icon		(AsApp		*app);
 const gchar	*as_app_get_id			(AsApp		*app);
 const gchar	*as_app_get_id_full		(AsApp		*app);
 const gchar	*as_app_get_project_group	(AsApp		*app);
+const gchar	*as_app_get_project_license	(AsApp		*app);
 const gchar	*as_app_get_name		(AsApp		*app,
 						 const gchar	*locale);
 const gchar	*as_app_get_comment		(AsApp		*app,
@@ -109,7 +111,7 @@ const gchar	*as_app_get_url_item		(AsApp		*app,
 void		 as_app_set_id_full		(AsApp		*app,
 						 const gchar	*id_full);
 void		 as_app_set_id_kind		(AsApp		*app,
-						 AsAppIdKind	 kind);
+						 AsAppIdKind	 id_kind);
 void		 as_app_set_project_group	(AsApp		*app,
 						 const gchar	*project_group);
 void		 as_app_set_project_license	(AsApp		*app,
@@ -117,7 +119,7 @@ void		 as_app_set_project_license	(AsApp		*app,
 void		 as_app_set_icon		(AsApp		*app,
 						 const gchar	*icon);
 void		 as_app_set_icon_kind		(AsApp		*app,
-						 AsAppIconKind	 icon_type);
+						 AsAppIconKind	 icon_kind);
 void		 as_app_set_name		(AsApp		*app,
 						 const gchar	*locale,
 						 const gchar	*name);
@@ -154,6 +156,11 @@ void		 as_app_remove_metadata		(AsApp		*app,
 						 const gchar	*key);
 
 /* object methods */
+GNode		*as_app_node_insert		(AsApp		*app,
+						 GNode		*parent);
+gboolean	 as_app_node_parse		(AsApp		*app,
+						 GNode		*node,
+						 GError		**error);
 void		 as_app_subsume			(AsApp		*app,
 						 AsApp		*donor);
 

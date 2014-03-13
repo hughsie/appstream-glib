@@ -53,16 +53,25 @@ struct _AsReleaseClass
 GType		 as_release_get_type		(void);
 AsRelease	*as_release_new			(void);
 
+/* getters */
 const gchar	*as_release_get_version		(AsRelease	*release);
 guint64		 as_release_get_timestamp	(AsRelease	*release);
 const gchar	*as_release_get_description	(AsRelease	*release);
 
+/* setters */
 void		 as_release_set_version		(AsRelease	*release,
 						 const gchar	*version);
 void		 as_release_set_timestamp	(AsRelease	*release,
 						 guint64	 timestamp);
 void		 as_release_set_description	(AsRelease	*release,
 						 const gchar	*description);
+
+/* object methods */
+GNode		*as_release_node_insert		(AsRelease	*release,
+						 GNode		*parent);
+gboolean	 as_release_node_parse		(AsRelease	*release,
+						 GNode		*node,
+						 GError		**error);
 
 G_END_DECLS
 

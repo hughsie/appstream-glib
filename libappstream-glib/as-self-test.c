@@ -24,13 +24,217 @@
 #include <glib.h>
 
 #include "as-app.h"
+#include "as-image.h"
 #include "as-node.h"
+#include "as-release.h"
+#include "as-screenshot.h"
+
+static void
+ch_test_release_func (void)
+{
+	AsRelease *release;
+	GError *error = NULL;
+	GNode *n;
+	GNode *root;
+	GString *xml;
+	const gchar *src = "<release version=\"0.1.2\" timestamp=\"123\"/>";
+	gboolean ret;
+
+	release = as_release_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, -1, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "release");
+	g_assert (n != NULL);
+	ret = as_release_node_parse (release, n, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_release_get_timestamp (release), ==, 123);
+	g_assert_cmpstr (as_release_get_version (release), ==, "0.1.2");
+
+	/* back to node */
+	root = as_node_new ();
+	n = as_release_node_insert (release, root);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert_cmpstr (xml->str, ==, src);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+
+	g_object_unref (release);
+}
+
+static void
+ch_test_image_func (void)
+{
+	AsImage *image;
+	GError *error = NULL;
+	GNode *n;
+	GNode *root;
+	GString *xml;
+	const gchar *src =
+		"<image type=\"thumbnail\" height=\"12\" width=\"34\">"
+		"http://www.hughsie.com/a.jpg</image>";
+	gboolean ret;
+
+	image = as_image_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, -1, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "image");
+	g_assert (n != NULL);
+	ret = as_image_node_parse (image, n, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_image_get_kind (image), ==, AS_IMAGE_KIND_THUMBNAIL);
+	g_assert_cmpint (as_image_get_height (image), ==, 12);
+	g_assert_cmpint (as_image_get_width (image), ==, 34);
+	g_assert_cmpstr (as_image_get_url (image), ==, "http://www.hughsie.com/a.jpg");
+
+	/* back to node */
+	root = as_node_new ();
+	n = as_image_node_insert (image, root);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert_cmpstr (xml->str, ==, src);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+
+	g_object_unref (image);
+}
+
+static void
+ch_test_screenshot_func (void)
+{
+	GPtrArray *images;
+	AsScreenshot *screenshot;
+	GError *error = NULL;
+	GNode *n;
+	GNode *root;
+	GString *xml;
+	const gchar *src =
+		"<screenshot type=\"normal\">"
+		"<caption>Hello</caption>"
+		"<image type=\"source\">http://1.png</image>"
+		"<image type=\"thumbnail\">http://2.png</image>"
+		"</screenshot>";
+	gboolean ret;
+
+	screenshot = as_screenshot_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, -1, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "screenshot");
+	g_assert (n != NULL);
+	ret = as_screenshot_node_parse (screenshot, n, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* verify */
+	g_assert_cmpint (as_screenshot_get_kind (screenshot), ==, AS_SCREENSHOT_KIND_NORMAL);
+	g_assert_cmpstr (as_screenshot_get_caption (screenshot, "C"), ==, "Hello");
+	images = as_screenshot_get_images (screenshot);
+	g_assert_cmpint (images->len, ==, 2);
+	as_node_unref (root);
+
+	/* back to node */
+	root = as_node_new ();
+	n = as_screenshot_node_insert (screenshot, root);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert_cmpstr (xml->str, ==, src);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+
+	g_object_unref (screenshot);
+}
 
 static void
 ch_test_app_func (void)
 {
 	AsApp *app;
+	GError *error = NULL;
+	GNode *n;
+	GNode *root;
+	GString *xml;
+	gboolean ret;
+	const gchar *src =
+		"<application>"
+		"<id type=\"desktop\">org.gnome.Software.desktop</id>"
+		"<pkgname>gnome-software</pkgname>"
+		"<name>Software</name>"
+		"<name xml:lang=\"pl\">Oprogramowanie</name>"
+		"<summary>Application manager</summary>"
+		"<description><p>Software allows you to find stuff</p></description>"
+		"<description xml:lang=\"pt_BR\"><p>O aplicativo Software.</p></description>"
+		"<icon type=\"cached\">org.gnome.Software.png</icon>"
+		"<appcategories>"
+		"<appcategory>System</appcategory>"
+		"</appcategories>"
+		"<project_license>GPLv2+</project_license>"
+		"<url type=\"homepage\">https://wiki.gnome.org/Design/Apps/Software</url>"
+		"<project_group>GNOME</project_group>"
+		"<compulsory_for_desktop>GNOME</compulsory_for_desktop>"
+		"<screenshots>"
+		"<screenshot type=\"default\">"
+		"<image type=\"thumbnail\" height=\"351\" width=\"624\">http://a.png</image>"
+		"</screenshot>"
+		"<screenshot type=\"normal\">"
+		"<image type=\"thumbnail\">http://b.png</image>"
+		"</screenshot>"
+		"</screenshots>"
+		"<releases>"
+		"<release version=\"3.11.90\" timestamp=\"1392724800\"/>"
+		"</releases>"
+		"<metadata>"
+		"<value key=\"X-Kudo-GTK3\"/>"
+		"</metadata>"
+		"</application>";
+
 	app = as_app_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, -1, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "application");
+	g_assert (n != NULL);
+	ret = as_app_node_parse (app, n, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* verify */
+	g_assert_cmpstr (as_app_get_id_full (app), ==, "org.gnome.Software.desktop");
+	g_assert_cmpstr (as_app_get_id (app), ==, "org.gnome.Software");
+	g_assert_cmpstr (as_app_get_name (app, "pl"), ==, "Oprogramowanie");
+	g_assert_cmpstr (as_app_get_comment (app, NULL), ==, "Application manager");
+	g_assert_cmpstr (as_app_get_icon (app), ==, "org.gnome.Software.png");
+	g_assert_cmpint (as_app_get_icon_kind (app), ==, AS_APP_ICON_KIND_CACHED);
+	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
+	g_assert_cmpstr (as_app_get_project_license (app), ==, "GPLv2+");
+	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);
+	g_assert_cmpint (as_app_get_screenshots(app)->len, ==, 2);
+	g_assert_cmpint (as_app_get_releases(app)->len, ==, 1);
+	g_assert_cmpstr (as_app_get_metadata_item (app, "X-Kudo-GTK3"), ==, "");
+	as_node_unref (root);
+
+	/* back to node */
+	root = as_node_new ();
+	n = as_app_node_insert (app, root);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert_cmpstr (xml->str, ==, src);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+
 	g_object_unref (app);
 }
 
@@ -252,6 +456,9 @@ main (int argc, char **argv)
 	g_log_set_fatal_mask (NULL, G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL);
 
 	/* tests go here */
+	g_test_add_func ("/AppStream/release", ch_test_release_func);
+	g_test_add_func ("/AppStream/image", ch_test_image_func);
+	g_test_add_func ("/AppStream/screenshot", ch_test_screenshot_func);
 	g_test_add_func ("/AppStream/app", ch_test_app_func);
 	g_test_add_func ("/AppStream/node", ch_test_node_func);
 	g_test_add_func ("/AppStream/node{xml}", ch_test_node_xml_func);
