@@ -983,7 +983,8 @@ as_app_node_insert (AsApp *app, GNode *parent)
 static gboolean
 as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 {
-	AsTag tag;
+	AsRelease *r;
+	AsScreenshot *ss;
 	GNode *c;
 	GString *xml;
 	const gchar *tmp;
@@ -991,109 +992,109 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	guint percent;
 
 	/* <id> */
-	tag = as_tag_from_string (as_node_get_name (n));
-	if (tag == AS_TAG_ID) {
+	switch (as_tag_from_string (as_node_get_name (n))) {
+
+	/* <id> */
+	case AS_TAG_ID:
 		tmp = as_node_get_attribute (n, "type");
 		as_app_set_id_kind (app, as_app_id_kind_from_string (tmp));
 		as_app_set_id_full (app, as_node_get_data (n), -1);
-		goto out;
-	}
+		break;
+
+	/* <priority> */
+	case AS_TAG_PRIORITY:
+		as_app_set_priority (app, g_ascii_strtoll (as_node_get_data (n),
+							   NULL, 10));
+		break;
 
 	/* <pkgname> */
-	if (tag == AS_TAG_PKGNAME) {
+	case AS_TAG_PKGNAME:
 		as_app_add_pkgname (app, as_node_get_data (n), -1);
-		goto out;
-	}
+		break;
 
 	/* <name> */
-	if (tag == AS_TAG_NAME) {
+	case AS_TAG_NAME:
 		as_app_set_name (app,
 				 as_node_get_attribute (n, "xml:lang"),
 				 as_node_get_data (n), -1);
-	}
+		break;
 
 	/* <summary> */
-	if (tag == AS_TAG_SUMMARY) {
+	case AS_TAG_SUMMARY:
 		as_app_set_comment (app,
 				    as_node_get_attribute (n, "xml:lang"),
 				    as_node_get_data (n), -1);
-	}
+		break;
 
 	/* <description> */
-	if (tag == AS_TAG_DESCRIPTION) {
+	case AS_TAG_DESCRIPTION:
 		xml = as_node_to_xml (n->children, AS_NODE_TO_XML_FLAG_NONE);
 		as_app_set_description (app,
 					 as_node_get_attribute (n, "xml:lang"),
 					 xml->str, xml->len);
 		g_string_free (xml, TRUE);
-	}
+		break;
 
 	/* <icon> */
-	if (tag == AS_TAG_ICON) {
+	case AS_TAG_ICON:
 		tmp = as_node_get_attribute (n, "type");
 		as_app_set_icon_kind (app, as_app_icon_kind_from_string (tmp));
 		as_app_set_icon (app, as_node_get_data (n), -1);
-		goto out;
-	}
+		break;
 
 	/* <categories> */
-	if (tag == AS_TAG_APPCATEGORIES) {
+	case AS_TAG_APPCATEGORIES:
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c),
 				       "appcategory") != 0)
 				continue;
 			as_app_add_category (app, as_node_get_data (c), -1);
 		}
-	}
+		break;
 
 	/* <keywords> */
-	if (tag == AS_TAG_KEYWORDS) {
+	case AS_TAG_KEYWORDS:
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c),
 				       "keyword") != 0)
 				continue;
 			as_app_add_keyword (app, as_node_get_data (c), -1);
 		}
-	}
+		break;
 
 	/* <mimetypes> */
-	if (tag == AS_TAG_MIMETYPES) {
+	case AS_TAG_MIMETYPES:
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c),
 				       "mimetype") != 0)
 				continue;
 			as_app_add_mimetype (app, as_node_get_data (c), -1);
 		}
-	}
+		break;
 
 	/* <project_license> */
-	if (tag == AS_TAG_PROJECT_LICENSE) {
+	case AS_TAG_PROJECT_LICENSE:
 		as_app_set_project_license (app, as_node_get_data (n), -1);
-		goto out;
-	}
+		break;
 
 	/* <url> */
-	if (tag == AS_TAG_URL) {
+	case AS_TAG_URL:
 		tmp = as_node_get_attribute (n, "type");
 		as_app_add_url (app, tmp, as_node_get_data (n), -1);
-		goto out;
-	}
+		break;
 
 	/* <project_group> */
-	if (tag == AS_TAG_PROJECT_GROUP) {
+	case AS_TAG_PROJECT_GROUP:
 		as_app_set_project_group (app, as_node_get_data (n), -1);
-		goto out;
-	}
+		break;
 
 	/* <compulsory_for_desktop> */
-	if (tag == AS_TAG_COMPULSORY_FOR_DESKTOP) {
+	case AS_TAG_COMPULSORY_FOR_DESKTOP:
 		as_app_add_compulsory_for_desktop (app, as_node_get_data (n), -1);
-		goto out;
-	}
+		break;
 
 	/* <screenshots> */
-	if (tag == AS_TAG_SCREENSHOTS) {
-		AsScreenshot *ss;
+	case AS_TAG_SCREENSHOTS:
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c), "screenshot") != 0)
 				continue;
@@ -1106,11 +1107,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 			as_app_add_screenshot (app, ss);
 			g_object_unref (ss);
 		}
-	}
+		break;
 
 	/* <releases> */
-	if (tag == AS_TAG_RELEASES) {
-		AsRelease *r;
+	case AS_TAG_RELEASES:
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c), "release") != 0)
 				continue;
@@ -1123,10 +1123,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 			as_app_add_release (app, r);
 			g_object_unref (r);
 		}
-	}
+		break;
 
 	/* <languages> */
-	if (tag == AS_TAG_LANGUAGES) {
+	case AS_TAG_LANGUAGES:
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c), "lang") != 0)
 				continue;
@@ -1134,16 +1134,19 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 			as_app_add_language (app, percent,
 					     as_node_get_data (c), -1);
 		}
-	}
+		break;
 
 	/* <metadata> */
-	if (tag == AS_TAG_METADATA) {
+	case AS_TAG_METADATA:
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c), "value") != 0)
 				continue;
 			tmp = as_node_get_attribute (c, "key");
 			as_app_add_metadata (app, tmp, as_node_get_data (c), -1);
 		}
+		break;
+	default:
+		break;
 	}
 out:
 	return ret;
