@@ -38,7 +38,7 @@ struct _AsAppPrivate
 	GHashTable	*names;				/* of locale:string */
 	GHashTable	*urls;				/* of key:string */
 	GPtrArray	*categories;			/* of string */
-	GPtrArray	*compulsory_for_desktop;	/* of string */
+	GPtrArray	*compulsory_for_desktops;	/* of string */
 	GPtrArray	*keywords;			/* of string */
 	GPtrArray	*mimetypes;			/* of string */
 	GPtrArray	*pkgnames;			/* of string */
@@ -86,7 +86,7 @@ as_app_finalize (GObject *object)
 	g_hash_table_unref (priv->names);
 	g_hash_table_unref (priv->urls);
 	g_ptr_array_unref (priv->categories);
-	g_ptr_array_unref (priv->compulsory_for_desktop);
+	g_ptr_array_unref (priv->compulsory_for_desktops);
 	g_ptr_array_unref (priv->keywords);
 	g_ptr_array_unref (priv->mimetypes);
 	g_ptr_array_unref (priv->pkgnames);
@@ -116,7 +116,7 @@ as_app_init (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->categories = g_ptr_array_new_with_free_func (g_free);
-	priv->compulsory_for_desktop = g_ptr_array_new_with_free_func (g_free);
+	priv->compulsory_for_desktops = g_ptr_array_new_with_free_func (g_free);
 	priv->keywords = g_ptr_array_new_with_free_func (g_free);
 	priv->mimetypes = g_ptr_array_new_with_free_func (g_free);
 	priv->pkgnames = g_ptr_array_new_with_free_func (g_free);
@@ -245,6 +245,16 @@ as_app_get_categories (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->categories;
+}
+
+/**
+ * as_app_get_compulsory_for_desktops:
+ **/
+GPtrArray *
+as_app_get_compulsory_for_desktops (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->compulsory_for_desktops;
 }
 
 /**
@@ -619,10 +629,10 @@ as_app_add_compulsory_for_desktop (AsApp *app,
 				   gssize compulsory_for_desktop_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	if (as_app_array_find_string (priv->compulsory_for_desktop,
+	if (as_app_array_find_string (priv->compulsory_for_desktops,
 				      compulsory_for_desktop))
 		return;
-	g_ptr_array_add (priv->compulsory_for_desktop,
+	g_ptr_array_add (priv->compulsory_for_desktops,
 			 as_strndup (compulsory_for_desktop,
 				     compulsory_for_desktop_len));
 }
@@ -874,9 +884,9 @@ as_app_node_insert (AsApp *app, GNode *parent)
 	}
 
 	/* <compulsory_for_desktop> */
-	if (priv->compulsory_for_desktop != NULL) {
-		for (i = 0; i < priv->compulsory_for_desktop->len; i++) {
-			tmp = g_ptr_array_index (priv->compulsory_for_desktop, i);
+	if (priv->compulsory_for_desktops != NULL) {
+		for (i = 0; i < priv->compulsory_for_desktops->len; i++) {
+			tmp = g_ptr_array_index (priv->compulsory_for_desktops, i);
 			as_node_insert (node_app, "compulsory_for_desktop",
 					tmp, 0, NULL);
 		}

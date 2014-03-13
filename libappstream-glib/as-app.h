@@ -86,6 +86,7 @@ AsAppIconKind	 as_app_get_icon_kind		(AsApp		*app);
 AsAppIdKind	 as_app_get_id_kind		(AsApp		*app);
 GList		*as_app_get_languages		(AsApp		*app);
 GPtrArray	*as_app_get_categories		(AsApp		*app);
+GPtrArray	*as_app_get_compulsory_for_desktops (AsApp	*app);
 GPtrArray	*as_app_get_keywords		(AsApp		*app);
 GPtrArray	*as_app_get_pkgnames		(AsApp		*app);
 GPtrArray	*as_app_get_releases		(AsApp		*app);
