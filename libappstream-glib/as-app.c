@@ -50,6 +50,7 @@ struct _AsAppPrivate
 	gchar		*id_full;
 	gchar		*project_group;
 	gchar		*project_license;
+	gint		 priority;
 	gsize		 token_cache_valid;
 	GPtrArray	*token_cache;			/* of AsAppTokenItem */
 };
@@ -396,6 +397,16 @@ as_app_get_language (AsApp *app, const gchar *locale)
 }
 
 /**
+ * as_app_get_priority:
+ */
+gint
+as_app_get_priority (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->priority;
+}
+
+/**
  * as_app_get_languages:
  **/
 GList *
@@ -583,6 +594,16 @@ as_app_set_description (AsApp *app,
 	g_hash_table_insert (priv->descriptions,
 			     g_strdup (locale),
 			     as_strndup (description, description_len));
+}
+
+/**
+ * as_app_set_priority:
+ */
+void
+as_app_set_priority (AsApp *app, gint priority)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	priv->priority = priority;
 }
 
 /**
@@ -843,6 +864,13 @@ as_app_node_insert (AsApp *app, GNode *parent)
 	as_node_insert (node_app, "id", priv->id_full, 0,
 			"type", as_app_id_kind_to_string (priv->id_kind),
 			NULL);
+
+	/* <priority> */
+	if (priv->priority != 0) {
+		gchar prio[6];
+		g_snprintf (prio, sizeof (prio), "%i", priv->priority);
+		as_node_insert (node_app, "priority", prio, 0, NULL);
+	}
 
 	/* <pkgname> */
 	for (i = 0; i < priv->pkgnames->len; i++) {

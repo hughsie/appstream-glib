@@ -104,6 +104,7 @@ const gchar	*as_app_get_comment		(AsApp		*app,
 						 const gchar	*locale);
 const gchar	*as_app_get_description		(AsApp		*app,
 						 const gchar	*locale);
+gint		 as_app_get_priority		(AsApp		*app);
 gint		 as_app_get_language		(AsApp		*app,
 						 const gchar	*locale);
 const gchar	*as_app_get_metadata_item	(AsApp		*app,
@@ -143,6 +144,8 @@ void		 as_app_set_description		(AsApp		*app,
 						 const gchar	*locale,
 						 const gchar	*description,
 						 gssize		 description_len);
+void		 as_app_set_priority		(AsApp		*app,
+						 gint		 priority);
 void		 as_app_add_category		(AsApp		*app,
 						 const gchar	*category,
 						 gssize		 category_len);

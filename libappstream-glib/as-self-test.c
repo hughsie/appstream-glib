@@ -170,6 +170,7 @@ ch_test_app_func (void)
 	const gchar *src =
 		"<application>"
 		"<id type=\"desktop\">org.gnome.Software.desktop</id>"
+		"<priority>-4</priority>"
 		"<pkgname>gnome-software</pkgname>"
 		"<name>Software</name>"
 		"<name xml:lang=\"pl\">Oprogramowanie</name>"
