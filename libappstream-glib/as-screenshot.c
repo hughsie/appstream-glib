@@ -21,11 +21,10 @@
 
 #include "config.h"
 
-#include <string.h>
-
 #include "as-node.h"
 #include "as-screenshot.h"
 #include "as-tag.h"
+#include "as-utils.h"
 
 typedef struct _AsScreenshotPrivate	AsScreenshotPrivate;
 struct _AsScreenshotPrivate
@@ -166,11 +165,9 @@ as_screenshot_set_caption (AsScreenshot *screenshot,
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	if (locale == NULL)
 		locale = "C";
-	if (caption_length == (gsize) -1)
-		caption_length = strlen (caption);
 	g_hash_table_insert (priv->captions,
 			     g_strdup (locale),
-			     g_strndup (caption, caption_length));
+			     as_strndup (caption, caption_length));
 }
 
 /**

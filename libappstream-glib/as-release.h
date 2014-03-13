@@ -60,11 +60,13 @@ const gchar	*as_release_get_description	(AsRelease	*release);
 
 /* setters */
 void		 as_release_set_version		(AsRelease	*release,
-						 const gchar	*version);
+						 const gchar	*version,
+						 gssize		 version_len);
 void		 as_release_set_timestamp	(AsRelease	*release,
 						 guint64	 timestamp);
 void		 as_release_set_description	(AsRelease	*release,
-						 const gchar	*description);
+						 const gchar	*description,
+						 gssize		 description_len);
 
 /* object methods */
 GNode		*as_release_node_insert		(AsRelease	*release,

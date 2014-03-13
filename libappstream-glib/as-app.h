@@ -109,49 +109,64 @@ const gchar	*as_app_get_url_item		(AsApp		*app,
 
 /* setters */
 void		 as_app_set_id_full		(AsApp		*app,
-						 const gchar	*id_full);
+						 const gchar	*id_full,
+						 gssize		 id_full_len);
 void		 as_app_set_id_kind		(AsApp		*app,
 						 AsAppIdKind	 id_kind);
 void		 as_app_set_project_group	(AsApp		*app,
-						 const gchar	*project_group);
+						 const gchar	*project_group,
+						 gssize		 project_group_len);
 void		 as_app_set_project_license	(AsApp		*app,
-						 const gchar	*project_license);
+						 const gchar	*project_license,
+						 gssize		 project_license_len);
 void		 as_app_set_icon		(AsApp		*app,
-						 const gchar	*icon);
+						 const gchar	*icon,
+						 gssize		 icon_len);
 void		 as_app_set_icon_kind		(AsApp		*app,
 						 AsAppIconKind	 icon_kind);
 void		 as_app_set_name		(AsApp		*app,
 						 const gchar	*locale,
-						 const gchar	*name);
+						 const gchar	*name,
+						 gssize		 name_len);
 void		 as_app_set_comment		(AsApp		*app,
 						 const gchar	*locale,
-						 const gchar	*comment);
+						 const gchar	*comment,
+						 gssize		 comment_len);
 void		 as_app_set_description		(AsApp		*app,
 						 const gchar	*locale,
-						 const gchar	*description);
+						 const gchar	*description,
+						 gssize		 description_len);
 void		 as_app_add_category		(AsApp		*app,
-						 const gchar	*category);
+						 const gchar	*category,
+						 gssize		 category_len);
 void		 as_app_add_keyword		(AsApp		*app,
-						 const gchar	*keyword);
+						 const gchar	*keyword,
+						 gssize		 keyword_len);
 void		 as_app_add_mimetype		(AsApp		*app,
-						 const gchar	*mimetype);
+						 const gchar	*mimetype,
+						 gssize		 mimetype_len);
 void		 as_app_add_pkgname		(AsApp		*app,
-						 const gchar	*pkgname);
+						 const gchar	*pkgname,
+						 gssize		 pkgname_len);
 void		 as_app_add_release		(AsApp		*app,
 						 AsRelease	*release);
 void		 as_app_add_screenshot		(AsApp		*app,
 						 AsScreenshot	*screenshot);
 void		 as_app_add_language		(AsApp		*app,
 						 const gchar	*locale,
-						 const gchar	*value);
+						 const gchar	*value,
+						 gssize		 value_len);
 void		 as_app_add_compulsory_for_desktop (AsApp	*app,
-						 const gchar	*compulsory_for_desktop);
+						 const gchar	*compulsory_for_desktop,
+						 gssize		 compulsory_for_desktop_len);
 void		 as_app_add_url			(AsApp		*app,
 						 const gchar	*type,
-						 const gchar	*url);
+						 const gchar	*url,
+						 gssize		 url_len);
 void		 as_app_add_metadata		(AsApp		*app,
 						 const gchar	*key,
-						 const gchar	*value);
+						 const gchar	*value,
+						 gssize		 value_len);
 void		 as_app_remove_metadata		(AsApp		*app,
 						 const gchar	*key);
 

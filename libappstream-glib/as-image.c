@@ -22,10 +22,10 @@
 #include "config.h"
 
 #include <stdlib.h>
-#include <string.h>
 
 #include "as-image.h"
 #include "as-node.h"
+#include "as-utils.h"
 
 typedef struct _AsImagePrivate	AsImagePrivate;
 struct _AsImagePrivate
@@ -143,13 +143,11 @@ as_image_get_kind (AsImage *image)
  * as_image_set_url:
  */
 void
-as_image_set_url (AsImage *image, const gchar *url, gsize url_len)
+as_image_set_url (AsImage *image, const gchar *url, gssize url_len)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	g_free (priv->url);
-	if (url_len == (gsize) -1)
-		url_len = strlen (url);
-	priv->url = g_strndup (url, url_len);
+	priv->url = as_strndup (url, url_len);
 }
 
 /**

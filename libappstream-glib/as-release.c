@@ -25,6 +25,7 @@
 
 #include "as-node.h"
 #include "as-release.h"
+#include "as-utils.h"
 
 typedef struct _AsReleasePrivate	AsReleasePrivate;
 struct _AsReleasePrivate
@@ -105,10 +106,12 @@ as_release_get_description (AsRelease *release)
  * as_release_set_version:
  **/
 void
-as_release_set_version (AsRelease *release, const gchar *version)
+as_release_set_version (AsRelease *release,
+			const gchar *version,
+			gssize version_len)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
-	priv->version = g_strdup (version);
+	priv->version = as_strndup (version, version_len);
 }
 
 /**
@@ -125,10 +128,12 @@ as_release_set_timestamp (AsRelease *release, guint64 timestamp)
  * as_release_set_description:
  **/
 void
-as_release_set_description (AsRelease *release, const gchar *description)
+as_release_set_description (AsRelease *release,
+			    const gchar *description,
+			    gssize description_len)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
-	priv->description = g_strdup (description);
+	priv->description = as_strndup (description, description_len);
 }
 
 /**
@@ -164,10 +169,10 @@ as_release_node_parse (AsRelease *release, GNode *node, GError **error)
 		as_release_set_timestamp (release, atol (tmp));
 	tmp = as_node_get_attribute (node, "version");
 	if (tmp != NULL)
-		as_release_set_version (release, tmp);
+		as_release_set_version (release, tmp, -1);
 	tmp = as_node_get_data (node);
 	if (tmp != NULL)
-		as_release_set_description (release, tmp);
+		as_release_set_description (release, tmp, -1);
 	return TRUE;
 }
 
