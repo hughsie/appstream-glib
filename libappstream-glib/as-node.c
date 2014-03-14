@@ -52,7 +52,8 @@ as_node_destroy_node_cb (GNode *node, gpointer user_data)
 	if (data == NULL)
 		return FALSE;
 	g_free (data->name);
-	g_string_free (data->cdata, TRUE);
+	if (data->cdata != NULL)
+		g_string_free (data->cdata, TRUE);
 	g_hash_table_unref (data->attributes);
 	g_slice_free (AsNodeData, data);
 	return FALSE;
@@ -197,7 +198,7 @@ as_node_to_xml_string (GString *xml,
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_INDENT) > 0)
 			as_node_add_padding (xml, depth - depth_offset);
 		attrs = as_node_get_attr_string (data->attributes);
-		if (data->cdata->len == 0) {
+		if (data->cdata == NULL || data->cdata->len == 0) {
 			g_string_append_printf (xml, "<%s%s/>",
 						data->name, attrs);
 		} else {
@@ -270,10 +271,8 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	guint i;
 
 	/* create the new node data */
-	data = g_slice_new (AsNodeData);
+	data = g_slice_new0 (AsNodeData);
 	data->name = g_strdup (element_name);
-	data->cdata = g_string_new (NULL);
-	data->cdata_escaped = FALSE;
 	data->attributes = g_hash_table_new_full (g_str_hash,
 						  g_str_equal,
 						  g_free,
@@ -302,8 +301,12 @@ as_node_end_element_cb (GMarkupParseContext *context,
 	GNode **current = (GNode **) user_data;
 	AsNodeData *data;
 	data = (*current)->data;
-	as_node_string_replace (data->cdata, "\n", " ");
-	as_node_string_replace (data->cdata, "  ", " ");
+
+	if (data->cdata != NULL) {
+		as_node_string_replace (data->cdata, "\n", " ");
+		as_node_string_replace (data->cdata, "  ", " ");
+	}
+
 	(*current) = (*current)->parent;
 }
 
@@ -338,6 +341,9 @@ as_node_text_cb (GMarkupParseContext *context,
 
 	/* save cdata */
 	data = (*current)->data;
+
+	/* create as it's now required */
+	data->cdata = g_string_sized_new (text_len + 1);
 
 	/* split up into lines and add each with spaces stripped */
 	split = g_strsplit (text, "\n", -1);
@@ -476,7 +482,7 @@ as_node_get_data (const GNode *node)
 	if (node->data == NULL)
 		return NULL;
 	data = (AsNodeData *) node->data;
-	if (data->cdata->len == 0)
+	if (data->cdata == NULL || data->cdata->len == 0)
 		return NULL;
 	as_node_cdata_to_raw (data);
 	return data->cdata->str;
@@ -574,9 +580,10 @@ as_node_insert (GNode *parent,
 	guint i;
 	va_list args;
 
-	data = g_slice_new (AsNodeData);
+	data = g_slice_new0 (AsNodeData);
 	data->name = g_strdup (name);
-	data->cdata = g_string_new (cdata);
+	if (cdata != NULL)
+		data->cdata = g_string_new (cdata);
 	data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 	data->attributes = g_hash_table_new_full (g_str_hash,
 						  g_str_equal,
@@ -725,6 +732,8 @@ as_node_get_localized (const GNode *node, const gchar *key)
 	for (tmp = node->children; tmp != NULL; tmp = tmp->next) {
 		data = tmp->data;
 		if (data == NULL)
+			continue;
+		if (data->cdata == NULL)
 			continue;
 		if (g_strcmp0 (data->name, key) != 0)
 			continue;
