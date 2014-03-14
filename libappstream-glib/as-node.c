@@ -54,7 +54,8 @@ as_node_destroy_node_cb (GNode *node, gpointer user_data)
 	g_free (data->name);
 	if (data->cdata != NULL)
 		g_string_free (data->cdata, TRUE);
-	g_hash_table_unref (data->attributes);
+	if (data->attributes != NULL)
+		g_hash_table_unref (data->attributes);
 	g_slice_free (AsNodeData, data);
 	return FALSE;
 }
@@ -162,6 +163,10 @@ as_node_get_attr_string (GHashTable *hash)
 	GList *keys;
 	GList *l;
 	GString *str;
+
+	/* nothing to get */
+	if (hash == NULL)
+		return g_strdup ("");
 
 	str = g_string_new ("");
 	keys = g_hash_table_get_keys (hash);
@@ -273,10 +278,12 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	/* create the new node data */
 	data = g_slice_new0 (AsNodeData);
 	data->name = g_strdup (element_name);
-	data->attributes = g_hash_table_new_full (g_str_hash,
-						  g_str_equal,
-						  g_free,
-						  g_free);
+	if (g_strv_length ((gchar **) attribute_names) > 0) {
+		data->attributes = g_hash_table_new_full (g_str_hash,
+							  g_str_equal,
+							  g_free,
+							  g_free);
+	}
 	for (i = 0; attribute_names[i] != NULL; i++) {
 		g_hash_table_insert (data->attributes,
 				     g_strdup (attribute_names[i]),
@@ -528,11 +535,17 @@ out:
 const gchar *
 as_node_get_attribute (const GNode *node, const gchar *key)
 {
+	AsNodeData *data;
+
 	g_return_val_if_fail (node != NULL, NULL);
 	g_return_val_if_fail (key != NULL, NULL);
+
 	if (node->data == NULL)
 		return NULL;
-	return g_hash_table_lookup (((AsNodeData *) node->data)->attributes, key);
+	data = (AsNodeData *) node->data;
+	if (data->attributes == NULL)
+		return NULL;
+	return g_hash_table_lookup (data->attributes, key);
 }
 
 /**
@@ -737,9 +750,12 @@ as_node_get_localized (const GNode *node, const gchar *key)
 			continue;
 		if (g_strcmp0 (data->name, key) != 0)
 			continue;
+		if (data->attributes != NULL)
+			xml_lang = g_hash_table_lookup (data->attributes, "xml:lang");
+		else
+			xml_lang = NULL;
 
 		/* avoid storing identical strings */
-		xml_lang = g_hash_table_lookup (data->attributes, "xml:lang");
 		data_localized = data->cdata->str;
 		if (xml_lang != NULL && g_strcmp0 (data_unlocalized, data_localized) == 0)
 			continue;
@@ -819,11 +835,14 @@ as_node_denorm_get_str_for_lang (GHashTable *hash,
 				AsNodeData *data,
 				gboolean allow_new_locales)
 {
-	const gchar *xml_lang;
+	const gchar *xml_lang = NULL;
 	GString *str;
 
+	/* only set if attrs exist */
+	if (data->attributes != NULL)
+		xml_lang = g_hash_table_lookup (data->attributes, "xml:lang");
+
 	/* get locale */
-	xml_lang = g_hash_table_lookup (data->attributes, "xml:lang");
 	if (xml_lang == NULL)
 		xml_lang = "C";
 	str = g_hash_table_lookup (hash, xml_lang);
