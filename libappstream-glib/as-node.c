@@ -28,7 +28,7 @@
 typedef struct
 {
 	gchar		*name;
-	GString		*cdata;
+	gchar		*cdata;
 	gboolean	 cdata_escaped;
 	GHashTable	*attributes;
 } AsNodeData;
@@ -52,8 +52,7 @@ as_node_destroy_node_cb (GNode *node, gpointer user_data)
 	if (data == NULL)
 		return FALSE;
 	g_free (data->name);
-	if (data->cdata != NULL)
-		g_string_free (data->cdata, TRUE);
+	g_free (data->cdata);
 	if (data->attributes != NULL)
 		g_hash_table_unref (data->attributes);
 	g_slice_free (AsNodeData, data);
@@ -119,11 +118,15 @@ out:
 static void
 as_node_cdata_to_raw (AsNodeData *data)
 {
+	GString *str;
 	if (!data->cdata_escaped)
 		return;
-	as_node_string_replace (data->cdata, "&amp;", "&");
-	as_node_string_replace (data->cdata, "&lt;", "<");
-	as_node_string_replace (data->cdata, "&gt;", ">");
+	str = g_string_new (data->cdata);
+	g_free (data->cdata);
+	as_node_string_replace (str, "&amp;", "&");
+	as_node_string_replace (str, "&lt;", "<");
+	as_node_string_replace (str, "&gt;", ">");
+	data->cdata = g_string_free (str, FALSE);
 	data->cdata_escaped = FALSE;
 }
 
@@ -133,11 +136,15 @@ as_node_cdata_to_raw (AsNodeData *data)
 static void
 as_node_cdata_to_escaped (AsNodeData *data)
 {
+	GString *str;
 	if (data->cdata_escaped)
 		return;
-	as_node_string_replace (data->cdata, "&", "&amp;");
-	as_node_string_replace (data->cdata, "<", "&lt;");
-	as_node_string_replace (data->cdata, ">", "&gt;");
+	str = g_string_new (data->cdata);
+	g_free (data->cdata);
+	as_node_string_replace (str, "&", "&amp;");
+	as_node_string_replace (str, "<", "&lt;");
+	as_node_string_replace (str, ">", "&gt;");
+	data->cdata = g_string_free (str, FALSE);
 	data->cdata_escaped = TRUE;
 }
 
@@ -203,7 +210,7 @@ as_node_to_xml_string (GString *xml,
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_INDENT) > 0)
 			as_node_add_padding (xml, depth - depth_offset);
 		attrs = as_node_get_attr_string (data->attributes);
-		if (data->cdata == NULL || data->cdata->len == 0) {
+		if (data->cdata == NULL || data->cdata[0] == '\0') {
 			g_string_append_printf (xml, "<%s%s/>",
 						data->name, attrs);
 		} else {
@@ -211,7 +218,7 @@ as_node_to_xml_string (GString *xml,
 			g_string_append_printf (xml, "<%s%s>%s</%s>",
 						data->name,
 						attrs,
-						data->cdata->str,
+						data->cdata,
 						data->name);
 		}
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE) > 0)
@@ -341,24 +348,24 @@ as_node_text_cb (GMarkupParseContext *context,
 
 	/* create as it's now required */
 	if (g_strstr_len (text, text_len, "\n") == NULL) {
-		data->cdata = g_string_new_len (text, text_len);
+		data->cdata = g_strndup (text, text_len);
 
 	/* split up into lines and add each with spaces stripped */
 	} else {
-		data->cdata = g_string_sized_new (text_len + 1);
+		GString *tmp;
+		tmp = g_string_sized_new (text_len + 1);
 		split = g_strsplit (text, "\n", -1);
 		for (i = 0; split[i] != NULL; i++) {
 			g_strstrip (split[i]);
 			if (split[i][0] == '\0')
 				continue;
-			g_string_append_printf (data->cdata, "%s ", split[i]);
+			g_string_append_printf (tmp, "%s ", split[i]);
 		}
 
 		/* remove trailing space */
-		if (data->cdata->len > 1 &&
-		    data->cdata->str[data->cdata->len - 1] == ' ') {
-			g_string_truncate (data->cdata, data->cdata->len - 1);
-		}
+		if (tmp->len > 1 && tmp->str[tmp->len - 1] == ' ')
+			g_string_truncate (tmp, tmp->len - 1);
+		data->cdata = g_string_free (tmp, FALSE);
 		g_strfreev (split);
 	}
 }
@@ -482,10 +489,10 @@ as_node_get_data (const GNode *node)
 	if (node->data == NULL)
 		return NULL;
 	data = (AsNodeData *) node->data;
-	if (data->cdata == NULL || data->cdata->len == 0)
+	if (data->cdata == NULL || data->cdata[0] == '\0')
 		return NULL;
 	as_node_cdata_to_raw (data);
-	return data->cdata->str;
+	return data->cdata;
 }
 
 /**
@@ -589,7 +596,7 @@ as_node_insert (GNode *parent,
 	data = g_slice_new0 (AsNodeData);
 	data->name = g_strdup (name);
 	if (cdata != NULL)
-		data->cdata = g_string_new (cdata);
+		data->cdata = g_strdup (cdata);
 	data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 	data->attributes = g_hash_table_new_full (g_str_hash,
 						  g_str_equal,
@@ -644,7 +651,7 @@ as_node_insert_localized (GNode *parent,
 		value = g_hash_table_lookup (localized, key);
 		data = g_slice_new (AsNodeData);
 		data->name = g_strdup (name);
-		data->cdata = g_string_new (value);
+		data->cdata = g_strdup (value);
 		data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 		data->attributes = g_hash_table_new_full (g_str_hash,
 							  g_str_equal,
@@ -684,7 +691,7 @@ as_node_insert_hash (GNode *parent,
 		value = g_hash_table_lookup (hash, key);
 		data = g_slice_new (AsNodeData);
 		data->name = g_strdup (name);
-		data->cdata = g_string_new (!swapped ? value : key);
+		data->cdata = g_strdup (!swapped ? value : key);
 		data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 		data->attributes = g_hash_table_new_full (g_str_hash,
 							  g_str_equal,
@@ -749,7 +756,7 @@ as_node_get_localized (const GNode *node, const gchar *key)
 			xml_lang = NULL;
 
 		/* avoid storing identical strings */
-		data_localized = data->cdata->str;
+		data_localized = data->cdata;
 		if (xml_lang != NULL && g_strcmp0 (data_unlocalized, data_localized) == 0)
 			continue;
 		g_hash_table_insert (hash,
@@ -890,7 +897,7 @@ as_node_get_localized_unwrap (const GNode *node, GError **error)
 			str = as_node_denorm_get_str_for_lang (hash, data, TRUE);
 			as_node_cdata_to_escaped (data);
 			g_string_append_printf (str, "<p>%s</p>",
-						data->cdata->str);
+						data->cdata);
 
 		/* loop on the children */
 		} else if (g_strcmp0 (data->name, "ul") == 0 ||
@@ -916,7 +923,7 @@ as_node_get_localized_unwrap (const GNode *node, GError **error)
 					as_node_cdata_to_escaped (data_c);
 					g_string_append_printf (str,
 								"<li>%s</li>",
-								data_c->cdata->str);
+								data_c->cdata);
 				} else {
 					/* only <li> is valid in lists */
 					g_set_error (error,
