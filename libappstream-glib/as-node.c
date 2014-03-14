@@ -306,14 +306,6 @@ as_node_end_element_cb (GMarkupParseContext *context,
 		       GError             **error)
 {
 	GNode **current = (GNode **) user_data;
-	AsNodeData *data;
-	data = (*current)->data;
-
-	if (data->cdata != NULL) {
-		as_node_string_replace (data->cdata, "\n", " ");
-		as_node_string_replace (data->cdata, "  ", " ");
-	}
-
 	(*current) = (*current)->parent;
 }
 
