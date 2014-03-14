@@ -338,9 +338,7 @@ as_node_text_cb (GMarkupParseContext *context,
 
 	/* all whitespace? */
 	for (i = 0; i < text_len; i++) {
-		if (text[i] != ' ' &&
-		    text[i] != '\n' &&
-		    text[i] != '\t')
+		if (!g_ascii_isspace(text[i]))
 			break;
 	}
 	if (i >= text_len)
@@ -350,24 +348,27 @@ as_node_text_cb (GMarkupParseContext *context,
 	data = (*current)->data;
 
 	/* create as it's now required */
-	data->cdata = g_string_sized_new (text_len + 1);
+	if (g_strstr_len (text, text_len, "\n") == NULL) {
+		data->cdata = g_string_new_len (text, text_len);
 
 	/* split up into lines and add each with spaces stripped */
-	split = g_strsplit (text, "\n", -1);
-	for (i = 0; split[i] != NULL; i++) {
-		g_strstrip (split[i]);
-		if (split[i][0] == '\0')
-			continue;
-		g_string_append_printf (data->cdata, "%s ", split[i]);
-	}
+	} else {
+		data->cdata = g_string_sized_new (text_len + 1);
+		split = g_strsplit (text, "\n", -1);
+		for (i = 0; split[i] != NULL; i++) {
+			g_strstrip (split[i]);
+			if (split[i][0] == '\0')
+				continue;
+			g_string_append_printf (data->cdata, "%s ", split[i]);
+		}
 
-	/* remove trailing space */
-	if (data->cdata->len > 1 &&
-	    data->cdata->str[data->cdata->len - 1] == ' ') {
-		g_string_truncate (data->cdata, data->cdata->len - 1);
+		/* remove trailing space */
+		if (data->cdata->len > 1 &&
+		    data->cdata->str[data->cdata->len - 1] == ' ') {
+			g_string_truncate (data->cdata, data->cdata->len - 1);
+		}
+		g_strfreev (split);
 	}
-
-	g_strfreev (split);
 }
 
 /**
