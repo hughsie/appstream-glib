@@ -30,6 +30,9 @@
 
 gchar		*as_strndup			(const gchar	*text,
 						 gssize		 text_len);
+gchar		*as_markup_convert_simple	(const gchar	*markup,
+						 gssize		 markup_len,
+						 GError		**error);
 
 G_END_DECLS
 

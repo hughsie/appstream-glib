@@ -29,6 +29,7 @@
 #include "as-release.h"
 #include "as-screenshot.h"
 #include "as-store.h"
+#include "as-utils.h"
 
 static void
 ch_test_release_func (void)
@@ -576,6 +577,49 @@ ch_test_store_func (void)
 	g_timer_destroy (timer);
 }
 
+static void
+ch_test_utils_func (void)
+{
+	gchar *tmp;
+	GError *error = NULL;
+
+	/* as_strndup */
+	tmp = as_strndup ("dave", 2);
+	g_assert_cmpstr (tmp, ==, "da");
+	g_free (tmp);
+	tmp = as_strndup ("dave", 4);
+	g_assert_cmpstr (tmp, ==, "dave");
+	g_free (tmp);
+	tmp = as_strndup ("dave", -1);
+	g_assert_cmpstr (tmp, ==, "dave");
+	g_free (tmp);
+
+	/* valid description markup */
+	tmp = as_markup_convert_simple ("<p>Hello world!</p>", -1, &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (tmp, ==, "Hello world!");
+	g_free (tmp);
+	tmp = as_markup_convert_simple ("<p>Hello world</p>"
+					"<ul><li>Item</li></ul>",
+					-1, &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (tmp, ==, "Hello world\n • Item");
+	g_free (tmp);
+
+	/* valid description markup */
+	tmp = as_markup_convert_simple ("bare text", -1, &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (tmp, ==, "bare text");
+	g_free (tmp);
+
+	/* invalid XML */
+	tmp = as_markup_convert_simple ("<p>Hello world</dave>",
+					-1, &error);
+	g_assert_error (error, AS_NODE_ERROR, AS_NODE_ERROR_FAILED);
+	g_assert_cmpstr (tmp, ==, NULL);
+	g_clear_error (&error);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -597,6 +641,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{hash}", ch_test_node_hash_func);
 	g_test_add_func ("/AppStream/node{localized}", ch_test_node_localized_func);
 	g_test_add_func ("/AppStream/node{localized-wrap}", ch_test_node_localized_wrap_func);
+	g_test_add_func ("/AppStream/utils", ch_test_utils_func);
 	g_test_add_func ("/AppStream/store", ch_test_store_func);
 
 	return g_test_run ();
