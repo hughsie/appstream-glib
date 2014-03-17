@@ -301,7 +301,6 @@ as_node_start_element_cb (GMarkupParseContext *context,
 {
 	GNode **current = (GNode **) user_data;
 	AsNodeData *data;
-	GNode *new;
 	guint i;
 
 	/* create the new node data */
@@ -320,9 +319,7 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	}
 
 	/* add the node to the DOM */
-	new = g_node_new (data);
-	g_node_append (*current, new);
-	*current = new;
+	*current = g_node_append_data (*current, data);
 }
 
 /**
