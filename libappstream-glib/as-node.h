@@ -19,9 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-//#if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
-//#error "Only <appstream-glib.h> can be included directly."
-//#endif
+#if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
+#error "Only <appstream-glib.h> can be included directly."
+#endif
 
 #ifndef __AS_NODE_H
 #define __AS_NODE_H
