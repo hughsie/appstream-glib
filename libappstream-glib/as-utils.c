@@ -25,7 +25,15 @@
 
 /**
  * as_strndup:
- */
+ * @text: the text to copy.
+ * @text_len: the length of @text, or -1 if @text is NULL terminated.
+ *
+ * Copies a string, with an optional length argument.
+ *
+ * Returns: (transfer full): a newly allocated %NULL terminated string
+ *
+ * Since: 0.1.0
+ **/
 gchar *
 as_strndup (const gchar *text, gssize text_len)
 {

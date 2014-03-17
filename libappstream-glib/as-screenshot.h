@@ -23,8 +23,8 @@
 #error "Only <appstream-glib.h> can be included directly."
 #endif
 
-#ifndef AS_SCREENSHOT_H
-#define AS_SCREENSHOT_H
+#ifndef __AS_SCREENSHOT_H
+#define __AS_SCREENSHOT_H
 
 #include <glib-object.h>
 
@@ -53,9 +53,10 @@ struct _AsScreenshotClass
 };
 
 typedef enum {
+	AS_SCREENSHOT_KIND_UNKNOWN,
 	AS_SCREENSHOT_KIND_NORMAL,
 	AS_SCREENSHOT_KIND_DEFAULT,
-	AS_SCREENSHOT_KIND_UNKNOWN,
+	/*< private >*/
 	AS_SCREENSHOT_KIND_LAST
 } AsScreenshotKind;
 
@@ -78,7 +79,7 @@ void		 as_screenshot_set_kind		(AsScreenshot	*screenshot,
 void		 as_screenshot_set_caption	(AsScreenshot	*screenshot,
 						 const gchar	*locale,
 						 const gchar	*caption,
-						 gsize		 caption_length);
+						 gsize		 caption_len);
 void		 as_screenshot_add_image	(AsScreenshot	*screenshot,
 						 AsImage	*image);
 
@@ -91,4 +92,4 @@ gboolean	 as_screenshot_node_parse	(AsScreenshot	*screenshot,
 
 G_END_DECLS
 
-#endif /* AS_SCREENSHOT_H */
+#endif /* __AS_SCREENSHOT_H */

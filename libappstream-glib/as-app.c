@@ -100,7 +100,7 @@ as_app_finalize (GObject *object)
 
 /**
  * as_app_token_item_free:
- */
+ **/
 static void
 as_app_token_item_free (AsAppTokenItem *token_item)
 {
@@ -145,6 +145,13 @@ as_app_class_init (AsAppClass *klass)
 
 /**
  * as_app_id_kind_to_string:
+ * @id_kind: the #AsAppIdKind.
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @id_kind
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_app_id_kind_to_string (AsAppIdKind id_kind)
@@ -166,6 +173,13 @@ as_app_id_kind_to_string (AsAppIdKind id_kind)
 
 /**
  * as_app_id_kind_from_string:
+ * @id_kind: the string.
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Returns: a #AsAppIdKind or %AS_APP_ID_KIND_UNKNOWN for unknown
+ *
+ * Since: 0.1.0
  **/
 AsAppIdKind
 as_app_id_kind_from_string (const gchar *id_kind)
@@ -187,6 +201,13 @@ as_app_id_kind_from_string (const gchar *id_kind)
 
 /**
  * as_app_icon_kind_to_string:
+ * @icon_kind: the @AsAppIconKind.
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @icon_kind
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_app_icon_kind_to_string (AsAppIconKind icon_kind)
@@ -202,6 +223,13 @@ as_app_icon_kind_to_string (AsAppIconKind icon_kind)
 
 /**
  * as_app_icon_kind_from_string:
+ * @icon_kind: the string.
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Returns: a #AsAppIconKind or %AS_APP_ICON_KIND_UNKNOWN for unknown
+ *
+ * Since: 0.1.0
  **/
 AsAppIconKind
 as_app_icon_kind_from_string (const gchar *icon_kind)
@@ -217,9 +245,15 @@ as_app_icon_kind_from_string (const gchar *icon_kind)
 
 /******************************************************************************/
 
-
 /**
  * as_app_get_id_full:
+ * @app: a #AsApp instance.
+ *
+ * Gets the full ID value.
+ *
+ * Returns: the ID, e.g. "org.gnome.Software.desktop"
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_app_get_id_full (AsApp *app)
@@ -230,6 +264,13 @@ as_app_get_id_full (AsApp *app)
 
 /**
  * as_app_get_id:
+ * @app: a #AsApp instance.
+ *
+ * Returns the short version of the ID.
+ *
+ * Returns: the short ID, e.g. "org.gnome.Software"
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_app_get_id (AsApp *app)
@@ -240,6 +281,13 @@ as_app_get_id (AsApp *app)
 
 /**
  * as_app_get_categories:
+ * @app: a #AsApp instance.
+ *
+ * Get the application categories.
+ *
+ * Returns: (element-type utf8) (transfer none): an array
+ *
+ * Since: 0.1.0
  **/
 GPtrArray *
 as_app_get_categories (AsApp *app)
@@ -250,6 +298,13 @@ as_app_get_categories (AsApp *app)
 
 /**
  * as_app_get_compulsory_for_desktops:
+ * @app: a #AsApp instance.
+ *
+ * Returns the desktops where this application is compulsory.
+ *
+ * Returns: (element-type utf8) (transfer none): an array
+ *
+ * Since: 0.1.0
  **/
 GPtrArray *
 as_app_get_compulsory_for_desktops (AsApp *app)
@@ -260,6 +315,13 @@ as_app_get_compulsory_for_desktops (AsApp *app)
 
 /**
  * as_app_get_keywords:
+ * @app: a #AsApp instance.
+ *
+ * Gets any keywords the application should match against.
+ *
+ * Returns: (element-type utf8) (transfer none): an array
+ *
+ * Since: 0.1.0
  **/
 GPtrArray *
 as_app_get_keywords (AsApp *app)
@@ -270,6 +332,13 @@ as_app_get_keywords (AsApp *app)
 
 /**
  * as_app_get_releases:
+ * @app: a #AsApp instance.
+ *
+ * Gets all the releases the application has had.
+ *
+ * Returns: (element-type AsRelease) (transfer none): an array
+ *
+ * Since: 0.1.0
  **/
 GPtrArray *
 as_app_get_releases (AsApp *app)
@@ -280,6 +349,13 @@ as_app_get_releases (AsApp *app)
 
 /**
  * as_app_get_screenshots:
+ * @app: a #AsApp instance.
+ *
+ * Gets any screenshots the application has defined.
+ *
+ * Returns: (element-type AsScreenshot) (transfer none): an array
+ *
+ * Since: 0.1.0
  **/
 GPtrArray *
 as_app_get_screenshots (AsApp *app)
@@ -290,7 +366,14 @@ as_app_get_screenshots (AsApp *app)
 
 /**
  * as_app_get_urls:
- */
+ * @app: a #AsApp instance.
+ *
+ * Gets the URLs set for the application.
+ *
+ * Returns: (transfer none): URLs
+ *
+ * Since: 0.1.0
+ **/
 GHashTable *
 as_app_get_urls (AsApp *app)
 {
@@ -300,6 +383,13 @@ as_app_get_urls (AsApp *app)
 
 /**
  * as_app_get_pkgnames:
+ * @app: a #AsApp instance.
+ *
+ * Gets the package names (if any) for the application.
+ *
+ * Returns: (element-type utf8) (transfer none): an array
+ *
+ * Since: 0.1.0
  **/
 GPtrArray *
 as_app_get_pkgnames (AsApp *app)
@@ -310,6 +400,13 @@ as_app_get_pkgnames (AsApp *app)
 
 /**
  * as_app_get_id_kind:
+ * @app: a #AsApp instance.
+ *
+ * Gets the ID kind.
+ *
+ * Returns: enumerated value
+ *
+ * Since: 0.1.0
  **/
 AsAppIdKind
 as_app_get_id_kind (AsApp *app)
@@ -320,6 +417,13 @@ as_app_get_id_kind (AsApp *app)
 
 /**
  * as_app_get_icon_kind:
+ * @app: a #AsApp instance.
+ *
+ * Gets the icon kind.
+ *
+ * Returns: enumerated value
+ *
+ * Since: 0.1.0
  **/
 AsAppIconKind
 as_app_get_icon_kind (AsApp *app)
@@ -330,6 +434,14 @@ as_app_get_icon_kind (AsApp *app)
 
 /**
  * as_app_get_icon:
+ * @app: a #AsApp instance.
+ *
+ * Gets the application icon. Use as_app_get_icon_path() if you need the create
+ * a full filename.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_app_get_icon (AsApp *app)
@@ -340,6 +452,13 @@ as_app_get_icon (AsApp *app)
 
 /**
  * as_app_get_icon_path:
+ * @app: a #AsApp instance.
+ *
+ * Gets the application icon path.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_app_get_icon_path (AsApp *app)
@@ -350,6 +469,14 @@ as_app_get_icon_path (AsApp *app)
 
 /**
  * as_app_get_name:
+ * @app: a #AsApp instance.
+ * @locale: the locale, or %NULL. e.g. "en_GB"
+ *
+ * Gets the application name for a specific locale.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_app_get_name (AsApp *app, const gchar *locale)
@@ -362,6 +489,14 @@ as_app_get_name (AsApp *app, const gchar *locale)
 
 /**
  * as_app_get_comment:
+ * @app: a #AsApp instance.
+ * @locale: the locale, or %NULL. e.g. "en_GB"
+ *
+ * Gets the application summary for a specific locale.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_app_get_comment (AsApp *app, const gchar *locale)
@@ -374,6 +509,14 @@ as_app_get_comment (AsApp *app, const gchar *locale)
 
 /**
  * as_app_get_description:
+ * @app: a #AsApp instance.
+ * @locale: the locale, or %NULL. e.g. "en_GB"
+ *
+ * Gets the application description markup for a specific locale.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_app_get_description (AsApp *app, const gchar *locale)
@@ -386,6 +529,14 @@ as_app_get_description (AsApp *app, const gchar *locale)
 
 /**
  * as_app_get_language:
+ * @app: a #AsApp instance.
+ * @locale: the locale, or %NULL. e.g. "en_GB"
+ *
+ * Gets the language coverage for the specific language.
+ *
+ * Returns: a percentage value
+ *
+ * Since: 0.1.0
  **/
 gint
 as_app_get_language (AsApp *app, const gchar *locale)
@@ -398,7 +549,14 @@ as_app_get_language (AsApp *app, const gchar *locale)
 
 /**
  * as_app_get_priority:
- */
+ * @app: a #AsApp instance.
+ *
+ * Gets the application priority. Larger values trump smaller values.
+ *
+ * Returns: priority value
+ *
+ * Since: 0.1.0
+ **/
 gint
 as_app_get_priority (AsApp *app)
 {
@@ -408,6 +566,13 @@ as_app_get_priority (AsApp *app)
 
 /**
  * as_app_get_languages:
+ * @app: a #AsApp instance.
+ *
+ * Get a list of all languages.
+ *
+ * Returns: (transfer container) (element-type utf8): list of language values
+ *
+ * Since: 0.1.0
  **/
 GList *
 as_app_get_languages (AsApp *app)
@@ -418,6 +583,14 @@ as_app_get_languages (AsApp *app)
 
 /**
  * as_app_get_url_item:
+ * @app: a #AsApp instance.
+ * @type: the URL type, e.g. "homepage".
+ *
+ * Gets a URL.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_app_get_url_item (AsApp *app, const gchar *type)
@@ -428,6 +601,14 @@ as_app_get_url_item (AsApp *app, const gchar *type)
 
 /**
  * as_app_get_metadata_item:
+ * @app: a #AsApp instance.
+ * @key: the metadata key.
+ *
+ * Gets some metadata item.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_app_get_metadata_item (AsApp *app, const gchar *key)
@@ -438,6 +619,13 @@ as_app_get_metadata_item (AsApp *app, const gchar *key)
 
 /**
  * as_app_get_project_group:
+ * @app: a #AsApp instance.
+ *
+ * Gets an application project group.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_app_get_project_group (AsApp *app)
@@ -448,6 +636,13 @@ as_app_get_project_group (AsApp *app)
 
 /**
  * as_app_get_project_license:
+ * @app: a #AsApp instance.
+ *
+ * Gets the application project license.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_app_get_project_license (AsApp *app)
@@ -460,6 +655,13 @@ as_app_get_project_license (AsApp *app)
 
 /**
  * as_app_set_id_full:
+ * @app: a #AsApp instance.
+ * @id_full: the new _full_ application ID, e.g. "org.gnome.Software.desktop".
+ * @id_full_len: the size of @id_full, or -1 if %NULL-terminated.
+ *
+ * Sets a new application ID. Any invalid characters will be automatically replaced.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_set_id_full (AsApp *app, const gchar *id_full, gssize id_full_len)
@@ -477,6 +679,12 @@ as_app_set_id_full (AsApp *app, const gchar *id_full, gssize id_full_len)
 
 /**
  * as_app_set_id_kind:
+ * @app: a #AsApp instance.
+ * @id_kind: the #AsAppIdKind.
+ *
+ * Sets the application kind.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_set_id_kind (AsApp *app, AsAppIdKind id_kind)
@@ -487,6 +695,13 @@ as_app_set_id_kind (AsApp *app, AsAppIdKind id_kind)
 
 /**
  * as_app_set_project_group:
+ * @app: a #AsApp instance.
+ * @project_group: the project group, e.g. "GNOME".
+ * @project_group_len: the size of @project_group, or -1 if %NULL-terminated.
+ *
+ * Set any project affiliation.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_set_project_group (AsApp *app,
@@ -500,6 +715,13 @@ as_app_set_project_group (AsApp *app,
 
 /**
  * as_app_set_project_license:
+ * @app: a #AsApp instance.
+ * @project_license: the project license string.
+ * @project_license_len: the size of @project_license, or -1 if %NULL-terminated.
+ *
+ * Set the project license.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_set_project_license (AsApp *app,
@@ -513,6 +735,13 @@ as_app_set_project_license (AsApp *app,
 
 /**
  * as_app_set_icon:
+ * @app: a #AsApp instance.
+ * @icon: the icon filename or URL.
+ * @icon_len: the size of @icon, or -1 if %NULL-terminated.
+ *
+ * Set the application icon.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_set_icon (AsApp *app, const gchar *icon, gssize icon_len)
@@ -524,6 +753,13 @@ as_app_set_icon (AsApp *app, const gchar *icon, gssize icon_len)
 
 /**
  * as_app_set_icon_path:
+ * @app: a #AsApp instance.
+ * @icon_path: the local path.
+ * @icon_path_len: the size of @icon_path, or -1 if %NULL-terminated.
+ *
+ * Sets the icon path, where local icons would be found.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_set_icon_path (AsApp *app, const gchar *icon_path, gssize icon_path_len)
@@ -535,6 +771,12 @@ as_app_set_icon_path (AsApp *app, const gchar *icon_path, gssize icon_path_len)
 
 /**
  * as_app_set_icon_kind:
+ * @app: a #AsApp instance.
+ * @icon_kind: the #AsAppIconKind.
+ *
+ * Sets the icon kind.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_set_icon_kind (AsApp *app, AsAppIconKind icon_kind)
@@ -545,6 +787,14 @@ as_app_set_icon_kind (AsApp *app, AsAppIconKind icon_kind)
 
 /**
  * as_app_set_name:
+ * @app: a #AsApp instance.
+ * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @name: the application name.
+ * @name_len: the size of @name, or -1 if %NULL-terminated.
+ *
+ * Sets the application name for a specific locale.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_set_name (AsApp *app,
@@ -562,6 +812,14 @@ as_app_set_name (AsApp *app,
 
 /**
  * as_app_set_comment:
+ * @app: a #AsApp instance.
+ * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @comment: the application summary.
+ * @comment_len: the size of @comment, or -1 if %NULL-terminated.
+ *
+ * Sets the application summary for a specific locale.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_set_comment (AsApp *app,
@@ -580,6 +838,14 @@ as_app_set_comment (AsApp *app,
 
 /**
  * as_app_set_description:
+ * @app: a #AsApp instance.
+ * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @description: the application description.
+ * @description_len: the size of @description, or -1 if %NULL-terminated.
+ *
+ * Sets the application descrption markup for a specific locale.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_set_description (AsApp *app,
@@ -598,7 +864,14 @@ as_app_set_description (AsApp *app,
 
 /**
  * as_app_set_priority:
- */
+ * @app: a #AsApp instance.
+ * @priority: the priority.
+ *
+ * Sets the application priority, where 0 is default and positive numbers
+ * are better than negative numbers.
+ *
+ * Since: 0.1.0
+ **/
 void
 as_app_set_priority (AsApp *app, gint priority)
 {
@@ -625,6 +898,13 @@ as_app_array_find_string (GPtrArray *array, const gchar *value)
 
 /**
  * as_app_add_category:
+ * @app: a #AsApp instance.
+ * @category: the category.
+ * @category_len: the size of @category, or -1 if %NULL-terminated.
+ *
+ * Adds a menu category to the application.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_add_category (AsApp *app, const gchar *category, gssize category_len)
@@ -643,6 +923,13 @@ as_app_add_category (AsApp *app, const gchar *category, gssize category_len)
 
 /**
  * as_app_add_compulsory_for_desktop:
+ * @app: a #AsApp instance.
+ * @compulsory_for_desktop: the desktop string, e.g. "GNOME".
+ * @compulsory_for_desktop_len: the size of @compulsory_for_desktop, or -1 if %NULL-terminated.
+ *
+ * Adds a desktop that requires this application to be installed.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_add_compulsory_for_desktop (AsApp *app,
@@ -660,6 +947,13 @@ as_app_add_compulsory_for_desktop (AsApp *app,
 
 /**
  * as_app_add_keyword:
+ * @app: a #AsApp instance.
+ * @keyword: the keyword.
+ * @keyword_len: the size of @keyword, or -1 if %NULL-terminated.
+ *
+ * Add a keyword the application should match against.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_add_keyword (AsApp *app, const gchar *keyword, gssize keyword_len)
@@ -672,6 +966,13 @@ as_app_add_keyword (AsApp *app, const gchar *keyword, gssize keyword_len)
 
 /**
  * as_app_add_mimetype:
+ * @app: a #AsApp instance.
+ * @mimetype: the mimetype.
+ * @mimetype_len: the size of @mimetype, or -1 if %NULL-terminated.
+ *
+ * Adds a mimetype the application can process.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_add_mimetype (AsApp *app, const gchar *mimetype, gssize mimetype_len)
@@ -684,6 +985,12 @@ as_app_add_mimetype (AsApp *app, const gchar *mimetype, gssize mimetype_len)
 
 /**
  * as_app_add_release:
+ * @app: a #AsApp instance.
+ * @release: a #AsRelease instance.
+ *
+ * Adds a release to an application.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_add_release (AsApp *app, AsRelease *release)
@@ -694,6 +1001,12 @@ as_app_add_release (AsApp *app, AsRelease *release)
 
 /**
  * as_app_add_screenshot:
+ * @app: a #AsApp instance.
+ * @screenshot: a #AsScreenshot instance.
+ *
+ * Adds a screenshot to an application.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_add_screenshot (AsApp *app, AsScreenshot *screenshot)
@@ -704,6 +1017,13 @@ as_app_add_screenshot (AsApp *app, AsScreenshot *screenshot)
 
 /**
  * as_app_add_pkgname:
+ * @app: a #AsApp instance.
+ * @pkgname: the package name.
+ * @pkgname_len: the size of @pkgname, or -1 if %NULL-terminated.
+ *
+ * Adds a package name to an application.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_add_pkgname (AsApp *app, const gchar *pkgname, gssize pkgname_len)
@@ -716,6 +1036,14 @@ as_app_add_pkgname (AsApp *app, const gchar *pkgname, gssize pkgname_len)
 
 /**
  * as_app_add_language:
+ * @app: a #AsApp instance.
+ * @percentage: the percentage completion of the translation.
+ * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale_len: the size of @locale, or -1 if %NULL-terminated.
+ *
+ * Adds a language to the application.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_add_language (AsApp *app,
@@ -733,6 +1061,14 @@ as_app_add_language (AsApp *app,
 
 /**
  * as_app_add_url:
+ * @app: a #AsApp instance.
+ * @type: the URL kind, e.g. "homepage".
+ * @url: the full URL.
+ * @url_len: the size of @url, or -1 if %NULL-terminated.
+ *
+ * Adds some URL data to the application.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_add_url (AsApp *app, const gchar *type, const gchar *url, gssize url_len)
@@ -745,6 +1081,14 @@ as_app_add_url (AsApp *app, const gchar *type, const gchar *url, gssize url_len)
 
 /**
  * as_app_add_metadata:
+ * @app: a #AsApp instance.
+ * @key: the metadata key.
+ * @value: the value to store.
+ * @value_len: the size of @value, or -1 if %NULL-terminated.
+ *
+ * Adds a metadata entry to the application.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_add_metadata (AsApp *app,
@@ -763,6 +1107,12 @@ as_app_add_metadata (AsApp *app,
 
 /**
  * as_app_remove_metadata:
+ * @app: a #AsApp instance.
+ * @key: the metadata key.
+ *
+ * Removes a metadata item from the application.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_remove_metadata (AsApp *app, const gchar *key)
@@ -775,6 +1125,12 @@ as_app_remove_metadata (AsApp *app, const gchar *key)
 
 /**
  * as_app_subsume:
+ * @app: a #AsApp instance.
+ * @donor: the donor.
+ *
+ * Copies information from the donor to the application object.
+ *
+ * Since: 0.1.0
  **/
 void
 as_app_subsume (AsApp *app, AsApp *donor)
@@ -846,7 +1202,15 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
 }
 
 /**
- * as_app_node_insert:
+ * as_app_node_insert: (skip)
+ * @app: a #AsApp instance.
+ * @parent: the parent #GNode to use..
+ *
+ * Inserts the application into the DOM tree.
+ *
+ * Returns: (transfer full): A populated #GNode
+ *
+ * Since: 0.1.0
  **/
 GNode *
 as_app_node_insert (AsApp *app, GNode *parent)
@@ -1179,6 +1543,15 @@ out:
 
 /**
  * as_app_node_parse:
+ * @app: a #AsApp instance.
+ * @node: a #GNode.
+ * @error: A #GError or %NULL.
+ *
+ * Populates the object from a DOM node.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.1.0
  **/
 gboolean
 as_app_node_parse (AsApp *app, GNode *node, GError **error)
@@ -1201,7 +1574,7 @@ out:
 
 /**
  * as_app_add_tokens:
- */
+ **/
 static void
 as_app_add_tokens (AsApp *app,
 		   const gchar *value,
@@ -1225,7 +1598,7 @@ as_app_add_tokens (AsApp *app,
 
 /**
  * as_app_create_token_cache:
- */
+ **/
 static void
 as_app_create_token_cache (AsApp *app)
 {
@@ -1260,7 +1633,15 @@ as_app_create_token_cache (AsApp *app)
 
 /**
  * as_app_search_matches:
- */
+ * @app: a #AsApp instance.
+ * @search: the search term.
+ *
+ * Searches application data for a specific keyword.
+ *
+ * Returns: a match scrore, where 0 is no match and 100 is the best match.
+ *
+ * Since: 0.1.0
+ **/
 guint
 as_app_search_matches (AsApp *app, const gchar *search)
 {
@@ -1295,6 +1676,12 @@ as_app_search_matches (AsApp *app, const gchar *search)
 
 /**
  * as_app_new:
+ *
+ * Creates a new #AsApp.
+ *
+ * Returns: (transfer full): a #GsApp
+ *
+ * Since: 0.1.0
  **/
 AsApp *
 as_app_new (void)

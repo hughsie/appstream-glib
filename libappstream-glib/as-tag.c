@@ -25,7 +25,14 @@
 
 /**
  * as_tag_from_string:
- */
+ * @tag: the string.
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Returns: a %AsTag, or %AS_TAG_UNKNOWN if not known.
+ *
+ * Since: 0.1.0
+ **/
 AsTag
 as_tag_from_string (const gchar *tag)
 {
@@ -94,7 +101,14 @@ as_tag_from_string (const gchar *tag)
 
 /**
  * as_tag_to_string:
- */
+ * @tag: the %AsTag value.
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @tag
+ *
+ * Since: 0.1.0
+ **/
 const gchar *
 as_tag_to_string (AsTag tag)
 {

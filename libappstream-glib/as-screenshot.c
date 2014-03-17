@@ -77,7 +77,15 @@ as_screenshot_class_init (AsScreenshotClass *klass)
 
 /**
  * as_screenshot_kind_from_string:
- */
+ * @kind: the string.
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Returns: (transfer full): a %AsScreenshotKind, or
+ *                           %AS_SCREENSHOT_KIND_UNKNOWN if not known.
+ *
+ * Since: 0.1.0
+ **/
 AsScreenshotKind
 as_screenshot_kind_from_string (const gchar *kind)
 {
@@ -90,7 +98,14 @@ as_screenshot_kind_from_string (const gchar *kind)
 
 /**
  * as_screenshot_kind_to_string:
- */
+ * @kind: the #AsScreenshotKind.
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @kind
+ *
+ * Since: 0.1.0
+ **/
 const gchar *
 as_screenshot_kind_to_string (AsScreenshotKind kind)
 {
@@ -103,7 +118,14 @@ as_screenshot_kind_to_string (AsScreenshotKind kind)
 
 /**
  * as_screenshot_get_kind:
- */
+ * @screenshot: a #AsScreenshot instance.
+ *
+ * Gets the screenshot kind.
+ *
+ * Returns: a #AsScreenshotKind
+ *
+ * Since: 0.1.0
+ **/
 AsScreenshotKind
 as_screenshot_get_kind (AsScreenshot *screenshot)
 {
@@ -113,7 +135,14 @@ as_screenshot_get_kind (AsScreenshot *screenshot)
 
 /**
  * as_screenshot_get_images:
- */
+ * @screenshot: a #AsScreenshot instance.
+ *
+ * Gets the image sizes included in the screenshot.
+ *
+ * Returns: (element-type AsImage) (transfer none): an array
+ *
+ * Since: 0.1.0
+ **/
 GPtrArray *
 as_screenshot_get_images (AsScreenshot *screenshot)
 {
@@ -123,7 +152,15 @@ as_screenshot_get_images (AsScreenshot *screenshot)
 
 /**
  * as_screenshot_get_caption:
- */
+ * @screenshot: a #AsScreenshot instance.
+ * @locale: the locale, or %NULL. e.g. "en_GB"
+ *
+ * Gets the image caption for a specific locale.
+ *
+ * Returns: the caption
+ *
+ * Since: 0.1.0
+ **/
 const gchar *
 as_screenshot_get_caption (AsScreenshot *screenshot, const gchar *locale)
 {
@@ -135,7 +172,13 @@ as_screenshot_get_caption (AsScreenshot *screenshot, const gchar *locale)
 
 /**
  * as_screenshot_set_kind:
- */
+ * @screenshot: a #AsScreenshot instance.
+ * @kind: the #AsScreenshotKind.
+ *
+ * Sets the screenshot kind.
+ *
+ * Since: 0.1.0
+ **/
 void
 as_screenshot_set_kind (AsScreenshot *screenshot, AsScreenshotKind kind)
 {
@@ -145,7 +188,13 @@ as_screenshot_set_kind (AsScreenshot *screenshot, AsScreenshotKind kind)
 
 /**
  * as_screenshot_add_image:
- */
+ * @screenshot: a #AsScreenshot instance.
+ * @image: a #AsImage instance.
+ *
+ * Adds an image to the screenshot.
+ *
+ * Since: 0.1.0
+ **/
 void
 as_screenshot_add_image (AsScreenshot *screenshot, AsImage *image)
 {
@@ -155,23 +204,39 @@ as_screenshot_add_image (AsScreenshot *screenshot, AsImage *image)
 
 /**
  * as_screenshot_set_caption:
- */
+ * @screenshot: a #AsScreenshot instance.
+ * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @caption: the caption text.
+ * @caption_len: the size of @caption, or -1 if %NULL-terminated.
+ *
+ * Sets a caption on the screenshot for a specific locale.
+ *
+ * Since: 0.1.0
+ **/
 void
 as_screenshot_set_caption (AsScreenshot *screenshot,
 			   const gchar *locale,
 			   const gchar *caption,
-			   gsize caption_length)
+			   gsize caption_len)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	if (locale == NULL)
 		locale = "C";
 	g_hash_table_insert (priv->captions,
 			     g_strdup (locale),
-			     as_strndup (caption, caption_length));
+			     as_strndup (caption, caption_len));
 }
 
 /**
- * as_screenshot_node_insert:
+ * as_screenshot_node_insert: (skip)
+ * @screenshot: a #AsScreenshot instance.
+ * @parent: the parent #GNode to use..
+ *
+ * Inserts the screenshot into the DOM tree.
+ *
+ * Returns: (transfer full): A populated #GNode
+ *
+ * Since: 0.1.0
  **/
 GNode *
 as_screenshot_node_insert (AsScreenshot *screenshot, GNode *parent)
@@ -195,6 +260,15 @@ as_screenshot_node_insert (AsScreenshot *screenshot, GNode *parent)
 
 /**
  * as_screenshot_node_parse:
+ * @screenshot: a #AsScreenshot instance.
+ * @node: a #GNode.
+ * @error: A #GError or %NULL.
+ *
+ * Populates the object from a DOM node.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.1.0
  **/
 gboolean
 as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
@@ -248,6 +322,12 @@ out:
 
 /**
  * as_screenshot_new:
+ *
+ * Creates a new #AsScreenshot.
+ *
+ * Returns: (transfer full): a #AsScreenshot
+ *
+ * Since: 0.1.0
  **/
 AsScreenshot *
 as_screenshot_new (void)

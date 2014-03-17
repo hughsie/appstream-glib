@@ -35,7 +35,13 @@ typedef struct
 } AsNodeData;
 
 /**
- * as_node_new:
+ * as_node_new: (skip)
+ *
+ * Creates a new empty tree whicah can have nodes appended to it.
+ *
+ * Returns: (transfer full): a new empty tree
+ *
+ * Since: 0.1.0
  **/
 GNode *
 as_node_new (void)
@@ -62,6 +68,11 @@ as_node_destroy_node_cb (GNode *node, gpointer user_data)
 
 /**
  * as_node_unref:
+ * @node: a #GNode.
+ *
+ * Deallocates all notes in the tree.
+ *
+ * Since: 0.1.0
  **/
 void
 as_node_unref (GNode *node)
@@ -93,7 +104,7 @@ as_node_error_quark (void)
 
 /**
  * as_node_string_replace:
- */
+ **/
 static void
 as_node_string_replace (GString *string, const gchar *search, const gchar *replace)
 {
@@ -270,11 +281,14 @@ as_node_to_xml_string (GString *xml,
 
 /**
  * as_node_to_xml:
- * @dom: a #GNode instance.
+ * @node: a #GNode.
+ * @flags: the AsNodeToXmlFlags, e.g. %AS_NODE_INSERT_FLAG_PRE_ESCAPED.
  *
- * Returns a XML representation of the DOM tree.
+ * Converts a node and it's children to XML.
  *
- * Return value: an allocated string
+ * Returns: (transfer full): a #GString
+ *
+ * Since: 0.1.0
  **/
 GString *
 as_node_to_xml (const GNode *node, AsNodeToXmlFlags flags)
@@ -390,12 +404,16 @@ as_node_text_cb (GMarkupParseContext *context,
 }
 
 /**
- * as_node_from_xml:
+ * as_node_from_xml: (skip)
  * @data: XML data
  * @data_len: Length of @data, or -1 if NULL terminated
  * @error: A #GError or %NULL
  *
- * Parses data into a DOM tree.
+ * Parses XML data into a DOM tree.
+ *
+ * Returns: (transfer full): A populated #GNode tree
+ *
+ * Since: 0.1.0
  **/
 GNode *
 as_node_from_xml (const gchar *data,
@@ -452,12 +470,16 @@ out:
 }
 
 /**
- * as_node_from_file:
+ * as_node_from_file: (skip)
  * @file: file
  * @cancellable: A #GCancellable, or %NULL
  * @error: A #GError or %NULL
  *
- * Parses data into a DOM tree.
+ * Parses an XML file into a DOM tree.
+ *
+ * Returns: (transfer full): A populated #GNode tree
+ *
+ * Since: 0.1.0
  **/
 GNode *
 as_node_from_file (GFile *file, GCancellable *cancellable, GError **error)
@@ -606,6 +628,8 @@ as_node_get_child_node (const GNode *root, const gchar *name)
  * Gets the node name, e.g. "body"
  *
  * Return value: string value
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_node_get_name (const GNode *node)
@@ -623,6 +647,8 @@ as_node_get_name (const GNode *node)
  * Gets the node data, e.g. "paragraph text"
  *
  * Return value: string value
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_node_get_data (const GNode *node)
@@ -645,6 +671,8 @@ as_node_get_data (const GNode *node)
  * Gets the node data, e.g. "paragraph text"
  *
  * Return value: string value
+ *
+ * Since: 0.1.0
  **/
 gchar *
 as_node_take_data (const GNode *node)
@@ -670,6 +698,8 @@ as_node_take_data (const GNode *node)
  * Gets a node attribute, e.g. 34
  *
  * Return value: integer value
+ *
+ * Since: 0.1.0
  **/
 gint
 as_node_get_attribute_as_int (const GNode *node, const gchar *key)
@@ -699,6 +729,8 @@ out:
  * Gets a node attribute, e.g. "false"
  *
  * Return value: string value
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_node_get_attribute (const GNode *node, const gchar *key)
@@ -717,13 +749,15 @@ as_node_get_attribute (const GNode *node, const gchar *key)
 }
 
 /**
- * as_node_find:
+ * as_node_find: (skip)
  * @root: a root node, or %NULL
  * @path: a path in the DOM, e.g. "html/body"
  *
  * Gets a node from the DOM tree.
  *
  * Return value: A #GNode, or %NULL if not found
+ *
+ * Since: 0.1.0
  **/
 GNode *
 as_node_find (GNode *root, const gchar *path)
@@ -746,7 +780,18 @@ out:
 }
 
 /**
- * as_node_insert:
+ * as_node_insert: (skip)
+ * @parent: a parent #GNode.
+ * @name: the tag name, e.g. "id".
+ * @cdata: the tag data, or %NULL, e.g. "org.gnome.Software.desktop".
+ * @insert_flags: any %AsNodeInsertFlags.
+ * @...: any attributes to add to the node, terminated by %NULL
+ *
+ * Inserts a node into the DOM.
+ *
+ * Returns: (transfer full): A populated #GNode
+ *
+ * Since: 0.1.0
  **/
 GNode *
 as_node_insert (GNode *parent,
@@ -799,6 +844,14 @@ as_node_list_sort_cb (gconstpointer a, gconstpointer b)
 
 /**
  * as_node_insert_localized:
+ * @parent: a parent #GNode.
+ * @name: the tag name, e.g. "id".
+ * @localized: the hash table of data, with the locale as the key.
+ * @insert_flags: any %AsNodeInsertFlags.
+ *
+ * Inserts a localized key into the DOM.
+ *
+ * Since: 0.1.0
  **/
 void
 as_node_insert_localized (GNode *parent,
@@ -837,6 +890,15 @@ as_node_insert_localized (GNode *parent,
 
 /**
  * as_node_insert_hash:
+ * @parent: a parent #GNode.
+ * @name: the tag name, e.g. "id".
+ * @attr_key: the key to use as the attribute in the XML, e.g. "key".
+ * @hash: the hash table with the key as the key to use in the XML.
+ * @insert_flags: any %AsNodeInsertFlags.
+ *
+ * Inserts a hash table of data into the DOM.
+ *
+ * Since: 0.1.0
  **/
 void
 as_node_insert_hash (GNode *parent,
@@ -891,6 +953,8 @@ as_node_insert_hash (GNode *parent,
  * Extracts localized values from the DOM tree
  *
  * Return value: (transfer full): A hash table with the locale (e.g. en_GB) as the key
+ *
+ * Since: 0.1.0
  **/
 GHashTable *
 as_node_get_localized (const GNode *node, const gchar *key)
@@ -937,6 +1001,14 @@ out:
 
 /**
  * as_node_get_localized_best:
+ * @node: a #GNode.
+ * @key: the tag name.
+ *
+ * Gets the 'best' locale version of a specific data value.
+ *
+ * Returns: the string value, or %NULL if there was no data
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_node_get_localized_best (const GNode *node, const gchar *key)
@@ -975,8 +1047,8 @@ as_node_string_free (GString *string)
  **/
 static void
 as_node_denorm_add_to_langs (GHashTable *hash,
-			    const gchar *data,
-			    gboolean is_start)
+			     const gchar *data,
+			     gboolean is_start)
 {
 	const gchar *xml_lang;
 	GList *keys;
@@ -1023,6 +1095,8 @@ as_node_denorm_get_str_for_lang (GHashTable *hash,
 
 /**
  * as_node_get_localized_unwrap:
+ * @node: a #GNode.
+ * @error: A #GError or %NULL.
  *
  * Denormalize AppData data like this:
  *
@@ -1039,6 +1113,10 @@ as_node_denorm_get_str_for_lang (GHashTable *hash,
  *
  * "C"  ->  "<p>Hi</p><ul><li>First</li></ul>"
  * "pl" ->  "<p>Czesc</p><ul><li>Pierwszy</li></ul>"
+ *
+ * Returns: (transfer full): a hash table of data
+ *
+ * Since: 0.1.0
  **/
 GHashTable *
 as_node_get_localized_unwrap (const GNode *node, GError **error)

@@ -71,19 +71,20 @@ TESTS = as-self-test
 
 if HAVE_INTROSPECTION
 introspection_sources =						\
-	$(libappstream_glib_la_SOURCES)	
+	$(libappstream_glib_include_HEADERS)			\
+	$(libappstream_glib_la_SOURCES)
 
-AppStream-1.0.gir: libappstream-glib.la
-AppStream_1_0_gir_INCLUDES = GObject-2.0 Gio-2.0
-AppStream_1_0_gir_CFLAGS = $(AM_CPPFLAGS)
-AppStream_1_0_gir_SCANNERFLAGS = --identifier-prefix=As \
+AppStreamGlib-1.0.gir: libappstream-glib.la
+AppStreamGlib_1_0_gir_INCLUDES = GObject-2.0 Gio-2.0
+AppStreamGlib_1_0_gir_CFLAGS = $(AM_CPPFLAGS)
+AppStreamGlib_1_0_gir_SCANNERFLAGS = --identifier-prefix=As \
 				--symbol-prefix=as_ \
 				--warn-all \
 				--add-include-path=$(srcdir)
-AppStream_1_0_gir_EXPORT_PACKAGES = appstream-glib
-AppStream_1_0_gir_LIBS = libappstream-glib.la
-AppStream_1_0_gir_FILES = $(introspection_sources)
-INTROSPECTION_GIRS += AppStream-1.0.gir
+AppStreamGlib_1_0_gir_EXPORT_PACKAGES = appstream-glib
+AppStreamGlib_1_0_gir_LIBS = libappstream-glib.la
+AppStreamGlib_1_0_gir_FILES = $(introspection_sources)
+INTROSPECTION_GIRS += AppStreamGlib-1.0.gir
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(INTROSPECTION_GIRS)

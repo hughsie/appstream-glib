@@ -23,8 +23,8 @@
 #error "Only <appstream-glib.h> can be included directly."
 #endif
 
-#ifndef AS_STORE_H
-#define AS_STORE_H
+#ifndef __AS_STORE_H
+#define __AS_STORE_H
 
 #include <glib-object.h>
 #include <gio/gio.h>
@@ -55,7 +55,6 @@ struct _AsStoreClass
 
 GType		 as_store_get_type		(void);
 AsStore		*as_store_new			(void);
-GQuark		 as_store_error_quark		(void);
 
 /* getters */
 guint		 as_store_get_size		(AsStore	*store);
@@ -74,4 +73,4 @@ AsApp		*as_store_get_app_by_pkgname	(AsStore	*store,
 
 G_END_DECLS
 
-#endif /* AS_STORE_H */
+#endif /* __AS_STORE_H */

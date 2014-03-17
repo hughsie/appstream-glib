@@ -23,8 +23,8 @@
 #error "Only <appstream-glib.h> can be included directly."
 #endif
 
-#ifndef AS_TAG_H
-#define AS_TAG_H
+#ifndef __AS_TAG_H
+#define __AS_TAG_H
 
 #include <glib.h>
 
@@ -60,6 +60,7 @@ typedef enum {
 	AS_TAG_VALUE,
 	AS_TAG_RELEASES,
 	AS_TAG_RELEASE,
+	/*< private >*/
 	AS_TAG_LAST
 } AsTag;
 
@@ -68,4 +69,4 @@ const gchar	*as_tag_to_string		(AsTag		 tag);
 
 G_END_DECLS
 
-#endif /* AS_TAG_H */
+#endif /* __AS_TAG_H */

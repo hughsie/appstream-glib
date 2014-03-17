@@ -23,8 +23,8 @@
 #error "Only <appstream-glib.h> can be included directly."
 #endif
 
-#ifndef AS_IMAGE_H
-#define AS_IMAGE_H
+#ifndef __AS_IMAGE_H
+#define __AS_IMAGE_H
 
 #include <glib-object.h>
 
@@ -54,6 +54,7 @@ typedef enum {
 	AS_IMAGE_KIND_UNKNOWN,
 	AS_IMAGE_KIND_SOURCE,
 	AS_IMAGE_KIND_THUMBNAIL,
+	/*< private >*/
 	AS_IMAGE_KIND_LAST
 } AsImageKind;
 
@@ -90,4 +91,4 @@ gboolean	 as_image_node_parse		(AsImage	*image,
 
 G_END_DECLS
 
-#endif /* AS_IMAGE_H */
+#endif /* __AS_IMAGE_H */

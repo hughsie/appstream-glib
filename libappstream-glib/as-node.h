@@ -37,6 +37,7 @@ typedef enum {
 	AS_NODE_TO_XML_FLAG_ADD_HEADER		= 1,
 	AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE	= 2,
 	AS_NODE_TO_XML_FLAG_FORMAT_INDENT	= 4,
+	/*< private >*/
 	AS_NODE_TO_XML_FLAG_LAST
 } AsNodeToXmlFlags;
 
@@ -44,11 +45,13 @@ typedef enum {
 	AS_NODE_INSERT_FLAG_NONE		= 0,	/* 'bar & baz > foo' */
 	AS_NODE_INSERT_FLAG_PRE_ESCAPED		= 1,	/* 'bar &amp; baz &lt; foo' */
 	AS_NODE_INSERT_FLAG_SWAPPED		= 2,
+	/*< private >*/
 	AS_NODE_INSERT_FLAG_LAST
 } AsNodeInsertFlags;
 
 typedef enum {
 	AS_NODE_ERROR_FAILED,
+	/*< private >*/
 	AS_NODE_ERROR_LAST
 } AsNodeError;
 

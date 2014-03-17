@@ -74,6 +74,13 @@ as_release_class_init (AsReleaseClass *klass)
 
 /**
  * as_release_get_version:
+ * @release: a #AsRelease instance.
+ *
+ * Gets the release version.
+ *
+ * Returns: string
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_release_get_version (AsRelease *release)
@@ -84,6 +91,13 @@ as_release_get_version (AsRelease *release)
 
 /**
  * as_release_get_timestamp:
+ * @release: a #AsRelease instance.
+ *
+ * Gets the release timestamp.
+ *
+ * Returns: timestamp
+ *
+ * Since: 0.1.0
  **/
 guint64
 as_release_get_timestamp (AsRelease *release)
@@ -94,6 +108,13 @@ as_release_get_timestamp (AsRelease *release)
 
 /**
  * as_release_get_description:
+ * @release: a #AsRelease instance.
+ *
+ * Gets the release description markup.
+ *
+ * Returns: markup
+ *
+ * Since: 0.1.0
  **/
 const gchar *
 as_release_get_description (AsRelease *release)
@@ -104,6 +125,13 @@ as_release_get_description (AsRelease *release)
 
 /**
  * as_release_set_version:
+ * @release: a #AsRelease instance.
+ * @version: the version string.
+ * @version_len: the size of @version, or -1 if %NULL-terminated.
+ *
+ * Sets the release version.
+ *
+ * Since: 0.1.0
  **/
 void
 as_release_set_version (AsRelease *release,
@@ -116,6 +144,12 @@ as_release_set_version (AsRelease *release,
 
 /**
  * as_release_set_timestamp:
+ * @release: a #AsRelease instance.
+ * @timestamp: the timestamp value.
+ *
+ * Sets the release timestamp.
+ *
+ * Since: 0.1.0
  **/
 void
 as_release_set_timestamp (AsRelease *release, guint64 timestamp)
@@ -126,6 +160,13 @@ as_release_set_timestamp (AsRelease *release, guint64 timestamp)
 
 /**
  * as_release_set_description:
+ * @release: a #AsRelease instance.
+ * @description: the description markup.
+ * @description_len: the size of @description, or -1 if %NULL-terminated.
+ *
+ * Sets the description release markup.
+ *
+ * Since: 0.1.0
  **/
 void
 as_release_set_description (AsRelease *release,
@@ -137,7 +178,15 @@ as_release_set_description (AsRelease *release,
 }
 
 /**
- * as_release_node_insert:
+ * as_release_node_insert: (skip)
+ * @release: a #AsRelease instance.
+ * @parent: the parent #GNode to use..
+ *
+ * Inserts the release into the DOM tree.
+ *
+ * Returns: (transfer full): A populated #GNode
+ *
+ * Since: 0.1.0
  **/
 GNode *
 as_release_node_insert (AsRelease *release, GNode *parent)
@@ -159,6 +208,15 @@ as_release_node_insert (AsRelease *release, GNode *parent)
 
 /**
  * as_release_node_parse:
+ * @release: a #AsRelease instance.
+ * @node: a #GNode.
+ * @error: A #GError or %NULL.
+ *
+ * Populates the object from a DOM node.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.1.0
  **/
 gboolean
 as_release_node_parse (AsRelease *release, GNode *node, GError **error)
@@ -178,6 +236,12 @@ as_release_node_parse (AsRelease *release, GNode *node, GError **error)
 
 /**
  * as_release_new:
+ *
+ * Creates a new #AsRelease.
+ *
+ * Returns: (transfer full): a #AsRelease
+ *
+ * Since: 0.1.0
  **/
 AsRelease *
 as_release_new (void)

@@ -73,7 +73,14 @@ as_image_class_init (AsImageClass *klass)
 
 /**
  * as_image_kind_from_string:
- */
+ * @kind: the string.
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Returns: (transfer full): a #AsImageKind, or %AS_IMAGE_KIND_UNKNOWN for unknown.
+ *
+ * Since: 0.1.0
+ **/
 AsImageKind
 as_image_kind_from_string (const gchar *kind)
 {
@@ -86,7 +93,14 @@ as_image_kind_from_string (const gchar *kind)
 
 /**
  * as_image_kind_to_string:
- */
+ * @kind: the #AsImageKind.
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @kind
+ *
+ * Since: 0.1.0
+ **/
 const gchar *
 as_image_kind_to_string (AsImageKind kind)
 {
@@ -99,7 +113,14 @@ as_image_kind_to_string (AsImageKind kind)
 
 /**
  * as_image_get_url:
- */
+ * @image: a #AsImage instance.
+ *
+ * Gets the full qualified URL for the image, usually pointing at some mirror.
+ *
+ * Returns: URL
+ *
+ * Since: 0.1.0
+ **/
 const gchar *
 as_image_get_url (AsImage *image)
 {
@@ -109,7 +130,14 @@ as_image_get_url (AsImage *image)
 
 /**
  * as_image_get_width:
- */
+ * @image: a #AsImage instance.
+ *
+ * Gets the image width.
+ *
+ * Returns: width in pixels
+ *
+ * Since: 0.1.0
+ **/
 guint
 as_image_get_width (AsImage *image)
 {
@@ -119,7 +147,14 @@ as_image_get_width (AsImage *image)
 
 /**
  * as_image_get_height:
- */
+ * @image: a #AsImage instance.
+ *
+ * Gets the image height.
+ *
+ * Returns: height in pixels
+ *
+ * Since: 0.1.0
+ **/
 guint
 as_image_get_height (AsImage *image)
 {
@@ -129,7 +164,14 @@ as_image_get_height (AsImage *image)
 
 /**
  * as_image_get_kind:
- */
+ * @image: a #AsImage instance.
+ *
+ * Gets the image kind.
+ *
+ * Returns: the #AsImageKind
+ *
+ * Since: 0.1.0
+ **/
 AsImageKind
 as_image_get_kind (AsImage *image)
 {
@@ -139,7 +181,14 @@ as_image_get_kind (AsImage *image)
 
 /**
  * as_image_set_url:
- */
+ * @image: a #AsImage instance.
+ * @url: the URL.
+ * @url_len: the size of @url, or -1 if %NULL-terminated.
+ *
+ * Sets the fully-qualified mirror URL to use for the image.
+ *
+ * Since: 0.1.0
+ **/
 void
 as_image_set_url (AsImage *image, const gchar *url, gssize url_len)
 {
@@ -150,7 +199,13 @@ as_image_set_url (AsImage *image, const gchar *url, gssize url_len)
 
 /**
  * as_image_set_width:
- */
+ * @image: a #AsImage instance.
+ * @width: the width in pixels.
+ *
+ * Sets the image width.
+ *
+ * Since: 0.1.0
+ **/
 void
 as_image_set_width (AsImage *image, guint width)
 {
@@ -160,7 +215,13 @@ as_image_set_width (AsImage *image, guint width)
 
 /**
  * as_image_set_height:
- */
+ * @image: a #AsImage instance.
+ * @height: the height in pixels.
+ *
+ * Sets the image height.
+ *
+ * Since: 0.1.0
+ **/
 void
 as_image_set_height (AsImage *image, guint height)
 {
@@ -170,7 +231,13 @@ as_image_set_height (AsImage *image, guint height)
 
 /**
  * as_image_set_kind:
- */
+ * @image: a #AsImage instance.
+ * @kind: the #AsImageKind, e.g. %AS_IMAGE_KIND_THUMBNAIL.
+ *
+ * Sets the image kind.
+ *
+ * Since: 0.1.0
+ **/
 void
 as_image_set_kind (AsImage *image, AsImageKind kind)
 {
@@ -179,7 +246,15 @@ as_image_set_kind (AsImage *image, AsImageKind kind)
 }
 
 /**
- * as_image_node_insert:
+ * as_image_node_insert: (skip)
+ * @image: a #AsImage instance.
+ * @parent: the parent #GNode to use..
+ *
+ * Inserts the image into the DOM tree.
+ *
+ * Returns: (transfer full): A populated #GNode
+ *
+ * Since: 0.1.0
  **/
 GNode *
 as_image_node_insert (AsImage *image, GNode *parent)
@@ -209,6 +284,15 @@ as_image_node_insert (AsImage *image, GNode *parent)
 
 /**
  * as_image_node_parse:
+ * @image: a #AsImage instance.
+ * @node: a #GNode.
+ * @error: A #GError or %NULL.
+ *
+ * Populates the object from a DOM node.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.1.0
  **/
 gboolean
 as_image_node_parse (AsImage *image, GNode *node, GError **error)
@@ -237,6 +321,12 @@ as_image_node_parse (AsImage *image, GNode *node, GError **error)
 
 /**
  * as_image_new:
+ *
+ * Creates a new #AsImage.
+ *
+ * Returns: (transfer full): a #AsImage
+ *
+ * Since: 0.1.0
  **/
 AsImage *
 as_image_new (void)

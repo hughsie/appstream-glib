@@ -23,8 +23,8 @@
 #error "Only <appstream-glib.h> can be included directly."
 #endif
 
-#ifndef AS_APP_H
-#define AS_APP_H
+#ifndef __AS_APP_H
+#define __AS_APP_H
 
 #include <glib-object.h>
 
@@ -58,6 +58,7 @@ typedef enum {
 	AS_APP_ICON_KIND_STOCK,
 	AS_APP_ICON_KIND_CACHED,
 	AS_APP_ICON_KIND_REMOTE,
+	/*< private >*/
 	AS_APP_ICON_KIND_LAST
 } AsAppIconKind;
 
@@ -69,6 +70,7 @@ typedef enum {
 	AS_APP_ID_KIND_INPUT_METHOD,
 	AS_APP_ID_KIND_WEB_APP,
 	AS_APP_ID_KIND_SOURCE,
+	/*< private >*/
 	AS_APP_ID_KIND_LAST
 } AsAppIdKind;
 
@@ -193,4 +195,4 @@ guint		 as_app_search_matches		(AsApp		*app,
 
 G_END_DECLS
 
-#endif /* AS_APP_H */
+#endif /* __AS_APP_H */

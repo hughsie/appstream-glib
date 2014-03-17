@@ -82,7 +82,15 @@ as_store_class_init (AsStoreClass *klass)
 
 /**
  * as_store_get_size:
- */
+ * @store: a #AsStore instance.
+ *
+ * Gets the size of the store after deduplication and prioritization has
+ * taken place.
+ *
+ * Returns: the number of usable applications in the store
+ *
+ * Since: 0.1.0
+ **/
 guint
 as_store_get_size (AsStore *store)
 {
@@ -93,7 +101,14 @@ as_store_get_size (AsStore *store)
 
 /**
  * as_store_get_apps:
- */
+ * @store: a #AsStore instance.
+ *
+ * Gets an array of all the valid applications in the store.
+ *
+ * Returns: (element-type AsApp) (transfer none): an array
+ *
+ * Since: 0.1.0
+ **/
 GPtrArray *
 as_store_get_apps (AsStore *store)
 {
@@ -104,7 +119,15 @@ as_store_get_apps (AsStore *store)
 
 /**
  * as_store_get_app_by_id:
- */
+ * @store: a #AsStore instance.
+ * @id: the application short ID.
+ *
+ * Finds an application in the store by ID.
+ *
+ * Returns: (transfer none): a #GsApp or %NULL
+ *
+ * Since: 0.1.0
+ **/
 AsApp *
 as_store_get_app_by_id (AsStore *store, const gchar *id)
 {
@@ -115,7 +138,15 @@ as_store_get_app_by_id (AsStore *store, const gchar *id)
 
 /**
  * as_store_get_app_by_pkgname:
- */
+ * @store: a #AsStore instance.
+ * @pkgname: the package name.
+ *
+ * Finds an application in the store by package name.
+ *
+ * Returns: (transfer none): a #GsApp or %NULL
+ *
+ * Since: 0.1.0
+ **/
 AsApp *
 as_store_get_app_by_pkgname (AsStore *store, const gchar *pkgname)
 {
@@ -126,7 +157,7 @@ as_store_get_app_by_pkgname (AsStore *store, const gchar *pkgname)
 
 /**
  * as_store_add_app:
- */
+ **/
 static void
 as_store_add_app (AsStore *store, AsApp *app)
 {
@@ -182,7 +213,18 @@ as_store_add_app (AsStore *store, AsApp *app)
 
 /**
  * as_store_parse_file:
- */
+ * @store: a #AsStore instance.
+ * @file: a #GFile.
+ * @path_icons: the icon path for the applications, or %NULL.
+ * @cancellable: a #GCancellable.
+ * @error: A #GError or %NULL.
+ *
+ * Parses an AppStream XML file and adds any valid applications to the store.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.1.0
+ **/
 gboolean
 as_store_parse_file (AsStore *store,
 		     GFile *file,
@@ -206,7 +248,8 @@ as_store_parse_file (AsStore *store,
 	apps = as_node_find (root, "applications");
 	for (n = apps->children; n != NULL; n = n->next) {
 		app = as_app_new ();
-		as_app_set_icon_path (app, path_icons, -1);
+		if (path_icons != NULL)
+			as_app_set_icon_path (app, path_icons, -1);
 		ret = as_app_node_parse (app, n, error);
 		if (!ret) {
 			g_object_unref (app);
@@ -222,6 +265,12 @@ out:
 
 /**
  * as_store_new:
+ *
+ * Creates a new #AsStore.
+ *
+ * Returns: (transfer full): a #AsStore
+ *
+ * Since: 0.1.0
  **/
 AsStore *
 as_store_new (void)

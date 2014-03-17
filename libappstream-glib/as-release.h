@@ -23,8 +23,8 @@
 #error "Only <appstream-glib.h> can be included directly."
 #endif
 
-#ifndef AS_RELEASE_H
-#define AS_RELEASE_H
+#ifndef __AS_RELEASE_H
+#define __AS_RELEASE_H
 
 #include <glib-object.h>
 
@@ -77,4 +77,4 @@ gboolean	 as_release_node_parse		(AsRelease	*release,
 
 G_END_DECLS
 
-#endif /* AS_RELEASE_H */
+#endif /* __AS_RELEASE_H */

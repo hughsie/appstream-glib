@@ -23,8 +23,8 @@
 #error "Only <appstream-glib.h> can be included directly."
 #endif
 
-#ifndef AS_UTILS_H
-#define AS_UTILS_H
+#ifndef __AS_UTILS_H
+#define __AS_UTILS_H
 
 #include <glib.h>
 
@@ -33,4 +33,4 @@ gchar		*as_strndup			(const gchar	*text,
 
 G_END_DECLS
 
-#endif /* AS_UTILS_H */
+#endif /* __AS_UTILS_H */
