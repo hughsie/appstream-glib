@@ -943,7 +943,7 @@ as_node_get_localized_best (const GNode *node, const gchar *key)
 {
 	GHashTable *hash;
 	const gchar *const *locales;
-	const gchar *tmp;
+	const gchar *tmp = NULL;
 	guint i;
 
 	hash = as_node_get_localized (node, key);
@@ -953,12 +953,12 @@ as_node_get_localized_best (const GNode *node, const gchar *key)
 	for (i = 0; locales[i] != NULL; i++) {
 		tmp = g_hash_table_lookup (hash, locales[i]);
 		if (tmp != NULL)
-			return tmp;
+			goto out;
 	}
 out:
 	if (hash != NULL)
 		g_hash_table_unref (hash);
-	return NULL;
+	return tmp;
 }
 
 /**

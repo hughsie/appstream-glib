@@ -842,6 +842,7 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
 					NULL);
 		}
 	}
+	g_list_free (langs);
 }
 
 /**
