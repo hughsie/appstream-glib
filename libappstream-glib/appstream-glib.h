@@ -29,6 +29,7 @@
 #include <as-node.h>
 #include <as-release.h>
 #include <as-screenshot.h>
+#include <as-store.h>
 #include <as-tag.h>
 #include <as-version.h>
 

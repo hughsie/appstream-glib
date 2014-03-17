@@ -28,6 +28,7 @@
 #include "as-node.h"
 #include "as-release.h"
 #include "as-screenshot.h"
+#include "as-store.h"
 
 static void
 ch_test_release_func (void)
@@ -498,19 +499,16 @@ ch_test_app_search_func (void)
 }
 
 static void
-ch_test_node_speed_func (void)
+ch_test_store_func (void)
 {
-	AsApp *app;
+	AsStore *store;
 	GError *error = NULL;
 	GFile *file;
-	GNode *apps;
-	GNode *n;
-	GNode *root;
 	GTimer *timer;
+	const gchar *filename = "./test.xml.gz";
 	gboolean ret;
 	guint i;
 	guint loops = 10;
-	const gchar *filename = "./test.xml.gz";
 
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS))
 		return;
@@ -518,24 +516,19 @@ ch_test_node_speed_func (void)
 	file = g_file_new_for_path (filename);
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
-
-		root = as_node_from_file (file, NULL, &error);
+		store = as_store_new ();
+		ret = as_store_parse_file (store, file, NULL, NULL, &error);
 		g_assert_no_error (error);
-		g_assert (root != NULL);
-
-		apps = as_node_find (root, "applications");
-		for (n = apps->children; n != NULL; n = n->next) {
-			app = as_app_new ();
-			ret = as_app_node_parse (app, n, &error);
-			g_assert_no_error (error);
-			g_assert (ret);
-			g_object_unref (app);
-		}
-		as_node_unref (root);
+		g_assert (ret);
+		g_assert_cmpint (as_store_get_apps (store)->len, ==, 1415);
+		g_assert (as_store_get_app_by_id (store, "org.gnome.Software") != NULL);
+		g_assert (as_store_get_app_by_pkgname (store, "gnome-software") != NULL);
+		g_object_unref (store);
 	}
-	g_object_unref (file);
-
 	g_print ("%.0f ms: ", g_timer_elapsed (timer, NULL) * 1000 / loops);
+
+	g_object_unref (file);
+	g_timer_destroy (timer);
 }
 
 int
@@ -558,7 +551,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{hash}", ch_test_node_hash_func);
 	g_test_add_func ("/AppStream/node{localized}", ch_test_node_localized_func);
 	g_test_add_func ("/AppStream/node{localized-wrap}", ch_test_node_localized_wrap_func);
-	g_test_add_func ("/AppStream/node{speed}", ch_test_node_speed_func);
+	g_test_add_func ("/AppStream/store", ch_test_store_func);
 
 	return g_test_run ();
 }
