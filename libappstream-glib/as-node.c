@@ -452,6 +452,130 @@ out:
 }
 
 /**
+ * as_node_from_file:
+ * @file: file
+ * @cancellable: A #GCancellable, or %NULL
+ * @error: A #GError or %NULL
+ *
+ * Parses data into a DOM tree.
+ **/
+GNode *
+as_node_from_file (GFile *file, GCancellable *cancellable, GError **error)
+{
+	GConverter *conv = NULL;
+	GError *error_local = NULL;
+	GFileInfo *info = NULL;
+	GInputStream *file_stream = NULL;
+	GInputStream *stream_data = NULL;
+	GMarkupParseContext *ctx = NULL;
+	GNode *current;
+	GNode *root = NULL;
+	const gchar *content_type = NULL;
+	gboolean ret = TRUE;
+	gchar *data = NULL;
+	gsize chunk_size = 32 * 1024;
+	gssize len;
+	const GMarkupParser parser = {
+		as_node_start_element_cb,
+		as_node_end_element_cb,
+		as_node_text_cb,
+		NULL,
+		NULL };
+
+	/* what kind of file is this */
+	info = g_file_query_info (file,
+				  G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+				  G_FILE_QUERY_INFO_NONE,
+				  cancellable,
+				  error);
+	if (info == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+
+	/* decompress if required */
+	file_stream = G_INPUT_STREAM (g_file_read (file, cancellable, error));
+	if (file_stream == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+	content_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
+	if (g_strcmp0 (content_type, "application/gzip") == 0 ||
+	    g_strcmp0 (content_type, "application/x-gzip") == 0) {
+		conv = G_CONVERTER (g_zlib_decompressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP));
+		stream_data = g_converter_input_stream_new (file_stream, conv);
+	} else if (g_strcmp0 (content_type, "application/xml") == 0) {
+		stream_data = g_object_ref (file_stream);
+	} else {
+		ret = FALSE;
+		g_set_error (error,
+			     AS_NODE_ERROR,
+			     AS_NODE_ERROR_FAILED,
+			     "cannot process file of type %s",
+			     content_type);
+		goto out;
+	}
+
+	/* parse */
+	current = root = g_node_new (NULL);
+	ctx = g_markup_parse_context_new (&parser,
+					  G_MARKUP_PREFIX_ERROR_POSITION,
+					  &current,
+					  NULL);
+
+	data = g_malloc (chunk_size);
+	while ((len = g_input_stream_read (stream_data,
+					   data,
+					   chunk_size,
+					   cancellable,
+					   error)) > 0) {
+		ret = g_markup_parse_context_parse (ctx,
+						    data,
+						    len,
+						    &error_local);
+		if (!ret) {
+			g_set_error_literal (error,
+					     AS_NODE_ERROR,
+					     AS_NODE_ERROR_FAILED,
+					     error_local->message);
+			g_error_free (error_local);
+			as_node_unref (root);
+			root = NULL;
+			goto out;
+		}
+	}
+	if (len < 0) {
+		as_node_unref (root);
+		root = NULL;
+		goto out;
+	}
+
+	/* more opening than closing */
+	if (root != current) {
+		g_set_error_literal (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_FAILED,
+				     "Mismatched XML");
+		as_node_unref (root);
+		root = NULL;
+		goto out;
+	}
+out:
+	if (info != NULL)
+		g_object_unref (info);
+	if (stream_data != NULL)
+		g_object_unref (stream_data);
+	if (conv != NULL)
+		g_object_unref (conv);
+	if (file_stream != NULL)
+		g_object_unref (file_stream);
+	g_free (data);
+	if (ctx != NULL)
+		g_markup_parse_context_free (ctx);
+	return root;
+}
+
+/**
  * as_node_get_child_node:
  **/
 static GNode *

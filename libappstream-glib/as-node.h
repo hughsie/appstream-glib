@@ -26,6 +26,7 @@
 #ifndef __AS_NODE_H
 #define __AS_NODE_H
 
+#include <gio/gio.h>
 #include <glib-object.h>
 #include <stdarg.h>
 
@@ -75,6 +76,10 @@ GString		*as_node_to_xml			(const GNode	*node,
 						 AsNodeToXmlFlags flags);
 GNode		*as_node_from_xml		(const gchar	*data,
 						 gssize		 data_len,
+						 GError		**error)
+						 G_GNUC_WARN_UNUSED_RESULT;
+GNode		*as_node_from_file		(GFile		*file,
+						 GCancellable	*cancellable,
 						 GError		**error)
 						 G_GNUC_WARN_UNUSED_RESULT;
 

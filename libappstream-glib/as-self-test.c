@@ -502,27 +502,24 @@ ch_test_node_speed_func (void)
 {
 	AsApp *app;
 	GError *error = NULL;
+	GFile *file;
 	GNode *apps;
 	GNode *n;
 	GNode *root;
 	GTimer *timer;
 	gboolean ret;
-	gchar *data;
 	guint i;
 	guint loops = 10;
-	const gchar *filename = "./test.xml";
+	const gchar *filename = "./test.xml.gz";
 
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS))
 		return;
 
-	ret = g_file_get_contents (filename, &data, NULL, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
+	file = g_file_new_for_path (filename);
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
 
-		root = as_node_from_xml (data, -1, &error);
+		root = as_node_from_file (file, NULL, &error);
 		g_assert_no_error (error);
 		g_assert (root != NULL);
 
@@ -536,6 +533,7 @@ ch_test_node_speed_func (void)
 		}
 		as_node_unref (root);
 	}
+	g_object_unref (file);
 
 	g_print ("%.0f ms: ", g_timer_elapsed (timer, NULL) * 1000 / loops);
 }
