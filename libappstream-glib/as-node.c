@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "as-node.h"
+#include "as-utils.h"
 
 typedef struct
 {
@@ -1014,19 +1015,14 @@ const gchar *
 as_node_get_localized_best (const GNode *node, const gchar *key)
 {
 	GHashTable *hash;
-	const gchar *const *locales;
 	const gchar *tmp = NULL;
-	guint i;
 
 	hash = as_node_get_localized (node, key);
 	if (hash == NULL)
 		goto out;
-	locales = g_get_language_names ();
-	for (i = 0; locales[i] != NULL; i++) {
-		tmp = g_hash_table_lookup (hash, locales[i]);
-		if (tmp != NULL)
-			goto out;
-	}
+	tmp = as_hash_lookup_by_locale (hash, NULL);
+	if (tmp == NULL)
+		goto out;
 out:
 	if (hash != NULL)
 		g_hash_table_unref (hash);

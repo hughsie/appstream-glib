@@ -165,9 +165,7 @@ const gchar *
 as_screenshot_get_caption (AsScreenshot *screenshot, const gchar *locale)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
-	if (locale == NULL)
-		locale = "C";
-	return g_hash_table_lookup (priv->captions, locale);
+	return as_hash_lookup_by_locale (priv->captions, locale);
 }
 
 /**

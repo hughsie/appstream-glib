@@ -518,9 +518,7 @@ const gchar *
 as_app_get_name (AsApp *app, const gchar *locale)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	if (locale == NULL)
-		locale = "C";
-	return g_hash_table_lookup (priv->names, locale);
+	return as_hash_lookup_by_locale (priv->names, locale);
 }
 
 /**
@@ -538,9 +536,7 @@ const gchar *
 as_app_get_comment (AsApp *app, const gchar *locale)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	if (locale == NULL)
-		locale = "C";
-	return g_hash_table_lookup (priv->comments, locale);
+	return as_hash_lookup_by_locale (priv->comments, locale);
 }
 
 /**
@@ -558,9 +554,7 @@ const gchar *
 as_app_get_description (AsApp *app, const gchar *locale)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	if (locale == NULL)
-		locale = "C";
-	return g_hash_table_lookup (priv->descriptions, locale);
+	return as_hash_lookup_by_locale (priv->descriptions, locale);
 }
 
 /**

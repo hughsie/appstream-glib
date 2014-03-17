@@ -136,3 +136,42 @@ out:
 	}
 	return formatted;
 }
+
+/**
+ * as_hash_lookup_by_locale:
+ * @hash: a #GHashTable.
+ * @locale: the locale, or %NULL to use the users default local.
+ *
+ * Gets the 'best' data entry in a hash table using the user-set list
+ * of preferred languages.
+ *
+ * This is how methods like as_app_get_name(app,NULL) return the localized
+ * data for the user.
+ *
+ * Returns: the string value, or %NULL if there was no data
+ *
+ * Since: 0.1.0
+ **/
+const gchar *
+as_hash_lookup_by_locale (GHashTable *hash, const gchar *locale)
+{
+	const gchar *const *locales;
+	const gchar *tmp = NULL;
+	guint i;
+
+	/* the user specified a locale */
+	if (locale != NULL) {
+		tmp = g_hash_table_lookup (hash, locale);
+		goto out;
+	}
+
+	/* use LANGUAGE, LC_ALL, LC_MESSAGES and LANG */
+	locales = g_get_language_names ();
+	for (i = 0; locales[i] != NULL; i++) {
+		tmp = g_hash_table_lookup (hash, locales[i]);
+		if (tmp != NULL)
+			goto out;
+	}
+out:
+	return tmp;
+}

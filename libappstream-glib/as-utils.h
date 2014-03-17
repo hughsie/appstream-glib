@@ -33,6 +33,8 @@ gchar		*as_strndup			(const gchar	*text,
 gchar		*as_markup_convert_simple	(const gchar	*markup,
 						 gssize		 markup_len,
 						 GError		**error);
+const gchar	*as_hash_lookup_by_locale	(GHashTable	*hash,
+						 const gchar	*locale);
 
 G_END_DECLS
 

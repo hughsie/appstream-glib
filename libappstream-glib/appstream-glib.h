@@ -32,6 +32,7 @@
 #include <as-store.h>
 #include <as-tag.h>
 #include <as-version.h>
+#include <as-utils.h>
 
 #undef __APPSTREAM_GLIB_H_INSIDE__
 

@@ -123,9 +123,7 @@ const gchar *
 as_release_get_description (AsRelease *release, const gchar *locale)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
-	if (locale == NULL)
-		locale = "C";
-	return g_hash_table_lookup (priv->descriptions, locale);
+	return as_hash_lookup_by_locale (priv->descriptions, locale);
 }
 
 /**
