@@ -497,6 +497,49 @@ ch_test_app_search_func (void)
 	g_object_unref (app);
 }
 
+static void
+ch_test_node_speed_func (void)
+{
+	AsApp *app;
+	GError *error = NULL;
+	GNode *apps;
+	GNode *n;
+	GNode *root;
+	GTimer *timer;
+	gboolean ret;
+	gchar *data;
+	guint i;
+	guint loops = 10;
+	const gchar *filename = "./test.xml";
+
+	if (!g_file_test (filename, G_FILE_TEST_EXISTS))
+		return;
+
+	ret = g_file_get_contents (filename, &data, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	timer = g_timer_new ();
+	for (i = 0; i < loops; i++) {
+
+		root = as_node_from_xml (data, -1, &error);
+		g_assert_no_error (error);
+		g_assert (root != NULL);
+
+		apps = as_node_find (root, "applications");
+		for (n = apps->children; n != NULL; n = n->next) {
+			app = as_app_new ();
+			ret = as_app_node_parse (app, n, &error);
+			g_assert_no_error (error);
+			g_assert (ret);
+			g_object_unref (app);
+		}
+		as_node_unref (root);
+	}
+
+	g_print ("%.0f ms: ", g_timer_elapsed (timer, NULL) * 1000 / loops);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -517,6 +560,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{hash}", ch_test_node_hash_func);
 	g_test_add_func ("/AppStream/node{localized}", ch_test_node_localized_func);
 	g_test_add_func ("/AppStream/node{localized-wrap}", ch_test_node_localized_wrap_func);
+	g_test_add_func ("/AppStream/node{speed}", ch_test_node_speed_func);
 
 	return g_test_run ();
 }
