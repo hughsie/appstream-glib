@@ -56,7 +56,8 @@ AsRelease	*as_release_new			(void);
 /* getters */
 const gchar	*as_release_get_version		(AsRelease	*release);
 guint64		 as_release_get_timestamp	(AsRelease	*release);
-const gchar	*as_release_get_description	(AsRelease	*release);
+const gchar	*as_release_get_description	(AsRelease	*release,
+						 const gchar	*locale);
 
 /* setters */
 void		 as_release_set_version		(AsRelease	*release,
@@ -65,6 +66,7 @@ void		 as_release_set_version		(AsRelease	*release,
 void		 as_release_set_timestamp	(AsRelease	*release,
 						 guint64	 timestamp);
 void		 as_release_set_description	(AsRelease	*release,
+						 const gchar	*locale,
 						 const gchar	*description,
 						 gssize		 description_len);
 

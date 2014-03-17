@@ -70,6 +70,51 @@ ch_test_release_func (void)
 }
 
 static void
+ch_test_release_desc_func (void)
+{
+	AsRelease *release;
+	GError *error = NULL;
+	GNode *n;
+	GNode *root;
+	GString *xml;
+	gboolean ret;
+	const gchar *src =
+		"<release version=\"0.1.2\" timestamp=\"123\">"
+		"<description><p>This is a new release</p></description>"
+		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>"
+		"</release>";
+
+	release = as_release_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, -1, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "release");
+	g_assert (n != NULL);
+	ret = as_release_node_parse (release, n, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_release_get_timestamp (release), ==, 123);
+	g_assert_cmpstr (as_release_get_version (release), ==, "0.1.2");
+	g_assert_cmpstr (as_release_get_description (release, "pl"), ==,
+				"<p>Oprogramowanie</p>");
+
+	/* back to node */
+	root = as_node_new ();
+	n = as_release_node_insert (release, root);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert_cmpstr (xml->str, ==, src);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+
+	g_object_unref (release);
+}
+
+static void
 ch_test_image_func (void)
 {
 	AsImage *image;
@@ -541,6 +586,7 @@ main (int argc, char **argv)
 
 	/* tests go here */
 	g_test_add_func ("/AppStream/release", ch_test_release_func);
+	g_test_add_func ("/AppStream/release{description}", ch_test_release_desc_func);
 	g_test_add_func ("/AppStream/image", ch_test_image_func);
 	g_test_add_func ("/AppStream/screenshot", ch_test_screenshot_func);
 	g_test_add_func ("/AppStream/app", ch_test_app_func);
