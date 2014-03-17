@@ -243,6 +243,42 @@ as_app_icon_kind_from_string (const gchar *icon_kind)
 	return AS_APP_ICON_KIND_UNKNOWN;
 }
 
+/**
+ * as_app_url_kind_to_string:
+ * @url_kind: the @AsAppUrlKind.
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @url_kind
+ *
+ * Since: 0.1.0
+ **/
+const gchar *
+as_app_url_kind_to_string (AsAppUrlKind url_kind)
+{
+	if (url_kind == AS_APP_URL_KIND_HOMEPAGE)
+		return "homepage";
+	return "unknown";
+}
+
+/**
+ * as_app_url_kind_from_string:
+ * @url_kind: the string.
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Returns: a #AsAppUrlKind or %AS_APP_URL_KIND_UNKNOWN for unknown
+ *
+ * Since: 0.1.0
+ **/
+AsAppUrlKind
+as_app_url_kind_from_string (const gchar *url_kind)
+{
+	if (g_strcmp0 (url_kind, "homepage") == 0)
+		return AS_APP_URL_KIND_HOMEPAGE;
+	return AS_APP_URL_KIND_UNKNOWN;
+}
+
 /******************************************************************************/
 
 /**
@@ -584,7 +620,7 @@ as_app_get_languages (AsApp *app)
 /**
  * as_app_get_url_item:
  * @app: a #AsApp instance.
- * @type: the URL type, e.g. "homepage".
+ * @url_kind: the URL kind, e.g. %AS_APP_URL_KIND_HOMEPAGE.
  *
  * Gets a URL.
  *
@@ -593,10 +629,11 @@ as_app_get_languages (AsApp *app)
  * Since: 0.1.0
  **/
 const gchar *
-as_app_get_url_item (AsApp *app, const gchar *type)
+as_app_get_url_item (AsApp *app, AsAppUrlKind url_kind)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	return g_hash_table_lookup (priv->urls, type);
+	return g_hash_table_lookup (priv->urls,
+				    as_app_url_kind_to_string (url_kind));
 }
 
 /**
@@ -1062,7 +1099,7 @@ as_app_add_language (AsApp *app,
 /**
  * as_app_add_url:
  * @app: a #AsApp instance.
- * @type: the URL kind, e.g. "homepage".
+ * @url_kind: the URL kind, e.g. %AS_APP_URL_KIND_HOMEPAGE
  * @url: the full URL.
  * @url_len: the size of @url, or -1 if %NULL-terminated.
  *
@@ -1071,11 +1108,14 @@ as_app_add_language (AsApp *app,
  * Since: 0.1.0
  **/
 void
-as_app_add_url (AsApp *app, const gchar *type, const gchar *url, gssize url_len)
+as_app_add_url (AsApp *app,
+		AsAppUrlKind url_kind,
+		const gchar *url,
+		gssize url_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_hash_table_insert (priv->urls,
-			     g_strdup (type),
+			     g_strdup (as_app_url_kind_to_string (url_kind)),
 			     as_strndup (url, url_len));
 }
 
@@ -1458,7 +1498,9 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	/* <url> */
 	case AS_TAG_URL:
 		tmp = as_node_get_attribute (n, "type");
-		as_app_add_url (app, tmp, as_node_get_data (n), -1);
+		as_app_add_url (app,
+				as_app_url_kind_from_string (tmp),
+				as_node_get_data (n), -1);
 		break;
 
 	/* <project_group> */

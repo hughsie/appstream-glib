@@ -74,6 +74,13 @@ typedef enum {
 	AS_APP_ID_KIND_LAST
 } AsAppIdKind;
 
+typedef enum {
+	AS_APP_URL_KIND_UNKNOWN,
+	AS_APP_URL_KIND_HOMEPAGE,
+	/*< private >*/
+	AS_APP_URL_KIND_LAST
+} AsAppUrlKind;
+
 GType		 as_app_get_type		(void);
 AsApp		*as_app_new			(void);
 
@@ -82,6 +89,8 @@ const gchar	*as_app_id_kind_to_string	(AsAppIdKind	 id_kind);
 AsAppIdKind	 as_app_id_kind_from_string	(const gchar	*id_kind);
 const gchar	*as_app_icon_kind_to_string	(AsAppIconKind	 icon_kind);
 AsAppIconKind	 as_app_icon_kind_from_string	(const gchar	*icon_kind);
+const gchar	*as_app_url_kind_to_string	(AsAppUrlKind	 url_kind);
+AsAppUrlKind	 as_app_url_kind_from_string	(const gchar	*url_kind);
 
 /* getters */
 AsAppIconKind	 as_app_get_icon_kind		(AsApp		*app);
@@ -112,7 +121,7 @@ gint		 as_app_get_language		(AsApp		*app,
 const gchar	*as_app_get_metadata_item	(AsApp		*app,
 						 const gchar	*key);
 const gchar	*as_app_get_url_item		(AsApp		*app,
-						 const gchar	*type);
+						 AsAppUrlKind	 url_kind);
 
 /* setters */
 void		 as_app_set_id_full		(AsApp		*app,
@@ -172,7 +181,7 @@ void		 as_app_add_compulsory_for_desktop (AsApp	*app,
 						 const gchar	*compulsory_for_desktop,
 						 gssize		 compulsory_for_desktop_len);
 void		 as_app_add_url			(AsApp		*app,
-						 const gchar	*type,
+						 AsAppUrlKind	 url_kind,
 						 const gchar	*url,
 						 gssize		 url_len);
 void		 as_app_add_metadata		(AsApp		*app,
