@@ -21,8 +21,6 @@
 
 #include "config.h"
 
-#include <stdlib.h>
-
 #include "as-image.h"
 #include "as-node.h"
 #include "as-utils.h"
@@ -218,13 +216,14 @@ as_image_node_parse (AsImage *image, GNode *node, GError **error)
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	const gchar *tmp;
 	gchar *taken;
+	guint size;
 
-	tmp = as_node_get_attribute (node, "width");
-	if (tmp != NULL)
-		as_image_set_width (image, atoi (tmp));
-	tmp = as_node_get_attribute (node, "height");
-	if (tmp != NULL)
-		as_image_set_height (image, atoi (tmp));
+	size = as_node_get_attribute_as_int (node, "width");
+	if (size != G_MAXUINT)
+		as_image_set_width (image, size);
+	size = as_node_get_attribute_as_int (node, "height");
+	if (size != G_MAXUINT)
+		as_image_set_height (image, size);
 	tmp = as_node_get_attribute (node, "type");
 	if (tmp != NULL)
 		as_image_set_kind (image, as_image_kind_from_string (tmp));
