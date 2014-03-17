@@ -215,7 +215,10 @@ as_image_node_insert (AsImage *image, GNode *parent)
 gboolean
 as_image_node_parse (AsImage *image, GNode *node, GError **error)
 {
+	AsImagePrivate *priv = GET_PRIVATE (image);
 	const gchar *tmp;
+	gchar *taken;
+
 	tmp = as_node_get_attribute (node, "width");
 	if (tmp != NULL)
 		as_image_set_width (image, atoi (tmp));
@@ -225,9 +228,11 @@ as_image_node_parse (AsImage *image, GNode *node, GError **error)
 	tmp = as_node_get_attribute (node, "type");
 	if (tmp != NULL)
 		as_image_set_kind (image, as_image_kind_from_string (tmp));
-	tmp = as_node_get_data (node);
-	if (tmp != NULL)
-		as_image_set_url (image, tmp, -1);
+	taken = as_node_take_data (node);
+	if (taken != NULL) {
+		g_free (priv->url);
+		priv->url = taken;
+	}
 	return TRUE;
 }
 

@@ -59,6 +59,7 @@ void		 as_node_unref			(GNode		*node);
 
 const gchar	*as_node_get_name		(const GNode	*node);
 const gchar	*as_node_get_data		(const GNode	*node);
+gchar		*as_node_take_data		(const GNode	*node);
 const gchar	*as_node_get_attribute		(const GNode	*node,
 						 const gchar	*key);
 gint		 as_node_get_attribute_as_int	(const GNode	*node,

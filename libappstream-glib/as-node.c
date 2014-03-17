@@ -515,6 +515,31 @@ as_node_get_data (const GNode *node)
 }
 
 /**
+ * as_node_take_data:
+ * @node: a #GNode
+ *
+ * Gets the node data, e.g. "paragraph text"
+ *
+ * Return value: string value
+ **/
+gchar *
+as_node_take_data (const GNode *node)
+{
+	AsNodeData *data;
+	gchar *tmp;
+
+	if (node->data == NULL)
+		return NULL;
+	data = (AsNodeData *) node->data;
+	if (data->cdata == NULL || data->cdata[0] == '\0')
+		return NULL;
+	as_node_cdata_to_raw (data);
+	tmp = data->cdata;
+	data->cdata = NULL;
+	return tmp;
+}
+
+/**
  * as_node_get_attribute_as_int:
  * @node: a #GNode
  *

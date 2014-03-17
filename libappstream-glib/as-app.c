@@ -983,12 +983,14 @@ as_app_node_insert (AsApp *app, GNode *parent)
 static gboolean
 as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 {
+	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsRelease *r;
 	AsScreenshot *ss;
 	GNode *c;
 	GString *xml;
 	const gchar *tmp;
 	gboolean ret = TRUE;
+	gchar *taken;
 	guint percent;
 
 	/* <id> */
@@ -1009,29 +1011,35 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <pkgname> */
 	case AS_TAG_PKGNAME:
-		as_app_add_pkgname (app, as_node_get_data (n), -1);
+		g_ptr_array_add (priv->pkgnames, as_node_take_data (n));
 		break;
 
 	/* <name> */
 	case AS_TAG_NAME:
-		as_app_set_name (app,
-				 as_node_get_attribute (n, "xml:lang"),
-				 as_node_get_data (n), -1);
+		tmp = as_node_get_attribute (n, "xml:lang");
+		if (tmp == NULL)
+			tmp = "C";
+		g_hash_table_insert (priv->names,
+				     g_strdup (tmp),
+				     as_node_take_data (n));
 		break;
 
 	/* <summary> */
 	case AS_TAG_SUMMARY:
-		as_app_set_comment (app,
-				    as_node_get_attribute (n, "xml:lang"),
-				    as_node_get_data (n), -1);
+		tmp = as_node_get_attribute (n, "xml:lang");
+		if (tmp == NULL)
+			tmp = "C";
+		g_hash_table_insert (priv->comments,
+				     g_strdup (tmp),
+				     as_node_take_data (n));
 		break;
 
 	/* <description> */
 	case AS_TAG_DESCRIPTION:
 		xml = as_node_to_xml (n->children, AS_NODE_TO_XML_FLAG_NONE);
 		as_app_set_description (app,
-					 as_node_get_attribute (n, "xml:lang"),
-					 xml->str, xml->len);
+					as_node_get_attribute (n, "xml:lang"),
+					xml->str, xml->len);
 		g_string_free (xml, TRUE);
 		break;
 
@@ -1039,42 +1047,47 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_ICON:
 		tmp = as_node_get_attribute (n, "type");
 		as_app_set_icon_kind (app, as_app_icon_kind_from_string (tmp));
-		as_app_set_icon (app, as_node_get_data (n), -1);
+		g_free (priv->icon);
+		priv->icon = as_node_take_data (n);
 		break;
 
 	/* <categories> */
 	case AS_TAG_APPCATEGORIES:
+		g_ptr_array_set_size (priv->categories, 0);
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c),
 				       "appcategory") != 0)
 				continue;
-			as_app_add_category (app, as_node_get_data (c), -1);
+			g_ptr_array_add (priv->categories, as_node_take_data (c));
 		}
 		break;
 
 	/* <keywords> */
 	case AS_TAG_KEYWORDS:
+		g_ptr_array_set_size (priv->keywords, 0);
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c),
 				       "keyword") != 0)
 				continue;
-			as_app_add_keyword (app, as_node_get_data (c), -1);
+			g_ptr_array_add (priv->keywords, as_node_take_data (c));
 		}
 		break;
 
 	/* <mimetypes> */
 	case AS_TAG_MIMETYPES:
+		g_ptr_array_set_size (priv->mimetypes, 0);
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c),
 				       "mimetype") != 0)
 				continue;
-			as_app_add_mimetype (app, as_node_get_data (c), -1);
+			g_ptr_array_add (priv->mimetypes, as_node_take_data (n));
 		}
 		break;
 
 	/* <project_license> */
 	case AS_TAG_PROJECT_LICENSE:
-		as_app_set_project_license (app, as_node_get_data (n), -1);
+		g_free (priv->project_license);
+		priv->project_license = as_node_take_data (n);
 		break;
 
 	/* <url> */
@@ -1085,16 +1098,19 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <project_group> */
 	case AS_TAG_PROJECT_GROUP:
-		as_app_set_project_group (app, as_node_get_data (n), -1);
+		g_free (priv->project_group);
+		priv->project_group = as_node_take_data (n);
 		break;
 
 	/* <compulsory_for_desktop> */
 	case AS_TAG_COMPULSORY_FOR_DESKTOP:
-		as_app_add_compulsory_for_desktop (app, as_node_get_data (n), -1);
+		g_ptr_array_add (priv->compulsory_for_desktops,
+				 as_node_take_data (n));
 		break;
 
 	/* <screenshots> */
 	case AS_TAG_SCREENSHOTS:
+		g_ptr_array_set_size (priv->screenshots, 0);
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c), "screenshot") != 0)
 				continue;
@@ -1111,6 +1127,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <releases> */
 	case AS_TAG_RELEASES:
+		g_ptr_array_set_size (priv->releases, 0);
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c), "release") != 0)
 				continue;
@@ -1127,6 +1144,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <languages> */
 	case AS_TAG_LANGUAGES:
+		g_hash_table_remove_all (priv->languages);
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c), "lang") != 0)
 				continue;
@@ -1138,11 +1156,17 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <metadata> */
 	case AS_TAG_METADATA:
+		g_hash_table_remove_all (priv->metadata);
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c), "value") != 0)
 				continue;
 			tmp = as_node_get_attribute (c, "key");
-			as_app_add_metadata (app, tmp, as_node_get_data (c), -1);
+			taken = as_node_take_data (c);
+			if (taken == NULL)
+				taken = g_strdup ("");
+			g_hash_table_insert (priv->metadata,
+					     g_strdup (tmp),
+					     taken);
 		}
 		break;
 	default:
@@ -1158,10 +1182,13 @@ out:
 gboolean
 as_app_node_parse (AsApp *app, GNode *node, GError **error)
 {
+	AsAppPrivate *priv = GET_PRIVATE (app);
 	GNode *n;
 	gboolean ret = TRUE;
 
 	/* parse each node */
+	g_ptr_array_set_size (priv->compulsory_for_desktops, 0);
+	g_ptr_array_set_size (priv->pkgnames, 0);
 	for (n = node->children; n != NULL; n = n->next) {
 		ret = as_app_node_parse_child (app, n, error);
 		if (!ret)
