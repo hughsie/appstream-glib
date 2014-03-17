@@ -15,8 +15,10 @@ BuildRequires: gtk-doc
 BuildRequires: gobject-introspection-devel
 
 %description
-This library provides objects and helper methods to help reading and writing
-AppStream metadata. It does not actually parse data to and from XML format.
+This library provides GObjects and helper methods to make it easy to read and
+write AppStream metadata. It also provides a simple DOM implementation that
+makes it easy to edit nodes and convert to and from the standardized XML
+representation.
 
 %package devel
 Summary: GLib Libraries and headers for appstream-glib
@@ -48,7 +50,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libappstream-glib*.la
 
 %files
 %defattr(-,root,root,-)
-%doc README AUTHORS NEWS COPYING
+%doc README.md AUTHORS NEWS COPYING
 %{_libdir}/*libappstream-glib*.so.*
 %{_libdir}/girepository-1.0/*.typelib
 

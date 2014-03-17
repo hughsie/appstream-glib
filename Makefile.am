@@ -31,7 +31,7 @@ EXTRA_DIST =						\
 	MAINTAINERS					\
 	AUTHORS						\
 	INSTALL						\
-	README						\
+	README.md					\
 	NEWS						\
 	autogen.sh					\
 	config.h

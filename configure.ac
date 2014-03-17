@@ -6,9 +6,9 @@ m4_define([as_micro_version], [0])
 m4_define([as_version],
           [as_major_version.as_minor_version.as_micro_version])
 
-AC_INIT([appstream-glib],[0.1.0])
+AC_INIT([appstream-glib],[as_version])
 AC_CONFIG_SRCDIR(libappstream-glib)
-AM_INIT_AUTOMAKE([1.9 no-dist-gzip dist-xz tar-ustar])
+AM_INIT_AUTOMAKE([1.9 no-dist-gzip dist-xz tar-ustar foreign])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_SYS_LARGEFILE
@@ -27,15 +27,23 @@ AC_SUBST(AS_VERSION)
 # enable nice build output on automake1.11
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
-# libtool versioning - this applies to libappstream_glib
+# libtool versioning - this applies to libpackagekit
 #
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 #
-# increment;
-# CURRENT	If the API or ABI interface has changed (reset REVISION to 0)
-# REVISION	If the API and ABI remains the same, but bugs are fixed.
-# AGE		If libappstream_glib can be linked into executables which can be
-# 		built with previous versions of this library. Don't use.
+# - If interfaces have been changed or added, but binary compatibility
+#   has been preserved, change:
+#      CURRENT += 1
+#      REVISION = 0
+#      AGE += 1
+# - If binary compatibility has been broken (eg removed or changed
+#   interfaces), change:
+#      CURRENT += 1
+#      REVISION = 0
+#      AGE = 0
+# - If the interface is the same as the previous version, but bugs are
+#   fixed, change:
+#      REVISION += 1
 LT_CURRENT=1
 LT_REVISION=0
 LT_AGE=0
@@ -81,14 +89,9 @@ fi
 AC_SUBST(WARNINGFLAGS_C)
 
 dnl ---------------------------------------------------------------------------
-dnl - Library dependencies
-dnl ---------------------------------------------------------------------------
-GLIB_REQUIRED=2.14.0
-
-dnl ---------------------------------------------------------------------------
 dnl - Check library dependencies
 dnl ---------------------------------------------------------------------------
-PKG_CHECK_MODULES(GLIB, glib-2.0 >= $GLIB_REQUIRED gio-2.0 gobject-2.0 gthread-2.0)
+PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.14.0 gio-2.0 gobject-2.0 gthread-2.0)
 
 dnl ---------------------------------------------------------------------------
 dnl - Makefiles, etc.
@@ -103,16 +106,3 @@ docs/api/Makefile
 docs/api/version.xml
 ])
 AC_OUTPUT
-
-dnl ==========================================================================
-echo "
-                    AppStream-Glib $VERSION
-                  ========================
-
-        prefix:                    ${prefix}
-        datadir:                   ${datadir}
-        compiler:                  ${CC}
-        cflags:                    ${CFLAGS}
-        cppflags:                  ${CPPFLAGS}
-"
-
