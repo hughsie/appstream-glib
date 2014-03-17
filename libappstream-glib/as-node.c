@@ -22,6 +22,7 @@
 #include "config.h"
 
 #include <glib.h>
+#include <string.h>
 
 #include "as-node.h"
 
@@ -113,20 +114,41 @@ out:
 }
 
 /**
+ * as_node_string_replace_inplace:
+ **/
+static void
+as_node_string_replace_inplace (gchar *text,
+				const gchar *search,
+				gchar replace)
+{
+	const gchar *start = text;
+	gchar *tmp;
+	gsize len;
+	gsize len_escaped = 0;
+
+	while ((tmp = g_strstr_len (start, -1, search)) != NULL) {
+		*tmp = replace;
+		len = strlen (tmp);
+		if (len_escaped == 0)
+			len_escaped = strlen (search);
+		memcpy (tmp + 1,
+			tmp + len_escaped,
+			(len - len_escaped) + 1);
+		start = tmp + 1;
+	}
+}
+
+/**
  * as_node_cdata_to_raw:
  **/
 static void
 as_node_cdata_to_raw (AsNodeData *data)
 {
-	GString *str;
 	if (!data->cdata_escaped)
 		return;
-	str = g_string_new (data->cdata);
-	g_free (data->cdata);
-	as_node_string_replace (str, "&amp;", "&");
-	as_node_string_replace (str, "&lt;", "<");
-	as_node_string_replace (str, "&gt;", ">");
-	data->cdata = g_string_free (str, FALSE);
+	as_node_string_replace_inplace (data->cdata, "&amp;", '&');
+	as_node_string_replace_inplace (data->cdata, "&lt;", '<');
+	as_node_string_replace_inplace (data->cdata, "&gt;", '>');
 	data->cdata_escaped = FALSE;
 }
 
