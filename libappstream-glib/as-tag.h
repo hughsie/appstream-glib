@@ -40,8 +40,8 @@
  * @AS_TAG_DESCRIPTION:			`description`
  * @AS_TAG_URL:				`url`
  * @AS_TAG_ICON:			`icon`
- * @AS_TAG_CATEGORIES:			`appcategories`
- * @AS_TAG_CATEGORY:			`appcategory`
+ * @AS_TAG_CATEGORIES:			`categories` (or `appcategories`)
+ * @AS_TAG_CATEGORY:			`category` (or `appcategory`)
  * @AS_TAG_KEYWORDS:			`keywords`
  * @AS_TAG_KEYWORD:			`keyword`
  * @AS_TAG_MIMETYPES:			`mimetypes`

@@ -1176,10 +1176,10 @@ as_app_node_insert (AsApp *app, GNode *parent)
 
 	/* <categories> */
 	if (priv->categories->len > 0) {
-		node_tmp = as_node_insert (node_app, "appcategories", NULL, 0, NULL);
+		node_tmp = as_node_insert (node_app, "categories", NULL, 0, NULL);
 		for (i = 0; i < priv->categories->len; i++) {
 			tmp = g_ptr_array_index (priv->categories, i);
-			as_node_insert (node_tmp, "appcategory", tmp, 0, NULL);
+			as_node_insert (node_tmp, "category", tmp, 0, NULL);
 		}
 	}
 
@@ -1334,8 +1334,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_CATEGORIES:
 		g_ptr_array_set_size (priv->categories, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			if (g_strcmp0 (as_node_get_name (c),
-				       "appcategory") != 0)
+			if (g_strcmp0 (as_node_get_name (c), "category") != 0)
 				continue;
 			g_ptr_array_add (priv->categories, as_node_take_data (c));
 		}

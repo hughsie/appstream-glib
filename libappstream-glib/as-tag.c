@@ -68,9 +68,13 @@ as_tag_from_string (const gchar *tag)
 		return AS_TAG_DESCRIPTION;
 	if (g_strcmp0 (tag, "icon") == 0)
 		return AS_TAG_ICON;
-	if (g_strcmp0 (tag, "appcategories") == 0)
+	if (g_strcmp0 (tag, "appcategories") == 0) /* deprecated */
 		return AS_TAG_CATEGORIES;
-	if (g_strcmp0 (tag, "appcategory") == 0)
+	if (g_strcmp0 (tag, "categories") == 0)
+		return AS_TAG_CATEGORIES;
+	if (g_strcmp0 (tag, "appcategory") == 0) /* deprecated */
+		return AS_TAG_CATEGORY;
+	if (g_strcmp0 (tag, "category") == 0)
 		return AS_TAG_CATEGORY;
 	if (g_strcmp0 (tag, "keywords") == 0)
 		return AS_TAG_KEYWORDS;
@@ -147,9 +151,9 @@ as_tag_to_string (AsTag tag)
 	if (tag == AS_TAG_ICON)
 		return "icon";
 	if (tag == AS_TAG_CATEGORIES)
-		return "appcategories";
+		return "categories";
 	if (tag == AS_TAG_CATEGORY)
-		return "appcategory";
+		return "category";
 	if (tag == AS_TAG_KEYWORDS)
 		return "keywords";
 	if (tag == AS_TAG_KEYWORD)
