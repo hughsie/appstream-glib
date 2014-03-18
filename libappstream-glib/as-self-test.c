@@ -292,6 +292,49 @@ ch_test_app_func (void)
 }
 
 static void
+ch_test_app_no_markup_func (void)
+{
+	AsApp *app;
+	GError *error = NULL;
+	GNode *n;
+	GNode *root;
+	GString *xml;
+	gboolean ret;
+	const gchar *src =
+		"<application>"
+		"<id type=\"desktop\">org.gnome.Software.desktop</id>"
+		"<description>Software</description>"
+		"</application>";
+
+	app = as_app_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, -1, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "application");
+	g_assert (n != NULL);
+	ret = as_app_node_parse (app, n, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* verify */
+	g_assert_cmpstr (as_app_get_id_full (app), ==, "org.gnome.Software.desktop");
+	g_assert_cmpstr (as_app_get_description (app, "C"), ==, "Software");
+	as_node_unref (root);
+
+	/* back to node */
+	root = as_node_new ();
+	n = as_app_node_insert (app, root);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert_cmpstr (xml->str, ==, src);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+
+	g_object_unref (app);
+}
+
+static void
 ch_test_node_func (void)
 {
 	GNode *n1;
@@ -602,7 +645,7 @@ ch_test_store_speed_func (void)
 		ret = as_store_from_file (store, file, NULL, NULL, &error);
 		g_assert_no_error (error);
 		g_assert (ret);
-		g_assert_cmpint (as_store_get_apps (store)->len, ==, 1415);
+		g_assert_cmpint (as_store_get_apps (store)->len, >=, 1415);
 		g_assert (as_store_get_app_by_id (store, "org.gnome.Software") != NULL);
 		g_assert (as_store_get_app_by_pkgname (store, "gnome-software") != NULL);
 		g_object_unref (store);
@@ -670,6 +713,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/image", ch_test_image_func);
 	g_test_add_func ("/AppStream/screenshot", ch_test_screenshot_func);
 	g_test_add_func ("/AppStream/app", ch_test_app_func);
+	g_test_add_func ("/AppStream/app{no-markup}", ch_test_app_no_markup_func);
 	g_test_add_func ("/AppStream/app{subsume}", ch_test_app_subsume_func);
 	g_test_add_func ("/AppStream/app{search}", ch_test_app_search_func);
 	g_test_add_func ("/AppStream/node", ch_test_node_func);

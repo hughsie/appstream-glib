@@ -1315,11 +1315,19 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <description> */
 	case AS_TAG_DESCRIPTION:
-		xml = as_node_to_xml (n->children, AS_NODE_TO_XML_FLAG_NONE);
-		as_app_set_description (app,
-					as_node_get_attribute (n, "xml:lang"),
-					xml->str, xml->len);
-		g_string_free (xml, TRUE);
+		if (n->children == NULL) {
+			/* pre-formatted */
+			as_app_set_description (app,
+						as_node_get_attribute (n, "xml:lang"),
+						as_node_get_data (n),
+						-1);
+		} else {
+			xml = as_node_to_xml (n->children, AS_NODE_TO_XML_FLAG_NONE);
+			as_app_set_description (app,
+						as_node_get_attribute (n, "xml:lang"),
+						xml->str, xml->len);
+			g_string_free (xml, TRUE);
+		}
 		break;
 
 	/* <icon> */
