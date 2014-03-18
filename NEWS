@@ -1,1 +1,14 @@
+Version 0.1.0
+~~~~~~~~~~~~~
+Released: 2014-03-18
 
+Notes:
+ - This library provides GObjects and helper methods to make it easy to read and
+   write AppStream metadata.
+
+New Features:
+ - Add and search for applications in an application store
+ - Easily retrieve the best application data for the current locale
+ - Efficiently interface with more heavy-weight parsers like expat
+ - Get screenshot image data and release announcements
+ - Read and write compressed AppStream XML files
