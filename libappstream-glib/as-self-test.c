@@ -526,6 +526,7 @@ ch_test_node_localized_wrap_func (void)
 		" <ul>"
 		"  <li>First</li>"
 		"  <li xml:lang=\"pl\">Pierwszy</li>"
+		"  <li xml:lang=\"en_GB\">Hi</li>"
 		" </ul>"
 		"</description>";
 
@@ -539,11 +540,13 @@ ch_test_node_localized_wrap_func (void)
 	hash = as_node_get_localized_unwrap (n1, &error);
 	g_assert_no_error (error);
 	g_assert (hash != NULL);
-	g_assert_cmpint (g_hash_table_size (hash), ==, 2);
+	g_assert_cmpint (g_hash_table_size (hash), ==, 3);
 	g_assert_cmpstr (g_hash_table_lookup (hash, "C"), ==,
 		"<p>Hi</p><ul><li>First</li></ul>");
 	g_assert_cmpstr (g_hash_table_lookup (hash, "pl"), ==,
 		"<p>Czesc</p><ul><li>Pierwszy</li></ul>");
+	g_assert_cmpstr (g_hash_table_lookup (hash, "en_GB"), ==,
+		"<ul><li>Hi</li></ul>");
 	g_hash_table_unref (hash);
 
 	as_node_unref (root);

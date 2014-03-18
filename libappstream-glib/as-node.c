@@ -1173,18 +1173,17 @@ as_node_get_localized_unwrap (const GNode *node, GError **error)
 			for (tmp_c = tmp->children; tmp_c != NULL; tmp_c = tmp_c->next) {
 				data_c = tmp_c->data;
 
-				/* we can only add local text for languages
-				 * already added in paragraph text */
+				/* handle new locales that have list
+				 * translations but no paragraph translations */
 				str = as_node_denorm_get_str_for_lang (hash,
-								      data_c,
-								      FALSE);
+								       data_c,
+								       FALSE);
 				if (str == NULL) {
-					g_set_error (error,
-						     AS_NODE_ERROR,
-						     AS_NODE_ERROR_FAILED,
-						     "Cannot add locale for <%s>",
-						     data_c->name);
-					goto out;
+					str = as_node_denorm_get_str_for_lang (hash,
+									       data_c,
+									       TRUE);
+					g_string_append_printf (str, "<%s>",
+								data->name);
 				}
 				if (g_strcmp0 (data_c->name, "li") == 0) {
 					as_node_cdata_to_escaped (data_c);
