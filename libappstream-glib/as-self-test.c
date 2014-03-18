@@ -548,6 +548,41 @@ ch_test_app_search_func (void)
 static void
 ch_test_store_func (void)
 {
+	AsApp *app;
+	AsStore *store;
+	GString *xml;
+
+	/* create a store and add a single app */
+	store = as_store_new ();
+	app = as_app_new ();
+	as_app_set_id_full (app, "gnome-software.desktop", -1);
+	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
+	as_store_add_app (store, app);
+	g_object_unref (app);
+
+	/* add and then remove another app */
+	app = as_app_new ();
+	as_app_set_id_full (app, "junk.desktop", -1);
+	as_app_set_id_kind (app, AS_ID_KIND_FONT);
+	as_store_add_app (store, app);
+	g_object_unref (app);
+	as_store_remove_app (store, app);
+
+	/* check string output */
+	xml = as_store_to_xml (store, 0);
+	g_assert_cmpstr (xml->str, ==,
+		"<applications version=\"0.4\">"
+		"<application>"
+		"<id type=\"desktop\">gnome-software.desktop</id>"
+		"</application>"
+		"</applications>");
+	g_object_unref (store);
+	g_string_free (xml, TRUE);
+}
+
+static void
+ch_test_store_speed_func (void)
+{
 	AsStore *store;
 	GError *error = NULL;
 	GFile *file;
@@ -564,7 +599,7 @@ ch_test_store_func (void)
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
 		store = as_store_new ();
-		ret = as_store_parse_file (store, file, NULL, NULL, &error);
+		ret = as_store_from_file (store, file, NULL, NULL, &error);
 		g_assert_no_error (error);
 		g_assert (ret);
 		g_assert_cmpint (as_store_get_apps (store)->len, ==, 1415);
@@ -644,6 +679,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{localized-wrap}", ch_test_node_localized_wrap_func);
 	g_test_add_func ("/AppStream/utils", ch_test_utils_func);
 	g_test_add_func ("/AppStream/store", ch_test_store_func);
+	g_test_add_func ("/AppStream/store{speed}", ch_test_store_speed_func);
 
 	return g_test_run ();
 }

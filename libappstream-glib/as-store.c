@@ -68,7 +68,7 @@ as_store_init (AsStore *store)
 	priv->hash_pkgname = g_hash_table_new_full (g_str_hash,
 						    g_str_equal,
 						    g_free,
-						    NULL);
+						    (GDestroyNotify) g_object_unref);
 }
 
 /**
@@ -157,9 +157,35 @@ as_store_get_app_by_pkgname (AsStore *store, const gchar *pkgname)
 }
 
 /**
- * as_store_add_app:
+ * as_store_remove_app:
+ * @store: a #AsStore instance.
+ * @app: a #AsApp instance.
+ *
+ * Removes an application from the store if it exists.
+ *
+ * Since: 0.1.0
  **/
-static void
+void
+as_store_remove_app (AsStore *store, AsApp *app)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_hash_table_remove (priv->hash_id, as_app_get_id (app));
+	g_ptr_array_remove (priv->array, app);
+}
+
+/**
+ * as_store_add_app:
+ * @store: a #AsStore instance.
+ * @app: a #AsApp instance.
+ *
+ * Adds an application to the store. If a lower priority application has already
+ * been added then this new application will replace it.
+ *
+ * Additionally only applications where the kind is known will be added.
+ *
+ * Since: 0.1.0
+ **/
+void
 as_store_add_app (AsStore *store, AsApp *app)
 {
 	AsApp *item;
@@ -179,7 +205,6 @@ as_store_add_app (AsStore *store, AsApp *app)
 		if (as_app_get_priority (item) >
 		    as_app_get_priority (app)) {
 			g_debug ("ignoring duplicate AppStream entry: %s", id);
-			g_object_unref (app);
 			return;
 		}
 
@@ -194,12 +219,11 @@ as_store_add_app (AsStore *store, AsApp *app)
 	id_kind = as_app_get_id_kind (app);
 	if (id_kind == AS_ID_KIND_UNKNOWN) {
 		g_debug ("No idea how to handle AppStream entry: %s", id);
-		g_object_unref (app);
 		return;
 	}
 
 	/* success, add to array */
-	g_ptr_array_add (priv->array, app);
+	g_ptr_array_add (priv->array, g_object_ref (app));
 	g_hash_table_insert (priv->hash_id,
 			     (gpointer) as_app_get_id (app),
 			     app);
@@ -208,12 +232,12 @@ as_store_add_app (AsStore *store, AsApp *app)
 		pkgname = g_ptr_array_index (pkgnames, i);
 		g_hash_table_insert (priv->hash_pkgname,
 				     g_strdup (pkgname),
-				     app);
+				     g_object_ref (app));
 	}
 }
 
 /**
- * as_store_parse_file:
+ * as_store_from_file:
  * @store: a #AsStore instance.
  * @file: a #GFile.
  * @path_icons: the icon path for the applications, or %NULL.
@@ -227,11 +251,11 @@ as_store_add_app (AsStore *store, AsApp *app)
  * Since: 0.1.0
  **/
 gboolean
-as_store_parse_file (AsStore *store,
-		     GFile *file,
-		     const gchar *path_icons,
-		     GCancellable *cancellable,
-		     GError **error)
+as_store_from_file (AsStore *store,
+		    GFile *file,
+		    const gchar *path_icons,
+		    GCancellable *cancellable,
+		    GError **error)
 {
 	AsApp *app;
 	GNode *apps;
@@ -260,10 +284,105 @@ as_store_parse_file (AsStore *store,
 			goto out;
 		}
 		as_store_add_app (store, app);
+		g_object_unref (app);
 	}
 out:
 	if (root != NULL)
 		as_node_unref (root);
+	return ret;
+}
+
+/**
+ * as_store_to_xml:
+ * @store: a #AsStore instance.
+ * @flags: the AsNodeToXmlFlags, e.g. %AS_NODE_INSERT_FLAG_NONE.
+ *
+ * Outputs an XML representation of all the applications in the store.
+ *
+ * Returns: A #GString
+ *
+ * Since: 0.1.0
+ **/
+GString *
+as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
+{
+	AsApp *app;
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	GNode *node_apps;
+	GNode *node_root;
+	GString *xml;
+	guint i;
+
+	/* get XML text */
+	node_root = as_node_new ();
+	node_apps = as_node_insert (node_root, "applications", NULL, 0,
+				    "version", "0.4",
+				    NULL);
+	for (i = 0; i < priv->array->len; i++) {
+		app = g_ptr_array_index (priv->array, i);
+		as_app_node_insert (app, node_apps);
+	}
+	xml = as_node_to_xml (node_root, flags);
+	as_node_unref (node_root);
+	return xml;
+}
+
+/**
+ * as_store_to_file:
+ * @file: file
+ * @flags: the AsNodeToXmlFlags, e.g. %AS_NODE_INSERT_FLAG_NONE.
+ * @cancellable: A #GCancellable, or %NULL
+ * @error: A #GError or %NULL
+ *
+ * Outputs a compressed XML file of all the applications in the store.
+ *
+ * Returns: A #GString
+ *
+ * Since: 0.1.0
+ **/
+gboolean
+as_store_to_file (AsStore *store,
+		  GFile *file,
+		  AsNodeToXmlFlags flags,
+		  GCancellable *cancellable,
+		  GError **error)
+{
+	GOutputStream *out;
+	GOutputStream *out2;
+	GString *xml;
+	GZlibCompressor *compressor;
+	gboolean ret;
+
+	/* compress as a gzip file */
+	compressor = g_zlib_compressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP, -1);
+	out = g_memory_output_stream_new_resizable ();
+	out2 = g_converter_output_stream_new (out, G_CONVERTER (compressor));
+	xml = as_store_to_xml (store, flags);
+	ret = g_output_stream_write_all (out2, xml->str, xml->len,
+					 NULL, NULL, error);
+	if (!ret)
+		goto out;
+	ret = g_output_stream_close (out2, NULL, error);
+	if (!ret)
+		goto out;
+
+	/* write file */
+	ret = g_file_replace_contents (file,
+		g_memory_output_stream_get_data (G_MEMORY_OUTPUT_STREAM (out)),
+		g_memory_output_stream_get_size (G_MEMORY_OUTPUT_STREAM (out)),
+				       NULL,
+				       FALSE,
+				       G_FILE_CREATE_NONE,
+				       NULL,
+				       cancellable,
+				       error);
+	if (!ret)
+		goto out;
+out:
+	g_object_unref (compressor);
+	g_object_unref (out);
+	g_object_unref (out2);
+	g_string_free (xml, TRUE);
 	return ret;
 }
 

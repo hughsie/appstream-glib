@@ -30,6 +30,7 @@
 #include <gio/gio.h>
 
 #include "as-app.h"
+#include "as-node.h"
 
 #define AS_TYPE_STORE		(as_store_get_type())
 #define AS_STORE(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_STORE, AsStore))
@@ -69,7 +70,7 @@ AsStore		*as_store_new			(void);
 guint		 as_store_get_size		(AsStore	*store);
 
 /* object methods */
-gboolean	 as_store_parse_file		(AsStore	*store,
+gboolean	 as_store_from_file		(AsStore	*store,
 						 GFile		*file,
 						 const gchar	*path_icons,
 						 GCancellable	*cancellable,
@@ -79,6 +80,17 @@ AsApp		*as_store_get_app_by_id		(AsStore	*store,
 						 const gchar	*id);
 AsApp		*as_store_get_app_by_pkgname	(AsStore	*store,
 						 const gchar	*pkgname);
+void		 as_store_add_app		(AsStore	*store,
+						 AsApp		*app);
+void		 as_store_remove_app		(AsStore	*store,
+						 AsApp		*app);
+GString		*as_store_to_xml		(AsStore	*store,
+						 AsNodeToXmlFlags flags);
+gboolean	 as_store_to_file		(AsStore	*store,
+						 GFile		*file,
+						 AsNodeToXmlFlags flags,
+						 GCancellable	*cancellable,
+						 GError		**error);
 
 G_END_DECLS
 
