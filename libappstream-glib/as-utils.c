@@ -19,6 +19,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+/**
+ * SECTION:as-utils
+ * @short_description: Helper functions that are used inside libappstream-glib
+ * @include: appstream-glib.h
+ * @stability: Stable
+ *
+ * These functions are used internally to libappstream-glib, and some may be
+ * useful to user-applications.
+ */
+
 #include "config.h"
 
 #include "as-node.h"
@@ -48,6 +58,7 @@ as_strndup (const gchar *text, gssize text_len)
  * as_markup_convert_simple:
  * @markup: the text to copy.
  * @markup_len: the length of @markup, or -1 if @markup is NULL terminated.
+ * @error: A #GError or %NULL
  *
  * Converts an XML description into a printable form.
  *

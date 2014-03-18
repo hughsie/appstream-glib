@@ -19,6 +19,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+/**
+ * SECTION:as-tag
+ * @short_description: Helper functions to convert to and from tag enums
+ * @include: appstream-glib.h
+ * @stability: Stable
+ *
+ * These functions will convert a tag enum such as %AS_TAG_APPLICATION to
+ * it's string form, and also vice-versa.
+ *
+ * These helper functions may be useful if implementing an AppStream parser.
+ */
+
 #include "config.h"
 
 #include "as-tag.h"
@@ -57,9 +69,9 @@ as_tag_from_string (const gchar *tag)
 	if (g_strcmp0 (tag, "icon") == 0)
 		return AS_TAG_ICON;
 	if (g_strcmp0 (tag, "appcategories") == 0)
-		return AS_TAG_APPCATEGORIES;
+		return AS_TAG_CATEGORIES;
 	if (g_strcmp0 (tag, "appcategory") == 0)
-		return AS_TAG_APPCATEGORY;
+		return AS_TAG_CATEGORY;
 	if (g_strcmp0 (tag, "keywords") == 0)
 		return AS_TAG_KEYWORDS;
 	if (g_strcmp0 (tag, "keyword") == 0)
@@ -70,12 +82,14 @@ as_tag_from_string (const gchar *tag)
 		return AS_TAG_MIMETYPE;
 	if (g_strcmp0 (tag, "project_license") == 0)
 		return AS_TAG_PROJECT_LICENSE;
+	if (g_strcmp0 (tag, "licence") == 0) /* deprecated */
+		return AS_TAG_PROJECT_LICENSE;
 	if (g_strcmp0 (tag, "screenshots") == 0)
 		return AS_TAG_SCREENSHOTS;
 	if (g_strcmp0 (tag, "screenshot") == 0)
 		return AS_TAG_SCREENSHOT;
 	if (g_strcmp0 (tag, "updatecontact") == 0)
-		return AS_TAG_UPDATECONTACT;
+		return AS_TAG_UPDATE_CONTACT;
 	if (g_strcmp0 (tag, "image") == 0)
 		return AS_TAG_IMAGE;
 	if (g_strcmp0 (tag, "compulsory_for_desktop") == 0)
@@ -132,9 +146,9 @@ as_tag_to_string (AsTag tag)
 		return "description";
 	if (tag == AS_TAG_ICON)
 		return "icon";
-	if (tag == AS_TAG_APPCATEGORIES)
+	if (tag == AS_TAG_CATEGORIES)
 		return "appcategories";
-	if (tag == AS_TAG_APPCATEGORY)
+	if (tag == AS_TAG_CATEGORY)
 		return "appcategory";
 	if (tag == AS_TAG_KEYWORDS)
 		return "keywords";
@@ -150,7 +164,7 @@ as_tag_to_string (AsTag tag)
 		return "screenshots";
 	if (tag == AS_TAG_SCREENSHOT)
 		return "screenshot";
-	if (tag == AS_TAG_UPDATECONTACT)
+	if (tag == AS_TAG_UPDATE_CONTACT)
 		return "updatecontact";
 	if (tag == AS_TAG_IMAGE)
 		return "image";

@@ -19,6 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+/**
+ * SECTION:as-enums
+ * @short_description: Helper functions for converting to and from enum strings
+ * @include: appstream-glib.h
+ * @stability: Stable
+ *
+ * These helper functions may be useful if implementing an AppStream parser.
+ */
+
 #include "config.h"
 
 #include "as-enums.h"

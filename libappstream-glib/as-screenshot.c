@@ -19,6 +19,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+/**
+ * SECTION:as-screenshot
+ * @short_description: Object representing a single screenshot
+ * @include: appstream-glib.h
+ * @stability: Stable
+ *
+ * Screenshots have a localized caption and also contain a number of images
+ * of different resolution.
+ *
+ * See also: #AsImage
+ */
+
 #include "config.h"
 
 #include "as-image-private.h"

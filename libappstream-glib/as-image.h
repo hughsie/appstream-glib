@@ -59,6 +59,14 @@ struct _AsImageClass
 	void (*_as_reserved8)	(void);
 };
 
+/**
+ * AsImageKind:
+ * @AS_IMAGE_KIND_UNKNOWN:		Type invalid or not known
+ * @AS_IMAGE_KIND_SOURCE:		The source image at full resolution
+ * @AS_IMAGE_KIND_THUMBNAIL:		A thumbnail at reduced resolution
+ *
+ * The image type.
+ **/
 typedef enum {
 	AS_IMAGE_KIND_UNKNOWN,
 	AS_IMAGE_KIND_SOURCE,

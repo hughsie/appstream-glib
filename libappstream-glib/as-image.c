@@ -19,6 +19,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+/**
+ * SECTION:as-image
+ * @short_description: Object representing a single image used in a screenshot.
+ * @include: appstream-glib.h
+ * @stability: Stable
+ *
+ * Screenshot may have multiple versions of an image in different resolutions
+ * or aspect ratios. This object allows access to the location and size of a
+ * single image.
+ *
+ * See also: #AsScreenshot
+ */
+
 #include "config.h"
 
 #include "as-image-private.h"

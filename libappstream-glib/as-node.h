@@ -32,29 +32,58 @@
 
 G_BEGIN_DECLS
 
+/**
+ * AsNodeToXmlFlags:
+ * @AS_NODE_TO_XML_FLAG_NONE:			No extra flags to use
+ * @AS_NODE_TO_XML_FLAG_ADD_HEADER:		Add an XML header to the data
+ * @AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE:	Split up children with a newline
+ * @AS_NODE_TO_XML_FLAG_FORMAT_INDENT:		Indent the XML by child depth
+ *
+ * The flags for converting to XML.
+ **/
 typedef enum {
-	AS_NODE_TO_XML_FLAG_NONE		= 0,
-	AS_NODE_TO_XML_FLAG_ADD_HEADER		= 1,
-	AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE	= 2,
-	AS_NODE_TO_XML_FLAG_FORMAT_INDENT	= 4,
+	AS_NODE_TO_XML_FLAG_NONE		= 0,	/* Since: 0.1.0 */
+	AS_NODE_TO_XML_FLAG_ADD_HEADER		= 1,	/* Since: 0.1.0 */
+	AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE	= 2,	/* Since: 0.1.0 */
+	AS_NODE_TO_XML_FLAG_FORMAT_INDENT	= 4,	/* Since: 0.1.0 */
 	/*< private >*/
 	AS_NODE_TO_XML_FLAG_LAST
 } AsNodeToXmlFlags;
 
+/**
+ * AsNodeFromXmlFlags:
+ * @AS_NODE_FROM_XML_FLAG_NONE:			No extra flags to use
+ *
+ * The flags for converting from XML.
+ **/
 typedef enum {
-	AS_NODE_FROM_XML_FLAG_NONE		= 0,
+	AS_NODE_FROM_XML_FLAG_NONE		= 0,	/* Since: 0.1.0 */
 	/*< private >*/
 	AS_NODE_FROM_XML_FLAG_LAST
 } AsNodeFromXmlFlags;
 
+/**
+ * AsNodeInsertFlags:
+ * @AS_NODE_INSERT_FLAG_NONE:			No extra flags to use
+ * @AS_NODE_INSERT_FLAG_PRE_ESCAPED:		The data is already XML escaped
+ * @AS_NODE_INSERT_FLAG_SWAPPED:		The name and key should be swapped
+ *
+ * The flags to use when inserting a node.
+ **/
 typedef enum {
-	AS_NODE_INSERT_FLAG_NONE		= 0,	/* 'bar & baz > foo' */
-	AS_NODE_INSERT_FLAG_PRE_ESCAPED		= 1,	/* 'bar &amp; baz &lt; foo' */
-	AS_NODE_INSERT_FLAG_SWAPPED		= 2,
+	AS_NODE_INSERT_FLAG_NONE		= 0,	/* Since: 0.1.0 */
+	AS_NODE_INSERT_FLAG_PRE_ESCAPED		= 1,	/* Since: 0.1.0 */
+	AS_NODE_INSERT_FLAG_SWAPPED		= 2,	/* Since: 0.1.0 */
 	/*< private >*/
 	AS_NODE_INSERT_FLAG_LAST
 } AsNodeInsertFlags;
 
+/**
+ * AsNodeError:
+ * @AS_NODE_ERROR_FAILED:			Generic failure
+ *
+ * The error type.
+ **/
 typedef enum {
 	AS_NODE_ERROR_FAILED,
 	/*< private >*/

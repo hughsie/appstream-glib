@@ -30,30 +30,58 @@
 
 G_BEGIN_DECLS
 
+/**
+ * AsIdKind:
+ * @AS_ID_KIND_UNKNOWN:			Type invalid or not known
+ * @AS_ID_KIND_DESKTOP:			A desktop application
+ * @AS_ID_KIND_FONT:			A font add-on
+ * @AS_ID_KIND_CODEC:			A codec add-on
+ * @AS_ID_KIND_INPUT_METHOD:		A input method add-on
+ * @AS_ID_KIND_WEB_APP:			A web appication
+ * @AS_ID_KIND_SOURCE:			A software source
+ *
+ * The ID type.
+ **/
 typedef enum {
-	AS_ID_KIND_UNKNOWN,
-	AS_ID_KIND_DESKTOP,
-	AS_ID_KIND_FONT,
-	AS_ID_KIND_CODEC,
-	AS_ID_KIND_INPUT_METHOD,
-	AS_ID_KIND_WEB_APP,
-	AS_ID_KIND_SOURCE,
+	AS_ID_KIND_UNKNOWN,		/* Since: 0.1.0 */
+	AS_ID_KIND_DESKTOP,		/* Since: 0.1.0 */
+	AS_ID_KIND_FONT,		/* Since: 0.1.0 */
+	AS_ID_KIND_CODEC,		/* Since: 0.1.0 */
+	AS_ID_KIND_INPUT_METHOD,	/* Since: 0.1.0 */
+	AS_ID_KIND_WEB_APP,		/* Since: 0.1.0 */
+	AS_ID_KIND_SOURCE,		/* Since: 0.1.0 */
 	/*< private >*/
 	AS_ID_KIND_LAST
 } AsIdKind;
 
+/**
+ * AsIconKind:
+ * @AS_ICON_KIND_UNKNOWN:		Type invalid or not known
+ * @AS_ICON_KIND_STOCK:			Stock icon or present in the generic icon theme
+ * @AS_ICON_KIND_CACHED:		An icon shipped with the AppStream metadata
+ * @AS_ICON_KIND_REMOTE:		An icon referenced by a remote URL
+ *
+ * The icon type.
+ **/
 typedef enum {
-	AS_ICON_KIND_UNKNOWN,
-	AS_ICON_KIND_STOCK,
-	AS_ICON_KIND_CACHED,
-	AS_ICON_KIND_REMOTE,
+	AS_ICON_KIND_UNKNOWN,		/* Since: 0.1.0 */
+	AS_ICON_KIND_STOCK,		/* Since: 0.1.0 */
+	AS_ICON_KIND_CACHED,		/* Since: 0.1.0 */
+	AS_ICON_KIND_REMOTE,		/* Since: 0.1.0 */
 	/*< private >*/
 	AS_ICON_KIND_LAST
 } AsIconKind;
 
+/**
+ * AsUrlKind:
+ * @AS_URL_KIND_UNKNOWN:		Type invalid or not known
+ * @AS_URL_KIND_HOMEPAGE:		Application project homepage
+ *
+ * The URL type.
+ **/
 typedef enum {
-	AS_URL_KIND_UNKNOWN,
-	AS_URL_KIND_HOMEPAGE,
+	AS_URL_KIND_UNKNOWN,		/* Since: 0.1.0 */
+	AS_URL_KIND_HOMEPAGE,		/* Since: 0.1.0 */
 	/*< private >*/
 	AS_URL_KIND_LAST
 } AsUrlKind;

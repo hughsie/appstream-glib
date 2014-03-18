@@ -19,6 +19,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+/**
+ * SECTION:as-node
+ * @short_description: A simple DOM parser
+ * @include: appstream-glib.h
+ * @stability: Stable
+ *
+ * These helper functions allow parsing to and from #AsApp's and the AppStream
+ * XML representation. This parser is UTF-8 safe, but not very fast, and parsers
+ * like expat should be used if full XML specification adherence is required.
+ *
+ * See also: #AsApp
+ */
+
 #include "config.h"
 
 #include <glib.h>
@@ -701,6 +714,7 @@ as_node_take_data (const GNode *node)
 /**
  * as_node_get_attribute_as_int:
  * @node: a #GNode
+ * @key: the attribute key
  *
  * Gets a node attribute, e.g. 34
  *
@@ -732,6 +746,7 @@ out:
 /**
  * as_node_get_attribute:
  * @node: a #GNode
+ * @key: the attribute key
  *
  * Gets a node attribute, e.g. "false"
  *
@@ -1102,6 +1117,7 @@ as_node_denorm_get_str_for_lang (GHashTable *hash,
  *
  * Denormalize AppData data like this:
  *
+ * |[
  * <description>
  *  <p>Hi</p>
  *  <p xml:lang="pl">Czesc</p>
@@ -1110,11 +1126,14 @@ as_node_denorm_get_str_for_lang (GHashTable *hash,
  *   <li xml:lang="pl">Pierwszy</li>
  *  </ul>
  * </description>
+ * ]|
  *
  * into a hash that contains:
  *
+ * |[
  * "C"  ->  "<p>Hi</p><ul><li>First</li></ul>"
  * "pl" ->  "<p>Czesc</p><ul><li>Pierwszy</li></ul>"
+ * ]|
  *
  * Returns: (transfer full): a hash table of data
  *

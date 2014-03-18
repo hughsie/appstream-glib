@@ -19,6 +19,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+/**
+ * SECTION:as-app
+ * @short_description: An object for an AppStream application or add-on
+ * @include: appstream-glib.h
+ * @stability: Stable
+ *
+ * This object represents the base object of all AppStream, the application.
+ * Although called #AsApp, this object also represents components like fonts,
+ * codecs and input methods.
+ *
+ * See also: #AsScreenshot, #AsRelease
+ */
+
 #include "config.h"
 
 #include "as-app-private.h"
@@ -1318,7 +1331,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 		break;
 
 	/* <categories> */
-	case AS_TAG_APPCATEGORIES:
+	case AS_TAG_CATEGORIES:
 		g_ptr_array_set_size (priv->categories, 0);
 		for (c = n->children; c != NULL; c = c->next) {
 			if (g_strcmp0 (as_node_get_name (c),
@@ -1582,7 +1595,7 @@ as_app_search_matches (AsApp *app, const gchar *search)
  *
  * Creates a new #AsApp.
  *
- * Returns: (transfer full): a #GsApp
+ * Returns: (transfer full): a #AsApp
  *
  * Since: 0.1.0
  **/

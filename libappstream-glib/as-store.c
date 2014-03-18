@@ -19,6 +19,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+/**
+ * SECTION:as-store
+ * @short_description: a hashed array store of applications
+ * @include: appstream-glib.h
+ * @stability: Stable
+ *
+ * This store contains both an array of #AsApp's but also a pair of hashes
+ * to quickly retrieve an application from the ID or package name.
+ *
+ * Applications can also be removed, and the whole store can be loaded and
+ * saved to a compressed XML file.
+ *
+ * See also: #AsApp
+ */
+
 #include "config.h"
 
 #include "as-app-private.h"
@@ -125,7 +140,7 @@ as_store_get_apps (AsStore *store)
  *
  * Finds an application in the store by ID.
  *
- * Returns: (transfer none): a #GsApp or %NULL
+ * Returns: (transfer none): a #AsApp or %NULL
  *
  * Since: 0.1.0
  **/
@@ -144,7 +159,7 @@ as_store_get_app_by_id (AsStore *store, const gchar *id)
  *
  * Finds an application in the store by package name.
  *
- * Returns: (transfer none): a #GsApp or %NULL
+ * Returns: (transfer none): a #AsApp or %NULL
  *
  * Since: 0.1.0
  **/
@@ -329,6 +344,7 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 
 /**
  * as_store_to_file:
+ * @store: a #AsStore instance.
  * @file: file
  * @flags: the AsNodeToXmlFlags, e.g. %AS_NODE_INSERT_FLAG_NONE.
  * @cancellable: A #GCancellable, or %NULL
