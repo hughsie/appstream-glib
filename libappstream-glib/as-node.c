@@ -408,6 +408,7 @@ as_node_text_cb (GMarkupParseContext *context,
  * as_node_from_xml: (skip)
  * @data: XML data
  * @data_len: Length of @data, or -1 if NULL terminated
+ * @flags: #AsNodeFromXmlFlags, e.g. %AS_NODE_FROM_XML_FLAG_NONE
  * @error: A #GError or %NULL
  *
  * Parses XML data into a DOM tree.
@@ -419,6 +420,7 @@ as_node_text_cb (GMarkupParseContext *context,
 GNode *
 as_node_from_xml (const gchar *data,
 		  gssize data_len,
+		  AsNodeFromXmlFlags flags,
 		  GError **error)
 {
 	GError *error_local = NULL;
@@ -473,6 +475,7 @@ out:
 /**
  * as_node_from_file: (skip)
  * @file: file
+ * @flags: #AsNodeFromXmlFlags, e.g. %AS_NODE_FROM_XML_FLAG_NONE
  * @cancellable: A #GCancellable, or %NULL
  * @error: A #GError or %NULL
  *
@@ -483,7 +486,10 @@ out:
  * Since: 0.1.0
  **/
 GNode *
-as_node_from_file (GFile *file, GCancellable *cancellable, GError **error)
+as_node_from_file (GFile *file,
+		   AsNodeFromXmlFlags flags,
+		   GCancellable *cancellable,
+		   GError **error)
 {
 	GConverter *conv = NULL;
 	GError *error_local = NULL;

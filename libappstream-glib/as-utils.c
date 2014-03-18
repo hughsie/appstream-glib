@@ -76,7 +76,10 @@ as_markup_convert_simple (const gchar *markup,
 	}
 
 	/* load */
-	root = as_node_from_xml (markup, markup_len, error);
+	root = as_node_from_xml (markup,
+				 markup_len,
+				 AS_NODE_FROM_XML_FLAG_NONE,
+				 error);
 	if (root == NULL) {
 		ret = FALSE;
 		goto out;

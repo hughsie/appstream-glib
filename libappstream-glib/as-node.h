@@ -42,6 +42,12 @@ typedef enum {
 } AsNodeToXmlFlags;
 
 typedef enum {
+	AS_NODE_FROM_XML_FLAG_NONE		= 0,
+	/*< private >*/
+	AS_NODE_FROM_XML_FLAG_LAST
+} AsNodeFromXmlFlags;
+
+typedef enum {
 	AS_NODE_INSERT_FLAG_NONE		= 0,	/* 'bar & baz > foo' */
 	AS_NODE_INSERT_FLAG_PRE_ESCAPED		= 1,	/* 'bar &amp; baz &lt; foo' */
 	AS_NODE_INSERT_FLAG_SWAPPED		= 2,
@@ -76,9 +82,11 @@ GString		*as_node_to_xml			(const GNode	*node,
 						 AsNodeToXmlFlags flags);
 GNode		*as_node_from_xml		(const gchar	*data,
 						 gssize		 data_len,
+						 AsNodeFromXmlFlags flags,
 						 GError		**error)
 						 G_GNUC_WARN_UNUSED_RESULT;
 GNode		*as_node_from_file		(GFile		*file,
+						 AsNodeFromXmlFlags flags,
 						 GCancellable	*cancellable,
 						 GError		**error)
 						 G_GNUC_WARN_UNUSED_RESULT;

@@ -45,7 +45,7 @@ ch_test_release_func (void)
 	release = as_release_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, &error);
+	root = as_node_from_xml (src, -1, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "release");
@@ -88,7 +88,7 @@ ch_test_release_desc_func (void)
 	release = as_release_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, &error);
+	root = as_node_from_xml (src, -1, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "release");
@@ -131,7 +131,7 @@ ch_test_image_func (void)
 	image = as_image_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, &error);
+	root = as_node_from_xml (src, -1, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "image");
@@ -178,7 +178,7 @@ ch_test_screenshot_func (void)
 	screenshot = as_screenshot_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, &error);
+	root = as_node_from_xml (src, -1, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "screenshot");
@@ -255,7 +255,7 @@ ch_test_app_func (void)
 	app = as_app_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, &error);
+	root = as_node_from_xml (src, -1, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "application");
@@ -339,17 +339,17 @@ ch_test_node_xml_func (void)
 	GString *xml;
 
 	/* invalid XML */
-	root = as_node_from_xml ("<moo>", -1, &error);
+	root = as_node_from_xml ("<moo>", -1, 0, &error);
 	g_assert (root == NULL);
 	g_assert_error (error, AS_NODE_ERROR, AS_NODE_ERROR_FAILED);
 	g_clear_error (&error);
-	root = as_node_from_xml ("<foo></bar>", -1, &error);
+	root = as_node_from_xml ("<foo></bar>", -1, 0, &error);
 	g_assert (root == NULL);
 	g_assert_error (error, AS_NODE_ERROR, AS_NODE_ERROR_FAILED);
 	g_clear_error (&error);
 
 	/* valid XML */
-	root = as_node_from_xml (valid, -1, &error);
+	root = as_node_from_xml (valid, -1, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 
@@ -482,7 +482,7 @@ ch_test_node_localized_wrap_func (void)
 		" </ul>"
 		"</description>";
 
-	root = as_node_from_xml (xml, -1, &error);
+	root = as_node_from_xml (xml, -1, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 

@@ -241,7 +241,10 @@ as_store_parse_file (AsStore *store,
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
-	root = as_node_from_file (file, cancellable, error);
+	root = as_node_from_file (file,
+				  AS_NODE_FROM_XML_FLAG_NONE,
+				  cancellable,
+				  error);
 	if (root == NULL) {
 		ret = FALSE;
 		goto out;
