@@ -24,7 +24,8 @@ To install the libappstream-glib library you either need to install the
 `libappstream-glib` package from your distributor, or you can build a local
 copy. To do the latter just do:
 
-    dnf install automake autoconf libtool glib-devel
+    dnf install automake autoconf libtool glib-devel \
+                docbook-utils gtk-doc gobject-introspection-devel
     ./autogen.sh
     make
     make install
