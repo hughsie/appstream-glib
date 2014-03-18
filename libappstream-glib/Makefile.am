@@ -24,6 +24,7 @@ libappstream_glib_includedir = $(includedir)/libappstream-glib
 libappstream_glib_include_HEADERS =				\
 	appstream-glib.h					\
 	as-app.h						\
+	as-enums.h						\
 	as-image.h						\
 	as-node.h						\
 	as-release.h						\
@@ -36,6 +37,7 @@ libappstream_glib_include_HEADERS =				\
 libappstream_glib_la_SOURCES =					\
 	as-app.c						\
 	as-app-private.h					\
+	as-enums.c						\
 	as-image.c						\
 	as-image-private.h					\
 	as-node.c						\

@@ -163,7 +163,7 @@ static void
 as_store_add_app (AsStore *store, AsApp *app)
 {
 	AsApp *item;
-	AsAppIdKind id_kind;
+	AsIdKind id_kind;
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	GPtrArray *pkgnames;
 	const gchar *id;
@@ -192,7 +192,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 
 	/* this is a type we don't know how to handle */
 	id_kind = as_app_get_id_kind (app);
-	if (id_kind == AS_APP_ID_KIND_UNKNOWN) {
+	if (id_kind == AS_ID_KIND_UNKNOWN) {
 		g_debug ("No idea how to handle AppStream entry: %s", id);
 		g_object_unref (app);
 		return;

@@ -22,6 +22,7 @@
 #include "config.h"
 
 #include "as-app-private.h"
+#include "as-enums.h"
 #include "as-node-private.h"
 #include "as-release-private.h"
 #include "as-screenshot-private.h"
@@ -31,8 +32,8 @@
 typedef struct _AsAppPrivate	AsAppPrivate;
 struct _AsAppPrivate
 {
-	AsAppIconKind	 icon_kind;
-	AsAppIdKind	 id_kind;
+	AsIconKind	 icon_kind;
+	AsIdKind	 id_kind;
 	GHashTable	*comments;			/* of locale:string */
 	GHashTable	*descriptions;			/* of locale:string */
 	GHashTable	*languages;			/* of locale:string */
@@ -143,142 +144,6 @@ as_app_class_init (AsAppClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	object_class->finalize = as_app_finalize;
-}
-
-/**
- * as_app_id_kind_to_string:
- * @id_kind: the #AsAppIdKind.
- *
- * Converts the enumerated value to an text representation.
- *
- * Returns: string version of @id_kind
- *
- * Since: 0.1.0
- **/
-const gchar *
-as_app_id_kind_to_string (AsAppIdKind id_kind)
-{
-	if (id_kind == AS_APP_ID_KIND_DESKTOP)
-		return "desktop";
-	if (id_kind == AS_APP_ID_KIND_CODEC)
-		return "codec";
-	if (id_kind == AS_APP_ID_KIND_FONT)
-		return "font";
-	if (id_kind == AS_APP_ID_KIND_INPUT_METHOD)
-		return "inputmethod";
-	if (id_kind == AS_APP_ID_KIND_WEB_APP)
-		return "webapp";
-	if (id_kind == AS_APP_ID_KIND_SOURCE)
-		return "source";
-	return "unknown";
-}
-
-/**
- * as_app_id_kind_from_string:
- * @id_kind: the string.
- *
- * Converts the text representation to an enumerated value.
- *
- * Returns: a #AsAppIdKind or %AS_APP_ID_KIND_UNKNOWN for unknown
- *
- * Since: 0.1.0
- **/
-AsAppIdKind
-as_app_id_kind_from_string (const gchar *id_kind)
-{
-	if (g_strcmp0 (id_kind, "desktop") == 0)
-		return AS_APP_ID_KIND_DESKTOP;
-	if (g_strcmp0 (id_kind, "codec") == 0)
-		return AS_APP_ID_KIND_CODEC;
-	if (g_strcmp0 (id_kind, "font") == 0)
-		return AS_APP_ID_KIND_FONT;
-	if (g_strcmp0 (id_kind, "inputmethod") == 0)
-		return AS_APP_ID_KIND_INPUT_METHOD;
-	if (g_strcmp0 (id_kind, "webapp") == 0)
-		return AS_APP_ID_KIND_WEB_APP;
-	if (g_strcmp0 (id_kind, "source") == 0)
-		return AS_APP_ID_KIND_SOURCE;
-	return AS_APP_ID_KIND_UNKNOWN;
-}
-
-/**
- * as_app_icon_kind_to_string:
- * @icon_kind: the @AsAppIconKind.
- *
- * Converts the enumerated value to an text representation.
- *
- * Returns: string version of @icon_kind
- *
- * Since: 0.1.0
- **/
-const gchar *
-as_app_icon_kind_to_string (AsAppIconKind icon_kind)
-{
-	if (icon_kind == AS_APP_ICON_KIND_CACHED)
-		return "cached";
-	if (icon_kind == AS_APP_ICON_KIND_STOCK)
-		return "stock";
-	if (icon_kind == AS_APP_ICON_KIND_REMOTE)
-		return "remote";
-	return "unknown";
-}
-
-/**
- * as_app_icon_kind_from_string:
- * @icon_kind: the string.
- *
- * Converts the text representation to an enumerated value.
- *
- * Returns: a #AsAppIconKind or %AS_APP_ICON_KIND_UNKNOWN for unknown
- *
- * Since: 0.1.0
- **/
-AsAppIconKind
-as_app_icon_kind_from_string (const gchar *icon_kind)
-{
-	if (g_strcmp0 (icon_kind, "cached") == 0)
-		return AS_APP_ICON_KIND_CACHED;
-	if (g_strcmp0 (icon_kind, "stock") == 0)
-		return AS_APP_ICON_KIND_STOCK;
-	if (g_strcmp0 (icon_kind, "remote") == 0)
-		return AS_APP_ICON_KIND_REMOTE;
-	return AS_APP_ICON_KIND_UNKNOWN;
-}
-
-/**
- * as_app_url_kind_to_string:
- * @url_kind: the @AsAppUrlKind.
- *
- * Converts the enumerated value to an text representation.
- *
- * Returns: string version of @url_kind
- *
- * Since: 0.1.0
- **/
-const gchar *
-as_app_url_kind_to_string (AsAppUrlKind url_kind)
-{
-	if (url_kind == AS_APP_URL_KIND_HOMEPAGE)
-		return "homepage";
-	return "unknown";
-}
-
-/**
- * as_app_url_kind_from_string:
- * @url_kind: the string.
- *
- * Converts the text representation to an enumerated value.
- *
- * Returns: a #AsAppUrlKind or %AS_APP_URL_KIND_UNKNOWN for unknown
- *
- * Since: 0.1.0
- **/
-AsAppUrlKind
-as_app_url_kind_from_string (const gchar *url_kind)
-{
-	if (g_strcmp0 (url_kind, "homepage") == 0)
-		return AS_APP_URL_KIND_HOMEPAGE;
-	return AS_APP_URL_KIND_UNKNOWN;
 }
 
 /******************************************************************************/
@@ -446,7 +311,7 @@ as_app_get_pkgnames (AsApp *app)
  *
  * Since: 0.1.0
  **/
-AsAppIdKind
+AsIdKind
 as_app_get_id_kind (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
@@ -463,7 +328,7 @@ as_app_get_id_kind (AsApp *app)
  *
  * Since: 0.1.0
  **/
-AsAppIconKind
+AsIconKind
 as_app_get_icon_kind (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
@@ -616,7 +481,7 @@ as_app_get_languages (AsApp *app)
 /**
  * as_app_get_url_item:
  * @app: a #AsApp instance.
- * @url_kind: the URL kind, e.g. %AS_APP_URL_KIND_HOMEPAGE.
+ * @url_kind: the URL kind, e.g. %AS_URL_KIND_HOMEPAGE.
  *
  * Gets a URL.
  *
@@ -625,11 +490,11 @@ as_app_get_languages (AsApp *app)
  * Since: 0.1.0
  **/
 const gchar *
-as_app_get_url_item (AsApp *app, AsAppUrlKind url_kind)
+as_app_get_url_item (AsApp *app, AsUrlKind url_kind)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return g_hash_table_lookup (priv->urls,
-				    as_app_url_kind_to_string (url_kind));
+				    as_url_kind_to_string (url_kind));
 }
 
 /**
@@ -713,14 +578,14 @@ as_app_set_id_full (AsApp *app, const gchar *id_full, gssize id_full_len)
 /**
  * as_app_set_id_kind:
  * @app: a #AsApp instance.
- * @id_kind: the #AsAppIdKind.
+ * @id_kind: the #AsIdKind.
  *
  * Sets the application kind.
  *
  * Since: 0.1.0
  **/
 void
-as_app_set_id_kind (AsApp *app, AsAppIdKind id_kind)
+as_app_set_id_kind (AsApp *app, AsIdKind id_kind)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->id_kind = id_kind;
@@ -805,14 +670,14 @@ as_app_set_icon_path (AsApp *app, const gchar *icon_path, gssize icon_path_len)
 /**
  * as_app_set_icon_kind:
  * @app: a #AsApp instance.
- * @icon_kind: the #AsAppIconKind.
+ * @icon_kind: the #AsIconKind.
  *
  * Sets the icon kind.
  *
  * Since: 0.1.0
  **/
 void
-as_app_set_icon_kind (AsApp *app, AsAppIconKind icon_kind)
+as_app_set_icon_kind (AsApp *app, AsIconKind icon_kind)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->icon_kind = icon_kind;
@@ -1095,7 +960,7 @@ as_app_add_language (AsApp *app,
 /**
  * as_app_add_url:
  * @app: a #AsApp instance.
- * @url_kind: the URL kind, e.g. %AS_APP_URL_KIND_HOMEPAGE
+ * @url_kind: the URL kind, e.g. %AS_URL_KIND_HOMEPAGE
  * @url: the full URL.
  * @url_len: the size of @url, or -1 if %NULL-terminated.
  *
@@ -1105,13 +970,13 @@ as_app_add_language (AsApp *app,
  **/
 void
 as_app_add_url (AsApp *app,
-		AsAppUrlKind url_kind,
+		AsUrlKind url_kind,
 		const gchar *url,
 		gssize url_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_hash_table_insert (priv->urls,
-			     g_strdup (as_app_url_kind_to_string (url_kind)),
+			     g_strdup (as_url_kind_to_string (url_kind)),
 			     as_strndup (url, url_len));
 }
 
@@ -1263,7 +1128,7 @@ as_app_node_insert (AsApp *app, GNode *parent)
 
 	/* <id> */
 	as_node_insert (node_app, "id", priv->id_full, 0,
-			"type", as_app_id_kind_to_string (priv->id_kind),
+			"type", as_id_kind_to_string (priv->id_kind),
 			NULL);
 
 	/* <priority> */
@@ -1292,7 +1157,7 @@ as_app_node_insert (AsApp *app, GNode *parent)
 	/* <icon> */
 	if (priv->icon != NULL) {
 		as_node_insert (node_app, "icon", priv->icon, 0,
-				"type", as_app_icon_kind_to_string (priv->icon_kind),
+				"type", as_icon_kind_to_string (priv->icon_kind),
 				NULL);
 	}
 
@@ -1400,7 +1265,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	/* <id> */
 	case AS_TAG_ID:
 		tmp = as_node_get_attribute (n, "type");
-		as_app_set_id_kind (app, as_app_id_kind_from_string (tmp));
+		as_app_set_id_kind (app, as_id_kind_from_string (tmp));
 		as_app_set_id_full (app, as_node_get_data (n), -1);
 		break;
 
@@ -1447,7 +1312,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	/* <icon> */
 	case AS_TAG_ICON:
 		tmp = as_node_get_attribute (n, "type");
-		as_app_set_icon_kind (app, as_app_icon_kind_from_string (tmp));
+		as_app_set_icon_kind (app, as_icon_kind_from_string (tmp));
 		g_free (priv->icon);
 		priv->icon = as_node_take_data (n);
 		break;
@@ -1495,7 +1360,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_URL:
 		tmp = as_node_get_attribute (n, "type");
 		as_app_add_url (app,
-				as_app_url_kind_from_string (tmp),
+				as_url_kind_from_string (tmp),
 				as_node_get_data (n), -1);
 		break;
 

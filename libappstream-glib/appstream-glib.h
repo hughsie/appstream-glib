@@ -25,6 +25,7 @@
 #define __APPSTREAM_GLIB_H_INSIDE__
 
 #include <as-app.h>
+#include <as-enums.h>
 #include <as-image.h>
 #include <as-node.h>
 #include <as-release.h>

@@ -24,6 +24,7 @@
 #include <glib.h>
 
 #include "as-app-private.h"
+#include "as-enums.h"
 #include "as-image-private.h"
 #include "as-node-private.h"
 #include "as-release-private.h"
@@ -270,7 +271,7 @@ ch_test_app_func (void)
 	g_assert_cmpstr (as_app_get_name (app, "pl"), ==, "Oprogramowanie");
 	g_assert_cmpstr (as_app_get_comment (app, NULL), ==, "Application manager");
 	g_assert_cmpstr (as_app_get_icon (app), ==, "org.gnome.Software.png");
-	g_assert_cmpint (as_app_get_icon_kind (app), ==, AS_APP_ICON_KIND_CACHED);
+	g_assert_cmpint (as_app_get_icon_kind (app), ==, AS_ICON_KIND_CACHED);
 	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
 	g_assert_cmpstr (as_app_get_project_license (app), ==, "GPLv2+");
 	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);

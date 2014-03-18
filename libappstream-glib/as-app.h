@@ -28,6 +28,7 @@
 
 #include <glib-object.h>
 
+#include "as-enums.h"
 #include "as-release.h"
 #include "as-screenshot.h"
 
@@ -62,48 +63,12 @@ struct _AsAppClass
 	void (*_as_reserved8)	(void);
 };
 
-typedef enum {
-	AS_APP_ICON_KIND_UNKNOWN,
-	AS_APP_ICON_KIND_STOCK,
-	AS_APP_ICON_KIND_CACHED,
-	AS_APP_ICON_KIND_REMOTE,
-	/*< private >*/
-	AS_APP_ICON_KIND_LAST
-} AsAppIconKind;
-
-typedef enum {
-	AS_APP_ID_KIND_UNKNOWN,
-	AS_APP_ID_KIND_DESKTOP,
-	AS_APP_ID_KIND_FONT,
-	AS_APP_ID_KIND_CODEC,
-	AS_APP_ID_KIND_INPUT_METHOD,
-	AS_APP_ID_KIND_WEB_APP,
-	AS_APP_ID_KIND_SOURCE,
-	/*< private >*/
-	AS_APP_ID_KIND_LAST
-} AsAppIdKind;
-
-typedef enum {
-	AS_APP_URL_KIND_UNKNOWN,
-	AS_APP_URL_KIND_HOMEPAGE,
-	/*< private >*/
-	AS_APP_URL_KIND_LAST
-} AsAppUrlKind;
-
 GType		 as_app_get_type		(void);
 AsApp		*as_app_new			(void);
 
-/* helpers */
-const gchar	*as_app_id_kind_to_string	(AsAppIdKind	 id_kind);
-AsAppIdKind	 as_app_id_kind_from_string	(const gchar	*id_kind);
-const gchar	*as_app_icon_kind_to_string	(AsAppIconKind	 icon_kind);
-AsAppIconKind	 as_app_icon_kind_from_string	(const gchar	*icon_kind);
-const gchar	*as_app_url_kind_to_string	(AsAppUrlKind	 url_kind);
-AsAppUrlKind	 as_app_url_kind_from_string	(const gchar	*url_kind);
-
 /* getters */
-AsAppIconKind	 as_app_get_icon_kind		(AsApp		*app);
-AsAppIdKind	 as_app_get_id_kind		(AsApp		*app);
+AsIconKind	 as_app_get_icon_kind		(AsApp		*app);
+AsIdKind	 as_app_get_id_kind		(AsApp		*app);
 GList		*as_app_get_languages		(AsApp		*app);
 GPtrArray	*as_app_get_categories		(AsApp		*app);
 GPtrArray	*as_app_get_compulsory_for_desktops (AsApp	*app);
@@ -130,14 +95,14 @@ gint		 as_app_get_language		(AsApp		*app,
 const gchar	*as_app_get_metadata_item	(AsApp		*app,
 						 const gchar	*key);
 const gchar	*as_app_get_url_item		(AsApp		*app,
-						 AsAppUrlKind	 url_kind);
+						 AsUrlKind	 url_kind);
 
 /* setters */
 void		 as_app_set_id_full		(AsApp		*app,
 						 const gchar	*id_full,
 						 gssize		 id_full_len);
 void		 as_app_set_id_kind		(AsApp		*app,
-						 AsAppIdKind	 id_kind);
+						 AsIdKind	 id_kind);
 void		 as_app_set_project_group	(AsApp		*app,
 						 const gchar	*project_group,
 						 gssize		 project_group_len);
@@ -151,7 +116,7 @@ void		 as_app_set_icon_path		(AsApp		*app,
 						 const gchar	*icon_path,
 						 gssize		 icon_path_len);
 void		 as_app_set_icon_kind		(AsApp		*app,
-						 AsAppIconKind	 icon_kind);
+						 AsIconKind	 icon_kind);
 void		 as_app_set_name		(AsApp		*app,
 						 const gchar	*locale,
 						 const gchar	*name,
@@ -190,7 +155,7 @@ void		 as_app_add_compulsory_for_desktop (AsApp	*app,
 						 const gchar	*compulsory_for_desktop,
 						 gssize		 compulsory_for_desktop_len);
 void		 as_app_add_url			(AsApp		*app,
-						 AsAppUrlKind	 url_kind,
+						 AsUrlKind	 url_kind,
 						 const gchar	*url,
 						 gssize		 url_len);
 void		 as_app_add_metadata		(AsApp		*app,
