@@ -21,10 +21,12 @@
 
 #include "config.h"
 
-#include "as-app.h"
-#include "as-node.h"
+#include "as-app-private.h"
+#include "as-node-private.h"
+#include "as-release-private.h"
+#include "as-screenshot-private.h"
 #include "as-tag.h"
-#include "as-utils.h"
+#include "as-utils-private.h"
 
 typedef struct _AsAppPrivate	AsAppPrivate;
 struct _AsAppPrivate

@@ -19,21 +19,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
+#if !defined (__APPSTREAM_GLIB_PRIVATE_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
 
-#ifndef __AS_UTILS_H
-#define __AS_UTILS_H
+#ifndef __AS_NODE_PRIVATE_H
+#define __AS_NODE_PRIVATE_H
 
-#include <glib.h>
+#include "as-node.h"
 
 G_BEGIN_DECLS
 
-gchar		*as_markup_convert_simple	(const gchar	*markup,
-						 gssize		 markup_len,
-						 GError		**error);
+gchar		*as_node_take_data		(const GNode	*node);
+gint		 as_node_get_attribute_as_int	(const GNode	*node,
+						 const gchar	*key);
 
 G_END_DECLS
 
-#endif /* __AS_UTILS_H */
+#endif /* __AS_NODE_PRIVATE_H */
+

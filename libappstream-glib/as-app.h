@@ -201,11 +201,6 @@ void		 as_app_remove_metadata		(AsApp		*app,
 						 const gchar	*key);
 
 /* object methods */
-GNode		*as_app_node_insert		(AsApp		*app,
-						 GNode		*parent);
-gboolean	 as_app_node_parse		(AsApp		*app,
-						 GNode		*node,
-						 GError		**error);
 void		 as_app_subsume			(AsApp		*app,
 						 AsApp		*donor);
 guint		 as_app_search_matches		(AsApp		*app,

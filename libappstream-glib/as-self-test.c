@@ -23,13 +23,13 @@
 
 #include <glib.h>
 
-#include "as-app.h"
-#include "as-image.h"
-#include "as-node.h"
-#include "as-release.h"
-#include "as-screenshot.h"
+#include "as-app-private.h"
+#include "as-image-private.h"
+#include "as-node-private.h"
+#include "as-release-private.h"
+#include "as-screenshot-private.h"
 #include "as-store.h"
-#include "as-utils.h"
+#include "as-utils-private.h"
 
 static void
 ch_test_release_func (void)

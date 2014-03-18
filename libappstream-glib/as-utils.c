@@ -23,6 +23,7 @@
 
 #include "as-node.h"
 #include "as-utils.h"
+#include "as-utils-private.h"
 
 /**
  * as_strndup:

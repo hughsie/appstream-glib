@@ -35,13 +35,19 @@ libappstream_glib_include_HEADERS =				\
 
 libappstream_glib_la_SOURCES =					\
 	as-app.c						\
+	as-app-private.h					\
 	as-image.c						\
+	as-image-private.h					\
 	as-node.c						\
+	as-node-private.h					\
 	as-release.c						\
+	as-release-private.h					\
 	as-screenshot.c						\
+	as-screenshot-private.h					\
 	as-store.c						\
 	as-tag.c						\
 	as-utils.c						\
+	as-utils-private.h					\
 	as-version.h
 
 CLEANFILES = $(BUILT_SOURCES)

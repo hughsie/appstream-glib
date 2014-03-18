@@ -23,10 +23,10 @@
 
 #include <stdlib.h>
 
-#include "as-node.h"
-#include "as-release.h"
+#include "as-node-private.h"
+#include "as-release-private.h"
 #include "as-tag.h"
-#include "as-utils.h"
+#include "as-utils-private.h"
 
 typedef struct _AsReleasePrivate	AsReleasePrivate;
 struct _AsReleasePrivate

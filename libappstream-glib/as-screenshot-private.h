@@ -19,21 +19,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
+#if !defined (__APPSTREAM_GLIB_PRIVATE_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
 
-#ifndef __AS_UTILS_H
-#define __AS_UTILS_H
+#ifndef __AS_SCREENSHOT_PRIVATE_H
+#define __AS_SCREENSHOT_PRIVATE_H
 
-#include <glib.h>
+#include <glib-object.h>
+
+#include "as-screenshot.h"
 
 G_BEGIN_DECLS
 
-gchar		*as_markup_convert_simple	(const gchar	*markup,
-						 gssize		 markup_len,
+GNode		*as_screenshot_node_insert	(AsScreenshot	*screenshot,
+						 GNode		*parent);
+gboolean	 as_screenshot_node_parse	(AsScreenshot	*screenshot,
+						 GNode		*node,
 						 GError		**error);
 
 G_END_DECLS
 
-#endif /* __AS_UTILS_H */
+#endif /* __AS_SCREENSHOT_PRIVATE_H */

@@ -21,6 +21,7 @@
 
 #include "config.h"
 
+#include "as-app-private.h"
 #include "as-node.h"
 #include "as-store.h"
 

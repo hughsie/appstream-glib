@@ -91,13 +91,6 @@ void		 as_image_set_height		(AsImage	*image,
 void		 as_image_set_kind		(AsImage	*image,
 						 AsImageKind	 kind);
 
-/* object methods */
-GNode		*as_image_node_insert		(AsImage	*image,
-						 GNode		*parent);
-gboolean	 as_image_node_parse		(AsImage	*image,
-						 GNode		*node,
-						 GError		**error);
-
 G_END_DECLS
 
 #endif /* __AS_IMAGE_H */

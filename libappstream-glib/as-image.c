@@ -21,9 +21,9 @@
 
 #include "config.h"
 
-#include "as-image.h"
-#include "as-node.h"
-#include "as-utils.h"
+#include "as-image-private.h"
+#include "as-node-private.h"
+#include "as-utils-private.h"
 
 typedef struct _AsImagePrivate	AsImagePrivate;
 struct _AsImagePrivate

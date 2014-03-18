@@ -79,13 +79,6 @@ void		 as_release_set_description	(AsRelease	*release,
 						 const gchar	*description,
 						 gssize		 description_len);
 
-/* object methods */
-GNode		*as_release_node_insert		(AsRelease	*release,
-						 GNode		*parent);
-gboolean	 as_release_node_parse		(AsRelease	*release,
-						 GNode		*node,
-						 GError		**error);
-
 G_END_DECLS
 
 #endif /* __AS_RELEASE_H */

@@ -21,10 +21,11 @@
 
 #include "config.h"
 
+#include "as-image-private.h"
 #include "as-node.h"
-#include "as-screenshot.h"
+#include "as-screenshot-private.h"
 #include "as-tag.h"
-#include "as-utils.h"
+#include "as-utils-private.h"
 
 typedef struct _AsScreenshotPrivate	AsScreenshotPrivate;
 struct _AsScreenshotPrivate

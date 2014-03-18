@@ -92,13 +92,6 @@ void		 as_screenshot_set_caption	(AsScreenshot	*screenshot,
 void		 as_screenshot_add_image	(AsScreenshot	*screenshot,
 						 AsImage	*image);
 
-/* object methods */
-GNode		*as_screenshot_node_insert	(AsScreenshot	*screenshot,
-						 GNode		*parent);
-gboolean	 as_screenshot_node_parse	(AsScreenshot	*screenshot,
-						 GNode		*node,
-						 GError		**error);
-
 G_END_DECLS
 
 #endif /* __AS_SCREENSHOT_H */
