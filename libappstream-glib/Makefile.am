@@ -103,6 +103,10 @@ typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 CLEANFILES += $(gir_DATA) $(typelib_DATA)
 endif
 
+DISTCLEANFILES =						\
+	*.log							\
+	*.trs
+
 EXTRA_DIST =							\
 	as-version.h.in						\
 	appstream-glib.pc.in

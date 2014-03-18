@@ -5,7 +5,7 @@ SUBDIRS = 						\
 	docs
 
 DISTCLEANFILES =					\
-	appstream-glib-*.tar.gz
+	appstream-glib-*.tar.xz
 
 MAINTAINERCLEANFILES =					\
 	*~						\
@@ -30,7 +30,6 @@ EXTRA_DIST =						\
 	COPYING						\
 	MAINTAINERS					\
 	AUTHORS						\
-	INSTALL						\
 	README.md					\
 	NEWS						\
 	autogen.sh					\
