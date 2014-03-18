@@ -1488,6 +1488,26 @@ out:
 	return ret;
 }
 
+#if !GLIB_CHECK_VERSION(2,39,1)
+/**
+ * as_app_value_tokenize:
+ **/
+static gchar **
+as_app_value_tokenize (const gchar *value)
+{
+	gchar **tmp;
+	gchar **values;
+	guint i;
+	tmp = g_strsplit (value, " ", -1);
+	values = g_new0 (gchar *, g_strv_length (tmp) + 1);
+	for (i = 0; tmp[i] != NULL; i++) {
+		values[i] = g_utf8_strdown (tmp[i], -1);
+	}
+	g_strfreev (tmp);
+	return values;
+}
+#endif
+
 /**
  * as_app_add_tokens:
  **/
@@ -1504,10 +1524,14 @@ as_app_add_tokens (AsApp *app,
 	if (value == NULL)
 		return;
 
-	token_item = g_slice_new (AsAppTokenItem);
+	token_item = g_slice_new0 (AsAppTokenItem);
+#if GLIB_CHECK_VERSION(2,39,1)
 	token_item->values_utf8 = g_str_tokenize_and_fold (value,
 							   locale,
 							   &token_item->values_ascii);
+#else
+	token_item->values_utf8 = as_app_value_tokenize (value);
+#endif
 	token_item->score = score;
 	g_ptr_array_add (priv->token_cache, token_item);
 }
@@ -1562,7 +1586,7 @@ guint
 as_app_search_matches (AsApp *app, const gchar *search)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	AsAppTokenItem *token_item;
+	AsAppTokenItem *item;
 	guint i, j;
 
 	/* nothing to do */
@@ -1577,14 +1601,22 @@ as_app_search_matches (AsApp *app, const gchar *search)
 
 	/* find the search term */
 	for (i = 0; i < priv->token_cache->len; i++) {
-		token_item = g_ptr_array_index (priv->token_cache, i);
-		for (j = 0; token_item->values_utf8[j] != NULL; j++) {
-			if (g_str_has_prefix (token_item->values_utf8[j], search))
-				return token_item->score;
+		item = g_ptr_array_index (priv->token_cache, i);
+
+		/* prefer UTF-8 matches */
+		if (item->values_utf8 != NULL) {
+			for (j = 0; item->values_utf8[j] != NULL; j++) {
+				if (g_str_has_prefix (item->values_utf8[j], search))
+					return item->score;
+			}
 		}
-		for (j = 0; token_item->values_ascii[j] != NULL; j++) {
-			if (g_str_has_prefix (token_item->values_utf8[j], search))
-				return token_item->score / 2;
+
+		/* fall back to ASCII matches */
+		if (item->values_ascii != NULL) {
+			for (j = 0; item->values_ascii[j] != NULL; j++) {
+				if (g_str_has_prefix (item->values_ascii[j], search))
+					return item->score / 2;
+			}
 		}
 	}
 	return 0;
