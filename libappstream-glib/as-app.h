@@ -74,6 +74,7 @@ GPtrArray	*as_app_get_categories		(AsApp		*app);
 GPtrArray	*as_app_get_compulsory_for_desktops (AsApp	*app);
 GPtrArray	*as_app_get_keywords		(AsApp		*app);
 GPtrArray	*as_app_get_pkgnames		(AsApp		*app);
+GPtrArray	*as_app_get_architectures	(AsApp		*app);
 GPtrArray	*as_app_get_releases		(AsApp		*app);
 GPtrArray	*as_app_get_screenshots		(AsApp		*app);
 GHashTable	*as_app_get_urls		(AsApp		*app);
@@ -143,6 +144,9 @@ void		 as_app_add_mimetype		(AsApp		*app,
 void		 as_app_add_pkgname		(AsApp		*app,
 						 const gchar	*pkgname,
 						 gssize		 pkgname_len);
+void		 as_app_add_arch		(AsApp		*app,
+						 const gchar	*arch,
+						 gssize		 arch_len);
 void		 as_app_add_release		(AsApp		*app,
 						 AsRelease	*release);
 void		 as_app_add_screenshot		(AsApp		*app,

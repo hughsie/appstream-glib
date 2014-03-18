@@ -114,6 +114,10 @@ as_tag_from_string (const gchar *tag)
 		return AS_TAG_RELEASES;
 	if (g_strcmp0 (tag, "release") == 0)
 		return AS_TAG_RELEASE;
+	if (g_strcmp0 (tag, "architectures") == 0)
+		return AS_TAG_ARCHITECTURES;
+	if (g_strcmp0 (tag, "arch") == 0)
+		return AS_TAG_ARCH;
 	return AS_TAG_UNKNOWN;
 }
 
@@ -161,6 +165,8 @@ as_tag_to_string (AsTag tag)
 		"value",
 		"releases",
 		"release",
+		"architectures",
+		"arch",
 		NULL };
 	if (tag > AS_TAG_LAST)
 		tag = AS_TAG_LAST;

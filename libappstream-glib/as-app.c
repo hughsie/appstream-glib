@@ -58,6 +58,7 @@ struct _AsAppPrivate
 	GPtrArray	*keywords;			/* of string */
 	GPtrArray	*mimetypes;			/* of string */
 	GPtrArray	*pkgnames;			/* of string */
+	GPtrArray	*architectures;			/* of string */
 	GPtrArray	*releases;			/* of AsRelease */
 	GPtrArray	*screenshots;			/* of AsScreenshot */
 	gchar		*icon;
@@ -107,6 +108,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->keywords);
 	g_ptr_array_unref (priv->mimetypes);
 	g_ptr_array_unref (priv->pkgnames);
+	g_ptr_array_unref (priv->architectures);
 	g_ptr_array_unref (priv->releases);
 	g_ptr_array_unref (priv->screenshots);
 	g_ptr_array_unref (priv->token_cache);
@@ -137,6 +139,7 @@ as_app_init (AsApp *app)
 	priv->keywords = g_ptr_array_new_with_free_func (g_free);
 	priv->mimetypes = g_ptr_array_new_with_free_func (g_free);
 	priv->pkgnames = g_ptr_array_new_with_free_func (g_free);
+	priv->architectures = g_ptr_array_new_with_free_func (g_free);
 	priv->releases = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->screenshots = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->token_cache = g_ptr_array_new_with_free_func ((GDestroyNotify) as_app_token_item_free);
@@ -312,6 +315,24 @@ as_app_get_pkgnames (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->pkgnames;
+}
+
+/**
+ * as_app_get_architectures:
+ * @app: a #AsApp instance.
+ *
+ * Gets the supported architectures for the application, or an empty list
+ * if all architectures are supported.
+ *
+ * Returns: (element-type utf8) (transfer none): an array
+ *
+ * Since: 0.1.1
+ **/
+GPtrArray *
+as_app_get_architectures (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->architectures;
 }
 
 /**
@@ -946,6 +967,25 @@ as_app_add_pkgname (AsApp *app, const gchar *pkgname, gssize pkgname_len)
 }
 
 /**
+ * as_app_add_arch:
+ * @app: a #AsApp instance.
+ * @arch: the package name.
+ * @arch_len: the size of @arch, or -1 if %NULL-terminated.
+ *
+ * Adds a package name to an application.
+ *
+ * Since: 0.1.1
+ **/
+void
+as_app_add_arch (AsApp *app, const gchar *arch, gssize arch_len)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	if (as_app_array_find_string (priv->architectures, arch))
+		return;
+	g_ptr_array_add (priv->architectures, as_strndup (arch, arch_len));
+}
+
+/**
  * as_app_add_language:
  * @app: a #AsApp instance.
  * @percentage: the percentage completion of the translation.
@@ -1183,6 +1223,15 @@ as_app_node_insert (AsApp *app, GNode *parent)
 		}
 	}
 
+	/* <architectures> */
+	if (priv->categories->len > 0) {
+		node_tmp = as_node_insert (node_app, "architectures", NULL, 0, NULL);
+		for (i = 0; i < priv->architectures->len; i++) {
+			tmp = g_ptr_array_index (priv->architectures, i);
+			as_node_insert (node_tmp, "arch", tmp, 0, NULL);
+		}
+	}
+
 	/* <keywords> */
 	if (priv->keywords->len > 0) {
 		node_tmp = as_node_insert (node_app, "keywords", NULL, 0, NULL);
@@ -1348,6 +1397,16 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 		}
 		break;
 
+	/* <architectures> */
+	case AS_TAG_ARCHITECTURES:
+		g_ptr_array_set_size (priv->architectures, 0);
+		for (c = n->children; c != NULL; c = c->next) {
+			if (g_strcmp0 (as_node_get_name (c), "arch") != 0)
+				continue;
+			g_ptr_array_add (priv->architectures, as_node_take_data (c));
+		}
+		break;
+
 	/* <keywords> */
 	case AS_TAG_KEYWORDS:
 		g_ptr_array_set_size (priv->keywords, 0);
@@ -1486,6 +1545,7 @@ as_app_node_parse (AsApp *app, GNode *node, GError **error)
 	/* parse each node */
 	g_ptr_array_set_size (priv->compulsory_for_desktops, 0);
 	g_ptr_array_set_size (priv->pkgnames, 0);
+	g_ptr_array_set_size (priv->architectures, 0);
 	for (n = node->children; n != NULL; n = n->next) {
 		ret = as_app_node_parse_child (app, n, error);
 		if (!ret)
