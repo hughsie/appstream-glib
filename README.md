@@ -14,7 +14,7 @@ What this library allows you to do:
  * Easily retrieve the best application data for the current locale
  * Efficiently interface with more heavy-weight parsers like expat
 
-For more information about what AppStream is, please see the wikie here:
+For more information about what AppStream is, please see the wiki here:
 http://www.freedesktop.org/wiki/Distributions/AppStream/
 
 Getting Started

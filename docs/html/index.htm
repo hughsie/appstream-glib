@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta name="robots" content="index,follow">
+    <link rel="stylesheet" type="text/css" media="all" href="common.css">
+    <title>AppStream-Glib</title>
+  </head>
+  <body>
+    <div class="nav center">
+      <a href="index.htm">Homepage</a>
+      <a href="docs/">Documentation</a>
+      <a href="releases/">Releases</a>
+      <a href="https://github.com/hughsie/appstream-glib">Browse source code</a>
+    </div>
+    <h1>AppStream-Glib</h1>
+    <p>
+      This library provides GObjects and helper methods to make it easy to read and
+      write AppStream metadata. It also provides a simple DOM implementation that
+      makes it easy to edit nodes and convert to and from the standardized XML
+      representation.
+    </p>
+    <p>
+      What this library allows you to do:
+    </p>
+    <ul>
+      <li>Read and write compressed AppStream XML files</li>
+      <li>Add and search for applications in an application store</li>
+      <li>Get screenshot image data and release announcements</li>
+      <li>Easily retrieve the best application data for the current locale</li>
+      <li>Efficiently interface with more heavy-weight parsers like expat</li>
+    </ul>
+    <p>
+      For more information about what AppStream is, please see the
+      <a href="http://www.freedesktop.org/wiki/Distributions/AppStream/">wiki</a>.
+    </p>
+
+    <h2>Getting Started</h2>
+    <p>
+      To install the libappstream-glib library you either need to install the
+      <code>libappstream-glib</code> package from your distributor, or you can build a local
+      copy. To do the latter just do:
+<pre>
+dnf install automake autoconf libtool glib-devel
+./autogen.sh
+make
+make install
+</pre>
+
+    <h2>More Information</h2>
+    <p>
+      If you want to actually generate metadata rather than just consuming it, you
+      probably want to be looking at
+      <a href="https://github.com/hughsie/createrepo_as">createrepo_as</a> or if
+      you're completely lost, GNOME Software is a GUI tool that uses this library to
+      implement a software center. See <code>src/plugins/gs-plugin-appstream.c</code> if you
+      want some more examples on using this library where speed and latency really
+      matter.
+    </p>
+
+    <h2>Hacking</h2>
+    <p>
+      If you want a new feature, or have found a bug or a way to crash this library,
+      please report as much information as you can to the
+      <a href="https://github.com/hughsie/appstream-glib/issues">issue tracker</a>
+      - patches very welcome.
+    </p>
+    <p>
+      New functionality or crash fixes should include a test in `src/as-self-test.c`
+      to ensure we don't regress in the future. New functionality should also be
+      thread safe and also not leak *any* memory for success or failure cases.
+    </p>
+
+    <h2>License</h2>
+    <p>
+      LGPLv2+
+    </p>
+
+    <p class="footer">
+      Copyright <a href="mailto:richard@hughsie.com">Richard Hughes 2007-2014</a><br>
+      <a href="http://validator.w3.org/check/referer">Optimized</a>
+      for <a href="http://www.w3.org/">standards</a>.
+    </p>
+  </body>
+</html>
+
