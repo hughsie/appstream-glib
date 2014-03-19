@@ -30,7 +30,24 @@
 #include "as-release-private.h"
 #include "as-screenshot-private.h"
 #include "as-store.h"
+#include "as-tag.h"
 #include "as-utils-private.h"
+
+static void
+ch_test_tag_func (void)
+{
+	guint i;
+
+	/* simple test */
+	g_assert_cmpstr (as_tag_to_string (AS_TAG_URL), ==, "url");
+	g_assert_cmpstr (as_tag_to_string (AS_TAG_UNKNOWN), ==, "unknown");
+	g_assert_cmpint (as_tag_from_string ("url"), ==, AS_TAG_URL);
+	g_assert_cmpint (as_tag_from_string ("xxx"), ==, AS_TAG_UNKNOWN);
+
+	/* test we can go back and forth */
+	for (i = 0; i < AS_TAG_LAST; i++)
+		g_assert_cmpint (as_tag_from_string (as_tag_to_string (i)), ==, i);
+}
 
 static void
 ch_test_release_func (void)
@@ -714,6 +731,7 @@ main (int argc, char **argv)
 	g_log_set_fatal_mask (NULL, G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL);
 
 	/* tests go here */
+	g_test_add_func ("/AppStream/tag", ch_test_tag_func);
 	g_test_add_func ("/AppStream/release", ch_test_release_func);
 	g_test_add_func ("/AppStream/release{description}", ch_test_release_desc_func);
 	g_test_add_func ("/AppStream/image", ch_test_image_func);
