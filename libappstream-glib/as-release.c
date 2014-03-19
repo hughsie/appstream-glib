@@ -96,7 +96,7 @@ as_release_class_init (AsReleaseClass *klass)
  *
  * Gets the release version.
  *
- * Returns: string
+ * Returns: string, or %NULL for not set or invalid
  *
  * Since: 0.1.0
  **/
@@ -113,7 +113,7 @@ as_release_get_version (AsRelease *release)
  *
  * Gets the release timestamp.
  *
- * Returns: timestamp
+ * Returns: timestamp, or 0 for unset
  *
  * Since: 0.1.0
  **/
@@ -131,7 +131,7 @@ as_release_get_timestamp (AsRelease *release)
  *
  * Gets the release description markup for a given locale.
  *
- * Returns: markup
+ * Returns: markup, or %NULL for not set or invalid
  *
  * Since: 0.1.0
  **/
@@ -139,6 +139,8 @@ const gchar *
 as_release_get_description (AsRelease *release, const gchar *locale)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	if (priv->descriptions == NULL)
+		return NULL;
 	return as_hash_lookup_by_locale (priv->descriptions, locale);
 }
 

@@ -174,6 +174,8 @@ as_hash_lookup_by_locale (GHashTable *hash, const gchar *locale)
 	const gchar *tmp = NULL;
 	guint i;
 
+	g_return_val_if_fail (hash != NULL, NULL);
+
 	/* the user specified a locale */
 	if (locale != NULL) {
 		tmp = g_hash_table_lookup (hash, locale);
