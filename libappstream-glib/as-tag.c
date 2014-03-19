@@ -48,76 +48,20 @@
 AsTag
 as_tag_from_string (const gchar *tag)
 {
-	if (g_strcmp0 (tag, "applications") == 0)
-		return AS_TAG_APPLICATIONS;
-	if (g_strcmp0 (tag, "application") == 0)
-		return AS_TAG_APPLICATION;
-	if (g_strcmp0 (tag, "id") == 0)
-		return AS_TAG_ID;
-	if (g_strcmp0 (tag, "pkgname") == 0)
-		return AS_TAG_PKGNAME;
-	if (g_strcmp0 (tag, "name") == 0)
-		return AS_TAG_NAME;
-	if (g_strcmp0 (tag, "summary") == 0)
-		return AS_TAG_SUMMARY;
-	if (g_strcmp0 (tag, "project_group") == 0)
-		return AS_TAG_PROJECT_GROUP;
-	if (g_strcmp0 (tag, "url") == 0)
-		return AS_TAG_URL;
-	if (g_strcmp0 (tag, "description") == 0)
-		return AS_TAG_DESCRIPTION;
-	if (g_strcmp0 (tag, "icon") == 0)
-		return AS_TAG_ICON;
-	if (g_strcmp0 (tag, "appcategories") == 0) /* deprecated */
-		return AS_TAG_CATEGORIES;
-	if (g_strcmp0 (tag, "categories") == 0)
-		return AS_TAG_CATEGORIES;
-	if (g_strcmp0 (tag, "appcategory") == 0) /* deprecated */
-		return AS_TAG_CATEGORY;
-	if (g_strcmp0 (tag, "category") == 0)
-		return AS_TAG_CATEGORY;
-	if (g_strcmp0 (tag, "keywords") == 0)
-		return AS_TAG_KEYWORDS;
-	if (g_strcmp0 (tag, "keyword") == 0)
-		return AS_TAG_KEYWORD;
-	if (g_strcmp0 (tag, "mimetypes") == 0)
-		return AS_TAG_MIMETYPES;
-	if (g_strcmp0 (tag, "mimetype") == 0)
-		return AS_TAG_MIMETYPE;
-	if (g_strcmp0 (tag, "project_license") == 0)
-		return AS_TAG_PROJECT_LICENSE;
-	if (g_strcmp0 (tag, "licence") == 0) /* deprecated */
-		return AS_TAG_PROJECT_LICENSE;
-	if (g_strcmp0 (tag, "screenshots") == 0)
-		return AS_TAG_SCREENSHOTS;
-	if (g_strcmp0 (tag, "screenshot") == 0)
-		return AS_TAG_SCREENSHOT;
-	if (g_strcmp0 (tag, "updatecontact") == 0)
-		return AS_TAG_UPDATE_CONTACT;
-	if (g_strcmp0 (tag, "image") == 0)
-		return AS_TAG_IMAGE;
-	if (g_strcmp0 (tag, "compulsory_for_desktop") == 0)
-		return AS_TAG_COMPULSORY_FOR_DESKTOP;
-	if (g_strcmp0 (tag, "priority") == 0)
-		return AS_TAG_PRIORITY;
-	if (g_strcmp0 (tag, "caption") == 0)
-		return AS_TAG_CAPTION;
-	if (g_strcmp0 (tag, "languages") == 0)
-		return AS_TAG_LANGUAGES;
-	if (g_strcmp0 (tag, "lang") == 0)
-		return AS_TAG_LANG;
-	if (g_strcmp0 (tag, "metadata") == 0)
-		return AS_TAG_METADATA;
-	if (g_strcmp0 (tag, "value") == 0)
-		return AS_TAG_VALUE;
-	if (g_strcmp0 (tag, "releases") == 0)
-		return AS_TAG_RELEASES;
-	if (g_strcmp0 (tag, "release") == 0)
-		return AS_TAG_RELEASE;
-	if (g_strcmp0 (tag, "architectures") == 0)
-		return AS_TAG_ARCHITECTURES;
-	if (g_strcmp0 (tag, "arch") == 0)
-		return AS_TAG_ARCH;
+	GQuark qtag;
+	guint i;
+	static gboolean done_init = FALSE;
+	static GQuark qenum[AS_TAG_LAST];
+
+	if (!done_init) {
+		for (i = 0; i < AS_TAG_LAST; i++)
+			qenum[i] = g_quark_from_static_string (as_tag_to_string (i));
+		done_init = TRUE;
+	}
+	qtag = g_quark_try_string (tag);
+	for (i = 0; i < AS_TAG_LAST; i++)
+		if (qenum[i] == qtag)
+			return i;
 	return AS_TAG_UNKNOWN;
 }
 
