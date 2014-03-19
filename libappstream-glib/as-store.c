@@ -37,12 +37,13 @@
 #include "config.h"
 
 #include "as-app-private.h"
-#include "as-node.h"
+#include "as-node-private.h"
 #include "as-store.h"
 
 typedef struct _AsStorePrivate	AsStorePrivate;
 struct _AsStorePrivate
 {
+	gchar			*origin;
 	GPtrArray		*array;		/* of AsApp */
 	GHashTable		*hash_id;	/* of AsApp{id} */
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
@@ -61,6 +62,7 @@ as_store_finalize (GObject *object)
 	AsStore *store = AS_STORE (object);
 	AsStorePrivate *priv = GET_PRIVATE (store);
 
+	g_free (priv->origin);
 	g_ptr_array_unref (priv->array);
 	g_hash_table_unref (priv->hash_id);
 	g_hash_table_unref (priv->hash_pkgname);
@@ -255,7 +257,7 @@ as_store_add_app (AsStore *store, AsApp *app)
  * as_store_from_file:
  * @store: a #AsStore instance.
  * @file: a #GFile.
- * @path_icons: the icon path for the applications, or %NULL.
+ * @path_icons: the icon path for the applications, or %NULL for the default.
  * @cancellable: a #GCancellable.
  * @error: A #GError or %NULL.
  *
@@ -276,7 +278,9 @@ as_store_from_file (AsStore *store,
 	GNode *apps;
 	GNode *n;
 	GNode *root;
+	const gchar *origin;
 	gboolean ret = TRUE;
+	gchar *fullpath = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
@@ -289,10 +293,29 @@ as_store_from_file (AsStore *store,
 		goto out;
 	}
 	apps = as_node_find (root, "applications");
+	if (apps == NULL) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_FAILED,
+				     "No valid root node specified");
+		goto out;
+	}
+	if (path_icons == NULL) {
+		origin = as_node_get_attribute (apps, "origin");
+		as_store_set_origin (store, origin);
+		if (origin != NULL) {
+			fullpath = g_build_filename ("/usr/share/app-info/icons/",
+						     origin,
+						     NULL);
+		}
+	} else {
+		fullpath = g_strdup (path_icons);
+	}
 	for (n = apps->children; n != NULL; n = n->next) {
 		app = as_app_new ();
-		if (path_icons != NULL)
-			as_app_set_icon_path (app, path_icons, -1);
+		if (fullpath != NULL)
+			as_app_set_icon_path (app, fullpath, -1);
 		ret = as_app_node_parse (app, n, error);
 		if (!ret) {
 			g_object_unref (app);
@@ -304,6 +327,7 @@ as_store_from_file (AsStore *store,
 out:
 	if (root != NULL)
 		as_node_unref (root);
+	g_free (fullpath);
 	return ret;
 }
 
@@ -333,6 +357,8 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 	node_apps = as_node_insert (node_root, "applications", NULL, 0,
 				    "version", "0.4",
 				    NULL);
+	if (priv->origin != NULL)
+		as_node_add_attribute (node_root, "origin", priv->origin, -1);
 	for (i = 0; i < priv->array->len; i++) {
 		app = g_ptr_array_index (priv->array, i);
 		as_app_node_insert (app, node_apps);
@@ -400,6 +426,40 @@ out:
 	g_object_unref (out2);
 	g_string_free (xml, TRUE);
 	return ret;
+}
+
+/**
+ * as_store_get_origin:
+ * @store: a #AsStore instance.
+ *
+ * Gets the metadata origin, which is used to locate icons.
+ *
+ * Returns: the origin string, or %NULL if unset
+ *
+ * Since: 0.1.1
+ **/
+const gchar *
+as_store_get_origin (AsStore *store)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	return priv->origin;
+}
+
+/**
+ * as_store_set_origin:
+ * @store: a #AsStore instance.
+ * @origin: the origin, e.g. "fedora-21"
+ *
+ * Sets the metadata origin, which is used to locate icons.
+ *
+ * Since: 0.1.1
+ **/
+void
+as_store_set_origin (AsStore *store, const gchar *origin)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_free (priv->origin);
+	priv->origin = g_strdup (origin);
 }
 
 /**

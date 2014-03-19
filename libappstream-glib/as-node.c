@@ -680,6 +680,36 @@ as_node_get_data (const GNode *node)
 }
 
 /**
+ * as_node_set_data: (skip)
+ * @node: a #GNode
+ * @cdata: new data
+ * @cdata_len: length of @data, or -1 if NULL terminated
+ * @insert_flags: any %AsNodeInsertFlags.
+ *
+ * Sets new data on a node.
+ *
+ * Since: 0.1.1
+ **/
+void
+as_node_set_data (GNode *node,
+		  const gchar *cdata,
+		  gssize cdata_len,
+		  AsNodeInsertFlags insert_flags)
+{
+	AsNodeData *data;
+
+	g_return_if_fail (node != NULL);
+
+	if (node->data == NULL)
+		return;
+
+	data = (AsNodeData *) node->data;
+	g_free (data->cdata);
+	data->cdata = as_strndup (cdata, cdata_len);
+	data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
+}
+
+/**
  * as_node_take_data:
  * @node: a #GNode
  *
@@ -763,6 +793,42 @@ as_node_get_attribute (const GNode *node, const gchar *key)
 	if (data->attributes == NULL)
 		return NULL;
 	return g_hash_table_lookup (data->attributes, key);
+}
+
+/**
+ * as_node_add_attribute: (skip)
+ * @node: a #GNode
+ * @key: the attribute key
+ * @value: new data
+ * @value_len: length of @data, or -1 if NULL terminated
+ *
+ * Adds a new attribute to a node.
+ *
+ * Since: 0.1.1
+ **/
+void
+as_node_add_attribute (GNode *node,
+		       const gchar *key,
+		       const gchar *value,
+		       gssize value_len)
+{
+	AsNodeData *data;
+
+	g_return_if_fail (node != NULL);
+	g_return_if_fail (key != NULL);
+
+	if (node->data == NULL)
+		return;
+	data = (AsNodeData *) node->data;
+	if (data->attributes == NULL) {
+		data->attributes = g_hash_table_new_full (g_str_hash,
+							  g_str_equal,
+							  g_free,
+							  g_free);
+	}
+	g_hash_table_insert (data->attributes,
+			     g_strdup (key),
+			     as_strndup (value, value_len));
 }
 
 /**

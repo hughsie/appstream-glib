@@ -22,6 +22,7 @@
 #include "config.h"
 
 #include <glib.h>
+#include <stdlib.h>
 
 #include "as-app-private.h"
 #include "as-enums.h"
@@ -32,6 +33,27 @@
 #include "as-store.h"
 #include "as-tag.h"
 #include "as-utils-private.h"
+
+/**
+ * cd_test_get_filename:
+ **/
+static gchar *
+as_test_get_filename (const gchar *filename)
+{
+	char full_tmp[PATH_MAX];
+	gchar *full = NULL;
+	gchar *path;
+	gchar *tmp;
+
+	path = g_build_filename (TESTDATADIR, filename, NULL);
+	tmp = realpath (path, full_tmp);
+	if (tmp == NULL)
+		goto out;
+	full = g_strdup (full_tmp);
+out:
+	g_free (path);
+	return full;
+}
 
 static void
 ch_test_tag_func (void)
@@ -377,6 +399,12 @@ ch_test_node_func (void)
 	g_assert_cmpstr (as_node_get_data (n2), ==, "hal");
 	g_assert_cmpstr (as_node_get_attribute (n2, "xxx"), ==, NULL);
 
+	/* replace some node data */
+	as_node_set_data (n2, "udev", -1, 0);
+	g_assert_cmpstr (as_node_get_data (n2), ==, "udev");
+	as_node_add_attribute (n2, "enabled", "true", -1);
+	g_assert_cmpstr (as_node_get_attribute (n2, "enabled"), ==, "true");
+
 	/* find the n2 node */
 	n2 = as_node_find (root, "apps/id");
 	g_assert (n2 != NULL);
@@ -625,6 +653,7 @@ ch_test_store_func (void)
 	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
 	as_store_add_app (store, app);
 	g_object_unref (app);
+	g_assert_cmpstr (as_store_get_origin (store), ==, NULL);
 
 	/* add and then remove another app */
 	app = as_app_new ();
@@ -644,6 +673,37 @@ ch_test_store_func (void)
 		"</applications>");
 	g_object_unref (store);
 	g_string_free (xml, TRUE);
+}
+
+static void
+ch_test_store_origin_func (void)
+{
+	AsApp *app;
+	AsStore *store;
+	GError *error = NULL;
+	GFile *file;
+	gboolean ret;
+	gchar *filename;
+
+	/* load a file to the store */
+	store = as_store_new ();
+	filename = as_test_get_filename ("origin.xml");
+	file = g_file_new_for_path (filename);
+	ret = as_store_from_file (store, file, NULL, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* test icon path */
+	g_assert_cmpstr (as_store_get_origin (store), ==, "fedora-21");
+	g_assert_cmpint (as_store_get_size (store), ==, 1);
+	app = as_store_get_app_by_id (store, "test");
+	g_assert (app != NULL);
+	g_assert_cmpstr (as_app_get_icon_path (app), ==,
+		"/usr/share/app-info/icons/fedora-21");
+
+	g_free (filename);
+	g_object_unref (file);
+	g_object_unref (store);
 }
 
 static void
@@ -747,6 +807,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{localized-wrap}", ch_test_node_localized_wrap_func);
 	g_test_add_func ("/AppStream/utils", ch_test_utils_func);
 	g_test_add_func ("/AppStream/store", ch_test_store_func);
+	g_test_add_func ("/AppStream/store{origin}", ch_test_store_origin_func);
 	g_test_add_func ("/AppStream/store{speed}", ch_test_store_speed_func);
 
 	return g_test_run ();

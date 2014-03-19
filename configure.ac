@@ -101,6 +101,8 @@ Makefile
 libappstream-glib/Makefile
 libappstream-glib/appstream-glib.pc
 libappstream-glib/as-version.h
+data/Makefile
+data/tests/Makefile
 docs/Makefile
 docs/api/Makefile
 docs/api/version.xml

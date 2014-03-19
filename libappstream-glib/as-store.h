@@ -91,6 +91,9 @@ gboolean	 as_store_to_file		(AsStore	*store,
 						 AsNodeToXmlFlags flags,
 						 GCancellable	*cancellable,
 						 GError		**error);
+const gchar	*as_store_get_origin		(AsStore	*store);
+void		 as_store_set_origin		(AsStore	*store,
+						 const gchar	*origin);
 
 G_END_DECLS
 

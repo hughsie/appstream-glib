@@ -1,0 +1,5 @@
+<applications origin="fedora-21">
+<application>
+<id type="desktop">test.desktop</id>
+</application>
+</applications>

@@ -11,6 +11,7 @@ AM_CPPFLAGS =							\
 	-I$(top_builddir)/libappstream-glib			\
 	-I.							\
 	-DAS_COMPILATION					\
+	-DTESTDATADIR=\""$(top_srcdir)/data/tests"\"		\
 	-DG_LOG_DOMAIN=\"As\"
 
 pkgconfigdir = $(libdir)/pkgconfig

@@ -31,8 +31,16 @@
 G_BEGIN_DECLS
 
 gchar		*as_node_take_data		(const GNode	*node);
+void		 as_node_set_data		(GNode		*node,
+						 const gchar	*cdata,
+						 gssize		 cdata_len,
+						 AsNodeInsertFlags insert_flags);
 gint		 as_node_get_attribute_as_int	(const GNode	*node,
 						 const gchar	*key);
+void		 as_node_add_attribute		(GNode		*node,
+						 const gchar	*key,
+						 const gchar	*value,
+						 gssize		 value_len);
 
 G_END_DECLS
 
