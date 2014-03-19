@@ -530,17 +530,13 @@ as_node_from_file (GFile *file,
 				  G_FILE_QUERY_INFO_NONE,
 				  cancellable,
 				  error);
-	if (info == NULL) {
-		ret = FALSE;
+	if (info == NULL)
 		goto out;
-	}
 
 	/* decompress if required */
 	file_stream = G_INPUT_STREAM (g_file_read (file, cancellable, error));
-	if (file_stream == NULL) {
-		ret = FALSE;
+	if (file_stream == NULL)
 		goto out;
-	}
 	content_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
 	if (g_strcmp0 (content_type, "application/gzip") == 0 ||
 	    g_strcmp0 (content_type, "application/x-gzip") == 0) {
@@ -549,7 +545,6 @@ as_node_from_file (GFile *file,
 	} else if (g_strcmp0 (content_type, "application/xml") == 0) {
 		stream_data = g_object_ref (file_stream);
 	} else {
-		ret = FALSE;
 		g_set_error (error,
 			     AS_NODE_ERROR,
 			     AS_NODE_ERROR_FAILED,
