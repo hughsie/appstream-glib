@@ -33,7 +33,8 @@
 G_BEGIN_DECLS
 
 GNode		*as_screenshot_node_insert	(AsScreenshot	*screenshot,
-						 GNode		*parent);
+						 GNode		*parent,
+						 gdouble	 api_version);
 gboolean	 as_screenshot_node_parse	(AsScreenshot	*screenshot,
 						 GNode		*node,
 						 GError		**error);

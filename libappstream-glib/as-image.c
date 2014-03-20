@@ -262,6 +262,7 @@ as_image_set_kind (AsImage *image, AsImageKind kind)
  * as_image_node_insert: (skip)
  * @image: a #AsImage instance.
  * @parent: the parent #GNode to use..
+ * @api_version: the AppStream API version
  *
  * Inserts the image into the DOM tree.
  *
@@ -270,7 +271,7 @@ as_image_set_kind (AsImage *image, AsImageKind kind)
  * Since: 0.1.0
  **/
 GNode *
-as_image_node_insert (AsImage *image, GNode *parent)
+as_image_node_insert (AsImage *image, GNode *parent, gdouble api_version)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	GNode *n;

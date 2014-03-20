@@ -214,15 +214,16 @@ as_release_set_description (AsRelease *release,
  * as_release_node_insert: (skip)
  * @release: a #AsRelease instance.
  * @parent: the parent #GNode to use..
+ * @api_version: the AppStream API version
  *
  * Inserts the release into the DOM tree.
  *
  * Returns: (transfer full): A populated #GNode
  *
- * Since: 0.1.0
+ * Since: 0.1.1
  **/
 GNode *
-as_release_node_insert (AsRelease *release, GNode *parent)
+as_release_node_insert (AsRelease *release, GNode *parent, gdouble api_version)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	GNode *n;
@@ -235,7 +236,7 @@ as_release_node_insert (AsRelease *release, GNode *parent)
 			    "timestamp", timestamp_str,
 			    "version", priv->version,
 			    NULL);
-	if (priv->descriptions != NULL) {
+	if (priv->descriptions != NULL && api_version >= 0.6) {
 		as_node_insert_localized (n, "description", priv->descriptions,
 					  AS_NODE_INSERT_FLAG_PRE_ESCAPED);
 	}

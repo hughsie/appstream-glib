@@ -1159,6 +1159,7 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
  * as_app_node_insert: (skip)
  * @app: a #AsApp instance.
  * @parent: the parent #GNode to use..
+ * @api_version: the AppStream API version
  *
  * Inserts the application into the DOM tree.
  *
@@ -1167,7 +1168,7 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
  * Since: 0.1.0
  **/
 GNode *
-as_app_node_insert (AsApp *app, GNode *parent)
+as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsRelease *rel;
@@ -1177,12 +1178,23 @@ as_app_node_insert (AsApp *app, GNode *parent)
 	const gchar *tmp;
 	guint i;
 
-	node_app = as_node_insert (parent, "application", NULL, 0, NULL);
+	/* <component> or <application> */
+	if (api_version >= 0.6) {
+		node_app = as_node_insert (parent, "component", NULL, 0,
+					   "type", as_id_kind_to_string (priv->id_kind),
+					   NULL);
+	} else {
+		node_app = as_node_insert (parent, "application", NULL, 0, NULL);
+	}
 
 	/* <id> */
-	as_node_insert (node_app, "id", priv->id_full, 0,
-			"type", as_id_kind_to_string (priv->id_kind),
-			NULL);
+	node_tmp = as_node_insert (node_app, "id", priv->id_full, 0, NULL);
+	if (api_version < 0.6) {
+		as_node_add_attribute (node_tmp,
+				       "type",
+				       as_id_kind_to_string (priv->id_kind),
+				       -1);
+	}
 
 	/* <priority> */
 	if (priv->priority != 0) {
@@ -1204,8 +1216,13 @@ as_app_node_insert (AsApp *app, GNode *parent)
 	as_node_insert_localized (node_app, "summary", priv->comments, 0);
 
 	/* <description> */
-	as_node_insert_localized (node_app, "description", priv->descriptions,
-				  AS_NODE_INSERT_FLAG_PRE_ESCAPED);
+	if (api_version < 0.6) {
+		as_node_insert_localized (node_app, "description", priv->descriptions,
+					  AS_NODE_INSERT_FLAG_NO_MARKUP);
+	} else {
+		as_node_insert_localized (node_app, "description", priv->descriptions,
+					  AS_NODE_INSERT_FLAG_PRE_ESCAPED);
+	}
 
 	/* <icon> */
 	if (priv->icon != NULL) {
@@ -1215,16 +1232,26 @@ as_app_node_insert (AsApp *app, GNode *parent)
 	}
 
 	/* <categories> */
-	if (priv->categories->len > 0) {
-		node_tmp = as_node_insert (node_app, "categories", NULL, 0, NULL);
-		for (i = 0; i < priv->categories->len; i++) {
-			tmp = g_ptr_array_index (priv->categories, i);
-			as_node_insert (node_tmp, "category", tmp, 0, NULL);
+	if (api_version >= 0.5) {
+		if (priv->categories->len > 0) {
+			node_tmp = as_node_insert (node_app, "categories", NULL, 0, NULL);
+			for (i = 0; i < priv->categories->len; i++) {
+				tmp = g_ptr_array_index (priv->categories, i);
+				as_node_insert (node_tmp, "category", tmp, 0, NULL);
+			}
+		}
+	} else {
+		if (priv->categories->len > 0) {
+			node_tmp = as_node_insert (node_app, "appcategories", NULL, 0, NULL);
+			for (i = 0; i < priv->categories->len; i++) {
+				tmp = g_ptr_array_index (priv->categories, i);
+				as_node_insert (node_tmp, "appcategory", tmp, 0, NULL);
+			}
 		}
 	}
 
 	/* <architectures> */
-	if (priv->categories->len > 0) {
+	if (priv->architectures->len > 0 && api_version >= 0.6) {
 		node_tmp = as_node_insert (node_app, "architectures", NULL, 0, NULL);
 		for (i = 0; i < priv->architectures->len; i++) {
 			tmp = g_ptr_array_index (priv->architectures, i);
@@ -1250,23 +1277,28 @@ as_app_node_insert (AsApp *app, GNode *parent)
 		}
 	}
 
-	/* <project_license> */
+	/* <project_license> or <licence> */
 	if (priv->project_license != NULL) {
-		as_node_insert (node_app, "project_license",
-				priv->project_license, 0, NULL);
+		if (api_version >= 0.4) {
+			as_node_insert (node_app, "project_license",
+					priv->project_license, 0, NULL);
+		} else {
+			as_node_insert (node_app, "licence",
+					priv->project_license, 0, NULL);
+		}
 	}
 
 	/* <url> */
 	as_node_insert_hash (node_app, "url", "type", priv->urls, 0);
 
 	/* <project_group> */
-	if (priv->project_group != NULL) {
+	if (priv->project_group != NULL && api_version >= 0.4) {
 		as_node_insert (node_app, "project_group",
 				priv->project_group, 0, NULL);
 	}
 
 	/* <compulsory_for_desktop> */
-	if (priv->compulsory_for_desktops != NULL) {
+	if (priv->compulsory_for_desktops != NULL && api_version >= 0.4) {
 		for (i = 0; i < priv->compulsory_for_desktops->len; i++) {
 			tmp = g_ptr_array_index (priv->compulsory_for_desktops, i);
 			as_node_insert (node_app, "compulsory_for_desktop",
@@ -1275,25 +1307,25 @@ as_app_node_insert (AsApp *app, GNode *parent)
 	}
 
 	/* <screenshots> */
-	if (priv->screenshots->len > 0) {
+	if (priv->screenshots->len > 0 && api_version >= 0.4) {
 		node_tmp = as_node_insert (node_app, "screenshots", NULL, 0, NULL);
 		for (i = 0; i < priv->screenshots->len; i++) {
 			ss = g_ptr_array_index (priv->screenshots, i);
-			as_screenshot_node_insert (ss, node_tmp);
+			as_screenshot_node_insert (ss, node_tmp, api_version);
 		}
 	}
 
 	/* <releases> */
-	if (priv->releases->len > 0) {
+	if (priv->releases->len > 0 && api_version >= 0.6) {
 		node_tmp = as_node_insert (node_app, "releases", NULL, 0, NULL);
 		for (i = 0; i < priv->releases->len && i < 3; i++) {
 			rel = g_ptr_array_index (priv->releases, i);
-			as_release_node_insert (rel, node_tmp);
+			as_release_node_insert (rel, node_tmp, api_version);
 		}
 	}
 
 	/* <languages> */
-	if (g_hash_table_size (priv->languages) > 0)
+	if (g_hash_table_size (priv->languages) > 0 && api_version >= 0.4)
 		as_app_node_insert_languages (app, node_app);
 
 	/* <metadata> */
@@ -1327,7 +1359,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	/* <id> */
 	case AS_TAG_ID:
 		tmp = as_node_get_attribute (n, "type");
-		as_app_set_id_kind (app, as_id_kind_from_string (tmp));
+		if (tmp != NULL)
+			as_app_set_id_kind (app, as_id_kind_from_string (tmp));
 		as_app_set_id_full (app, as_node_get_data (n), -1);
 		break;
 
@@ -1391,7 +1424,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_CATEGORIES:
 		g_ptr_array_set_size (priv->categories, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			if (g_strcmp0 (as_node_get_name (c), "category") != 0)
+			if (g_strcmp0 (as_node_get_name (c), "category") != 0 &&
+			    g_strcmp0 (as_node_get_name (c), "appcategory") != 0)
 				continue;
 			g_ptr_array_add (priv->categories, as_node_take_data (c));
 		}
@@ -1540,7 +1574,15 @@ as_app_node_parse (AsApp *app, GNode *node, GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	GNode *n;
+	const gchar *tmp;
 	gboolean ret = TRUE;
+
+	/* new style */
+	if (g_strcmp0 (as_node_get_name (node), "component") == 0) {
+		tmp = as_node_get_attribute (node, "type");
+		if (tmp != NULL)
+			as_app_set_id_kind (app, as_id_kind_from_string (tmp));
+	}
 
 	/* parse each node */
 	g_ptr_array_set_size (priv->compulsory_for_desktops, 0);

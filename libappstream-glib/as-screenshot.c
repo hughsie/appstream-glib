@@ -242,15 +242,18 @@ as_screenshot_set_caption (AsScreenshot *screenshot,
  * as_screenshot_node_insert: (skip)
  * @screenshot: a #AsScreenshot instance.
  * @parent: the parent #GNode to use..
+ * @api_version: the AppStream API version
  *
  * Inserts the screenshot into the DOM tree.
  *
  * Returns: (transfer full): A populated #GNode
  *
- * Since: 0.1.0
+ * Since: 0.1.1
  **/
 GNode *
-as_screenshot_node_insert (AsScreenshot *screenshot, GNode *parent)
+as_screenshot_node_insert (AsScreenshot *screenshot,
+			   GNode *parent,
+			   gdouble api_version)
 {
 	AsImage *image;
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
@@ -261,10 +264,11 @@ as_screenshot_node_insert (AsScreenshot *screenshot, GNode *parent)
 			    AS_NODE_INSERT_FLAG_NONE,
 			    "type", as_screenshot_kind_to_string (priv->kind),
 			    NULL);
-	as_node_insert_localized (n, "caption", priv->captions, 0);
+	if (api_version >= 0.5)
+		as_node_insert_localized (n, "caption", priv->captions, 0);
 	for (i = 0; i < priv->images->len; i++) {
 		image = g_ptr_array_index (priv->images, i);
-		as_image_node_insert (image, n);
+		as_image_node_insert (image, n, api_version);
 	}
 	return n;
 }

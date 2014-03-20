@@ -70,6 +70,10 @@ as_tag_from_string (const gchar *tag)
 		return AS_TAG_CATEGORY;
 	if (g_strcmp0 (tag, "licence") == 0)
 		return AS_TAG_PROJECT_LICENSE;
+	if (g_strcmp0 (tag, "applications") == 0)
+		return AS_TAG_APPLICATIONS;
+	if (g_strcmp0 (tag, "application") == 0)
+		return AS_TAG_APPLICATION;
 
 	return AS_TAG_UNKNOWN;
 }
@@ -89,8 +93,8 @@ as_tag_to_string (AsTag tag)
 {
 	const gchar *str[] = {
 		"unknown",
-		"applications",
-		"application",
+		"components",
+		"component",
 		"id",
 		"pkgname",
 		"name",

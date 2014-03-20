@@ -104,7 +104,7 @@ ch_test_release_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_release_node_insert (release, root);
+	n = as_release_node_insert (release, root, 0.4);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);
@@ -149,7 +149,7 @@ ch_test_release_desc_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_release_node_insert (release, root);
+	n = as_release_node_insert (release, root, 0.6);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);
@@ -192,7 +192,7 @@ ch_test_image_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_image_node_insert (image, root);
+	n = as_image_node_insert (image, root, 0.4);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);
@@ -239,7 +239,7 @@ ch_test_screenshot_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_screenshot_node_insert (screenshot, root);
+	n = as_screenshot_node_insert (screenshot, root, 0.6);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);
@@ -258,8 +258,8 @@ ch_test_app_func (void)
 	GString *xml;
 	gboolean ret;
 	const gchar *src =
-		"<application>"
-		"<id type=\"desktop\">org.gnome.Software.desktop</id>"
+		"<component type=\"desktop\">"
+		"<id>org.gnome.Software.desktop</id>"
 		"<priority>-4</priority>"
 		"<pkgname>gnome-software</pkgname>"
 		"<name>Software</name>"
@@ -296,7 +296,7 @@ ch_test_app_func (void)
 		"<metadata>"
 		"<value key=\"X-Kudo-GTK3\"/>"
 		"</metadata>"
-		"</application>";
+		"</component>";
 
 	app = as_app_new ();
 
@@ -304,7 +304,7 @@ ch_test_app_func (void)
 	root = as_node_from_xml (src, -1, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
-	n = as_node_find (root, "application");
+	n = as_node_find (root, "component");
 	g_assert (n != NULL);
 	ret = as_app_node_parse (app, n, &error);
 	g_assert_no_error (error);
@@ -327,7 +327,7 @@ ch_test_app_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_app_node_insert (app, root);
+	n = as_app_node_insert (app, root, 0.6);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);
@@ -370,7 +370,7 @@ ch_test_app_no_markup_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_app_node_insert (app, root);
+	n = as_app_node_insert (app, root, 0.4);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);
@@ -651,6 +651,8 @@ ch_test_store_func (void)
 
 	/* create a store and add a single app */
 	store = as_store_new ();
+	g_assert_cmpfloat (as_store_get_api_version (store), <, 1.f);
+	g_assert_cmpfloat (as_store_get_api_version (store), >, 0.f);
 	app = as_app_new ();
 	as_app_set_id_full (app, "gnome-software.desktop", -1);
 	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
@@ -667,6 +669,7 @@ ch_test_store_func (void)
 	as_store_remove_app (store, app);
 
 	/* check string output */
+	as_store_set_api_version (store, 0.4);
 	xml = as_store_to_xml (store, 0);
 	g_assert_cmpstr (xml->str, ==,
 		"<applications version=\"0.4\">"
@@ -676,6 +679,92 @@ ch_test_store_func (void)
 		"</applications>");
 	g_object_unref (store);
 	g_string_free (xml, TRUE);
+}
+
+static void
+ch_test_store_versions_func (void)
+{
+	AsStore *store;
+	GError *error = NULL;
+	gboolean ret;
+	GString *str;
+
+	/* load a file to the store */
+	store = as_store_new ();
+	ret = as_store_from_xml (store,
+		"<applications version=\"0.4\">"
+		"<application>"
+		"<id type=\"desktop\">test.desktop</id>"
+		"<description><p>Hello world</p></description>"
+		"<architectures><arch>i386</arch></architectures>"
+		"<releases>"
+		"<release version=\"0.1.2\" timestamp=\"123\">"
+		"<description><p>Hello</p></description>"
+		"</release>"
+		"</releases>"
+		"</application>"
+		"</applications>", -1, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpfloat (as_store_get_api_version (store), <, 0.4 + 0.01);
+	g_assert_cmpfloat (as_store_get_api_version (store), >, 0.4 - 0.01);
+
+	/* test with latest features */
+	as_store_set_api_version (store, 0.6);
+	g_assert_cmpfloat (as_store_get_api_version (store), <, 0.6 + 0.01);
+	g_assert_cmpfloat (as_store_get_api_version (store), >, 0.6 - 0.01);
+	str = as_store_to_xml (store, 0);
+	g_assert_cmpstr (str->str, ==,
+		"<components version=\"0.6\">"
+		"<component type=\"desktop\">"
+		"<id>test.desktop</id>"
+		"<description><p>Hello world</p></description>"
+		"<architectures><arch>i386</arch></architectures>"
+		"<releases>"
+		"<release version=\"0.1.2\" timestamp=\"123\">"
+		"<description><p>Hello</p></description>"
+		"</release>"
+		"</releases>"
+		"</component>"
+		"</components>");
+	g_string_free (str, TRUE);
+
+	/* test with legacy options */
+	as_store_set_api_version (store, 0.3);
+	str = as_store_to_xml (store, 0);
+	g_assert_cmpstr (str->str, ==,
+		"<applications version=\"0.3\">"
+		"<application>"
+		"<id type=\"desktop\">test.desktop</id>"
+		"<description>Hello world</description>"
+		"</application>"
+		"</applications>");
+	g_string_free (str, TRUE);
+
+	g_object_unref (store);
+
+	/* load a version 0.6 file to the store */
+	store = as_store_new ();
+	ret = as_store_from_xml (store,
+		"<components version=\"0.6\">"
+		"<component type=\"desktop\">"
+		"<id>test.desktop</id>"
+		"</component>"
+		"</components>", -1, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* test latest spec version */
+	str = as_store_to_xml (store, 0);
+	g_assert_cmpstr (str->str, ==,
+		"<components version=\"0.6\">"
+		"<component type=\"desktop\">"
+		"<id>test.desktop</id>"
+		"</component>"
+		"</components>");
+	g_string_free (str, TRUE);
+
+	g_object_unref (store);
 }
 
 static void
@@ -810,6 +899,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{localized-wrap}", ch_test_node_localized_wrap_func);
 	g_test_add_func ("/AppStream/utils", ch_test_utils_func);
 	g_test_add_func ("/AppStream/store", ch_test_store_func);
+	g_test_add_func ("/AppStream/store{versions}", ch_test_store_versions_func);
 	g_test_add_func ("/AppStream/store{origin}", ch_test_store_origin_func);
 	g_test_add_func ("/AppStream/store{speed}", ch_test_store_speed_func);
 

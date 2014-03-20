@@ -31,7 +31,8 @@
 G_BEGIN_DECLS
 
 GNode		*as_image_node_insert		(AsImage	*image,
-						 GNode		*parent);
+						 GNode		*parent,
+						 gdouble	 api_version);
 gboolean	 as_image_node_parse		(AsImage	*image,
 						 GNode		*node,
 						 GError		**error);

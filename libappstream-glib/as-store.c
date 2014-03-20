@@ -39,11 +39,15 @@
 #include "as-app-private.h"
 #include "as-node-private.h"
 #include "as-store.h"
+#include "as-utils-private.h"
+
+#define AS_API_VERSION_NEWEST	0.6
 
 typedef struct _AsStorePrivate	AsStorePrivate;
 struct _AsStorePrivate
 {
 	gchar			*origin;
+	gdouble			 api_version;
 	GPtrArray		*array;		/* of AsApp */
 	GHashTable		*hash_id;	/* of AsApp{id} */
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
@@ -77,6 +81,7 @@ static void
 as_store_init (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	priv->api_version = AS_API_VERSION_NEWEST;
 	priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->hash_id = g_hash_table_new_full (g_str_hash,
 					       g_str_equal,
@@ -433,17 +438,30 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 	GNode *node_root;
 	GString *xml;
 	guint i;
+	gchar version[6];
 
 	/* get XML text */
 	node_root = as_node_new ();
-	node_apps = as_node_insert (node_root, "applications", NULL, 0,
-				    "version", "0.4",
-				    NULL);
+	if (priv->api_version >= 0.6) {
+		node_apps = as_node_insert (node_root, "components", NULL, 0, NULL);
+	} else {
+		node_apps = as_node_insert (node_root, "applications", NULL, 0, NULL);
+	}
+
+	/* set origin attribute */
 	if (priv->origin != NULL)
-		as_node_add_attribute (node_root, "origin", priv->origin, -1);
+		as_node_add_attribute (node_apps, "origin", priv->origin, -1);
+
+	/* set version attribute */
+	if (priv->api_version > 0.1f) {
+		g_ascii_formatd (version, sizeof (version),
+				 "%.1f", priv->api_version);
+		as_node_add_attribute (node_apps, "version", version, -1);
+	}
+
 	for (i = 0; i < priv->array->len; i++) {
 		app = g_ptr_array_index (priv->array, i);
-		as_app_node_insert (app, node_apps);
+		as_app_node_insert (app, node_apps, priv->api_version);
 	}
 	xml = as_node_to_xml (node_root, flags);
 	as_node_unref (node_root);
@@ -542,6 +560,39 @@ as_store_set_origin (AsStore *store, const gchar *origin)
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_free (priv->origin);
 	priv->origin = g_strdup (origin);
+}
+
+/**
+ * as_store_get_api_version:
+ * @store: a #AsStore instance.
+ *
+ * Gets the AppStream API version.
+ *
+ * Returns: the #AsNodeInsertFlags, or 0 if unset
+ *
+ * Since: 0.1.1
+ **/
+gdouble
+as_store_get_api_version (AsStore *store)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	return priv->api_version;
+}
+
+/**
+ * as_store_set_api_version:
+ * @store: a #AsStore instance.
+ * @api_version: the API version
+ *
+ * Sets the AppStream API version.
+ *
+ * Since: 0.1.1
+ **/
+void
+as_store_set_api_version (AsStore *store, gdouble api_version)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	priv->api_version = api_version;
 }
 
 /**

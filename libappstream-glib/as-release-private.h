@@ -31,7 +31,8 @@
 G_BEGIN_DECLS
 
 GNode		*as_release_node_insert		(AsRelease	*release,
-						 GNode		*parent);
+						 GNode		*parent,
+						 gdouble	 api_version);
 gboolean	 as_release_node_parse		(AsRelease	*release,
 						 GNode		*node,
 						 GError		**error);

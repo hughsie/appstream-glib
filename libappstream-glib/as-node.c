@@ -955,8 +955,13 @@ as_node_insert_localized (GNode *parent,
 		value = g_hash_table_lookup (localized, key);
 		data = g_slice_new (AsNodeData);
 		data->name = g_strdup (name);
-		data->cdata = g_strdup (value);
-		data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
+		if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
+			data->cdata = as_markup_convert_simple (value, -1, NULL);
+			data->cdata_escaped = FALSE;
+		} else {
+			data->cdata = g_strdup (value);
+			data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
+		}
 		data->attributes = g_hash_table_new_full (g_str_hash,
 							  g_str_equal,
 							  g_free,

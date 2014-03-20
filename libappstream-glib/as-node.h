@@ -67,6 +67,7 @@ typedef enum {
  * @AS_NODE_INSERT_FLAG_NONE:			No extra flags to use
  * @AS_NODE_INSERT_FLAG_PRE_ESCAPED:		The data is already XML escaped
  * @AS_NODE_INSERT_FLAG_SWAPPED:		The name and key should be swapped
+ * @AS_NODE_INSERT_FLAG_NO_MARKUP:		Preformat the 'description' markup
  *
  * The flags to use when inserting a node.
  **/
@@ -74,6 +75,7 @@ typedef enum {
 	AS_NODE_INSERT_FLAG_NONE		= 0,	/* Since: 0.1.0 */
 	AS_NODE_INSERT_FLAG_PRE_ESCAPED		= 1,	/* Since: 0.1.0 */
 	AS_NODE_INSERT_FLAG_SWAPPED		= 2,	/* Since: 0.1.0 */
+	AS_NODE_INSERT_FLAG_NO_MARKUP		= 4,	/* Since: 0.1.1 */
 	/*< private >*/
 	AS_NODE_INSERT_FLAG_LAST
 } AsNodeInsertFlags;

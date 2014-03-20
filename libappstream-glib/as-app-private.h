@@ -33,7 +33,8 @@
 G_BEGIN_DECLS
 
 GNode		*as_app_node_insert		(AsApp		*app,
-						 GNode		*parent);
+						 GNode		*parent,
+						 gdouble	 api_version);
 gboolean	 as_app_node_parse		(AsApp		*app,
 						 GNode		*node,
 						 GError		**error);
