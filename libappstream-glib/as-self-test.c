@@ -66,6 +66,9 @@ ch_test_tag_func (void)
 	g_assert_cmpint (as_tag_from_string ("url"), ==, AS_TAG_URL);
 	g_assert_cmpint (as_tag_from_string ("xxx"), ==, AS_TAG_UNKNOWN);
 
+	/* deprecated names */
+	g_assert_cmpint (as_tag_from_string ("appcategories"), ==, AS_TAG_CATEGORIES);
+
 	/* test we can go back and forth */
 	for (i = 0; i < AS_TAG_LAST; i++)
 		g_assert_cmpint (as_tag_from_string (as_tag_to_string (i)), ==, i);

@@ -62,6 +62,15 @@ as_tag_from_string (const gchar *tag)
 	for (i = 0; i < AS_TAG_LAST; i++)
 		if (qenum[i] == qtag)
 			return i;
+
+	/* deprecated names */
+	if (g_strcmp0 (tag, "appcategories") == 0)
+		return AS_TAG_CATEGORIES;
+	if (g_strcmp0 (tag, "appcategory") == 0)
+		return AS_TAG_CATEGORY;
+	if (g_strcmp0 (tag, "licence") == 0)
+		return AS_TAG_PROJECT_LICENSE;
+
 	return AS_TAG_UNKNOWN;
 }
 
