@@ -257,11 +257,15 @@ as_store_add_app (AsStore *store, AsApp *app)
  * as_store_from_file:
  * @store: a #AsStore instance.
  * @file: a #GFile.
- * @path_icons: the icon path for the applications, or %NULL for the default.
+ * @icon_root: the icon path, or %NULL for the default.
  * @cancellable: a #GCancellable.
  * @error: A #GError or %NULL.
  *
  * Parses an AppStream XML file and adds any valid applications to the store.
+ *
+ * If the root node does not have a 'origin' attribute, then the method
+ * as_store_set_origin() should be called *before* this function if cached
+ * icons are required.
  *
  * Returns: %TRUE for success
  *
@@ -270,17 +274,18 @@ as_store_add_app (AsStore *store, AsApp *app)
 gboolean
 as_store_from_file (AsStore *store,
 		    GFile *file,
-		    const gchar *path_icons,
+		    const gchar *icon_root,
 		    GCancellable *cancellable,
 		    GError **error)
 {
 	AsApp *app;
+	AsStorePrivate *priv = GET_PRIVATE (store);
 	GNode *apps;
 	GNode *n;
 	GNode *root;
 	const gchar *origin;
 	gboolean ret = TRUE;
-	gchar *fullpath = NULL;
+	gchar *icon_path = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
@@ -301,21 +306,24 @@ as_store_from_file (AsStore *store,
 				     "No valid root node specified");
 		goto out;
 	}
-	if (path_icons == NULL) {
-		origin = as_node_get_attribute (apps, "origin");
+
+	/* set in the XML file */
+	origin = as_node_get_attribute (apps, "origin");
+	if (origin != NULL)
 		as_store_set_origin (store, origin);
-		if (origin != NULL) {
-			fullpath = g_build_filename ("/usr/share/app-info/icons/",
-						     origin,
-						     NULL);
-		}
-	} else {
-		fullpath = g_strdup (path_icons);
+
+	/* if we have an origin either from the XML or _set_origin() */
+	if (priv->origin != NULL) {
+		if (icon_root == NULL)
+			icon_root = "/usr/share/app-info/icons/";
+		icon_path = g_build_filename (icon_root,
+					      priv->origin,
+					      NULL);
 	}
 	for (n = apps->children; n != NULL; n = n->next) {
 		app = as_app_new ();
-		if (fullpath != NULL)
-			as_app_set_icon_path (app, fullpath, -1);
+		if (icon_path != NULL)
+			as_app_set_icon_path (app, icon_path, -1);
 		ret = as_app_node_parse (app, n, error);
 		if (!ret) {
 			g_object_unref (app);
@@ -327,7 +335,7 @@ as_store_from_file (AsStore *store,
 out:
 	if (root != NULL)
 		as_node_unref (root);
-	g_free (fullpath);
+	g_free (icon_path);
 	return ret;
 }
 

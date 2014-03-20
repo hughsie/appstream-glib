@@ -72,7 +72,7 @@ guint		 as_store_get_size		(AsStore	*store);
 /* object methods */
 gboolean	 as_store_from_file		(AsStore	*store,
 						 GFile		*file,
-						 const gchar	*path_icons,
+						 const gchar	*icon_root,
 						 GCancellable	*cancellable,
 						 GError		**error);
 GPtrArray	*as_store_get_apps		(AsStore	*store);
