@@ -147,6 +147,12 @@ as_url_kind_to_string (AsUrlKind url_kind)
 {
 	if (url_kind == AS_URL_KIND_HOMEPAGE)
 		return "homepage";
+	if (url_kind == AS_URL_KIND_BUGTRACKER)
+		return "bugtracker";
+	if (url_kind == AS_URL_KIND_FAQ)
+		return "faq";
+	if (url_kind == AS_URL_KIND_DONATION)
+		return "donation";
 	return "unknown";
 }
 
@@ -165,5 +171,11 @@ as_url_kind_from_string (const gchar *url_kind)
 {
 	if (g_strcmp0 (url_kind, "homepage") == 0)
 		return AS_URL_KIND_HOMEPAGE;
+	if (g_strcmp0 (url_kind, "bugtracker") == 0)
+		return AS_URL_KIND_BUGTRACKER;
+	if (g_strcmp0 (url_kind, "faq") == 0)
+		return AS_URL_KIND_FAQ;
+	if (g_strcmp0 (url_kind, "donation") == 0)
+		return AS_URL_KIND_DONATION;
 	return AS_URL_KIND_UNKNOWN;
 }

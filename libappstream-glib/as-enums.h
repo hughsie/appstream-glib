@@ -76,12 +76,18 @@ typedef enum {
  * AsUrlKind:
  * @AS_URL_KIND_UNKNOWN:		Type invalid or not known
  * @AS_URL_KIND_HOMEPAGE:		Application project homepage
+ * @AS_URL_KIND_BUGTRACKER:		Application bugtracker
+ * @AS_URL_KIND_FAQ:			Application FAQ page
+ * @AS_URL_KIND_DONATION:		Application donation page
  *
  * The URL type.
  **/
 typedef enum {
 	AS_URL_KIND_UNKNOWN,		/* Since: 0.1.0 */
 	AS_URL_KIND_HOMEPAGE,		/* Since: 0.1.0 */
+	AS_URL_KIND_BUGTRACKER,		/* Since: 0.1.1 */
+	AS_URL_KIND_FAQ,		/* Since: 0.1.1 */
+	AS_URL_KIND_DONATION,		/* Since: 0.1.1 */
 	/*< private >*/
 	AS_URL_KIND_LAST
 } AsUrlKind;
