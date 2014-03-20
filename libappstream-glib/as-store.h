@@ -75,6 +75,11 @@ gboolean	 as_store_from_file		(AsStore	*store,
 						 const gchar	*icon_root,
 						 GCancellable	*cancellable,
 						 GError		**error);
+gboolean	 as_store_from_xml		(AsStore	*store,
+						 const gchar	*data,
+						 gssize		 data_len,
+						 const gchar	*icon_root,
+						 GError		**error);
 GPtrArray	*as_store_get_apps		(AsStore	*store);
 AsApp		*as_store_get_app_by_id		(AsStore	*store,
 						 const gchar	*id);
