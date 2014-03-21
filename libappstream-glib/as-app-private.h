@@ -79,6 +79,9 @@ GNode		*as_app_node_insert		(AsApp		*app,
 gboolean	 as_app_node_parse		(AsApp		*app,
 						 GNode		*node,
 						 GError		**error);
+gboolean	 as_app_node_parse_dep11	(AsApp		*app,
+						 GNode		*node,
+						 GError		**error);
 
 G_END_DECLS
 

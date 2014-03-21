@@ -167,6 +167,19 @@ AS_IF([test "x$enable_man" != "xno"],
   [have_manutils=no])
 AM_CONDITIONAL([ENABLE_MAN], [test "x$have_manutils" = "xyes"])
 
+dnl ---------------------------------------------------------------------------
+dnl - Use libyaml for DEP-11 support
+dnl ---------------------------------------------------------------------------
+AC_ARG_ENABLE(dep11, AS_HELP_STRING([--enable-dep11],[enable DEP-11]),
+              enable_dep11=$enableval,enable_dep11=yes)
+AM_CONDITIONAL(HAVE_DEP11, test x$enable_dep11 = xyes)
+if test x$enable_dep11 = xyes; then
+  AC_CHECK_HEADER(yaml.h, [], [AC_MSG_ERROR([No yaml.h])])
+  YAML_LIBS="-lyaml"
+  AC_SUBST(YAML_LIBS)
+  AC_DEFINE(PK_BUILD_DEP11,1,[Build DEP-11 code])
+fi
+
 AC_CONFIG_FILES([
 Makefile
 client/Makefile
@@ -193,5 +206,6 @@ AC_MSG_RESULT([
     datarootdir:             ${datarootdir}
     includedir:              ${includedir}
     lib dir:                 ${libdir}
+    DEP-11 support:          ${enable_dep11}
     Bash completion dir:     ${with_bashcompletiondir}
               ])

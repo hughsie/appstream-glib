@@ -65,7 +65,9 @@ ChangeLog:
 	  echo A git checkout and git-log is required to generate this file >> $@); \
 	fi
 
-DISTCHECK_CONFIGURE_FLAGS = --with-bashcompletiondir=/${prefix}/share/bash-completion/completions
+DISTCHECK_CONFIGURE_FLAGS =				\
+	--enable-dep11					\
+	--with-bashcompletiondir=/${prefix}/share/bash-completion/completions
 
 .PHONY: ChangeLog
 

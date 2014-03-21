@@ -39,6 +39,7 @@
 #include "as-screenshot-private.h"
 #include "as-tag.h"
 #include "as-utils-private.h"
+#include "as-yaml.h"
 
 typedef struct _AsScreenshotPrivate	AsScreenshotPrivate;
 struct _AsScreenshotPrivate
@@ -413,6 +414,56 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 		if (!as_image_node_parse (image, c, error))
 			return FALSE;
 		g_ptr_array_add (priv->images, g_object_ref (image));
+	}
+	return TRUE;
+}
+
+/**
+ * as_screenshot_node_parse_dep11:
+ * @screenshot: a #AsScreenshot instance.
+ * @node: a #GNode.
+ * @error: A #GError or %NULL.
+ *
+ * Populates the object from a DEP-11 node.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.3.0
+ **/
+gboolean
+as_screenshot_node_parse_dep11 (AsScreenshot *ss, GNode *node, GError **error)
+{
+	GNode *c;
+	GNode *n;
+	const gchar *tmp;
+
+	for (n = node->children; n != NULL; n = n->next) {
+		tmp = as_yaml_node_get_key (n);
+		if (g_strcmp0 (tmp, "default") == 0) {
+			if (g_strcmp0 (as_yaml_node_get_value (n), "true") == 0)
+				as_screenshot_set_kind (ss, AS_SCREENSHOT_KIND_DEFAULT);
+			else if (g_strcmp0 (as_yaml_node_get_value (n), "false") == 0)
+				as_screenshot_set_kind (ss, AS_SCREENSHOT_KIND_NORMAL);
+			continue;
+		}
+		if (g_strcmp0 (tmp, "source-image") == 0) {
+			_cleanup_object_unref_ AsImage *im = as_image_new ();
+			as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
+			if (!as_image_node_parse_dep11 (im, n, error))
+				return FALSE;
+			as_screenshot_add_image (ss, im);
+			continue;
+		}
+		if (g_strcmp0 (tmp, "thumbnails") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				_cleanup_object_unref_ AsImage *im = as_image_new ();
+				as_image_set_kind (im, AS_IMAGE_KIND_THUMBNAIL);
+				if (!as_image_node_parse_dep11 (im, c, error))
+					return FALSE;
+				as_screenshot_add_image (ss, im);
+			}
+			continue;
+		}
 	}
 	return TRUE;
 }

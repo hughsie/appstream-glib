@@ -42,6 +42,7 @@
 #include "as-problem.h"
 #include "as-store.h"
 #include "as-utils-private.h"
+#include "as-yaml.h"
 
 #define AS_API_VERSION_NEWEST	0.6
 
@@ -543,6 +544,53 @@ as_store_from_root (AsStore *store,
 }
 
 /**
+ * as_store_load_yaml_file:
+ **/
+static gboolean
+as_store_load_yaml_file (AsStore *store,
+			 GFile *file,
+			 GCancellable *cancellable,
+			 GError **error)
+{
+	GNode *app_n;
+	GNode *n;
+	const gchar *tmp;
+	_cleanup_yaml_unref_ GNode *root = NULL;
+
+	/* load file */
+	root = as_yaml_from_file (file, cancellable, error);
+	if (root == NULL)
+		return FALSE;
+
+	/* get header information */
+	for (n = root->children->children; n != NULL; n = n->next) {
+		tmp = as_yaml_node_get_key (n);
+		if (g_strcmp0 (tmp, "Origin") == 0) {
+			as_store_set_origin (store, as_yaml_node_get_value (n));
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Version") == 0) {
+			if (as_yaml_node_get_value (n) != NULL)
+				as_store_set_api_version (store, g_ascii_strtod (as_yaml_node_get_value (n), NULL));
+			continue;
+		}
+	}
+
+	/* parse applications */
+	for (app_n = root->children->next; app_n != NULL; app_n = app_n->next) {
+		_cleanup_object_unref_ AsApp *app = NULL;
+		if (app_n->children == NULL)
+			continue;
+		app = as_app_new ();
+		if (!as_app_node_parse_dep11 (app, app_n, error))
+			return FALSE;
+		if (as_app_get_id_full (app) != NULL)
+			as_store_add_app (store, app);
+	}
+	return TRUE;
+}
+
+/**
  * as_store_from_file:
  * @store: a #AsStore instance.
  * @file: a #GFile.
@@ -550,7 +598,8 @@ as_store_from_root (AsStore *store,
  * @cancellable: a #GCancellable.
  * @error: A #GError or %NULL.
  *
- * Parses an AppStream XML file and adds any valid applications to the store.
+ * Parses an AppStream XML or DEP-11 YAML file and adds any valid applications
+ * to the store.
  *
  * If the root node does not have a 'origin' attribute, then the method
  * as_store_set_origin() should be called *before* this function if cached
@@ -567,11 +616,18 @@ as_store_from_file (AsStore *store,
 		    GCancellable *cancellable,
 		    GError **error)
 {
+	_cleanup_free_ gchar *filename = NULL;
 	_cleanup_error_free_ GError *error_local = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
+	/* a DEP-11 file */
+	filename = g_file_get_path (file);
+	if (g_strstr_len (filename, -1, ".yml") != NULL)
+		return as_store_load_yaml_file (store, file, cancellable, error);
+
+	/* an AppStream XML file */
 	root = as_node_from_file (file,
 				  AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
 				  cancellable,
@@ -1054,6 +1110,7 @@ as_store_monitor_directory (AsStore *store,
 static gboolean
 as_store_load_app_info (AsStore *store,
 			const gchar *path,
+			const gchar *format,
 			GCancellable *cancellable,
 			GError **error)
 {
@@ -1061,31 +1118,31 @@ as_store_load_app_info (AsStore *store,
 	_cleanup_dir_close_ GDir *dir = NULL;
 	_cleanup_error_free_ GError *error_local = NULL;
 	_cleanup_free_ gchar *icon_root = NULL;
-	_cleanup_free_ gchar *path_xml = NULL;
+	_cleanup_free_ gchar *path_md = NULL;
 
 	/* watch the directory for changes */
 	if (!as_store_monitor_directory (store, path, cancellable, error))
 		return FALSE;
 
 	/* search all files */
-	path_xml = g_build_filename (path, "xmls", NULL);
-	if (!g_file_test (path_xml, G_FILE_TEST_EXISTS))
+	path_md = g_build_filename (path, format, NULL);
+	if (!g_file_test (path_md, G_FILE_TEST_EXISTS))
 		return TRUE;
-	dir = g_dir_open (path_xml, 0, &error_local);
+	dir = g_dir_open (path_md, 0, &error_local);
 	if (dir == NULL) {
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
 			     "Failed to open %s: %s",
-			     path_xml, error_local->message);
+			     path_md, error_local->message);
 		return FALSE;
 	}
 	icon_root = g_build_filename (path, "icons", NULL);
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free_ gchar *filename_xml;
-		filename_xml = g_build_filename (path_xml, tmp, NULL);
+		_cleanup_free_ gchar *filename_md;
+		filename_md = g_build_filename (path_md, tmp, NULL);
 		if (!as_store_load_app_info_file (store,
-						  filename_xml,
+						  filename_md,
 						  icon_root,
 						  cancellable,
 						  error))
@@ -1375,7 +1432,9 @@ as_store_load (AsStore *store,
 		dest = g_build_filename (priv->destdir ? priv->destdir : "/", tmp, NULL);
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 			continue;
-		if (!as_store_load_app_info (store, dest, cancellable, error))
+		if (!as_store_load_app_info (store, dest, "xmls", cancellable, error))
+			return FALSE;
+		if (!as_store_load_app_info (store, dest, "yaml", cancellable, error))
 			return FALSE;
 	}
 

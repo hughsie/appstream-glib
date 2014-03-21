@@ -46,6 +46,7 @@
 #include "as-screenshot-private.h"
 #include "as-tag.h"
 #include "as-utils-private.h"
+#include "as-yaml.h"
 
 typedef struct _AsAppPrivate	AsAppPrivate;
 struct _AsAppPrivate
@@ -213,6 +214,8 @@ AsAppSourceKind
 as_app_guess_source_kind (const gchar *filename)
 {
 	if (g_str_has_suffix (filename, ".xml.gz"))
+		return AS_APP_SOURCE_KIND_APPSTREAM;
+	if (g_str_has_suffix (filename, ".yml.gz"))
 		return AS_APP_SOURCE_KIND_APPSTREAM;
 	if (g_str_has_suffix (filename, ".desktop"))
 		return AS_APP_SOURCE_KIND_DESKTOP;
@@ -2646,6 +2649,8 @@ as_app_node_insert_keywords (AsApp *app, GNode *parent, gdouble api_version)
 		g_ptr_array_sort (keywords, as_app_ptr_array_sort_cb);
 		for (i = 0; i < keywords->len; i++) {
 			tmp = g_ptr_array_index (keywords, i);
+			if (tmp == NULL)
+				continue;
 			if (g_strcmp0 (lang, "C") != 0 &&
 			    g_hash_table_lookup (already_in_c, tmp) != NULL)
 				continue;
@@ -3346,6 +3351,140 @@ gboolean
 as_app_node_parse (AsApp *app, GNode *node, GError **error)
 {
 	return as_app_node_parse_full (app, node, AS_APP_PARSE_FLAG_NONE, error);
+}
+
+/**
+ * as_app_node_parse_dep11:
+ * @app: a #AsApp instance.
+ * @node: a #GNode.
+ * @error: A #GError or %NULL.
+ *
+ * Populates the object from a DEP-11 node.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.3.0
+ **/
+gboolean
+as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
+{
+	GNode *c;
+	GNode *c2;
+	GNode *n;
+	const gchar *tmp;
+
+	for (n = node->children; n != NULL; n = n->next) {
+		tmp = as_yaml_node_get_key (n);
+		if (g_strcmp0 (tmp, "ID") == 0) {
+			as_app_set_id_full (app, as_yaml_node_get_value (n), -1);
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Type") == 0) {
+			if (g_strcmp0 (as_yaml_node_get_value (n), "desktop-app") == 0) {
+				as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
+				continue;
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Packages") == 0) {
+			for (c = n->children; c != NULL; c = c->next)
+				as_app_add_pkgname (app, as_yaml_node_get_key (c), -1);
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Name") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				as_app_set_name (app,
+						 as_yaml_node_get_key (c),
+						 as_yaml_node_get_value (c), -1);
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Summary") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				as_app_set_comment (app,
+						    as_yaml_node_get_key (c),
+						    as_yaml_node_get_value (c), -1);
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Description") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				as_app_set_description (app,
+							as_yaml_node_get_key (c),
+							as_yaml_node_get_value (c), -1);
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Keywords") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				for (c2 = c->children; c2 != NULL; c2 = c2->next) {
+					if (as_yaml_node_get_key (c2) == NULL)
+						continue;
+					as_app_add_keyword (app,
+							   as_yaml_node_get_key (c),
+							   as_yaml_node_get_key (c2), -1);
+				}
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Categories") == 0) {
+			for (c = n->children; c != NULL; c = c->next)
+				as_app_add_category (app, as_yaml_node_get_key (c), -1);
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Icon") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				if (g_strcmp0 (as_yaml_node_get_key (c), "cached") == 0) {
+					as_app_set_icon (app, as_yaml_node_get_value (c), -1);
+					as_app_set_icon_kind (app, AS_ICON_KIND_CACHED);
+					continue;
+				}
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Url") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				if (g_strcmp0 (as_yaml_node_get_key (c), "homepage") == 0) {
+					as_app_add_url (app,
+							AS_URL_KIND_HOMEPAGE,
+							as_yaml_node_get_value (c),
+							-1);
+					continue;
+				}
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Provides") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				if (g_strcmp0 (as_yaml_node_get_key (c), "mimetypes") == 0) {
+					for (c2 = c->children; c2 != NULL; c2 = c2->next) {
+						as_app_add_mimetype (app,
+								     as_yaml_node_get_key (c2),
+								     -1);
+					}
+					continue;
+				} else {
+					_cleanup_object_unref_ AsProvide *pr = NULL;
+					pr = as_provide_new ();
+					if (!as_provide_node_parse_dep11 (pr, c, error))
+						return FALSE;
+					as_app_add_provide (app, pr);
+				}
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Screenshots") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				_cleanup_object_unref_ AsScreenshot *ss = NULL;
+				ss = as_screenshot_new ();
+				if (!as_screenshot_node_parse_dep11 (ss, c, error))
+					return FALSE;
+				as_app_add_screenshot (app, ss);
+			}
+			continue;
+		}
+	}
+	return TRUE;
 }
 
 #if !GLIB_CHECK_VERSION(2,39,1)

@@ -942,8 +942,13 @@ as_util_install_filename (const gchar *filename,
 
 	switch (as_app_guess_source_kind (filename)) {
 	case AS_APP_SOURCE_KIND_APPSTREAM:
-		ret = as_util_install_xml (filename, origin,
-					   "/usr/share/app-info/xmls", error);
+		if (g_strstr_len (filename, -1, ".yml.gz") != NULL) {
+			ret = as_util_install_xml (filename, origin,
+						   "/usr/share/app-info/yaml", error);
+		} else {
+			ret = as_util_install_xml (filename, origin,
+						   "/usr/share/app-info/xmls", error);
+		}
 		break;
 	case AS_APP_SOURCE_KIND_APPDATA:
 	case AS_APP_SOURCE_KIND_METAINFO:

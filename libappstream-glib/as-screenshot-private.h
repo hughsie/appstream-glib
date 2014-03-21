@@ -38,6 +38,9 @@ GNode		*as_screenshot_node_insert	(AsScreenshot	*screenshot,
 gboolean	 as_screenshot_node_parse	(AsScreenshot	*screenshot,
 						 GNode		*node,
 						 GError		**error);
+gboolean	 as_screenshot_node_parse_dep11	(AsScreenshot	*screenshot,
+						 GNode		*node,
+						 GError		**error);
 
 G_END_DECLS
 

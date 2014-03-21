@@ -66,6 +66,7 @@ GLib headers and libraries for appstream-builder.
 %build
 %configure \
         --enable-gtk-doc \
+        --disable-dep11 \
         --disable-static \
         --disable-silent-rules \
         --disable-dependency-tracking

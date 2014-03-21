@@ -38,6 +38,7 @@
 #include "as-image-private.h"
 #include "as-node-private.h"
 #include "as-utils-private.h"
+#include "as-yaml.h"
 
 typedef struct _AsImagePrivate	AsImagePrivate;
 struct _AsImagePrivate
@@ -437,6 +438,36 @@ as_image_node_parse (AsImage *image, GNode *node, GError **error)
 	if (taken != NULL) {
 		g_free (priv->url);
 		priv->url = taken;
+	}
+	return TRUE;
+}
+
+/**
+ * as_image_node_parse_dep11:
+ * @image: a #AsImage instance.
+ * @node: a #GNode.
+ * @error: A #GError or %NULL.
+ *
+ * Populates the object from a DEP-11 node.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.3.0
+ **/
+gboolean
+as_image_node_parse_dep11 (AsImage *im, GNode *node, GError **error)
+{
+	GNode *n;
+	const gchar *tmp;
+
+	for (n = node->children; n != NULL; n = n->next) {
+		tmp = as_yaml_node_get_key (n);
+		if (g_strcmp0 (tmp, "height") == 0)
+			as_image_set_height (im, as_yaml_node_get_value_as_int (n));
+		else if (g_strcmp0 (tmp, "width") == 0)
+			as_image_set_width (im, as_yaml_node_get_value_as_int (n));
+		else if (g_strcmp0 (tmp, "url") == 0)
+			as_image_set_url (im, as_yaml_node_get_value (n), -1);
 	}
 	return TRUE;
 }

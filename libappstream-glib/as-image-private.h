@@ -36,6 +36,9 @@ GNode		*as_image_node_insert		(AsImage	*image,
 gboolean	 as_image_node_parse		(AsImage	*image,
 						 GNode		*node,
 						 GError		**error);
+gboolean	 as_image_node_parse_dep11	(AsImage	*image,
+						 GNode		*node,
+						 GError		**error);
 
 G_END_DECLS
 

@@ -36,6 +36,7 @@
 #include "as-store.h"
 #include "as-tag.h"
 #include "as-utils-private.h"
+#include "as-yaml.h"
 
 /**
  * cd_test_get_filename:
@@ -2400,6 +2401,211 @@ as_test_store_metadata_func (void)
 	g_ptr_array_unref (apps);
 }
 
+static void
+as_test_yaml_func (void)
+{
+	GNode *node;
+	GError *error = NULL;
+	GString *str;
+	const gchar *expected;
+	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+
+	/* simple header */
+	node = as_yaml_from_data (
+		"File: DEP-11\n"
+		"Origin: aequorea\n"
+		"Version: '0.6'\n",
+		-1, &error);
+	g_assert_no_error (error);
+	g_assert (node != NULL);
+	str = as_yaml_to_string (node);
+	expected =
+		"[MAP]{\n"
+		" [KVL]File=DEP-11\n"
+		" [KVL]Origin=aequorea\n"
+		" [KVL]Version=0.6\n";
+	if (g_strcmp0 (str->str, expected) != 0)
+		g_warning ("Expected:\n%s\nGot:\n%s", expected, str->str);
+	g_assert_cmpstr (str->str, ==, expected);
+	g_string_free (str, TRUE);
+	as_yaml_unref (node);
+
+	/* simple list */
+	node = as_yaml_from_data (
+		"Mimetypes:\n"
+		"  - text/html\n"
+		"  - text/xml\n"
+		"  - application/xhtml+xml\n"
+		"Kudos:\n"
+		"  - AppMenu\n"
+		"  - SearchProvider\n"
+		"  - Notifications\n",
+		-1, &error);
+	g_assert_no_error (error);
+	g_assert (node != NULL);
+	str = as_yaml_to_string (node);
+	expected =
+		"[MAP]{\n"
+		" [SEQ]Mimetypes\n"
+		"  [KEY]text/html\n"
+		"  [KEY]text/xml\n"
+		"  [KEY]application/xhtml+xml\n"
+		" [SEQ]Kudos\n"
+		"  [KEY]AppMenu\n"
+		"  [KEY]SearchProvider\n"
+		"  [KEY]Notifications\n";
+	if (g_strcmp0 (str->str, expected) != 0)
+		g_warning ("Expected:\n%s\nGot:\n%s", expected, str->str);
+	g_assert_cmpstr (str->str, ==, expected);
+	g_string_free (str, TRUE);
+	as_yaml_unref (node);
+
+	/* dummy application */
+	filename = as_test_get_filename ("example.yml");
+	g_assert (filename != NULL);
+	file = g_file_new_for_path (filename);
+	node = as_yaml_from_file (file, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (node != NULL);
+	str = as_yaml_to_string (node);
+	expected =
+		"[MAP]{\n"
+		" [KVL]File=DEP-11\n"
+		" [KVL]Origin=aequorea\n"
+		" [KVL]Version=0.6\n"
+		"[MAP]{\n"
+		" [KVL]Type=desktop-app\n"
+		" [KVL]ID=iceweasel.desktop\n"
+		" [MAP]Name\n"
+		"  [KVL]C=Iceweasel\n"
+		" [SEQ]Packages\n"
+		"  [KEY]iceweasel\n"
+		" [MAP]Icon\n"
+		"  [KVL]cached=iceweasel.png\n"
+		" [MAP]Keywords\n"
+		"  [SEQ]C\n"
+		"   [KEY]browser\n"
+		" [SEQ]Screenshots\n"
+		"  [MAP]{\n"
+		"   [KVL]default=true\n"
+		"   [MAP]source-image\n"
+		"    [KVL]height=770\n"
+		"    [KVL]url=http://localhost/source/screenshot.png\n"
+		"    [KVL]width=1026\n"
+		"   [SEQ]thumbnails\n"
+		"    [MAP]{\n"
+		"     [KVL]height=423\n"
+		"     [KVL]url=http://localhost/752x423/screenshot.png\n"
+		"     [KVL]width=752\n"
+		"[MAP]{\n"
+		" [KVL]Type=desktop-app\n"
+		" [KVL]ID=dave.desktop\n"
+		" [MAP]Name\n"
+		"  [KVL]C=dave\n";
+	if (g_strcmp0 (str->str, expected) != 0)
+		g_warning ("Expected:\n%s\nGot:\n%s", expected, str->str);
+	g_assert_cmpstr (str->str, ==, expected);
+	g_string_free (str, TRUE);
+	as_yaml_unref (node);
+
+}
+
+static void
+as_test_store_yaml_func (void)
+{
+	AsApp *app;
+	GError *error = NULL;
+	gboolean ret;
+	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+	_cleanup_string_free_ GString *str = NULL;
+	const gchar *xml =
+		"<components version=\"0.6\" origin=\"aequorea\">\n"
+		"<component type=\"desktop\">\n"
+		"<id>dave.desktop</id>\n"
+		"<name>dave</name>\n"
+		"</component>\n"
+		"<component type=\"desktop\">\n"
+		"<id>iceweasel.desktop</id>\n"
+		"<pkgname>iceweasel</pkgname>\n"
+		"<name>Iceweasel</name>\n"
+		"<icon type=\"cached\">iceweasel.png</icon>\n"
+		"<keywords>\n"
+		"<keyword>browser</keyword>\n"
+		"</keywords>\n"
+		"<screenshots>\n"
+		"<screenshot type=\"default\">\n"
+		"<image type=\"source\" height=\"770\" width=\"1026\">http://localhost/source/screenshot.png</image>\n"
+		"<image type=\"thumbnail\" height=\"423\" width=\"752\">http://localhost/752x423/screenshot.png</image>\n"
+		"</screenshot>\n"
+		"</screenshots>\n"
+		"</component>\n"
+		"</components>\n";
+
+	/* load store */
+	store = as_store_new ();
+	filename = as_test_get_filename ("example.yml");
+	file = g_file_new_for_path (filename);
+	ret = as_store_from_file (store, file, NULL, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* test it matches expected XML */
+	str = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	if (g_strcmp0 (str->str, xml) != 0)
+		g_warning ("Expected:\n%s\nGot:\n%s", xml, str->str);
+	g_assert_cmpstr (str->str, ==, xml);
+
+	/* test store properties */
+	g_assert_cmpstr (as_store_get_origin (store), ==, "aequorea");
+	g_assert_cmpfloat (as_store_get_api_version (store), <, 0.6 + 0.01);
+	g_assert_cmpfloat (as_store_get_api_version (store), >, 0.6 - 0.01);
+	g_assert_cmpint (as_store_get_size (store), ==, 2);
+	g_assert (as_store_get_app_by_id (store, "iceweasel.desktop") != NULL);
+	g_assert (as_store_get_app_by_id (store, "dave.desktop") != NULL);
+
+	/* test application properties */
+	app = as_store_get_app_by_id (store, "iceweasel.desktop");
+	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_DESKTOP);
+	g_assert_cmpstr (as_app_get_pkgname_default (app), ==, "iceweasel");
+	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "Iceweasel");
+}
+
+static void
+as_test_store_speed_yaml_func (void)
+{
+	GError *error = NULL;
+	gboolean ret;
+	guint i;
+	guint loops = 10;
+	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+	_cleanup_timer_destroy_ GTimer *timer = NULL;
+
+	filename = as_test_get_filename ("example-v06.yml.gz");
+	g_assert (filename != NULL);
+	file = g_file_new_for_path (filename);
+	timer = g_timer_new ();
+	for (i = 0; i < loops; i++) {
+		_cleanup_object_unref_ AsStore *store;
+		store = as_store_new ();
+		ret = as_store_from_file (store, file, NULL, NULL, &error);
+		g_assert_no_error (error);
+		g_assert (ret);
+
+		/* test store properties */
+		g_assert_cmpstr (as_store_get_origin (store), ==, "bartholomea");
+		g_assert_cmpfloat (as_store_get_api_version (store), <, 0.6 + 0.01);
+		g_assert_cmpfloat (as_store_get_api_version (store), >, 0.6 - 0.01);
+		g_assert_cmpint (as_store_get_size (store), ==, 85);
+		g_assert (as_store_get_app_by_id (store, "blobwars.desktop") != NULL);
+	}
+	g_print ("%.0f ms: ", g_timer_elapsed (timer, NULL) * 1000 / loops);
+
+}
+
 int
 main (int argc, char **argv)
 {
@@ -2442,6 +2648,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils", as_test_utils_func);
 	g_test_add_func ("/AppStream/utils{icons}", as_test_utils_icons_func);
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
+	g_test_add_func ("/AppStream/yaml", as_test_yaml_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
 	g_test_add_func ("/AppStream/store{demote}", as_test_store_demote_func);
 	g_test_add_func ("/AppStream/store{merges}", as_test_store_merges_func);
@@ -2450,6 +2657,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{versions}", as_test_store_versions_func);
 	g_test_add_func ("/AppStream/store{origin}", as_test_store_origin_func);
 	g_test_add_func ("/AppStream/store{app-install}", as_test_store_app_install_func);
+	g_test_add_func ("/AppStream/store{yaml}", as_test_store_yaml_func);
 	g_test_add_func ("/AppStream/store{metadata}", as_test_store_metadata_func);
 	g_test_add_func ("/AppStream/store{validate}", as_test_store_validate_func);
 	g_test_add_func ("/AppStream/store{local-app-install}", as_test_store_local_app_install_func);
@@ -2457,6 +2665,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{speed-appstream}", as_test_store_speed_appstream_func);
 	g_test_add_func ("/AppStream/store{speed-appdata}", as_test_store_speed_appdata_func);
 	g_test_add_func ("/AppStream/store{speed-desktop}", as_test_store_speed_desktop_func);
+	g_test_add_func ("/AppStream/store{speed-yaml}", as_test_store_speed_yaml_func);
 
 	return g_test_run ();
 }

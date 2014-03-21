@@ -19,27 +19,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#if !defined (__APPSTREAM_GLIB_PRIVATE_H) && !defined (AS_COMPILATION)
+#if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
 
-#ifndef __AS_PROVIDE_PRIVATE_H
-#define __AS_PROVIDE_PRIVATE_H
+#ifndef __AS_YAML_H
+#define __AS_YAML_H
 
-#include "as-provide.h"
+#include <gio/gio.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 
-GNode		*as_provide_node_insert		(AsProvide	*provide,
-						 GNode		*parent,
-						 gdouble	 api_version);
-gboolean	 as_provide_node_parse		(AsProvide	*provide,
-						 GNode		*node,
+void		 as_yaml_unref			(GNode		*node);
+GString		*as_yaml_to_string		(GNode		*node);
+GNode		*as_yaml_from_data		(const gchar	*data,
+						 gssize		 data_len,
 						 GError		**error);
-gboolean	 as_provide_node_parse_dep11	(AsProvide	*provide,
-						 GNode		*node,
+GNode		*as_yaml_from_file		(GFile		*file,
+						 GCancellable	*cancellable,
 						 GError		**error);
+const gchar	*as_yaml_node_get_key		(const GNode	*node);
+const gchar	*as_yaml_node_get_value		(const GNode	*node);
+gint		 as_yaml_node_get_value_as_int	(const GNode	*node);
 
 G_END_DECLS
 
-#endif /* __AS_PROVIDE_PRIVATE_H */
+#endif /* __AS_YAML_H */
+

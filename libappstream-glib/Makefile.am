@@ -9,6 +9,7 @@ AM_CPPFLAGS =							\
 	$(GLIB_CFLAGS)						\
 	$(GDKPIXBUF_CFLAGS)					\
 	$(SOUP_CFLAGS)						\
+	$(YAML_CFLAGS)						\
 	-I$(top_srcdir)/libappstream-glib			\
 	-I$(top_builddir)/libappstream-glib			\
 	-I.							\
@@ -102,7 +103,9 @@ libappstream_glib_la_SOURCES =					\
 	as-tag.c						\
 	as-utils.c						\
 	as-utils-private.h					\
-	as-version.h
+	as-version.h						\
+	as-yaml.c						\
+	as-yaml.h
 
 if HAVE_GPERF
 libappstream_glib_la_SOURCES += as-tag-private.h
@@ -114,7 +117,8 @@ CLEANFILES = $(BUILT_SOURCES)
 libappstream_glib_la_LIBADD =					\
 	$(GLIB_LIBS)						\
 	$(GDKPIXBUF_LIBS)					\
-	$(SOUP_LIBS)
+	$(SOUP_LIBS)						\
+	$(YAML_LIBS)
 
 libappstream_glib_la_LDFLAGS =					\
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)	\
@@ -133,6 +137,7 @@ as_self_test_LDADD =						\
 	$(GLIB_LIBS)						\
 	$(GDKPIXBUF_LIBS)					\
 	$(SOUP_LIBS)						\
+	$(YAML_LIBS)						\
 	$(lib_LTLIBRARIES)
 as_self_test_CFLAGS = $(WARNINGFLAGS_C)
 

@@ -4,11 +4,12 @@ AppStream-Glib
 This library provides GObjects and helper methods to make it easy to read and
 write AppStream metadata. It also provides a simple DOM implementation that
 makes it easy to edit nodes and convert to and from the standardized XML
-representation.
+representation. It also supports reading of Debian-style DEP-11 metadata.
 
 What this library allows you to do:
 
  * Read and write compressed AppStream XML files
+ * Read compressed Debian YAML files
  * Add and search for applications in an application store
  * Get screenshot image data and release announcements
  * Easily retrieve the best application data for the current locale
@@ -27,7 +28,7 @@ copy. To do the latter just do:
     dnf install automake autoconf libtool glib-devel docbook-utils \
                 gtk-doc gobject-introspection-devel rpm-devel \
                 gtk3-devel sqlite-devel libsoup-devel gettext-devel \
-                intltool libarchive-devel
+                intltool libarchive-devel libyaml-devel
     ./autogen.sh
     make
     make install

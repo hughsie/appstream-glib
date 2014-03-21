@@ -27,6 +27,7 @@
 #include <libsoup/soup.h>
 
 #include "as-node.h"
+#include "as-yaml.h"
 
 G_BEGIN_DECLS
 
@@ -59,6 +60,7 @@ GS_DEFINE_CLEANUP_FUNCTION0(GHashTable*, gs_local_hashtable_unref, g_hash_table_
 GS_DEFINE_CLEANUP_FUNCTION0(GKeyFile*, gs_local_keyfile_unref, g_key_file_unref)
 GS_DEFINE_CLEANUP_FUNCTION0(GMarkupParseContext*, gs_local_markup_parse_context_unref, g_markup_parse_context_unref)
 GS_DEFINE_CLEANUP_FUNCTION0(GNode*, gs_local_node_unref, as_node_unref)
+GS_DEFINE_CLEANUP_FUNCTION0(GNode*, gs_local_yaml_unref, as_yaml_unref)
 GS_DEFINE_CLEANUP_FUNCTION0(GObject*, gs_local_obj_unref, g_object_unref)
 GS_DEFINE_CLEANUP_FUNCTION0(GPtrArray*, gs_local_ptrarray_unref, g_ptr_array_unref)
 GS_DEFINE_CLEANUP_FUNCTION0(GTimer*, gs_local_destroy_timer, g_timer_destroy)
@@ -87,6 +89,7 @@ GS_DEFINE_CLEANUP_FUNCTION(void*, gs_local_free, g_free)
 #define _cleanup_keyfile_unref_ __attribute__ ((cleanup(gs_local_keyfile_unref)))
 #define _cleanup_markup_parse_context_unref_ __attribute__ ((cleanup(gs_local_markup_parse_context_unref)))
 #define _cleanup_node_unref_ __attribute__ ((cleanup(gs_local_node_unref)))
+#define _cleanup_yaml_unref_ __attribute__ ((cleanup(gs_local_yaml_unref)))
 #define _cleanup_object_unref_ __attribute__ ((cleanup(gs_local_obj_unref)))
 #define _cleanup_ptrarray_unref_ __attribute__ ((cleanup(gs_local_ptrarray_unref)))
 #define _cleanup_uri_unref_ __attribute__ ((cleanup(gs_local_uri_unref)))

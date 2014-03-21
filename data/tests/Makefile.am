@@ -14,6 +14,8 @@ test_files =						\
 	example.desktop					\
 	example.metainfo.xml				\
 	example-v04.xml.gz				\
+	example-v06.yml.gz				\
+	example.yml					\
 	intltool.appdata.xml.in				\
 	origin.xml					\
 	settings-panel.desktop				\

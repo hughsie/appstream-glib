@@ -36,6 +36,7 @@
 #include "as-node-private.h"
 #include "as-provide-private.h"
 #include "as-utils-private.h"
+#include "as-yaml.h"
 
 typedef struct _AsProvidePrivate	AsProvidePrivate;
 struct _AsProvidePrivate
@@ -258,6 +259,24 @@ as_provide_node_insert (AsProvide *provide, GNode *parent, gdouble api_version)
 		break;
 	}
 	return n;
+}
+
+/**
+ * as_provide_node_parse_dep11:
+ * @provide: a #AsProvide instance.
+ * @node: a #GNode.
+ * @error: A #GError or %NULL.
+ *
+ * Populates the object from a DEP-11 node.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.3.0
+ **/
+gboolean
+as_provide_node_parse_dep11 (AsProvide *provide, GNode *node, GError **error)
+{
+	return TRUE;
 }
 
 /**
