@@ -1,3 +1,21 @@
+Version 0.1.1
+~~~~~~~~~~~~~
+Released: 2014-03-21
+
+New Features:
+ - Add an 'api-version' property to AsStore (Richard Hughes)
+ - Add as_store_from_xml() to load text XML not from a file (Richard Hughes)
+ - Add the new AsUrlKind's and <architectures> from API 0.6 (Richard Hughes)
+ - Speed up as_tag_to_string() by using a table and a single lookup (Richard Hughes)
+ - Support old-style markup-less <description> tags (Richard Hughes)
+ - Support the 'origin' attribute on the root node (Richard Hughes)
+
+Bugfixes:
+ - Do not crash when using getting an unset description (Richard Hughes)
+ - Do not depend on functions introduced in Glib 2.39.1 (Richard Hughes)
+ - Fix parsing incompletely translated AppData files (Richard Hughes)
+ - The 'appcategories' tag is now deprecated for 'categories' (Richard Hughes)
+
 Version 0.1.0
 ~~~~~~~~~~~~~
 Released: 2014-03-18
