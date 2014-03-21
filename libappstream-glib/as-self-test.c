@@ -805,14 +805,12 @@ ch_test_store_speed_func (void)
 	GError *error = NULL;
 	GFile *file;
 	GTimer *timer;
-	const gchar *filename = "./test.xml.gz";
 	gboolean ret;
+	gchar *filename;
 	guint i;
 	guint loops = 10;
 
-	if (!g_file_test (filename, G_FILE_TEST_EXISTS))
-		return;
-
+	filename = as_test_get_filename ("example-v04.xml.gz");
 	file = g_file_new_for_path (filename);
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
@@ -827,6 +825,7 @@ ch_test_store_speed_func (void)
 	}
 	g_print ("%.0f ms: ", g_timer_elapsed (timer, NULL) * 1000 / loops);
 
+	g_free (filename);
 	g_object_unref (file);
 	g_timer_destroy (timer);
 }
