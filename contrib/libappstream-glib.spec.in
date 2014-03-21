@@ -22,7 +22,7 @@ representation.
 
 %package devel
 Summary: GLib Libraries and headers for appstream-glib
-Requires: %{name} = %{version}-%{release}
+Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
 GLib headers and libraries for appstream-glib.
@@ -49,14 +49,12 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libappstream-glib*.la
 %postun -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root,-)
 %doc README.md AUTHORS NEWS COPYING
-%{_libdir}/*libappstream-glib*.so.*
+%{_libdir}/libappstream-glib.so.1*
 %{_libdir}/girepository-1.0/*.typelib
 
 %files devel
-%defattr(-,root,root,-)
-%{_libdir}/libappstream-glib*.so
+%{_libdir}/libappstream-glib.so
 %{_libdir}/pkgconfig/appstream-glib.pc
 %dir %{_includedir}/libappstream-glib
 %{_includedir}/libappstream-glib/*.h
