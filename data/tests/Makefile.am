@@ -1,4 +1,5 @@
 test_files =						\
+	example.desktop					\
 	example-v04.xml.gz				\
 	origin.xml
 

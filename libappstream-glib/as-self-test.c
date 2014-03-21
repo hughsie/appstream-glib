@@ -337,6 +337,46 @@ ch_test_app_func (void)
 }
 
 static void
+ch_test_app_parse_file_func (void)
+{
+	AsApp *app;
+	GError *error = NULL;
+	gboolean ret;
+	gchar *filename;
+
+	/* create an AsApp from a desktop file */
+	app = as_app_new ();
+	filename = as_test_get_filename ("example.desktop");
+	ret = as_app_parse_file (app, filename, 0, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* test things we found */
+	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "Color Profile Viewer");
+	g_assert_cmpstr (as_app_get_name (app, "pl"), ==, "Podgląd profilu kolorów");
+	g_assert_cmpstr (as_app_get_comment (app, "C"), ==,
+		"Inspect and compare installed color profiles");
+	g_assert_cmpstr (as_app_get_comment (app, "pl"), ==,
+		"Badanie i porównywanie zainstalowanych profilów kolorów");
+	g_assert_cmpstr (as_app_get_icon (app), ==, "gnome-color-manager");
+	g_assert_cmpstr (as_app_get_metadata_item (app, "NoDisplay"), ==, "");
+	g_assert_cmpstr (as_app_get_project_group (app), ==, NULL);
+	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);
+
+	/* reparse with heuristics */
+	ret = as_app_parse_file (app,
+				 filename,
+				 AS_APP_PARSE_FLAG_USE_HEURISTICS,
+				 &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
+
+	g_free (filename);
+	g_object_unref (app);
+}
+
+static void
 ch_test_app_no_markup_func (void)
 {
 	AsApp *app;
@@ -888,6 +928,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/image", ch_test_image_func);
 	g_test_add_func ("/AppStream/screenshot", ch_test_screenshot_func);
 	g_test_add_func ("/AppStream/app", ch_test_app_func);
+	g_test_add_func ("/AppStream/app{parse-file}", ch_test_app_parse_file_func);
 	g_test_add_func ("/AppStream/app{no-markup}", ch_test_app_no_markup_func);
 	g_test_add_func ("/AppStream/app{subsume}", ch_test_app_subsume_func);
 	g_test_add_func ("/AppStream/app{search}", ch_test_app_search_func);

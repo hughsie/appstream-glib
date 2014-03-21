@@ -63,6 +63,20 @@ struct _AsAppClass
 	void (*_as_reserved8)	(void);
 };
 
+/**
+ * AsAppParseFlags:
+ * @AS_APP_PARSE_FLAG_NONE:		No special actions to use
+ * @AS_APP_PARSE_FLAG_USE_HEURISTICS:	Use heuristic to infer properties
+ *
+ * The flags to use when parsing resources.
+ **/
+typedef enum {
+	AS_APP_PARSE_FLAG_NONE,
+	AS_APP_PARSE_FLAG_USE_HEURISTICS = 1,	/* Since: 0.1.2 */
+	/*< private >*/
+	AS_APP_PARSE_FLAG_LAST,
+} AsAppParseFlags;
+
 GType		 as_app_get_type		(void);
 AsApp		*as_app_new			(void);
 
@@ -174,6 +188,10 @@ void		 as_app_subsume			(AsApp		*app,
 						 AsApp		*donor);
 guint		 as_app_search_matches		(AsApp		*app,
 						 const gchar	*search);
+gboolean	 as_app_parse_file		(AsApp		*app,
+						 const gchar	*desktop_file,
+						 AsAppParseFlags flags,
+						 GError		**error);
 
 G_END_DECLS
 

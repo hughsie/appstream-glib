@@ -1732,6 +1732,313 @@ as_app_search_matches (AsApp *app, const gchar *search)
 }
 
 /**
+ * as_app_desktop_key_get_locale:
+ */
+static gchar *
+as_app_desktop_key_get_locale (const gchar *key)
+{
+	gchar *tmp1;
+	gchar *tmp2;
+	gchar *locale = NULL;
+
+	tmp1 = g_strstr_len (key, -1, "[");
+	if (tmp1 == NULL)
+		goto out;
+	tmp2 = g_strstr_len (tmp1, -1, "]");
+	if (tmp1 == NULL)
+		goto out;
+	locale = g_strdup (tmp1 + 1);
+	locale[tmp2 - tmp1 - 1] = '\0';
+out:
+	return locale;
+}
+
+/**
+ * as_app_infer_file_key:
+ **/
+static gboolean
+as_app_infer_file_key (AsApp *app,
+		       GKeyFile *kf,
+		       const gchar *key,
+		       GError **error)
+{
+	gboolean ret = TRUE;
+	gchar *tmp = NULL;
+
+	if (g_strcmp0 (key, "X-GNOME-UsesNotifications") == 0) {
+		as_app_add_metadata (app, "X-Kudo-UsesNotifications", "", -1);
+		goto out;
+	}
+
+	if (g_strcmp0 (key, "X-GNOME-Bugzilla-Product") == 0) {
+		as_app_set_project_group (app, "GNOME", -1);
+		goto out;
+	}
+
+	if (g_strcmp0 (key, "X-MATE-Bugzilla-Product") == 0) {
+		as_app_set_project_group (app, "MATE", -1);
+		goto out;
+	}
+
+	if (g_strcmp0 (key, "X-KDE-StartupNotify") == 0) {
+		as_app_set_project_group (app, "KDE", -1);
+		goto out;
+	}
+
+	if (g_strcmp0 (key, "X-DocPath") == 0) {
+		tmp = g_key_file_get_string (kf,
+					     G_KEY_FILE_DESKTOP_GROUP,
+					     key,
+					     NULL);
+		if (g_str_has_prefix (tmp, "http://userbase.kde.org/"))
+			as_app_set_project_group (app, "KDE", -1);
+		goto out;
+	}
+
+	/* Exec */
+	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_EXEC) == 0) {
+		tmp = g_key_file_get_string (kf,
+					     G_KEY_FILE_DESKTOP_GROUP,
+					     key,
+					     NULL);
+		if (g_str_has_prefix (tmp, "xfce4-"))
+			as_app_set_project_group (app, "XFCE", -1);
+		goto out;
+	}
+out:
+	g_free (tmp);
+	return ret;
+}
+
+/**
+ * as_app_parse_file_key:
+ **/
+static gboolean
+as_app_parse_file_key (AsApp *app,
+		       GKeyFile *kf,
+		       const gchar *key,
+		       GError **error)
+{
+
+	gboolean ret = TRUE;
+	gchar **list = NULL;
+	gchar *locale = NULL;
+	gchar *tmp = NULL;
+	guint i;
+
+	/* NoDisplay */
+	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_NO_DISPLAY) == 0) {
+		as_app_add_metadata (app, "NoDisplay", "", -1);
+		goto out;
+	}
+
+	/* Type */
+	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_TYPE) == 0) {
+		tmp = g_key_file_get_string (kf,
+					     G_KEY_FILE_DESKTOP_GROUP,
+					     key,
+					     NULL);
+		if (g_strcmp0 (tmp, G_KEY_FILE_DESKTOP_TYPE_APPLICATION) != 0) {
+			g_set_error_literal (error,
+					     AS_NODE_ERROR,
+					     AS_NODE_ERROR_FAILED,
+					     "not an application");
+			ret = FALSE;
+			goto out;
+		}
+		goto out;
+	}
+
+	/* Icon */
+	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_ICON) == 0) {
+		tmp = g_key_file_get_string (kf,
+					     G_KEY_FILE_DESKTOP_GROUP,
+					     key,
+					     NULL);
+		if (tmp != NULL && tmp[0] != '\0')
+			as_app_set_icon (app, tmp, -1);
+		goto out;
+	}
+
+	/* Categories */
+	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_CATEGORIES) == 0) {
+		list = g_key_file_get_string_list (kf,
+						   G_KEY_FILE_DESKTOP_GROUP,
+						   key,
+						   NULL, NULL);
+		for (i = 0; list[i] != NULL; i++) {
+			if (g_strcmp0 (list[i], "GTK") == 0)
+				continue;
+			if (g_strcmp0 (list[i], "Qt") == 0)
+				continue;
+			if (g_strcmp0 (list[i], "KDE") == 0)
+				continue;
+			if (g_strcmp0 (list[i], "GNOME") == 0)
+				continue;
+			if (g_str_has_prefix (list[i], "X-"))
+				continue;
+			as_app_add_category (app, list[i], -1);
+		}
+		goto out;
+	}
+
+	if (g_strcmp0 (key, "Keywords") == 0) {
+		list = g_key_file_get_string_list (kf,
+						   G_KEY_FILE_DESKTOP_GROUP,
+						   key,
+						   NULL, NULL);
+		for (i = 0; list[i] != NULL; i++)
+			as_app_add_keyword (app, list[i], -1);
+		goto out;
+	}
+
+	if (g_strcmp0 (key, "MimeType") == 0) {
+		list = g_key_file_get_string_list (kf,
+						   G_KEY_FILE_DESKTOP_GROUP,
+						   key,
+						   NULL, NULL);
+		for (i = 0; list[i] != NULL; i++)
+			as_app_add_mimetype (app, list[i], -1);
+		goto out;
+	}
+
+	if (g_strcmp0 (key, "X-AppInstall-Package") == 0) {
+		tmp = g_key_file_get_string (kf,
+					     G_KEY_FILE_DESKTOP_GROUP,
+					     key,
+					     NULL);
+		if (tmp != NULL && tmp[0] != '\0')
+			as_app_add_pkgname (app, tmp, -1);
+		goto out;
+	}
+
+	/* OnlyShowIn */
+	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN) == 0) {
+		/* if an app has only one entry, it's that desktop */
+		list = g_key_file_get_string_list (kf,
+						   G_KEY_FILE_DESKTOP_GROUP,
+						   key,
+						   NULL, NULL);
+		if (g_strv_length (list) == 1)
+			as_app_set_project_group (app, list[0], -1);
+		goto out;
+	}
+
+	/* Name */
+	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_NAME) == 0) {
+		tmp = g_key_file_get_string (kf,
+					     G_KEY_FILE_DESKTOP_GROUP,
+					     key,
+					     NULL);
+		if (tmp != NULL && tmp[0] != '\0')
+			as_app_set_name (app, "C", tmp, -1);
+		goto out;
+	}
+
+	/* Name[] */
+	if (g_str_has_prefix (key, G_KEY_FILE_DESKTOP_KEY_NAME)) {
+		locale = as_app_desktop_key_get_locale (key);
+		tmp = g_key_file_get_locale_string (kf,
+						    G_KEY_FILE_DESKTOP_GROUP,
+						    G_KEY_FILE_DESKTOP_KEY_NAME,
+						    locale,
+						    NULL);
+		if (tmp != NULL && tmp[0] != '\0')
+			as_app_set_name (app, locale, tmp, -1);
+		goto out;
+	}
+
+	/* Comment */
+	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_COMMENT) == 0) {
+		tmp = g_key_file_get_string (kf,
+					     G_KEY_FILE_DESKTOP_GROUP,
+					     key,
+					     NULL);
+		if (tmp != NULL && tmp[0] != '\0')
+			as_app_set_comment (app, "C", tmp, -1);
+		goto out;
+	}
+
+	/* Comment[] */
+	if (g_str_has_prefix (key, G_KEY_FILE_DESKTOP_KEY_COMMENT)) {
+		locale = as_app_desktop_key_get_locale (key);
+		tmp = g_key_file_get_locale_string (kf,
+						    G_KEY_FILE_DESKTOP_GROUP,
+						    G_KEY_FILE_DESKTOP_KEY_COMMENT,
+						    locale,
+						    NULL);
+		if (tmp != NULL && tmp[0] != '\0')
+			as_app_set_comment (app, locale, tmp, -1);
+		goto out;
+	}
+out:
+	g_free (locale);
+	g_free (tmp);
+	g_strfreev (list);
+	return ret;
+}
+
+/**
+ * as_app_parse_file:
+ * @app: a #AsApp instance.
+ * @desktop_file: desktop file to load.
+ * @flags: #AsAppParseFlags, e.g. %AS_APP_PARSE_FLAG_USE_HEURISTICS
+ * @error: A #GError or %NULL.
+ *
+ * Parses a desktop file and populates the application state.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.1.2
+ **/
+gboolean
+as_app_parse_file (AsApp *app,
+		   const gchar *desktop_file,
+		   AsAppParseFlags flags,
+		   GError **error)
+{
+	GKeyFile *kf;
+	gboolean ret;
+	gchar *app_id = NULL;
+	gchar **keys = NULL;
+	guint i;
+
+	/* load file */
+	kf = g_key_file_new ();
+	ret = g_key_file_load_from_file (kf, desktop_file,
+					 G_KEY_FILE_KEEP_TRANSLATIONS,
+					 error);
+	if (!ret)
+		goto out;
+
+	/* create app */
+	app_id = g_path_get_basename (desktop_file);
+	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
+
+	/* look at all the keys */
+	keys = g_key_file_get_keys (kf, G_KEY_FILE_DESKTOP_GROUP, NULL, error);
+	if (keys == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+	for (i = 0; keys[i] != NULL; i++) {
+		ret = as_app_parse_file_key (app, kf, keys[i], error);
+		if (!ret)
+			goto out;
+		if ((flags & AS_APP_PARSE_FLAG_USE_HEURISTICS) > 0) {
+			ret = as_app_infer_file_key (app, kf, keys[i], error);
+			if (!ret)
+				goto out;
+		}
+	}
+out:
+	g_free (app_id);
+	g_key_file_unref (kf);
+	g_strfreev (keys);
+	return ret;
+}
+
+/**
  * as_app_new:
  *
  * Creates a new #AsApp.
