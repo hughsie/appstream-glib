@@ -221,7 +221,8 @@ GPtrArray	*as_app_get_addons		(AsApp		*app);
 GPtrArray	*as_app_get_categories		(AsApp		*app);
 GPtrArray	*as_app_get_compulsory_for_desktops (AsApp	*app);
 GPtrArray	*as_app_get_extends		(AsApp		*app);
-GPtrArray	*as_app_get_keywords		(AsApp		*app);
+GPtrArray	*as_app_get_keywords		(AsApp		*app,
+						 const gchar	*locale);
 GPtrArray	*as_app_get_kudos		(AsApp		*app);
 GPtrArray	*as_app_get_mimetypes		(AsApp		*app);
 GPtrArray	*as_app_get_pkgnames		(AsApp		*app);
@@ -328,6 +329,7 @@ void		 as_app_add_category		(AsApp		*app,
 						 const gchar	*category,
 						 gssize		 category_len);
 void		 as_app_add_keyword		(AsApp		*app,
+						 const gchar	*locale,
 						 const gchar	*keyword,
 						 gssize		 keyword_len);
 void		 as_app_add_kudo		(AsApp		*app,

@@ -169,12 +169,12 @@ asb_plugin_process (AsbPlugin *plugin,
 			continue;
 		split = g_strsplit (data[i].text, "|", -1);
 		for (j = 0; split[j] != NULL; j++)
-			as_app_add_keyword (AS_APP (app), split[j], -1);
+			as_app_add_keyword (AS_APP (app), NULL, split[j], -1);
 		g_strfreev (split);
 	}
 
 	/* no codecs we care about */
-	keywords = as_app_get_keywords (AS_APP (app));
+	keywords = as_app_get_keywords (AS_APP (app), NULL);
 	if (keywords->len == 0) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,

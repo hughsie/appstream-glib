@@ -1108,7 +1108,7 @@ as_test_app_parse_file_func (void)
 	g_assert_cmpstr (as_app_get_project_group (app), ==, NULL);
 	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
 	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);
-	g_assert_cmpint (as_app_get_keywords(app)->len, ==, 2);
+	g_assert_cmpint (as_app_get_keywords(app, NULL)->len, ==, 2);
 	g_assert (as_app_has_category (app, "System"));
 	g_assert (!as_app_has_category (app, "NotGoingToExist"));
 
