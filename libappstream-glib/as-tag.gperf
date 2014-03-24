@@ -1,0 +1,42 @@
+%language=ANSI-C
+%struct-type
+%define hash-function-name as_tag_hash
+%define lookup-function-name as_tag_from_gperf
+%readonly-tables
+%includes
+%pic
+struct tag_data { gint name; guint etag; };
+%%
+unknown, AS_TAG_UNKNOWN
+components, AS_TAG_APPLICATIONS
+component, AS_TAG_APPLICATION
+id, AS_TAG_ID
+pkgname, AS_TAG_PKGNAME
+name, AS_TAG_NAME
+summary, AS_TAG_SUMMARY
+description, AS_TAG_DESCRIPTION
+url, AS_TAG_URL
+icon, AS_TAG_ICON
+categories, AS_TAG_CATEGORIES
+category, AS_TAG_CATEGORY
+keywords, AS_TAG_KEYWORDS
+keyword, AS_TAG_KEYWORD
+mimetypes, AS_TAG_MIMETYPES
+mimetype, AS_TAG_MIMETYPE
+project_group, AS_TAG_PROJECT_GROUP
+project_license, AS_TAG_PROJECT_LICENSE
+screenshot, AS_TAG_SCREENSHOT
+screenshots, AS_TAG_SCREENSHOTS
+updatecontact, AS_TAG_UPDATE_CONTACT
+image, AS_TAG_IMAGE
+compulsory_for_desktop, AS_TAG_COMPULSORY_FOR_DESKTOP
+priority, AS_TAG_PRIORITY
+caption, AS_TAG_CAPTION
+languages, AS_TAG_LANGUAGES
+lang, AS_TAG_LANG
+metadata, AS_TAG_METADATA
+value, AS_TAG_VALUE
+releases, AS_TAG_RELEASES
+release, AS_TAG_RELEASE
+architectures, AS_TAG_ARCHITECTURES
+arch, AS_TAG_ARCH

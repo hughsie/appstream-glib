@@ -35,6 +35,12 @@
 
 #include "as-tag.h"
 
+#ifdef HAVE_GPERF
+  /* we need to define this now as gperf just writes a big header file */
+  const struct tag_data *as_tag_from_gperf (const char *tag, guint etag);
+  #include "as-tag-private.h"
+#endif
+
 /**
  * as_tag_from_string:
  * @tag: the string.
@@ -48,34 +54,40 @@
 AsTag
 as_tag_from_string (const gchar *tag)
 {
-	GQuark qtag;
+#ifdef HAVE_GPERF
+	const struct tag_data *ky;
+#else
 	guint i;
-	static gboolean done_init = FALSE;
-	static GQuark qenum[AS_TAG_LAST];
+#endif
+	AsTag etag = AS_TAG_UNKNOWN;
 
-	if (!done_init) {
-		for (i = 0; i < AS_TAG_LAST; i++)
-			qenum[i] = g_quark_from_static_string (as_tag_to_string (i));
-		done_init = TRUE;
+#ifdef HAVE_GPERF
+	/* use a perfect hash */
+	ky = as_tag_from_gperf (tag, strlen (tag));
+	if (ky != NULL)
+		etag = ky->etag;
+#else
+	for (i = 0; i < AS_TAG_LAST; i++) {
+		if (g_strcmp0 (tag, as_tag_to_string (i)) == 0) {
+			etag = i;
+			break;
+		}
 	}
-	qtag = g_quark_try_string (tag);
-	for (i = 0; i < AS_TAG_LAST; i++)
-		if (qenum[i] == qtag)
-			return i;
+#endif
 
 	/* deprecated names */
 	if (g_strcmp0 (tag, "appcategories") == 0)
-		return AS_TAG_CATEGORIES;
+		etag = AS_TAG_CATEGORIES;
 	if (g_strcmp0 (tag, "appcategory") == 0)
-		return AS_TAG_CATEGORY;
+		etag = AS_TAG_CATEGORY;
 	if (g_strcmp0 (tag, "licence") == 0)
-		return AS_TAG_PROJECT_LICENSE;
+		etag = AS_TAG_PROJECT_LICENSE;
 	if (g_strcmp0 (tag, "applications") == 0)
-		return AS_TAG_APPLICATIONS;
+		etag = AS_TAG_APPLICATIONS;
 	if (g_strcmp0 (tag, "application") == 0)
-		return AS_TAG_APPLICATION;
+		etag = AS_TAG_APPLICATION;
 
-	return AS_TAG_UNKNOWN;
+	return etag;
 }
 
 /**

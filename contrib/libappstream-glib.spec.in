@@ -13,6 +13,7 @@ BuildRequires: libtool
 BuildRequires: docbook-utils
 BuildRequires: gtk-doc
 BuildRequires: gobject-introspection-devel
+BuildRequires: gperf
 
 %description
 This library provides GObjects and helper methods to make it easy to read and

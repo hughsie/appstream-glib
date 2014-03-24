@@ -88,14 +88,15 @@ else
 fi
 AC_SUBST(WARNINGFLAGS_C)
 
-dnl ---------------------------------------------------------------------------
-dnl - Check library dependencies
-dnl ---------------------------------------------------------------------------
+# use gperf for faster string -> enum matching
+AC_PATH_PROG(GPERF, [gperf], [no])
+if test x$GPERF != xno ; then
+	AC_DEFINE(HAVE_GPERF,[1], [Use gperf])
+fi
+AM_CONDITIONAL(HAVE_GPERF, [test x$GPERF != xno])
+
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.16.1 gio-2.0 gobject-2.0 gthread-2.0)
 
-dnl ---------------------------------------------------------------------------
-dnl - Makefiles, etc.
-dnl ---------------------------------------------------------------------------
 AC_CONFIG_FILES([
 Makefile
 libappstream-glib/Makefile
