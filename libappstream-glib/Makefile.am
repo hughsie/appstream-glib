@@ -18,8 +18,10 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = 						\
 	appstream-glib.pc
 
+if HAVE_GPERF
 as-tag-private.h: as-tag.gperf
 	$(AM_V_GEN) gperf < $< > $@
+endif
 
 lib_LTLIBRARIES =						\
 	libappstream-glib.la
@@ -58,10 +60,8 @@ libappstream_glib_la_SOURCES =					\
 
 if HAVE_GPERF
 libappstream_glib_la_SOURCES += as-tag-private.h
+BUILT_SOURCES = as-tag-private.h
 endif
-
-BUILT_SOURCES = 						\
-	as-tag-private.h
 
 CLEANFILES = $(BUILT_SOURCES)
 
