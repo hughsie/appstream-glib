@@ -45,8 +45,13 @@ typedef struct
 	gchar		*name;
 	gchar		*cdata;
 	gboolean	 cdata_escaped;
-	GHashTable	*attributes;
+	GList		*attrs;
 } AsNodeData;
+
+typedef struct {
+	gchar		*key;
+	gchar		*value;
+} AsNodeAttr;
 
 /**
  * as_node_new: (skip)
@@ -64,6 +69,48 @@ as_node_new (void)
 }
 
 /**
+ * as_node_attr_free:
+ **/
+static void
+as_node_attr_free (AsNodeAttr *attr)
+{
+	g_free (attr->key);
+	g_free (attr->value);
+	g_slice_free (AsNodeAttr, attr);
+}
+
+/**
+ * as_node_attr_insert:
+ **/
+static AsNodeAttr *
+as_node_attr_insert (AsNodeData *data, const gchar *key, const gchar *value)
+{
+	AsNodeAttr *attr;
+	attr = g_slice_new0 (AsNodeAttr);
+	attr->key = g_strdup (key);
+	attr->value = g_strdup (value);
+	data->attrs = g_list_prepend (data->attrs, attr);
+	return attr;
+}
+
+/**
+ * as_node_attr_lookup:
+ **/
+static const gchar *
+as_node_attr_lookup (AsNodeData *data, const gchar *key)
+{
+	AsNodeAttr *attr;
+	GList *l;
+
+	for (l = data->attrs; l != NULL; l = l->next) {
+		attr = l->data;
+		if (g_strcmp0 (attr->key, key) == 0)
+			return attr->value;
+	}
+	return NULL;
+}
+
+/**
  * as_node_destroy_node_cb:
  **/
 static gboolean
@@ -74,8 +121,7 @@ as_node_destroy_node_cb (GNode *node, gpointer user_data)
 		return FALSE;
 	g_free (data->name);
 	g_free (data->cdata);
-	if (data->attributes != NULL)
-		g_hash_table_unref (data->attributes);
+	g_list_free_full (data->attrs, (GDestroyNotify) as_node_attr_free);
 	g_slice_free (AsNodeData, data);
 	return FALSE;
 }
@@ -210,26 +256,18 @@ as_node_add_padding (GString *xml, guint depth)
  * as_node_get_attr_string:
  **/
 static gchar *
-as_node_get_attr_string (GHashTable *hash)
+as_node_get_attr_string (AsNodeData *data)
 {
-	const gchar *key;
-	const gchar *value;
-	GList *keys;
+	AsNodeAttr *attr;
 	GList *l;
 	GString *str;
 
-	/* nothing to get */
-	if (hash == NULL)
-		return g_strdup ("");
-
 	str = g_string_new ("");
-	keys = g_hash_table_get_keys (hash);
-	for (l = keys; l != NULL; l = l->next) {
-		key = l->data;
-		value = g_hash_table_lookup (hash, key);
-		g_string_append_printf (str, " %s=\"%s\"", key, value);
+	for (l = data->attrs; l != NULL; l = l->next) {
+		attr = l->data;
+		g_string_append_printf (str, " %s=\"%s\"",
+					attr->key, attr->value);
 	}
-	g_list_free (keys);
 	return g_string_free (str, FALSE);
 }
 
@@ -256,7 +294,7 @@ as_node_to_xml_string (GString *xml,
 	} else if (n->children == NULL) {
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_INDENT) > 0)
 			as_node_add_padding (xml, depth - depth_offset);
-		attrs = as_node_get_attr_string (data->attributes);
+		attrs = as_node_get_attr_string (data);
 		if (data->cdata == NULL || data->cdata[0] == '\0') {
 			g_string_append_printf (xml, "<%s%s/>",
 						data->name, attrs);
@@ -276,7 +314,7 @@ as_node_to_xml_string (GString *xml,
 	} else {
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_INDENT) > 0)
 			as_node_add_padding (xml, depth - depth_offset);
-		attrs = as_node_get_attr_string (data->attributes);
+		attrs = as_node_get_attr_string (data);
 		g_string_append_printf (xml, "<%s%s>", data->name, attrs);
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE) > 0)
 			g_string_append (xml, "\n");
@@ -334,16 +372,10 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	/* create the new node data */
 	data = g_slice_new0 (AsNodeData);
 	data->name = g_strdup (element_name);
-	if (g_strv_length ((gchar **) attribute_names) > 0) {
-		data->attributes = g_hash_table_new_full (g_str_hash,
-							  g_str_equal,
-							  g_free,
-							  g_free);
-	}
 	for (i = 0; attribute_names[i] != NULL; i++) {
-		g_hash_table_insert (data->attributes,
-				     g_strdup (attribute_names[i]),
-				     g_strdup (attribute_values[i]));
+		as_node_attr_insert (data,
+				     attribute_names[i],
+				     attribute_values[i]);
 	}
 
 	/* add the node to the DOM */
@@ -790,9 +822,7 @@ as_node_get_attribute (const GNode *node, const gchar *key)
 	if (node->data == NULL)
 		return NULL;
 	data = (AsNodeData *) node->data;
-	if (data->attributes == NULL)
-		return NULL;
-	return g_hash_table_lookup (data->attributes, key);
+	return as_node_attr_lookup (data, key);
 }
 
 /**
@@ -813,6 +843,7 @@ as_node_add_attribute (GNode *node,
 		       gssize value_len)
 {
 	AsNodeData *data;
+	AsNodeAttr *attr;
 
 	g_return_if_fail (node != NULL);
 	g_return_if_fail (key != NULL);
@@ -820,15 +851,8 @@ as_node_add_attribute (GNode *node,
 	if (node->data == NULL)
 		return;
 	data = (AsNodeData *) node->data;
-	if (data->attributes == NULL) {
-		data->attributes = g_hash_table_new_full (g_str_hash,
-							  g_str_equal,
-							  g_free,
-							  g_free);
-	}
-	g_hash_table_insert (data->attributes,
-			     g_strdup (key),
-			     as_strndup (value, value_len));
+	attr = as_node_attr_insert (data, key, NULL);
+	attr->value = as_strndup (value, value_len);
 }
 
 /**
@@ -894,10 +918,6 @@ as_node_insert (GNode *parent,
 	if (cdata != NULL)
 		data->cdata = g_strdup (cdata);
 	data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
-	data->attributes = g_hash_table_new_full (g_str_hash,
-						  g_str_equal,
-						  g_free,
-						  g_free);
 
 	/* process the attrs valist */
 	va_start (args, insert_flags);
@@ -908,8 +928,7 @@ as_node_insert (GNode *parent,
 		value = va_arg (args, const gchar *);
 		if (value == NULL)
 			break;
-		g_hash_table_insert (data->attributes,
-				     g_strdup (key), g_strdup (value));
+		as_node_attr_insert (data, key, value);
 	}
 	va_end (args);
 
@@ -953,7 +972,7 @@ as_node_insert_localized (GNode *parent,
 	for (l = list; l != NULL; l = l->next) {
 		key = l->data;
 		value = g_hash_table_lookup (localized, key);
-		data = g_slice_new (AsNodeData);
+		data = g_slice_new0 (AsNodeData);
 		data->name = g_strdup (name);
 		if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
 			data->cdata = as_markup_convert_simple (value, -1, NULL);
@@ -962,15 +981,8 @@ as_node_insert_localized (GNode *parent,
 			data->cdata = g_strdup (value);
 			data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 		}
-		data->attributes = g_hash_table_new_full (g_str_hash,
-							  g_str_equal,
-							  g_free,
-							  g_free);
-		if (g_strcmp0 (key, "C") != 0) {
-			g_hash_table_insert (data->attributes,
-					     g_strdup ("xml:lang"),
-					     g_strdup (key));
-		}
+		if (g_strcmp0 (key, "C") != 0)
+			as_node_attr_insert (data, "xml:lang", key);
 		g_node_insert_data (parent, -1, data);
 	}
 	g_list_free (list);
@@ -1007,26 +1019,16 @@ as_node_insert_hash (GNode *parent,
 	for (l = list; l != NULL; l = l->next) {
 		key = l->data;
 		value = g_hash_table_lookup (hash, key);
-		data = g_slice_new (AsNodeData);
+		data = g_slice_new0 (AsNodeData);
 		data->name = g_strdup (name);
 		data->cdata = g_strdup (!swapped ? value : key);
 		data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
-		data->attributes = g_hash_table_new_full (g_str_hash,
-							  g_str_equal,
-							  g_free,
-							  g_free);
 		if (!swapped) {
-			if (key != NULL && key[0] != '\0') {
-				g_hash_table_insert (data->attributes,
-						     g_strdup (attr_key),
-						     g_strdup (key));
-			}
+			if (key != NULL && key[0] != '\0')
+				as_node_attr_insert (data, attr_key, key);
 		} else {
-			if (value != NULL && value[0] != '\0') {
-				g_hash_table_insert (data->attributes,
-						     g_strdup (attr_key),
-						     g_strdup (value));
-			}
+			if (value != NULL && value[0] != '\0')
+				as_node_attr_insert (data, attr_key, value);
 		}
 		g_node_insert_data (parent, -1, data);
 	}
@@ -1070,10 +1072,7 @@ as_node_get_localized (const GNode *node, const gchar *key)
 			continue;
 		if (g_strcmp0 (data->name, key) != 0)
 			continue;
-		if (data->attributes != NULL)
-			xml_lang = g_hash_table_lookup (data->attributes, "xml:lang");
-		else
-			xml_lang = NULL;
+		xml_lang = as_node_attr_lookup (data, "xml:lang");
 
 		/* avoid storing identical strings */
 		data_localized = data->cdata;
@@ -1161,11 +1160,8 @@ as_node_denorm_get_str_for_lang (GHashTable *hash,
 	const gchar *xml_lang = NULL;
 	GString *str;
 
-	/* only set if attrs exist */
-	if (data->attributes != NULL)
-		xml_lang = g_hash_table_lookup (data->attributes, "xml:lang");
-
 	/* get locale */
+	xml_lang = as_node_attr_lookup (data, "xml:lang");
 	if (xml_lang == NULL)
 		xml_lang = "C";
 	str = g_hash_table_lookup (hash, xml_lang);
