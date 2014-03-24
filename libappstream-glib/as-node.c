@@ -49,7 +49,7 @@ typedef struct
 } AsNodeData;
 
 typedef struct {
-	gchar		*key;
+	const gchar	*key;
 	gchar		*value;
 } AsNodeAttr;
 
@@ -74,7 +74,6 @@ as_node_new (void)
 static void
 as_node_attr_free (AsNodeAttr *attr)
 {
-	g_free (attr->key);
 	g_free (attr->value);
 	g_slice_free (AsNodeAttr, attr);
 }
@@ -87,7 +86,7 @@ as_node_attr_insert (AsNodeData *data, const gchar *key, const gchar *value)
 {
 	AsNodeAttr *attr;
 	attr = g_slice_new0 (AsNodeAttr);
-	attr->key = g_strdup (key);
+	attr->key = g_intern_string (key);
 	attr->value = g_strdup (value);
 	data->attrs = g_list_prepend (data->attrs, attr);
 	return attr;
