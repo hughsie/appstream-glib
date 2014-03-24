@@ -284,6 +284,24 @@ as_node_get_attr_string (AsNodeData *data)
 }
 
 /**
+ * as_tag_data_get_name:
+ **/
+static const gchar *
+as_tag_data_get_name (AsNodeData *data)
+{
+	return data->name;
+}
+
+/**
+ * as_node_data_set_name:
+ **/
+static void
+as_node_data_set_name (AsNodeData *data, const gchar *name)
+{
+	data->name = g_strdup (name);
+}
+
+/**
  * as_node_to_xml_string:
  **/
 static void
@@ -294,6 +312,7 @@ as_node_to_xml_string (GString *xml,
 {
 	AsNodeData *data = n->data;
 	GNode *c;
+	const gchar *tag_str;
 	guint depth = g_node_depth ((GNode *) n);
 	gchar *attrs;
 
@@ -307,16 +326,17 @@ as_node_to_xml_string (GString *xml,
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_INDENT) > 0)
 			as_node_add_padding (xml, depth - depth_offset);
 		attrs = as_node_get_attr_string (data);
+		tag_str = as_tag_data_get_name (data);
 		if (data->cdata == NULL || data->cdata[0] == '\0') {
 			g_string_append_printf (xml, "<%s%s/>",
-						data->name, attrs);
+						tag_str, attrs);
 		} else {
 			as_node_cdata_to_escaped (data);
 			g_string_append_printf (xml, "<%s%s>%s</%s>",
-						data->name,
+						tag_str,
 						attrs,
 						data->cdata,
-						data->name);
+						tag_str);
 		}
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE) > 0)
 			g_string_append (xml, "\n");
@@ -327,7 +347,8 @@ as_node_to_xml_string (GString *xml,
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_INDENT) > 0)
 			as_node_add_padding (xml, depth - depth_offset);
 		attrs = as_node_get_attr_string (data);
-		g_string_append_printf (xml, "<%s%s>", data->name, attrs);
+		tag_str = as_tag_data_get_name (data);
+		g_string_append_printf (xml, "<%s%s>", tag_str, attrs);
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE) > 0)
 			g_string_append (xml, "\n");
 		g_free (attrs);
@@ -337,7 +358,7 @@ as_node_to_xml_string (GString *xml,
 
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_INDENT) > 0)
 			as_node_add_padding (xml, depth - depth_offset);
-		g_string_append_printf (xml, "</%s>", data->name);
+		g_string_append_printf (xml, "</%s>", tag_str);
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE) > 0)
 			g_string_append (xml, "\n");
 	}
@@ -383,7 +404,7 @@ as_node_start_element_cb (GMarkupParseContext *context,
 
 	/* create the new node data */
 	data = g_slice_new0 (AsNodeData);
-	data->name = g_strdup (element_name);
+	as_node_data_set_name (data, element_name);
 	for (i = 0; attribute_names[i] != NULL; i++) {
 		as_node_attr_insert (data,
 				     attribute_names[i],
@@ -674,7 +695,7 @@ as_node_get_child_node (const GNode *root, const gchar *name)
 		data = node->data;
 		if (data == NULL)
 			return NULL;
-		if (g_strcmp0 (data->name, name) == 0)
+		if (g_strcmp0 (as_tag_data_get_name (data), name) == 0)
 			return node;
 	}
 	return NULL;
@@ -696,7 +717,7 @@ as_node_get_name (const GNode *node)
 	g_return_val_if_fail (node != NULL, NULL);
 	if (node->data == NULL)
 		return NULL;
-	return ((AsNodeData *) node->data)->name;
+	return as_tag_data_get_name ((AsNodeData *) node->data);
 }
 
 /**
@@ -958,7 +979,7 @@ as_node_insert (GNode *parent,
 	va_list args;
 
 	data = g_slice_new0 (AsNodeData);
-	data->name = g_strdup (name);
+	as_node_data_set_name (data, name);
 	if (cdata != NULL)
 		data->cdata = g_strdup (cdata);
 	data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
@@ -1017,7 +1038,7 @@ as_node_insert_localized (GNode *parent,
 		key = l->data;
 		value = g_hash_table_lookup (localized, key);
 		data = g_slice_new0 (AsNodeData);
-		data->name = g_strdup (name);
+		as_node_data_set_name (data, name);
 		if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
 			data->cdata = as_markup_convert_simple (value, -1, NULL);
 			data->cdata_escaped = FALSE;
@@ -1064,7 +1085,7 @@ as_node_insert_hash (GNode *parent,
 		key = l->data;
 		value = g_hash_table_lookup (hash, key);
 		data = g_slice_new0 (AsNodeData);
-		data->name = g_strdup (name);
+		as_node_data_set_name (data, name);
 		data->cdata = g_strdup (!swapped ? value : key);
 		data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 		if (!swapped) {
@@ -1114,7 +1135,7 @@ as_node_get_localized (const GNode *node, const gchar *key)
 			continue;
 		if (data->cdata == NULL)
 			continue;
-		if (g_strcmp0 (data->name, key) != 0)
+		if (g_strcmp0 (as_tag_data_get_name (data), key) != 0)
 			continue;
 		xml_lang = as_node_attr_lookup (data, "xml:lang");
 
