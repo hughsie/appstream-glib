@@ -94,10 +94,10 @@ as_node_attr_insert (AsNodeData *data, const gchar *key, const gchar *value)
 }
 
 /**
- * as_node_attr_lookup:
+ * as_node_attr_find:
  **/
-static const gchar *
-as_node_attr_lookup (AsNodeData *data, const gchar *key)
+static AsNodeAttr *
+as_node_attr_find (AsNodeData *data, const gchar *key)
 {
 	AsNodeAttr *attr;
 	GList *l;
@@ -105,8 +105,21 @@ as_node_attr_lookup (AsNodeData *data, const gchar *key)
 	for (l = data->attrs; l != NULL; l = l->next) {
 		attr = l->data;
 		if (g_strcmp0 (attr->key, key) == 0)
-			return attr->value;
+			return attr;
 	}
+	return NULL;
+}
+
+/**
+ * as_node_attr_lookup:
+ **/
+static const gchar *
+as_node_attr_lookup (AsNodeData *data, const gchar *key)
+{
+	AsNodeAttr *attr;
+	attr = as_node_attr_find (data, key);
+	if (attr != NULL)
+		return attr->value;
 	return NULL;
 }
 
@@ -823,6 +836,38 @@ as_node_get_attribute (const GNode *node, const gchar *key)
 		return NULL;
 	data = (AsNodeData *) node->data;
 	return as_node_attr_lookup (data, key);
+}
+
+/**
+ * as_node_take_attribute: (skip)
+ * @node: a #GNode
+ * @key: the attribute key
+ *
+ * Gets a node attribute, e.g. "false"
+ *
+ * Return value: string value
+ *
+ * Since: 0.1.2
+ **/
+gchar *
+as_node_take_attribute (const GNode *node, const gchar *key)
+{
+	AsNodeAttr *attr;
+	AsNodeData *data;
+	gchar *tmp;
+
+	g_return_val_if_fail (node != NULL, NULL);
+	g_return_val_if_fail (key != NULL, NULL);
+
+	if (node->data == NULL)
+		return NULL;
+	data = (AsNodeData *) node->data;
+	attr = as_node_attr_find (data, key);
+	if (attr == NULL)
+		return NULL;
+	tmp = attr->value;
+	attr->value = NULL;
+	return tmp;
 }
 
 /**

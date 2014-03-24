@@ -1377,21 +1377,21 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <name> */
 	case AS_TAG_NAME:
-		tmp = as_node_get_attribute (n, "xml:lang");
-		if (tmp == NULL)
-			tmp = "C";
+		taken = as_node_take_attribute (n, "xml:lang");
+		if (taken == NULL)
+			taken = g_strdup ("C");
 		g_hash_table_insert (priv->names,
-				     g_strdup (tmp),
+				     taken,
 				     as_node_take_data (n));
 		break;
 
 	/* <summary> */
 	case AS_TAG_SUMMARY:
-		tmp = as_node_get_attribute (n, "xml:lang");
-		if (tmp == NULL)
-			tmp = "C";
+		taken = as_node_take_attribute (n, "xml:lang");
+		if (taken == NULL)
+			taken = g_strdup ("C");
 		g_hash_table_insert (priv->comments,
-				     g_strdup (tmp),
+				     taken,
 				     as_node_take_data (n));
 		break;
 
@@ -1539,14 +1539,15 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_METADATA:
 		g_hash_table_remove_all (priv->metadata);
 		for (c = n->children; c != NULL; c = c->next) {
+			gchar *key;
 			if (g_strcmp0 (as_node_get_name (c), "value") != 0)
 				continue;
-			tmp = as_node_get_attribute (c, "key");
+			key = as_node_take_attribute (c, "key");
 			taken = as_node_take_data (c);
 			if (taken == NULL)
 				taken = g_strdup ("");
 			g_hash_table_insert (priv->metadata,
-					     g_strdup (tmp),
+					     key,
 					     taken);
 		}
 		break;

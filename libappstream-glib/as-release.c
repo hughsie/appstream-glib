@@ -259,16 +259,20 @@ as_release_node_insert (AsRelease *release, GNode *parent, gdouble api_version)
 gboolean
 as_release_node_parse (AsRelease *release, GNode *node, GError **error)
 {
-	const gchar *tmp;
+	AsReleasePrivate *priv = GET_PRIVATE (release);
 	GNode *n;
 	GString *xml;
+	const gchar *tmp;
+	gchar *taken;
 
 	tmp = as_node_get_attribute (node, "timestamp");
 	if (tmp != NULL)
 		as_release_set_timestamp (release, atol (tmp));
-	tmp = as_node_get_attribute (node, "version");
-	if (tmp != NULL)
-		as_release_set_version (release, tmp, -1);
+	taken = as_node_take_attribute (node, "version");
+	if (taken != NULL) {
+		g_free (priv->version);
+		priv->version = taken;
+	}
 
 	/* descriptions are translated and optional */
 	for (n = node->children; n != NULL; n = n->next) {
