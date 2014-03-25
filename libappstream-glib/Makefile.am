@@ -91,8 +91,25 @@ TESTS = as-self-test
 
 if HAVE_INTROSPECTION
 introspection_sources =						\
-	$(libappstream_glib_include_HEADERS)			\
-	$(libappstream_glib_la_SOURCES)
+	as-app.c						\
+	as-app.h						\
+	as-enums.c						\
+	as-enums.h						\
+	as-image.c						\
+	as-image.h						\
+	as-node.c						\
+	as-node.h						\
+	as-release.c						\
+	as-release.h						\
+	as-screenshot.c						\
+	as-screenshot.h						\
+	as-store.c						\
+	as-store.h						\
+	as-tag.c						\
+	as-tag.h						\
+	as-utils.c						\
+	as-utils.h						\
+	as-version.h
 
 AppStreamGlib-1.0.gir: libappstream-glib.la
 AppStreamGlib_1_0_gir_INCLUDES = GObject-2.0 Gio-2.0
