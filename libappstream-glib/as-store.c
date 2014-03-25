@@ -865,6 +865,44 @@ out:
 }
 
 /**
+ * as_store_add_app_install_screenshot:
+ **/
+static void
+as_store_add_app_install_screenshot (AsApp *app)
+{
+	AsImage *im = NULL;
+	AsScreenshot *ss = NULL;
+	GPtrArray *pkgnames;
+	const gchar *pkgname;
+	gchar *url = NULL;
+
+	/* get the default package name */
+	pkgnames = as_app_get_pkgnames (app);
+	if (pkgnames->len == 0)
+		goto out;
+	pkgname = g_ptr_array_index (pkgnames, 0);
+	url = g_build_filename ("http://screenshots.debian.net/screenshot",
+				pkgname, NULL);
+
+	/* screenshots.debian.net doesn't specify a size, so this is a guess */
+	im = as_image_new ();
+	as_image_set_url (im, url, -1);
+	as_image_set_width (im, 800);
+	as_image_set_height (im, 600);
+
+	/* add screenshot without a caption */
+	ss = as_screenshot_new ();
+	as_screenshot_add_image (ss, im);
+	as_app_add_screenshot (app, ss);
+out:
+	if (im != NULL)
+		g_object_unref (im);
+	if (ss != NULL)
+		g_object_unref (ss);
+	g_free (url);
+}
+
+/**
  * as_store_load_app_install_file:
  **/
 static gboolean
@@ -901,6 +939,7 @@ as_store_load_app_install_file (AsStore *store,
 	}
 	as_app_set_icon_kind (app, AS_ICON_KIND_CACHED);
 	as_app_set_icon_path (app, path_icons, -1);
+	as_store_add_app_install_screenshot (app);
 	as_store_add_app (store, app);
 out:
 	g_object_unref (app);
