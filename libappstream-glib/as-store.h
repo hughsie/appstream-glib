@@ -63,8 +63,23 @@ struct _AsStoreClass
 	void (*_as_reserved8)	(void);
 };
 
+/**
+ * AsStoreError:
+ * @AS_STORE_ERROR_FAILED:			Generic failure
+ *
+ * The error type.
+ **/
+typedef enum {
+	AS_STORE_ERROR_FAILED,
+	/*< private >*/
+	AS_STORE_ERROR_LAST
+} AsStoreError;
+
+#define	AS_STORE_ERROR				as_store_error_quark ()
+
 GType		 as_store_get_type		(void);
 AsStore		*as_store_new			(void);
+GQuark		 as_store_error_quark		(void);
 
 /* getters */
 guint		 as_store_get_size		(AsStore	*store);

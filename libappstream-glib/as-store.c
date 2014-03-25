@@ -58,6 +58,22 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsStore, as_store, G_TYPE_OBJECT)
 #define GET_PRIVATE(o) (as_store_get_instance_private (o))
 
 /**
+ * as_store_error_quark:
+ *
+ * Return value: An error quark.
+ *
+ * Since: 0.1.2
+ **/
+GQuark
+as_store_error_quark (void)
+{
+	static GQuark quark = 0;
+	if (!quark)
+		quark = g_quark_from_static_string ("AsStoreError");
+	return quark;
+}
+
+/**
  * as_store_finalize:
  **/
 static void
@@ -283,8 +299,8 @@ as_store_from_root (AsStore *store,
 		if (apps == NULL) {
 			ret = FALSE;
 			g_set_error_literal (error,
-					     AS_NODE_ERROR,
-					     AS_NODE_ERROR_FAILED,
+					     AS_STORE_ERROR,
+					     AS_STORE_ERROR_FAILED,
 					     "No valid root node specified");
 			goto out;
 		}
