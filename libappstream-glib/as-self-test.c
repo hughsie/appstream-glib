@@ -913,6 +913,23 @@ ch_test_utils_func (void)
 	g_clear_error (&error);
 }
 
+static void
+ch_test_store_app_install_func (void)
+{
+	AsStore *store;
+	GError *error = NULL;
+	gboolean ret;
+
+	store = as_store_new ();
+	ret = as_store_load (store,
+			     AS_STORE_LOAD_FLAG_APP_INSTALL,
+			     NULL,
+			     &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_object_unref (store);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -941,6 +958,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store", ch_test_store_func);
 	g_test_add_func ("/AppStream/store{versions}", ch_test_store_versions_func);
 	g_test_add_func ("/AppStream/store{origin}", ch_test_store_origin_func);
+	g_test_add_func ("/AppStream/store{app-install}", ch_test_store_app_install_func);
 	g_test_add_func ("/AppStream/store{speed}", ch_test_store_speed_func);
 
 	return g_test_run ();

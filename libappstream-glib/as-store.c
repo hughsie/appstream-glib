@@ -865,6 +865,104 @@ out:
 }
 
 /**
+ * as_store_load_app_install_file:
+ **/
+static gboolean
+as_store_load_app_install_file (AsStore *store,
+				const gchar *filename,
+				const gchar *path_icons,
+				GError **error)
+{
+	GError *error_local = NULL;
+	gboolean ret;
+	AsApp *app;
+
+	app = as_app_new ();
+	ret = as_app_parse_file (app,
+				 filename,
+				 AS_APP_PARSE_FLAG_USE_HEURISTICS,
+				 &error_local);
+	if (!ret) {
+		if (g_error_matches (error_local,
+				     AS_APP_ERROR,
+				     AS_APP_ERROR_INVALID_TYPE)) {
+			/* Ubuntu include non-apps here too... */
+			ret = TRUE;
+		} else {
+			g_set_error (error,
+				     AS_STORE_ERROR,
+				     AS_STORE_ERROR_FAILED,
+				     "Failed to parse %s: %s",
+				     filename,
+				     error_local->message);
+		}
+		g_error_free (error_local);
+		goto out;
+	}
+	as_app_set_icon_kind (app, AS_ICON_KIND_CACHED);
+	as_app_set_icon_path (app, path_icons, -1);
+	as_store_add_app (store, app);
+out:
+	g_object_unref (app);
+	return ret;
+}
+
+/**
+ * as_store_load_app_install:
+ **/
+static gboolean
+as_store_load_app_install (AsStore *store,
+			   const gchar *path,
+			   GCancellable *cancellable,
+			   GError **error)
+{
+	GError *error_local = NULL;
+	GDir *dir = NULL;
+	gboolean ret = TRUE;
+	gchar *path_desktop = NULL;
+	gchar *path_icons = NULL;
+	gchar *filename;
+	const gchar *tmp;
+
+	path_desktop = g_build_filename (path, "desktop", NULL);
+	if (!g_file_test (path_desktop, G_FILE_TEST_EXISTS))
+		goto out;
+	dir = g_dir_open (path_desktop, 0, &error_local);
+	if (dir == NULL) {
+		ret = FALSE;
+		g_set_error (error,
+			     AS_STORE_ERROR,
+			     AS_STORE_ERROR_FAILED,
+			     "Failed to open %s: %s",
+			     path_desktop,
+			     error_local->message);
+		g_error_free (error_local);
+		goto out;
+	}
+
+	path_icons = g_build_filename (path, "icons", NULL);
+	while ((tmp = g_dir_read_name (dir)) != NULL) {
+		if (!g_str_has_suffix (tmp, ".desktop"))
+			continue;
+		filename = g_build_filename (path_desktop, tmp, NULL);
+		ret = as_store_load_app_install_file (store,
+						      filename,
+						      path_icons,
+						      error);
+		g_free (filename);
+		if (!ret)
+			goto out;
+	}
+
+out:
+	if (dir != NULL)
+		g_dir_close (dir);
+	g_free (path_desktop);
+	g_free (path_icons);
+	return ret;
+}
+
+/**
  * as_store_load:
  * @store: a #AsStore instance.
  * @flags: #AsStoreLoadFlags, e.g. %AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM
@@ -920,12 +1018,12 @@ as_store_load (AsStore *store,
 
 	/* ubuntu specific */
 	if ((flags & AS_STORE_LOAD_FLAG_APP_INSTALL) > 0) {
-		ret = FALSE;
-		g_set_error_literal (error,
-				     AS_STORE_ERROR,
-				     AS_STORE_ERROR_FAILED,
-				     "app-install not yet supported");
-		goto out;
+		ret = as_store_load_app_install (store,
+						 "/usr/share/app-install",
+						 cancellable,
+						 error);
+		if (!ret)
+			goto out;
 	}
 out:
 	g_list_free_full (app_info, g_free);

@@ -617,6 +617,9 @@ as_app_set_id_full (AsApp *app, const gchar *id_full, gssize id_full_len)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	gchar *tmp;
 
+	g_free (priv->id_full);
+	g_free (priv->id);
+
 	priv->id_full = as_strndup (id_full, id_full_len);
 	g_strdelimit (priv->id_full, "&<>", '-');
 	priv->id = g_strdup (priv->id_full);
@@ -2018,6 +2021,7 @@ as_app_parse_file (AsApp *app,
 	gboolean ret;
 	gchar *app_id = NULL;
 	gchar **keys = NULL;
+	gchar *tmp;
 	guint i;
 
 	/* load file */
@@ -2031,6 +2035,13 @@ as_app_parse_file (AsApp *app,
 	/* create app */
 	app_id = g_path_get_basename (desktop_file);
 	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
+
+	/* Ubuntu helpfully put the package name in the desktop file name */
+	tmp = g_strstr_len (app_id, -1, ":");
+	if (tmp != NULL)
+		as_app_set_id_full (app, tmp + 1, -1);
+	else
+		as_app_set_id_full (app, app_id, -1);
 
 	/* look at all the keys */
 	keys = g_key_file_get_keys (kf, G_KEY_FILE_DESKTOP_GROUP, NULL, error);
