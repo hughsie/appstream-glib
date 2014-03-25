@@ -51,9 +51,17 @@ struct _AsStorePrivate
 	GPtrArray		*array;		/* of AsApp */
 	GHashTable		*hash_id;	/* of AsApp{id} */
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
+	GPtrArray		*file_monitors;	/* of GFileMonitor */
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsStore, as_store, G_TYPE_OBJECT)
+
+enum {
+	SIGNAL_CHANGED,
+	SIGNAL_LAST
+};
+
+static guint signals [SIGNAL_LAST] = { 0 };
 
 #define GET_PRIVATE(o) (as_store_get_instance_private (o))
 
@@ -84,6 +92,7 @@ as_store_finalize (GObject *object)
 
 	g_free (priv->origin);
 	g_ptr_array_unref (priv->array);
+	g_ptr_array_unref (priv->file_monitors);
 	g_hash_table_unref (priv->hash_id);
 	g_hash_table_unref (priv->hash_pkgname);
 
@@ -107,6 +116,7 @@ as_store_init (AsStore *store)
 						    g_str_equal,
 						    g_free,
 						    (GDestroyNotify) g_object_unref);
+	priv->file_monitors = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 }
 
 /**
@@ -116,6 +126,23 @@ static void
 as_store_class_init (AsStoreClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+	/**
+	 * AsStore::changed:
+	 * @device: the #AsStore instance that emitted the signal
+	 *
+	 * The ::changed signal is emitted when the files backing the store
+	 * have changed.
+	 *
+	 * Since: 0.1.2
+	 **/
+	signals [SIGNAL_CHANGED] =
+		g_signal_new ("changed",
+			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (AsStoreClass, changed),
+			      NULL, NULL, g_cclosure_marshal_VOID__VOID,
+			      G_TYPE_NONE, 0);
+
 	object_class->finalize = as_store_finalize;
 }
 
@@ -609,6 +636,243 @@ as_store_set_api_version (AsStore *store, gdouble api_version)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	priv->api_version = api_version;
+}
+
+/**
+ * as_store_guess_origin_fallback:
+ */
+static gboolean
+as_store_guess_origin_fallback (AsStore *store,
+				const gchar *filename,
+				GError **error)
+{
+	gboolean ret = TRUE;
+	gchar *origin_fallback;
+	gchar *tmp;
+
+	/* the first component of the file (e.g. "fedora-20.xml.gz)
+	 * is used for the icon directory as we might want to clean up
+	 * the icons manually if they are installed in /var/cache */
+	origin_fallback = g_path_get_basename (filename);
+	tmp = g_strstr_len (origin_fallback, -1, ".xml");
+	if (tmp == NULL) {
+		ret = FALSE;
+		g_set_error (error,
+			     AS_STORE_ERROR,
+			     AS_STORE_ERROR_FAILED,
+			     "AppStream metadata name %s not valid, "
+			     "expected .xml[.*]",
+			     filename);
+		goto out;
+	}
+	tmp[0] = '\0';
+
+	/* load this specific file */
+	as_store_set_origin (store, origin_fallback);
+out:
+	g_free (origin_fallback);
+	return ret;
+}
+
+/**
+ * as_store_load_app_info_file:
+ */
+static gboolean
+as_store_load_app_info_file (AsStore *store,
+			     const gchar *path_xml,
+			     const gchar *icon_root,
+			     GCancellable *cancellable,
+			     GError **error)
+{
+	GFile *file = NULL;
+	gboolean ret = FALSE;
+
+	/* guess this based on the name */
+	ret = as_store_guess_origin_fallback (store, path_xml, error);
+	if (!ret)
+		goto out;
+
+	/* load this specific file */
+	g_debug ("Loading AppStream XML %s with icon path %s",
+		 path_xml, icon_root);
+	file = g_file_new_for_path (path_xml);
+	ret = as_store_from_file (store,
+				  file,
+				  icon_root,
+				  cancellable,
+				  error);
+	if (!ret)
+		goto out;
+out:
+	if (file != NULL)
+		g_object_unref (file);
+	return ret;
+}
+
+/**
+ * as_store_cache_changed_cb:
+ */
+static void
+as_store_cache_changed_cb (GFileMonitor *monitor,
+			   GFile *file, GFile *other_file,
+			   GFileMonitorEvent event_type,
+			   AsStore *store)
+{
+	g_debug ("Emitting ::changed()");
+	g_signal_emit (store, signals[SIGNAL_CHANGED], 0);
+}
+
+/**
+ * as_store_monitor_directory:
+ **/
+static gboolean
+as_store_monitor_directory (AsStore *store,
+			    const gchar *path,
+			    GCancellable *cancellable,
+			    GError **error)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	GFile *file = NULL;
+	GFileMonitor *monitor = NULL;
+	gboolean ret = TRUE;
+
+	file = g_file_new_for_path (path);
+	monitor = g_file_monitor_directory (file,
+					    G_FILE_MONITOR_NONE,
+					    cancellable,
+					    error);
+	if (monitor == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+	g_signal_connect (monitor, "changed",
+			  G_CALLBACK (as_store_cache_changed_cb),
+			  store);
+	g_ptr_array_add (priv->file_monitors, g_object_ref (monitor));
+out:
+	if (monitor != NULL)
+		g_object_unref (monitor);
+	if (file != NULL)
+		g_object_unref (file);
+	return ret;
+}
+
+/**
+ * as_store_load_app_info:
+ **/
+static gboolean
+as_store_load_app_info (AsStore *store,
+			const gchar *path,
+			GCancellable *cancellable,
+			GError **error)
+{
+	GDir *dir = NULL;
+	const gchar *tmp;
+	gboolean ret = TRUE;
+	gchar *filename_xml;
+	gchar *icon_root = NULL;
+	gchar *path_xml = NULL;
+
+	/* watch the directory for changes */
+	ret = as_store_monitor_directory (store, path, cancellable, error);
+	if (!ret)
+		goto out;
+
+	/* search all files */
+	path_xml = g_build_filename (path, "xmls", NULL);
+	if (!g_file_test (path_xml, G_FILE_TEST_EXISTS))
+		goto out;
+	dir = g_dir_open (path_xml, 0, error);
+	if (dir == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+	icon_root = g_build_filename (path, "icons", NULL);
+	while ((tmp = g_dir_read_name (dir)) != NULL) {
+		filename_xml = g_build_filename (path_xml, tmp, NULL);
+		ret = as_store_load_app_info_file (store,
+						   filename_xml,
+						   icon_root,
+						   cancellable,
+						   error);
+		g_free (filename_xml);
+		if (!ret)
+			goto out;
+	}
+out:
+	if (dir != NULL)
+		g_dir_close (dir);
+	g_free (path_xml);
+	g_free (icon_root);
+	return ret;
+}
+
+/**
+ * as_store_load:
+ * @store: a #AsStore instance.
+ * @flags: #AsStoreLoadFlags, e.g. %AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM
+ * @cancellable: a #GCancellable.
+ * @error: A #GError or %NULL.
+ *
+ * Loads the store from the default locations.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.1.2
+ **/
+gboolean
+as_store_load (AsStore *store,
+	       AsStoreLoadFlags flags,
+	       GCancellable *cancellable,
+	       GError **error)
+{
+	GList *app_info = NULL;
+	GList *l;
+	const gchar * const * data_dirs;
+	const gchar *tmp;
+	gchar *path;
+	guint i;
+	gboolean ret = TRUE;
+
+	/* system locations */
+	if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM) > 0) {
+		data_dirs = g_get_system_data_dirs ();
+		for (i = 0; data_dirs[i] != NULL; i++) {
+			path = g_build_filename (data_dirs[i], "app-info", NULL);
+			app_info = g_list_prepend (app_info, path);
+		}
+		path = g_build_filename (LOCALSTATEDIR, "cache", "app-info", NULL);
+		app_info = g_list_prepend (app_info, path);
+	}
+
+	/* per-user locations */
+	if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_USER) > 0) {
+		path = g_build_filename (g_get_user_data_dir (), "app-info", NULL);
+		app_info = g_list_prepend (app_info, path);
+	}
+
+	/* load each app-info path if it exists */
+	for (l = app_info; l != NULL; l = l->next) {
+		tmp = l->data;
+		if (!g_file_test (tmp, G_FILE_TEST_EXISTS))
+			continue;
+		ret = as_store_load_app_info (store, tmp, cancellable, error);
+		if (!ret)
+			goto out;
+	}
+
+	/* ubuntu specific */
+	if ((flags & AS_STORE_LOAD_FLAG_APP_INSTALL) > 0) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     AS_STORE_ERROR,
+				     AS_STORE_ERROR_FAILED,
+				     "app-install not yet supported");
+		goto out;
+	}
+out:
+	g_list_free_full (app_info, g_free);
+	return ret;
 }
 
 /**

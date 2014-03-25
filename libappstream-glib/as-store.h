@@ -52,6 +52,7 @@ struct _AsStore
 struct _AsStoreClass
 {
 	GObjectClass		parent_class;
+	void			(*changed)	(AsStore	*store);
 	/*< private >*/
 	void (*_as_reserved1)	(void);
 	void (*_as_reserved2)	(void);
@@ -60,8 +61,25 @@ struct _AsStoreClass
 	void (*_as_reserved5)	(void);
 	void (*_as_reserved6)	(void);
 	void (*_as_reserved7)	(void);
-	void (*_as_reserved8)	(void);
 };
+
+/**
+ * AsStoreLoadFlags:
+ * @AS_STORE_LOAD_FLAG_NONE:			No extra flags to use
+ * @AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM:		The system app-info AppStream data
+ * @AS_STORE_LOAD_FLAG_APP_INFO_USER:		The per-user app-info AppStream data
+ * @AS_STORE_LOAD_FLAG_APP_INSTALL:		The ubuntu-specific app-install data
+ *
+ * The flags to use when loading the store.
+ **/
+typedef enum {
+	AS_STORE_LOAD_FLAG_NONE			= 0,	/* Since: 0.1.2 */
+	AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM	= 1,	/* Since: 0.1.2 */
+	AS_STORE_LOAD_FLAG_APP_INFO_USER	= 2,	/* Since: 0.1.2 */
+	AS_STORE_LOAD_FLAG_APP_INSTALL		= 4,	/* Since: 0.1.2 */
+	/*< private >*/
+	AS_STORE_LOAD_FLAG_LAST
+} AsStoreLoadFlags;
 
 /**
  * AsStoreError:
@@ -94,6 +112,10 @@ gboolean	 as_store_from_xml		(AsStore	*store,
 						 const gchar	*data,
 						 gssize		 data_len,
 						 const gchar	*icon_root,
+						 GError		**error);
+gboolean	 as_store_load			(AsStore	*store,
+						 AsStoreLoadFlags flags,
+						 GCancellable	*cancellable,
 						 GError		**error);
 GPtrArray	*as_store_get_apps		(AsStore	*store);
 AsApp		*as_store_get_app_by_id		(AsStore	*store,

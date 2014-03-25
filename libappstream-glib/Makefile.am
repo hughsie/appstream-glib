@@ -12,6 +12,7 @@ AM_CPPFLAGS =							\
 	-I.							\
 	-DAS_COMPILATION					\
 	-DTESTDATADIR=\""$(top_srcdir)/data/tests"\"		\
+	-DLOCALSTATEDIR=\""$(localstatedir)"\"			\
 	-DG_LOG_DOMAIN=\"As\"
 
 pkgconfigdir = $(libdir)/pkgconfig
