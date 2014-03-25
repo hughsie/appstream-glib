@@ -49,7 +49,7 @@ struct _AsStorePrivate
 	gchar			*origin;
 	gdouble			 api_version;
 	GPtrArray		*array;		/* of AsApp */
-	GHashTable		*hash_id;	/* of AsApp{id} */
+	GHashTable		*hash_id;	/* of AsApp{id_full} */
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
 	GPtrArray		*file_monitors;	/* of GFileMonitor */
 };
@@ -186,7 +186,7 @@ as_store_get_apps (AsStore *store)
 /**
  * as_store_get_app_by_id:
  * @store: a #AsStore instance.
- * @id: the application short ID.
+ * @id: the application full ID.
  *
  * Finds an application in the store by ID.
  *
@@ -234,7 +234,7 @@ void
 as_store_remove_app (AsStore *store, AsApp *app)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	g_hash_table_remove (priv->hash_id, as_app_get_id (app));
+	g_hash_table_remove (priv->hash_id, as_app_get_id_full (app));
 	g_ptr_array_remove (priv->array, app);
 }
 
@@ -262,7 +262,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 	guint i;
 
 	/* have we recorded this before? */
-	id = as_app_get_id (app);
+	id = as_app_get_id_full (app);
 	item = g_hash_table_lookup (priv->hash_id, id);
 	if (item != NULL) {
 
@@ -290,7 +290,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 	/* success, add to array */
 	g_ptr_array_add (priv->array, g_object_ref (app));
 	g_hash_table_insert (priv->hash_id,
-			     (gpointer) as_app_get_id (app),
+			     (gpointer) as_app_get_id_full (app),
 			     app);
 	pkgnames = as_app_get_pkgnames (app);
 	for (i = 0; i < pkgnames->len; i++) {

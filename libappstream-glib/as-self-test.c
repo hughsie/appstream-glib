@@ -828,7 +828,7 @@ ch_test_store_origin_func (void)
 	/* test icon path */
 	g_assert_cmpstr (as_store_get_origin (store), ==, "fedora-21");
 	g_assert_cmpint (as_store_get_size (store), ==, 1);
-	app = as_store_get_app_by_id (store, "test");
+	app = as_store_get_app_by_id (store, "test.desktop");
 	g_assert (app != NULL);
 	g_assert_cmpstr (as_app_get_icon_path (app), ==,
 		"/usr/share/app-info/icons/fedora-21");
@@ -859,7 +859,7 @@ ch_test_store_speed_func (void)
 		g_assert_no_error (error);
 		g_assert (ret);
 		g_assert_cmpint (as_store_get_apps (store)->len, >=, 1415);
-		g_assert (as_store_get_app_by_id (store, "org.gnome.Software") != NULL);
+		g_assert (as_store_get_app_by_id (store, "org.gnome.Software.desktop") != NULL);
 		g_assert (as_store_get_app_by_pkgname (store, "gnome-software") != NULL);
 		g_object_unref (store);
 	}
