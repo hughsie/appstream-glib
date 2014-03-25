@@ -83,6 +83,22 @@ typedef struct {
 } AsAppTokenItem;
 
 /**
+ * as_app_error_quark:
+ *
+ * Return value: An error quark.
+ *
+ * Since: 0.1.2
+ **/
+GQuark
+as_app_error_quark (void)
+{
+	static GQuark quark = 0;
+	if (!quark)
+		quark = g_quark_from_static_string ("AsAppError");
+	return quark;
+}
+
+/**
  * as_app_finalize:
  **/
 static void
@@ -1841,8 +1857,8 @@ as_app_parse_file_key (AsApp *app,
 					     NULL);
 		if (g_strcmp0 (tmp, G_KEY_FILE_DESKTOP_TYPE_APPLICATION) != 0) {
 			g_set_error_literal (error,
-					     AS_NODE_ERROR,
-					     AS_NODE_ERROR_FAILED,
+					     AS_APP_ERROR,
+					     AS_APP_ERROR_INVALID_TYPE,
 					     "not an application");
 			ret = FALSE;
 			goto out;

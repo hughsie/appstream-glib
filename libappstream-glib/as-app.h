@@ -77,8 +77,25 @@ typedef enum {
 	AS_APP_PARSE_FLAG_LAST,
 } AsAppParseFlags;
 
+/**
+ * AsAppError:
+ * @AS_APP_ERROR_FAILED:			Generic failure
+ * @AS_APP_ERROR_INVALID_TYPE:			Invalid type
+ *
+ * The error type.
+ **/
+typedef enum {
+	AS_APP_ERROR_FAILED,
+	AS_APP_ERROR_INVALID_TYPE,
+	/*< private >*/
+	AS_APP_ERROR_LAST
+} AsAppError;
+
+#define	AS_APP_ERROR				as_app_error_quark ()
+
 GType		 as_app_get_type		(void);
 AsApp		*as_app_new			(void);
+GQuark		 as_app_error_quark		(void);
 
 /* getters */
 AsIconKind	 as_app_get_icon_kind		(AsApp		*app);
