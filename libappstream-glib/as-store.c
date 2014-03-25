@@ -312,6 +312,7 @@ as_store_from_root (AsStore *store,
 {
 	AsApp *app;
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	GError *error_local = NULL;
 	GNode *apps;
 	GNode *n;
 	const gchar *tmp;
@@ -355,8 +356,14 @@ as_store_from_root (AsStore *store,
 		app = as_app_new ();
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path, -1);
-		ret = as_app_node_parse (app, n, error);
+		ret = as_app_node_parse (app, n, &error_local);
 		if (!ret) {
+			g_set_error (error,
+				     AS_STORE_ERROR,
+				     AS_STORE_ERROR_FAILED,
+				     "Failed to parse root: %s",
+				     error_local->message);
+			g_error_free (error_local);
 			g_object_unref (app);
 			goto out;
 		}
@@ -393,6 +400,7 @@ as_store_from_file (AsStore *store,
 		    GCancellable *cancellable,
 		    GError **error)
 {
+	GError *error_local = NULL;
 	GNode *root;
 	gboolean ret = TRUE;
 
@@ -401,9 +409,15 @@ as_store_from_file (AsStore *store,
 	root = as_node_from_file (file,
 				  AS_NODE_FROM_XML_FLAG_NONE,
 				  cancellable,
-				  error);
+				  &error_local);
 	if (root == NULL) {
 		ret = FALSE;
+		g_set_error (error,
+			     AS_STORE_ERROR,
+			     AS_STORE_ERROR_FAILED,
+			     "Failed to parse file: %s",
+			     error_local->message);
+		g_error_free (error_local);
 		goto out;
 	}
 	ret = as_store_from_root (store, root, icon_root, error);
@@ -440,6 +454,7 @@ as_store_from_xml (AsStore *store,
 		   const gchar *icon_root,
 		   GError **error)
 {
+	GError *error_local = NULL;
 	GNode *root;
 	gboolean ret = TRUE;
 
@@ -447,9 +462,15 @@ as_store_from_xml (AsStore *store,
 
 	root = as_node_from_xml (data, data_len,
 				 AS_NODE_FROM_XML_FLAG_NONE,
-				 error);
+				 &error_local);
 	if (root == NULL) {
 		ret = FALSE;
+		g_set_error (error,
+			     AS_STORE_ERROR,
+			     AS_STORE_ERROR_FAILED,
+			     "Failed to parse XML: %s",
+			     error_local->message);
+		g_error_free (error_local);
 		goto out;
 	}
 	ret = as_store_from_root (store, root, icon_root, error);
@@ -532,6 +553,7 @@ as_store_to_file (AsStore *store,
 		  GCancellable *cancellable,
 		  GError **error)
 {
+	GError *error_local = NULL;
 	GOutputStream *out;
 	GOutputStream *out2;
 	GString *xml;
@@ -544,12 +566,26 @@ as_store_to_file (AsStore *store,
 	out2 = g_converter_output_stream_new (out, G_CONVERTER (compressor));
 	xml = as_store_to_xml (store, flags);
 	ret = g_output_stream_write_all (out2, xml->str, xml->len,
-					 NULL, NULL, error);
-	if (!ret)
+					 NULL, NULL, &error_local);
+	if (!ret) {
+		g_set_error (error,
+			     AS_STORE_ERROR,
+			     AS_STORE_ERROR_FAILED,
+			     "Failed to write stream: %s",
+			     error_local->message);
+		g_error_free (error_local);
 		goto out;
-	ret = g_output_stream_close (out2, NULL, error);
-	if (!ret)
+	}
+	ret = g_output_stream_close (out2, NULL, &error_local);
+	if (!ret) {
+		g_set_error (error,
+			     AS_STORE_ERROR,
+			     AS_STORE_ERROR_FAILED,
+			     "Failed to close stream: %s",
+			     error_local->message);
+		g_error_free (error_local);
 		goto out;
+	}
 
 	/* write file */
 	ret = g_file_replace_contents (file,
@@ -560,9 +596,16 @@ as_store_to_file (AsStore *store,
 				       G_FILE_CREATE_NONE,
 				       NULL,
 				       cancellable,
-				       error);
-	if (!ret)
+				       &error_local);
+	if (!ret) {
+		g_set_error (error,
+			     AS_STORE_ERROR,
+			     AS_STORE_ERROR_FAILED,
+			     "Failed to write file: %s",
+			     error_local->message);
+		g_error_free (error_local);
 		goto out;
+	}
 out:
 	g_object_unref (compressor);
 	g_object_unref (out);
@@ -732,6 +775,7 @@ as_store_monitor_directory (AsStore *store,
 			    GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	GError *error_local = NULL;
 	GFile *file = NULL;
 	GFileMonitor *monitor = NULL;
 	gboolean ret = TRUE;
@@ -740,9 +784,15 @@ as_store_monitor_directory (AsStore *store,
 	monitor = g_file_monitor_directory (file,
 					    G_FILE_MONITOR_NONE,
 					    cancellable,
-					    error);
+					    &error_local);
 	if (monitor == NULL) {
 		ret = FALSE;
+		g_set_error (error,
+			     AS_STORE_ERROR,
+			     AS_STORE_ERROR_FAILED,
+			     "Failed to monitor %s: %s",
+			     path, error_local->message);
+		g_error_free (error_local);
 		goto out;
 	}
 	g_signal_connect (monitor, "changed",
@@ -767,6 +817,7 @@ as_store_load_app_info (AsStore *store,
 			GError **error)
 {
 	GDir *dir = NULL;
+	GError *error_local = NULL;
 	const gchar *tmp;
 	gboolean ret = TRUE;
 	gchar *filename_xml;
@@ -782,9 +833,15 @@ as_store_load_app_info (AsStore *store,
 	path_xml = g_build_filename (path, "xmls", NULL);
 	if (!g_file_test (path_xml, G_FILE_TEST_EXISTS))
 		goto out;
-	dir = g_dir_open (path_xml, 0, error);
+	dir = g_dir_open (path_xml, 0, &error_local);
 	if (dir == NULL) {
 		ret = FALSE;
+		g_set_error (error,
+			     AS_STORE_ERROR,
+			     AS_STORE_ERROR_FAILED,
+			     "Failed to open %s: %s",
+			     path_xml, error_local->message);
+		g_error_free (error_local);
 		goto out;
 	}
 	icon_root = g_build_filename (path, "icons", NULL);
