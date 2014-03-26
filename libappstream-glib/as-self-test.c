@@ -360,7 +360,8 @@ ch_test_app_parse_file_func (void)
 		"Inspect and compare installed color profiles");
 	g_assert_cmpstr (as_app_get_comment (app, "pl"), ==,
 		"Badanie i porównywanie zainstalowanych profilów kolorów");
-	g_assert_cmpstr (as_app_get_icon (app), ==, "gnome-color-manager");
+	g_assert_cmpstr (as_app_get_icon (app), ==, "audio-input-microphone");
+	g_assert_cmpint (as_app_get_icon_kind (app), ==, AS_ICON_KIND_STOCK);
 	g_assert_cmpstr (as_app_get_metadata_item (app, "NoDisplay"), ==, "");
 	g_assert_cmpstr (as_app_get_project_group (app), ==, NULL);
 	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);

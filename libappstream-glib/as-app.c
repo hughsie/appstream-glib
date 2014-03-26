@@ -1840,6 +1840,7 @@ as_app_parse_file_key (AsApp *app,
 
 	gboolean ret = TRUE;
 	gchar **list = NULL;
+	gchar *dot = NULL;
 	gchar *locale = NULL;
 	gchar *tmp = NULL;
 	guint i;
@@ -1873,8 +1874,16 @@ as_app_parse_file_key (AsApp *app,
 					     G_KEY_FILE_DESKTOP_GROUP,
 					     key,
 					     NULL);
-		if (tmp != NULL && tmp[0] != '\0')
+		if (tmp != NULL && tmp[0] != '\0') {
 			as_app_set_icon (app, tmp, -1);
+			dot = g_strstr_len (tmp, -1, ".");
+			if (dot != NULL)
+				*dot = '\0';
+			if (as_utils_is_stock_icon_name (tmp)) {
+				as_app_set_icon (app, tmp, -1);
+				as_app_set_icon_kind (app, AS_ICON_KIND_STOCK);
+			}
+		}
 		goto out;
 	}
 
