@@ -276,7 +276,7 @@ as_release_node_parse (AsRelease *release, GNode *node, GError **error)
 
 	/* descriptions are translated and optional */
 	for (n = node->children; n != NULL; n = n->next) {
-		if (as_tag_from_string (as_node_get_name (n)) != AS_TAG_DESCRIPTION)
+		if (as_node_get_tag (n) != AS_TAG_DESCRIPTION)
 			continue;
 		xml = as_node_to_xml (n->children, AS_NODE_TO_XML_FLAG_NONE);
 		as_release_set_description (release,

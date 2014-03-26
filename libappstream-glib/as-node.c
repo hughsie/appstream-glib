@@ -42,10 +42,11 @@
 
 typedef struct
 {
-	gchar		*name;
+	GList		*attrs;
+	gchar		*name;		/* only used if tag == AS_TAG_UNKNOWN */
 	gchar		*cdata;
 	gboolean	 cdata_escaped;
-	GList		*attrs;
+	AsTag		 tag;
 } AsNodeData;
 
 typedef struct {
@@ -289,6 +290,8 @@ as_node_get_attr_string (AsNodeData *data)
 static const gchar *
 as_tag_data_get_name (AsNodeData *data)
 {
+	if (data->name == NULL)
+		return as_tag_to_string (data->tag);
 	return data->name;
 }
 
@@ -298,7 +301,10 @@ as_tag_data_get_name (AsNodeData *data)
 static void
 as_node_data_set_name (AsNodeData *data, const gchar *name)
 {
-	data->name = g_strdup (name);
+	/* only store the name if the tag is not recognised */
+	data->tag = as_tag_from_string (name);
+	if (data->tag == AS_TAG_UNKNOWN)
+		data->name = g_strdup (name);
 }
 
 /**
@@ -742,6 +748,27 @@ as_node_get_data (const GNode *node)
 		return NULL;
 	as_node_cdata_to_raw (data);
 	return data->cdata;
+}
+
+/**
+ * as_node_get_tag:
+ * @node: a #GNode
+ *
+ * Gets the node tag enum.
+ *
+ * Return value: #AsTag, e.g. %AS_TAG_PKGNAME
+ *
+ * Since: 0.1.2
+ **/
+AsTag
+as_node_get_tag (const GNode *node)
+{
+	AsNodeData *data;
+	g_return_val_if_fail (node != NULL, AS_TAG_UNKNOWN);
+	data = (AsNodeData *) node->data;
+	if (data == NULL)
+		return AS_TAG_UNKNOWN;
+	return data->tag;
 }
 
 /**

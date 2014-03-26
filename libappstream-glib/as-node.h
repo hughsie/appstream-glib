@@ -30,6 +30,8 @@
 #include <glib-object.h>
 #include <stdarg.h>
 
+#include "as-tag.h"
+
 G_BEGIN_DECLS
 
 /**
@@ -100,6 +102,7 @@ void		 as_node_unref			(GNode		*node);
 
 const gchar	*as_node_get_name		(const GNode	*node);
 const gchar	*as_node_get_data		(const GNode	*node);
+AsTag		 as_node_get_tag		(const GNode	*node);
 const gchar	*as_node_get_attribute		(const GNode	*node,
 						 const gchar	*key);
 GHashTable	*as_node_get_localized		(const GNode	*node,

@@ -440,7 +440,7 @@ ch_test_node_func (void)
 	g_assert_cmpstr (as_node_get_attribute (n1, "xxx"), ==, NULL);
 	n2 = as_node_insert (n1, "id", "hal", 0, NULL);
 	g_assert (n2 != NULL);
-	g_assert_cmpstr (as_node_get_name (n2), ==, "id");
+	g_assert_cmpint (as_node_get_tag (n2), ==, AS_TAG_ID);
 	g_assert_cmpstr (as_node_get_data (n2), ==, "hal");
 	g_assert_cmpstr (as_node_get_attribute (n2, "xxx"), ==, NULL);
 
@@ -453,7 +453,7 @@ ch_test_node_func (void)
 	/* find the n2 node */
 	n2 = as_node_find (root, "apps/id");
 	g_assert (n2 != NULL);
-	g_assert_cmpstr (as_node_get_name (n2), ==, "id");
+	g_assert_cmpint (as_node_get_tag (n2), ==, AS_TAG_ID);
 
 	/* don't find invalid nodes */
 	n2 = as_node_find (root, "apps/id/xxx");

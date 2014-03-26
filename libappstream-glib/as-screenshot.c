@@ -319,7 +319,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 
 	/* add images */
 	for (c = node->children; c != NULL; c = c->next) {
-		if (as_tag_from_string (as_node_get_name (c)) != AS_TAG_IMAGE)
+		if (as_node_get_tag (c) != AS_TAG_IMAGE)
 			continue;
 		image = as_image_new ();
 		ret = as_image_node_parse (image, c, error);

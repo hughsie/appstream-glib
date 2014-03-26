@@ -1372,8 +1372,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	gchar *taken;
 	guint percent;
 
-	/* <id> */
-	switch (as_tag_from_string (as_node_get_name (n))) {
+	switch (as_node_get_tag (n)) {
 
 	/* <id> */
 	case AS_TAG_ID:
@@ -1443,8 +1442,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_CATEGORIES:
 		g_ptr_array_set_size (priv->categories, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			if (g_strcmp0 (as_node_get_name (c), "category") != 0 &&
-			    g_strcmp0 (as_node_get_name (c), "appcategory") != 0)
+			if (as_node_get_tag (c) != AS_TAG_CATEGORY)
 				continue;
 			g_ptr_array_add (priv->categories, as_node_take_data (c));
 		}
@@ -1454,7 +1452,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_ARCHITECTURES:
 		g_ptr_array_set_size (priv->architectures, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			if (g_strcmp0 (as_node_get_name (c), "arch") != 0)
+			if (as_node_get_tag (c) != AS_TAG_ARCH)
 				continue;
 			g_ptr_array_add (priv->architectures, as_node_take_data (c));
 		}
@@ -1464,8 +1462,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_KEYWORDS:
 		g_ptr_array_set_size (priv->keywords, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			if (g_strcmp0 (as_node_get_name (c),
-				       "keyword") != 0)
+			if (as_node_get_tag (c) != AS_TAG_KEYWORD)
 				continue;
 			g_ptr_array_add (priv->keywords, as_node_take_data (c));
 		}
@@ -1475,8 +1472,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_MIMETYPES:
 		g_ptr_array_set_size (priv->mimetypes, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			if (g_strcmp0 (as_node_get_name (c),
-				       "mimetype") != 0)
+			if (as_node_get_tag (c) != AS_TAG_MIMETYPE)
 				continue;
 			g_ptr_array_add (priv->mimetypes, as_node_take_data (n));
 		}
@@ -1512,7 +1508,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_SCREENSHOTS:
 		g_ptr_array_set_size (priv->screenshots, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			if (g_strcmp0 (as_node_get_name (c), "screenshot") != 0)
+			if (as_node_get_tag (c) != AS_TAG_SCREENSHOT)
 				continue;
 			ss = as_screenshot_new ();
 			ret = as_screenshot_node_parse (ss, c, error);
@@ -1529,7 +1525,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_RELEASES:
 		g_ptr_array_set_size (priv->releases, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			if (g_strcmp0 (as_node_get_name (c), "release") != 0)
+			if (as_node_get_tag (c) != AS_TAG_RELEASE)
 				continue;
 			r = as_release_new ();
 			ret = as_release_node_parse (r, c, error);
@@ -1546,7 +1542,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_LANGUAGES:
 		g_hash_table_remove_all (priv->languages);
 		for (c = n->children; c != NULL; c = c->next) {
-			if (g_strcmp0 (as_node_get_name (c), "lang") != 0)
+			if (as_node_get_tag (c) != AS_TAG_LANG)
 				continue;
 			percent = as_node_get_attribute_as_int (c, "percentage");
 			as_app_add_language (app, percent,
@@ -1559,7 +1555,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 		g_hash_table_remove_all (priv->metadata);
 		for (c = n->children; c != NULL; c = c->next) {
 			gchar *key;
-			if (g_strcmp0 (as_node_get_name (c), "value") != 0)
+			if (as_node_get_tag (c) != AS_TAG_VALUE)
 				continue;
 			key = as_node_take_attribute (c, "key");
 			taken = as_node_take_data (c);
