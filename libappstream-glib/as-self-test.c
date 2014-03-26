@@ -897,6 +897,14 @@ ch_test_utils_func (void)
 	g_assert_cmpstr (tmp, ==, "dave");
 	g_free (tmp);
 
+	/* as_utils_is_stock_icon_name */
+	g_assert (!as_utils_is_stock_icon_name (NULL));
+	g_assert (!as_utils_is_stock_icon_name (""));
+	g_assert (!as_utils_is_stock_icon_name ("indigo-blue"));
+	g_assert (as_utils_is_stock_icon_name ("accessories-calculator"));
+	g_assert (as_utils_is_stock_icon_name ("insert-image"));
+	g_assert (as_utils_is_stock_icon_name ("zoom-out"));
+
 	/* valid description markup */
 	tmp = as_markup_convert_simple ("<p>Hello world!</p>", -1, &error);
 	g_assert_no_error (error);

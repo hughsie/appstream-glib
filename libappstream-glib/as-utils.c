@@ -32,6 +32,7 @@
 #include "config.h"
 
 #include "as-node.h"
+#include "as-resources.h"
 #include "as-utils.h"
 #include "as-utils-private.h"
 
@@ -191,4 +192,38 @@ as_hash_lookup_by_locale (GHashTable *hash, const gchar *locale)
 	}
 out:
 	return tmp;
+}
+
+/**
+ * as_utils_is_stock_icon_name:
+ * @name: an icon name
+ *
+ * Searches the known list of stock icons.
+ *
+ * Returns: %TRUE if the icon is a "stock icon name" and does not need to be
+ *          included in the AppStream icon tarball
+ *
+ * Since: 0.1.3
+ **/
+gboolean
+as_utils_is_stock_icon_name (const gchar *name)
+{
+	GBytes *data;
+	gboolean ret = FALSE;
+	gchar *key = NULL;
+
+	/* load the readonly data section and look for the icon name */
+	data = g_resource_lookup_data (as_get_resource (),
+				       "/org/freedesktop/appstream-glib/as-stock-icons.txt",
+				       G_RESOURCE_LOOKUP_FLAGS_NONE,
+				       NULL);
+	if (data == NULL)
+		goto out;
+	key = g_strdup_printf ("\n%s\n", name);
+	ret = g_strstr_len (g_bytes_get_data (data, NULL), -1, key) != NULL;
+out:
+	if (data != NULL)
+		g_bytes_unref (data);
+	g_free (key);
+	return ret;
 }

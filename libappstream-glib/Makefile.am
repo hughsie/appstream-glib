@@ -24,6 +24,29 @@ as-tag-private.h: as-tag.gperf
 	$(AM_V_GEN) gperf < $< > $@
 endif
 
+as-resources.c: appstream-glib.gresource.xml as-stock-icons.txt
+	$(AM_V_GEN)						\
+	glib-compile-resources					\
+		--sourcedir=$(srcdir)				\
+		--sourcedir=$(top_builddir)/data		\
+		--target=$@					\
+		--generate-source				\
+		--c-name as					\
+		$(srcdir)/appstream-glib.gresource.xml
+as-resources.h: appstream-glib.gresource.xml as-stock-icons.txt
+	$(AM_V_GEN)						\
+	glib-compile-resources					\
+		--sourcedir=$(srcdir)				\
+		--sourcedir=$(top_builddir)/data		\
+		--target=$@					\
+		--generate-header				\
+		--c-name as					\
+		$(srcdir)/appstream-glib.gresource.xml
+
+BUILT_SOURCES =							\
+	as-resources.c						\
+	as-resources.h
+
 lib_LTLIBRARIES =						\
 	libappstream-glib.la
 
@@ -51,6 +74,8 @@ libappstream_glib_la_SOURCES =					\
 	as-node-private.h					\
 	as-release.c						\
 	as-release-private.h					\
+	as-resources.c						\
+	as-resources.h						\
 	as-screenshot.c						\
 	as-screenshot-private.h					\
 	as-store.c						\
@@ -61,7 +86,7 @@ libappstream_glib_la_SOURCES =					\
 
 if HAVE_GPERF
 libappstream_glib_la_SOURCES += as-tag-private.h
-BUILT_SOURCES = as-tag-private.h
+BUILT_SOURCES += as-tag-private.h
 endif
 
 CLEANFILES = $(BUILT_SOURCES)
@@ -137,9 +162,11 @@ DISTCLEANFILES =						\
 	*.trs
 
 EXTRA_DIST =							\
+	appstream-glib.gresource.xml				\
+	appstream-glib.pc.in					\
+	as-stock-icons.txt					\
 	as-tag.gperf						\
-	as-version.h.in						\
-	appstream-glib.pc.in
+	as-version.h.in
 
 clean-local:
 	rm -f *~

@@ -33,6 +33,7 @@ G_BEGIN_DECLS
 gchar		*as_markup_convert_simple	(const gchar	*markup,
 						 gssize		 markup_len,
 						 GError		**error);
+gboolean	 as_utils_is_stock_icon_name	(const gchar	*name);
 
 G_END_DECLS
 
