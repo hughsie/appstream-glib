@@ -1,3 +1,26 @@
+Version 0.1.2
+~~~~~~~~~~~~~
+Released: 2014-03-26
+
+Notes:
+ - This release adds basic Ubuntu app-install support, speeds up the time taken
+   to parse large metadata files and reduces the amount of memory used to load
+   the AppStream metadata.
+
+New Features:
+ - Add as_app_parse_file() which parses a .desktop file into an AsApp
+ - Add as_node_get_tag() and only store the name when the tag is unknown
+ - Add as_node_take_attribute() to reduce allocations during parse
+ - Add as_store_load() to load system and user locations
+ - Add as_tag_from_string_full() to control whether fallback names are used
+ - Load the Ubuntu app-install data which uses screenshots.debian.net
+ - Use gperf to generate a perfect hash for the tag names
+
+Bugfixes:
+ - Do not use GHashTable to store node attributes
+ - Reduce the number of small attr key allocations
+ - Use the full ID for the AsStore hash
+
 Version 0.1.1
 ~~~~~~~~~~~~~
 Released: 2014-03-21
