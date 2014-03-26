@@ -1,7 +1,8 @@
 test_files =						\
 	example.desktop					\
 	example-v04.xml.gz				\
-	origin.xml
+	origin.xml					\
+	settings-panel.desktop
 
 EXTRA_DIST = $(test_files)
 

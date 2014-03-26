@@ -373,6 +373,14 @@ ch_test_app_parse_file_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
+	g_free (filename);
+
+	/* reparse with invalid file */
+	filename = as_test_get_filename ("settings-panel.desktop");
+	ret = as_app_parse_file (app, filename, 0, &error);
+	g_assert_error (error, AS_APP_ERROR, AS_APP_ERROR_INVALID_TYPE);
+	g_assert (!ret);
+	g_clear_error (&error);
 
 	g_free (filename);
 	g_object_unref (app);

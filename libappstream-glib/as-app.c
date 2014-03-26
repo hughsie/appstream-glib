@@ -34,6 +34,8 @@
 
 #include "config.h"
 
+#include <fnmatch.h>
+
 #include "as-app-private.h"
 #include "as-enums.h"
 #include "as-node-private.h"
@@ -1883,6 +1885,21 @@ as_app_parse_file_key (AsApp *app,
 						   key,
 						   NULL, NULL);
 		for (i = 0; list[i] != NULL; i++) {
+
+			/* check categories that if present would blacklist
+			 * the application */
+			if (fnmatch ("X-*-Settings-Panel", list[i], 0) == 0 ||
+			    fnmatch ("X-*-SettingsDialog", list[i], 0) == 0) {
+				ret = FALSE;
+				g_set_error (error,
+					     AS_APP_ERROR,
+					     AS_APP_ERROR_INVALID_TYPE,
+					     "category %s is blacklisted",
+					     list[i]);
+				goto out;
+			}
+
+			/* ignore some useless keys */
 			if (g_strcmp0 (list[i], "GTK") == 0)
 				continue;
 			if (g_strcmp0 (list[i], "Qt") == 0)
