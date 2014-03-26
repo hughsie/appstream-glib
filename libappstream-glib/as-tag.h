@@ -104,7 +104,16 @@ typedef enum {
 	AS_TAG_LAST
 } AsTag;
 
+typedef enum {
+	AS_TAG_FLAG_NONE,
+	AS_TAG_FLAG_USE_FALLBACKS,
+	/*< private >*/
+	AS_TAG_FLAG_LAST
+} AsTagFlags;
+
 AsTag		 as_tag_from_string		(const gchar	*tag);
+AsTag		 as_tag_from_string_full	(const gchar	*tag,
+						 AsTagFlags	 flags);
 const gchar	*as_tag_to_string		(AsTag		 tag);
 
 G_END_DECLS

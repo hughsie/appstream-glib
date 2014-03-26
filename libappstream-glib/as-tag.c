@@ -54,6 +54,23 @@
 AsTag
 as_tag_from_string (const gchar *tag)
 {
+	return as_tag_from_string_full (tag, AS_TAG_FLAG_NONE);
+}
+
+/**
+ * as_tag_from_string_full:
+ * @tag: the string.
+ *
+ * Converts the text representation to an enumerated value also converting
+ * legacy key names.
+ *
+ * Returns: a %AsTag, or %AS_TAG_UNKNOWN if not known.
+ *
+ * Since: 0.1.2
+ **/
+AsTag
+as_tag_from_string_full (const gchar *tag, AsTagFlags flags)
+{
 #ifdef HAVE_GPERF
 	const struct tag_data *ky;
 #else
@@ -76,16 +93,18 @@ as_tag_from_string (const gchar *tag)
 #endif
 
 	/* deprecated names */
-	if (g_strcmp0 (tag, "appcategories") == 0)
-		etag = AS_TAG_CATEGORIES;
-	if (g_strcmp0 (tag, "appcategory") == 0)
-		etag = AS_TAG_CATEGORY;
-	if (g_strcmp0 (tag, "licence") == 0)
-		etag = AS_TAG_PROJECT_LICENSE;
-	if (g_strcmp0 (tag, "applications") == 0)
-		etag = AS_TAG_APPLICATIONS;
-	if (g_strcmp0 (tag, "application") == 0)
-		etag = AS_TAG_APPLICATION;
+	if (etag == AS_TAG_UNKNOWN && (flags & AS_TAG_FLAG_USE_FALLBACKS)) {
+		if (g_strcmp0 (tag, "appcategories") == 0)
+			return AS_TAG_CATEGORIES;
+		if (g_strcmp0 (tag, "appcategory") == 0)
+			return AS_TAG_CATEGORY;
+		if (g_strcmp0 (tag, "licence") == 0)
+			return AS_TAG_PROJECT_LICENSE;
+		if (g_strcmp0 (tag, "applications") == 0)
+			return AS_TAG_APPLICATIONS;
+		if (g_strcmp0 (tag, "application") == 0)
+			return AS_TAG_APPLICATION;
+	}
 
 	return etag;
 }

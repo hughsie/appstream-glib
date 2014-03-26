@@ -67,7 +67,9 @@ ch_test_tag_func (void)
 	g_assert_cmpint (as_tag_from_string ("xxx"), ==, AS_TAG_UNKNOWN);
 
 	/* deprecated names */
-	g_assert_cmpint (as_tag_from_string ("appcategories"), ==, AS_TAG_CATEGORIES);
+	g_assert_cmpint (as_tag_from_string_full ("appcategories",
+						  AS_TAG_FLAG_USE_FALLBACKS),
+						  ==, AS_TAG_CATEGORIES);
 
 	/* test we can go back and forth */
 	for (i = 0; i < AS_TAG_LAST; i++)
