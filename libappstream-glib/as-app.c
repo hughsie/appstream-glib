@@ -2081,6 +2081,17 @@ as_app_parse_file (AsApp *app,
 				goto out;
 		}
 	}
+
+	/* all applications require icons */
+	if (as_app_get_icon (app) == NULL) {
+		ret = FALSE;
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "Application %s has no icon",
+			     desktop_file);
+		goto out;
+	}
 out:
 	g_free (app_id);
 	g_key_file_unref (kf);
