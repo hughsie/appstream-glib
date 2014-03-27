@@ -937,7 +937,8 @@ as_store_load_app_install_file (AsStore *store,
 		g_error_free (error_local);
 		goto out;
 	}
-	as_app_set_icon_kind (app, AS_ICON_KIND_CACHED);
+	if (as_app_get_icon_kind (app) == AS_ICON_KIND_UNKNOWN)
+		as_app_set_icon_kind (app, AS_ICON_KIND_CACHED);
 	as_app_set_icon_path (app, path_icons, -1);
 	as_store_add_app_install_screenshot (app);
 	as_store_add_app (store, app);
