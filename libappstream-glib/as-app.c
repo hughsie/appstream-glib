@@ -1622,15 +1622,19 @@ out:
 static gchar **
 as_app_value_tokenize (const gchar *value)
 {
+	gchar *delim;
 	gchar **tmp;
 	gchar **values;
 	guint i;
-	tmp = g_strsplit (value, " ", -1);
+	delim = g_strdup (value);
+	g_strdelimit (delim, "/,.;:", ' ');
+	tmp = g_strsplit (delim, " ", -1);
 	values = g_new0 (gchar *, g_strv_length (tmp) + 1);
 	for (i = 0; tmp[i] != NULL; i++) {
 		values[i] = g_utf8_strdown (tmp[i], -1);
 	}
 	g_strfreev (tmp);
+	g_free (delim);
 	return values;
 }
 #endif
