@@ -764,10 +764,20 @@ AsTag
 as_node_get_tag (const GNode *node)
 {
 	AsNodeData *data;
+	const gchar *tmp;
+
 	g_return_val_if_fail (node != NULL, AS_TAG_UNKNOWN);
+
 	data = (AsNodeData *) node->data;
 	if (data == NULL)
 		return AS_TAG_UNKNOWN;
+
+	/* try to match with a fallback */
+	if (data->tag == AS_TAG_UNKNOWN) {
+		tmp = as_tag_data_get_name (data);
+		return as_tag_from_string_full (tmp, AS_TAG_FLAG_USE_FALLBACKS);
+	}
+
 	return data->tag;
 }
 
