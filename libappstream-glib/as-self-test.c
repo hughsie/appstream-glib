@@ -276,6 +276,9 @@ ch_test_app_func (void)
 		"<architectures>"
 		"<arch>i386</arch>"
 		"</architectures>"
+		"<mimetypes>"
+		"<mimetype>application/vnd.oasis.opendocument.spreadsheet</mimetype>"
+		"</mimetypes>"
 		"<project_license>GPLv2+</project_license>"
 		"<url type=\"homepage\">https://wiki.gnome.org/Design/Apps/Software</url>"
 		"<project_group>GNOME</project_group>"
@@ -683,16 +686,19 @@ ch_test_app_search_func (void)
 	AsApp *app;
 	const gchar *all[] = { "gnome", "install", "software", NULL };
 	const gchar *none[] = { "gnome", "xxx", "software", NULL };
+	const gchar *mime[] = { "application", "vnd", "oasis", "opendocument","text", NULL };
 
 	app = as_app_new ();
 	as_app_set_name (app, NULL, "GNOME Software", -1);
 	as_app_set_comment (app, NULL, "Install and remove software", -1);
+	as_app_add_mimetype (app, "application/vnd.oasis.opendocument.text", -1);
 
 	g_assert_cmpint (as_app_search_matches (app, "software"), ==, 80);
 	g_assert_cmpint (as_app_search_matches (app, "soft"), ==, 80);
 	g_assert_cmpint (as_app_search_matches (app, "install"), ==, 60);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) all), ==, 220);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) none), ==, 0);
+	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) mime), ==, 5);
 
 	g_object_unref (app);
 }

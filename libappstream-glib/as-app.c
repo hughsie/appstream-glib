@@ -1476,7 +1476,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_MIMETYPE)
 				continue;
-			g_ptr_array_add (priv->mimetypes, as_node_take_data (n));
+			g_ptr_array_add (priv->mimetypes, as_node_take_data (c));
 		}
 		break;
 
@@ -1648,8 +1648,11 @@ as_app_add_tokens (AsApp *app,
 	AsAppTokenItem *token_item;
 
 	/* sanity check */
-	if (value == NULL)
+	if (value == NULL) {
+		g_critical ("trying to add NULL search token to %s",
+			    as_app_get_id_full (app));
 		return;
+	}
 
 	token_item = g_slice_new0 (AsAppTokenItem);
 #if GLIB_CHECK_VERSION(2,39,1)
@@ -1675,7 +1678,8 @@ as_app_create_token_cache (AsApp *app)
 	guint i;
 
 	/* add all the data we have */
-	as_app_add_tokens (app, priv->id, "C", 100);
+	if (priv->id != NULL)
+		as_app_add_tokens (app, priv->id, "C", 100);
 	locales = g_get_language_names ();
 	for (i = 0; locales[i] != NULL; i++) {
 		tmp = as_app_get_name (app, locales[i]);
