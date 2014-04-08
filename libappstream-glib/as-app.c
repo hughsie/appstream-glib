@@ -1750,6 +1750,35 @@ as_app_search_matches (AsApp *app, const gchar *search)
 }
 
 /**
+ * as_app_search_matches_all:
+ * @app: a #AsApp instance.
+ * @search: the search terms.
+ *
+ * Searches application data for all the specific keywords.
+ *
+ * Returns: a match scrore, where 0 is no match and larger numbers are better
+ * matches.
+ *
+ * Since: 0.1.3
+ */
+guint
+as_app_search_matches_all (AsApp *app, gchar **values)
+{
+	guint i;
+	guint matches_sum = 0;
+	guint tmp;
+
+	/* do *all* search keywords match */
+	for (i = 0; values[i] != NULL; i++) {
+		tmp = as_app_search_matches (app, values[i]);
+		if (tmp == 0)
+			return 0;
+		matches_sum += tmp;
+	}
+	return matches_sum;
+}
+
+/**
  * as_app_desktop_key_get_locale:
  */
 static gchar *

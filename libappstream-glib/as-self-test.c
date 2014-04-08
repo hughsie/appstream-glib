@@ -681,6 +681,8 @@ static void
 ch_test_app_search_func (void)
 {
 	AsApp *app;
+	const gchar *all[] = { "gnome", "install", "software", NULL };
+	const gchar *none[] = { "gnome", "xxx", "software", NULL };
 
 	app = as_app_new ();
 	as_app_set_name (app, NULL, "GNOME Software", -1);
@@ -689,6 +691,8 @@ ch_test_app_search_func (void)
 	g_assert_cmpint (as_app_search_matches (app, "software"), ==, 80);
 	g_assert_cmpint (as_app_search_matches (app, "soft"), ==, 80);
 	g_assert_cmpint (as_app_search_matches (app, "install"), ==, 60);
+	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) all), ==, 220);
+	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) none), ==, 0);
 
 	g_object_unref (app);
 }

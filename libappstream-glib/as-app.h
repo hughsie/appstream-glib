@@ -203,6 +203,8 @@ void		 as_app_remove_metadata		(AsApp		*app,
 /* object methods */
 void		 as_app_subsume			(AsApp		*app,
 						 AsApp		*donor);
+guint		 as_app_search_matches_all	(AsApp		*app,
+						 gchar		**values);
 guint		 as_app_search_matches		(AsApp		*app,
 						 const gchar	*search);
 gboolean	 as_app_parse_file		(AsApp		*app,
