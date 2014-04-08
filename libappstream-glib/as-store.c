@@ -407,7 +407,7 @@ as_store_from_file (AsStore *store,
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
 	root = as_node_from_file (file,
-				  AS_NODE_FROM_XML_FLAG_NONE,
+				  AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
 				  cancellable,
 				  &error_local);
 	if (root == NULL) {
@@ -461,7 +461,7 @@ as_store_from_xml (AsStore *store,
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
 	root = as_node_from_xml (data, data_len,
-				 AS_NODE_FROM_XML_FLAG_NONE,
+				 AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
 				 &error_local);
 	if (root == NULL) {
 		ret = FALSE;

@@ -402,13 +402,15 @@ ch_test_app_no_markup_func (void)
 	const gchar *src =
 		"<application>"
 		"<id type=\"desktop\">org.gnome.Software.desktop</id>"
-		"<description>Software</description>"
+		"<description>Software is awesome:\n\n * Bada\n * Boom!</description>"
 		"</application>";
 
 	app = as_app_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, 0, &error);
+	root = as_node_from_xml (src, -1,
+				 AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
+				 &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "application");
@@ -419,7 +421,8 @@ ch_test_app_no_markup_func (void)
 
 	/* verify */
 	g_assert_cmpstr (as_app_get_id_full (app), ==, "org.gnome.Software.desktop");
-	g_assert_cmpstr (as_app_get_description (app, "C"), ==, "Software");
+	g_assert_cmpstr (as_app_get_description (app, "C"), ==,
+		"Software is awesome:\n\n * Bada\n * Boom!");
 	as_node_unref (root);
 
 	/* back to node */

@@ -370,6 +370,11 @@ as_node_to_xml_string (GString *xml,
 	}
 }
 
+typedef struct {
+	GNode			*current;
+	AsNodeFromXmlFlags	 flags;
+} AsNodeToXmlHelper;
+
 /**
  * as_node_to_xml:
  * @node: a #GNode.
@@ -398,13 +403,13 @@ as_node_to_xml (const GNode *node, AsNodeToXmlFlags flags)
  **/
 static void
 as_node_start_element_cb (GMarkupParseContext *context,
-			 const gchar         *element_name,
-			 const gchar        **attribute_names,
-			 const gchar        **attribute_values,
-			 gpointer             user_data,
-			 GError             **error)
+			  const gchar *element_name,
+			  const gchar  **attribute_names,
+			  const gchar **attribute_values,
+			  gpointer user_data,
+			  GError **error)
 {
-	GNode **current = (GNode **) user_data;
+	AsNodeToXmlHelper *helper = (AsNodeToXmlHelper *) user_data;
 	AsNodeData *data;
 	guint i;
 
@@ -418,7 +423,7 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	}
 
 	/* add the node to the DOM */
-	*current = g_node_append_data (*current, data);
+	helper->current = g_node_append_data (helper->current, data);
 }
 
 /**
@@ -426,12 +431,12 @@ as_node_start_element_cb (GMarkupParseContext *context,
  **/
 static void
 as_node_end_element_cb (GMarkupParseContext *context,
-		       const gchar         *element_name,
-		       gpointer             user_data,
-		       GError             **error)
+			const gchar         *element_name,
+			gpointer             user_data,
+			GError             **error)
 {
-	GNode **current = (GNode **) user_data;
-	(*current) = (*current)->parent;
+	AsNodeToXmlHelper *helper = (AsNodeToXmlHelper *) user_data;
+	helper->current = helper->current->parent;
 }
 
 /**
@@ -444,7 +449,7 @@ as_node_text_cb (GMarkupParseContext *context,
 		 gpointer             user_data,
 		 GError             **error)
 {
-	GNode **current = (GNode **) user_data;
+	AsNodeToXmlHelper *helper = (AsNodeToXmlHelper *) user_data;
 	AsNodeData *data;
 	guint i;
 	gchar **split;
@@ -462,10 +467,11 @@ as_node_text_cb (GMarkupParseContext *context,
 		return;
 
 	/* save cdata */
-	data = (*current)->data;
+	data = helper->current->data;
 
 	/* create as it's now required */
-	if (g_strstr_len (text, text_len, "\n") == NULL) {
+	if ((helper->flags & AS_NODE_FROM_XML_FLAG_LITERAL_TEXT) > 0 ||
+	    g_strstr_len (text, text_len, "\n") == NULL) {
 		data->cdata = g_strndup (text, text_len);
 
 	/* split up into lines and add each with spaces stripped */
@@ -475,8 +481,10 @@ as_node_text_cb (GMarkupParseContext *context,
 		split = g_strsplit (text, "\n", -1);
 		for (i = 0; split[i] != NULL; i++) {
 			g_strstrip (split[i]);
-			if (split[i][0] == '\0')
+			if (split[i][0] == '\0') {
+				g_string_append (tmp, "\n\n");
 				continue;
+			}
 			g_string_append_printf (tmp, "%s ", split[i]);
 		}
 
@@ -507,10 +515,10 @@ as_node_from_xml (const gchar *data,
 		  AsNodeFromXmlFlags flags,
 		  GError **error)
 {
+	AsNodeToXmlHelper helper;
 	GError *error_local = NULL;
 	GMarkupParseContext *ctx;
 	GNode *root;
-	GNode *current;
 	gboolean ret;
 	const GMarkupParser parser = {
 		as_node_start_element_cb,
@@ -521,10 +529,12 @@ as_node_from_xml (const gchar *data,
 
 	g_return_val_if_fail (data != NULL, FALSE);
 
-	current = root = g_node_new (NULL);
+	root = g_node_new (NULL);
+	helper.flags = flags;
+	helper.current = root;
 	ctx = g_markup_parse_context_new (&parser,
 					  G_MARKUP_PREFIX_ERROR_POSITION,
-					  &current,
+					  &helper,
 					  NULL);
 	ret = g_markup_parse_context_parse (ctx,
 					    data,
@@ -542,7 +552,7 @@ as_node_from_xml (const gchar *data,
 	}
 
 	/* more opening than closing */
-	if (root != current) {
+	if (root != helper.current) {
 		g_set_error_literal (error,
 				     AS_NODE_ERROR,
 				     AS_NODE_ERROR_FAILED,
@@ -575,13 +585,13 @@ as_node_from_file (GFile *file,
 		   GCancellable *cancellable,
 		   GError **error)
 {
+	AsNodeToXmlHelper helper;
 	GConverter *conv = NULL;
 	GError *error_local = NULL;
 	GFileInfo *info = NULL;
 	GInputStream *file_stream = NULL;
 	GInputStream *stream_data = NULL;
 	GMarkupParseContext *ctx = NULL;
-	GNode *current;
 	GNode *root = NULL;
 	const gchar *content_type = NULL;
 	gboolean ret = TRUE;
@@ -625,10 +635,12 @@ as_node_from_file (GFile *file,
 	}
 
 	/* parse */
-	current = root = g_node_new (NULL);
+	root = g_node_new (NULL);
+	helper.flags = flags;
+	helper.current = root;
 	ctx = g_markup_parse_context_new (&parser,
 					  G_MARKUP_PREFIX_ERROR_POSITION,
-					  &current,
+					  &helper,
 					  NULL);
 
 	data = g_malloc (chunk_size);
@@ -659,7 +671,7 @@ as_node_from_file (GFile *file,
 	}
 
 	/* more opening than closing */
-	if (root != current) {
+	if (root != helper.current) {
 		g_set_error_literal (error,
 				     AS_NODE_ERROR,
 				     AS_NODE_ERROR_FAILED,

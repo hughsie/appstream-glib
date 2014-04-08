@@ -55,11 +55,13 @@ typedef enum {
 /**
  * AsNodeFromXmlFlags:
  * @AS_NODE_FROM_XML_FLAG_NONE:			No extra flags to use
+ * @AS_NODE_FROM_XML_FLAG_LITERAL_TEXT:		Treat the text as an exact string
  *
  * The flags for converting from XML.
  **/
 typedef enum {
 	AS_NODE_FROM_XML_FLAG_NONE		= 0,	/* Since: 0.1.0 */
+	AS_NODE_FROM_XML_FLAG_LITERAL_TEXT	= 1,	/* Since: 0.1.3 */
 	/*< private >*/
 	AS_NODE_FROM_XML_FLAG_LAST
 } AsNodeFromXmlFlags;
