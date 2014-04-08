@@ -1762,15 +1762,15 @@ as_app_search_matches (AsApp *app, const gchar *search)
  * Since: 0.1.3
  */
 guint
-as_app_search_matches_all (AsApp *app, gchar **values)
+as_app_search_matches_all (AsApp *app, gchar **search)
 {
 	guint i;
 	guint matches_sum = 0;
 	guint tmp;
 
 	/* do *all* search keywords match */
-	for (i = 0; values[i] != NULL; i++) {
-		tmp = as_app_search_matches (app, values[i]);
+	for (i = 0; search[i] != NULL; i++) {
+		tmp = as_app_search_matches (app, search[i]);
 		if (tmp == 0)
 			return 0;
 		matches_sum += tmp;
