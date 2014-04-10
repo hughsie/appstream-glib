@@ -264,8 +264,12 @@ as_screenshot_node_insert (AsScreenshot *screenshot,
 			    AS_NODE_INSERT_FLAG_NONE,
 			    "type", as_screenshot_kind_to_string (priv->kind),
 			    NULL);
-	if (api_version >= 0.5)
-		as_node_insert_localized (n, "caption", priv->captions, 0);
+	if (api_version >= 0.5) {
+		as_node_insert_localized (n,
+					  "caption",
+					  priv->captions,
+					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
+	}
 	for (i = 0; i < priv->images->len; i++) {
 		image = g_ptr_array_index (priv->images, i);
 		as_image_node_insert (image, n, api_version);

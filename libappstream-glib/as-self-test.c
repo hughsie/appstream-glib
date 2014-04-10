@@ -831,6 +831,56 @@ ch_test_store_versions_func (void)
 	g_object_unref (store);
 }
 
+/*
+ * test that we don't save the same translated data as C back to the file
+ */
+static void
+ch_test_node_no_dup_c_func (void)
+{
+	AsApp *app;
+	GError *error = NULL;
+	GNode *n;
+	GNode *root;
+	GString *xml;
+	gboolean ret;
+	const gchar *src =
+		"<application>"
+		"<id type=\"desktop\">test.desktop</id>"
+		"<name>Krita</name>"
+		"<name xml:lang=\"pl\">Krita</name>"
+		"</application>";
+
+	/* to object */
+	app = as_app_new ();
+	root = as_node_from_xml (src, -1, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "application");
+	g_assert (n != NULL);
+	ret = as_app_node_parse (app, n, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* verify */
+	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "Krita");
+	g_assert_cmpstr (as_app_get_name (app, "pl"), ==, "Krita");
+	as_node_unref (root);
+
+	/* back to node */
+	root = as_node_new ();
+	n = as_app_node_insert (app, root, 0.4);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert_cmpstr (xml->str, ==,
+		"<application>"
+		"<id type=\"desktop\">test.desktop</id>"
+		"<name>Krita</name>"
+		"</application>");
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+
+	g_object_unref (app);
+}
+
 static void
 ch_test_store_origin_func (void)
 {
@@ -984,6 +1034,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node", ch_test_node_func);
 	g_test_add_func ("/AppStream/node{xml}", ch_test_node_xml_func);
 	g_test_add_func ("/AppStream/node{hash}", ch_test_node_hash_func);
+	g_test_add_func ("/AppStream/node{no-dup-c}", ch_test_node_no_dup_c_func);
 	g_test_add_func ("/AppStream/node{localized}", ch_test_node_localized_func);
 	g_test_add_func ("/AppStream/node{localized-wrap}", ch_test_node_localized_wrap_func);
 	g_test_add_func ("/AppStream/utils", ch_test_utils_func);

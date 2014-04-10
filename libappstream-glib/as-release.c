@@ -238,7 +238,8 @@ as_release_node_insert (AsRelease *release, GNode *parent, gdouble api_version)
 			    NULL);
 	if (priv->descriptions != NULL && api_version >= 0.6) {
 		as_node_insert_localized (n, "description", priv->descriptions,
-					  AS_NODE_INSERT_FLAG_PRE_ESCAPED);
+					  AS_NODE_INSERT_FLAG_PRE_ESCAPED |
+					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 	}
 	g_free (timestamp_str);
 	return n;

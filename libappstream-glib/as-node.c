@@ -1077,16 +1077,39 @@ as_node_insert_localized (GNode *parent,
 {
 	const gchar *key;
 	const gchar *value;
+	const gchar *value_c;
 	AsNodeData *data;
 	GList *l;
 	GList *list;
 
+	/* add the untranslated value first */
+	value_c = g_hash_table_lookup (localized, "C");
+	if (value_c == NULL)
+		return;
+	data = g_slice_new0 (AsNodeData);
+	as_node_data_set_name (data, name);
+	if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
+		data->cdata = as_markup_convert_simple (value_c, -1, NULL);
+		data->cdata_escaped = FALSE;
+	} else {
+		data->cdata = g_strdup (value_c);
+		data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
+	}
+	g_node_insert_data (parent, -1, data);
+
+	/* add the other localized values */
 	list = g_hash_table_get_keys (localized);
 	list = g_list_sort (list, as_node_list_sort_cb);
 	for (l = list; l != NULL; l = l->next) {
 		key = l->data;
+		if (g_strcmp0 (key, "C") == 0)
+			continue;
 		value = g_hash_table_lookup (localized, key);
+		if ((insert_flags & AS_NODE_INSERT_FLAG_DEDUPE_LANG) > 0 &&
+		    g_strcmp0 (value_c, value) == 0)
+			continue;
 		data = g_slice_new0 (AsNodeData);
+		as_node_attr_insert (data, "xml:lang", key);
 		as_node_data_set_name (data, name);
 		if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
 			data->cdata = as_markup_convert_simple (value, -1, NULL);
@@ -1095,8 +1118,6 @@ as_node_insert_localized (GNode *parent,
 			data->cdata = g_strdup (value);
 			data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 		}
-		if (g_strcmp0 (key, "C") != 0)
-			as_node_attr_insert (data, "xml:lang", key);
 		g_node_insert_data (parent, -1, data);
 	}
 	g_list_free (list);

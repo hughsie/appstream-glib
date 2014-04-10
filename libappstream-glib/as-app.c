@@ -1231,18 +1231,26 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	}
 
 	/* <name> */
-	as_node_insert_localized (node_app, "name", priv->names, 0);
+	as_node_insert_localized (node_app, "name",
+				  priv->names,
+				  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 
 	/* <summary> */
-	as_node_insert_localized (node_app, "summary", priv->comments, 0);
+	as_node_insert_localized (node_app, "summary",
+				  priv->comments,
+				  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 
 	/* <description> */
 	if (api_version < 0.6) {
-		as_node_insert_localized (node_app, "description", priv->descriptions,
-					  AS_NODE_INSERT_FLAG_NO_MARKUP);
+		as_node_insert_localized (node_app, "description",
+					  priv->descriptions,
+					  AS_NODE_INSERT_FLAG_NO_MARKUP |
+					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 	} else {
-		as_node_insert_localized (node_app, "description", priv->descriptions,
-					  AS_NODE_INSERT_FLAG_PRE_ESCAPED);
+		as_node_insert_localized (node_app, "description",
+					  priv->descriptions,
+					  AS_NODE_INSERT_FLAG_PRE_ESCAPED |
+					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 	}
 
 	/* <icon> */
