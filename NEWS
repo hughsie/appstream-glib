@@ -1,3 +1,20 @@
+Version 0.1.3
+~~~~~~~~~~~~~
+Released: 2014-04-10
+
+New Features:
+ - Add as_app_search_matches_all()
+ - Add as_utils_is_stock_icon_name()
+
+Bugfixes:
+ - Actually add mimetype data to the AsApp object
+ - Do not allow applications without icons
+ - Ignore settings panels when parsing desktop files
+ - Load AppStream files assuming literal text strings
+ - Only set app-install icons to cached if not already stock
+ - Set the icon kind to stock if it matches any stock icon
+ - Use the legacy names when using as_node_get_tag()
+
 Version 0.1.2
 ~~~~~~~~~~~~~
 Released: 2014-03-26
@@ -26,18 +43,18 @@ Version 0.1.1
 Released: 2014-03-21
 
 New Features:
- - Add an 'api-version' property to AsStore (Richard Hughes)
- - Add as_store_from_xml() to load text XML not from a file (Richard Hughes)
- - Add the new AsUrlKind's and <architectures> from API 0.6 (Richard Hughes)
- - Speed up as_tag_to_string() by using a table and a single lookup (Richard Hughes)
- - Support old-style markup-less <description> tags (Richard Hughes)
- - Support the 'origin' attribute on the root node (Richard Hughes)
+ - Add an 'api-version' property to AsStore
+ - Add as_store_from_xml() to load text XML not from a file
+ - Add the new AsUrlKind's and <architectures> from API 0.6
+ - Speed up as_tag_to_string() by using a table and a single lookup
+ - Support old-style markup-less <description> tags
+ - Support the 'origin' attribute on the root node
 
 Bugfixes:
- - Do not crash when using getting an unset description (Richard Hughes)
- - Do not depend on functions introduced in Glib 2.39.1 (Richard Hughes)
- - Fix parsing incompletely translated AppData files (Richard Hughes)
- - The 'appcategories' tag is now deprecated for 'categories' (Richard Hughes)
+ - Do not crash when using getting an unset description
+ - Do not depend on functions introduced in Glib 2.39.1
+ - Fix parsing incompletely translated AppData files
+ - The 'appcategories' tag is now deprecated for 'categories'
 
 Version 0.1.0
 ~~~~~~~~~~~~~
