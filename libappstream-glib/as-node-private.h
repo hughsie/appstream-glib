@@ -43,6 +43,8 @@ void		 as_node_add_attribute		(GNode		*node,
 						 const gchar	*key,
 						 const gchar	*value,
 						 gssize		 value_len);
+gchar		*as_node_reflow_text		(const gchar	*text,
+						 gssize		 text_len);
 
 G_END_DECLS
 

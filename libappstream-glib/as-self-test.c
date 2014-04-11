@@ -437,6 +437,37 @@ ch_test_app_no_markup_func (void)
 }
 
 static void
+ch_test_node_reflow_text_func (void)
+{
+	gchar *tmp;
+
+	/* plain text */
+	tmp = as_node_reflow_text ("Dave", -1);
+	g_assert_cmpstr (tmp, ==, "Dave");
+	g_free (tmp);
+
+	/* stripping */
+	tmp = as_node_reflow_text ("    Dave    ", -1);
+	g_assert_cmpstr (tmp, ==, "Dave");
+	g_free (tmp);
+
+	/* paragraph */
+	tmp = as_node_reflow_text ("Dave\n\nSoftware", -1);
+	g_assert_cmpstr (tmp, ==, "Dave\n\nSoftware");
+	g_free (tmp);
+
+	/* pathological */
+	tmp = as_node_reflow_text (
+		"\n"
+		"  Dave: \n"
+		"  Software is \n"
+		"  awesome.\n\n\n"
+		"  Okay!\n", -1);
+	g_assert_cmpstr (tmp, ==, "Dave: Software is awesome.\n\nOkay!");
+	g_free (tmp);
+}
+
+static void
 ch_test_node_func (void)
 {
 	GNode *n1;
@@ -1032,6 +1063,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/app{subsume}", ch_test_app_subsume_func);
 	g_test_add_func ("/AppStream/app{search}", ch_test_app_search_func);
 	g_test_add_func ("/AppStream/node", ch_test_node_func);
+	g_test_add_func ("/AppStream/node{reflow}", ch_test_node_reflow_text_func);
 	g_test_add_func ("/AppStream/node{xml}", ch_test_node_xml_func);
 	g_test_add_func ("/AppStream/node{hash}", ch_test_node_hash_func);
 	g_test_add_func ("/AppStream/node{no-dup-c}", ch_test_node_no_dup_c_func);

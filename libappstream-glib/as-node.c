@@ -370,6 +370,63 @@ as_node_to_xml_string (GString *xml,
 	}
 }
 
+/**
+ * as_node_reflow_text:
+ * @text: XML text data
+ * @text_len: length of @text
+ *
+ * Converts pretty-formatted source text into a format suitable for AppStream.
+ * This might include joining paragraphs, supressing newlines or doing other
+ * sanity checks to the text.
+ *
+ * Returns: (transfer full): a new string
+ *
+ * Since: 0.1.4
+ **/
+gchar *
+as_node_reflow_text (const gchar *text, gssize text_len)
+{
+	GString *tmp;
+	gchar **split;
+	guint i;
+	guint newline_count = 0;
+
+	/* split the text into lines */
+	tmp = g_string_sized_new (text_len + 1);
+	split = g_strsplit (text, "\n", -1);
+	for (i = 0; split[i] != NULL; i++) {
+
+		/* remove leading and trailing whitespace */
+		g_strstrip (split[i]);
+
+		/* if this is a blank line we end the paragraph mode
+		 * and swallow the newline. If we see exactly two
+		 * newlines in sequence then do a paragraph break */
+		if (split[i][0] == '\0') {
+			newline_count++;
+			continue;
+		}
+
+		/* if the line just before this one was not a newline
+		 * then seporate the words with a space */
+		if (newline_count == 1 && tmp->len > 0)
+			g_string_append (tmp, " ");
+
+		/* if we had more than one newline in sequence add a paragraph
+		 * break */
+		if (newline_count > 1)
+			g_string_append (tmp, "\n\n");
+
+		/* add the actual stripped text */
+		g_string_append (tmp, split[i]);
+
+		/* this last section was paragraph */
+		newline_count = 1;
+	}
+	g_strfreev (split);
+	return g_string_free (tmp, FALSE);
+}
+
 typedef struct {
 	GNode			*current;
 	AsNodeFromXmlFlags	 flags;
@@ -452,7 +509,6 @@ as_node_text_cb (GMarkupParseContext *context,
 	AsNodeToXmlHelper *helper = (AsNodeToXmlHelper *) user_data;
 	AsNodeData *data;
 	guint i;
-	gchar **split;
 
 	/* no data */
 	if (text_len == 0)
@@ -466,33 +522,12 @@ as_node_text_cb (GMarkupParseContext *context,
 	if (i >= text_len)
 		return;
 
-	/* save cdata */
-	data = helper->current->data;
-
-	/* create as it's now required */
-	if ((helper->flags & AS_NODE_FROM_XML_FLAG_LITERAL_TEXT) > 0 ||
-	    g_strstr_len (text, text_len, "\n") == NULL) {
-		data->cdata = g_strndup (text, text_len);
-
 	/* split up into lines and add each with spaces stripped */
+	data = helper->current->data;
+	if ((helper->flags & AS_NODE_FROM_XML_FLAG_LITERAL_TEXT) > 0) {
+		data->cdata = g_strndup (text, text_len);
 	} else {
-		GString *tmp;
-		tmp = g_string_sized_new (text_len + 1);
-		split = g_strsplit (text, "\n", -1);
-		for (i = 0; split[i] != NULL; i++) {
-			g_strstrip (split[i]);
-			if (split[i][0] == '\0') {
-				g_string_append (tmp, "\n\n");
-				continue;
-			}
-			g_string_append_printf (tmp, "%s ", split[i]);
-		}
-
-		/* remove trailing space */
-		if (tmp->len > 1 && tmp->str[tmp->len - 1] == ' ')
-			g_string_truncate (tmp, tmp->len - 1);
-		data->cdata = g_string_free (tmp, FALSE);
-		g_strfreev (split);
+		data->cdata = as_node_reflow_text (text, text_len);
 	}
 }
 
