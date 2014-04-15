@@ -5,6 +5,7 @@ AM_CPPFLAGS =						\
 	-I$(top_srcdir)					\
 	-I$(top_builddir)				\
 	-I$(top_srcdir)/libappstream-glib		\
+	-I$(top_builddir)/libappstream-glib		\
 	-DG_LOG_DOMAIN=\"As\"				\
 	-DVERSION="\"$(VERSION)\""			\
 	-DLOCALEDIR=\""$(localedir)"\"
