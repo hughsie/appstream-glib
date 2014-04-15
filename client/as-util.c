@@ -620,6 +620,325 @@ out:
 }
 
 /**
+ * as_util_status_join:
+ */
+static gchar *
+as_util_status_join (GPtrArray *array)
+{
+	const gchar *tmp;
+	guint i;
+	GString *txt;
+
+	if (array == NULL)
+		return NULL;
+	if (array->len == 0)
+		return NULL;
+
+	txt = g_string_new ("");
+	for (i = 0; i < array->len; i++) {
+		tmp = g_ptr_array_index (array, i);
+		if (txt->len > 0)
+			g_string_append (txt, ", ");
+		g_string_append (txt, tmp);
+	}
+	return g_string_free (txt, FALSE);
+}
+
+/**
+ * as_util_status_write_app:
+ */
+static void
+as_util_status_write_app (AsApp *app, GString *html)
+{
+	GPtrArray *images;
+	GPtrArray *screenshots;
+	AsImage *im;
+	AsScreenshot *ss;
+	const gchar *pkgname;
+	gchar *tmp;
+	guint i;
+	guint j;
+	const gchar *kudos[] = {
+		"X-Kudo-SearchProvider",
+		"X-Kudo-InstallsUserDocs",
+		"X-Kudo-UsesAppMenu",
+		"X-Kudo-GTK3",
+		"X-Kudo-RecentRelease",
+		"X-Kudo-UsesNotifications",
+		NULL };
+
+	g_string_append_printf (html, "<a name=\"%s\"/><h2>%s</h2>\n",
+				as_app_get_id (app), as_app_get_id (app));
+
+	/* print the screenshot thumbnails */
+	screenshots = as_app_get_screenshots (app);
+	for (i = 0; i < screenshots->len; i++) {
+		ss  = g_ptr_array_index (screenshots, i);
+		images = as_screenshot_get_images (ss);
+		for (j = 0; j < images->len; j++) {
+			im = g_ptr_array_index (images, j);
+			if (as_image_get_width (im) != 624)
+				continue;
+			if (as_screenshot_get_caption (ss, "C") != NULL) {
+				g_string_append_printf (html, "<a href=\"%s\">"
+							"<img src=\"%s\" alt=\"%s\"/></a>\n",
+							as_image_get_url (im),
+							as_image_get_url (im),
+							as_screenshot_get_caption (ss, "C"));
+			} else {
+				g_string_append_printf (html, "<a href=\"%s\">"
+							"<img src=\"%s\"/></a>\n",
+							as_image_get_url (im),
+							as_image_get_url (im));
+			}
+		}
+	}
+
+	g_string_append (html, "<table>\n");
+
+	/* summary */
+	g_string_append_printf (html, "<tr><td>%s</td><td><code>%s</code></td></tr>\n",
+				"Type", as_id_kind_to_string (as_app_get_id_kind (app)));
+	g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+				"Name", as_app_get_name (app, "C"));
+	g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+				"Comment", as_app_get_comment (app, "C"));
+	if (as_app_get_description (app, "C") != NULL) {
+		g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+				"Description", as_app_get_description (app, "C"));
+	}
+
+	/* packages */
+	tmp = as_util_status_join (as_app_get_pkgnames (app));
+	if (tmp != NULL) {
+		pkgname = g_ptr_array_index (as_app_get_pkgnames(app), 0);
+		g_string_append_printf (html, "<tr><td>%s</td><td>"
+					"<a href=\"https://apps.fedoraproject.org/packages/%s\">"
+					"<code>%s</code></a></td></tr>\n",
+					"Package", pkgname, tmp);
+	}
+	g_free (tmp);
+
+	/* categories */
+	tmp = as_util_status_join (as_app_get_categories (app));
+	if (tmp != NULL) {
+		g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+					"Categories", tmp);
+	}
+	g_free (tmp);
+
+	/* keywords */
+	tmp = as_util_status_join (as_app_get_keywords (app));
+	if (tmp != NULL) {
+		g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+					"Keywords", tmp);
+	}
+	g_free (tmp);
+
+	/* homepage */
+	pkgname = as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE);
+	if (pkgname != NULL) {
+		g_string_append_printf (html, "<tr><td>%s</td><td><a href=\"%s\">"
+					"%s</a></td></tr>\n",
+					"Homepage", pkgname, pkgname);
+	}
+
+	/* project */
+	if (as_app_get_project_group (app) != NULL) {
+		g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+					"Project", as_app_get_project_group (app));
+	}
+
+	/* desktops */
+	tmp = as_util_status_join (as_app_get_compulsory_for_desktops (app));
+	if (tmp != NULL) {
+		g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+					"Compulsory for", tmp);
+	}
+	g_free (tmp);
+
+	/* add all possible Kudo's for desktop files */
+	if (as_app_get_id_kind (app) == AS_ID_KIND_DESKTOP) {
+		for (i = 0; kudos[i] != NULL; i++) {
+			pkgname = as_app_get_metadata_item (app, kudos[i]) ?
+					"Yes" : "No";
+			g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+						kudos[i], pkgname);
+		}
+	}
+
+	g_string_append (html, "</table>\n");
+	g_string_append (html, "<hr/>\n");
+}
+
+/**
+ * as_util_status_write_exec_summary:
+ */
+static void
+as_util_status_write_exec_summary (GPtrArray *apps, GString *html)
+{
+	AsApp *app;
+	const gchar *project_groups[] = { "GNOME", "KDE", "XFCE", NULL };
+	guint cnt;
+	guint i;
+	guint j;
+	guint perc;
+	guint total;
+
+	g_string_append (html, "<h1>Executive summary</h1>\n");
+	g_string_append (html, "<ul>\n");
+
+	/* long descriptions */
+	cnt = 0;
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_description (app, "C") != NULL)
+			cnt++;
+	}
+	perc = 100 * cnt / apps->len;
+	g_string_append_printf (html, "<li>Applications in Fedora with "
+				"long descriptions: %i (%i%%)</li>\n", cnt, perc);
+
+	/* keywords */
+	cnt = 0;
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_keywords(app)->len > 0)
+			cnt++;
+	}
+	perc = 100 * cnt / apps->len;
+	g_string_append_printf (html, "<li>Applications in Fedora with "
+				"keywords: %i (%i%%)</li>\n", cnt, perc);
+
+	/* categories */
+	cnt = 0;
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_categories(app)->len > 0)
+			cnt++;
+	}
+	perc = 100 * cnt / apps->len;
+	g_string_append_printf (html, "<li>Applications in Fedora with "
+				"categories: %i (%i%%)</li>\n", cnt, perc);
+
+	/* screenshots */
+	cnt = 0;
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_screenshots(app)->len > 0)
+			cnt++;
+	}
+	perc = 100 * cnt / apps->len;
+	g_string_append_printf (html, "<li>Applications in Fedora with "
+				"screenshots: %i (%i%%)</li>\n", cnt, perc);
+
+	/* project apps with appdata */
+	for (j = 0; project_groups[j] != NULL; j++) {
+		cnt = 0;
+		total = 0;
+		for (i = 0; i < apps->len; i++) {
+			app = g_ptr_array_index (apps, i);
+			if (g_strcmp0 (as_app_get_project_group (app),
+				       project_groups[j]) != 0)
+				continue;
+			total += 1;
+			if (as_app_get_screenshots(app)->len > 0 ||
+			    as_app_get_description (app, "C") != NULL)
+				cnt++;
+		}
+		perc = 0;
+		if (total > 0)
+			perc = 100 * cnt / total;
+		g_string_append_printf (html, "<li>Applications in %s "
+					"with AppData: %i (%i%%)</li>\n",
+					project_groups[j], cnt, perc);
+	}
+	g_string_append (html, "</ul>\n");
+}
+
+/**
+ * as_util_status:
+ **/
+static gboolean
+as_util_status (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsApp *app;
+	AsStore *store = NULL;
+	GFile *file = NULL;
+	GPtrArray *apps = NULL;
+	GString *html = NULL;
+	gboolean ret = TRUE;
+	guint i;
+
+	/* check args */
+	if (g_strv_length (values) != 1) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected filename.xml.gz");
+		goto out;
+	}
+
+	/* load file */
+	store = as_store_new ();
+	file = g_file_new_for_path (values[0]);
+	ret = as_store_from_file (store, file, NULL, NULL, error);
+	if (!ret)
+		goto out;
+	apps = as_store_get_apps (store);
+
+	/* create header */
+	html = g_string_new ("");
+	g_string_append (html, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 "
+			       "Transitional//EN\" "
+			       "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
+	g_string_append (html, "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n");
+	g_string_append (html, "<head>\n");
+	g_string_append (html, "<meta http-equiv=\"Content-Type\" content=\"text/html; "
+			       "charset=UTF-8\" />\n");
+	g_string_append (html, "<title>Application Data Review</title>\n");
+	g_string_append (html, "</head>\n");
+	g_string_append (html, "<body>\n");
+
+	/* summary section */
+	if (apps->len > 0)
+		as_util_status_write_exec_summary (apps, html);
+
+	/* write applications */
+	g_string_append (html, "<h1>Applications</h1>\n");
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_id_kind (app) == AS_ID_KIND_FONT)
+			continue;
+		if (as_app_get_id_kind (app) == AS_ID_KIND_INPUT_METHOD)
+			continue;
+		if (as_app_get_id_kind (app) == AS_ID_KIND_CODEC)
+			continue;
+		if (as_app_get_id_kind (app) == AS_ID_KIND_SOURCE)
+			continue;
+		as_util_status_write_app (app, html);
+	}
+
+	g_string_append (html, "</body>\n");
+	g_string_append (html, "</html>\n");
+
+	/* save file */
+	ret = g_file_set_contents ("./status.html", html->str, -1, error);
+	if (!ret)
+		goto out;
+out:
+	if (html != NULL)
+		g_string_free (html, TRUE);
+	if (store != NULL)
+		g_object_unref (store);
+	if (file != NULL)
+		g_object_unref (file);
+	return ret;
+}
+
+/**
  * as_util_ignore_cb:
  **/
 static void
@@ -682,6 +1001,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Uninstalls AppStream metadata"),
 		     as_util_uninstall);
+	as_util_add (priv->cmd_array,
+		     "status",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Create an HTML status page"),
+		     as_util_status);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
