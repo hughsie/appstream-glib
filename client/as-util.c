@@ -939,6 +939,67 @@ out:
 }
 
 /**
+ * as_util_non_package_yaml:
+ **/
+static gboolean
+as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsApp *app;
+	AsStore *store = NULL;
+	GFile *file = NULL;
+	GPtrArray *apps = NULL;
+	GString *yaml = NULL;
+	gboolean ret = TRUE;
+	guint i;
+
+	/* check args */
+	if (g_strv_length (values) != 1) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected filename.xml.gz");
+		goto out;
+	}
+
+	/* load file */
+	store = as_store_new ();
+	file = g_file_new_for_path (values[0]);
+	ret = as_store_from_file (store, file, NULL, NULL, error);
+	if (!ret)
+		goto out;
+	apps = as_store_get_apps (store);
+
+	/* write applications */
+	yaml = g_string_new ("# automatically generated, do not edit\n");
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_pkgnames(app)->len > 0)
+			continue;
+		g_string_append_printf (yaml, "- id: %s\n",
+					as_app_get_id (app));
+		g_string_append_printf (yaml, "  name: %s\n",
+					as_app_get_name (app, "C"));
+		g_string_append_printf (yaml, "  summary: %s\n",
+					as_app_get_comment (app, "C"));
+	}
+
+	/* save file */
+	ret = g_file_set_contents ("./applications-to-import.yaml", yaml->str, -1, error);
+	if (!ret)
+		goto out;
+out:
+	if (yaml != NULL)
+		g_string_free (yaml, TRUE);
+	if (store != NULL)
+		g_object_unref (store);
+	if (file != NULL)
+		g_object_unref (file);
+	return ret;
+}
+
+/**
  * as_util_ignore_cb:
  **/
 static void
@@ -1007,6 +1068,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Create an HTML status page"),
 		     as_util_status);
+	as_util_add (priv->cmd_array,
+		     "non-package-yaml",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("List applications not backed by packages"),
+		     as_util_non_package_yaml);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
