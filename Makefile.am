@@ -2,6 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = 						\
 	libappstream-glib				\
+	client						\
 	data						\
 	docs
 

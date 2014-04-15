@@ -103,9 +103,11 @@ fi
 AM_CONDITIONAL(HAVE_GPERF, [test x$GPERF != xno])
 
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.16.1 gio-2.0 gobject-2.0 gthread-2.0)
+PKG_CHECK_MODULES(LIBARCHIVE, libarchive)
 
 AC_CONFIG_FILES([
 Makefile
+client/Makefile
 libappstream-glib/Makefile
 libappstream-glib/appstream-glib.pc
 libappstream-glib/as-version.h
