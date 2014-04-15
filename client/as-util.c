@@ -620,10 +620,10 @@ out:
 }
 
 /**
- * as_util_status_join:
+ * as_util_status_html_join:
  */
 static gchar *
-as_util_status_join (GPtrArray *array)
+as_util_status_html_join (GPtrArray *array)
 {
 	const gchar *tmp;
 	guint i;
@@ -645,10 +645,10 @@ as_util_status_join (GPtrArray *array)
 }
 
 /**
- * as_util_status_write_app:
+ * as_util_status_html_write_app:
  */
 static void
-as_util_status_write_app (AsApp *app, GString *html)
+as_util_status_html_write_app (AsApp *app, GString *html)
 {
 	GPtrArray *images;
 	GPtrArray *screenshots;
@@ -709,7 +709,7 @@ as_util_status_write_app (AsApp *app, GString *html)
 	}
 
 	/* packages */
-	tmp = as_util_status_join (as_app_get_pkgnames (app));
+	tmp = as_util_status_html_join (as_app_get_pkgnames (app));
 	if (tmp != NULL) {
 		pkgname = g_ptr_array_index (as_app_get_pkgnames(app), 0);
 		g_string_append_printf (html, "<tr><td>%s</td><td>"
@@ -720,7 +720,7 @@ as_util_status_write_app (AsApp *app, GString *html)
 	g_free (tmp);
 
 	/* categories */
-	tmp = as_util_status_join (as_app_get_categories (app));
+	tmp = as_util_status_html_join (as_app_get_categories (app));
 	if (tmp != NULL) {
 		g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
 					"Categories", tmp);
@@ -728,7 +728,7 @@ as_util_status_write_app (AsApp *app, GString *html)
 	g_free (tmp);
 
 	/* keywords */
-	tmp = as_util_status_join (as_app_get_keywords (app));
+	tmp = as_util_status_html_join (as_app_get_keywords (app));
 	if (tmp != NULL) {
 		g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
 					"Keywords", tmp);
@@ -750,7 +750,7 @@ as_util_status_write_app (AsApp *app, GString *html)
 	}
 
 	/* desktops */
-	tmp = as_util_status_join (as_app_get_compulsory_for_desktops (app));
+	tmp = as_util_status_html_join (as_app_get_compulsory_for_desktops (app));
 	if (tmp != NULL) {
 		g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
 					"Compulsory for", tmp);
@@ -772,10 +772,10 @@ as_util_status_write_app (AsApp *app, GString *html)
 }
 
 /**
- * as_util_status_write_exec_summary:
+ * as_util_status_html_write_exec_summary:
  */
 static void
-as_util_status_write_exec_summary (GPtrArray *apps, GString *html)
+as_util_status_html_write_exec_summary (GPtrArray *apps, GString *html)
 {
 	AsApp *app;
 	const gchar *project_groups[] = { "GNOME", "KDE", "XFCE", NULL };
@@ -857,10 +857,10 @@ as_util_status_write_exec_summary (GPtrArray *apps, GString *html)
 }
 
 /**
- * as_util_status:
+ * as_util_status_html:
  **/
 static gboolean
-as_util_status (AsUtilPrivate *priv, gchar **values, GError **error)
+as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	AsApp *app;
 	AsStore *store = NULL;
@@ -904,7 +904,7 @@ as_util_status (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* summary section */
 	if (apps->len > 0)
-		as_util_status_write_exec_summary (apps, html);
+		as_util_status_html_write_exec_summary (apps, html);
 
 	/* write applications */
 	g_string_append (html, "<h1>Applications</h1>\n");
@@ -918,7 +918,7 @@ as_util_status (AsUtilPrivate *priv, gchar **values, GError **error)
 			continue;
 		if (as_app_get_id_kind (app) == AS_ID_KIND_SOURCE)
 			continue;
-		as_util_status_write_app (app, html);
+		as_util_status_html_write_app (app, html);
 	}
 
 	g_string_append (html, "</body>\n");
@@ -1063,11 +1063,11 @@ main (int argc, char *argv[])
 		     _("Uninstalls AppStream metadata"),
 		     as_util_uninstall);
 	as_util_add (priv->cmd_array,
-		     "status",
+		     "status-html",
 		     NULL,
 		     /* TRANSLATORS: command description */
 		     _("Create an HTML status page"),
-		     as_util_status);
+		     as_util_status_html);
 	as_util_add (priv->cmd_array,
 		     "non-package-yaml",
 		     NULL,
