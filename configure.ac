@@ -88,6 +88,13 @@ else
 fi
 AC_SUBST(WARNINGFLAGS_C)
 
+# check for PIE (position independent executable) support
+AX_CHECK_COMPILE_FLAG([-fPIE],
+		      [AX_CHECK_LINK_FLAG([-fPIE -pie],
+					  [PIE_CFLAGS="-fPIE" PIE_LDFLAGS="-pie"])])
+AC_SUBST(PIE_CFLAGS)
+AC_SUBST(PIE_LDFLAGS)
+
 # use gperf for faster string -> enum matching
 AC_PATH_PROG(GPERF, [gperf], [no])
 if test x$GPERF != xno ; then
