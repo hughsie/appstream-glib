@@ -1043,6 +1043,41 @@ ch_test_store_app_install_func (void)
 	g_object_unref (store);
 }
 
+static void
+ch_test_store_metadata_func (void)
+{
+	AsStore *store;
+	GError *error = NULL;
+	GPtrArray *apps;
+	gboolean ret;
+	const gchar *xml =
+		"<applications version=\"0.3\">"
+		"<application>"
+		"<id type=\"desktop\">test.desktop</id>"
+		"<metadata>"
+		"<value key=\"foo\">bar</value>"
+		"</metadata>"
+		"</application>"
+		"<application>"
+		"<id type=\"desktop\">tested.desktop</id>"
+		"<metadata>"
+		"<value key=\"foo\">bar</value>"
+		"</metadata>"
+		"</application>"
+		"</applications>";
+
+	store = as_store_new ();
+	ret = as_store_from_xml (store, xml, -1, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	apps = as_store_get_apps_by_metadata (store, "foo", "bar");
+	g_assert_cmpint (apps->len, ==, 2);
+	g_ptr_array_unref (apps);
+
+	g_object_unref (store);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -1074,6 +1109,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{versions}", ch_test_store_versions_func);
 	g_test_add_func ("/AppStream/store{origin}", ch_test_store_origin_func);
 	g_test_add_func ("/AppStream/store{app-install}", ch_test_store_app_install_func);
+	g_test_add_func ("/AppStream/store{metadata}", ch_test_store_metadata_func);
 	g_test_add_func ("/AppStream/store{speed}", ch_test_store_speed_func);
 
 	return g_test_run ();

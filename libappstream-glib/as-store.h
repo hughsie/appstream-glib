@@ -118,6 +118,9 @@ gboolean	 as_store_load			(AsStore	*store,
 						 GCancellable	*cancellable,
 						 GError		**error);
 GPtrArray	*as_store_get_apps		(AsStore	*store);
+GPtrArray	*as_store_get_apps_by_metadata	(AsStore	*store,
+						 const gchar	*key,
+						 const gchar	*value);
 AsApp		*as_store_get_app_by_id		(AsStore	*store,
 						 const gchar	*id);
 AsApp		*as_store_get_app_by_pkgname	(AsStore	*store,
