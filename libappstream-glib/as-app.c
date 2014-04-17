@@ -1201,16 +1201,20 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 
 	/* <component> or <application> */
 	if (api_version >= 0.6) {
-		node_app = as_node_insert (parent, "component", NULL, 0,
-					   "type", as_id_kind_to_string (priv->id_kind),
-					   NULL);
+		node_app = as_node_insert (parent, "component", NULL, 0, NULL);
+		if (priv->id_kind != AS_ID_KIND_UNKNOWN) {
+			as_node_add_attribute (node_app,
+					       "type",
+					       as_id_kind_to_string (priv->id_kind),
+					       -1);
+		}
 	} else {
 		node_app = as_node_insert (parent, "application", NULL, 0, NULL);
 	}
 
 	/* <id> */
 	node_tmp = as_node_insert (node_app, "id", priv->id_full, 0, NULL);
-	if (api_version < 0.6) {
+	if (api_version < 0.6 && priv->id_kind != AS_ID_KIND_UNKNOWN) {
 		as_node_add_attribute (node_tmp,
 				       "type",
 				       as_id_kind_to_string (priv->id_kind),
