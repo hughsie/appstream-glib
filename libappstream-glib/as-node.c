@@ -1345,11 +1345,9 @@ as_node_denorm_get_str_for_lang (GHashTable *hash,
 }
 
 /**
- * as_node_get_localized_unwrap:
- * @node: a #GNode.
- * @error: A #GError or %NULL.
+ * as_node_get_localized_unwrap_type_li:
  *
- * Denormalize AppData data like this:
+ * Denormalize AppData data where each <li> element is translated:
  *
  * |[
  * <description>
@@ -1361,34 +1359,19 @@ as_node_denorm_get_str_for_lang (GHashTable *hash,
  *  </ul>
  * </description>
  * ]|
- *
- * into a hash that contains:
- *
- * |[
- * "C"  ->  "<p>Hi</p><ul><li>First</li></ul>"
- * "pl" ->  "<p>Czesc</p><ul><li>Pierwszy</li></ul>"
- * ]|
- *
- * Returns: (transfer full): a hash table of data
- *
- * Since: 0.1.0
  **/
-GHashTable *
-as_node_get_localized_unwrap (const GNode *node, GError **error)
+static gboolean
+as_node_get_localized_unwrap_type_li (const GNode *node,
+				      GHashTable *hash,
+				      GError **error)
 {
 	GNode *tmp;
 	GNode *tmp_c;
 	AsNodeData *data;
 	AsNodeData *data_c;
-	const gchar *xml_lang;
-	GHashTable *hash;
 	GString *str;
-	GList *keys = NULL;
-	GList *l;
-	GHashTable *results = NULL;
+	gboolean ret = TRUE;
 
-	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
-				      g_free, (GDestroyNotify) as_node_string_free);
 	for (tmp = node->children; tmp != NULL; tmp = tmp->next) {
 		data = tmp->data;
 
@@ -1426,6 +1409,7 @@ as_node_get_localized_unwrap (const GNode *node, GError **error)
 								data_c->cdata);
 				} else {
 					/* only <li> is valid in lists */
+					ret = FALSE;
 					g_set_error (error,
 						     AS_NODE_ERROR,
 						     AS_NODE_ERROR_FAILED,
@@ -1437,6 +1421,7 @@ as_node_get_localized_unwrap (const GNode *node, GError **error)
 			as_node_denorm_add_to_langs (hash, data->name, FALSE);
 		} else {
 			/* only <p>, <ul> and <ol> is valid here */
+			ret = FALSE;
 			g_set_error (error,
 				     AS_NODE_ERROR,
 				     AS_NODE_ERROR_FAILED,
@@ -1444,6 +1429,157 @@ as_node_get_localized_unwrap (const GNode *node, GError **error)
 				     data->name);
 			goto out;
 		}
+	}
+out:
+	return ret;
+}
+
+/**
+ * as_node_get_localized_unwrap_type_ul:
+ *
+ * Denormalize AppData data where the parent <ul> is translated:
+ *
+ * |[
+ * <description>
+ *  <p>Hi</p>
+ *  <p xml:lang="pl">Czesc</p>
+ *  <ul xml:lang="pl">
+ *   <li>First</li>
+ *  </ul>
+ *  <ul xml:lang="pl">
+ *   <li>Pierwszy</li>
+ *  </ul>
+ * </description>
+ * ]|
+ **/
+static gboolean
+as_node_get_localized_unwrap_type_ul (const GNode *node,
+				      GHashTable *hash,
+				      GError **error)
+{
+	GNode *tmp;
+	GNode *tmp_c;
+	AsNodeData *data;
+	AsNodeData *data_c;
+	GString *str;
+	gboolean ret = TRUE;
+
+	for (tmp = node->children; tmp != NULL; tmp = tmp->next) {
+		data = tmp->data;
+
+		/* append to existing string, adding the locale if it's not
+		 * already present */
+		if (g_strcmp0 (data->name, "p") == 0) {
+			str = as_node_denorm_get_str_for_lang (hash, data, TRUE);
+			as_node_cdata_to_escaped (data);
+			g_string_append_printf (str, "<p>%s</p>",
+						data->cdata);
+
+		/* loop on the children */
+		} else if (g_strcmp0 (data->name, "ul") == 0 ||
+			   g_strcmp0 (data->name, "ol") == 0) {
+			str = as_node_denorm_get_str_for_lang (hash, data, TRUE);
+			g_string_append_printf (str, "<%s>", data->name);
+			for (tmp_c = tmp->children; tmp_c != NULL; tmp_c = tmp_c->next) {
+				data_c = tmp_c->data;
+				if (g_strcmp0 (data_c->name, "li") == 0) {
+					as_node_cdata_to_escaped (data_c);
+					g_string_append_printf (str,
+								"<li>%s</li>",
+								data_c->cdata);
+				} else {
+					/* only <li> is valid in lists */
+					ret = FALSE;
+					g_set_error (error,
+						     AS_NODE_ERROR,
+						     AS_NODE_ERROR_FAILED,
+						     "Tag %s in %s invalid",
+						     data_c->name, data->name);
+					goto out;
+				}
+			}
+			g_string_append_printf (str, "</%s>", data->name);
+		} else {
+			/* only <p>, <ul> and <ol> is valid here */
+			ret = FALSE;
+			g_set_error (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_FAILED,
+				     "Unknown tag '%s'",
+				     data->name);
+			goto out;
+		}
+	}
+out:
+	return ret;
+}
+
+/**
+ * as_node_get_localized_unwrap:
+ * @node: a #GNode.
+ * @error: A #GError or %NULL.
+ *
+ * Denormalize AppData data like this:
+ *
+ * |[
+ * <description>
+ *  <p>Hi</p>
+ *  <p xml:lang="pl">Czesc</p>
+ *  <ul>
+ *   <li>First</li>
+ *   <li xml:lang="pl">Pierwszy</li>
+ *  </ul>
+ * </description>
+ * ]|
+ *
+ * into a hash that contains:
+ *
+ * |[
+ * "C"  ->  "<p>Hi</p><ul><li>First</li></ul>"
+ * "pl" ->  "<p>Czesc</p><ul><li>Pierwszy</li></ul>"
+ * ]|
+ *
+ * Returns: (transfer full): a hash table of data
+ *
+ * Since: 0.1.0
+ **/
+GHashTable *
+as_node_get_localized_unwrap (const GNode *node, GError **error)
+{
+	GNode *tmp;
+	AsNodeData *data;
+	const gchar *xml_lang;
+	GHashTable *hash;
+	GString *str;
+	GList *keys = NULL;
+	GList *l;
+	GHashTable *results = NULL;
+	gboolean is_li_translated = TRUE;
+	gboolean ret;
+
+	/* work out what kind of normalization this is */
+	for (tmp = node->children; tmp != NULL; tmp = tmp->next) {
+		data = tmp->data;
+		if (g_strcmp0 (data->name, "ul") == 0 ||
+		    g_strcmp0 (data->name, "ol") == 0) {
+			if (as_node_attr_lookup (data, "xml:lang") != NULL) {
+				is_li_translated = FALSE;
+				break;
+			}
+		}
+	}
+
+	/* unwrap it to a hash */
+	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
+				      g_free, (GDestroyNotify) as_node_string_free);
+	if (is_li_translated) {
+		ret = as_node_get_localized_unwrap_type_li (node, hash, error);
+		if (!ret)
+			goto out;
+	} else {
+		ret = as_node_get_localized_unwrap_type_ul (node, hash, error);
+		if (!ret)
+			goto out;
 	}
 
 	/* copy into a hash table of the correct size */

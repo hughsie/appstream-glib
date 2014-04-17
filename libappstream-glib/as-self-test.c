@@ -689,6 +689,47 @@ ch_test_node_localized_wrap_func (void)
 }
 
 static void
+ch_test_node_localized_wrap2_func (void)
+{
+	GError *error = NULL;
+	GHashTable *hash;
+	GNode *n1;
+	GNode *root;
+	const gchar *xml =
+		"<description>"
+		" <p>Hi</p>"
+		" <p xml:lang=\"pl\">Czesc</p>"
+		" <ul>"
+		"  <li>First</li>"
+		"  <li>Second</li>"
+		" </ul>"
+		" <ul xml:lang=\"pl\">"
+		"  <li>Pierwszy</li>"
+		"  <li>Secondski</li>"
+		" </ul>"
+		"</description>";
+
+	root = as_node_from_xml (xml, -1, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+
+	/* unwrap the locale data */
+	n1 = as_node_find (root, "description");
+	g_assert (n1 != NULL);
+	hash = as_node_get_localized_unwrap (n1, &error);
+	g_assert_no_error (error);
+	g_assert (hash != NULL);
+	g_assert_cmpint (g_hash_table_size (hash), ==, 2);
+	g_assert_cmpstr (g_hash_table_lookup (hash, "C"), ==,
+		"<p>Hi</p><ul><li>First</li><li>Second</li></ul>");
+	g_assert_cmpstr (g_hash_table_lookup (hash, "pl"), ==,
+		"<p>Czesc</p><ul><li>Pierwszy</li><li>Secondski</li></ul>");
+	g_hash_table_unref (hash);
+
+	as_node_unref (root);
+}
+
+static void
 ch_test_app_subsume_func (void)
 {
 	AsApp *app;
@@ -1104,6 +1145,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{no-dup-c}", ch_test_node_no_dup_c_func);
 	g_test_add_func ("/AppStream/node{localized}", ch_test_node_localized_func);
 	g_test_add_func ("/AppStream/node{localized-wrap}", ch_test_node_localized_wrap_func);
+	g_test_add_func ("/AppStream/node{localized-wrap2}", ch_test_node_localized_wrap2_func);
 	g_test_add_func ("/AppStream/utils", ch_test_utils_func);
 	g_test_add_func ("/AppStream/store", ch_test_store_func);
 	g_test_add_func ("/AppStream/store{versions}", ch_test_store_versions_func);
