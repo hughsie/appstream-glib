@@ -289,7 +289,6 @@ void
 as_store_add_app (AsStore *store, AsApp *app)
 {
 	AsApp *item;
-	AsIdKind id_kind;
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	GPtrArray *pkgnames;
 	const gchar *id;
@@ -313,13 +312,6 @@ as_store_add_app (AsStore *store, AsApp *app)
 		g_debug ("replacing duplicate AppStream entry: %s", id);
 		g_hash_table_remove (priv->hash_id, id);
 		g_ptr_array_remove (priv->array, item);
-	}
-
-	/* this is a type we don't know how to handle */
-	id_kind = as_app_get_id_kind (app);
-	if (id_kind == AS_ID_KIND_UNKNOWN) {
-		g_debug ("No idea how to handle AppStream entry: %s", id);
-		return;
 	}
 
 	/* success, add to array */
