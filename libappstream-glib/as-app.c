@@ -70,6 +70,7 @@ struct _AsAppPrivate
 	gchar		*project_group;
 	gchar		*project_license;
 	gchar		*metadata_license;
+	gchar		*update_contact;
 	gint		 priority;
 	gsize		 token_cache_valid;
 	GPtrArray	*token_cache;			/* of AsAppTokenItem */
@@ -117,6 +118,7 @@ as_app_finalize (GObject *object)
 	g_free (priv->project_group);
 	g_free (priv->project_license);
 	g_free (priv->metadata_license);
+	g_free (priv->update_contact);
 	g_hash_table_unref (priv->comments);
 	g_hash_table_unref (priv->descriptions);
 	g_hash_table_unref (priv->languages);
@@ -620,6 +622,23 @@ as_app_get_metadata_license (AsApp *app)
 	return priv->metadata_license;
 }
 
+/**
+ * as_app_get_update_contact:
+ * @app: a #AsApp instance.
+ *
+ * Gets the application upstream update contact email.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.1.4
+ **/
+const gchar *
+as_app_get_update_contact (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->update_contact;
+}
+
 /******************************************************************************/
 
 /**
@@ -723,6 +742,26 @@ as_app_set_metadata_license (AsApp *app,
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_free (priv->metadata_license);
 	priv->metadata_license = as_strndup (metadata_license, metadata_license_len);
+}
+
+/**
+ * as_app_set_update_contact:
+ * @app: a #AsApp instance.
+ * @update_contact: the project license string.
+ * @update_contact_len: the size of @update_contact, or -1 if %NULL-terminated.
+ *
+ * Set the project license.
+ *
+ * Since: 0.1.4
+ **/
+void
+as_app_set_update_contact (AsApp *app,
+			   const gchar *update_contact,
+			   gssize update_contact_len)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_free (priv->update_contact);
+	priv->update_contact = as_strndup (update_contact, update_contact_len);
 }
 
 /**
@@ -1541,6 +1580,12 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_METADATA_LICENSE:
 		g_free (priv->metadata_license);
 		priv->metadata_license = as_node_take_data (n);
+		break;
+
+	/* <updatecontact> */
+	case AS_TAG_UPDATE_CONTACT:
+		g_free (priv->update_contact);
+		priv->update_contact = as_node_take_data (n);
 		break;
 
 	/* <url> */
