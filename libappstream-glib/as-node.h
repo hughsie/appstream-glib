@@ -40,6 +40,7 @@ G_BEGIN_DECLS
  * @AS_NODE_TO_XML_FLAG_ADD_HEADER:		Add an XML header to the data
  * @AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE:	Split up children with a newline
  * @AS_NODE_TO_XML_FLAG_FORMAT_INDENT:		Indent the XML by child depth
+ * @AS_NODE_TO_XML_FLAG_INCLUDE_SIBLINGS:	Include the siblings when converting
  *
  * The flags for converting to XML.
  **/
@@ -48,6 +49,7 @@ typedef enum {
 	AS_NODE_TO_XML_FLAG_ADD_HEADER		= 1,	/* Since: 0.1.0 */
 	AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE	= 2,	/* Since: 0.1.0 */
 	AS_NODE_TO_XML_FLAG_FORMAT_INDENT	= 4,	/* Since: 0.1.0 */
+	AS_NODE_TO_XML_FLAG_INCLUDE_SIBLINGS	= 8,	/* Since: 0.1.4 */
 	/*< private >*/
 	AS_NODE_TO_XML_FLAG_LAST
 } AsNodeToXmlFlags;

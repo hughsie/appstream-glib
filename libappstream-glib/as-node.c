@@ -447,11 +447,17 @@ GString *
 as_node_to_xml (const GNode *node, AsNodeToXmlFlags flags)
 {
 	GString *xml;
+	const GNode *l;
 	guint depth_offset = g_node_depth ((GNode *) node) + 1;
 	xml = g_string_new ("");
 	if ((flags & AS_NODE_TO_XML_FLAG_ADD_HEADER) > 0)
 		g_string_append (xml, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-	as_node_to_xml_string (xml, depth_offset, node, flags);
+	if ((flags & AS_NODE_TO_XML_FLAG_INCLUDE_SIBLINGS) > 0) {
+		for (l = node; l != NULL; l = l->next)
+			as_node_to_xml_string (xml, depth_offset, l, flags);
+	} else {
+		as_node_to_xml_string (xml, depth_offset, node, flags);
+	}
 	return xml;
 }
 

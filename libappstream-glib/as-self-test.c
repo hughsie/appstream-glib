@@ -565,7 +565,17 @@ ch_test_node_xml_func (void)
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		"<foo>\n <bar key=\"value\">baz</bar>\n</foo>\n");
 	g_string_free (xml, TRUE);
+	as_node_unref (root);
 
+	/* convert all the children to XML */
+	root = as_node_from_xml ("<p>One</p><p>Two</p>", -1, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	g_assert_cmpint (g_node_n_nodes (root, G_TRAVERSE_ALL), ==, 3);
+	xml = as_node_to_xml (root->children, AS_NODE_TO_XML_FLAG_INCLUDE_SIBLINGS);
+	g_assert (xml != NULL);
+	g_assert_cmpstr (xml->str, ==, "<p>One</p><p>Two</p>");
+	g_string_free (xml, TRUE);
 	as_node_unref (root);
 }
 

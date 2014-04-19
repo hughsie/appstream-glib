@@ -1548,7 +1548,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 						as_node_get_data (n),
 						-1);
 		} else {
-			xml = as_node_to_xml (n->children, AS_NODE_TO_XML_FLAG_NONE);
+			xml = as_node_to_xml (n->children,
+					      AS_NODE_TO_XML_FLAG_INCLUDE_SIBLINGS);
 			as_app_set_description (app,
 						as_node_get_attribute (n, "xml:lang"),
 						xml->str, xml->len);
