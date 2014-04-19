@@ -63,6 +63,7 @@
  * @AS_TAG_RELEASE:			`release`
  * @AS_TAG_ARCHITECTURES:		`architectures`
  * @AS_TAG_ARCH:			`arch`
+ * @AS_TAG_METADATA_LICENSE:		`metadata_license`
  *
  * The tag type.
  **/
@@ -100,6 +101,7 @@ typedef enum {
 	AS_TAG_RELEASE,			/* Since: 0.1.0 */
 	AS_TAG_ARCHITECTURES,		/* Since: 0.1.1 */
 	AS_TAG_ARCH,			/* Since: 0.1.1 */
+	AS_TAG_METADATA_LICENSE,	/* Since: 0.1.4 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;

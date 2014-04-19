@@ -40,3 +40,4 @@ releases, AS_TAG_RELEASES
 release, AS_TAG_RELEASE
 architectures, AS_TAG_ARCHITECTURES
 arch, AS_TAG_ARCH
+metadata_license, AS_TAG_METADATA_LICENSE

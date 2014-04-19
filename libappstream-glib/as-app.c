@@ -69,6 +69,7 @@ struct _AsAppPrivate
 	gchar		*id_full;
 	gchar		*project_group;
 	gchar		*project_license;
+	gchar		*metadata_license;
 	gint		 priority;
 	gsize		 token_cache_valid;
 	GPtrArray	*token_cache;			/* of AsAppTokenItem */
@@ -115,6 +116,7 @@ as_app_finalize (GObject *object)
 	g_free (priv->id_full);
 	g_free (priv->project_group);
 	g_free (priv->project_license);
+	g_free (priv->metadata_license);
 	g_hash_table_unref (priv->comments);
 	g_hash_table_unref (priv->descriptions);
 	g_hash_table_unref (priv->languages);
@@ -601,6 +603,23 @@ as_app_get_project_license (AsApp *app)
 	return priv->project_license;
 }
 
+/**
+ * as_app_get_metadata_license:
+ * @app: a #AsApp instance.
+ *
+ * Gets the application project license.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.1.4
+ **/
+const gchar *
+as_app_get_metadata_license (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->metadata_license;
+}
+
 /******************************************************************************/
 
 /**
@@ -684,6 +703,26 @@ as_app_set_project_license (AsApp *app,
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_free (priv->project_license);
 	priv->project_license = as_strndup (project_license, project_license_len);
+}
+
+/**
+ * as_app_set_metadata_license:
+ * @app: a #AsApp instance.
+ * @metadata_license: the project license string.
+ * @metadata_license_len: the size of @metadata_license, or -1 if %NULL-terminated.
+ *
+ * Set the project license.
+ *
+ * Since: 0.1.4
+ **/
+void
+as_app_set_metadata_license (AsApp *app,
+			     const gchar *metadata_license,
+			     gssize metadata_license_len)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_free (priv->metadata_license);
+	priv->metadata_license = as_strndup (metadata_license, metadata_license_len);
 }
 
 /**
@@ -1496,6 +1535,12 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_PROJECT_LICENSE:
 		g_free (priv->project_license);
 		priv->project_license = as_node_take_data (n);
+		break;
+
+	/* <project_license> */
+	case AS_TAG_METADATA_LICENSE:
+		g_free (priv->metadata_license);
+		priv->metadata_license = as_node_take_data (n);
 		break;
 
 	/* <url> */

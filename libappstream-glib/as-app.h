@@ -115,6 +115,7 @@ const gchar	*as_app_get_id			(AsApp		*app);
 const gchar	*as_app_get_id_full		(AsApp		*app);
 const gchar	*as_app_get_project_group	(AsApp		*app);
 const gchar	*as_app_get_project_license	(AsApp		*app);
+const gchar	*as_app_get_metadata_license	(AsApp		*app);
 const gchar	*as_app_get_name		(AsApp		*app,
 						 const gchar	*locale);
 const gchar	*as_app_get_comment		(AsApp		*app,
@@ -141,6 +142,9 @@ void		 as_app_set_project_group	(AsApp		*app,
 void		 as_app_set_project_license	(AsApp		*app,
 						 const gchar	*project_license,
 						 gssize		 project_license_len);
+void		 as_app_set_metadata_license	(AsApp		*app,
+						 const gchar	*metadata_license,
+						 gssize		 metadata_license_len);
 void		 as_app_set_icon		(AsApp		*app,
 						 const gchar	*icon,
 						 gssize		 icon_len);
