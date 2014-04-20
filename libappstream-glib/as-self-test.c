@@ -322,6 +322,7 @@ ch_test_app_func (void)
 	g_assert_cmpstr (as_app_get_comment (app, NULL), ==, "Application manager");
 	g_assert_cmpstr (as_app_get_icon (app), ==, "org.gnome.Software.png");
 	g_assert_cmpint (as_app_get_icon_kind (app), ==, AS_ICON_KIND_CACHED);
+	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_APP_SOURCE_KIND_UNKNOWN);
 	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
 	g_assert_cmpstr (as_app_get_project_license (app), ==, "GPLv2+");
 	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);
@@ -820,6 +821,7 @@ ch_test_store_func (void)
 static void
 ch_test_store_versions_func (void)
 {
+	AsApp *app;
 	AsStore *store;
 	GError *error = NULL;
 	gboolean ret;
@@ -844,6 +846,10 @@ ch_test_store_versions_func (void)
 	g_assert (ret);
 	g_assert_cmpfloat (as_store_get_api_version (store), <, 0.4 + 0.01);
 	g_assert_cmpfloat (as_store_get_api_version (store), >, 0.4 - 0.01);
+
+	/* verify source kind */
+	app = as_store_get_app_by_id (store, "test.desktop");
+	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_APP_SOURCE_KIND_APPSTREAM);
 
 	/* test with latest features */
 	as_store_set_api_version (store, 0.6);

@@ -91,6 +91,22 @@ typedef enum {
 	AS_APP_ERROR_LAST
 } AsAppError;
 
+/**
+ * AsAppSourceKind:
+ * @AS_APP_SOURCE_KIND_UNKNOWN:			Not sourced from a file
+ * @AS_APP_SOURCE_KIND_APPSTREAM:		Sourced from a AppStream file
+ * @AS_APP_SOURCE_KIND_DESKTOP:			Sourced from a desktop file
+ *
+ * The source kind.
+ **/
+typedef enum {
+	AS_APP_SOURCE_KIND_UNKNOWN,			/* Since: 0.1.4 */
+	AS_APP_SOURCE_KIND_APPSTREAM,			/* Since: 0.1.4 */
+	AS_APP_SOURCE_KIND_DESKTOP,			/* Since: 0.1.4 */
+	/*< private >*/
+	AS_APP_SOURCE_KIND_LAST
+} AsAppSourceKind;
+
 #define	AS_APP_ERROR				as_app_error_quark ()
 
 GType		 as_app_get_type		(void);
@@ -100,6 +116,7 @@ GQuark		 as_app_error_quark		(void);
 /* getters */
 AsIconKind	 as_app_get_icon_kind		(AsApp		*app);
 AsIdKind	 as_app_get_id_kind		(AsApp		*app);
+AsAppSourceKind	 as_app_get_source_kind		(AsApp		*app);
 GList		*as_app_get_languages		(AsApp		*app);
 GPtrArray	*as_app_get_categories		(AsApp		*app);
 GPtrArray	*as_app_get_compulsory_for_desktops (AsApp	*app);
@@ -216,7 +233,7 @@ guint		 as_app_search_matches_all	(AsApp		*app,
 guint		 as_app_search_matches		(AsApp		*app,
 						 const gchar	*search);
 gboolean	 as_app_parse_file		(AsApp		*app,
-						 const gchar	*desktop_file,
+						 const gchar	*filename,
 						 AsAppParseFlags flags,
 						 GError		**error);
 

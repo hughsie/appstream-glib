@@ -63,6 +63,7 @@ struct _AsAppPrivate
 	GPtrArray	*architectures;			/* of string */
 	GPtrArray	*releases;			/* of AsRelease */
 	GPtrArray	*screenshots;			/* of AsScreenshot */
+	AsAppSourceKind	 source_kind;
 	gchar		*icon;
 	gchar		*icon_path;
 	gchar		*id;
@@ -375,6 +376,23 @@ as_app_get_id_kind (AsApp *app)
 }
 
 /**
+ * as_app_get_source_kind:
+ * @app: a #AsApp instance.
+ *
+ * Gets the source kind, i.e. where the AsApp came from.
+ *
+ * Returns: enumerated value
+ *
+ * Since: 0.1.4
+ **/
+AsAppSourceKind
+as_app_get_source_kind (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->source_kind;
+}
+
+/**
  * as_app_get_icon_kind:
  * @app: a #AsApp instance.
  *
@@ -666,6 +684,22 @@ as_app_set_id_full (AsApp *app, const gchar *id_full, gssize id_full_len)
 	tmp = g_strrstr_len (priv->id, -1, ".");
 	if (tmp != NULL)
 		*tmp = '\0';
+}
+
+/**
+ * as_app_set_source_kind:
+ * @app: a #AsApp instance.
+ * @source_kind: the #AsAppSourceKind.
+ *
+ * Sets the source kind.
+ *
+ * Since: 0.1.4
+ **/
+void
+as_app_set_source_kind (AsApp *app, AsAppSourceKind source_kind)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	priv->source_kind = source_kind;
 }
 
 /**
@@ -2160,23 +2194,13 @@ out:
 }
 
 /**
- * as_app_parse_file:
- * @app: a #AsApp instance.
- * @desktop_file: desktop file to load.
- * @flags: #AsAppParseFlags, e.g. %AS_APP_PARSE_FLAG_USE_HEURISTICS
- * @error: A #GError or %NULL.
- *
- * Parses a desktop file and populates the application state.
- *
- * Returns: %TRUE for success
- *
- * Since: 0.1.2
+ * as_app_parse_desktop_file:
  **/
-gboolean
-as_app_parse_file (AsApp *app,
-		   const gchar *desktop_file,
-		   AsAppParseFlags flags,
-		   GError **error)
+static gboolean
+as_app_parse_desktop_file (AsApp *app,
+			   const gchar *desktop_file,
+			   AsAppParseFlags flags,
+			   GError **error)
 {
 	GKeyFile *kf;
 	gboolean ret;
@@ -2235,6 +2259,41 @@ out:
 	g_free (app_id);
 	g_key_file_unref (kf);
 	g_strfreev (keys);
+	return ret;
+}
+
+/**
+ * as_app_parse_file:
+ * @app: a #AsApp instance.
+ * @filename: file to load.
+ * @flags: #AsAppParseFlags, e.g. %AS_APP_PARSE_FLAG_USE_HEURISTICS
+ * @error: A #GError or %NULL.
+ *
+ * Parses a desktop or AppData file and populates the application state.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.1.2
+ **/
+gboolean
+as_app_parse_file (AsApp *app,
+		   const gchar *filename,
+		   AsAppParseFlags flags,
+		   GError **error)
+{
+	gboolean ret = FALSE;
+
+	if (g_str_has_suffix (filename, ".desktop")) {
+		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_DESKTOP);
+		ret = as_app_parse_desktop_file (app, filename, flags, error);
+		goto out;
+	}
+	g_set_error (error,
+		     AS_APP_ERROR,
+		     AS_APP_ERROR_INVALID_TYPE,
+		     "%s has an unrecognised type",
+		     filename);
+out:
 	return ret;
 }
 

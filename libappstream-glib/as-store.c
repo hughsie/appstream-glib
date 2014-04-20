@@ -383,6 +383,7 @@ as_store_from_root (AsStore *store,
 		app = as_app_new ();
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path, -1);
+		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
 		ret = as_app_node_parse (app, n, &error_local);
 		if (!ret) {
 			g_set_error (error,

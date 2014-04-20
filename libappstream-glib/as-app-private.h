@@ -32,6 +32,9 @@
 
 G_BEGIN_DECLS
 
+void		 as_app_set_source_kind		(AsApp		*app,
+						 AsAppSourceKind source_kind);
+
 GNode		*as_app_node_insert		(AsApp		*app,
 						 GNode		*parent,
 						 gdouble	 api_version);
