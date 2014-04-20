@@ -376,6 +376,57 @@ as_app_get_id_kind (AsApp *app)
 }
 
 /**
+ * as_app_get_name_size: (skip)
+ * @app: a #AsApp instance.
+ *
+ * Gets the number of names.
+ *
+ * Returns: integer
+ *
+ * Since: 0.1.4
+ **/
+guint
+as_app_get_name_size (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return g_hash_table_size (priv->names);
+}
+
+/**
+ * as_app_get_comment_size: (skip)
+ * @app: a #AsApp instance.
+ *
+ * Gets the number of comments.
+ *
+ * Returns: integer
+ *
+ * Since: 0.1.4
+ **/
+guint
+as_app_get_comment_size (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return g_hash_table_size (priv->comments);
+}
+
+/**
+ * as_app_get_description_size: (skip)
+ * @app: a #AsApp instance.
+ *
+ * Gets the number of descriptions.
+ *
+ * Returns: integer
+ *
+ * Since: 0.1.4
+ **/
+guint
+as_app_get_description_size (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return g_hash_table_size (priv->descriptions);
+}
+
+/**
  * as_app_get_source_kind:
  * @app: a #AsApp instance.
  *
