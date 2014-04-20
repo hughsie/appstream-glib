@@ -34,7 +34,7 @@
 #include "config.h"
 
 #include "as-image-private.h"
-#include "as-node.h"
+#include "as-node-private.h"
 #include "as-screenshot-private.h"
 #include "as-tag.h"
 #include "as-utils-private.h"
@@ -319,6 +319,19 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 						   -1);
 		}
 		g_list_free (keys);
+	}
+
+	/* AppData files does not have <image> tags */
+	tmp = as_node_get_data (node);
+	if (tmp != NULL) {
+		image = as_image_new ();
+		as_image_set_kind (image, AS_IMAGE_KIND_SOURCE);
+		as_image_set_width (image,
+				    as_node_get_attribute_as_int (node, "width"));
+		as_image_set_height (image,
+				     as_node_get_attribute_as_int (node, "height"));
+		as_image_set_url (image, tmp, -1);
+		g_ptr_array_add (priv->images, image);
 	}
 
 	/* add images */
