@@ -47,6 +47,7 @@
 typedef struct _AsAppPrivate	AsAppPrivate;
 struct _AsAppPrivate
 {
+	AsAppProblems	 problems;
 	AsIconKind	 icon_kind;
 	AsIdKind	 id_kind;
 	GHashTable	*comments;			/* of locale:string */
@@ -441,6 +442,23 @@ as_app_get_source_kind (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->source_kind;
+}
+
+/**
+ * as_app_get_problems: (skip)
+ * @app: a #AsApp instance.
+ *
+ * Gets the bitfield of problems.
+ *
+ * Returns: problems encountered during parsing the application
+ *
+ * Since: 0.1.4
+ **/
+AsAppProblems
+as_app_get_problems (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->problems;
 }
 
 /**

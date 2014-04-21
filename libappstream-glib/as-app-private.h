@@ -32,6 +32,16 @@
 
 G_BEGIN_DECLS
 
+typedef enum {
+	AS_APP_PROBLEM_NONE			= 0,
+	AS_APP_PROBLEM_NO_XML_HEADER		= 1 << 0,
+	AS_APP_PROBLEM_NO_COPYRIGHT_INFO	= 1 << 1,
+	AS_APP_PROBLEM_DEPRECATED_LICENCE	= 1 << 2,
+	AS_APP_PROBLEM_MULTIPLE_ENTRIES		= 1 << 3,
+	AS_APP_PROBLEM_LAST
+} AsAppProblems;
+
+AsAppProblems	 as_app_get_problems		(AsApp		*app);
 void		 as_app_set_source_kind		(AsApp		*app,
 						 AsAppSourceKind source_kind);
 guint		 as_app_get_name_size		(AsApp		*app);
