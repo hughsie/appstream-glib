@@ -1000,6 +1000,64 @@ out:
 }
 
 /**
+ * as_util_validate:
+ **/
+static gboolean
+as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsApp *app = NULL;
+	AsProblemKind kind;
+	AsProblem *problem;
+	GPtrArray *probs = NULL;
+	gboolean ret = TRUE;
+	guint i;
+
+	/* check args */
+	if (g_strv_length (values) != 1) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected example.appdata.xml");
+		goto out;
+	}
+
+	/* load file */
+	app = as_app_new ();
+	as_app_parse_file (app, values[0], AS_APP_PARSE_FLAG_NONE, error);
+	if (!ret)
+		goto out;
+	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NONE, error);
+	if (probs == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+	if (probs->len == 0) {
+		g_print ("%s\n", _("File validated successfully!"));
+	} else {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     _("Validation failed"));
+	}
+	for (i = 0; i < probs->len; i++) {
+		problem = g_ptr_array_index (probs, i);
+		kind = as_problem_get_kind (problem);
+		g_print ("%s\t%s\n",
+			 as_problem_kind_to_string (kind),
+			 as_problem_get_message (problem));
+	}
+out:
+	if (probs != NULL)
+		g_ptr_array_unref (probs);
+	if (app != NULL)
+		g_object_unref (app);
+	return ret;
+}
+
+/**
  * as_util_ignore_cb:
  **/
 static void
@@ -1074,6 +1132,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("List applications not backed by packages"),
 		     as_util_non_package_yaml);
+	as_util_add (priv->cmd_array,
+		     "validate",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Validate an AppData or AppStream file"),
+		     as_util_validate);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
