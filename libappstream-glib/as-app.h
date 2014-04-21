@@ -92,6 +92,24 @@ typedef enum {
 } AsAppError;
 
 /**
+ * AsAppValidateFlags:
+ * @AS_APP_VALIDATE_FLAG_NONE:			No extra flags to use
+ * @AS_APP_VALIDATE_FLAG_RELAX:			Relax the checks
+ * @AS_APP_VALIDATE_FLAG_STRICT:		Make the checks more strict
+ * @AS_APP_VALIDATE_FLAG_NO_NETWORK:		Do not use the network
+ *
+ * The flags to use when validating.
+ **/
+typedef enum {
+	AS_APP_VALIDATE_FLAG_NONE		= 0,	/* Since: 0.1.4 */
+	AS_APP_VALIDATE_FLAG_RELAX		= 1,	/* Since: 0.1.4 */
+	AS_APP_VALIDATE_FLAG_STRICT		= 2,	/* Since: 0.1.4 */
+	AS_APP_VALIDATE_FLAG_NO_NETWORK		= 4,	/* Since: 0.1.4 */
+	/*< private >*/
+	AS_APP_VALIDATE_FLAG_LAST
+} AsAppValidateFlags;
+
+/**
  * AsAppSourceKind:
  * @AS_APP_SOURCE_KIND_UNKNOWN:			Not sourced from a file
  * @AS_APP_SOURCE_KIND_APPSTREAM:		Sourced from a AppStream file
@@ -228,6 +246,9 @@ void		 as_app_remove_metadata		(AsApp		*app,
 						 const gchar	*key);
 
 /* object methods */
+GPtrArray	*as_app_validate		(AsApp		*app,
+						 AsAppValidateFlags flags,
+						 GError		**error);
 void		 as_app_subsume			(AsApp		*app,
 						 AsApp		*donor);
 guint		 as_app_search_matches_all	(AsApp		*app,

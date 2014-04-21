@@ -344,6 +344,203 @@ ch_test_app_func (void)
 }
 
 static void
+ch_test_app_validate_check (GPtrArray *array,
+			    AsProblemKind kind,
+			    const gchar *message)
+{
+	AsProblem *problem;
+	guint i;
+
+	for (i = 0; i < array->len; i++) {
+		problem = g_ptr_array_index (array, i);
+		if (as_problem_get_kind (problem) == kind &&
+		    g_strcmp0 (as_problem_get_message (problem), message) == 0)
+			return;
+	}
+	g_assert_cmpstr (message, ==, "not-found");
+}
+
+static void
+ch_test_app_validate_file_good_func (void)
+{
+	AsApp *app;
+	AsImage *im;
+	AsProblem *problem;
+	AsScreenshot *ss;
+	GError *error = NULL;
+	GPtrArray *images;
+	GPtrArray *probs;
+	GPtrArray *screenshots;
+	gboolean ret;
+	gchar *filename;
+	guint i;
+
+	/* open file */
+	app = as_app_new ();
+	filename = as_test_get_filename ("success.appdata.xml");
+	ret = as_app_parse_file (app, filename, AS_APP_PARSE_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* check success */
+	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_DESKTOP);
+	g_assert_cmpstr (as_app_get_id_full (app), ==, "gnome-power-statistics.desktop");
+	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "0 A.D.");
+	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "Observe power management");
+	g_assert_cmpstr (as_app_get_metadata_license (app), ==, "CC0");
+	g_assert_cmpstr (as_app_get_update_contact (app), ==, "richard_at_hughsie.com");
+	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
+	g_assert_cmpstr (as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE), ==,
+			 "http://www.gnome.org/projects/gnome-power-manager/");
+	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NO_NETWORK, &error);
+	g_assert_no_error (error);
+	g_assert (probs != NULL);
+	for (i = 0; i < probs->len; i++) {
+		problem = g_ptr_array_index (probs, i);
+		g_warning ("%s", as_problem_get_message (problem));
+	}
+	g_assert_cmpint (probs->len, ==, 0);
+	g_ptr_array_unref (probs);
+
+	/* check screenshots were loaded */
+	screenshots = as_app_get_screenshots (app);
+	g_assert_cmpint (screenshots->len, ==, 1);
+	ss = g_ptr_array_index (screenshots, 0);
+	g_assert_cmpint (as_screenshot_get_kind (ss), ==, AS_SCREENSHOT_KIND_DEFAULT);
+	images = as_screenshot_get_images (ss);
+	g_assert_cmpint (images->len, ==, 1);
+	im = g_ptr_array_index (images, 0);
+	g_assert_cmpstr (as_image_get_url (im), ==, "https://projects.gnome.org/gnome-power-manager/images/gpm-low-batt.png");
+	g_assert_cmpint (as_image_get_width (im), ==, 355);
+	g_assert_cmpint (as_image_get_height (im), ==, 134);
+	g_assert_cmpint (as_image_get_kind (im), ==, AS_IMAGE_KIND_SOURCE);
+
+	g_free (filename);
+	g_object_unref (app);
+}
+
+static void
+ch_test_app_validate_file_bad_func (void)
+{
+	AsApp *app;
+	AsProblem *problem;
+	GError *error = NULL;
+	GPtrArray *probs;
+	gboolean ret;
+	gchar *filename;
+	guint i;
+
+	/* open file */
+	app = as_app_new ();
+	filename = as_test_get_filename ("broken.appdata.xml");
+	ret = as_app_parse_file (app, filename, AS_APP_PARSE_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (probs != NULL);
+	for (i = 0; i < probs->len; i++) {
+		problem = g_ptr_array_index (probs, i);
+		g_debug ("%s", as_problem_get_message (problem));
+	}
+	g_assert_cmpint (probs->len, ==, 17);
+
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
+				    "<id> has invalid type attribute");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
+				    "<id> does not have correct extension for kind");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "<metadata_license> is not valid");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
+				    "<updatecontact> is not present");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "<url> does not start with 'http://'");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
+				    "<?xml> header not found");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<name> cannot end in '.'");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<summary> cannot end in '.'");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "Not enough <screenshot> tags");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<li> is too short");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<li> cannot end in '.'");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<ul> cannot start a description");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<ul> cannot start a description");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "Not enough <p> tags for a good description");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<p> should not start with 'This application'");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<p> does not end in '.|:|!'");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<p> is too short");
+
+	g_ptr_array_unref (probs);
+	g_free (filename);
+	g_object_unref (app);
+}
+
+static void
+ch_test_app_validate_style_func (void)
+{
+	AsApp *app;
+	GError *error = NULL;
+	GPtrArray *probs;
+	guint i;
+	AsProblem *problem;
+
+	app = as_app_new ();
+	as_app_add_url (app, AS_URL_KIND_UNKNOWN, "dave.com", -1);
+	as_app_set_id_full (app, "dave.exe", -1);
+	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
+	as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPDATA);
+	as_app_set_metadata_license (app, "BSD", -1);
+	as_app_set_name (app, "C", "Test app name that is very log indeed.", -1);
+	as_app_set_comment (app, "C", "Awesome", -1);
+	as_app_set_update_contact (app, "someone_who_cares@upstream_project.org", -1);
+
+	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (probs != NULL);
+	for (i = 0; i < probs->len; i++) {
+		problem = g_ptr_array_index (probs, i);
+		g_debug ("%s", as_problem_get_message (problem));
+	}
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "<update_contact> is still set to a dummy value");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "<url> type invalid");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "<url> does not start with 'http://'");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "<metadata_license> is not valid");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<name> is too long");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<name> cannot end in '.'");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<summary> is too short");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
+				    "<id> does not have correct extension for kind");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "Not enough <screenshot> tags");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<summary> is shorter than <name>");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
+				    "<url> is not present");
+	g_assert_cmpint (probs->len, ==, 11);
+
+	g_ptr_array_unref (probs);
+	g_object_unref (app);
+}
+
+static void
 ch_test_app_parse_file_func (void)
 {
 	AsApp *app;
@@ -1151,6 +1348,9 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/image", ch_test_image_func);
 	g_test_add_func ("/AppStream/screenshot", ch_test_screenshot_func);
 	g_test_add_func ("/AppStream/app", ch_test_app_func);
+	g_test_add_func ("/AppStream/app{validate-style}", ch_test_app_validate_style_func);
+	g_test_add_func ("/AppStream/app{validate-file-good}", ch_test_app_validate_file_good_func);
+	g_test_add_func ("/AppStream/app{validate-file-bad}", ch_test_app_validate_file_bad_func);
 	g_test_add_func ("/AppStream/app{parse-file}", ch_test_app_parse_file_func);
 	g_test_add_func ("/AppStream/app{no-markup}", ch_test_app_no_markup_func);
 	g_test_add_func ("/AppStream/app{subsume}", ch_test_app_subsume_func);

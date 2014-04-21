@@ -7,6 +7,8 @@ endif
 
 AM_CPPFLAGS =							\
 	$(GLIB_CFLAGS)						\
+	$(GDKPIXBUF_CFLAGS)					\
+	$(SOUP_CFLAGS)						\
 	-I$(top_srcdir)/libappstream-glib			\
 	-I$(top_builddir)/libappstream-glib			\
 	-I.							\
@@ -68,6 +70,7 @@ libappstream_glib_include_HEADERS =				\
 libappstream_glib_la_SOURCES =					\
 	as-app.c						\
 	as-app-private.h					\
+	as-app-validate.c					\
 	as-enums.c						\
 	as-image.c						\
 	as-image-private.h					\
@@ -95,7 +98,9 @@ endif
 CLEANFILES = $(BUILT_SOURCES)
 
 libappstream_glib_la_LIBADD =					\
-	$(GLIB_LIBS)
+	$(GLIB_LIBS)						\
+	$(GDKPIXBUF_LIBS)					\
+	$(SOUP_LIBS)
 
 libappstream_glib_la_LDFLAGS =					\
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)	\
@@ -112,6 +117,8 @@ as_self_test_SOURCES =						\
 	as-self-test.c
 as_self_test_LDADD =						\
 	$(GLIB_LIBS)						\
+	$(GDKPIXBUF_LIBS)					\
+	$(SOUP_LIBS)						\
 	$(lib_LTLIBRARIES)
 as_self_test_CFLAGS = $(WARNINGFLAGS_C)
 
@@ -120,6 +127,7 @@ TESTS = as-self-test
 if HAVE_INTROSPECTION
 introspection_sources =						\
 	as-app.c						\
+	as-app-validate.c					\
 	as-app.h						\
 	as-enums.c						\
 	as-enums.h						\
