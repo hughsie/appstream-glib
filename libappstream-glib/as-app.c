@@ -2333,6 +2333,80 @@ out:
 }
 
 /**
+ * as_app_parse_appdata_file:
+ **/
+static gboolean
+as_app_parse_appdata_file (AsApp *app,
+			   const gchar *filename,
+			   AsAppParseFlags flags,
+			   GError **error)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	GNode *l;
+	GNode *node;
+	GNode *root = NULL;
+	gboolean ret = TRUE;
+	gboolean seen_application = FALSE;
+	gchar *data = NULL;
+	gchar *tmp;
+	gsize len;
+
+	/* open file */
+	ret = g_file_get_contents (filename, &data, &len, error);
+	if (!ret)
+		goto out;
+
+	/* validate */
+	tmp = g_strstr_len (data, len, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+	if (tmp == NULL)
+		priv->problems |= AS_APP_PROBLEM_NO_XML_HEADER;
+
+	/* check for copyright */
+	tmp = g_strstr_len (data, len, "<!-- Copyright");
+	if (tmp == NULL)
+		priv->problems |= AS_APP_PROBLEM_NO_COPYRIGHT_INFO;
+
+	/* parse */
+	root = as_node_from_xml (data, len,
+				 AS_NODE_FROM_XML_FLAG_NONE,
+				 error);
+	if (root == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+	node = as_node_find (root, "application");
+	if (node == NULL) {
+		ret = FALSE;
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "%s has an unrecognised contents",
+			     filename);
+		goto out;
+	}
+	for (l = node->children; l != NULL; l = l->next) {
+		if (g_strcmp0 (as_node_get_name (l), "licence") == 0) {
+			as_node_set_name (l, "metadata_license");
+			priv->problems |= AS_APP_PROBLEM_DEPRECATED_LICENCE;
+			continue;
+		}
+		if (as_node_get_tag (l) == AS_TAG_APPLICATION) {
+			if (seen_application)
+				priv->problems |= AS_APP_PROBLEM_MULTIPLE_ENTRIES;
+			seen_application = TRUE;
+		}
+	}
+	ret = as_app_node_parse (app, node, error);
+	if (!ret)
+		goto out;
+out:
+	if (root != NULL)
+		as_node_unref (root);
+	g_free (data);
+	return ret;
+}
+
+/**
  * as_app_parse_file:
  * @app: a #AsApp instance.
  * @filename: file to load.
@@ -2356,6 +2430,11 @@ as_app_parse_file (AsApp *app,
 	if (g_str_has_suffix (filename, ".desktop")) {
 		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_DESKTOP);
 		ret = as_app_parse_desktop_file (app, filename, flags, error);
+		goto out;
+	}
+	if (g_str_has_suffix (filename, ".appdata.xml")) {
+		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPDATA);
+		ret = as_app_parse_appdata_file (app, filename, flags, error);
 		goto out;
 	}
 	g_set_error (error,
