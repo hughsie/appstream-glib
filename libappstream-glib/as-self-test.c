@@ -28,6 +28,7 @@
 #include "as-enums.h"
 #include "as-image-private.h"
 #include "as-node-private.h"
+#include "as-problem.h"
 #include "as-release-private.h"
 #include "as-screenshot-private.h"
 #include "as-store.h"

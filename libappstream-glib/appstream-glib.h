@@ -28,6 +28,7 @@
 #include <as-enums.h>
 #include <as-image.h>
 #include <as-node.h>
+#include <as-problem.h>
 #include <as-release.h>
 #include <as-screenshot.h>
 #include <as-store.h>

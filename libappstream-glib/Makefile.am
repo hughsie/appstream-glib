@@ -57,6 +57,7 @@ libappstream_glib_include_HEADERS =				\
 	as-enums.h						\
 	as-image.h						\
 	as-node.h						\
+	as-problem.h						\
 	as-release.h						\
 	as-screenshot.h						\
 	as-store.h						\
@@ -72,6 +73,8 @@ libappstream_glib_la_SOURCES =					\
 	as-image-private.h					\
 	as-node.c						\
 	as-node-private.h					\
+	as-problem.c						\
+	as-problem.h						\
 	as-release.c						\
 	as-release-private.h					\
 	as-resources.c						\
@@ -124,6 +127,8 @@ introspection_sources =						\
 	as-image.h						\
 	as-node.c						\
 	as-node.h						\
+	as-problem.c						\
+	as-problem.h						\
 	as-release.c						\
 	as-release.h						\
 	as-screenshot.c						\

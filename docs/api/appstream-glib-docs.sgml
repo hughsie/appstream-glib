@@ -38,6 +38,7 @@
     <xi:include href="xml/as-release.xml"/>
     <xi:include href="xml/as-screenshot.xml"/>
     <xi:include href="xml/as-store.xml"/>
+    <xi:include href="xml/as-problem.xml"/>
     <xi:include href="xml/as-enums.xml"/>
     <xi:include href="xml/as-node.xml"/>
     <xi:include href="xml/as-tag.xml"/>
