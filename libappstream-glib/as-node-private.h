@@ -33,6 +33,8 @@ G_BEGIN_DECLS
 gchar		*as_node_take_data		(const GNode	*node);
 gchar		*as_node_take_attribute		(const GNode	*node,
 						 const gchar	*key);
+void		 as_node_set_name		(GNode		*node,
+						 const gchar	*name);
 void		 as_node_set_data		(GNode		*node,
 						 const gchar	*cdata,
 						 gssize		 cdata_len,

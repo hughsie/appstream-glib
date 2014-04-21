@@ -780,6 +780,34 @@ as_node_get_name (const GNode *node)
 }
 
 /**
+ * as_node_set_name: (skip)
+ * @node: a #GNode
+ * @name: the new name
+ *
+ * Sets the node name, e.g. "body"
+ *
+ * Since: 0.1.4
+ **/
+void
+as_node_set_name (GNode *node, const gchar *name)
+{
+	AsNodeData *data;
+
+	g_return_if_fail (node != NULL);
+
+	if (node->data == NULL)
+		return;
+	data = node->data;
+	if (data == NULL)
+		return;
+
+	/* overwrite */
+	g_free (data->name);
+	data->name = NULL;
+	as_node_data_set_name (data, name);
+}
+
+/**
  * as_node_get_data:
  * @node: a #GNode
  *
