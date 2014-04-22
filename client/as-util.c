@@ -1025,7 +1025,7 @@ as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* load file */
 	app = as_app_new ();
-	as_app_parse_file (app, values[0], AS_APP_PARSE_FLAG_NONE, error);
+	ret = as_app_parse_file (app, values[0], AS_APP_PARSE_FLAG_NONE, error);
 	if (!ret)
 		goto out;
 	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NONE, error);
