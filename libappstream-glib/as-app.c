@@ -1406,7 +1406,11 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	if (priv->priority != 0) {
 		gchar prio[6];
 		g_snprintf (prio, sizeof (prio), "%i", priv->priority);
-		as_node_insert (node_app, "priority", prio, 0, NULL);
+		if (api_version >= 0.61) {
+			as_node_add_attribute (node_app, "priority", prio, -1);
+		} else {
+			as_node_insert (node_app, "priority", prio, 0, NULL);
+		}
 	}
 
 	/* <pkgname> */
@@ -1800,12 +1804,16 @@ as_app_node_parse (AsApp *app, GNode *node, GError **error)
 	GNode *n;
 	const gchar *tmp;
 	gboolean ret = TRUE;
+	guint prio;
 
 	/* new style */
 	if (g_strcmp0 (as_node_get_name (node), "component") == 0) {
 		tmp = as_node_get_attribute (node, "type");
 		if (tmp != NULL)
 			as_app_set_id_kind (app, as_id_kind_from_string (tmp));
+		prio = as_node_get_attribute_as_int (node, "priority");
+		if (prio != G_MAXUINT && prio != 0)
+			as_app_set_priority (app, prio);
 	}
 
 	/* parse each node */
