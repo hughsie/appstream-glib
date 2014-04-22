@@ -227,3 +227,29 @@ out:
 	g_free (key);
 	return ret;
 }
+
+/**
+ * as_util_get_possible_kudos:
+ *
+ * Returns a list of all known kudos, which are metadata values that
+ * infer a level of integration or quality.
+ *
+ * Returns: a static list of possible metadata keys
+ *
+ * Since: 0.1.4
+ **/
+const gchar * const *
+as_util_get_possible_kudos (void)
+{
+	static const gchar * const kudos[] = {
+		"X-Kudo-SearchProvider",
+		"X-Kudo-InstallsUserDocs",
+		"X-Kudo-UsesAppMenu",
+		"X-Kudo-GTK3",
+		"X-Kudo-QT5",
+		"X-Kudo-RecentRelease",
+		"X-Kudo-UsesNotifications",
+		"X-Kudo-Popular",
+		NULL };
+	return kudos;
+}

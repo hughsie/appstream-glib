@@ -658,14 +658,7 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 	gchar *tmp;
 	guint i;
 	guint j;
-	const gchar *kudos[] = {
-		"X-Kudo-SearchProvider",
-		"X-Kudo-InstallsUserDocs",
-		"X-Kudo-UsesAppMenu",
-		"X-Kudo-GTK3",
-		"X-Kudo-RecentRelease",
-		"X-Kudo-UsesNotifications",
-		NULL };
+	const gchar * const *kudos;
 
 	g_string_append_printf (html, "<a name=\"%s\"/><h2>%s</h2>\n",
 				as_app_get_id (app), as_app_get_id (app));
@@ -759,6 +752,7 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 
 	/* add all possible Kudo's for desktop files */
 	if (as_app_get_id_kind (app) == AS_ID_KIND_DESKTOP) {
+		kudos = as_util_get_possible_kudos ();
 		for (i = 0; kudos[i] != NULL; i++) {
 			pkgname = as_app_get_metadata_item (app, kudos[i]) ?
 					"Yes" : "No";

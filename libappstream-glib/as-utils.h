@@ -34,6 +34,7 @@ gchar		*as_markup_convert_simple	(const gchar	*markup,
 						 gssize		 markup_len,
 						 GError		**error);
 gboolean	 as_utils_is_stock_icon_name	(const gchar	*name);
+const gchar * const *as_util_get_possible_kudos	(void);
 
 G_END_DECLS
 
