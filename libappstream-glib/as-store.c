@@ -1064,6 +1064,8 @@ as_store_load (AsStore *store,
 			path = g_build_filename (data_dirs[i], "app-info", NULL);
 			app_info = g_list_prepend (app_info, path);
 		}
+		path = g_build_filename (LOCALSTATEDIR, "lib", "app-info", NULL);
+		app_info = g_list_prepend (app_info, path);
 		path = g_build_filename (LOCALSTATEDIR, "cache", "app-info", NULL);
 		app_info = g_list_prepend (app_info, path);
 	}
