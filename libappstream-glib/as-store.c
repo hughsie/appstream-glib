@@ -384,6 +384,8 @@ as_store_from_root (AsStore *store,
 					      NULL);
 	}
 	for (n = apps->children; n != NULL; n = n->next) {
+		if (as_node_get_tag (n) != AS_TAG_APPLICATION)
+			continue;
 		app = as_app_new ();
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path, -1);
