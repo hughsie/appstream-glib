@@ -78,6 +78,22 @@ typedef enum {
 } AsAppParseFlags;
 
 /**
+ * AsAppSubsumeFlags:
+ * @AS_APP_SUBSUME_FLAG_NONE:		No special actions to use
+ * @AS_APP_SUBSUME_FLAG_NO_OVERWRITE:	Do not overwrite already set properties
+ * @AS_APP_SUBSUME_FLAG_BOTH_WAYS:	Copy unset properties both ways
+ *
+ * The flags to use when subsuming applications.
+ **/
+typedef enum {
+	AS_APP_SUBSUME_FLAG_NONE,
+	AS_APP_SUBSUME_FLAG_NO_OVERWRITE = 1,	/* Since: 0.1.4 */
+	AS_APP_SUBSUME_FLAG_BOTH_WAYS	 = 2,	/* Since: 0.1.4 */
+	/*< private >*/
+	AS_APP_SUBSUME_FLAG_LAST,
+} AsAppSubsumeFlags;
+
+/**
  * AsAppError:
  * @AS_APP_ERROR_FAILED:			Generic failure
  * @AS_APP_ERROR_INVALID_TYPE:			Invalid type
@@ -251,6 +267,9 @@ GPtrArray	*as_app_validate		(AsApp		*app,
 						 GError		**error);
 void		 as_app_subsume			(AsApp		*app,
 						 AsApp		*donor);
+void		 as_app_subsume_full		(AsApp		*app,
+						 AsApp		*donor,
+						 AsAppSubsumeFlags flags);
 guint		 as_app_search_matches_all	(AsApp		*app,
 						 gchar		**search);
 guint		 as_app_search_matches		(AsApp		*app,

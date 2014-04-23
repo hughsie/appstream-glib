@@ -1279,27 +1279,51 @@ as_app_remove_metadata (AsApp *app, const gchar *key)
 
 /******************************************************************************/
 
+
 /**
- * as_app_subsume:
- * @app: a #AsApp instance.
- * @donor: the donor.
- *
- * Copies information from the donor to the application object.
- *
- * Since: 0.1.0
+ * as_app_subsume_dict:
  **/
-void
-as_app_subsume (AsApp *app, AsApp *donor)
+static void
+as_app_subsume_dict (GHashTable *dest, GHashTable *src, gboolean overwrite)
+{
+	GList *l;
+	GList *keys;
+	const gchar *tmp;
+	const gchar *key;
+	const gchar *value;
+
+	keys = g_hash_table_get_keys (src);
+	for (l = keys; l != NULL; l = l->next) {
+		key = l->data;
+		if (!overwrite) {
+			tmp = g_hash_table_lookup (dest, key);
+			if (tmp != NULL)
+				continue;
+		}
+		value = g_hash_table_lookup (src, key);
+		g_hash_table_insert (dest, g_strdup (key), g_strdup (value));
+	}
+	g_list_free (keys);
+}
+
+/**
+ * as_app_subsume_private:
+ **/
+static void
+as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 {
 	AsAppPrivate *priv = GET_PRIVATE (donor);
+	AsAppPrivate *papp = GET_PRIVATE (app);
 	AsScreenshot *ss;
 	const gchar *tmp;
+	const gchar *key;
+	gboolean overwrite;
 	guint i;
 	gint percentage;
 	GList *l;
-	GList *langs;
+	GList *keys;
 
-	g_assert (app != donor);
+	overwrite = (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) == 0;
 
 	/* pkgnames */
 	for (i = 0; i < priv->pkgnames->len; i++) {
@@ -1314,17 +1338,71 @@ as_app_subsume (AsApp *app, AsApp *donor)
 	}
 
 	/* languages */
-	langs = g_hash_table_get_keys (priv->languages);
-	for (l = langs; l != NULL; l = l->next) {
-		tmp = l->data;
-		percentage = GPOINTER_TO_INT (g_hash_table_lookup (priv->languages, tmp));
-		as_app_add_language (app, percentage, tmp, -1);
+	keys = g_hash_table_get_keys (priv->languages);
+	for (l = keys; l != NULL; l = l->next) {
+		key = l->data;
+		if (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) {
+			percentage = as_app_get_language (app, key);
+			if (percentage > 0)
+				continue;
+		}
+		percentage = GPOINTER_TO_INT (g_hash_table_lookup (priv->languages, key));
+		as_app_add_language (app, percentage, key, -1);
 	}
-	g_list_free (langs);
+	g_list_free (keys);
+
+	/* dictionaries */
+	as_app_subsume_dict (papp->names, priv->names, overwrite);
+	as_app_subsume_dict (papp->comments, priv->comments, overwrite);
+	as_app_subsume_dict (papp->descriptions, priv->descriptions, overwrite);
+	as_app_subsume_dict (papp->metadata, priv->metadata, overwrite);
+	as_app_subsume_dict (papp->urls, priv->urls, overwrite);
 
 	/* icon */
 	if (priv->icon != NULL)
 		as_app_set_icon (app, priv->icon, -1);
+}
+
+/**
+ * as_app_subsume_full:
+ * @app: a #AsApp instance.
+ * @donor: the donor.
+ * @flags: any optional flags, e.g. %AS_APP_SUBSUME_FLAG_NO_OVERWRITE
+ *
+ * Copies information from the donor to the application object.
+ *
+ * Since: 0.1.4
+ **/
+void
+as_app_subsume_full (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
+{
+	g_assert (app != donor);
+
+	/* two way sync implies no overwriting */
+	if ((flags & AS_APP_SUBSUME_FLAG_BOTH_WAYS) > 0)
+		flags |= AS_APP_SUBSUME_FLAG_NO_OVERWRITE;
+
+	/* one way sync */
+	as_app_subsume_private (app, donor, flags);
+
+	/* and back again */
+	if ((flags & AS_APP_SUBSUME_FLAG_BOTH_WAYS) > 0)
+		as_app_subsume_private (donor, app, flags);
+}
+
+/**
+ * as_app_subsume:
+ * @app: a #AsApp instance.
+ * @donor: the donor.
+ *
+ * Copies information from the donor to the application object.
+ *
+ * Since: 0.1.0
+ **/
+void
+as_app_subsume (AsApp *app, AsApp *donor)
+{
+	as_app_subsume_full (app, donor, AS_APP_SUBSUME_FLAG_NONE);
 }
 
 /**

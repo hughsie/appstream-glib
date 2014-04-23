@@ -945,20 +945,34 @@ ch_test_app_subsume_func (void)
 	AsApp *donor;
 	GList *list;
 
-	app = as_app_new ();
 	donor = as_app_new ();
 	as_app_set_icon (donor, "gtk-find", -1);
 	as_app_add_pkgname (donor, "hal", -1);
 	as_app_add_language (donor, -1, "en_GB", -1);
+	as_app_add_metadata (donor, "donor", "true", -1);
+	as_app_add_metadata (donor, "overwrite", "1111", -1);
 
 	/* copy all useful properties */
-	as_app_subsume (app, donor);
+	app = as_app_new ();
+	as_app_add_metadata (app, "overwrite", "2222", -1);
+	as_app_add_metadata (app, "recipient", "true", -1);
+	as_app_subsume_full (app, donor, AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
 
 	g_assert_cmpstr (as_app_get_icon (app), ==, "gtk-find");
+	g_assert_cmpstr (as_app_get_metadata_item (app, "donor"), ==, "true");
+	g_assert_cmpstr (as_app_get_metadata_item (app, "overwrite"), ==, "2222");
+	g_assert_cmpstr (as_app_get_metadata_item (donor, "recipient"), ==, NULL);
 	g_assert_cmpint (as_app_get_pkgnames(app)->len, ==, 1);
 	list = as_app_get_languages (app);
 	g_assert_cmpint (g_list_length (list), ==, 1);
 	g_list_free (list);
+
+	/* test both ways */
+	as_app_subsume_full (app, donor, AS_APP_SUBSUME_FLAG_BOTH_WAYS);
+	g_assert_cmpstr (as_app_get_metadata_item (app, "donor"), ==, "true");
+	g_assert_cmpstr (as_app_get_metadata_item (app, "recipient"), ==, "true");
+	g_assert_cmpstr (as_app_get_metadata_item (donor, "donor"), ==, "true");
+	g_assert_cmpstr (as_app_get_metadata_item (donor, "recipient"), ==, "true");
 
 	g_object_unref (app);
 	g_object_unref (donor);
