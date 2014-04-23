@@ -4,6 +4,7 @@ accessories-character-map
 accessories-dictionary
 accessories-text-editor
 address-book-new
+applets-screenshooter
 application-exit
 applications-accessories
 applications-development
