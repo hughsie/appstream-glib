@@ -1328,6 +1328,15 @@ as_app_subsume (AsApp *app, AsApp *donor)
 }
 
 /**
+ * gs_app_node_language_sort_cb:
+ **/
+static gint
+gs_app_node_language_sort_cb (gconstpointer a, gconstpointer b)
+{
+	return g_strcmp0 ((const gchar *) a, (const gchar *) b);
+}
+
+/**
  * as_app_node_insert_languages:
  **/
 static void
@@ -1342,6 +1351,7 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
 
 	node_tmp = as_node_insert (parent, "languages", NULL, 0, NULL);
 	langs = as_app_get_languages (app);
+	langs = g_list_sort (langs, gs_app_node_language_sort_cb);
 	for (l = langs; l != NULL; l = l->next) {
 		locale = l->data;
 		percentage = as_app_get_language (app, locale);
