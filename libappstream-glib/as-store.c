@@ -297,6 +297,10 @@ as_store_add_app (AsStore *store, AsApp *app)
 
 	/* have we recorded this before? */
 	id = as_app_get_id_full (app);
+	if (id == NULL) {
+		g_warning ("application has no ID set");
+		return;
+	}
 	item = g_hash_table_lookup (priv->hash_id, id);
 	if (item != NULL) {
 
