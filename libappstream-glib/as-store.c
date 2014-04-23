@@ -311,6 +311,15 @@ as_store_add_app (AsStore *store, AsApp *app)
 			return;
 		}
 
+		/* same priority */
+		if (as_app_get_priority (item) ==
+		    as_app_get_priority (app)) {
+			g_debug ("merging duplicate AppStream entries: %s", id);
+			as_app_subsume_full (item, app,
+					     AS_APP_SUBSUME_FLAG_BOTH_WAYS);
+			return;
+		}
+
 		/* this new item has a higher priority than the one we've
 		 * previously stored */
 		g_debug ("replacing duplicate AppStream entry: %s", id);
