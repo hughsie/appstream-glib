@@ -330,6 +330,9 @@ ch_test_app_func (void)
 	g_assert_cmpint (as_app_get_screenshots(app)->len, ==, 2);
 	g_assert_cmpint (as_app_get_releases(app)->len, ==, 1);
 	g_assert_cmpstr (as_app_get_metadata_item (app, "X-Kudo-GTK3"), ==, "");
+	g_assert_cmpint (as_app_get_language (app, "en_GB"), ==, 90);
+	g_assert_cmpint (as_app_get_language (app, "pl"), ==, 0);
+	g_assert_cmpint (as_app_get_language (app, "xx_XX"), ==, -1);
 	as_node_unref (root);
 
 	/* back to node */

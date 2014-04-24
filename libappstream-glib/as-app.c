@@ -574,7 +574,7 @@ as_app_get_description (AsApp *app, const gchar *locale)
  *
  * Gets the language coverage for the specific language.
  *
- * Returns: a percentage value
+ * Returns: a percentage value where 0 is unspecified, or -1 for not found
  *
  * Since: 0.1.0
  **/
@@ -582,9 +582,16 @@ gint
 as_app_get_language (AsApp *app, const gchar *locale)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	gboolean ret;
+	gpointer value = NULL;
+
 	if (locale == NULL)
 		locale = "C";
-	return GPOINTER_TO_INT (g_hash_table_lookup (priv->languages, locale));
+	ret = g_hash_table_lookup_extended (priv->languages,
+					    locale, NULL, &value);
+	if (!ret)
+		return -1;
+	return GPOINTER_TO_INT (value);
 }
 
 /**
@@ -1190,7 +1197,7 @@ as_app_add_arch (AsApp *app, const gchar *arch, gssize arch_len)
 /**
  * as_app_add_language:
  * @app: a #AsApp instance.
- * @percentage: the percentage completion of the translation.
+ * @percentage: the percentage completion of the translation, or 0 for unknown
  * @locale: the locale, or %NULL. e.g. "en_GB"
  * @locale_len: the size of @locale, or -1 if %NULL-terminated.
  *
@@ -1343,7 +1350,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		key = l->data;
 		if (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) {
 			percentage = as_app_get_language (app, key);
-			if (percentage > 0)
+			if (percentage >= 0)
 				continue;
 		}
 		percentage = GPOINTER_TO_INT (g_hash_table_lookup (priv->languages, key));
@@ -1433,7 +1440,7 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
 	for (l = langs; l != NULL; l = l->next) {
 		locale = l->data;
 		percentage = as_app_get_language (app, locale);
-		if (percentage < 0) {
+		if (percentage == 0) {
 			as_node_insert (node_tmp, "lang", locale, 0, NULL);
 		} else {
 			g_snprintf (tmp, sizeof (tmp), "%i", percentage);
@@ -1845,6 +1852,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 			if (as_node_get_tag (c) != AS_TAG_LANG)
 				continue;
 			percent = as_node_get_attribute_as_int (c, "percentage");
+			if (percent == G_MAXUINT)
+				percent = 0;
 			as_app_add_language (app, percent,
 					     as_node_get_data (c), -1);
 		}
