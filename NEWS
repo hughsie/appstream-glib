@@ -1,3 +1,44 @@
+Version 0.1.4
+~~~~~~~~~~~~~
+Released: 2014-04-25
+
+Notes:
+ - This release adds a utility 'appstream-util' that can do simple operations
+   on AppStream metadata including generating status pages or converting the
+   metadata from one version to another.
+
+New Features:
+ - Add AsProblem to report non-critical problems with metadata
+ - Add as_app_get_metadata_license()
+ - Add as_app_get_source_kind()
+ - Add as_app_get_update_contact()
+ - Add as_app_subsume_full()
+ - Add as_app_validate() to validate AppStream and AppData files
+ - Add as_node_reflow_text() to reflow XML text properly
+ - Add as_node_set_name() internal method
+ - Add as_store_get_apps_by_metadata()
+ - Add as_util_get_possible_kudos()
+ - Add a flag to as_node_to_xml() so it can process all children
+ - Add a 'html-status' command to appstream-util
+ - Add a 'non-package-yaml' command to appstream-util
+ - Add a 'validate' command to appstream-util
+ - Parse AppData files when using as_app_parse_file()
+ - Read AppStream metadata from the per-machine location
+
+Bugfixes:
+ - Allow writing AppStream entries with an unknown type
+ - Do not add a 'type' attribute if the component type is unknown
+ - Do not crash if an AppStream entry has no ID
+ - Do not save metadata keys with an 'x-test' locale
+ - Do not try to parse non-application tags as applicatons
+ - Do not write xml:lang key versions when the same as the 'C' version
+ - Return -1 from as_app_get_language() if the language is not found
+ - Sort the application languages by name so they are predictable
+ - Support <screenshot> sections without <image>'s
+ - Support the AppStream 0.6.1 priority attribute
+ - Support translated <ul> and <ol> tags when normalizing
+ - When adding a duplicate AppStream application merge the entries
+
 Version 0.1.3
 ~~~~~~~~~~~~~
 Released: 2014-04-10
