@@ -2480,6 +2480,8 @@ as_app_parse_appdata_file (AsApp *app,
 		goto out;
 	}
 	node = as_node_find (root, "application");
+	if (node == NULL)
+		node = as_node_find (root, "component");
 	if (node == NULL) {
 		ret = FALSE;
 		g_set_error (error,
