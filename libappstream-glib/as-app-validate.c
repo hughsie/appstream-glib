@@ -757,10 +757,10 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	/* metadata_license */
 	license = as_app_get_metadata_license (app);
 	if (license != NULL) {
-		if (g_strcmp0 (license, "CC0") != 0 &&
-		    g_strcmp0 (license, "CC-BY") != 0 &&
-		    g_strcmp0 (license, "CC-BY-SA") != 0 &&
-		    g_strcmp0 (license, "GFDL") != 0) {
+		if (g_strcmp0 (license, "CC0-1.0") != 0 &&
+		    g_strcmp0 (license, "CC-BY-BY-3.0") != 0 &&
+		    g_strcmp0 (license, "CC-BY-SA-3.0") != 0 &&
+		    g_strcmp0 (license, "GFDL-1.3") != 0) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_TAG_INVALID,
 					     "<metadata_license> is not valid");

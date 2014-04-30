@@ -35,6 +35,7 @@
 #include "config.h"
 
 #include <fnmatch.h>
+#include <string.h>
 
 #include "as-app-private.h"
 #include "as-enums.h"
@@ -835,6 +836,22 @@ as_app_set_project_license (AsApp *app,
 }
 
 /**
+ * as_strncmp:
+ **/
+static gint
+as_strncmp (const gchar *s1, const gchar *s2, gssize n)
+{
+	if (n < 0) return g_strcmp0 (s1, s2);
+	if (s1 == NULL && s2 == NULL)
+		return 0;
+	if (s1 != NULL && s2 == NULL)
+		return 1;
+	if (s1 == NULL && s2 != NULL)
+		return -1;
+	return strncmp (s1, s2, n);
+}
+
+/**
  * as_app_set_metadata_license:
  * @app: a #AsApp instance.
  * @metadata_license: the project license string.
@@ -850,6 +867,28 @@ as_app_set_metadata_license (AsApp *app,
 			     gssize metadata_license_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	guint i;
+	struct {
+		const gchar	*old;
+		const gchar	*new;
+	} licenses[] =  {
+		{ "CC0",	"CC0-1.0" },
+		{ "CC-BY",	"CC-BY-3.0" },
+		{ "CC-BY-SA",	"CC-BY-SA-3.0" },
+		{ "GFDL",	"GFDL-1.3" },
+		{ NULL, NULL } };
+
+	/* automatically replace deprecated license names */
+	for (i = 0; licenses[i].old != NULL; i++) {
+		if (as_strncmp (metadata_license,
+				licenses[i].old,
+				metadata_license_len) == 0) {
+			metadata_license = licenses[i].new;
+			metadata_license_len = -1;
+			break;
+		}
+	}
+
 	g_free (priv->metadata_license);
 	priv->metadata_license = as_strndup (metadata_license, metadata_license_len);
 }
@@ -1781,8 +1820,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <project_license> */
 	case AS_TAG_METADATA_LICENSE:
-		g_free (priv->metadata_license);
-		priv->metadata_license = as_node_take_data (n);
+		as_app_set_metadata_license (app, as_node_get_data (n), -1);
 		break;
 
 	/* <updatecontact> */
