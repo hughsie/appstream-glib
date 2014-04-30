@@ -229,6 +229,39 @@ out:
 }
 
 /**
+ * as_utils_is_spdx_license_id:
+ * @license_id: a single SPDX license ID, e.g. "CC-BY-3.0"
+ *
+ * Searches the known list of SPDX license IDs.
+ *
+ * Returns: %TRUE if the icon is a valid "SPDX license ID"
+ *
+ * Since: 0.1.5
+ **/
+gboolean
+as_utils_is_spdx_license_id (const gchar *license_id)
+{
+	GBytes *data;
+	gboolean ret = FALSE;
+	gchar *key = NULL;
+
+	/* load the readonly data section and look for the icon name */
+	data = g_resource_lookup_data (as_get_resource (),
+				       "/org/freedesktop/appstream-glib/as-license-ids.txt",
+				       G_RESOURCE_LOOKUP_FLAGS_NONE,
+				       NULL);
+	if (data == NULL)
+		goto out;
+	key = g_strdup_printf ("\n%s\n", license_id);
+	ret = g_strstr_len (g_bytes_get_data (data, NULL), -1, key) != NULL;
+out:
+	if (data != NULL)
+		g_bytes_unref (data);
+	g_free (key);
+	return ret;
+}
+
+/**
  * as_util_get_possible_kudos:
  *
  * Returns a list of all known kudos, which are metadata values that

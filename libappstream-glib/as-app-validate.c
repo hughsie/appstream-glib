@@ -29,6 +29,7 @@
 #include "as-app-private.h"
 #include "as-node-private.h"
 #include "as-problem.h"
+#include "as-utils.h"
 
 typedef struct {
 	AsAppValidateFlags	 flags;
@@ -617,6 +618,33 @@ out:
 }
 
 /**
+ * as_app_validate_license:
+ **/
+static gboolean
+as_app_validate_license (const gchar *license_text, GError **error)
+{
+	gboolean ret = TRUE;
+	gchar **licenses;
+	guint i;
+
+	licenses = g_strsplit (license_text, " and ", -1);
+	for (i = 0; licenses[i] != NULL; i++) {
+		if (!as_utils_is_spdx_license_id (licenses[i])) {
+			ret = FALSE;
+			g_set_error (error,
+				     AS_APP_ERROR,
+				     AS_APP_ERROR_FAILED,
+				     "SPDX ID '%s' unknown",
+				     licenses[i]);
+			goto out;
+		}
+	}
+out:
+	g_strfreev (licenses);
+	return ret;
+}
+
+/**
  * as_app_validate:
  * @app: a #AsApp instance.
  * @flags: the #AsAppValidateFlags to use, e.g. %AS_APP_VALIDATE_FLAG_NONE
@@ -641,7 +669,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	const gchar *description;
 	const gchar *id_full;
 	const gchar *key;
-	const gchar *metadata_license;
+	const gchar *license;
 	const gchar *name;
 	const gchar *summary;
 	const gchar *tmp;
@@ -727,22 +755,36 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	}
 
 	/* metadata_license */
-	metadata_license = as_app_get_metadata_license (app);
-	if (metadata_license != NULL) {
-		if (g_strcmp0 (metadata_license, "CC0") != 0 &&
-		    g_strcmp0 (metadata_license, "CC-BY") != 0 &&
-		    g_strcmp0 (metadata_license, "CC-BY-SA") != 0 &&
-		    g_strcmp0 (metadata_license, "GFDL") != 0) {
+	license = as_app_get_metadata_license (app);
+	if (license != NULL) {
+		if (g_strcmp0 (license, "CC0") != 0 &&
+		    g_strcmp0 (license, "CC-BY") != 0 &&
+		    g_strcmp0 (license, "CC-BY-SA") != 0 &&
+		    g_strcmp0 (license, "GFDL") != 0) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_TAG_INVALID,
 					     "<metadata_license> is not valid");
 		}
 	}
 	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
-	    metadata_license == NULL) {
+	    license == NULL) {
 		ai_app_validate_add (probs,
 				     AS_PROBLEM_KIND_TAG_MISSING,
 				     "<metadata_license> is not present");
+	}
+
+	/* project_license */
+	license = as_app_get_project_license (app);
+	if (license != NULL) {
+		ret = as_app_validate_license (license, &error_local);
+		if (!ret) {
+			g_prefix_error (&error_local,
+					"<project_license> is not valid: ");
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_TAG_INVALID,
+					     error_local->message);
+			g_clear_error (&error_local);
+		}
 	}
 
 	/* updatecontact */

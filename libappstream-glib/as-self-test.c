@@ -360,6 +360,12 @@ ch_test_app_validate_check (GPtrArray *array,
 		    g_strcmp0 (as_problem_get_message (problem), message) == 0)
 			return;
 	}
+	for (i = 0; i < array->len; i++) {
+		problem = g_ptr_array_index (array, i);
+		g_print ("%i\t%s\n",
+			 as_problem_get_kind (problem),
+			 as_problem_get_message (problem));
+	}
 	g_assert_cmpstr (message, ==, "not-found");
 }
 
@@ -447,7 +453,7 @@ ch_test_app_validate_file_bad_func (void)
 		problem = g_ptr_array_index (probs, i);
 		g_debug ("%s", as_problem_get_message (problem));
 	}
-	g_assert_cmpint (probs->len, ==, 17);
+	g_assert_cmpint (probs->len, ==, 18);
 
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				    "<id> has invalid type attribute");
@@ -455,6 +461,8 @@ ch_test_app_validate_file_bad_func (void)
 				    "<id> does not have correct extension for kind");
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<metadata_license> is not valid");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "<project_license> is not valid: SPDX ID 'CC1' unknown");
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<updatecontact> is not present");
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,

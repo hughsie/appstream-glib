@@ -3,6 +3,7 @@
   <id type="unknown">gnome-power-statistics</id>
   <metadata_license>GPLv3+</metadata_license>
   <metadata_license>BSD</metadata_license>
+  <project_license>CC1</project_license>
   <name>Power Statistics.</name>
   <summary>Observe power management.</summary>
   <description>
