@@ -627,8 +627,10 @@ as_app_validate_license (const gchar *license_text, GError **error)
 	gchar **licenses;
 	guint i;
 
-	licenses = g_strsplit (license_text, " and ", -1);
+	licenses = as_utils_spdx_license_tokenize (license_text);
 	for (i = 0; licenses[i] != NULL; i++) {
+		if (g_str_has_prefix (licenses[i], "#"))
+			continue;
 		if (!as_utils_is_spdx_license_id (licenses[i])) {
 			ret = FALSE;
 			g_set_error (error,
