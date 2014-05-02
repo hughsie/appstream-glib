@@ -1256,6 +1256,48 @@ ch_test_store_speed_func (void)
 }
 
 static void
+ch_test_utils_spdx_token_func (void)
+{
+	gchar **tok;
+	gchar *tmp;
+
+	/* simple */
+	tok = as_utils_spdx_license_tokenize ("GPL");
+	tmp = g_strjoinv ("|", tok);
+	g_assert_cmpstr (tmp, ==, "GPL");
+	g_strfreev (tok);
+	g_free (tmp);
+
+	/* multiple licences */
+	tok = as_utils_spdx_license_tokenize ("GPL and MPL and CDL");
+	tmp = g_strjoinv ("|", tok);
+	g_assert_cmpstr (tmp, ==, "GPL|# and |MPL|# and |CDL");
+	g_strfreev (tok);
+	g_free (tmp);
+
+	/* multiple licences */
+	tok = as_utils_spdx_license_tokenize ("GPL and MPL or BSD and MPL");
+	tmp = g_strjoinv ("|", tok);
+	g_assert_cmpstr (tmp, ==, "GPL|# and |MPL|# or |BSD|# and |MPL");
+	g_strfreev (tok);
+	g_free (tmp);
+
+	/* brackets */
+	tok = as_utils_spdx_license_tokenize ("LGPLv2+ and (QPL or GPLv2) and MIT");
+	tmp = g_strjoinv ("|", tok);
+	g_assert_cmpstr (tmp, ==, "LGPLv2+|# and (|QPL|# or |GPLv2|#) and |MIT");
+	g_strfreev (tok);
+	g_free (tmp);
+
+	/* leading brackets */
+	tok = as_utils_spdx_license_tokenize ("(MPLv1.1 or LGPLv3+) and LGPLv3");
+	tmp = g_strjoinv ("|", tok);
+	g_assert_cmpstr (tmp, ==, "#(|MPLv1.1|# or |LGPLv3+|#) and |LGPLv3");
+	g_strfreev (tok);
+	g_free (tmp);
+}
+
+static void
 ch_test_utils_func (void)
 {
 	gchar *tmp;
@@ -1389,6 +1431,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{localized-wrap}", ch_test_node_localized_wrap_func);
 	g_test_add_func ("/AppStream/node{localized-wrap2}", ch_test_node_localized_wrap2_func);
 	g_test_add_func ("/AppStream/utils", ch_test_utils_func);
+	g_test_add_func ("/AppStream/utils{spdx-token}", ch_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/store", ch_test_store_func);
 	g_test_add_func ("/AppStream/store{versions}", ch_test_store_versions_func);
 	g_test_add_func ("/AppStream/store{origin}", ch_test_store_origin_func);

@@ -31,6 +31,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include "as-node.h"
 #include "as-resources.h"
 #include "as-utils.h"
@@ -259,6 +261,76 @@ out:
 		g_bytes_unref (data);
 	g_free (key);
 	return ret;
+}
+
+/**
+ * as_utils_spdx_license_tokenize:
+ * @license: a license string, e.g. "LGPLv2+ and (QPL or GPLv2) and MIT"
+ *
+ * Tokenizes the SPDX license string (or any simarly formatted string)
+ * into parts. Any non-licence parts of the string e.g. " and " are prefexed
+ * with "#".
+ *
+ * Returns: (transfer full): array of strings
+ *
+ * Since: 0.1.5
+ **/
+gchar **
+as_utils_spdx_license_tokenize (const gchar *license)
+{
+	GPtrArray *array;
+	gchar buf[1024];
+	guint i;
+	guint old = 0;
+	guint matchlen = 0;
+
+	array = g_ptr_array_new_with_free_func (g_free);
+	for (i = 0; license[i] != '\0'; i++) {
+
+		/* leading bracket */
+		if (i == 0 && license[i] == '(') {
+			matchlen = 1;
+			g_snprintf (buf, matchlen + 2, "#%s", &license[i]);
+			g_ptr_array_add (array, g_strdup (buf));
+			old = i + matchlen;
+			continue;
+		}
+
+		/* suppport AND and OR's in the license text */
+		matchlen = 0;
+		if (strncmp (&license[i], " and ", 5) == 0)
+			matchlen = 5;
+		else if (strncmp (&license[i], " or ", 4) == 0)
+			matchlen = 4;
+
+		if (matchlen > 0) {
+
+			/* brackets */
+			if (license[i - 1] == ')') {
+				i--;
+				matchlen++;
+			}
+
+			/* get previous token */
+			g_snprintf (buf, i - old + 1, "%s", &license[old]);
+			g_ptr_array_add (array, g_strdup (buf));
+
+			/* brackets */
+			if (license[i + matchlen] == '(')
+				matchlen++;
+
+			/* get operation */
+			g_snprintf (buf, matchlen + 2, "#%s", &license[i]);
+			g_ptr_array_add (array, g_strdup (buf));
+
+			old = i + matchlen;
+			i += matchlen - 1;
+		}
+	}
+	g_ptr_array_add (array, g_strdup (&license[old]));
+	g_ptr_array_add (array, NULL);
+
+	return (gchar **) g_ptr_array_free (array, FALSE);
 }
 
 /**
