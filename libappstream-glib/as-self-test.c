@@ -1268,6 +1268,13 @@ ch_test_utils_spdx_token_func (void)
 	g_strfreev (tok);
 	g_free (tmp);
 
+	/* empty */
+	tok = as_utils_spdx_license_tokenize ("");
+	tmp = g_strjoinv ("|", tok);
+	g_assert_cmpstr (tmp, ==, "");
+	g_strfreev (tok);
+	g_free (tmp);
+
 	/* multiple licences */
 	tok = as_utils_spdx_license_tokenize ("GPL and MPL and CDL");
 	tmp = g_strjoinv ("|", tok);
@@ -1293,6 +1300,13 @@ ch_test_utils_spdx_token_func (void)
 	tok = as_utils_spdx_license_tokenize ("(MPLv1.1 or LGPLv3+) and LGPLv3");
 	tmp = g_strjoinv ("|", tok);
 	g_assert_cmpstr (tmp, ==, "#(|MPLv1.1|# or |LGPLv3+|#) and |LGPLv3");
+	g_strfreev (tok);
+	g_free (tmp);
+
+	/*  trailing brackets */
+	tok = as_utils_spdx_license_tokenize ("MPLv1.1 and (LGPLv3 or GPLv3)");
+	tmp = g_strjoinv ("|", tok);
+	g_assert_cmpstr (tmp, ==, "MPLv1.1|# and (|LGPLv3|# or |GPLv3|#)");
 	g_strfreev (tok);
 	g_free (tmp);
 }

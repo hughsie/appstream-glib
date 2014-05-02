@@ -327,7 +327,20 @@ as_utils_spdx_license_tokenize (const gchar *license)
 			i += matchlen - 1;
 		}
 	}
-	g_ptr_array_add (array, g_strdup (&license[old]));
+
+	/* trailing bracket */
+	if (i > 0 && license[i - 1] == ')') {
+		/* token */
+		g_snprintf (buf, i - old, "%s", &license[old]);
+		g_ptr_array_add (array, g_strdup (buf));
+
+		/* brackets */
+		g_snprintf (buf, i - 1, "#%s", &license[i - 1]);
+		g_ptr_array_add (array, g_strdup (buf));
+	} else {
+		/* token */
+		g_ptr_array_add (array, g_strdup (&license[old]));
+	}
 	g_ptr_array_add (array, NULL);
 
 	return (gchar **) g_ptr_array_free (array, FALSE);
