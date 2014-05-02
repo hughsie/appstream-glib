@@ -788,6 +788,12 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 			g_clear_error (&error_local);
 		}
 	}
+	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
+	    license == NULL) {
+		ai_app_validate_add (probs,
+				     AS_PROBLEM_KIND_TAG_MISSING,
+				     "<project_license> is not present");
+	}
 
 	/* updatecontact */
 	update_contact = as_app_get_update_contact (app);

@@ -512,6 +512,7 @@ ch_test_app_validate_style_func (void)
 	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
 	as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPDATA);
 	as_app_set_metadata_license (app, "BSD", -1);
+	as_app_set_project_license (app, "GPL-2.0+", -1);
 	as_app_set_name (app, "C", "Test app name that is very log indeed.", -1);
 	as_app_set_comment (app, "C", "Awesome", -1);
 	as_app_set_update_contact (app, "someone_who_cares@upstream_project.org", -1);
