@@ -1175,6 +1175,8 @@ as_node_insert_localized (GNode *parent,
 			continue;
 		if (g_strcmp0 (key, "x-test") == 0)
 			continue;
+		if (g_strcmp0 (key, "xx") == 0)
+			continue;
 		value = g_hash_table_lookup (localized, key);
 		if ((insert_flags & AS_NODE_INSERT_FLAG_DEDUPE_LANG) > 0 &&
 		    g_strcmp0 (value_c, value) == 0)
