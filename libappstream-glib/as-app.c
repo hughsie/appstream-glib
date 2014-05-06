@@ -2284,6 +2284,7 @@ as_app_parse_file_key (AsApp *app,
 			/* check categories that if present would blacklist
 			 * the application */
 			if (fnmatch ("X-*-Settings-Panel", list[i], 0) == 0 ||
+			    fnmatch ("X-*-Settings", list[i], 0) == 0 ||
 			    fnmatch ("X-*-SettingsDialog", list[i], 0) == 0) {
 				ret = FALSE;
 				g_set_error (error,
