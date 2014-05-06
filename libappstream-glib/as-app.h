@@ -183,6 +183,8 @@ const gchar	*as_app_get_metadata_item	(AsApp		*app,
 						 const gchar	*key);
 const gchar	*as_app_get_url_item		(AsApp		*app,
 						 AsUrlKind	 url_kind);
+gboolean	 as_app_has_category		(AsApp		*app,
+						 const gchar	*category);
 
 /* setters */
 void		 as_app_set_id_full		(AsApp		*app,

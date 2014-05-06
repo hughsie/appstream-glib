@@ -579,6 +579,8 @@ ch_test_app_parse_file_func (void)
 	g_assert_cmpstr (as_app_get_metadata_item (app, "NoDisplay"), ==, "");
 	g_assert_cmpstr (as_app_get_project_group (app), ==, NULL);
 	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);
+	g_assert (as_app_has_category (app, "System"));
+	g_assert (!as_app_has_category (app, "NotGoingToExist"));
 
 	/* reparse with heuristics */
 	ret = as_app_parse_file (app,

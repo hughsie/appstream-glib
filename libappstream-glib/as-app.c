@@ -241,6 +241,33 @@ as_app_get_categories (AsApp *app)
 }
 
 /**
+ * as_app_has_category:
+ * @app: a #AsApp instance.
+ * @category: a category string, e.g. "DesktopSettings"
+ *
+ * Searches the category list for a specific item.
+ *
+ * Returns: %TRUE if the application has got the specified category
+ *
+ * Since: 0.1.5
+ */
+gboolean
+as_app_has_category (AsApp *app, const gchar *category)
+{
+	GPtrArray *categories;
+	const gchar *tmp;
+	guint i;
+
+	categories = as_app_get_categories (app);
+	for (i = 0; i < categories->len; i++) {
+		tmp = g_ptr_array_index (categories, i);
+		if (g_strcmp0 (tmp, category) == 0)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+/**
  * as_app_get_compulsory_for_desktops:
  * @app: a #AsApp instance.
  *
