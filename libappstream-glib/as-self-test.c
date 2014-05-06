@@ -1366,11 +1366,11 @@ ch_test_utils_func (void)
 	g_clear_error (&error);
 
 	/* invalid URLs */
-	ret = as_utils_check_url_exists ("hello dave", &error);
+	ret = as_utils_check_url_exists ("hello dave", 1, &error);
 	g_assert (!ret);
 	g_assert (error != NULL);
 	g_clear_error (&error);
-	ret = as_utils_check_url_exists ("http://www.bbc.co.uk/notgoingtoexist", &error);
+	ret = as_utils_check_url_exists ("http://www.bbc.co.uk/notgoingtoexist", 1, &error);
 	g_assert (!ret);
 	g_assert (error != NULL);
 	g_clear_error (&error);
