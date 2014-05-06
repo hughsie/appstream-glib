@@ -38,6 +38,7 @@ gboolean	 as_utils_is_spdx_license_id	(const gchar	*license_id);
 const gchar * const *as_util_get_possible_kudos	(void);
 gchar		**as_utils_spdx_license_tokenize (const gchar	*license);
 gboolean	 as_utils_check_url_exists	(const gchar	*url,
+						 guint		 timeout,
 						 GError		**error);
 
 G_END_DECLS

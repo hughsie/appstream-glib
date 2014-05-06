@@ -376,6 +376,7 @@ as_util_get_possible_kudos (void)
 /**
  * as_utils_check_url_exists:
  * @url: the URL to check.
+ * @timeout: the timeout in seconds.
  * @error: A #GError or %NULL
  *
  * Checks to see if a URL is reachable.
@@ -385,7 +386,7 @@ as_util_get_possible_kudos (void)
  * Since: 0.1.5
  **/
 gboolean
-as_utils_check_url_exists (const gchar *url, GError **error)
+as_utils_check_url_exists (const gchar *url, guint timeout, GError **error)
 {
 	SoupMessage *msg = NULL;
 	SoupSession *session = NULL;
@@ -415,7 +416,7 @@ as_utils_check_url_exists (const gchar *url, GError **error)
 	session = soup_session_sync_new_with_options (SOUP_SESSION_USER_AGENT,
 						      "libappstream-glib",
 						      SOUP_SESSION_TIMEOUT,
-						      5000,
+						      timeout,
 						      NULL);
 	if (session == NULL) {
 		ret = FALSE;
