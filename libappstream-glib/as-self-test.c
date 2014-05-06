@@ -1317,6 +1317,7 @@ ch_test_utils_spdx_token_func (void)
 static void
 ch_test_utils_func (void)
 {
+	gboolean ret;
 	gchar *tmp;
 	GError *error = NULL;
 
@@ -1363,6 +1364,21 @@ ch_test_utils_func (void)
 	g_assert_error (error, AS_NODE_ERROR, AS_NODE_ERROR_FAILED);
 	g_assert_cmpstr (tmp, ==, NULL);
 	g_clear_error (&error);
+
+	/* invalid URLs */
+	ret = as_utils_check_url_exists ("hello dave", &error);
+	g_assert (!ret);
+	g_assert (error != NULL);
+	g_clear_error (&error);
+	ret = as_utils_check_url_exists ("http://www.bbc.co.uk/notgoingtoexist", &error);
+	g_assert (!ret);
+	g_assert (error != NULL);
+	g_clear_error (&error);
+
+	/* valid URLs */
+	//ret = as_utils_check_url_exists ("http://www.bbc.co.uk/", &error);
+	//g_assert (ret);
+	//g_assert_no_error (error);
 }
 
 static void

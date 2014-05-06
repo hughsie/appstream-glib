@@ -32,6 +32,7 @@
 #include "config.h"
 
 #include <string.h>
+#include <libsoup/soup.h>
 
 #include "as-node.h"
 #include "as-resources.h"
@@ -370,4 +371,87 @@ as_util_get_possible_kudos (void)
 		"X-Kudo-Popular",
 		NULL };
 	return kudos;
+}
+
+/**
+ * as_utils_check_url_exists:
+ * @url: the URL to check.
+ * @error: A #GError or %NULL
+ *
+ * Checks to see if a URL is reachable.
+ *
+ * Returns: %TRUE if the URL was reachable and pointed to a non-zero-length file.
+ *
+ * Since: 0.1.5
+ **/
+gboolean
+as_utils_check_url_exists (const gchar *url, GError **error)
+{
+	SoupMessage *msg = NULL;
+	SoupSession *session = NULL;
+	SoupURI *base_uri = NULL;
+	gboolean ret = TRUE;
+	gint status_code;
+
+	/* GET file */
+	base_uri = soup_uri_new (url);
+	if (base_uri == NULL) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_FAILED,
+				     "URL not valid");
+		goto out;
+	}
+	msg = soup_message_new_from_uri (SOUP_METHOD_GET, base_uri);
+	if (msg == NULL) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_FAILED,
+				     "Failed to setup message");
+		goto out;
+	}
+	session = soup_session_sync_new_with_options (SOUP_SESSION_USER_AGENT,
+						      "libappstream-glib",
+						      SOUP_SESSION_TIMEOUT,
+						      5000,
+						      NULL);
+	if (session == NULL) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_FAILED,
+				     "Failed to set up networking");
+		goto out;
+	}
+
+	/* send sync */
+	status_code = soup_session_send_message (session, msg);
+	if (status_code != SOUP_STATUS_OK) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_FAILED,
+				     msg->reason_phrase);
+		goto out;
+	}
+
+	/* check if it's a zero sized file */
+	if (msg->response_body->length == 0) {
+		ret = FALSE;
+		g_set_error (error,
+			     AS_NODE_ERROR,
+			     AS_NODE_ERROR_FAILED,
+			     "Returned a zero length file");
+		goto out;
+	}
+out:
+	if (session != NULL)
+		g_object_unref (session);
+	if (base_uri != NULL)
+		soup_uri_free (base_uri);
+	if (msg != NULL)
+		g_object_unref (msg);
+	return ret;
 }
