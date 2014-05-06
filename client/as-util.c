@@ -777,19 +777,28 @@ as_util_status_html_write_exec_summary (GPtrArray *apps, GString *html)
 	guint i;
 	guint j;
 	guint perc;
-	guint total;
+	guint total = 0;
 
 	g_string_append (html, "<h1>Executive summary</h1>\n");
 	g_string_append (html, "<ul>\n");
+
+	/* count number of desktop apps */
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_id_kind (app) == AS_ID_KIND_DESKTOP)
+			total++;
+	}
 
 	/* long descriptions */
 	cnt = 0;
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+			continue;
 		if (as_app_get_description (app, "C") != NULL)
 			cnt++;
 	}
-	perc = 100 * cnt / apps->len;
+	perc = 100 * cnt / total;
 	g_string_append_printf (html, "<li>Applications in Fedora with "
 				"long descriptions: %i (%i%%)</li>\n", cnt, perc);
 
@@ -797,10 +806,12 @@ as_util_status_html_write_exec_summary (GPtrArray *apps, GString *html)
 	cnt = 0;
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+			continue;
 		if (as_app_get_keywords(app)->len > 0)
 			cnt++;
 	}
-	perc = 100 * cnt / apps->len;
+	perc = 100 * cnt / total;
 	g_string_append_printf (html, "<li>Applications in Fedora with "
 				"keywords: %i (%i%%)</li>\n", cnt, perc);
 
@@ -808,10 +819,12 @@ as_util_status_html_write_exec_summary (GPtrArray *apps, GString *html)
 	cnt = 0;
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+			continue;
 		if (as_app_get_categories(app)->len > 0)
 			cnt++;
 	}
-	perc = 100 * cnt / apps->len;
+	perc = 100 * cnt / total;
 	g_string_append_printf (html, "<li>Applications in Fedora with "
 				"categories: %i (%i%%)</li>\n", cnt, perc);
 
@@ -819,10 +832,12 @@ as_util_status_html_write_exec_summary (GPtrArray *apps, GString *html)
 	cnt = 0;
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+			continue;
 		if (as_app_get_screenshots(app)->len > 0)
 			cnt++;
 	}
-	perc = 100 * cnt / apps->len;
+	perc = 100 * cnt / total;
 	g_string_append_printf (html, "<li>Applications in Fedora with "
 				"screenshots: %i (%i%%)</li>\n", cnt, perc);
 
