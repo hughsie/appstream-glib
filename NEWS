@@ -1,3 +1,24 @@
+Version 0.1.5
+~~~~~~~~~~~~~
+Released: 2014-05-12
+
+New Features:
+ - Add as_app_has_category() (Richard Hughes)
+ - Add as_utils_check_url_exists() (Richard Hughes)
+ - Add as_utils_spdx_license_tokenize() (Richard Hughes)
+ - Add the new 'help' url type (Richard Hughes)
+ - Check the licenses against the SPDX list when validating (Richard Hughes)
+
+Bugfixes:
+ - Be less strict with the case of the XML header (Richard Hughes)
+ - Do not save the 'xx' locale (Richard Hughes)
+ - Do not validate AppData files without <project_license> (Richard Hughes)
+ - Don't crash when doing 'status-html' on an empty XML file (Richard Hughes)
+ - LXDE uses X-LXDE-Settings for settings panels (Richard Hughes)
+ - Only count desktop applications when doing the overview stats (Richard Hughes)
+ - Support AppData version 0.6 files too (Richard Hughes)
+ - Use SPDX license IDs in <metadata_license> (Richard Hughes)
+
 Version 0.1.4
 ~~~~~~~~~~~~~
 Released: 2014-04-25
