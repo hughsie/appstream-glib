@@ -768,11 +768,14 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 /**
  * as_util_status_html_write_exec_summary:
  */
-static void
-as_util_status_html_write_exec_summary (GPtrArray *apps, GString *html)
+static gboolean
+as_util_status_html_write_exec_summary (GPtrArray *apps,
+					GString *html,
+					GError **error)
 {
 	AsApp *app;
 	const gchar *project_groups[] = { "GNOME", "KDE", "XFCE", NULL };
+	gboolean ret = TRUE;
 	guint cnt;
 	guint i;
 	guint j;
@@ -787,6 +790,14 @@ as_util_status_html_write_exec_summary (GPtrArray *apps, GString *html)
 		app = g_ptr_array_index (apps, i);
 		if (as_app_get_id_kind (app) == AS_ID_KIND_DESKTOP)
 			total++;
+	}
+	if (total == 0) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "No desktop applications found");
+		goto out;
 	}
 
 	/* long descriptions */
@@ -863,6 +874,8 @@ as_util_status_html_write_exec_summary (GPtrArray *apps, GString *html)
 					project_groups[j], cnt, perc);
 	}
 	g_string_append (html, "</ul>\n");
+out:
+	return ret;
 }
 
 /**
@@ -912,8 +925,11 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	g_string_append (html, "<body>\n");
 
 	/* summary section */
-	if (apps->len > 0)
-		as_util_status_html_write_exec_summary (apps, html);
+	if (apps->len > 0) {
+		ret = as_util_status_html_write_exec_summary (apps, html, error);
+		if (!ret)
+			goto out;
+	}
 
 	/* write applications */
 	g_string_append (html, "<h1>Applications</h1>\n");
