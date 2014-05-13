@@ -150,7 +150,7 @@ introspection_sources =						\
 	as-version.h
 
 AppStreamGlib-1.0.gir: libappstream-glib.la
-AppStreamGlib_1_0_gir_INCLUDES = GObject-2.0 Gio-2.0
+AppStreamGlib_1_0_gir_INCLUDES = GObject-2.0 Gio-2.0 GdkPixbuf-2.0
 AppStreamGlib_1_0_gir_CFLAGS = $(AM_CPPFLAGS)
 AppStreamGlib_1_0_gir_SCANNERFLAGS = --identifier-prefix=As \
 				--symbol-prefix=as_ \

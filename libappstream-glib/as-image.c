@@ -45,6 +45,7 @@ struct _AsImagePrivate
 	gchar			*url;
 	guint			 width;
 	guint			 height;
+	GdkPixbuf		*pixbuf;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsImage, as_image, G_TYPE_OBJECT)
@@ -60,6 +61,8 @@ as_image_finalize (GObject *object)
 	AsImage *image = AS_IMAGE (object);
 	AsImagePrivate *priv = GET_PRIVATE (image);
 
+	if (priv->pixbuf != NULL)
+		g_object_unref (priv->pixbuf);
 	g_free (priv->url);
 
 	G_OBJECT_CLASS (as_image_parent_class)->finalize (object);
@@ -193,6 +196,23 @@ as_image_get_kind (AsImage *image)
 }
 
 /**
+ * as_image_get_pixbuf:
+ * @image: a #AsImage instance.
+ *
+ * Gets the image pixbuf if set.
+ *
+ * Returns: (transfer none): the #GdkPixbuf, or %NULL
+ *
+ * Since: 0.1.6
+ **/
+GdkPixbuf *
+as_image_get_pixbuf (AsImage *image)
+{
+	AsImagePrivate *priv = GET_PRIVATE (image);
+	return priv->pixbuf;
+}
+
+/**
  * as_image_set_url:
  * @image: a #AsImage instance.
  * @url: the URL.
@@ -256,6 +276,24 @@ as_image_set_kind (AsImage *image, AsImageKind kind)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	priv->kind = kind;
+}
+
+/**
+ * as_image_set_pixbuf:
+ * @image: a #AsImage instance.
+ * @pixbuf: the #GdkPixbuf
+ *
+ * Sets the image pixbuf.
+ *
+ * Since: 0.1.6
+ **/
+void
+as_image_set_pixbuf (AsImage *image, GdkPixbuf *pixbuf)
+{
+	AsImagePrivate *priv = GET_PRIVATE (image);
+	if (priv->pixbuf != NULL)
+		g_object_unref (priv->pixbuf);
+	priv->pixbuf = g_object_ref (pixbuf);
 }
 
 /**

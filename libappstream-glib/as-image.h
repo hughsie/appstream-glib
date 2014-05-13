@@ -27,6 +27,7 @@
 #define __AS_IMAGE_H
 
 #include <glib-object.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 
 #define AS_TYPE_IMAGE		(as_image_get_type())
 #define AS_IMAGE(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_IMAGE, AsImage))
@@ -87,6 +88,7 @@ const gchar	*as_image_get_url		(AsImage	*image);
 guint		 as_image_get_width		(AsImage	*image);
 guint		 as_image_get_height		(AsImage	*image);
 AsImageKind	 as_image_get_kind		(AsImage	*image);
+GdkPixbuf	*as_image_get_pixbuf		(AsImage	*image);
 
 /* setters */
 void		 as_image_set_url		(AsImage	*image,
@@ -98,6 +100,8 @@ void		 as_image_set_height		(AsImage	*image,
 						 guint		 height);
 void		 as_image_set_kind		(AsImage	*image,
 						 AsImageKind	 kind);
+void		 as_image_set_pixbuf		(AsImage	*image,
+						 GdkPixbuf	*pixbuf);
 
 G_END_DECLS
 

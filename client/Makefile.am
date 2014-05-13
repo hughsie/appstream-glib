@@ -1,6 +1,7 @@
 AM_CPPFLAGS =						\
 	$(PIE_CFLAGS)					\
 	$(GLIB_CFLAGS)					\
+	$(GDKPIXBUF_CFLAGS)				\
 	$(LIBARCHIVE_CFLAGS)				\
 	-I$(top_srcdir)					\
 	-I$(top_builddir)				\
