@@ -43,6 +43,7 @@ struct _AsImagePrivate
 {
 	AsImageKind		 kind;
 	gchar			*url;
+	gchar			*md5;
 	guint			 width;
 	guint			 height;
 	GdkPixbuf		*pixbuf;
@@ -64,6 +65,7 @@ as_image_finalize (GObject *object)
 	if (priv->pixbuf != NULL)
 		g_object_unref (priv->pixbuf);
 	g_free (priv->url);
+	g_free (priv->md5);
 
 	G_OBJECT_CLASS (as_image_parent_class)->finalize (object);
 }
@@ -142,6 +144,23 @@ as_image_get_url (AsImage *image)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	return priv->url;
+}
+
+/**
+ * as_image_get_md5:
+ * @image: a #AsImage instance.
+ *
+ * Gets the string representation of the pixbuf hash value.
+ *
+ * Returns: string representing the MD5 sum, or %NULL if unset
+ *
+ * Since: 0.1.6
+ **/
+const gchar *
+as_image_get_md5 (AsImage *image)
+{
+	AsImagePrivate *priv = GET_PRIVATE (image);
+	return priv->md5;
 }
 
 /**
@@ -291,8 +310,16 @@ void
 as_image_set_pixbuf (AsImage *image, GdkPixbuf *pixbuf)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	guchar *data;
+	guint len;
+
 	if (priv->pixbuf != NULL)
 		g_object_unref (priv->pixbuf);
+	if (priv->md5 == NULL) {
+		data = gdk_pixbuf_get_pixels_with_length (pixbuf, &len);
+		priv->md5 = g_compute_checksum_for_data (G_CHECKSUM_MD5,
+							 data, len);
+	}
 	priv->pixbuf = g_object_ref (pixbuf);
 }
 
