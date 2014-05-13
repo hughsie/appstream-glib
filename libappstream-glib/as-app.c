@@ -1472,6 +1472,12 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		as_app_add_pkgname (app, tmp, -1);
 	}
 
+	/* compulsory_for_desktops */
+	for (i = 0; i < priv->compulsory_for_desktops->len; i++) {
+		tmp = g_ptr_array_index (priv->compulsory_for_desktops, i);
+		as_app_add_compulsory_for_desktop (app, tmp, -1);
+	}
+
 	/* screenshots */
 	for (i = 0; i < priv->screenshots->len; i++) {
 		ss = g_ptr_array_index (priv->screenshots, i);
@@ -1502,6 +1508,10 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	/* icon */
 	if (priv->icon != NULL)
 		as_app_set_icon (app, priv->icon, -1);
+
+	/* project_group */
+	if (priv->project_group != NULL)
+		as_app_set_project_group (app, priv->project_group, -1);
 }
 
 /**
