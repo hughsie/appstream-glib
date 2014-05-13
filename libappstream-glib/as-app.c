@@ -336,12 +336,80 @@ as_app_get_screenshots (AsApp *app)
 }
 
 /**
+ * as_app_get_names:
+ * @app: a #AsApp instance.
+ *
+ * Gets the names set for the application.
+ *
+ * Returns: (transfer none): hash table of names
+ *
+ * Since: 0.1.6
+ **/
+GHashTable *
+as_app_get_names (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->names;
+}
+
+/**
+ * as_app_get_comments:
+ * @app: a #AsApp instance.
+ *
+ * Gets the comments set for the application.
+ *
+ * Returns: (transfer none): hash table of comments
+ *
+ * Since: 0.1.6
+ **/
+GHashTable *
+as_app_get_comments (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->comments;
+}
+
+/**
+ * as_app_get_metadata:
+ * @app: a #AsApp instance.
+ *
+ * Gets the metadata set for the application.
+ *
+ * Returns: (transfer none): hash table of metadata
+ *
+ * Since: 0.1.6
+ **/
+GHashTable *
+as_app_get_metadata (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->metadata;
+}
+
+/**
+ * as_app_get_descriptions:
+ * @app: a #AsApp instance.
+ *
+ * Gets the descriptions set for the application.
+ *
+ * Returns: (transfer none): hash table of descriptions
+ *
+ * Since: 0.1.6
+ **/
+GHashTable *
+as_app_get_descriptions (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->descriptions;
+}
+
+/**
  * as_app_get_urls:
  * @app: a #AsApp instance.
  *
  * Gets the URLs set for the application.
  *
- * Returns: (transfer none): URLs
+ * Returns: (transfer none): hash table of URLs
  *
  * Since: 0.1.0
  **/
