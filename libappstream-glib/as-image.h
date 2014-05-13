@@ -76,6 +76,20 @@ typedef enum {
 	AS_IMAGE_KIND_LAST
 } AsImageKind;
 
+/**
+ * AsImageSaveFlag:
+ * @AS_IMAGE_SAVE_FLAG_NONE:		No special flags set
+ * @AS_IMAGE_SAVE_FLAG_PAD_16_9:	Pad with alpha to 16:9 aspect
+ *
+ * The flags used for saving images.
+ **/
+typedef enum {
+	AS_IMAGE_SAVE_FLAG_NONE		= 0,	/* Since: 0.1.6 */
+	AS_IMAGE_SAVE_FLAG_PAD_16_9	= 1,	/* Since: 0.1.6 */
+	/*< private >*/
+	AS_IMAGE_SAVE_FLAG_LAST
+} AsImageSaveFlags;
+
 GType		 as_image_get_type		(void);
 AsImage		*as_image_new			(void);
 
@@ -102,6 +116,14 @@ void		 as_image_set_kind		(AsImage	*image,
 						 AsImageKind	 kind);
 void		 as_image_set_pixbuf		(AsImage	*image,
 						 GdkPixbuf	*pixbuf);
+
+/* object methods */
+gboolean	 as_image_save_filename		(AsImage	*image,
+						 const gchar	*filename,
+						 guint		 width,
+						 guint		 height,
+						 AsImageSaveFlags flags,
+						 GError		**error);
 
 G_END_DECLS
 
