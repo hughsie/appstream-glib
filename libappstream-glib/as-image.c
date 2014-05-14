@@ -401,6 +401,53 @@ as_image_node_parse (AsImage *image, GNode *node, GError **error)
 }
 
 /**
+ * as_image_load_filename:
+ * @image: a #AsImage instance.
+ * @filename: filename to read from
+ * @error: A #GError or %NULL.
+ *
+ * Reads a pixbuf from a file.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.1.6
+ **/
+gboolean
+as_image_load_filename (AsImage *image,
+			const gchar *filename,
+			GError **error)
+{
+	AsImagePrivate *priv = GET_PRIVATE (image);
+	GdkPixbuf *pixbuf = NULL;
+	gboolean ret = TRUE;
+	gchar *data = NULL;
+	gsize len;
+
+	/* get the contents so we can hash the predictable file data,
+	 * rather than the unpredicatable (for JPEG) pixel data */
+	ret = g_file_get_contents (filename, &data, &len, error);
+	if (!ret)
+		goto out;
+	priv->md5 = g_compute_checksum_for_data (G_CHECKSUM_MD5,
+						 (guchar * )data, len);
+
+	/* load the image */
+	pixbuf = gdk_pixbuf_new_from_file (filename, error);
+	if (pixbuf == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+
+	/* set */
+	as_image_set_pixbuf (image, pixbuf);
+out:
+	if (pixbuf != NULL)
+		g_object_unref (pixbuf);
+	g_free (data);
+	return ret;
+}
+
+/**
  * as_image_save_filename:
  * @image: a #AsImage instance.
  * @filename: filename to write to

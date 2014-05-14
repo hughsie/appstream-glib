@@ -119,6 +119,9 @@ void		 as_image_set_pixbuf		(AsImage	*image,
 						 GdkPixbuf	*pixbuf);
 
 /* object methods */
+gboolean	 as_image_load_filename		(AsImage	*image,
+						 const gchar	*filename,
+						 GError		**error);
 gboolean	 as_image_save_filename		(AsImage	*image,
 						 const gchar	*filename,
 						 guint		 width,
