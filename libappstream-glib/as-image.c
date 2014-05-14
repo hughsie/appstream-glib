@@ -321,6 +321,8 @@ as_image_set_pixbuf (AsImage *image, GdkPixbuf *pixbuf)
 							 data, len);
 	}
 	priv->pixbuf = g_object_ref (pixbuf);
+	priv->width = gdk_pixbuf_get_width (pixbuf);
+	priv->height = gdk_pixbuf_get_height (pixbuf);
 }
 
 /**
