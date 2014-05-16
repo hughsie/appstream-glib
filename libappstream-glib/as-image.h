@@ -100,6 +100,7 @@ const gchar	*as_image_kind_to_string	(AsImageKind	 kind);
 /* getters */
 const gchar	*as_image_get_url		(AsImage	*image);
 const gchar	*as_image_get_md5		(AsImage	*image);
+const gchar	*as_image_get_basename		(AsImage	*image);
 guint		 as_image_get_width		(AsImage	*image);
 guint		 as_image_get_height		(AsImage	*image);
 AsImageKind	 as_image_get_kind		(AsImage	*image);
@@ -109,6 +110,8 @@ GdkPixbuf	*as_image_get_pixbuf		(AsImage	*image);
 void		 as_image_set_url		(AsImage	*image,
 						 const gchar	*url,
 						 gssize		 url_len);
+void		 as_image_set_basename		(AsImage	*image,
+						 const gchar	*basename);
 void		 as_image_set_width		(AsImage	*image,
 						 guint		 width);
 void		 as_image_set_height		(AsImage	*image,

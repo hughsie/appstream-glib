@@ -165,6 +165,7 @@ static void
 ch_test_image_func (void)
 {
 	AsImage *image;
+	GdkPixbuf *pixbuf;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
@@ -173,6 +174,7 @@ ch_test_image_func (void)
 		"<image type=\"thumbnail\" height=\"12\" width=\"34\">"
 		"http://www.hughsie.com/a.jpg</image>";
 	gboolean ret;
+	gchar *filename;
 
 	image = as_image_new ();
 
@@ -201,6 +203,34 @@ ch_test_image_func (void)
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 
+	/* read from image */
+	filename = as_test_get_filename ("screenshot.png");
+	ret = as_image_load_filename (image, filename, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_image_get_width (image), ==, 800);
+	g_assert_cmpint (as_image_get_height (image), ==, 600);
+	g_assert_cmpstr (as_image_get_basename (image), ==, "screenshot.png");
+	g_assert_cmpstr (as_image_get_md5 (image), ==, "9de72240c27a6f8f2eaab692795cdafc");
+
+	/* resample */
+	pixbuf = as_image_save_pixbuf (image,
+				       752, 423,
+				       AS_IMAGE_SAVE_FLAG_PAD_16_9);
+	g_assert_cmpint (gdk_pixbuf_get_width (pixbuf), ==, 752);
+	g_assert_cmpint (gdk_pixbuf_get_height (pixbuf), ==, 423);
+	g_object_unref (pixbuf);
+
+	/* save */
+	ret = as_image_save_filename (image,
+				      "/tmp/foo.png",
+				      0, 0,
+				      AS_IMAGE_SAVE_FLAG_NONE,
+				      &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	g_free (filename);
 	g_object_unref (image);
 }
 

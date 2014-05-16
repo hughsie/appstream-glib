@@ -4,6 +4,7 @@ test_files =						\
 	example-v04.xml.gz				\
 	origin.xml					\
 	settings-panel.desktop				\
+	screenshot.png					\
 	success.appdata.xml				\
 	translated.appdata.xml
 

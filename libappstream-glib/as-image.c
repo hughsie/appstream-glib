@@ -44,6 +44,7 @@ struct _AsImagePrivate
 	AsImageKind		 kind;
 	gchar			*url;
 	gchar			*md5;
+	gchar			*basename;
 	guint			 width;
 	guint			 height;
 	GdkPixbuf		*pixbuf;
@@ -66,6 +67,7 @@ as_image_finalize (GObject *object)
 		g_object_unref (priv->pixbuf);
 	g_free (priv->url);
 	g_free (priv->md5);
+	g_free (priv->basename);
 
 	G_OBJECT_CLASS (as_image_parent_class)->finalize (object);
 }
@@ -144,6 +146,23 @@ as_image_get_url (AsImage *image)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	return priv->url;
+}
+
+/**
+ * as_image_get_basename:
+ * @image: a #AsImage instance.
+ *
+ * Gets the suggested basename the image, including file extension.
+ *
+ * Returns: filename
+ *
+ * Since: 0.1.6
+ **/
+const gchar *
+as_image_get_basename (AsImage *image)
+{
+	AsImagePrivate *priv = GET_PRIVATE (image);
+	return priv->basename;
 }
 
 /**
@@ -247,6 +266,23 @@ as_image_set_url (AsImage *image, const gchar *url, gssize url_len)
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	g_free (priv->url);
 	priv->url = as_strndup (url, url_len);
+}
+
+/**
+ * as_image_set_basename:
+ * @image: a #AsImage instance.
+ * @basename: the new filename basename.
+ *
+ * Sets the image basename filename.
+ *
+ * Since: 0.1.6
+ **/
+void
+as_image_set_basename (AsImage *image, const gchar *basename)
+{
+	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_free (priv->basename);
+	priv->basename = g_strdup (basename);
 }
 
 /**
@@ -408,6 +444,9 @@ as_image_node_parse (AsImage *image, GNode *node, GError **error)
  *
  * Reads a pixbuf from a file.
  *
+ * NOTE: This function also sets the suggested filename which can be retrieved
+ * using as_image_get_basename(). This can be overridden if required.
+ *
  * Returns: %TRUE for success
  *
  * Since: 0.1.6
@@ -420,6 +459,7 @@ as_image_load_filename (AsImage *image,
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	GdkPixbuf *pixbuf = NULL;
 	gboolean ret = TRUE;
+	gchar *basename = NULL;
 	gchar *data = NULL;
 	gsize len;
 
@@ -439,10 +479,13 @@ as_image_load_filename (AsImage *image,
 	}
 
 	/* set */
+	basename = g_path_get_basename (filename);
+	as_image_set_basename (image, basename);
 	as_image_set_pixbuf (image, pixbuf);
 out:
 	if (pixbuf != NULL)
 		g_object_unref (pixbuf);
+	g_free (basename);
 	g_free (data);
 	return ret;
 }
