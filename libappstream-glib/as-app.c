@@ -1863,6 +1863,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 				goto out;
 			}
 			as_app_subsume_dict (priv->descriptions, unwrapped, FALSE);
+			g_hash_table_unref (unwrapped);
 			break;
 		}
 
