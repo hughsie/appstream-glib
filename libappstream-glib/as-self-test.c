@@ -208,6 +208,7 @@ static void
 ch_test_screenshot_func (void)
 {
 	GPtrArray *images;
+	AsImage *im;
 	AsScreenshot *screenshot;
 	GError *error = NULL;
 	GNode *n;
@@ -238,6 +239,9 @@ ch_test_screenshot_func (void)
 	g_assert_cmpstr (as_screenshot_get_caption (screenshot, "C"), ==, "Hello");
 	images = as_screenshot_get_images (screenshot);
 	g_assert_cmpint (images->len, ==, 2);
+	im = as_screenshot_get_source (screenshot);
+	g_assert (im != NULL);
+	g_assert_cmpstr (as_image_get_url (im), ==, "http://1.png");
 	as_node_unref (root);
 
 	/* back to node */

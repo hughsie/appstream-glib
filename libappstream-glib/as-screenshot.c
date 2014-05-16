@@ -164,6 +164,31 @@ as_screenshot_get_images (AsScreenshot *screenshot)
 }
 
 /**
+ * as_screenshot_get_source:
+ * @screenshot: a #AsScreenshot instance.
+ *
+ * Gets the source image (the unscaled version) for the screenshot
+ *
+ * Returns: (transfer none): an #AsImage, or %NULL
+ *
+ * Since: 0.1.6
+ **/
+AsImage *
+as_screenshot_get_source (AsScreenshot *screenshot)
+{
+	AsImage *im;
+	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	guint i;
+
+	for (i = 0; i < priv->images->len; i++) {
+		im = g_ptr_array_index (priv->images, i);
+		if (as_image_get_kind (im) == AS_IMAGE_KIND_SOURCE)
+			return im;
+	}
+	return NULL;
+}
+
+/**
  * as_screenshot_get_caption:
  * @screenshot: a #AsScreenshot instance.
  * @locale: the locale, or %NULL. e.g. "en_GB"

@@ -89,6 +89,7 @@ AsScreenshotKind as_screenshot_get_kind		(AsScreenshot	*screenshot);
 const gchar	*as_screenshot_get_caption	(AsScreenshot	*screenshot,
 						 const gchar	*locale);
 GPtrArray	*as_screenshot_get_images	(AsScreenshot	*screenshot);
+AsImage		*as_screenshot_get_source	(AsScreenshot	*screenshot);
 
 /* setters */
 void		 as_screenshot_set_kind		(AsScreenshot	*screenshot,
