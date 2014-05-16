@@ -122,6 +122,10 @@ void		 as_image_set_pixbuf		(AsImage	*image,
 gboolean	 as_image_load_filename		(AsImage	*image,
 						 const gchar	*filename,
 						 GError		**error);
+GdkPixbuf	*as_image_save_pixbuf		(AsImage	*image,
+						 guint		 width,
+						 guint		 height,
+						 AsImageSaveFlags flags);
 gboolean	 as_image_save_filename		(AsImage	*image,
 						 const gchar	*filename,
 						 guint		 width,

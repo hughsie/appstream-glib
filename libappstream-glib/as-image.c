@@ -448,6 +448,75 @@ out:
 }
 
 /**
+ * as_image_save_pixbuf:
+ * @image: a #AsImage instance.
+ * @width: target width, or 0 for default
+ * @height: target height, or 0 for default
+ * @flags: some #AsImageSaveFlags values, e.g. %AS_IMAGE_SAVE_FLAG_PAD_16_9
+ *
+ * Resamples a pixbuf to a specific size.
+ *
+ * Returns: (transfer full): A #GdkPixbuf of the specified size
+ *
+ * Since: 0.1.6
+ **/
+GdkPixbuf *
+as_image_save_pixbuf (AsImage *image,
+		      guint width,
+		      guint height,
+		      AsImageSaveFlags flags)
+{
+	AsImagePrivate *priv = GET_PRIVATE (image);
+	GdkPixbuf *pixbuf = NULL;
+	GdkPixbuf *pixbuf_tmp = NULL;
+	guint tmp_height;
+	guint tmp_width;
+	guint pixbuf_height;
+	guint pixbuf_width;
+
+	/* 0 means 'default' */
+	if (width == 0)
+		width = gdk_pixbuf_get_width (priv->pixbuf);
+	if (height == 0)
+		height = gdk_pixbuf_get_height (priv->pixbuf);
+
+	/* is the aspect ratio of the source perfectly 16:9 */
+	pixbuf_width = gdk_pixbuf_get_width (priv->pixbuf);
+	pixbuf_height = gdk_pixbuf_get_height (priv->pixbuf);
+	if (flags == AS_IMAGE_SAVE_FLAG_NONE ||
+	    (pixbuf_width / 16) * 9 == pixbuf_height) {
+		return gdk_pixbuf_scale_simple (priv->pixbuf,
+						width, height,
+						GDK_INTERP_BILINEAR);
+	}
+
+	/* create new 16:9 pixbuf with alpha padding */
+	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
+				 TRUE, 8,
+				 width,
+				 height);
+	gdk_pixbuf_fill (pixbuf, 0x00000000);
+	if ((pixbuf_width / 16) * 9 > pixbuf_height) {
+		tmp_width = width;
+		tmp_height = width * pixbuf_height / pixbuf_width;
+	} else {
+		tmp_width = height * pixbuf_width / pixbuf_height;
+		tmp_height = height;
+	}
+	pixbuf_tmp = gdk_pixbuf_scale_simple (priv->pixbuf,
+					      tmp_width, tmp_height,
+					      GDK_INTERP_BILINEAR);
+	gdk_pixbuf_copy_area (pixbuf_tmp,
+			      0, 0, /* of src */
+			      tmp_width, tmp_height,
+			      pixbuf,
+			      (width - tmp_width) / 2,
+			      (height - tmp_height) / 2);
+	g_object_unref (pixbuf_tmp);
+	return pixbuf;
+}
+
+/**
  * as_image_save_filename:
  * @image: a #AsImage instance.
  * @filename: filename to write to
@@ -470,55 +539,11 @@ as_image_save_filename (AsImage *image,
 		        AsImageSaveFlags flags,
 		        GError **error)
 {
-	AsImagePrivate *priv = GET_PRIVATE (image);
-	GdkPixbuf *pixbuf = NULL;
-	GdkPixbuf *pixbuf_tmp = NULL;
+	GdkPixbuf *pixbuf;
 	gboolean ret;
-	guint tmp_height;
-	guint tmp_width;
-	guint pixbuf_height;
-	guint pixbuf_width;
-
-	/* 0 means 'default' */
-	if (width == 0)
-		width = gdk_pixbuf_get_width (priv->pixbuf);
-	if (height == 0)
-		height = gdk_pixbuf_get_height (priv->pixbuf);
-
-	/* is the aspect ratio of the source perfectly 16:9 */
-	pixbuf_width = gdk_pixbuf_get_width (priv->pixbuf);
-	pixbuf_height = gdk_pixbuf_get_height (priv->pixbuf);
-	if (flags == AS_IMAGE_SAVE_FLAG_NONE ||
-	    (pixbuf_width / 16) * 9 == pixbuf_height) {
-		pixbuf = gdk_pixbuf_scale_simple (priv->pixbuf,
-						  width, height,
-						  GDK_INTERP_BILINEAR);
-	} else {
-		/* create new 16:9 pixbuf with alpha padding */
-		pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
-					 TRUE, 8,
-					 width,
-					 height);
-		gdk_pixbuf_fill (pixbuf, 0x00000000);
-		if ((pixbuf_width / 16) * 9 > pixbuf_height) {
-			tmp_width = width;
-			tmp_height = width * pixbuf_height / pixbuf_width;
-		} else {
-			tmp_width = height * pixbuf_width / pixbuf_height;
-			tmp_height = height;
-		}
-		pixbuf_tmp = gdk_pixbuf_scale_simple (priv->pixbuf,
-						      tmp_width, tmp_height,
-						      GDK_INTERP_BILINEAR);
-		gdk_pixbuf_copy_area (pixbuf_tmp,
-				      0, 0, /* of src */
-				      tmp_width, tmp_height,
-				      pixbuf,
-				      (width - tmp_width) / 2,
-				      (height - tmp_height) / 2);
-	}
 
 	/* save source file */
+	pixbuf = as_image_save_pixbuf (image, width, height, flags);
 	ret = gdk_pixbuf_save (pixbuf,
 			       filename,
 			       "png",
@@ -529,8 +554,6 @@ as_image_save_filename (AsImage *image,
 out:
 	if (pixbuf != NULL)
 		g_object_unref (pixbuf);
-	if (pixbuf_tmp != NULL)
-		g_object_unref (pixbuf_tmp);
 	return ret;
 }
 
