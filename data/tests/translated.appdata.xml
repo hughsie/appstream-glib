@@ -1,0 +1,12 @@
+<!-- Author: 2014 Richard Hughes <richard@hughsie.com> -->
+<application>
+  <id>test</id>
+  <description>
+    <p>
+      Awesome
+    </p>
+    <p xml:lang="pl">
+      Asomeski
+    </p>
+  </description>
+</application>

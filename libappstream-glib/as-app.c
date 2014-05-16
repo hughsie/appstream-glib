@@ -1803,6 +1803,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsRelease *r;
 	AsScreenshot *ss;
+	GHashTable *unwrapped;
 	GNode *c;
 	GString *xml;
 	const gchar *tmp;
@@ -1853,6 +1854,18 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <description> */
 	case AS_TAG_DESCRIPTION:
+
+		/* unwrap appdata inline */
+		if (priv->source_kind == AS_APP_SOURCE_KIND_APPDATA) {
+			unwrapped = as_node_get_localized_unwrap (n, error);
+			if (unwrapped == NULL) {
+				ret = FALSE;
+				goto out;
+			}
+			as_app_subsume_dict (priv->descriptions, unwrapped, FALSE);
+			break;
+		}
+
 		if (n->children == NULL) {
 			/* pre-formatted */
 			as_app_set_description (app,

@@ -4,7 +4,8 @@ test_files =						\
 	example-v04.xml.gz				\
 	origin.xml					\
 	settings-panel.desktop				\
-	success.appdata.xml
+	success.appdata.xml				\
+	translated.appdata.xml
 
 EXTRA_DIST = $(test_files)
 

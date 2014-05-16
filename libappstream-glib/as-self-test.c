@@ -401,6 +401,8 @@ ch_test_app_validate_file_good_func (void)
 	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
 	g_assert_cmpstr (as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE), ==,
 			 "http://www.gnome.org/projects/gnome-power-manager/");
+	g_assert_cmpstr (as_app_get_description (app, "C"), !=, NULL);
+	g_assert_cmpint (as_app_get_description_size (app), ==, 1);
 	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NO_NETWORK, &error);
 	g_assert_no_error (error);
 	g_assert (probs != NULL);
@@ -429,6 +431,30 @@ ch_test_app_validate_file_good_func (void)
 }
 
 static void
+ch_test_app_translated_func (void)
+{
+	AsApp *app;
+	GError *error = NULL;
+	gboolean ret;
+	gchar *filename;
+
+	/* open file */
+	app = as_app_new ();
+	filename = as_test_get_filename ("translated.appdata.xml");
+	ret = as_app_parse_file (app, filename, AS_APP_PARSE_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* check success */
+	g_assert_cmpstr (as_app_get_description (app, "C"), ==, "<p>Awesome</p>");
+	g_assert_cmpstr (as_app_get_description (app, "pl"), ==, "<p>Asomeski</p>");
+	g_assert_cmpint (as_app_get_description_size (app), ==, 2);
+
+	g_free (filename);
+	g_object_unref (app);
+}
+
+static void
 ch_test_app_validate_file_bad_func (void)
 {
 	AsApp *app;
@@ -445,6 +471,9 @@ ch_test_app_validate_file_bad_func (void)
 	ret = as_app_parse_file (app, filename, AS_APP_PARSE_FLAG_NONE, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
+
+	g_assert_cmpstr (as_app_get_description (app, "C"), !=, NULL);
+	g_assert_cmpint (as_app_get_description_size (app), ==, 1);
 
 	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NONE, &error);
 	g_assert_no_error (error);
@@ -483,8 +512,6 @@ ch_test_app_validate_file_bad_func (void)
 				    "<ul> cannot start a description");
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<ul> cannot start a description");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
-				    "Not enough <p> tags for a good description");
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<p> should not start with 'This application'");
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
@@ -1448,6 +1475,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/image", ch_test_image_func);
 	g_test_add_func ("/AppStream/screenshot", ch_test_screenshot_func);
 	g_test_add_func ("/AppStream/app", ch_test_app_func);
+	g_test_add_func ("/AppStream/app{translated}", ch_test_app_translated_func);
 	g_test_add_func ("/AppStream/app{validate-style}", ch_test_app_validate_style_func);
 	g_test_add_func ("/AppStream/app{validate-file-good}", ch_test_app_validate_file_good_func);
 	g_test_add_func ("/AppStream/app{validate-file-bad}", ch_test_app_validate_file_bad_func);
