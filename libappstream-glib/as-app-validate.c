@@ -679,6 +679,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	gboolean deprectated_failure = FALSE;
 	gboolean require_contactdetails = TRUE;
 	gboolean require_copyright = FALSE;
+	gboolean require_project_license = TRUE;
 	gboolean require_translations = FALSE;
 	gboolean require_url = TRUE;
 	gboolean ret;
@@ -694,6 +695,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		length_summary_max = 200;
 		require_contactdetails = FALSE;
 		require_url = FALSE;
+		require_project_license = FALSE;
 	}
 
 	/* make the requirements more strict */
@@ -789,7 +791,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		}
 	}
 	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
-	    license == NULL) {
+	    require_project_license && license == NULL) {
 		ai_app_validate_add (probs,
 				     AS_PROBLEM_KIND_TAG_MISSING,
 				     "<project_license> is not present");
