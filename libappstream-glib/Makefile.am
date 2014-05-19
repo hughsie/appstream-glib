@@ -60,6 +60,7 @@ libappstream_glib_include_HEADERS =				\
 	as-image.h						\
 	as-node.h						\
 	as-problem.h						\
+	as-provide.h						\
 	as-release.h						\
 	as-screenshot.h						\
 	as-store.h						\
