@@ -29,6 +29,7 @@
 #include <glib-object.h>
 
 #include "as-enums.h"
+#include "as-provide.h"
 #include "as-release.h"
 #include "as-screenshot.h"
 
@@ -160,6 +161,7 @@ GPtrArray	*as_app_get_keywords		(AsApp		*app);
 GPtrArray	*as_app_get_pkgnames		(AsApp		*app);
 GPtrArray	*as_app_get_architectures	(AsApp		*app);
 GPtrArray	*as_app_get_releases		(AsApp		*app);
+GPtrArray	*as_app_get_provides		(AsApp		*app);
 GPtrArray	*as_app_get_screenshots		(AsApp		*app);
 GHashTable	*as_app_get_names		(AsApp		*app);
 GHashTable	*as_app_get_comments		(AsApp		*app);
@@ -247,6 +249,8 @@ void		 as_app_add_arch		(AsApp		*app,
 						 gssize		 arch_len);
 void		 as_app_add_release		(AsApp		*app,
 						 AsRelease	*release);
+void		 as_app_add_provide		(AsApp		*app,
+						 AsProvide	*provide);
 void		 as_app_add_screenshot		(AsApp		*app,
 						 AsScreenshot	*screenshot);
 void		 as_app_add_language		(AsApp		*app,

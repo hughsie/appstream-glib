@@ -29,6 +29,7 @@
 #include "as-image-private.h"
 #include "as-node-private.h"
 #include "as-problem.h"
+#include "as-provide-private.h"
 #include "as-release-private.h"
 #include "as-screenshot-private.h"
 #include "as-store.h"
@@ -114,6 +115,45 @@ ch_test_release_func (void)
 	as_node_unref (root);
 
 	g_object_unref (release);
+}
+
+static void
+ch_test_provide_func (void)
+{
+	AsProvide *provide;
+	GError *error = NULL;
+	GNode *n;
+	GNode *root;
+	GString *xml;
+	const gchar *src = "<binary>/usr/bin/gnome-shell</binary>";
+	gboolean ret;
+
+	provide = as_provide_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, -1, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "binary");
+	g_assert (n != NULL);
+	ret = as_provide_node_parse (provide, n, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_provide_get_kind (provide), ==, AS_PROVIDE_KIND_BINARY);
+	g_assert_cmpstr (as_provide_get_value (provide), ==, "/usr/bin/gnome-shell");
+
+	/* back to node */
+	root = as_node_new ();
+	n = as_provide_node_insert (provide, root, 0.4);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert_cmpstr (xml->str, ==, src);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+
+	g_object_unref (provide);
 }
 
 static void
@@ -329,6 +369,9 @@ ch_test_app_func (void)
 		"<releases>"
 		"<release version=\"3.11.90\" timestamp=\"1392724800\"/>"
 		"</releases>"
+		"<provides>"
+		"<binary>/usr/bin/gnome-shell</binary>"
+		"</provides>"
 		"<languages>"
 		"<lang percentage=\"90\">en_GB</lang>"
 		"<lang>pl</lang>"
@@ -363,6 +406,7 @@ ch_test_app_func (void)
 	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);
 	g_assert_cmpint (as_app_get_screenshots(app)->len, ==, 2);
 	g_assert_cmpint (as_app_get_releases(app)->len, ==, 1);
+	g_assert_cmpint (as_app_get_provides(app)->len, ==, 1);
 	g_assert_cmpstr (as_app_get_metadata_item (app, "X-Kudo-GTK3"), ==, "");
 	g_assert_cmpint (as_app_get_language (app, "en_GB"), ==, 90);
 	g_assert_cmpint (as_app_get_language (app, "pl"), ==, 0);
@@ -1504,6 +1548,7 @@ main (int argc, char **argv)
 
 	/* tests go here */
 	g_test_add_func ("/AppStream/tag", ch_test_tag_func);
+	g_test_add_func ("/AppStream/provide", ch_test_provide_func);
 	g_test_add_func ("/AppStream/release", ch_test_release_func);
 	g_test_add_func ("/AppStream/release{description}", ch_test_release_desc_func);
 	g_test_add_func ("/AppStream/image", ch_test_image_func);

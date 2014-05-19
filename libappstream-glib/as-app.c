@@ -40,6 +40,7 @@
 #include "as-app-private.h"
 #include "as-enums.h"
 #include "as-node-private.h"
+#include "as-provide-private.h"
 #include "as-release-private.h"
 #include "as-screenshot-private.h"
 #include "as-tag.h"
@@ -64,6 +65,7 @@ struct _AsAppPrivate
 	GPtrArray	*pkgnames;			/* of string */
 	GPtrArray	*architectures;			/* of string */
 	GPtrArray	*releases;			/* of AsRelease */
+	GPtrArray	*provides;			/* of AsProvide */
 	GPtrArray	*screenshots;			/* of AsScreenshot */
 	AsAppSourceKind	 source_kind;
 	gchar		*icon;
@@ -135,6 +137,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->pkgnames);
 	g_ptr_array_unref (priv->architectures);
 	g_ptr_array_unref (priv->releases);
+	g_ptr_array_unref (priv->provides);
 	g_ptr_array_unref (priv->screenshots);
 	g_ptr_array_unref (priv->token_cache);
 
@@ -166,6 +169,7 @@ as_app_init (AsApp *app)
 	priv->pkgnames = g_ptr_array_new_with_free_func (g_free);
 	priv->architectures = g_ptr_array_new_with_free_func (g_free);
 	priv->releases = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	priv->provides = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->screenshots = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->token_cache = g_ptr_array_new_with_free_func ((GDestroyNotify) as_app_token_item_free);
 
@@ -316,6 +320,23 @@ as_app_get_releases (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->releases;
+}
+
+/**
+ * as_app_get_provides:
+ * @app: a #AsApp instance.
+ *
+ * Gets all the provides the application has.
+ *
+ * Returns: (element-type AsProvide) (transfer none): an array
+ *
+ * Since: 0.1.6
+ **/
+GPtrArray *
+as_app_get_provides (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->provides;
 }
 
 /**
@@ -1275,6 +1296,22 @@ as_app_add_release (AsApp *app, AsRelease *release)
 }
 
 /**
+ * as_app_add_provide:
+ * @app: a #AsApp instance.
+ * @provide: a #AsProvide instance.
+ *
+ * Adds a provide to an application.
+ *
+ * Since: 0.1.6
+ **/
+void
+as_app_add_provide (AsApp *app, AsProvide *provide)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_ptr_array_add (priv->provides, g_object_ref (provide));
+}
+
+/**
  * as_app_add_screenshot:
  * @app: a #AsApp instance.
  * @screenshot: a #AsScreenshot instance.
@@ -1781,6 +1818,16 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 		}
 	}
 
+	/* <provides> */
+	if (priv->provides->len > 0 && api_version >= 0.6) {
+		AsProvide *provide;
+		node_tmp = as_node_insert (node_app, "provides", NULL, 0, NULL);
+		for (i = 0; i < priv->provides->len; i++) {
+			provide = g_ptr_array_index (priv->provides, i);
+			as_provide_node_insert (provide, node_tmp, api_version);
+		}
+	}
+
 	/* <languages> */
 	if (g_hash_table_size (priv->languages) > 0 && api_version >= 0.4)
 		as_app_node_insert_languages (app, node_app);
@@ -1999,6 +2046,22 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 			}
 			as_app_add_release (app, r);
 			g_object_unref (r);
+		}
+		break;
+
+	/* <provides> */
+	case AS_TAG_PROVIDES:
+		g_ptr_array_set_size (priv->provides, 0);
+		for (c = n->children; c != NULL; c = c->next) {
+			AsProvide *p;
+			p = as_provide_new ();
+			ret = as_provide_node_parse (p, c, error);
+			if (!ret) {
+				g_object_unref (p);
+				goto out;
+			}
+			as_app_add_provide (app, p);
+			g_object_unref (p);
 		}
 		break;
 
