@@ -653,6 +653,8 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 	GPtrArray *images;
 	GPtrArray *screenshots;
 	AsImage *im;
+	AsImage *im_thumb;
+	AsImage *im_scaled;
 	AsScreenshot *ss;
 	const gchar *pkgname;
 	gchar *tmp;
@@ -668,22 +670,28 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 	for (i = 0; i < screenshots->len; i++) {
 		ss  = g_ptr_array_index (screenshots, i);
 		images = as_screenshot_get_images (ss);
+		im_thumb = NULL;
+		im_scaled = NULL;
 		for (j = 0; j < images->len; j++) {
 			im = g_ptr_array_index (images, j);
-			if (as_image_get_width (im) != 624)
-				continue;
-			if (as_screenshot_get_caption (ss, "C") != NULL) {
-				g_string_append_printf (html, "<a href=\"%s\">"
-							"<img src=\"%s\" alt=\"%s\"/></a>\n",
-							as_image_get_url (im),
-							as_image_get_url (im),
-							as_screenshot_get_caption (ss, "C"));
-			} else {
-				g_string_append_printf (html, "<a href=\"%s\">"
-							"<img src=\"%s\"/></a>\n",
-							as_image_get_url (im),
-							as_image_get_url (im));
-			}
+			if (as_image_get_width (im) == 112)
+				im_thumb = im;
+			else if (as_image_get_width (im) == 624)
+				im_scaled = im;
+		}
+		if (im_thumb == NULL || im_scaled == NULL)
+			continue;
+		if (as_screenshot_get_caption (ss, "C") != NULL) {
+			g_string_append_printf (html, "<a href=\"%s\">"
+						"<img src=\"%s\" alt=\"%s\"/></a>\n",
+						as_image_get_url (im_scaled),
+						as_image_get_url (im_thumb),
+						as_screenshot_get_caption (ss, "C"));
+		} else {
+			g_string_append_printf (html, "<a href=\"%s\">"
+						"<img src=\"%s\"/></a>\n",
+						as_image_get_url (im_scaled),
+						as_image_get_url (im_thumb));
 		}
 	}
 
