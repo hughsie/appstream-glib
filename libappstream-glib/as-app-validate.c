@@ -762,7 +762,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	license = as_app_get_metadata_license (app);
 	if (license != NULL) {
 		if (g_strcmp0 (license, "CC0-1.0") != 0 &&
-		    g_strcmp0 (license, "CC-BY-BY-3.0") != 0 &&
+		    g_strcmp0 (license, "CC-BY-3.0") != 0 &&
 		    g_strcmp0 (license, "CC-BY-SA-3.0") != 0 &&
 		    g_strcmp0 (license, "GFDL-1.3") != 0) {
 			ai_app_validate_add (probs,
