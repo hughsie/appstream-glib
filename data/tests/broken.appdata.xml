@@ -20,6 +20,20 @@
   </description>
   <url type="bugtracker">www.dave.org</url>
   <updatecontact></updatecontact>
+
+  <releases>
+    <release version="0.6.1" timestamp="20140330">
+      <description>
+        <p>See: https://mail.xfce.org/pipermail/xfce-announce/2014-March/000318.html</p>
+      </description>
+    </release>
+    <release>
+      <description>
+        <p>Too little text.</p>
+      </description>
+    </release>
+  </releases>
+
 </application>
 <application>
 </application>

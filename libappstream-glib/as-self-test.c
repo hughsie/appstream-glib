@@ -560,7 +560,7 @@ ch_test_app_validate_file_bad_func (void)
 		problem = g_ptr_array_index (probs, i);
 		g_debug ("%s", as_problem_get_message (problem));
 	}
-	g_assert_cmpint (probs->len, ==, 18);
+	g_assert_cmpint (probs->len, ==, 23);
 
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				    "<id> has invalid type attribute");
@@ -596,6 +596,15 @@ ch_test_app_validate_file_bad_func (void)
 				    "<p> does not end in '.|:|!'");
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<p> is too short");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<release> description should be "
+				    "prose and not contain hyperlinks");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
+				    "<release> timestamp should be a UNIX time");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
+				    "<release> has no version");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
+				    "<release> has no timestamp");
 
 	g_ptr_array_unref (probs);
 	g_free (filename);

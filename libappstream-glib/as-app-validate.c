@@ -215,20 +215,14 @@ as_app_validate_description_list (const gchar *text, AsAppValidateHelper *helper
 static gboolean
 as_app_validate_description (const gchar *xml,
 			     AsAppValidateHelper *helper,
+			     guint number_para_min,
+			     guint number_para_max,
 			     GError **error)
 {
 	GNode *l;
 	GNode *l2;
 	GNode *node;
 	gboolean ret = TRUE;
-	guint number_para_max = 4;
-	guint number_para_min = 2;
-
-	/* relax the requirements a bit */
-	if ((helper->flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
-		number_para_max = 10;
-		number_para_min = 1;
-	}
 
 	/* parse xml */
 	node = as_node_from_xml (xml, -1,
@@ -238,6 +232,8 @@ as_app_validate_description (const gchar *xml,
 		ret = FALSE;
 		goto out;
 	}
+	helper->number_paragraphs = 0;
+	helper->previous_para_was_short = FALSE;
 	for (l = node->children; l != NULL; l = l->next) {
 		if (g_strcmp0 (as_node_get_name (l), "p") == 0) {
 			if (as_node_get_attribute (l, "xml:lang") != NULL)
@@ -591,6 +587,102 @@ as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 }
 
 /**
+ * as_app_validate_release:
+ **/
+static gboolean
+as_app_validate_release (AsRelease *release, AsAppValidateHelper *helper, GError **error)
+{
+	const gchar *tmp;
+	gboolean ret = TRUE;
+	guint64 timestamp;
+	guint number_para_max = 2;
+	guint number_para_min = 1;
+
+	/* relax the requirements a bit */
+	if ((helper->flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
+		number_para_max = 4;
+	}
+
+	/* check version */
+	tmp = as_release_get_version (release);
+	if (tmp == NULL) {
+		ai_app_validate_add (helper->probs,
+				     AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
+				     "<release> has no version");
+	}
+
+	/* check timestamp */
+	timestamp = as_release_get_timestamp (release);
+	if (timestamp == 0) {
+		ai_app_validate_add (helper->probs,
+				     AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
+				     "<release> has no timestamp");
+	}
+	if (timestamp > 20120101 && timestamp < 20151231) {
+		ai_app_validate_add (helper->probs,
+				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
+				     "<release> timestamp should be a UNIX time");
+	}
+
+	/* check description */
+	tmp = as_release_get_description (release, "C");
+	if (tmp == NULL) {
+		ai_app_validate_add (helper->probs,
+				     AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
+				     "<release> has no description");
+	} else {
+		if (g_strstr_len (tmp, -1, "http://") != NULL ||
+		    g_strstr_len (tmp, -1, "https://") != NULL ||
+		    g_strstr_len (tmp, -1, "ftp://") != NULL) {
+			ai_app_validate_add (helper->probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<release> description should be "
+					     "prose and not contain hyperlinks");
+		}
+		ret = as_app_validate_description (tmp,
+						   helper,
+						   number_para_min,
+						   number_para_max,
+						   error);
+		if (!ret)
+			goto out;
+	}
+out:
+	return ret;
+}
+
+/**
+ * as_app_validate_releases:
+ **/
+static gboolean
+as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **error)
+{
+	AsRelease *release;
+	GPtrArray *releases;
+	gboolean ret = TRUE;
+	guint i;
+
+	/* only for AppData */
+	if (as_app_get_source_kind (app) != AS_APP_SOURCE_KIND_APPDATA)
+		goto out;
+
+	releases = as_app_get_releases (app);
+	if (releases->len > 10) {
+		ai_app_validate_add (helper->probs,
+				     AS_PROBLEM_KIND_STYLE_INCORRECT,
+				     "Too many <release> tags");
+	}
+	for (i = 0; i < releases->len; i++) {
+		release = g_ptr_array_index (releases, i);
+		ret = as_app_validate_release (release, helper, error);
+		if (!ret)
+			goto out;
+	}
+out:
+	return ret;
+}
+
+/**
  * as_app_validate_setup_networking:
  **/
 static gboolean
@@ -687,6 +779,8 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	guint length_name_min = 3;
 	guint length_summary_max = 100;
 	guint length_summary_min = 8;
+	guint number_para_max = 4;
+	guint number_para_min = 2;
 	guint str_len;
 
 	/* relax the requirements a bit */
@@ -696,6 +790,8 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		require_contactdetails = FALSE;
 		require_url = FALSE;
 		require_project_license = FALSE;
+		number_para_max = 10;
+		number_para_min = 1;
 	}
 
 	/* make the requirements more strict */
@@ -864,6 +960,11 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	/* screenshots */
 	as_app_validate_screenshots (app, &helper);
 
+	/* releases */
+	ret = as_app_validate_releases (app, &helper, error);
+	if (!ret)
+		goto out;
+
 	/* name */
 	name = as_app_get_name (app, "C");
 	if (name != NULL) {
@@ -915,6 +1016,8 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	if (description != NULL) {
 		ret = as_app_validate_description (description,
 						   &helper,
+						   number_para_min,
+						   number_para_max,
 						   &error_local);
 		if (!ret) {
 			ai_app_validate_add (probs,
