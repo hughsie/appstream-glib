@@ -836,21 +836,6 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 				"keywords: %i/%i (%.1f%%)</li>\n",
 				cnt, total, perc);
 
-	/* categories */
-	cnt = 0;
-	for (i = 0; i < apps->len; i++) {
-		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
-			continue;
-		if (as_app_get_categories(app)->len > 0)
-			cnt++;
-		else g_warning ("%s", as_app_get_id (app));
-	}
-	perc = 100.f * (gdouble) cnt / (gdouble) total;
-	g_string_append_printf (html, "<li>Applications in Fedora with "
-				"categories: %i/%i (%.1f%%)</li>\n",
-				cnt, total, perc);
-
 	/* screenshots */
 	cnt = 0;
 	for (i = 0; i < apps->len; i++) {
