@@ -784,10 +784,10 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 	AsApp *app;
 	const gchar *project_groups[] = { "GNOME", "KDE", "XFCE", NULL };
 	gboolean ret = TRUE;
+	gdouble perc;
 	guint cnt;
 	guint i;
 	guint j;
-	guint perc;
 	guint total = 0;
 
 	g_string_append (html, "<h1>Executive summary</h1>\n");
@@ -817,9 +817,10 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 		if (as_app_get_description (app, "C") != NULL)
 			cnt++;
 	}
-	perc = 100 * cnt / total;
+	perc = 100.f * (gdouble) cnt / (gdouble) total;
 	g_string_append_printf (html, "<li>Applications in Fedora with "
-				"long descriptions: %i (%i%%)</li>\n", cnt, perc);
+				"long descriptions: %i/%i (%.1f%%)</li>\n",
+				cnt, total, perc);
 
 	/* keywords */
 	cnt = 0;
@@ -830,9 +831,10 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 		if (as_app_get_keywords(app)->len > 0)
 			cnt++;
 	}
-	perc = 100 * cnt / total;
+	perc = 100.f * (gdouble) cnt / (gdouble) total;
 	g_string_append_printf (html, "<li>Applications in Fedora with "
-				"keywords: %i (%i%%)</li>\n", cnt, perc);
+				"keywords: %i/%i (%.1f%%)</li>\n",
+				cnt, total, perc);
 
 	/* categories */
 	cnt = 0;
@@ -842,10 +844,12 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 			continue;
 		if (as_app_get_categories(app)->len > 0)
 			cnt++;
+		else g_warning ("%s", as_app_get_id (app));
 	}
-	perc = 100 * cnt / total;
+	perc = 100.f * (gdouble) cnt / (gdouble) total;
 	g_string_append_printf (html, "<li>Applications in Fedora with "
-				"categories: %i (%i%%)</li>\n", cnt, perc);
+				"categories: %i/%i (%.1f%%)</li>\n",
+				cnt, total, perc);
 
 	/* screenshots */
 	cnt = 0;
@@ -856,9 +860,10 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 		if (as_app_get_screenshots(app)->len > 0)
 			cnt++;
 	}
-	perc = 100 * cnt / total;
+	perc = 100.f * (gdouble) cnt / (gdouble) total;
 	g_string_append_printf (html, "<li>Applications in Fedora with "
-				"screenshots: %i (%i%%)</li>\n", cnt, perc);
+				"screenshots: %i/%i (%.1f%%)</li>\n",
+				cnt, total, perc);
 
 	/* project apps with appdata */
 	for (j = 0; project_groups[j] != NULL; j++) {
@@ -876,10 +881,11 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 		}
 		perc = 0;
 		if (total > 0)
-			perc = 100 * cnt / total;
+			perc = 100.f * (gdouble) cnt / (gdouble) total;
 		g_string_append_printf (html, "<li>Applications in %s "
-					"with AppData: %i (%i%%)</li>\n",
-					project_groups[j], cnt, perc);
+					"with AppData: %i/%i (%.1f%%)</li>\n",
+					project_groups[j], cnt,
+					total, perc);
 	}
 	g_string_append (html, "</ul>\n");
 out:
