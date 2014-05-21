@@ -80,7 +80,7 @@ libappstream_glib_la_SOURCES =					\
 	as-problem.c						\
 	as-problem.h						\
 	as-provide.c						\
-	as-provide.h						\
+	as-provide-private.h					\
 	as-release.c						\
 	as-release-private.h					\
 	as-resources.c						\
