@@ -325,6 +325,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 	GNode *c;
 	const gchar *tmp;
 	gboolean ret = TRUE;
+	guint size;
 
 	tmp = as_node_get_attribute (node, "type");
 	if (tmp != NULL) {
@@ -351,10 +352,12 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 	if (tmp != NULL) {
 		image = as_image_new ();
 		as_image_set_kind (image, AS_IMAGE_KIND_SOURCE);
-		as_image_set_width (image,
-				    as_node_get_attribute_as_int (node, "width"));
-		as_image_set_height (image,
-				     as_node_get_attribute_as_int (node, "height"));
+		size = as_node_get_attribute_as_int (node, "width");
+		if (size != G_MAXUINT)
+			as_image_set_width (image, size);
+		size = as_node_get_attribute_as_int (node, "height");
+		if (size != G_MAXUINT)
+			as_image_set_height (image, size);
 		as_image_set_url (image, tmp, -1);
 		g_ptr_array_add (priv->images, image);
 	}
