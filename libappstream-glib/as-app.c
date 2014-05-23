@@ -2598,6 +2598,7 @@ as_app_parse_desktop_file (AsApp *app,
 			   AsAppParseFlags flags,
 			   GError **error)
 {
+	GKeyFileFlags kf_flags = G_KEY_FILE_KEEP_TRANSLATIONS;
 	GKeyFile *kf;
 	gboolean ret;
 	gchar *app_id = NULL;
@@ -2607,9 +2608,9 @@ as_app_parse_desktop_file (AsApp *app,
 
 	/* load file */
 	kf = g_key_file_new ();
-	ret = g_key_file_load_from_file (kf, desktop_file,
-					 G_KEY_FILE_KEEP_TRANSLATIONS,
-					 error);
+	if (flags & AS_APP_PARSE_FLAG_KEEP_COMMENTS)
+		kf_flags |= G_KEY_FILE_KEEP_COMMENTS;
+	ret = g_key_file_load_from_file (kf, desktop_file, kf_flags, error);
 	if (!ret)
 		goto out;
 
@@ -2668,6 +2669,7 @@ as_app_parse_appdata_file (AsApp *app,
 			   GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsNodeFromXmlFlags from_xml_flags = AS_NODE_FROM_XML_FLAG_NONE;
 	GNode *l;
 	GNode *node;
 	GNode *root = NULL;
@@ -2695,8 +2697,10 @@ as_app_parse_appdata_file (AsApp *app,
 		priv->problems |= AS_APP_PROBLEM_NO_COPYRIGHT_INFO;
 
 	/* parse */
+	if (flags & AS_APP_PARSE_FLAG_KEEP_COMMENTS)
+		from_xml_flags |= AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS;
 	root = as_node_from_xml (data, len,
-				 AS_NODE_FROM_XML_FLAG_NONE,
+				 from_xml_flags,
 				 error);
 	if (root == NULL) {
 		ret = FALSE;
