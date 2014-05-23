@@ -58,12 +58,14 @@ typedef enum {
  * AsNodeFromXmlFlags:
  * @AS_NODE_FROM_XML_FLAG_NONE:			No extra flags to use
  * @AS_NODE_FROM_XML_FLAG_LITERAL_TEXT:		Treat the text as an exact string
+ * @AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS:	Retain comments in the XML file
  *
  * The flags for converting from XML.
  **/
 typedef enum {
 	AS_NODE_FROM_XML_FLAG_NONE		= 0,	/* Since: 0.1.0 */
 	AS_NODE_FROM_XML_FLAG_LITERAL_TEXT	= 1,	/* Since: 0.1.3 */
+	AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS	= 2,	/* Since: 0.1.6 */
 	/*< private >*/
 	AS_NODE_FROM_XML_FLAG_LAST
 } AsNodeFromXmlFlags;
@@ -108,6 +110,7 @@ void		 as_node_unref			(GNode		*node);
 
 const gchar	*as_node_get_name		(const GNode	*node);
 const gchar	*as_node_get_data		(const GNode	*node);
+const gchar	*as_node_get_comment		(const GNode	*node);
 AsTag		 as_node_get_tag		(const GNode	*node);
 const gchar	*as_node_get_attribute		(const GNode	*node,
 						 const gchar	*key);

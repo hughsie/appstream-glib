@@ -39,6 +39,9 @@ void		 as_node_set_data		(GNode		*node,
 						 const gchar	*cdata,
 						 gssize		 cdata_len,
 						 AsNodeInsertFlags insert_flags);
+void		 as_node_set_comment		(GNode		*node,
+						 const gchar	*comment,
+						 gssize		 comment_len);
 gint		 as_node_get_attribute_as_int	(const GNode	*node,
 						 const gchar	*key);
 void		 as_node_add_attribute		(GNode		*node,

@@ -842,7 +842,7 @@ ch_test_node_func (void)
 static void
 ch_test_node_xml_func (void)
 {
-	const gchar *valid = "<foo><bar key=\"value\">baz</bar></foo>";
+	const gchar *valid = "<foo><!-- this documents bar --><bar key=\"value\">baz</bar></foo>";
 	GError *error = NULL;
 	GNode *n2;
 	GNode *root;
@@ -866,12 +866,13 @@ ch_test_node_xml_func (void)
 	n2 = as_node_find (root, "foo/bar");
 	g_assert (n2 != NULL);
 	g_assert_cmpstr (as_node_get_data (n2), ==, "baz");
+	g_assert_cmpstr (as_node_get_comment (n2), ==, NULL);
 	g_assert_cmpstr (as_node_get_attribute (n2, "key"), ==, "value");
 
 	/* convert back */
 	xml = as_node_to_xml (root, AS_NODE_TO_XML_FLAG_NONE);
 	g_assert (xml != NULL);
-	g_assert_cmpstr (xml->str, ==, valid);
+	g_assert_cmpstr (xml->str, ==, "<foo><bar key=\"value\">baz</bar></foo>");
 	g_string_free (xml, TRUE);
 
 	/* with newlines */
@@ -901,6 +902,23 @@ ch_test_node_xml_func (void)
 	xml = as_node_to_xml (root->children, AS_NODE_TO_XML_FLAG_INCLUDE_SIBLINGS);
 	g_assert (xml != NULL);
 	g_assert_cmpstr (xml->str, ==, "<p>One</p><p>Two</p>");
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+
+	/* keep comments */
+	root = as_node_from_xml (valid, -1,
+				 AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS,
+				 &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n2 = as_node_find (root, "foo/bar");
+	g_assert (n2 != NULL);
+	g_assert_cmpstr (as_node_get_comment (n2), ==, "this documents bar");
+
+	/* check comments were preserved */
+	xml = as_node_to_xml (root, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert (xml != NULL);
+	g_assert_cmpstr (xml->str, ==, valid);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 }

@@ -278,6 +278,9 @@ as_node_get_attr_string (AsNodeData *data)
 	str = g_string_new ("");
 	for (l = data->attrs; l != NULL; l = l->next) {
 		attr = l->data;
+		if (g_strcmp0 (attr->key, "@comment") == 0 ||
+		    g_strcmp0 (attr->key, "@comment-tmp") == 0)
+			continue;
 		g_string_append_printf (str, " %s=\"%s\"",
 					attr->key, attr->value);
 	}
@@ -319,8 +322,19 @@ as_node_to_xml_string (GString *xml,
 	AsNodeData *data = n->data;
 	GNode *c;
 	const gchar *tag_str;
+	const gchar *comment;
 	guint depth = g_node_depth ((GNode *) n);
 	gchar *attrs;
+
+	/* comment */
+	comment = as_node_get_comment (n);
+	if (comment != NULL) {
+		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_INDENT) > 0)
+			as_node_add_padding (xml, depth - depth_offset);
+		g_string_append_printf (xml, "<!-- %s -->", comment);
+		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE) > 0)
+			g_string_append (xml, "\n");
+	}
 
 	/* root node */
 	if (data == NULL) {
@@ -474,6 +488,8 @@ as_node_start_element_cb (GMarkupParseContext *context,
 {
 	AsNodeToXmlHelper *helper = (AsNodeToXmlHelper *) user_data;
 	AsNodeData *data;
+	GNode *current;
+	gchar *tmp;
 	guint i;
 
 	/* create the new node data */
@@ -486,7 +502,17 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	}
 
 	/* add the node to the DOM */
-	helper->current = g_node_append_data (helper->current, data);
+	current = g_node_append_data (helper->current, data);
+
+	/* transfer the ownership of the comment to the new child */
+	tmp = as_node_take_attribute (helper->current, "@comment-tmp");
+	if (tmp != NULL) {
+		as_node_add_attribute (current, "@comment", tmp, -1);
+		g_free (tmp);
+	}
+
+	/* the child is now the node to be processed */
+	helper->current = current;
 }
 
 /**
@@ -538,6 +564,46 @@ as_node_text_cb (GMarkupParseContext *context,
 }
 
 /**
+ * as_node_passthrough_cb:
+ **/
+static void
+as_node_passthrough_cb (GMarkupParseContext *context,
+			const gchar         *passthrough_text,
+			gsize                passthrough_len,
+			gpointer             user_data,
+			GError             **error)
+{
+	AsNodeToXmlHelper *helper = (AsNodeToXmlHelper *) user_data;
+	const gchar *tmp;
+	gchar *found;
+	gchar *text = NULL;
+
+	/* only keep comments when told to */
+	if ((helper->flags & AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS) == 0)
+		return;
+
+	/* xml header */
+	if (g_strstr_len (passthrough_text, passthrough_len, "<?xml") != NULL)
+		goto out;
+
+	/* get stripped comment without '<!--' and '-->' */
+	text = g_strndup (passthrough_text, passthrough_len);
+	if (!g_str_has_prefix (text, "<!--")) {
+		g_warning ("Unexpected input: %s", text);
+		goto out;
+	}
+	found = g_strrstr (text, "-->");
+	if (found != NULL)
+		*found = '\0';
+	tmp = g_strstrip (text + 4);
+	if (tmp == NULL || tmp[0] == '\0')
+		goto out;
+	as_node_add_attribute (helper->current, "@comment-tmp", tmp, -1);
+out:
+	g_free (text);
+}
+
+/**
  * as_node_from_xml: (skip)
  * @data: XML data
  * @data_len: Length of @data, or -1 if NULL terminated
@@ -565,7 +631,7 @@ as_node_from_xml (const gchar *data,
 		as_node_start_element_cb,
 		as_node_end_element_cb,
 		as_node_text_cb,
-		NULL,
+		as_node_passthrough_cb,
 		NULL };
 
 	g_return_val_if_fail (data != NULL, FALSE);
@@ -643,7 +709,7 @@ as_node_from_file (GFile *file,
 		as_node_start_element_cb,
 		as_node_end_element_cb,
 		as_node_text_cb,
-		NULL,
+		as_node_passthrough_cb,
 		NULL };
 
 	/* what kind of file is this */
@@ -832,6 +898,22 @@ as_node_get_data (const GNode *node)
 }
 
 /**
+ * as_node_get_comment:
+ * @node: a #GNode
+ *
+ * Gets the node data, e.g. "Copyright 2014 Richard Hughes <richard@hughsie.com>"
+ *
+ * Return value: string value, or %NULL
+ *
+ * Since: 0.1.6
+ **/
+const gchar *
+as_node_get_comment (const GNode *node)
+{
+	return as_node_get_attribute (node, "@comment");
+}
+
+/**
  * as_node_get_tag:
  * @node: a #GNode
  *
@@ -890,6 +972,23 @@ as_node_set_data (GNode *node,
 	g_free (data->cdata);
 	data->cdata = as_strndup (cdata, cdata_len);
 	data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
+}
+
+/**
+ * as_node_set_comment: (skip)
+ * @node: a #GNode
+ * @comment: new comment
+ * @comment_len: length of @data, or -1 if NULL terminated
+ * @insert_flags: any %AsNodeInsertFlags.
+ *
+ * Sets new comment for the node.
+ *
+ * Since: 0.1.6
+ **/
+void
+as_node_set_comment (GNode *node, const gchar *comment, gssize comment_len)
+{
+	return as_node_add_attribute (node, "@comment", comment, comment_len);
 }
 
 /**
