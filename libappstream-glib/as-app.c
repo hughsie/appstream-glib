@@ -2759,23 +2759,41 @@ as_app_parse_file (AsApp *app,
 		   AsAppParseFlags flags,
 		   GError **error)
 {
+	AsAppPrivate *priv = GET_PRIVATE (app);
 	gboolean ret = FALSE;
 
-	if (g_str_has_suffix (filename, ".desktop")) {
-		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_DESKTOP);
+	/* autodetect */
+	if (priv->source_kind == AS_APP_SOURCE_KIND_UNKNOWN) {
+		if (g_str_has_suffix (filename, ".desktop")) {
+			as_app_set_source_kind (app, AS_APP_SOURCE_KIND_DESKTOP);
+		} else if (g_str_has_suffix (filename, ".appdata.xml")) {
+			as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPDATA);
+		} else {
+			g_set_error (error,
+				     AS_APP_ERROR,
+				     AS_APP_ERROR_INVALID_TYPE,
+				     "%s has an unrecognised extension",
+				     filename);
+			goto out;
+		}
+	}
+
+	/* parse */
+	switch (priv->source_kind) {
+	case AS_APP_SOURCE_KIND_DESKTOP:
 		ret = as_app_parse_desktop_file (app, filename, flags, error);
-		goto out;
-	}
-	if (g_str_has_suffix (filename, ".appdata.xml")) {
-		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPDATA);
+		break;
+	case AS_APP_SOURCE_KIND_APPDATA:
 		ret = as_app_parse_appdata_file (app, filename, flags, error);
-		goto out;
+		break;
+	default:
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "%s has an unhandled type",
+			     filename);
+		break;
 	}
-	g_set_error (error,
-		     AS_APP_ERROR,
-		     AS_APP_ERROR_INVALID_TYPE,
-		     "%s has an unrecognised type",
-		     filename);
 out:
 	return ret;
 }
