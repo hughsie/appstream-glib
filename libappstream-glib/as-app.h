@@ -200,6 +200,8 @@ void		 as_app_set_id_full		(AsApp		*app,
 						 gssize		 id_full_len);
 void		 as_app_set_id_kind		(AsApp		*app,
 						 AsIdKind	 id_kind);
+void		 as_app_set_source_kind		(AsApp		*app,
+						 AsAppSourceKind source_kind);
 void		 as_app_set_project_group	(AsApp		*app,
 						 const gchar	*project_group,
 						 gssize		 project_group_len);

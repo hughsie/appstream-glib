@@ -42,8 +42,6 @@ typedef enum {
 } AsAppProblems;
 
 AsAppProblems	 as_app_get_problems		(AsApp		*app);
-void		 as_app_set_source_kind		(AsApp		*app,
-						 AsAppSourceKind source_kind);
 guint		 as_app_get_name_size		(AsApp		*app);
 guint		 as_app_get_comment_size	(AsApp		*app);
 guint		 as_app_get_description_size	(AsApp		*app);
