@@ -69,13 +69,15 @@ struct _AsAppClass
  * @AS_APP_PARSE_FLAG_NONE:		No special actions to use
  * @AS_APP_PARSE_FLAG_USE_HEURISTICS:	Use heuristic to infer properties
  * @AS_APP_PARSE_FLAG_KEEP_COMMENTS:	Save comments from the file
+ * @AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE:	Allow translatable flags like <_p>
  *
  * The flags to use when parsing resources.
  **/
 typedef enum {
 	AS_APP_PARSE_FLAG_NONE,
-	AS_APP_PARSE_FLAG_USE_HEURISTICS = 1,	/* Since: 0.1.2 */
-	AS_APP_PARSE_FLAG_KEEP_COMMENTS = 1,	/* Since: 0.1.6 */
+	AS_APP_PARSE_FLAG_USE_HEURISTICS	= 1,	/* Since: 0.1.2 */
+	AS_APP_PARSE_FLAG_KEEP_COMMENTS		= 2,	/* Since: 0.1.6 */
+	AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE	= 4,	/* Since: 0.1.6 */
 	/*< private >*/
 	AS_APP_PARSE_FLAG_LAST,
 } AsAppParseFlags;

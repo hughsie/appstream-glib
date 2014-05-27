@@ -2660,6 +2660,39 @@ out:
 }
 
 /**
+ * as_app_parse_appdata_unintltoolize_cb:
+ **/
+static gboolean
+as_app_parse_appdata_unintltoolize_cb (GNode *node, gpointer data)
+{
+	const gchar *name;
+
+	name = as_node_get_name (node);
+	if (g_strcmp0 (name, "_name") == 0) {
+		as_node_set_name (node, "name");
+		goto out;
+	}
+	if (g_strcmp0 (name, "_summary") == 0) {
+		as_node_set_name (node, "summary");
+		goto out;
+	}
+	if (g_strcmp0 (name, "_caption") == 0) {
+		as_node_set_name (node, "caption");
+		goto out;
+	}
+	if (g_strcmp0 (name, "_p") == 0) {
+		as_node_set_name (node, "p");
+		goto out;
+	}
+	if (g_strcmp0 (name, "_li") == 0) {
+		as_node_set_name (node, "li");
+		goto out;
+	}
+out:
+	return FALSE;
+}
+
+/**
  * as_app_parse_appdata_file:
  **/
 static gboolean
@@ -2706,6 +2739,17 @@ as_app_parse_appdata_file (AsApp *app,
 		ret = FALSE;
 		goto out;
 	}
+
+	/* make the <_summary> tags into <summary> */
+	if (flags & AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE) {
+		g_node_traverse (root,
+				 G_IN_ORDER,
+				 G_TRAVERSE_ALL,
+				 10,
+				 as_app_parse_appdata_unintltoolize_cb,
+				 app);
+	}
+
 	node = as_node_find (root, "application");
 	if (node == NULL)
 		node = as_node_find (root, "component");
@@ -2767,6 +2811,9 @@ as_app_parse_file (AsApp *app,
 		if (g_str_has_suffix (filename, ".desktop")) {
 			as_app_set_source_kind (app, AS_APP_SOURCE_KIND_DESKTOP);
 		} else if (g_str_has_suffix (filename, ".appdata.xml")) {
+			as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPDATA);
+		} else if (g_str_has_suffix (filename, ".appdata.xml.in")) {
+			flags |= AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE;
 			as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPDATA);
 		} else {
 			g_set_error (error,

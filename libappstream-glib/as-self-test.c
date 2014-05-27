@@ -509,6 +509,43 @@ ch_test_app_validate_file_good_func (void)
 }
 
 static void
+ch_test_app_validate_intltool_func (void)
+{
+	AsApp *app;
+	AsProblem *problem;
+	GError *error = NULL;
+	GPtrArray *probs;
+	gboolean ret;
+	gchar *filename;
+	guint i;
+
+	/* open file */
+	app = as_app_new ();
+	filename = as_test_get_filename ("intltool.appdata.xml.in");
+	ret = as_app_parse_file (app, filename, AS_APP_PARSE_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* check success */
+	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_DESKTOP);
+	g_assert_cmpstr (as_app_get_id_full (app), ==, "gnome-power-statistics.desktop");
+	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "0 A.D.");
+	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "Observe power management");
+	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NO_NETWORK, &error);
+	g_assert_no_error (error);
+	g_assert (probs != NULL);
+	for (i = 0; i < probs->len; i++) {
+		problem = g_ptr_array_index (probs, i);
+		g_warning ("%s", as_problem_get_message (problem));
+	}
+	g_assert_cmpint (probs->len, ==, 0);
+	g_ptr_array_unref (probs);
+
+	g_free (filename);
+	g_object_unref (app);
+}
+
+static void
 ch_test_app_translated_func (void)
 {
 	AsApp *app;
@@ -1585,6 +1622,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/app{validate-style}", ch_test_app_validate_style_func);
 	g_test_add_func ("/AppStream/app{validate-file-good}", ch_test_app_validate_file_good_func);
 	g_test_add_func ("/AppStream/app{validate-file-bad}", ch_test_app_validate_file_bad_func);
+	g_test_add_func ("/AppStream/app{validate-intltool}", ch_test_app_validate_intltool_func);
 	g_test_add_func ("/AppStream/app{parse-file}", ch_test_app_parse_file_func);
 	g_test_add_func ("/AppStream/app{no-markup}", ch_test_app_no_markup_func);
 	g_test_add_func ("/AppStream/app{subsume}", ch_test_app_subsume_func);

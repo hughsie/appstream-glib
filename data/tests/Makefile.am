@@ -2,6 +2,7 @@ test_files =						\
 	broken.appdata.xml				\
 	example.desktop					\
 	example-v04.xml.gz				\
+	intltool.appdata.xml.in				\
 	origin.xml					\
 	settings-panel.desktop				\
 	screenshot.png					\
