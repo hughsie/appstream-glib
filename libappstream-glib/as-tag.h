@@ -108,9 +108,18 @@ typedef enum {
 	AS_TAG_LAST
 } AsTag;
 
+/**
+ * AsTagFlags:
+ * @AS_TAG_FLAG_NONE:			No special actions to use
+ * @AS_TAG_FLAG_USE_FALLBACKS:		Use fallback tag names
+ * @AS_TAG_FLAG_USE_TRANSLATED:		Use translated tag names
+ *
+ * The flags to use when matching %AsTag's.
+ **/
 typedef enum {
 	AS_TAG_FLAG_NONE,
-	AS_TAG_FLAG_USE_FALLBACKS,
+	AS_TAG_FLAG_USE_FALLBACKS 	= 1,	/* Since: 0.1.4 */
+	AS_TAG_FLAG_USE_TRANSLATED	= 2,	/* Since: 0.1.6 */
 	/*< private >*/
 	AS_TAG_FLAG_LAST
 } AsTagFlags;

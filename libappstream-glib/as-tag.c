@@ -106,6 +106,16 @@ as_tag_from_string_full (const gchar *tag, AsTagFlags flags)
 			return AS_TAG_APPLICATION;
 	}
 
+	/* translated versions */
+	if (etag == AS_TAG_UNKNOWN && (flags & AS_TAG_FLAG_USE_TRANSLATED)) {
+		if (g_strcmp0 (tag, "_name") == 0)
+			return AS_TAG_NAME;
+		if (g_strcmp0 (tag, "_summary") == 0)
+			return AS_TAG_SUMMARY;
+		if (g_strcmp0 (tag, "_caption") == 0)
+			return AS_TAG_CAPTION;
+	}
+
 	return etag;
 }
 
