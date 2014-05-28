@@ -1,3 +1,32 @@
+Version 0.1.6
+~~~~~~~~~~~~~
+Released: 2014-05-28
+
+New Features:
+ - Add as_app_get_names() (Richard Hughes)
+ - Add as_image_get_basename() (Richard Hughes)
+ - Add as_image_get_md5() (Richard Hughes)
+ - Add as_image_load_filename() (Richard Hughes)
+ - Add as_image_save_filename() (Richard Hughes)
+ - Add as_image_save_pixbuf() (Richard Hughes)
+ - Add as_image_set_pixbuf() (Richard Hughes)
+ - Add as_node_get_comment() (Richard Hughes)
+ - Add AsProvide (Richard Hughes, Kalev Lember)
+ - Add as_screenshot_get_source() convenience helper (Richard Hughes)
+ - Add AS_TAG_FLAG_USE_TRANSLATED (Richard Hughes)
+ - Add validation for <releases> (Richard Hughes)
+
+Bugfixes:
+ - Also support validating .appdata.xml.in files (Richard Hughes)
+ - Correctly parse the localized descriptions from AppData files (Richard Hughes)
+ - Export as_app_set_source_kind() (Richard Hughes)
+ - Fix validation of old-style AppData files without screenshot sizes (Richard Hughes)
+ - Only autodetect the AsAppSourceKind when unknown (Richard Hughes)
+ - Only require <project_licence> when being strict (Richard Hughes)
+ - Only show the thumbnail when creating the HTML status page (Richard Hughes)
+ - Retain comments in .desktop and .appdata.xml files when required (Richard Hughes)
+ - Subsume more properties in AsApp (Richard Hughes)
+
 Version 0.1.5
 ~~~~~~~~~~~~~
 Released: 2014-05-12
