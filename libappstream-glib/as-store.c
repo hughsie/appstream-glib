@@ -531,8 +531,8 @@ out:
 static gint
 as_store_apps_sort_cb (gconstpointer a, gconstpointer b)
 {
-	return g_strcmp0 (as_app_get_id (AS_APP (a)),
-			  as_app_get_id (AS_APP (b)));
+	return g_strcmp0 (as_app_get_id (AS_APP (*(AsApp **) a)),
+			  as_app_get_id (AS_APP (*(AsApp **) b)));
 }
 
 /**

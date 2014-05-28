@@ -1219,8 +1219,28 @@ ch_test_store_func (void)
 		"<id type=\"desktop\">gnome-software.desktop</id>"
 		"</application>"
 		"</applications>");
-	g_object_unref (store);
 	g_string_free (xml, TRUE);
+
+	/* add another app and ensure it's sorted */
+	app = as_app_new ();
+	as_app_set_id_full (app, "aaa.desktop", -1);
+	as_app_set_id_kind (app, AS_ID_KIND_FONT);
+	as_store_add_app (store, app);
+	g_object_unref (app);
+	xml = as_store_to_xml (store, 0);
+	g_assert_cmpstr (xml->str, ==,
+		"<applications version=\"0.4\">"
+		"<application>"
+		"<id type=\"font\">aaa.desktop</id>"
+		"</application>"
+		"<application>"
+		"<id type=\"desktop\">gnome-software.desktop</id>"
+		"</application>"
+		"</applications>");
+	g_string_free (xml, TRUE);
+
+	g_object_unref (store);
+
 }
 
 static void
