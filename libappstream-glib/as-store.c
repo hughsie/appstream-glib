@@ -526,6 +526,16 @@ out:
 }
 
 /**
+ * as_store_apps_sort_cb:
+ **/
+static gint
+as_store_apps_sort_cb (gconstpointer a, gconstpointer b)
+{
+	return g_strcmp0 (as_app_get_id (AS_APP (a)),
+			  as_app_get_id (AS_APP (b)));
+}
+
+/**
  * as_store_to_xml:
  * @store: a #AsStore instance.
  * @flags: the AsNodeToXmlFlags, e.g. %AS_NODE_INSERT_FLAG_NONE.
@@ -566,6 +576,10 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 		as_node_add_attribute (node_apps, "version", version, -1);
 	}
 
+	/* sort by ID */
+	g_ptr_array_sort (priv->array, as_store_apps_sort_cb);
+
+	/* add applications */
 	for (i = 0; i < priv->array->len; i++) {
 		app = g_ptr_array_index (priv->array, i);
 		as_app_node_insert (app, node_apps, priv->api_version);
