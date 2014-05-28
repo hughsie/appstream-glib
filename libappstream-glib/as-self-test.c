@@ -421,6 +421,10 @@ ch_test_app_func (void)
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 
+	/* test contact demunging */
+	as_app_set_update_contact (app, "richard_at_hughsie_dot_co_dot_uk", -1);
+	g_assert_cmpstr (as_app_get_update_contact (app), ==, "richard@hughsie.co.uk");
+
 	g_object_unref (app);
 }
 
@@ -475,7 +479,7 @@ ch_test_app_validate_file_good_func (void)
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "0 A.D.");
 	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "Observe power management");
 	g_assert_cmpstr (as_app_get_metadata_license (app), ==, "CC0-1.0");
-	g_assert_cmpstr (as_app_get_update_contact (app), ==, "richard_at_hughsie.com");
+	g_assert_cmpstr (as_app_get_update_contact (app), ==, "richard@hughsie.com");
 	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
 	g_assert_cmpstr (as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE), ==,
 			 "http://www.gnome.org/projects/gnome-power-manager/");

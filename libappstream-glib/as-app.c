@@ -1025,8 +1025,45 @@ as_app_set_update_contact (AsApp *app,
 			   gssize update_contact_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	gboolean done_replacement = TRUE;
+	gchar *tmp;
+	gsize len;
+	guint i;
+	struct {
+		const gchar	*search;
+		const gchar	 replace;
+	} replacements[] =  {
+		{ "(@)",	'@' },
+		{ " _at_ ",	'@' },
+		{ "_at_",	'@' },
+		{ "(at)",	'@' },
+		{ " AT ",	'@' },
+		{ "_dot_",	'.' },
+		{ " DOT ",	'.' },
+		{ NULL,		'\0' } };
+
+	/* copy as-is */
 	g_free (priv->update_contact);
 	priv->update_contact = as_strndup (update_contact, update_contact_len);
+	if (priv->update_contact == NULL)
+		return;
+
+	/* keep going until we have no more matches */
+	len = strlen (priv->update_contact);
+	while (done_replacement) {
+		done_replacement = FALSE;
+		for (i = 0; replacements[i].search != NULL; i++) {
+			tmp = g_strstr_len (priv->update_contact, -1,
+					    replacements[i].search);
+			if (tmp != NULL) {
+				*tmp = replacements[i].replace;
+				g_strlcpy (tmp + 1,
+					   tmp + strlen (replacements[i].search),
+					   len);
+				done_replacement = TRUE;
+			}
+		}
+	}
 }
 
 /**
@@ -1991,8 +2028,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <updatecontact> */
 	case AS_TAG_UPDATE_CONTACT:
-		g_free (priv->update_contact);
-		priv->update_contact = as_node_take_data (n);
+		as_app_set_update_contact (app, as_node_get_data (n), -1);
 		break;
 
 	/* <url> */
