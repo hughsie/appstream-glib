@@ -771,7 +771,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	gboolean deprectated_failure = FALSE;
 	gboolean require_contactdetails = TRUE;
 	gboolean require_copyright = FALSE;
-	gboolean require_project_license = TRUE;
+	gboolean require_project_license = FALSE;
 	gboolean require_translations = FALSE;
 	gboolean require_url = TRUE;
 	gboolean ret;
@@ -789,7 +789,6 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		length_summary_max = 200;
 		require_contactdetails = FALSE;
 		require_url = FALSE;
-		require_project_license = FALSE;
 		number_para_max = 10;
 		number_para_min = 1;
 	}
@@ -799,6 +798,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		deprectated_failure = TRUE;
 		require_copyright = TRUE;
 		require_translations = TRUE;
+		require_project_license = TRUE;
 	}
 
 	/* set up networking */
