@@ -72,6 +72,7 @@ libappstream_glib_la_SOURCES =					\
 	as-app.c						\
 	as-app-private.h					\
 	as-app-validate.c					\
+	as-cleanup.h						\
 	as-enums.c						\
 	as-image.c						\
 	as-image-private.h					\

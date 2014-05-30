@@ -37,6 +37,7 @@
 #include <glib.h>
 #include <string.h>
 
+#include "as-cleanup.h"
 #include "as-node-private.h"
 #include "as-utils-private.h"
 
@@ -181,20 +182,17 @@ as_node_error_quark (void)
 static void
 as_node_string_replace (GString *string, const gchar *search, const gchar *replace)
 {
-	gchar **split = NULL;
-	gchar *tmp = NULL;
+	_cleanup_free gchar *tmp = NULL;
+	_cleanup_free_strv gchar **split = NULL;
 
 	/* quick search */
 	if (g_strstr_len (string->str, -1, search) == NULL)
-		goto out;
+		return;
 
 	/* replace */
 	split = g_strsplit (string->str, search, -1);
 	tmp = g_strjoinv (replace, split);
 	g_string_assign (string, tmp);
-out:
-	g_strfreev (split);
-	g_free (tmp);
 }
 
 /**
@@ -574,9 +572,9 @@ as_node_passthrough_cb (GMarkupParseContext *context,
 			GError             **error)
 {
 	AsNodeToXmlHelper *helper = (AsNodeToXmlHelper *) user_data;
+	_cleanup_free gchar *text = NULL;
 	const gchar *tmp;
 	gchar *found;
-	gchar *text = NULL;
 
 	/* only keep comments when told to */
 	if ((helper->flags & AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS) == 0)
@@ -584,23 +582,21 @@ as_node_passthrough_cb (GMarkupParseContext *context,
 
 	/* xml header */
 	if (g_strstr_len (passthrough_text, passthrough_len, "<?xml") != NULL)
-		goto out;
+		return;
 
 	/* get stripped comment without '<!--' and '-->' */
 	text = g_strndup (passthrough_text, passthrough_len);
 	if (!g_str_has_prefix (text, "<!--")) {
 		g_warning ("Unexpected input: %s", text);
-		goto out;
+		return;
 	}
 	found = g_strrstr (text, "-->");
 	if (found != NULL)
 		*found = '\0';
 	tmp = g_strstrip (text + 4);
 	if (tmp == NULL || tmp[0] == '\0')
-		goto out;
+		return;
 	as_node_add_attribute (helper->current, "@comment-tmp", tmp, -1);
-out:
-	g_free (text);
 }
 
 /**
@@ -623,9 +619,9 @@ as_node_from_xml (const gchar *data,
 		  GError **error)
 {
 	AsNodeToXmlHelper helper;
-	GError *error_local = NULL;
-	GMarkupParseContext *ctx;
-	GNode *root;
+	GNode *root = NULL;
+	_cleanup_unref_markup_parse_context GMarkupParseContext *ctx = NULL;
+	_cleanup_free_error GError *error_local = NULL;
 	gboolean ret;
 	const GMarkupParser parser = {
 		as_node_start_element_cb,
@@ -652,10 +648,8 @@ as_node_from_xml (const gchar *data,
 				     AS_NODE_ERROR,
 				     AS_NODE_ERROR_FAILED,
 				     error_local->message);
-		g_error_free (error_local);
 		as_node_unref (root);
-		root = NULL;
-		goto out;
+		return NULL;
 	}
 
 	/* more opening than closing */
@@ -665,11 +659,8 @@ as_node_from_xml (const gchar *data,
 				     AS_NODE_ERROR_FAILED,
 				     "Mismatched XML");
 		as_node_unref (root);
-		root = NULL;
-		goto out;
+		return NULL;
 	}
-out:
-	g_markup_parse_context_free (ctx);
 	return root;
 }
 
@@ -693,16 +684,16 @@ as_node_from_file (GFile *file,
 		   GError **error)
 {
 	AsNodeToXmlHelper helper;
-	GConverter *conv = NULL;
 	GError *error_local = NULL;
-	GFileInfo *info = NULL;
-	GInputStream *file_stream = NULL;
-	GInputStream *stream_data = NULL;
-	GMarkupParseContext *ctx = NULL;
 	GNode *root = NULL;
+	_cleanup_free gchar *data = NULL;
+	_cleanup_unref_markup_parse_context GMarkupParseContext *ctx = NULL;
+	_cleanup_unref_object GConverter *conv = NULL;
+	_cleanup_unref_object GFileInfo *info = NULL;
+	_cleanup_unref_object GInputStream *file_stream = NULL;
+	_cleanup_unref_object GInputStream *stream_data = NULL;
 	const gchar *content_type = NULL;
 	gboolean ret = TRUE;
-	gchar *data = NULL;
 	gsize chunk_size = 32 * 1024;
 	gssize len;
 	const GMarkupParser parser = {
@@ -719,12 +710,12 @@ as_node_from_file (GFile *file,
 				  cancellable,
 				  error);
 	if (info == NULL)
-		goto out;
+		return NULL;
 
 	/* decompress if required */
 	file_stream = G_INPUT_STREAM (g_file_read (file, cancellable, error));
 	if (file_stream == NULL)
-		goto out;
+		return NULL;
 	content_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
 	if (g_strcmp0 (content_type, "application/gzip") == 0 ||
 	    g_strcmp0 (content_type, "application/x-gzip") == 0) {
@@ -738,7 +729,7 @@ as_node_from_file (GFile *file,
 			     AS_NODE_ERROR_FAILED,
 			     "cannot process file of type %s",
 			     content_type);
-		goto out;
+		return NULL;
 	}
 
 	/* parse */
@@ -767,14 +758,12 @@ as_node_from_file (GFile *file,
 					     error_local->message);
 			g_error_free (error_local);
 			as_node_unref (root);
-			root = NULL;
-			goto out;
+			return NULL;
 		}
 	}
 	if (len < 0) {
 		as_node_unref (root);
-		root = NULL;
-		goto out;
+		return NULL;
 	}
 
 	/* more opening than closing */
@@ -784,21 +773,8 @@ as_node_from_file (GFile *file,
 				     AS_NODE_ERROR_FAILED,
 				     "Mismatched XML");
 		as_node_unref (root);
-		root = NULL;
-		goto out;
+		return NULL;
 	}
-out:
-	if (info != NULL)
-		g_object_unref (info);
-	if (stream_data != NULL)
-		g_object_unref (stream_data);
-	if (conv != NULL)
-		g_object_unref (conv);
-	if (file_stream != NULL)
-		g_object_unref (file_stream);
-	g_free (data);
-	if (ctx != NULL)
-		g_markup_parse_context_free (ctx);
 	return root;
 }
 
@@ -1035,19 +1011,16 @@ as_node_get_attribute_as_int (const GNode *node, const gchar *key)
 	const gchar *tmp;
 	gchar *endptr = NULL;
 	guint64 value_tmp;
-	guint value = G_MAXUINT;
 
 	tmp = as_node_get_attribute (node, key);
 	if (tmp == NULL)
-		goto out;
+		return G_MAXUINT;
 	value_tmp = g_ascii_strtoll (tmp, &endptr, 10);
 	if (value_tmp == 0 && tmp == endptr)
-		goto out;
+		return G_MAXUINT;
 	if (value_tmp > G_MAXINT)
-		goto out;
-	value = value_tmp;
-out:
-	return value;
+		return G_MAXUINT;
+	return value_tmp;
 }
 
 /**
@@ -1151,8 +1124,8 @@ as_node_add_attribute (GNode *node,
 GNode *
 as_node_find (GNode *root, const gchar *path)
 {
-	gchar **split;
 	GNode *node = root;
+	_cleanup_free_strv gchar **split = NULL;
 	guint i;
 
 	g_return_val_if_fail (path != NULL, NULL);
@@ -1161,10 +1134,8 @@ as_node_find (GNode *root, const gchar *path)
 	for (i = 0; split[i] != NULL; i++) {
 		node = as_node_get_child_node (node, split[i]);
 		if (node == NULL)
-			goto out;
+			return NULL;
 	}
-out:
-	g_strfreev (split);
 	return node;
 }
 
@@ -1243,12 +1214,12 @@ as_node_insert_localized (GNode *parent,
 			  GHashTable *localized,
 			  AsNodeInsertFlags insert_flags)
 {
+	AsNodeData *data;
+	GList *l;
+	_cleanup_free_list GList *list = NULL;
 	const gchar *key;
 	const gchar *value;
 	const gchar *value_c;
-	AsNodeData *data;
-	GList *l;
-	GList *list;
 
 	/* add the untranslated value first */
 	value_c = g_hash_table_lookup (localized, "C");
@@ -1292,7 +1263,6 @@ as_node_insert_localized (GNode *parent,
 		}
 		g_node_insert_data (parent, -1, data);
 	}
-	g_list_free (list);
 }
 
 /**
@@ -1366,7 +1336,7 @@ as_node_get_localized (const GNode *node, const gchar *key)
 	/* does it exist? */
 	tmp = as_node_get_child_node (node, key);
 	if (tmp == NULL)
-		goto out;
+		return NULL;
 	data_unlocalized = as_node_get_data (tmp);
 
 	/* find a node called name */
@@ -1389,7 +1359,6 @@ as_node_get_localized (const GNode *node, const gchar *key)
 				     g_strdup (xml_lang != NULL ? xml_lang : "C"),
 				     (gpointer) data_localized);
 	}
-out:
 	return hash;
 }
 
@@ -1407,19 +1376,11 @@ out:
 const gchar *
 as_node_get_localized_best (const GNode *node, const gchar *key)
 {
-	GHashTable *hash;
-	const gchar *tmp = NULL;
-
+	_cleanup_unref_hashtable GHashTable *hash = NULL;
 	hash = as_node_get_localized (node, key);
 	if (hash == NULL)
-		goto out;
-	tmp = as_hash_lookup_by_locale (hash, NULL);
-	if (tmp == NULL)
-		goto out;
-out:
-	if (hash != NULL)
-		g_hash_table_unref (hash);
-	return tmp;
+		return NULL;
+	return as_hash_lookup_by_locale (hash, NULL);
 }
 
 /**
@@ -1439,10 +1400,10 @@ as_node_denorm_add_to_langs (GHashTable *hash,
 			     const gchar *data,
 			     gboolean is_start)
 {
-	const gchar *xml_lang;
-	GList *keys;
 	GList *l;
 	GString *str;
+	_cleanup_free_list GList *keys = NULL;
+	const gchar *xml_lang;
 
 	keys = g_hash_table_get_keys (hash);
 	for (l = keys; l != NULL; l = l->next) {
@@ -1453,7 +1414,6 @@ as_node_denorm_add_to_langs (GHashTable *hash,
 		else
 			g_string_append_printf (str, "</%s>", data);
 	}
-	g_list_free (keys);
 }
 
 /**
@@ -1505,7 +1465,6 @@ as_node_get_localized_unwrap_type_li (const GNode *node,
 	AsNodeData *data;
 	AsNodeData *data_c;
 	GString *str;
-	gboolean ret = TRUE;
 
 	for (tmp = node->children; tmp != NULL; tmp = tmp->next) {
 		data = tmp->data;
@@ -1544,29 +1503,26 @@ as_node_get_localized_unwrap_type_li (const GNode *node,
 								data_c->cdata);
 				} else {
 					/* only <li> is valid in lists */
-					ret = FALSE;
 					g_set_error (error,
 						     AS_NODE_ERROR,
 						     AS_NODE_ERROR_FAILED,
 						     "Tag %s in %s invalid",
 						     data_c->name, data->name);
-					goto out;
+					return FALSE;
 				}
 			}
 			as_node_denorm_add_to_langs (hash, data->name, FALSE);
 		} else {
 			/* only <p>, <ul> and <ol> is valid here */
-			ret = FALSE;
 			g_set_error (error,
 				     AS_NODE_ERROR,
 				     AS_NODE_ERROR_FAILED,
 				     "Unknown tag '%s'",
 				     data->name);
-			goto out;
+			return FALSE;
 		}
 	}
-out:
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -1597,7 +1553,6 @@ as_node_get_localized_unwrap_type_ul (const GNode *node,
 	AsNodeData *data;
 	AsNodeData *data_c;
 	GString *str;
-	gboolean ret = TRUE;
 
 	for (tmp = node->children; tmp != NULL; tmp = tmp->next) {
 		data = tmp->data;
@@ -1624,29 +1579,26 @@ as_node_get_localized_unwrap_type_ul (const GNode *node,
 								data_c->cdata);
 				} else {
 					/* only <li> is valid in lists */
-					ret = FALSE;
 					g_set_error (error,
 						     AS_NODE_ERROR,
 						     AS_NODE_ERROR_FAILED,
 						     "Tag %s in %s invalid",
 						     data_c->name, data->name);
-					goto out;
+					return FALSE;
 				}
 			}
 			g_string_append_printf (str, "</%s>", data->name);
 		} else {
 			/* only <p>, <ul> and <ol> is valid here */
-			ret = FALSE;
 			g_set_error (error,
 				     AS_NODE_ERROR,
 				     AS_NODE_ERROR_FAILED,
 				     "Unknown tag '%s'",
 				     data->name);
-			goto out;
+			return FALSE;
 		}
 	}
-out:
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -1681,16 +1633,15 @@ out:
 GHashTable *
 as_node_get_localized_unwrap (const GNode *node, GError **error)
 {
-	GNode *tmp;
 	AsNodeData *data;
-	const gchar *xml_lang;
-	GHashTable *hash;
-	GString *str;
-	GList *keys = NULL;
+	GHashTable *results;
 	GList *l;
-	GHashTable *results = NULL;
+	GNode *tmp;
+	GString *str;
+	_cleanup_free_list GList *keys = NULL;
+	_cleanup_unref_hashtable GHashTable *hash = NULL;
+	const gchar *xml_lang;
 	gboolean is_li_translated = TRUE;
-	gboolean ret;
 
 	/* work out what kind of normalization this is */
 	for (tmp = node->children; tmp != NULL; tmp = tmp->next) {
@@ -1708,13 +1659,11 @@ as_node_get_localized_unwrap (const GNode *node, GError **error)
 	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
 				      g_free, (GDestroyNotify) as_node_string_free);
 	if (is_li_translated) {
-		ret = as_node_get_localized_unwrap_type_li (node, hash, error);
-		if (!ret)
-			goto out;
+		if (!as_node_get_localized_unwrap_type_li (node, hash, error))
+			return NULL;
 	} else {
-		ret = as_node_get_localized_unwrap_type_ul (node, hash, error);
-		if (!ret)
-			goto out;
+		if (!as_node_get_localized_unwrap_type_ul (node, hash, error))
+			return NULL;
 	}
 
 	/* copy into a hash table of the correct size */
@@ -1727,8 +1676,5 @@ as_node_get_localized_unwrap (const GNode *node, GError **error)
 				     g_strdup (xml_lang),
 				     g_strdup (str->str));
 	}
-out:
-	g_list_free (keys);
-	g_hash_table_unref (hash);
 	return results;
 }

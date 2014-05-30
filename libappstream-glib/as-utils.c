@@ -34,6 +34,7 @@
 #include <string.h>
 #include <libsoup/soup.h>
 
+#include "as-cleanup.h"
 #include "as-node.h"
 #include "as-resources.h"
 #include "as-utils.h"
@@ -75,33 +76,27 @@ as_markup_convert_simple (const gchar *markup,
 			  gssize markup_len,
 			  GError **error)
 {
-	GNode *root = NULL;
 	GNode *tmp;
 	GNode *tmp_c;
-	GString *str = NULL;
+	_cleanup_free_string GString *str = NULL;
+	_cleanup_unref_node GNode *root = NULL;
 	const gchar *tag;
 	const gchar *tag_c;
-	gboolean ret = TRUE;
-	gchar *formatted = NULL;
 
 	/* is this actually markup */
-	if (g_strstr_len (markup, markup_len, "<") == NULL) {
-		formatted = as_strndup (markup, markup_len);
-		goto out;
-	}
+	if (g_strstr_len (markup, markup_len, "<") == NULL)
+		return as_strndup (markup, markup_len);
 
 	/* load */
 	root = as_node_from_xml (markup,
 				 markup_len,
 				 AS_NODE_FROM_XML_FLAG_NONE,
 				 error);
-	if (root == NULL) {
-		ret = FALSE;
-		goto out;
-	}
-	str = g_string_sized_new (markup_len);
+	if (root == NULL)
+		return NULL;
 
 	/* format */
+	str = g_string_sized_new (markup_len);
 	for (tmp = root->children; tmp != NULL; tmp = tmp->next) {
 
 		tag = as_node_get_name (tmp);
@@ -121,39 +116,28 @@ as_markup_convert_simple (const gchar *markup,
 								as_node_get_data (tmp_c));
 				} else {
 					/* only <li> is valid in lists */
-					ret = FALSE;
 					g_set_error (error,
 						     AS_NODE_ERROR,
 						     AS_NODE_ERROR_FAILED,
 						     "Tag %s in %s invalid",
 						     tag_c, tag);
-					goto out;
+					return FALSE;
 				}
 			}
 		} else {
 			/* only <p>, <ul> and <ol> is valid here */
-			ret = FALSE;
 			g_set_error (error,
 				     AS_NODE_ERROR,
 				     AS_NODE_ERROR_FAILED,
 				     "Unknown tag '%s'", tag);
-			goto out;
+			return NULL;
 		}
 	}
 
 	/* success */
 	if (str->len > 0)
 		g_string_truncate (str, str->len - 1);
-out:
-	if (root != NULL)
-		as_node_unref (root);
-	if (str != NULL) {
-		if (!ret)
-			g_string_free (str, TRUE);
-		else
-			formatted = g_string_free (str, FALSE);
-	}
-	return formatted;
+	return g_strdup (str->str);
 }
 
 /**
@@ -181,20 +165,17 @@ as_hash_lookup_by_locale (GHashTable *hash, const gchar *locale)
 	g_return_val_if_fail (hash != NULL, NULL);
 
 	/* the user specified a locale */
-	if (locale != NULL) {
-		tmp = g_hash_table_lookup (hash, locale);
-		goto out;
-	}
+	if (locale != NULL)
+		return g_hash_table_lookup (hash, locale);
 
 	/* use LANGUAGE, LC_ALL, LC_MESSAGES and LANG */
 	locales = g_get_language_names ();
 	for (i = 0; locales[i] != NULL; i++) {
 		tmp = g_hash_table_lookup (hash, locales[i]);
 		if (tmp != NULL)
-			goto out;
+			return tmp;
 	}
-out:
-	return tmp;
+	return NULL;
 }
 
 /**
@@ -211,9 +192,8 @@ out:
 gboolean
 as_utils_is_stock_icon_name (const gchar *name)
 {
-	GBytes *data;
-	gboolean ret = FALSE;
-	gchar *key = NULL;
+	_cleanup_free gchar *key = NULL;
+	_cleanup_unref_bytes GBytes *data;
 
 	/* load the readonly data section and look for the icon name */
 	data = g_resource_lookup_data (as_get_resource (),
@@ -221,14 +201,9 @@ as_utils_is_stock_icon_name (const gchar *name)
 				       G_RESOURCE_LOOKUP_FLAGS_NONE,
 				       NULL);
 	if (data == NULL)
-		goto out;
+		return FALSE;
 	key = g_strdup_printf ("\n%s\n", name);
-	ret = g_strstr_len (g_bytes_get_data (data, NULL), -1, key) != NULL;
-out:
-	if (data != NULL)
-		g_bytes_unref (data);
-	g_free (key);
-	return ret;
+	return g_strstr_len (g_bytes_get_data (data, NULL), -1, key) != NULL;
 }
 
 /**
@@ -244,9 +219,8 @@ out:
 gboolean
 as_utils_is_spdx_license_id (const gchar *license_id)
 {
-	GBytes *data;
-	gboolean ret = FALSE;
-	gchar *key = NULL;
+	_cleanup_free gchar *key = NULL;
+	_cleanup_unref_bytes GBytes *data;
 
 	/* load the readonly data section and look for the icon name */
 	data = g_resource_lookup_data (as_get_resource (),
@@ -254,14 +228,9 @@ as_utils_is_spdx_license_id (const gchar *license_id)
 				       G_RESOURCE_LOOKUP_FLAGS_NONE,
 				       NULL);
 	if (data == NULL)
-		goto out;
+		return FALSE;
 	key = g_strdup_printf ("\n%s\n", license_id);
-	ret = g_strstr_len (g_bytes_get_data (data, NULL), -1, key) != NULL;
-out:
-	if (data != NULL)
-		g_bytes_unref (data);
-	g_free (key);
-	return ret;
+	return g_strstr_len (g_bytes_get_data (data, NULL), -1, key) != NULL;
 }
 
 /**
@@ -388,30 +357,26 @@ as_util_get_possible_kudos (void)
 gboolean
 as_utils_check_url_exists (const gchar *url, guint timeout, GError **error)
 {
-	SoupMessage *msg = NULL;
-	SoupSession *session = NULL;
-	SoupURI *base_uri = NULL;
-	gboolean ret = TRUE;
-	gint status_code;
+	_cleanup_unref_object SoupMessage *msg = NULL;
+	_cleanup_unref_object SoupSession *session = NULL;
+	_cleanup_unref_uri SoupURI *base_uri = NULL;
 
 	/* GET file */
 	base_uri = soup_uri_new (url);
 	if (base_uri == NULL) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     AS_NODE_ERROR,
 				     AS_NODE_ERROR_FAILED,
 				     "URL not valid");
-		goto out;
+		return FALSE;
 	}
 	msg = soup_message_new_from_uri (SOUP_METHOD_GET, base_uri);
 	if (msg == NULL) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     AS_NODE_ERROR,
 				     AS_NODE_ERROR_FAILED,
 				     "Failed to setup message");
-		goto out;
+		return FALSE;
 	}
 	session = soup_session_sync_new_with_options (SOUP_SESSION_USER_AGENT,
 						      "libappstream-glib",
@@ -419,40 +384,29 @@ as_utils_check_url_exists (const gchar *url, guint timeout, GError **error)
 						      timeout,
 						      NULL);
 	if (session == NULL) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     AS_NODE_ERROR,
 				     AS_NODE_ERROR_FAILED,
 				     "Failed to set up networking");
-		goto out;
+		return FALSE;
 	}
 
 	/* send sync */
-	status_code = soup_session_send_message (session, msg);
-	if (status_code != SOUP_STATUS_OK) {
-		ret = FALSE;
+	if (soup_session_send_message (session, msg) != SOUP_STATUS_OK) {
 		g_set_error_literal (error,
 				     AS_NODE_ERROR,
 				     AS_NODE_ERROR_FAILED,
 				     msg->reason_phrase);
-		goto out;
+		return FALSE;
 	}
 
 	/* check if it's a zero sized file */
 	if (msg->response_body->length == 0) {
-		ret = FALSE;
 		g_set_error (error,
 			     AS_NODE_ERROR,
 			     AS_NODE_ERROR_FAILED,
 			     "Returned a zero length file");
-		goto out;
+		return FALSE;
 	}
-out:
-	if (session != NULL)
-		g_object_unref (session);
-	if (base_uri != NULL)
-		soup_uri_free (base_uri);
-	if (msg != NULL)
-		g_object_unref (msg);
-	return ret;
+	return TRUE;
 }

@@ -27,6 +27,7 @@
 #include <string.h>
 
 #include "as-app-private.h"
+#include "as-cleanup.h"
 #include "as-node-private.h"
 #include "as-problem.h"
 #include "as-utils.h"
@@ -229,17 +230,14 @@ as_app_validate_description (const gchar *xml,
 {
 	GNode *l;
 	GNode *l2;
-	GNode *node;
-	gboolean ret = TRUE;
+	_cleanup_unref_node GNode *node;
 
 	/* parse xml */
 	node = as_node_from_xml (xml, -1,
 				 AS_NODE_FROM_XML_FLAG_NONE,
 				 error);
-	if (node == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (node == NULL)
+		return FALSE;
 	helper->number_paragraphs = 0;
 	helper->previous_para_was_short = FALSE;
 	for (l = node->children; l != NULL; l = l->next) {
@@ -260,25 +258,23 @@ as_app_validate_description (const gchar *xml,
 									helper);
 				} else {
 					/* only <li> supported */
-					ret = FALSE;
 					g_set_error (error,
 						     AS_APP_ERROR,
 						     AS_APP_ERROR_FAILED,
 						     "invalid markup: <%s> follows <%s>",
 						     as_node_get_name (l2),
 						     as_node_get_name (l));
-					goto out;
+					return FALSE;
 				}
 			}
 		} else {
 			/* only <p>, <ol> and <ul> supported */
-			ret = FALSE;
 			g_set_error (error,
 				     AS_APP_ERROR,
 				     AS_APP_ERROR_FAILED,
 				     "invalid markup: tag <%s> invalid here",
 				     as_node_get_name (l));
-			goto out;
+			return FALSE;
 		}
 	}
 
@@ -298,10 +294,7 @@ as_app_validate_description (const gchar *xml,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
 				     "Too many <p> tags for a good description");
 	}
-out:
-	if (node != NULL)
-		as_node_unref (node);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -328,14 +321,12 @@ as_app_validate_image_url_already_exists (AsAppValidateHelper *helper,
 static gboolean
 ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 {
-	GdkPixbuf *pixbuf = NULL;
-	GError *error = NULL;
-	GInputStream *stream = NULL;
-	SoupMessage *msg = NULL;
-	SoupURI *base_uri = NULL;
+	_cleanup_unref_object GdkPixbuf *pixbuf = NULL;
+	_cleanup_unref_object GInputStream *stream = NULL;
+	_cleanup_unref_object SoupMessage *msg = NULL;
+	_cleanup_unref_uri SoupURI *base_uri = NULL;
 	const gchar *url;
 	gboolean require_correct_aspect_ratio = FALSE;
-	gboolean ret = TRUE;
 	gdouble desired_aspect = 1.777777778;
 	gdouble screenshot_aspect;
 	gint status_code;
@@ -361,42 +352,39 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 
 	/* have we got network access */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_NO_NETWORK) > 0)
-		goto out;
+		return TRUE;
 
 	/* GET file */
 	url = as_image_get_url (im);
 	g_debug ("checking %s", url);
 	base_uri = soup_uri_new (url);
 	if (base_uri == NULL) {
-		ret = FALSE;
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_URL_NOT_FOUND,
 				     "<screenshot> url not valid");
-		goto out;
+		return FALSE;
 	}
 	msg = soup_message_new_from_uri (SOUP_METHOD_GET, base_uri);
 	if (msg == NULL) {
 		g_warning ("Failed to setup message");
-		goto out;
+		return FALSE;
 	}
 
 	/* send sync */
 	status_code = soup_session_send_message (helper->session, msg);
 	if (status_code != SOUP_STATUS_OK) {
-		ret = FALSE;
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_URL_NOT_FOUND,
 				     "<screenshot> url not found");
-		goto out;
+		return FALSE;
 	}
 
 	/* check if it's a zero sized file */
 	if (msg->response_body->length == 0) {
-		ret = FALSE;
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_FILE_INVALID,
 				     "<screenshot> url is a zero length file");
-		goto out;
+		return FALSE;
 	}
 
 	/* create a buffer with the data */
@@ -404,21 +392,19 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 						      msg->response_body->length,
 						      NULL);
 	if (stream == NULL) {
-		ret = FALSE;
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_URL_NOT_FOUND,
 				     "<screenshot> failed to load data");
-		goto out;
+		return FALSE;
 	}
 
 	/* load the image */
-	pixbuf = gdk_pixbuf_new_from_stream (stream, NULL, &error);
+	pixbuf = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
 	if (pixbuf == NULL) {
-		ret = FALSE;
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_FILE_INVALID,
 				     "<screenshot> failed to load image");
-		goto out;
+		return FALSE;
 	}
 
 	/* check width matches */
@@ -472,16 +458,7 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 					     "<screenshot> aspect ratio was not 16:9");
 		}
 	}
-out:
-	if (base_uri != NULL)
-		soup_uri_free (base_uri);
-	if (msg != NULL)
-		g_object_unref (msg);
-	if (stream != NULL)
-		g_object_unref (stream);
-	if (pixbuf != NULL)
-		g_object_unref (pixbuf);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -513,9 +490,8 @@ as_app_validate_image (AsImage *im, AsAppValidateHelper *helper)
 
 	/* validate the URL */
 	ret = ai_app_validate_image_check (im, helper);
-	if (ret) {
+	if (ret)
 		g_ptr_array_add (helper->screenshot_urls, g_strdup (url));
-	}
 }
 
 /**
@@ -601,7 +577,6 @@ static gboolean
 as_app_validate_release (AsRelease *release, AsAppValidateHelper *helper, GError **error)
 {
 	const gchar *tmp;
-	gboolean ret = TRUE;
 	guint64 timestamp;
 	guint number_para_max = 2;
 	guint number_para_min = 1;
@@ -647,16 +622,14 @@ as_app_validate_release (AsRelease *release, AsAppValidateHelper *helper, GError
 					     "<release> description should be "
 					     "prose and not contain hyperlinks");
 		}
-		ret = as_app_validate_description (tmp,
-						   helper,
-						   number_para_min,
-						   number_para_max,
-						   error);
-		if (!ret)
-			goto out;
+		if (!as_app_validate_description (tmp,
+						  helper,
+						  number_para_min,
+						  number_para_max,
+						  error))
+			return FALSE;
 	}
-out:
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -667,12 +640,11 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 {
 	AsRelease *release;
 	GPtrArray *releases;
-	gboolean ret = TRUE;
 	guint i;
 
 	/* only for AppData */
 	if (as_app_get_source_kind (app) != AS_APP_SOURCE_KIND_APPDATA)
-		goto out;
+		return TRUE;
 
 	releases = as_app_get_releases (app);
 	if (releases->len > 10) {
@@ -682,12 +654,10 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 	}
 	for (i = 0; i < releases->len; i++) {
 		release = g_ptr_array_index (releases, i);
-		ret = as_app_validate_release (release, helper, error);
-		if (!ret)
-			goto out;
+		if (!as_app_validate_release (release, helper, error))
+			return FALSE;
 	}
-out:
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -696,25 +666,21 @@ out:
 static gboolean
 as_app_validate_setup_networking (AsAppValidateHelper *helper, GError **error)
 {
-	gboolean ret = TRUE;
-
 	helper->session = soup_session_sync_new_with_options (SOUP_SESSION_USER_AGENT,
 							      "libappstream-glib",
 							      SOUP_SESSION_TIMEOUT,
 							      5000,
 							      NULL);
 	if (helper->session == NULL) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     AS_APP_ERROR,
 				     AS_APP_ERROR_FAILED,
 				     "Failed to set up networking");
-		goto out;
+		return FALSE;
 	}
 	soup_session_add_feature_by_type (helper->session,
 					  SOUP_TYPE_PROXY_RESOLVER_DEFAULT);
-out:
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -723,8 +689,7 @@ out:
 static gboolean
 as_app_validate_license (const gchar *license_text, GError **error)
 {
-	gboolean ret = TRUE;
-	gchar **licenses;
+	_cleanup_free_strv gchar **licenses = NULL;
 	guint i;
 
 	licenses = as_utils_spdx_license_tokenize (license_text);
@@ -732,18 +697,15 @@ as_app_validate_license (const gchar *license_text, GError **error)
 		if (g_str_has_prefix (licenses[i], "#"))
 			continue;
 		if (!as_utils_is_spdx_license_id (licenses[i])) {
-			ret = FALSE;
 			g_set_error (error,
 				     AS_APP_ERROR,
 				     AS_APP_ERROR_FAILED,
 				     "SPDX ID '%s' unknown",
 				     licenses[i]);
-			goto out;
+			return FALSE;
 		}
 	}
-out:
-	g_strfreev (licenses);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -765,9 +727,9 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	AsAppValidateHelper helper;
 	GError *error_local = NULL;
 	GHashTable *urls;
-	GList *keys;
 	GList *l;
 	GPtrArray *probs = NULL;
+	_cleanup_free_list GList *keys = NULL;
 	const gchar *description;
 	const gchar *id_full;
 	const gchar *key;
@@ -963,7 +925,6 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					     "<url> does not start with 'http://'");
 		}
 	}
-	g_list_free (keys);
 
 	/* screenshots */
 	as_app_validate_screenshots (app, &helper);

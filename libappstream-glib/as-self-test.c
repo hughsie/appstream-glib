@@ -25,6 +25,7 @@
 #include <stdlib.h>
 
 #include "as-app-private.h"
+#include "as-cleanup.h"
 #include "as-enums.h"
 #include "as-image-private.h"
 #include "as-node-private.h"
@@ -43,18 +44,14 @@ static gchar *
 as_test_get_filename (const gchar *filename)
 {
 	char full_tmp[PATH_MAX];
-	gchar *full = NULL;
-	gchar *path;
+	_cleanup_free gchar *path = NULL;
 	gchar *tmp;
 
 	path = g_build_filename (TESTDATADIR, filename, NULL);
 	tmp = realpath (path, full_tmp);
 	if (tmp == NULL)
-		goto out;
-	full = g_strdup (full_tmp);
-out:
-	g_free (path);
-	return full;
+		return NULL;
+	return g_strdup (full_tmp);
 }
 
 static void
@@ -81,11 +78,11 @@ ch_test_tag_func (void)
 static void
 ch_test_release_func (void)
 {
-	AsRelease *release;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
 	GString *xml;
+	_cleanup_unref_object AsRelease *release = NULL;
 	const gchar *src = "<release version=\"0.1.2\" timestamp=\"123\"/>";
 	gboolean ret;
 
@@ -113,18 +110,16 @@ ch_test_release_func (void)
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
-
-	g_object_unref (release);
 }
 
 static void
 ch_test_provide_func (void)
 {
-	AsProvide *provide;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
 	GString *xml;
+	_cleanup_unref_object AsProvide *provide = NULL;
 	const gchar *src = "<binary>/usr/bin/gnome-shell</binary>";
 	gboolean ret;
 
@@ -152,19 +147,17 @@ ch_test_provide_func (void)
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
-
-	g_object_unref (provide);
 }
 
 static void
 ch_test_release_desc_func (void)
 {
-	AsRelease *release;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
 	GString *xml;
 	gboolean ret;
+	_cleanup_unref_object AsRelease *release;
 	const gchar *src =
 		"<release version=\"0.1.2\" timestamp=\"123\">"
 		"<description><p>This is a new release</p></description>"
@@ -197,24 +190,22 @@ ch_test_release_desc_func (void)
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
-
-	g_object_unref (release);
 }
 
 static void
 ch_test_image_func (void)
 {
-	AsImage *image;
-	GdkPixbuf *pixbuf;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
 	GString *xml;
+	_cleanup_free gchar *filename = NULL;
+	_cleanup_unref_object AsImage *image = NULL;
+	_cleanup_unref_object GdkPixbuf *pixbuf = NULL;
 	const gchar *src =
 		"<image type=\"thumbnail\" height=\"12\" width=\"34\">"
 		"http://www.hughsie.com/a.jpg</image>";
 	gboolean ret;
-	gchar *filename;
 
 	image = as_image_new ();
 
@@ -259,7 +250,6 @@ ch_test_image_func (void)
 				       AS_IMAGE_SAVE_FLAG_PAD_16_9);
 	g_assert_cmpint (gdk_pixbuf_get_width (pixbuf), ==, 752);
 	g_assert_cmpint (gdk_pixbuf_get_height (pixbuf), ==, 423);
-	g_object_unref (pixbuf);
 
 	/* save */
 	ret = as_image_save_filename (image,
@@ -269,9 +259,6 @@ ch_test_image_func (void)
 				      &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-
-	g_free (filename);
-	g_object_unref (image);
 }
 
 static void
@@ -279,11 +266,11 @@ ch_test_screenshot_func (void)
 {
 	GPtrArray *images;
 	AsImage *im;
-	AsScreenshot *screenshot;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
 	GString *xml;
+	_cleanup_unref_object AsScreenshot *screenshot = NULL;
 	const gchar *src =
 		"<screenshot type=\"normal\">"
 		"<caption>Hello</caption>"
@@ -321,14 +308,12 @@ ch_test_screenshot_func (void)
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
-
-	g_object_unref (screenshot);
 }
 
 static void
 ch_test_app_func (void)
 {
-	AsApp *app;
+	_cleanup_unref_object AsApp *app = NULL;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
@@ -424,8 +409,6 @@ ch_test_app_func (void)
 	/* test contact demunging */
 	as_app_set_update_contact (app, "richard_at_hughsie_dot_co_dot_uk", -1);
 	g_assert_cmpstr (as_app_get_update_contact (app), ==, "richard@hughsie.co.uk");
-
-	g_object_unref (app);
 }
 
 static void
@@ -454,7 +437,6 @@ ch_test_app_validate_check (GPtrArray *array,
 static void
 ch_test_app_validate_file_good_func (void)
 {
-	AsApp *app;
 	AsImage *im;
 	AsProblem *problem;
 	AsScreenshot *ss;
@@ -462,8 +444,9 @@ ch_test_app_validate_file_good_func (void)
 	GPtrArray *images;
 	GPtrArray *probs;
 	GPtrArray *screenshots;
+	_cleanup_free gchar *filename = NULL;
+	_cleanup_unref_object AsApp *app = NULL;
 	gboolean ret;
-	gchar *filename;
 	guint i;
 
 	/* open file */
@@ -507,20 +490,17 @@ ch_test_app_validate_file_good_func (void)
 	g_assert_cmpint (as_image_get_width (im), ==, 355);
 	g_assert_cmpint (as_image_get_height (im), ==, 134);
 	g_assert_cmpint (as_image_get_kind (im), ==, AS_IMAGE_KIND_SOURCE);
-
-	g_free (filename);
-	g_object_unref (app);
 }
 
 static void
 ch_test_app_validate_intltool_func (void)
 {
-	AsApp *app;
 	AsProblem *problem;
 	GError *error = NULL;
 	GPtrArray *probs;
+	_cleanup_free gchar *filename = NULL;
+	_cleanup_unref_object AsApp *app = NULL;
 	gboolean ret;
-	gchar *filename;
 	guint i;
 
 	/* open file */
@@ -544,18 +524,15 @@ ch_test_app_validate_intltool_func (void)
 	}
 	g_assert_cmpint (probs->len, ==, 0);
 	g_ptr_array_unref (probs);
-
-	g_free (filename);
-	g_object_unref (app);
 }
 
 static void
 ch_test_app_translated_func (void)
 {
-	AsApp *app;
 	GError *error = NULL;
 	gboolean ret;
-	gchar *filename;
+	_cleanup_free gchar *filename = NULL;
+	_cleanup_unref_object AsApp *app = NULL;
 
 	/* open file */
 	app = as_app_new ();
@@ -568,20 +545,17 @@ ch_test_app_translated_func (void)
 	g_assert_cmpstr (as_app_get_description (app, "C"), ==, "<p>Awesome</p>");
 	g_assert_cmpstr (as_app_get_description (app, "pl"), ==, "<p>Asomeski</p>");
 	g_assert_cmpint (as_app_get_description_size (app), ==, 2);
-
-	g_free (filename);
-	g_object_unref (app);
 }
 
 static void
 ch_test_app_validate_file_bad_func (void)
 {
-	AsApp *app;
 	AsProblem *problem;
 	GError *error = NULL;
-	GPtrArray *probs;
 	gboolean ret;
-	gchar *filename;
+	_cleanup_free gchar *filename = NULL;
+	_cleanup_unref_object AsApp *app = NULL;
+	_cleanup_unref_ptrarray GPtrArray *probs = NULL;
 	guint i;
 
 	/* open file */
@@ -646,20 +620,16 @@ ch_test_app_validate_file_bad_func (void)
 				    "<release> has no version");
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
 				    "<release> has no timestamp");
-
-	g_ptr_array_unref (probs);
-	g_free (filename);
-	g_object_unref (app);
 }
 
 static void
 ch_test_app_validate_style_func (void)
 {
-	AsApp *app;
-	GError *error = NULL;
-	GPtrArray *probs;
-	guint i;
 	AsProblem *problem;
+	GError *error = NULL;
+	_cleanup_unref_object AsApp *app = NULL;
+	_cleanup_unref_ptrarray GPtrArray *probs = NULL;
+	guint i;
 
 	app = as_app_new ();
 	as_app_add_url (app, AS_URL_KIND_UNKNOWN, "dave.com", -1);
@@ -702,18 +672,15 @@ ch_test_app_validate_style_func (void)
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<url> is not present");
 	g_assert_cmpint (probs->len, ==, 11);
-
-	g_ptr_array_unref (probs);
-	g_object_unref (app);
 }
 
 static void
 ch_test_app_parse_file_func (void)
 {
-	AsApp *app;
 	GError *error = NULL;
 	gboolean ret;
-	gchar *filename;
+	_cleanup_free gchar *filename = NULL;
+	_cleanup_unref_object AsApp *app = NULL;
 
 	/* create an AsApp from a desktop file */
 	app = as_app_new ();
@@ -753,20 +720,17 @@ ch_test_app_parse_file_func (void)
 	g_assert_error (error, AS_APP_ERROR, AS_APP_ERROR_INVALID_TYPE);
 	g_assert (!ret);
 	g_clear_error (&error);
-
-	g_free (filename);
-	g_object_unref (app);
 }
 
 static void
 ch_test_app_no_markup_func (void)
 {
-	AsApp *app;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
 	GString *xml;
 	gboolean ret;
+	_cleanup_unref_object AsApp *app = NULL;
 	const gchar *src =
 		"<application>"
 		"<id type=\"desktop\">org.gnome.Software.desktop</id>"
@@ -800,8 +764,6 @@ ch_test_app_no_markup_func (void)
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
-
-	g_object_unref (app);
 }
 
 static void
@@ -840,7 +802,7 @@ ch_test_node_func (void)
 {
 	GNode *n1;
 	GNode *n2;
-	GNode *root;
+	_cleanup_unref_node GNode *root = NULL;
 
 	/* create a simple tree */
 	root = as_node_new ();
@@ -876,8 +838,6 @@ ch_test_node_func (void)
 	g_assert (n2 == NULL);
 	n2 = as_node_find (root, "apps//id");
 	g_assert (n2 == NULL);
-
-	as_node_unref (root);
 }
 
 static void
@@ -1048,9 +1008,9 @@ static void
 ch_test_node_localized_wrap_func (void)
 {
 	GError *error = NULL;
-	GHashTable *hash;
 	GNode *n1;
-	GNode *root;
+	_cleanup_unref_hashtable GHashTable *hash = NULL;
+	_cleanup_unref_node GNode *root = NULL;
 	const gchar *xml =
 		"<description>"
 		" <p>Hi</p>"
@@ -1079,18 +1039,15 @@ ch_test_node_localized_wrap_func (void)
 		"<p>Czesc</p><ul><li>Pierwszy</li></ul>");
 	g_assert_cmpstr (g_hash_table_lookup (hash, "en_GB"), ==,
 		"<ul><li>Hi</li></ul>");
-	g_hash_table_unref (hash);
-
-	as_node_unref (root);
 }
 
 static void
 ch_test_node_localized_wrap2_func (void)
 {
 	GError *error = NULL;
-	GHashTable *hash;
 	GNode *n1;
-	GNode *root;
+	_cleanup_unref_hashtable GHashTable *hash = NULL;
+	_cleanup_unref_node GNode *root = NULL;
 	const gchar *xml =
 		"<description>"
 		" <p>Hi</p>"
@@ -1120,16 +1077,13 @@ ch_test_node_localized_wrap2_func (void)
 		"<p>Hi</p><ul><li>First</li><li>Second</li></ul>");
 	g_assert_cmpstr (g_hash_table_lookup (hash, "pl"), ==,
 		"<p>Czesc</p><ul><li>Pierwszy</li><li>Secondski</li></ul>");
-	g_hash_table_unref (hash);
-
-	as_node_unref (root);
 }
 
 static void
 ch_test_app_subsume_func (void)
 {
-	AsApp *app;
-	AsApp *donor;
+	_cleanup_unref_object AsApp *app = NULL;
+	_cleanup_unref_object AsApp *donor = NULL;
 	GList *list;
 
 	donor = as_app_new ();
@@ -1160,15 +1114,12 @@ ch_test_app_subsume_func (void)
 	g_assert_cmpstr (as_app_get_metadata_item (app, "recipient"), ==, "true");
 	g_assert_cmpstr (as_app_get_metadata_item (donor, "donor"), ==, "true");
 	g_assert_cmpstr (as_app_get_metadata_item (donor, "recipient"), ==, "true");
-
-	g_object_unref (app);
-	g_object_unref (donor);
 }
 
 static void
 ch_test_app_search_func (void)
 {
-	AsApp *app;
+	_cleanup_unref_object AsApp *app = NULL;
 	const gchar *all[] = { "gnome", "install", "software", NULL };
 	const gchar *none[] = { "gnome", "xxx", "software", NULL };
 	const gchar *mime[] = { "application", "vnd", "oasis", "opendocument","text", NULL };
@@ -1184,16 +1135,14 @@ ch_test_app_search_func (void)
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) all), ==, 220);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) none), ==, 0);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) mime), ==, 5);
-
-	g_object_unref (app);
 }
 
 static void
 ch_test_store_func (void)
 {
 	AsApp *app;
-	AsStore *store;
 	GString *xml;
+	_cleanup_unref_object AsStore *store = NULL;
 
 	/* create a store and add a single app */
 	store = as_store_new ();
@@ -1242,9 +1191,6 @@ ch_test_store_func (void)
 		"</application>"
 		"</applications>");
 	g_string_free (xml, TRUE);
-
-	g_object_unref (store);
-
 }
 
 static void
@@ -1344,12 +1290,12 @@ ch_test_store_versions_func (void)
 static void
 ch_test_node_no_dup_c_func (void)
 {
-	AsApp *app;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
 	GString *xml;
 	gboolean ret;
+	_cleanup_unref_object AsApp *app = NULL;
 	const gchar *src =
 		"<application>"
 		"<id type=\"desktop\">test.desktop</id>"
@@ -1384,19 +1330,17 @@ ch_test_node_no_dup_c_func (void)
 		"</application>");
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
-
-	g_object_unref (app);
 }
 
 static void
 ch_test_store_origin_func (void)
 {
 	AsApp *app;
-	AsStore *store;
 	GError *error = NULL;
-	GFile *file;
 	gboolean ret;
-	gchar *filename;
+	_cleanup_free gchar *filename = NULL;
+	_cleanup_unref_object AsStore *store = NULL;
+	_cleanup_unref_object GFile *file = NULL;
 
 	/* load a file to the store */
 	store = as_store_new ();
@@ -1413,21 +1357,16 @@ ch_test_store_origin_func (void)
 	g_assert (app != NULL);
 	g_assert_cmpstr (as_app_get_icon_path (app), ==,
 		"/usr/share/app-info/icons/fedora-21");
-
-	g_free (filename);
-	g_object_unref (file);
-	g_object_unref (store);
 }
 
 static void
 ch_test_store_speed_func (void)
 {
-	AsStore *store;
 	GError *error = NULL;
-	GFile *file;
-	GTimer *timer;
+	_cleanup_destroy_timer GTimer *timer = NULL;
+	_cleanup_free gchar *filename = NULL;
+	_cleanup_unref_object GFile *file = NULL;
 	gboolean ret;
-	gchar *filename;
 	guint i;
 	guint loops = 10;
 
@@ -1435,6 +1374,7 @@ ch_test_store_speed_func (void)
 	file = g_file_new_for_path (filename);
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
+		_cleanup_unref_object AsStore *store;
 		store = as_store_new ();
 		ret = as_store_from_file (store, file, NULL, NULL, &error);
 		g_assert_no_error (error);
@@ -1442,13 +1382,8 @@ ch_test_store_speed_func (void)
 		g_assert_cmpint (as_store_get_apps (store)->len, >=, 1415);
 		g_assert (as_store_get_app_by_id (store, "org.gnome.Software.desktop") != NULL);
 		g_assert (as_store_get_app_by_pkgname (store, "gnome-software") != NULL);
-		g_object_unref (store);
 	}
 	g_print ("%.0f ms: ", g_timer_elapsed (timer, NULL) * 1000 / loops);
-
-	g_free (filename);
-	g_object_unref (file);
-	g_timer_destroy (timer);
 }
 
 static void
@@ -1577,8 +1512,8 @@ ch_test_utils_func (void)
 static void
 ch_test_store_app_install_func (void)
 {
-	AsStore *store;
 	GError *error = NULL;
+	_cleanup_unref_object AsStore *store = NULL;
 	gboolean ret;
 
 	store = as_store_new ();
@@ -1588,16 +1523,15 @@ ch_test_store_app_install_func (void)
 			     &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_object_unref (store);
 }
 
 static void
 ch_test_store_metadata_func (void)
 {
-	AsStore *store;
 	GError *error = NULL;
 	GPtrArray *apps;
 	gboolean ret;
+	_cleanup_unref_object AsStore *store = NULL;
 	const gchar *xml =
 		"<applications version=\"0.3\">"
 		"<application>"
@@ -1622,8 +1556,6 @@ ch_test_store_metadata_func (void)
 	apps = as_store_get_apps_by_metadata (store, "foo", "bar");
 	g_assert_cmpint (apps->len, ==, 2);
 	g_ptr_array_unref (apps);
-
-	g_object_unref (store);
 }
 
 int

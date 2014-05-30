@@ -33,6 +33,7 @@
 
 #include "config.h"
 
+#include "as-cleanup.h"
 #include "as-image-private.h"
 #include "as-node-private.h"
 #include "as-screenshot-private.h"
@@ -317,14 +318,11 @@ as_screenshot_node_insert (AsScreenshot *screenshot,
 gboolean
 as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 {
-	AsImage *image;
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
-	GHashTable *captions = NULL;
-	GList *keys;
 	GList *l;
 	GNode *c;
+	_cleanup_unref_hashtable GHashTable *captions = NULL;
 	const gchar *tmp;
-	gboolean ret = TRUE;
 	guint size;
 
 	tmp = as_node_get_attribute (node, "type");
@@ -336,6 +334,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 	/* add captions */
 	captions = as_node_get_localized (node, "caption");
 	if (captions != NULL) {
+		_cleanup_free_list GList *keys;
 		keys = g_hash_table_get_keys (captions);
 		for (l = keys; l != NULL; l = l->next) {
 			tmp = l->data;
@@ -344,12 +343,12 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 						   g_hash_table_lookup (captions, tmp),
 						   -1);
 		}
-		g_list_free (keys);
 	}
 
 	/* AppData files does not have <image> tags */
 	tmp = as_node_get_data (node);
 	if (tmp != NULL) {
+		AsImage *image;
 		image = as_image_new ();
 		as_image_set_kind (image, AS_IMAGE_KIND_SOURCE);
 		size = as_node_get_attribute_as_int (node, "width");
@@ -364,20 +363,15 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 
 	/* add images */
 	for (c = node->children; c != NULL; c = c->next) {
+		_cleanup_unref_object AsImage *image = NULL;
 		if (as_node_get_tag (c) != AS_TAG_IMAGE)
 			continue;
 		image = as_image_new ();
-		ret = as_image_node_parse (image, c, error);
-		if (!ret) {
-			g_object_unref (image);
-			goto out;
-		}
-		g_ptr_array_add (priv->images, image);
+		if (!as_image_node_parse (image, c, error))
+			return FALSE;
+		g_ptr_array_add (priv->images, g_object_ref (image));
 	}
-out:
-	if (captions != NULL)
-		g_hash_table_unref (captions);
-	return ret;
+	return TRUE;
 }
 
 /**

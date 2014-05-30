@@ -34,6 +34,7 @@
 
 #include "config.h"
 
+#include "as-cleanup.h"
 #include "as-image-private.h"
 #include "as-node-private.h"
 #include "as-utils-private.h"
@@ -457,37 +458,28 @@ as_image_load_filename (AsImage *image,
 			GError **error)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
-	GdkPixbuf *pixbuf = NULL;
-	gboolean ret = TRUE;
-	gchar *basename = NULL;
-	gchar *data = NULL;
+	_cleanup_free gchar *basename = NULL;
+	_cleanup_free gchar *data = NULL;
+	_cleanup_unref_object GdkPixbuf *pixbuf = NULL;
 	gsize len;
 
 	/* get the contents so we can hash the predictable file data,
 	 * rather than the unpredicatable (for JPEG) pixel data */
-	ret = g_file_get_contents (filename, &data, &len, error);
-	if (!ret)
-		goto out;
+	if (!g_file_get_contents (filename, &data, &len, error))
+		return FALSE;
 	priv->md5 = g_compute_checksum_for_data (G_CHECKSUM_MD5,
 						 (guchar * )data, len);
 
 	/* load the image */
 	pixbuf = gdk_pixbuf_new_from_file (filename, error);
-	if (pixbuf == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (pixbuf == NULL)
+		return FALSE;
 
 	/* set */
 	basename = g_path_get_basename (filename);
 	as_image_set_basename (image, basename);
 	as_image_set_pixbuf (image, pixbuf);
-out:
-	if (pixbuf != NULL)
-		g_object_unref (pixbuf);
-	g_free (basename);
-	g_free (data);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -511,7 +503,7 @@ as_image_save_pixbuf (AsImage *image,
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	GdkPixbuf *pixbuf = NULL;
-	GdkPixbuf *pixbuf_tmp = NULL;
+	_cleanup_unref_object GdkPixbuf *pixbuf_tmp = NULL;
 	guint tmp_height;
 	guint tmp_width;
 	guint pixbuf_height;
@@ -555,7 +547,6 @@ as_image_save_pixbuf (AsImage *image,
 			      pixbuf,
 			      (width - tmp_width) / 2,
 			      (height - tmp_height) / 2);
-	g_object_unref (pixbuf_tmp);
 	return pixbuf;
 }
 
@@ -582,22 +573,15 @@ as_image_save_filename (AsImage *image,
 		        AsImageSaveFlags flags,
 		        GError **error)
 {
-	GdkPixbuf *pixbuf;
-	gboolean ret;
+	_cleanup_unref_object GdkPixbuf *pixbuf;
 
 	/* save source file */
 	pixbuf = as_image_save_pixbuf (image, width, height, flags);
-	ret = gdk_pixbuf_save (pixbuf,
-			       filename,
-			       "png",
-			       error,
-			       NULL);
-	if (!ret)
-		goto out;
-out:
-	if (pixbuf != NULL)
-		g_object_unref (pixbuf);
-	return ret;
+	return gdk_pixbuf_save (pixbuf,
+				filename,
+				"png",
+				error,
+				NULL);
 }
 
 /**

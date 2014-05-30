@@ -39,6 +39,7 @@
 
 #include <stdlib.h>
 
+#include "as-cleanup.h"
 #include "as-node-private.h"
 #include "as-release-private.h"
 #include "as-tag.h"
@@ -227,7 +228,7 @@ as_release_node_insert (AsRelease *release, GNode *parent, gdouble api_version)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	GNode *n;
-	gchar *timestamp_str;
+	_cleanup_free gchar *timestamp_str;
 
 	timestamp_str = g_strdup_printf ("%" G_GUINT64_FORMAT,
 					 priv->timestamp);
@@ -241,7 +242,6 @@ as_release_node_insert (AsRelease *release, GNode *parent, gdouble api_version)
 					  AS_NODE_INSERT_FLAG_PRE_ESCAPED |
 					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 	}
-	g_free (timestamp_str);
 	return n;
 }
 
@@ -262,7 +262,6 @@ as_release_node_parse (AsRelease *release, GNode *node, GError **error)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	GNode *n;
-	GString *xml;
 	const gchar *tmp;
 	gchar *taken;
 
@@ -277,13 +276,13 @@ as_release_node_parse (AsRelease *release, GNode *node, GError **error)
 
 	/* descriptions are translated and optional */
 	for (n = node->children; n != NULL; n = n->next) {
+		_cleanup_free_string GString *xml = NULL;
 		if (as_node_get_tag (n) != AS_TAG_DESCRIPTION)
 			continue;
 		xml = as_node_to_xml (n->children, AS_NODE_TO_XML_FLAG_NONE);
 		as_release_set_description (release,
 					    as_node_get_attribute (n, "xml:lang"),
 					    xml->str, xml->len);
-		g_string_free (xml, TRUE);
 	}
 	return TRUE;
 }

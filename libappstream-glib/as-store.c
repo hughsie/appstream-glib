@@ -37,6 +37,7 @@
 #include "config.h"
 
 #include "as-app-private.h"
+#include "as-cleanup.h"
 #include "as-node-private.h"
 #include "as-store.h"
 #include "as-utils-private.h"
@@ -355,9 +356,8 @@ as_store_from_root (AsStore *store,
 	GError *error_local = NULL;
 	GNode *apps;
 	GNode *n;
+	_cleanup_free gchar *icon_path = NULL;
 	const gchar *tmp;
-	gboolean ret = TRUE;
-	gchar *icon_path = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
@@ -365,12 +365,11 @@ as_store_from_root (AsStore *store,
 	if (apps == NULL) {
 		apps = as_node_find (root, "applications");
 		if (apps == NULL) {
-			ret = FALSE;
 			g_set_error_literal (error,
 					     AS_STORE_ERROR,
 					     AS_STORE_ERROR_FAILED,
 					     "No valid root node specified");
-			goto out;
+			return FALSE;
 		}
 	}
 
@@ -399,8 +398,7 @@ as_store_from_root (AsStore *store,
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path, -1);
 		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
-		ret = as_app_node_parse (app, n, &error_local);
-		if (!ret) {
+		if (!as_app_node_parse (app, n, &error_local)) {
 			g_set_error (error,
 				     AS_STORE_ERROR,
 				     AS_STORE_ERROR_FAILED,
@@ -408,14 +406,12 @@ as_store_from_root (AsStore *store,
 				     error_local->message);
 			g_error_free (error_local);
 			g_object_unref (app);
-			goto out;
+			return FALSE;
 		}
 		as_store_add_app (store, app);
 		g_object_unref (app);
 	}
-out:
-	g_free (icon_path);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -443,9 +439,8 @@ as_store_from_file (AsStore *store,
 		    GCancellable *cancellable,
 		    GError **error)
 {
-	GError *error_local = NULL;
-	GNode *root;
-	gboolean ret = TRUE;
+	_cleanup_free_error GError *error_local = NULL;
+	_cleanup_unref_node GNode *root = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
@@ -454,22 +449,14 @@ as_store_from_file (AsStore *store,
 				  cancellable,
 				  &error_local);
 	if (root == NULL) {
-		ret = FALSE;
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
 			     "Failed to parse file: %s",
 			     error_local->message);
-		g_error_free (error_local);
-		goto out;
+		return FALSE;
 	}
-	ret = as_store_from_root (store, root, icon_root, error);
-	if (!ret)
-		goto out;
-out:
-	if (root != NULL)
-		as_node_unref (root);
-	return ret;
+	return as_store_from_root (store, root, icon_root, error);
 }
 
 /**
@@ -497,9 +484,8 @@ as_store_from_xml (AsStore *store,
 		   const gchar *icon_root,
 		   GError **error)
 {
-	GError *error_local = NULL;
-	GNode *root;
-	gboolean ret = TRUE;
+	_cleanup_free_error GError *error_local = NULL;
+	_cleanup_unref_node GNode *root = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
@@ -507,22 +493,14 @@ as_store_from_xml (AsStore *store,
 				 AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
 				 &error_local);
 	if (root == NULL) {
-		ret = FALSE;
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
 			     "Failed to parse XML: %s",
 			     error_local->message);
-		g_error_free (error_local);
-		goto out;
+		return TRUE;
 	}
-	ret = as_store_from_root (store, root, icon_root, error);
-	if (!ret)
-		goto out;
-out:
-	if (root != NULL)
-		as_node_unref (root);
-	return ret;
+	return as_store_from_root (store, root, icon_root, error);
 }
 
 /**
@@ -610,65 +588,53 @@ as_store_to_file (AsStore *store,
 		  GCancellable *cancellable,
 		  GError **error)
 {
-	GError *error_local = NULL;
-	GOutputStream *out;
-	GOutputStream *out2;
-	GString *xml;
-	GZlibCompressor *compressor;
-	gboolean ret;
+	_cleanup_free_error GError *error_local = NULL;
+	_cleanup_free_string GString *xml = NULL;
+	_cleanup_unref_object GOutputStream *out2 = NULL;
+	_cleanup_unref_object GOutputStream *out = NULL;
+	_cleanup_unref_object GZlibCompressor *compressor = NULL;
 
 	/* compress as a gzip file */
 	compressor = g_zlib_compressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP, -1);
 	out = g_memory_output_stream_new_resizable ();
 	out2 = g_converter_output_stream_new (out, G_CONVERTER (compressor));
 	xml = as_store_to_xml (store, flags);
-	ret = g_output_stream_write_all (out2, xml->str, xml->len,
-					 NULL, NULL, &error_local);
-	if (!ret) {
+	if (!g_output_stream_write_all (out2, xml->str, xml->len,
+					NULL, NULL, &error_local)) {
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
 			     "Failed to write stream: %s",
 			     error_local->message);
-		g_error_free (error_local);
-		goto out;
+		return FALSE;
 	}
-	ret = g_output_stream_close (out2, NULL, &error_local);
-	if (!ret) {
+	if (!g_output_stream_close (out2, NULL, &error_local)) {
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
 			     "Failed to close stream: %s",
 			     error_local->message);
-		g_error_free (error_local);
-		goto out;
+		return FALSE;
 	}
 
 	/* write file */
-	ret = g_file_replace_contents (file,
+	if (!g_file_replace_contents (file,
 		g_memory_output_stream_get_data (G_MEMORY_OUTPUT_STREAM (out)),
 		g_memory_output_stream_get_size (G_MEMORY_OUTPUT_STREAM (out)),
-				       NULL,
-				       FALSE,
-				       G_FILE_CREATE_NONE,
-				       NULL,
-				       cancellable,
-				       &error_local);
-	if (!ret) {
+				      NULL,
+				      FALSE,
+				      G_FILE_CREATE_NONE,
+				      NULL,
+				      cancellable,
+				      &error_local)) {
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
 			     "Failed to write file: %s",
 			     error_local->message);
-		g_error_free (error_local);
-		goto out;
+		return FALSE;
 	}
-out:
-	g_object_unref (compressor);
-	g_object_unref (out);
-	g_object_unref (out2);
-	g_string_free (xml, TRUE);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -746,8 +712,7 @@ as_store_guess_origin_fallback (AsStore *store,
 				const gchar *filename,
 				GError **error)
 {
-	gboolean ret = TRUE;
-	gchar *origin_fallback;
+	_cleanup_free gchar *origin_fallback;
 	gchar *tmp;
 
 	/* the first component of the file (e.g. "fedora-20.xml.gz)
@@ -756,22 +721,19 @@ as_store_guess_origin_fallback (AsStore *store,
 	origin_fallback = g_path_get_basename (filename);
 	tmp = g_strstr_len (origin_fallback, -1, ".xml");
 	if (tmp == NULL) {
-		ret = FALSE;
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
 			     "AppStream metadata name %s not valid, "
 			     "expected .xml[.*]",
 			     filename);
-		goto out;
+		return FALSE;
 	}
 	tmp[0] = '\0';
 
 	/* load this specific file */
 	as_store_set_origin (store, origin_fallback);
-out:
-	g_free (origin_fallback);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -784,29 +746,21 @@ as_store_load_app_info_file (AsStore *store,
 			     GCancellable *cancellable,
 			     GError **error)
 {
-	GFile *file = NULL;
-	gboolean ret = FALSE;
+	_cleanup_unref_object GFile *file = NULL;
 
 	/* guess this based on the name */
-	ret = as_store_guess_origin_fallback (store, path_xml, error);
-	if (!ret)
-		goto out;
+	if (!as_store_guess_origin_fallback (store, path_xml, error))
+		return FALSE;
 
 	/* load this specific file */
 	g_debug ("Loading AppStream XML %s with icon path %s",
 		 path_xml, icon_root);
 	file = g_file_new_for_path (path_xml);
-	ret = as_store_from_file (store,
-				  file,
-				  icon_root,
-				  cancellable,
-				  error);
-	if (!ret)
-		goto out;
-out:
-	if (file != NULL)
-		g_object_unref (file);
-	return ret;
+	return as_store_from_file (store,
+				   file,
+				   icon_root,
+				   cancellable,
+				   error);
 }
 
 /**
@@ -832,10 +786,9 @@ as_store_monitor_directory (AsStore *store,
 			    GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	GError *error_local = NULL;
-	GFile *file = NULL;
-	GFileMonitor *monitor = NULL;
-	gboolean ret = TRUE;
+	_cleanup_free_error GError *error_local = NULL;
+	_cleanup_unref_object GFile *file = NULL;
+	_cleanup_unref_object GFileMonitor *monitor = NULL;
 
 	file = g_file_new_for_path (path);
 	monitor = g_file_monitor_directory (file,
@@ -843,25 +796,18 @@ as_store_monitor_directory (AsStore *store,
 					    cancellable,
 					    &error_local);
 	if (monitor == NULL) {
-		ret = FALSE;
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
 			     "Failed to monitor %s: %s",
 			     path, error_local->message);
-		g_error_free (error_local);
-		goto out;
+		return FALSE;
 	}
 	g_signal_connect (monitor, "changed",
 			  G_CALLBACK (as_store_cache_changed_cb),
 			  store);
 	g_ptr_array_add (priv->file_monitors, g_object_ref (monitor));
-out:
-	if (monitor != NULL)
-		g_object_unref (monitor);
-	if (file != NULL)
-		g_object_unref (file);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -873,52 +819,41 @@ as_store_load_app_info (AsStore *store,
 			GCancellable *cancellable,
 			GError **error)
 {
-	GDir *dir = NULL;
-	GError *error_local = NULL;
+	_cleanup_close_dir GDir *dir = NULL;
+	_cleanup_free_error GError *error_local = NULL;
+	_cleanup_free gchar *icon_root = NULL;
+	_cleanup_free gchar *path_xml = NULL;
 	const gchar *tmp;
-	gboolean ret = TRUE;
-	gchar *filename_xml;
-	gchar *icon_root = NULL;
-	gchar *path_xml = NULL;
 
 	/* watch the directory for changes */
-	ret = as_store_monitor_directory (store, path, cancellable, error);
-	if (!ret)
-		goto out;
+	if (!as_store_monitor_directory (store, path, cancellable, error))
+		return FALSE;
 
 	/* search all files */
 	path_xml = g_build_filename (path, "xmls", NULL);
 	if (!g_file_test (path_xml, G_FILE_TEST_EXISTS))
-		goto out;
+		return TRUE;
 	dir = g_dir_open (path_xml, 0, &error_local);
 	if (dir == NULL) {
-		ret = FALSE;
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
 			     "Failed to open %s: %s",
 			     path_xml, error_local->message);
-		g_error_free (error_local);
-		goto out;
+		return FALSE;
 	}
 	icon_root = g_build_filename (path, "icons", NULL);
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
+		_cleanup_free gchar *filename_xml;
 		filename_xml = g_build_filename (path_xml, tmp, NULL);
-		ret = as_store_load_app_info_file (store,
-						   filename_xml,
-						   icon_root,
-						   cancellable,
-						   error);
-		g_free (filename_xml);
-		if (!ret)
-			goto out;
+		if (!as_store_load_app_info_file (store,
+						  filename_xml,
+						  icon_root,
+						  cancellable,
+						  error))
+			return FALSE;
 	}
-out:
-	if (dir != NULL)
-		g_dir_close (dir);
-	g_free (path_xml);
-	g_free (icon_root);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -927,16 +862,16 @@ out:
 static void
 as_store_add_app_install_screenshot (AsApp *app)
 {
-	AsImage *im = NULL;
-	AsScreenshot *ss = NULL;
 	GPtrArray *pkgnames;
+	_cleanup_free gchar *url = NULL;
+	_cleanup_unref_object AsImage *im = NULL;
+	_cleanup_unref_object AsScreenshot *ss = NULL;
 	const gchar *pkgname;
-	gchar *url = NULL;
 
 	/* get the default package name */
 	pkgnames = as_app_get_pkgnames (app);
 	if (pkgnames->len == 0)
-		goto out;
+		return;
 	pkgname = g_ptr_array_index (pkgnames, 0);
 	url = g_build_filename ("http://screenshots.debian.net/screenshot",
 				pkgname, NULL);
@@ -951,12 +886,6 @@ as_store_add_app_install_screenshot (AsApp *app)
 	ss = as_screenshot_new ();
 	as_screenshot_add_image (ss, im);
 	as_app_add_screenshot (app, ss);
-out:
-	if (im != NULL)
-		g_object_unref (im);
-	if (ss != NULL)
-		g_object_unref (ss);
-	g_free (url);
 }
 
 /**
@@ -968,40 +897,34 @@ as_store_load_app_install_file (AsStore *store,
 				const gchar *path_icons,
 				GError **error)
 {
-	GError *error_local = NULL;
-	gboolean ret;
-	AsApp *app;
+	_cleanup_free_error GError *error_local = NULL;
+	_cleanup_unref_object AsApp *app;
 
 	app = as_app_new ();
-	ret = as_app_parse_file (app,
-				 filename,
-				 AS_APP_PARSE_FLAG_USE_HEURISTICS,
-				 &error_local);
-	if (!ret) {
+	if (!as_app_parse_file (app,
+				filename,
+				AS_APP_PARSE_FLAG_USE_HEURISTICS,
+				&error_local)) {
 		if (g_error_matches (error_local,
 				     AS_APP_ERROR,
 				     AS_APP_ERROR_INVALID_TYPE)) {
 			/* Ubuntu include non-apps here too... */
-			ret = TRUE;
-		} else {
-			g_set_error (error,
-				     AS_STORE_ERROR,
-				     AS_STORE_ERROR_FAILED,
-				     "Failed to parse %s: %s",
-				     filename,
-				     error_local->message);
+			return TRUE;
 		}
-		g_error_free (error_local);
-		goto out;
+		g_set_error (error,
+			     AS_STORE_ERROR,
+			     AS_STORE_ERROR_FAILED,
+			     "Failed to parse %s: %s",
+			     filename,
+			     error_local->message);
+		return FALSE;
 	}
 	if (as_app_get_icon_kind (app) == AS_ICON_KIND_UNKNOWN)
 		as_app_set_icon_kind (app, AS_ICON_KIND_CACHED);
 	as_app_set_icon_path (app, path_icons, -1);
 	as_store_add_app_install_screenshot (app);
 	as_store_add_app (store, app);
-out:
-	g_object_unref (app);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -1013,50 +936,39 @@ as_store_load_app_install (AsStore *store,
 			   GCancellable *cancellable,
 			   GError **error)
 {
-	GError *error_local = NULL;
-	GDir *dir = NULL;
-	gboolean ret = TRUE;
-	gchar *path_desktop = NULL;
-	gchar *path_icons = NULL;
-	gchar *filename;
+	_cleanup_free_error GError *error_local = NULL;
+	_cleanup_close_dir GDir *dir = NULL;
+	_cleanup_free gchar *path_desktop = NULL;
+	_cleanup_free gchar *path_icons = NULL;
 	const gchar *tmp;
 
 	path_desktop = g_build_filename (path, "desktop", NULL);
 	if (!g_file_test (path_desktop, G_FILE_TEST_EXISTS))
-		goto out;
+		return TRUE;
 	dir = g_dir_open (path_desktop, 0, &error_local);
 	if (dir == NULL) {
-		ret = FALSE;
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
 			     "Failed to open %s: %s",
 			     path_desktop,
 			     error_local->message);
-		g_error_free (error_local);
-		goto out;
+		return FALSE;
 	}
 
 	path_icons = g_build_filename (path, "icons", NULL);
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
+		_cleanup_free gchar *filename = NULL;
 		if (!g_str_has_suffix (tmp, ".desktop"))
 			continue;
 		filename = g_build_filename (path_desktop, tmp, NULL);
-		ret = as_store_load_app_install_file (store,
-						      filename,
-						      path_icons,
-						      error);
-		g_free (filename);
-		if (!ret)
-			goto out;
+		if (!as_store_load_app_install_file (store,
+						     filename,
+						     path_icons,
+						     error))
+			return FALSE;
 	}
-
-out:
-	if (dir != NULL)
-		g_dir_close (dir);
-	g_free (path_desktop);
-	g_free (path_icons);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -1078,55 +990,50 @@ as_store_load (AsStore *store,
 	       GCancellable *cancellable,
 	       GError **error)
 {
-	GList *app_info = NULL;
-	GList *l;
+	_cleanup_unref_ptrarray GPtrArray *app_info = NULL;
 	const gchar * const * data_dirs;
 	const gchar *tmp;
 	gchar *path;
 	guint i;
-	gboolean ret = TRUE;
 
 	/* system locations */
+	app_info = g_ptr_array_new_with_free_func (g_free);
 	if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM) > 0) {
 		data_dirs = g_get_system_data_dirs ();
 		for (i = 0; data_dirs[i] != NULL; i++) {
 			path = g_build_filename (data_dirs[i], "app-info", NULL);
-			app_info = g_list_prepend (app_info, path);
+			g_ptr_array_add (app_info, path);
 		}
 		path = g_build_filename (LOCALSTATEDIR, "lib", "app-info", NULL);
-		app_info = g_list_prepend (app_info, path);
+		g_ptr_array_add (app_info, path);
 		path = g_build_filename (LOCALSTATEDIR, "cache", "app-info", NULL);
-		app_info = g_list_prepend (app_info, path);
+		g_ptr_array_add (app_info, path);
 	}
 
 	/* per-user locations */
 	if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_USER) > 0) {
 		path = g_build_filename (g_get_user_data_dir (), "app-info", NULL);
-		app_info = g_list_prepend (app_info, path);
+		g_ptr_array_add (app_info, path);
 	}
 
 	/* load each app-info path if it exists */
-	for (l = app_info; l != NULL; l = l->next) {
-		tmp = l->data;
+	for (i = 0; i < app_info->len; i++) {
+		tmp = g_ptr_array_index (app_info, i);
 		if (!g_file_test (tmp, G_FILE_TEST_EXISTS))
 			continue;
-		ret = as_store_load_app_info (store, tmp, cancellable, error);
-		if (!ret)
-			goto out;
+		if (!as_store_load_app_info (store, tmp, cancellable, error))
+			return FALSE;
 	}
 
 	/* ubuntu specific */
 	if ((flags & AS_STORE_LOAD_FLAG_APP_INSTALL) > 0) {
-		ret = as_store_load_app_install (store,
-						 "/usr/share/app-install",
-						 cancellable,
-						 error);
-		if (!ret)
-			goto out;
+		if (!as_store_load_app_install (store,
+						"/usr/share/app-install",
+						cancellable,
+						error))
+			return FALSE;
 	}
-out:
-	g_list_free_full (app_info, g_free);
-	return ret;
+	return TRUE;
 }
 
 /**

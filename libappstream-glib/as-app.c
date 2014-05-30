@@ -38,6 +38,7 @@
 #include <string.h>
 
 #include "as-app-private.h"
+#include "as-cleanup.h"
 #include "as-enums.h"
 #include "as-node-private.h"
 #include "as-provide-private.h"
@@ -1502,7 +1503,7 @@ static void
 as_app_subsume_dict (GHashTable *dest, GHashTable *src, gboolean overwrite)
 {
 	GList *l;
-	GList *keys;
+	_cleanup_free_list GList *keys;
 	const gchar *tmp;
 	const gchar *key;
 	const gchar *value;
@@ -1518,7 +1519,6 @@ as_app_subsume_dict (GHashTable *dest, GHashTable *src, gboolean overwrite)
 		value = g_hash_table_lookup (src, key);
 		g_hash_table_insert (dest, g_strdup (key), g_strdup (value));
 	}
-	g_list_free (keys);
 }
 
 /**
@@ -1536,7 +1536,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	guint i;
 	gint percentage;
 	GList *l;
-	GList *keys;
+	_cleanup_free_list GList *keys;
 
 	overwrite = (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) == 0;
 
@@ -1570,7 +1570,6 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		percentage = GPOINTER_TO_INT (g_hash_table_lookup (priv->languages, key));
 		as_app_add_language (app, percentage, key, -1);
 	}
-	g_list_free (keys);
 
 	/* dictionaries */
 	as_app_subsume_dict (papp->names, priv->names, overwrite);
@@ -1646,8 +1645,8 @@ static void
 as_app_node_insert_languages (AsApp *app, GNode *parent)
 {
 	GNode *node_tmp;
-	GList *langs;
 	GList *l;
+	_cleanup_free_list GList *langs;
 	const gchar *locale;
 	gchar tmp[4];
 	gint percentage;
@@ -1667,7 +1666,6 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
 					NULL);
 		}
 	}
-	g_list_free (langs);
 }
 
 /**
@@ -1885,15 +1883,9 @@ static gboolean
 as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	AsRelease *r;
-	AsScreenshot *ss;
-	GHashTable *unwrapped;
 	GNode *c;
-	GString *xml;
 	const gchar *tmp;
-	gboolean ret = TRUE;
 	gchar *taken;
-	guint percent;
 
 	switch (as_node_get_tag (n)) {
 
@@ -1941,13 +1933,11 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 		/* unwrap appdata inline */
 		if (priv->source_kind == AS_APP_SOURCE_KIND_APPDATA) {
+			_cleanup_unref_hashtable GHashTable *unwrapped;
 			unwrapped = as_node_get_localized_unwrap (n, error);
-			if (unwrapped == NULL) {
-				ret = FALSE;
-				goto out;
-			}
+			if (unwrapped == NULL)
+				return FALSE;
 			as_app_subsume_dict (priv->descriptions, unwrapped, FALSE);
-			g_hash_table_unref (unwrapped);
 			break;
 		}
 
@@ -1958,12 +1948,12 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 						as_node_get_data (n),
 						-1);
 		} else {
+			_cleanup_free_string GString *xml;
 			xml = as_node_to_xml (n->children,
 					      AS_NODE_TO_XML_FLAG_INCLUDE_SIBLINGS);
 			as_app_set_description (app,
 						as_node_get_attribute (n, "xml:lang"),
 						xml->str, xml->len);
-			g_string_free (xml, TRUE);
 		}
 		break;
 
@@ -2055,16 +2045,13 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_SCREENSHOTS:
 		g_ptr_array_set_size (priv->screenshots, 0);
 		for (c = n->children; c != NULL; c = c->next) {
+			_cleanup_unref_object AsScreenshot *ss = NULL;
 			if (as_node_get_tag (c) != AS_TAG_SCREENSHOT)
 				continue;
 			ss = as_screenshot_new ();
-			ret = as_screenshot_node_parse (ss, c, error);
-			if (!ret) {
-				g_object_unref (ss);
-				goto out;
-			}
+			if (!as_screenshot_node_parse (ss, c, error))
+				return FALSE;
 			as_app_add_screenshot (app, ss);
-			g_object_unref (ss);
 		}
 		break;
 
@@ -2072,16 +2059,13 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_RELEASES:
 		g_ptr_array_set_size (priv->releases, 0);
 		for (c = n->children; c != NULL; c = c->next) {
+			_cleanup_unref_object AsRelease *r = NULL;
 			if (as_node_get_tag (c) != AS_TAG_RELEASE)
 				continue;
 			r = as_release_new ();
-			ret = as_release_node_parse (r, c, error);
-			if (!ret) {
-				g_object_unref (r);
-				goto out;
-			}
+			if (!as_release_node_parse (r, c, error))
+				return FALSE;
 			as_app_add_release (app, r);
-			g_object_unref (r);
 		}
 		break;
 
@@ -2089,15 +2073,11 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_PROVIDES:
 		g_ptr_array_set_size (priv->provides, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			AsProvide *p;
+			_cleanup_unref_object AsProvide *p;
 			p = as_provide_new ();
-			ret = as_provide_node_parse (p, c, error);
-			if (!ret) {
-				g_object_unref (p);
-				goto out;
-			}
+			if (!as_provide_node_parse (p, c, error))
+				return FALSE;
 			as_app_add_provide (app, p);
-			g_object_unref (p);
 		}
 		break;
 
@@ -2105,6 +2085,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_LANGUAGES:
 		g_hash_table_remove_all (priv->languages);
 		for (c = n->children; c != NULL; c = c->next) {
+			guint percent;
 			if (as_node_get_tag (c) != AS_TAG_LANG)
 				continue;
 			percent = as_node_get_attribute_as_int (c, "percentage");
@@ -2134,8 +2115,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	default:
 		break;
 	}
-out:
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -2156,7 +2136,6 @@ as_app_node_parse (AsApp *app, GNode *node, GError **error)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	GNode *n;
 	const gchar *tmp;
-	gboolean ret = TRUE;
 	guint prio;
 
 	/* new style */
@@ -2174,12 +2153,10 @@ as_app_node_parse (AsApp *app, GNode *node, GError **error)
 	g_ptr_array_set_size (priv->pkgnames, 0);
 	g_ptr_array_set_size (priv->architectures, 0);
 	for (n = node->children; n != NULL; n = n->next) {
-		ret = as_app_node_parse_child (app, n, error);
-		if (!ret)
-			goto out;
+		if (!as_app_node_parse_child (app, n, error))
+			return FALSE;
 	}
-out:
-	return ret;
+	return TRUE;
 }
 
 #if !GLIB_CHECK_VERSION(2,39,1)
@@ -2365,13 +2342,12 @@ as_app_desktop_key_get_locale (const gchar *key)
 
 	tmp1 = g_strstr_len (key, -1, "[");
 	if (tmp1 == NULL)
-		goto out;
+		return NULL;
 	tmp2 = g_strstr_len (tmp1, -1, "]");
 	if (tmp1 == NULL)
-		goto out;
+		return NULL;
 	locale = g_strdup (tmp1 + 1);
 	locale[tmp2 - tmp1 - 1] = '\0';
-out:
 	return locale;
 }
 
@@ -2384,52 +2360,39 @@ as_app_infer_file_key (AsApp *app,
 		       const gchar *key,
 		       GError **error)
 {
-	gboolean ret = TRUE;
-	gchar *tmp = NULL;
+	_cleanup_free gchar *tmp = NULL;
 
 	if (g_strcmp0 (key, "X-GNOME-UsesNotifications") == 0) {
 		as_app_add_metadata (app, "X-Kudo-UsesNotifications", "", -1);
-		goto out;
-	}
 
-	if (g_strcmp0 (key, "X-GNOME-Bugzilla-Product") == 0) {
+	} else if (g_strcmp0 (key, "X-GNOME-Bugzilla-Product") == 0) {
 		as_app_set_project_group (app, "GNOME", -1);
-		goto out;
-	}
 
-	if (g_strcmp0 (key, "X-MATE-Bugzilla-Product") == 0) {
+	} else if (g_strcmp0 (key, "X-MATE-Bugzilla-Product") == 0) {
 		as_app_set_project_group (app, "MATE", -1);
-		goto out;
-	}
 
-	if (g_strcmp0 (key, "X-KDE-StartupNotify") == 0) {
+	} else if (g_strcmp0 (key, "X-KDE-StartupNotify") == 0) {
 		as_app_set_project_group (app, "KDE", -1);
-		goto out;
-	}
 
-	if (g_strcmp0 (key, "X-DocPath") == 0) {
+	} else if (g_strcmp0 (key, "X-DocPath") == 0) {
 		tmp = g_key_file_get_string (kf,
 					     G_KEY_FILE_DESKTOP_GROUP,
 					     key,
 					     NULL);
 		if (g_str_has_prefix (tmp, "http://userbase.kde.org/"))
 			as_app_set_project_group (app, "KDE", -1);
-		goto out;
-	}
 
 	/* Exec */
-	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_EXEC) == 0) {
+	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_EXEC) == 0) {
 		tmp = g_key_file_get_string (kf,
 					     G_KEY_FILE_DESKTOP_GROUP,
 					     key,
 					     NULL);
 		if (g_str_has_prefix (tmp, "xfce4-"))
 			as_app_set_project_group (app, "XFCE", -1);
-		goto out;
 	}
-out:
-	g_free (tmp);
-	return ret;
+
+	return TRUE;
 }
 
 /**
@@ -2441,22 +2404,18 @@ as_app_parse_file_key (AsApp *app,
 		       const gchar *key,
 		       GError **error)
 {
-
-	gboolean ret = TRUE;
-	gchar **list = NULL;
+	_cleanup_free gchar *locale = NULL;
+	_cleanup_free gchar *tmp = NULL;
+	_cleanup_free_strv gchar **list = NULL;
 	gchar *dot = NULL;
-	gchar *locale = NULL;
-	gchar *tmp = NULL;
 	guint i;
 
 	/* NoDisplay */
 	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_NO_DISPLAY) == 0) {
 		as_app_add_metadata (app, "NoDisplay", "", -1);
-		goto out;
-	}
 
 	/* Type */
-	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_TYPE) == 0) {
+	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_TYPE) == 0) {
 		tmp = g_key_file_get_string (kf,
 					     G_KEY_FILE_DESKTOP_GROUP,
 					     key,
@@ -2466,14 +2425,11 @@ as_app_parse_file_key (AsApp *app,
 					     AS_APP_ERROR,
 					     AS_APP_ERROR_INVALID_TYPE,
 					     "not an application");
-			ret = FALSE;
-			goto out;
+			return FALSE;
 		}
-		goto out;
-	}
 
 	/* Icon */
-	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_ICON) == 0) {
+	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_ICON) == 0) {
 		tmp = g_key_file_get_string (kf,
 					     G_KEY_FILE_DESKTOP_GROUP,
 					     key,
@@ -2488,11 +2444,9 @@ as_app_parse_file_key (AsApp *app,
 				as_app_set_icon_kind (app, AS_ICON_KIND_STOCK);
 			}
 		}
-		goto out;
-	}
 
 	/* Categories */
-	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_CATEGORIES) == 0) {
+	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_CATEGORIES) == 0) {
 		list = g_key_file_get_string_list (kf,
 						   G_KEY_FILE_DESKTOP_GROUP,
 						   key,
@@ -2504,13 +2458,12 @@ as_app_parse_file_key (AsApp *app,
 			if (fnmatch ("X-*-Settings-Panel", list[i], 0) == 0 ||
 			    fnmatch ("X-*-Settings", list[i], 0) == 0 ||
 			    fnmatch ("X-*-SettingsDialog", list[i], 0) == 0) {
-				ret = FALSE;
 				g_set_error (error,
 					     AS_APP_ERROR,
 					     AS_APP_ERROR_INVALID_TYPE,
 					     "category %s is blacklisted",
 					     list[i]);
-				goto out;
+				return FALSE;
 			}
 
 			/* ignore some useless keys */
@@ -2526,41 +2479,33 @@ as_app_parse_file_key (AsApp *app,
 				continue;
 			as_app_add_category (app, list[i], -1);
 		}
-		goto out;
-	}
 
-	if (g_strcmp0 (key, "Keywords") == 0) {
+	} else if (g_strcmp0 (key, "Keywords") == 0) {
 		list = g_key_file_get_string_list (kf,
 						   G_KEY_FILE_DESKTOP_GROUP,
 						   key,
 						   NULL, NULL);
 		for (i = 0; list[i] != NULL; i++)
 			as_app_add_keyword (app, list[i], -1);
-		goto out;
-	}
 
-	if (g_strcmp0 (key, "MimeType") == 0) {
+	} else if (g_strcmp0 (key, "MimeType") == 0) {
 		list = g_key_file_get_string_list (kf,
 						   G_KEY_FILE_DESKTOP_GROUP,
 						   key,
 						   NULL, NULL);
 		for (i = 0; list[i] != NULL; i++)
 			as_app_add_mimetype (app, list[i], -1);
-		goto out;
-	}
 
-	if (g_strcmp0 (key, "X-AppInstall-Package") == 0) {
+	} else if (g_strcmp0 (key, "X-AppInstall-Package") == 0) {
 		tmp = g_key_file_get_string (kf,
 					     G_KEY_FILE_DESKTOP_GROUP,
 					     key,
 					     NULL);
 		if (tmp != NULL && tmp[0] != '\0')
 			as_app_add_pkgname (app, tmp, -1);
-		goto out;
-	}
 
 	/* OnlyShowIn */
-	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN) == 0) {
+	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN) == 0) {
 		/* if an app has only one entry, it's that desktop */
 		list = g_key_file_get_string_list (kf,
 						   G_KEY_FILE_DESKTOP_GROUP,
@@ -2568,22 +2513,18 @@ as_app_parse_file_key (AsApp *app,
 						   NULL, NULL);
 		if (g_strv_length (list) == 1)
 			as_app_set_project_group (app, list[0], -1);
-		goto out;
-	}
 
 	/* Name */
-	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_NAME) == 0) {
+	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_NAME) == 0) {
 		tmp = g_key_file_get_string (kf,
 					     G_KEY_FILE_DESKTOP_GROUP,
 					     key,
 					     NULL);
 		if (tmp != NULL && tmp[0] != '\0')
 			as_app_set_name (app, "C", tmp, -1);
-		goto out;
-	}
 
 	/* Name[] */
-	if (g_str_has_prefix (key, G_KEY_FILE_DESKTOP_KEY_NAME)) {
+	} else if (g_str_has_prefix (key, G_KEY_FILE_DESKTOP_KEY_NAME)) {
 		locale = as_app_desktop_key_get_locale (key);
 		tmp = g_key_file_get_locale_string (kf,
 						    G_KEY_FILE_DESKTOP_GROUP,
@@ -2592,22 +2533,18 @@ as_app_parse_file_key (AsApp *app,
 						    NULL);
 		if (tmp != NULL && tmp[0] != '\0')
 			as_app_set_name (app, locale, tmp, -1);
-		goto out;
-	}
 
 	/* Comment */
-	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_COMMENT) == 0) {
+	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_COMMENT) == 0) {
 		tmp = g_key_file_get_string (kf,
 					     G_KEY_FILE_DESKTOP_GROUP,
 					     key,
 					     NULL);
 		if (tmp != NULL && tmp[0] != '\0')
 			as_app_set_comment (app, "C", tmp, -1);
-		goto out;
-	}
 
 	/* Comment[] */
-	if (g_str_has_prefix (key, G_KEY_FILE_DESKTOP_KEY_COMMENT)) {
+	} else if (g_str_has_prefix (key, G_KEY_FILE_DESKTOP_KEY_COMMENT)) {
 		locale = as_app_desktop_key_get_locale (key);
 		tmp = g_key_file_get_locale_string (kf,
 						    G_KEY_FILE_DESKTOP_GROUP,
@@ -2616,13 +2553,8 @@ as_app_parse_file_key (AsApp *app,
 						    NULL);
 		if (tmp != NULL && tmp[0] != '\0')
 			as_app_set_comment (app, locale, tmp, -1);
-		goto out;
 	}
-out:
-	g_free (locale);
-	g_free (tmp);
-	g_strfreev (list);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -2635,10 +2567,9 @@ as_app_parse_desktop_file (AsApp *app,
 			   GError **error)
 {
 	GKeyFileFlags kf_flags = G_KEY_FILE_KEEP_TRANSLATIONS;
-	GKeyFile *kf;
-	gboolean ret;
-	gchar *app_id = NULL;
-	gchar **keys = NULL;
+	_cleanup_free gchar *app_id = NULL;
+	_cleanup_unref_keyfile GKeyFile *kf = NULL;
+	_cleanup_free_strv gchar **keys = NULL;
 	gchar *tmp;
 	guint i;
 
@@ -2646,9 +2577,8 @@ as_app_parse_desktop_file (AsApp *app,
 	kf = g_key_file_new ();
 	if (flags & AS_APP_PARSE_FLAG_KEEP_COMMENTS)
 		kf_flags |= G_KEY_FILE_KEEP_COMMENTS;
-	ret = g_key_file_load_from_file (kf, desktop_file, kf_flags, error);
-	if (!ret)
-		goto out;
+	if (!g_key_file_load_from_file (kf, desktop_file, kf_flags, error))
+		return FALSE;
 
 	/* create app */
 	app_id = g_path_get_basename (desktop_file);
@@ -2663,36 +2593,28 @@ as_app_parse_desktop_file (AsApp *app,
 
 	/* look at all the keys */
 	keys = g_key_file_get_keys (kf, G_KEY_FILE_DESKTOP_GROUP, NULL, error);
-	if (keys == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (keys == NULL)
+		return FALSE;
 	for (i = 0; keys[i] != NULL; i++) {
-		ret = as_app_parse_file_key (app, kf, keys[i], error);
-		if (!ret)
-			goto out;
+		if (!as_app_parse_file_key (app, kf, keys[i], error))
+			return FALSE;
 		if ((flags & AS_APP_PARSE_FLAG_USE_HEURISTICS) > 0) {
-			ret = as_app_infer_file_key (app, kf, keys[i], error);
-			if (!ret)
-				goto out;
+			if (!as_app_infer_file_key (app, kf, keys[i], error))
+				return FALSE;
 		}
 	}
 
 	/* all applications require icons */
 	if (as_app_get_icon (app) == NULL) {
-		ret = FALSE;
 		g_set_error (error,
 			     AS_APP_ERROR,
 			     AS_APP_ERROR_INVALID_TYPE,
 			     "Application %s has no icon",
 			     app_id);
-		goto out;
+		return FALSE;
 	}
-out:
-	g_free (app_id);
-	g_key_file_unref (kf);
-	g_strfreev (keys);
-	return ret;
+
+	return TRUE;
 }
 
 /**
@@ -2702,29 +2624,17 @@ static gboolean
 as_app_parse_appdata_unintltoolize_cb (GNode *node, gpointer data)
 {
 	const gchar *name;
-
 	name = as_node_get_name (node);
-	if (g_strcmp0 (name, "_name") == 0) {
+	if (g_strcmp0 (name, "_name") == 0)
 		as_node_set_name (node, "name");
-		goto out;
-	}
-	if (g_strcmp0 (name, "_summary") == 0) {
+	else if (g_strcmp0 (name, "_summary") == 0)
 		as_node_set_name (node, "summary");
-		goto out;
-	}
-	if (g_strcmp0 (name, "_caption") == 0) {
+	else if (g_strcmp0 (name, "_caption") == 0)
 		as_node_set_name (node, "caption");
-		goto out;
-	}
-	if (g_strcmp0 (name, "_p") == 0) {
+	else if (g_strcmp0 (name, "_p") == 0)
 		as_node_set_name (node, "p");
-		goto out;
-	}
-	if (g_strcmp0 (name, "_li") == 0) {
+	else if (g_strcmp0 (name, "_li") == 0)
 		as_node_set_name (node, "li");
-		goto out;
-	}
-out:
 	return FALSE;
 }
 
@@ -2741,17 +2651,15 @@ as_app_parse_appdata_file (AsApp *app,
 	AsNodeFromXmlFlags from_xml_flags = AS_NODE_FROM_XML_FLAG_NONE;
 	GNode *l;
 	GNode *node;
-	GNode *root = NULL;
-	gboolean ret = TRUE;
 	gboolean seen_application = FALSE;
-	gchar *data = NULL;
+	_cleanup_free gchar *data = NULL;
+	_cleanup_unref_node GNode *root = NULL;
 	gchar *tmp;
 	gsize len;
 
 	/* open file */
-	ret = g_file_get_contents (filename, &data, &len, error);
-	if (!ret)
-		goto out;
+	if (!g_file_get_contents (filename, &data, &len, error))
+		return FALSE;
 
 	/* validate */
 	tmp = g_strstr_len (data, len, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -2771,10 +2679,8 @@ as_app_parse_appdata_file (AsApp *app,
 	root = as_node_from_xml (data, len,
 				 from_xml_flags,
 				 error);
-	if (root == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (root == NULL)
+		return FALSE;
 
 	/* make the <_summary> tags into <summary> */
 	if (flags & AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE) {
@@ -2790,13 +2696,12 @@ as_app_parse_appdata_file (AsApp *app,
 	if (node == NULL)
 		node = as_node_find (root, "component");
 	if (node == NULL) {
-		ret = FALSE;
 		g_set_error (error,
 			     AS_APP_ERROR,
 			     AS_APP_ERROR_INVALID_TYPE,
 			     "%s has an unrecognised contents",
 			     filename);
-		goto out;
+		return FALSE;
 	}
 	for (l = node->children; l != NULL; l = l->next) {
 		if (g_strcmp0 (as_node_get_name (l), "licence") == 0) {
@@ -2810,14 +2715,9 @@ as_app_parse_appdata_file (AsApp *app,
 			seen_application = TRUE;
 		}
 	}
-	ret = as_app_node_parse (app, node, error);
-	if (!ret)
-		goto out;
-out:
-	if (root != NULL)
-		as_node_unref (root);
-	g_free (data);
-	return ret;
+	if (!as_app_node_parse (app, node, error))
+		return FALSE;
+	return TRUE;
 }
 
 /**
@@ -2840,7 +2740,6 @@ as_app_parse_file (AsApp *app,
 		   GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	gboolean ret = FALSE;
 
 	/* autodetect */
 	if (priv->source_kind == AS_APP_SOURCE_KIND_UNKNOWN) {
@@ -2857,17 +2756,19 @@ as_app_parse_file (AsApp *app,
 				     AS_APP_ERROR_INVALID_TYPE,
 				     "%s has an unrecognised extension",
 				     filename);
-			goto out;
+			return FALSE;
 		}
 	}
 
 	/* parse */
 	switch (priv->source_kind) {
 	case AS_APP_SOURCE_KIND_DESKTOP:
-		ret = as_app_parse_desktop_file (app, filename, flags, error);
+		if (!as_app_parse_desktop_file (app, filename, flags, error))
+			return FALSE;
 		break;
 	case AS_APP_SOURCE_KIND_APPDATA:
-		ret = as_app_parse_appdata_file (app, filename, flags, error);
+		if (!as_app_parse_appdata_file (app, filename, flags, error))
+			return FALSE;
 		break;
 	default:
 		g_set_error (error,
@@ -2875,10 +2776,10 @@ as_app_parse_file (AsApp *app,
 			     AS_APP_ERROR_INVALID_TYPE,
 			     "%s has an unhandled type",
 			     filename);
+		return FALSE;
 		break;
 	}
-out:
-	return ret;
+	return TRUE;
 }
 
 /**

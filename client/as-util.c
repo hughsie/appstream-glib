@@ -30,6 +30,8 @@
 #include <archive.h>
 #include <locale.h>
 
+#include "as-cleanup.h"
+
 #define AS_ERROR			1
 #define AS_ERROR_INVALID_ARGUMENTS	0
 #define AS_ERROR_NO_SUCH_CMD		1
@@ -82,7 +84,7 @@ as_util_add (GPtrArray *array,
 	     const gchar *description,
 	     AsUtilPrivateCb callback)
 {
-	gchar **names;
+	_cleanup_free_strv gchar **names = NULL;
 	guint i;
 	AsUtilItem *item;
 
@@ -106,7 +108,6 @@ as_util_add (GPtrArray *array,
 		item->callback = callback;
 		g_ptr_array_add (array, item);
 	}
-	g_strfreev (names);
 }
 
 /**
@@ -161,18 +162,15 @@ as_util_get_descriptions (GPtrArray *array)
 static gboolean
 as_util_run (AsUtilPrivate *priv, const gchar *command, gchar **values, GError **error)
 {
-	gboolean ret = FALSE;
-	guint i;
 	AsUtilItem *item;
-	GString *string;
+	_cleanup_free_string GString *string = NULL;
+	guint i;
 
 	/* find command */
 	for (i = 0; i < priv->cmd_array->len; i++) {
 		item = g_ptr_array_index (priv->cmd_array, i);
-		if (g_strcmp0 (item->name, command) == 0) {
-			ret = item->callback (priv, values, error);
-			goto out;
-		}
+		if (g_strcmp0 (item->name, command) == 0)
+			return item->callback (priv, values, error);
 	}
 
 	/* not found */
@@ -187,9 +185,7 @@ as_util_run (AsUtilPrivate *priv, const gchar *command, gchar **values, GError *
 					item->arguments ? item->arguments : "");
 	}
 	g_set_error_literal (error, AS_ERROR, AS_ERROR_NO_SUCH_CMD, string->str);
-	g_string_free (string, TRUE);
-out:
-	return ret;
+	return FALSE;
 }
 
 /**
@@ -198,48 +194,37 @@ out:
 static gboolean
 as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	AsStore *store = NULL;
-	GFile *file_input = NULL;
-	GFile *file_output = NULL;
-	gboolean ret = TRUE;
+	_cleanup_unref_object AsStore *store = NULL;
+	_cleanup_unref_object GFile *file_input = NULL;
+	_cleanup_unref_object GFile *file_output = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 3) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     "Not enough arguments, "
 				     "expected old.xml new.xml version");
-		goto out;
+		return FALSE;
 	}
 
 	/* load file */
 	store = as_store_new ();
 	file_input = g_file_new_for_path (values[0]);
-	ret = as_store_from_file (store, file_input, NULL, NULL, error);
-	if (!ret)
-		goto out;
+	if (!as_store_from_file (store, file_input, NULL, NULL, error))
+		return FALSE;
 	g_print ("Old API version: %.2f\n", as_store_get_api_version (store));
 
 	/* save file */
 	as_store_set_api_version (store, g_ascii_strtod (values[2], NULL));
 	file_output = g_file_new_for_path (values[1]);
-	ret = as_store_to_file (store, file_output,
+	if (!as_store_to_file (store, file_output,
 				AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE |
 				AS_NODE_TO_XML_FLAG_ADD_HEADER,
-				NULL, error);
-	if (!ret)
-		goto out;
+				NULL, error))
+		return FALSE;
 	g_print ("New API version: %.2f\n", as_store_get_api_version (store));
-out:
-	if (store != NULL)
-		g_object_unref (store);
-	if (file_input != NULL)
-		g_object_unref (file_input);
-	if (file_output != NULL)
-		g_object_unref (file_output);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -248,28 +233,25 @@ out:
 static gboolean
 as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	AsStore *store = NULL;
-	GFile *file_input = NULL;
-	GString *xml = NULL;
-	gboolean ret = TRUE;
+	_cleanup_free_string GString *xml = NULL;
+	_cleanup_unref_object AsStore *store = NULL;
+	_cleanup_unref_object GFile *file_input = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     "Not enough arguments, "
 				     "expected data.xml");
-		goto out;
+		return FALSE;
 	}
 
 	/* load file */
 	store = as_store_new ();
 	file_input = g_file_new_for_path (values[0]);
-	ret = as_store_from_file (store, file_input, NULL, NULL, error);
-	if (!ret)
-		goto out;
+	if (!as_store_from_file (store, file_input, NULL, NULL, error))
+		return FALSE;
 
 	/* dump to screen */
 	as_store_set_api_version (store, 1.0);
@@ -278,14 +260,7 @@ as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
 			       AS_NODE_TO_XML_FLAG_ADD_HEADER);
 	g_print ("%s\n", xml->str);
-out:
-	if (store != NULL)
-		g_object_unref (store);
-	if (xml != NULL)
-		g_string_free (xml, TRUE);
-	if (file_input != NULL)
-		g_object_unref (file_input);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -294,12 +269,12 @@ out:
 static gboolean
 as_util_install_icons (const gchar *filename, const gchar *origin, GError **error)
 {
+	_cleanup_free gchar *data = NULL;
+	_cleanup_free gchar *dir = NULL;
 	const gchar *destdir;
 	const gchar *tmp;
 	gboolean ret = TRUE;
 	gchar buf[PATH_MAX];
-	gchar *data = NULL;
-	gchar *dir;
 	gsize len;
 	int r;
 	struct archive *arch = NULL;
@@ -379,8 +354,6 @@ as_util_install_icons (const gchar *filename, const gchar *origin, GError **erro
 		}
 	}
 out:
-	g_free (data);
-	g_free (dir);
 	if (arch != NULL) {
 		archive_read_close (arch);
 		archive_read_free (arch);
@@ -394,27 +367,23 @@ out:
 static gboolean
 as_util_install_xml (const gchar *filename, GError **error)
 {
-	GFile *file_dest = NULL;
-	GFile *file_src = NULL;
+	_cleanup_free gchar *basename = NULL;
+	_cleanup_free gchar *path_dest = NULL;
+	_cleanup_free gchar *path_parent = NULL;
+	_cleanup_unref_object GFile *file_dest = NULL;
+	_cleanup_unref_object GFile *file_src = NULL;
 	const gchar *destdir;
-	gboolean ret;
-	gchar *basename = NULL;
-	gchar *path_dest = NULL;
-	gchar *path_parent = NULL;
-	gint rc;
 
 	/* create directory structure */
 	destdir = g_getenv ("DESTDIR");
 	path_parent = g_strdup_printf ("%s/usr/share/app-info/xmls",
 				       destdir != NULL ? destdir : "");
-	rc = g_mkdir_with_parents (path_parent, 0777);
-	if (rc != 0) {
-		ret = FALSE;
+	if (g_mkdir_with_parents (path_parent, 0777) != 0) {
 		g_set_error (error,
 			     AS_ERROR,
 			     AS_ERROR_FAILED,
 			     "Failed to create %s", path_parent);
-		goto out;
+		return FALSE;
 	}
 
 	/* copy XML file */
@@ -422,17 +391,8 @@ as_util_install_xml (const gchar *filename, GError **error)
 	basename = g_path_get_basename (filename);
 	path_dest = g_build_filename (path_parent, basename, NULL);
 	file_dest = g_file_new_for_path (path_dest);
-	ret = g_file_copy (file_src, file_dest, G_FILE_COPY_OVERWRITE,
-			   NULL, NULL, NULL, error);
-out:
-	if (file_dest != NULL)
-		g_object_unref (file_dest);
-	if (file_src != NULL)
-		g_object_unref (file_src);
-	g_free (basename);
-	g_free (path_parent);
-	g_free (path_dest);
-	return ret;
+	return g_file_copy (file_src, file_dest, G_FILE_COPY_OVERWRITE,
+			    NULL, NULL, NULL, error);
 }
 
 /**
@@ -441,24 +401,20 @@ out:
 static gboolean
 as_util_install_filename (const gchar *filename, GError **error)
 {
-	gchar *basename = NULL;
+	_cleanup_free gchar *basename = NULL;
 	gchar *tmp;
-	gboolean ret = FALSE;
 
 	/* xml */
 	tmp = g_strstr_len (filename, -1, ".xml.gz");
-	if (tmp != NULL) {
-		ret = as_util_install_xml (filename, error);
-		goto out;
-	}
+	if (tmp != NULL)
+		return as_util_install_xml (filename, error);
 
 	/* icons */
 	basename = g_path_get_basename (filename);
 	tmp = g_strstr_len (basename, -1, "-icons.tar.gz");
 	if (tmp != NULL) {
 		*tmp = '\0';
-		ret = as_util_install_icons (filename, basename, error);
-		goto out;
+		return as_util_install_icons (filename, basename, error);
 	}
 
 	/* unrecognised */
@@ -466,9 +422,7 @@ as_util_install_filename (const gchar *filename, GError **error)
 			     AS_ERROR,
 			     AS_ERROR_FAILED,
 			     "No idea how to process files of this type");
-out:
-	g_free (basename);
-	return ret;
+	return FALSE;
 }
 
 /**
@@ -477,29 +431,25 @@ out:
 static gboolean
 as_util_install (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	gboolean ret = TRUE;
 	guint i;
 
 	/* check args */
 	if (g_strv_length (values) < 1) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     "Not enough arguments, "
 				     "expected filename(s)");
-		goto out;
+		return FALSE;
 	}
 
 	/* for each item on the command line, install the xml files and
 	 * explode the icon files */
 	for (i = 0; values[i] != NULL; i++) {
-		ret = as_util_install_filename (values[i], error);
-		if (!ret)
-			goto out;
+		if (!as_util_install_filename (values[i], error))
+			return FALSE;
 	}
-out:
-	return ret;
+	return TRUE;
 }
 
 
@@ -509,55 +459,41 @@ out:
 static gboolean
 as_util_rmtree (const gchar *directory, GError **error)
 {
+	_cleanup_close_dir GDir *dir = NULL;
 	const gchar *filename;
-	gboolean ret = TRUE;
-	gchar *src;
-	GDir *dir = NULL;
-	gint rc;
 
 	/* try to open */
 	dir = g_dir_open (directory, 0, error);
-	if (dir == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (dir == NULL)
+		return FALSE;
 
 	/* find each */
 	while ((filename = g_dir_read_name (dir))) {
+		_cleanup_free gchar *src = NULL;
 		src = g_build_filename (directory, filename, NULL);
-		ret = g_file_test (src, G_FILE_TEST_IS_DIR);
-		if (ret) {
-			ret = as_util_rmtree (src, error);
-			if (!ret)
-				goto out;
+		if (g_file_test (src, G_FILE_TEST_IS_DIR)) {
+			if (!as_util_rmtree (src, error))
+				return FALSE;
 		} else {
-			rc = g_unlink (src);
-			if (rc != 0) {
-				ret = FALSE;
+			if (g_unlink (src) != 0) {
 				g_set_error (error,
 					     G_IO_ERROR,
 					     G_IO_ERROR_FAILED,
 					     "Failed to delete %s", src);
-				goto out;
+				return FALSE;
 			}
 		}
-		g_free (src);
 	}
 
 	/* remove directory */
-	rc = g_remove (directory);
-	if (rc != 0) {
-		ret = FALSE;
+	if (g_remove (directory) != 0) {
 		g_set_error (error,
 			     G_IO_ERROR,
 			     G_IO_ERROR_FAILED,
 			     "Failed to delete %s", directory);
-		goto out;
+		return FALSE;
 	}
-out:
-	if (dir != NULL)
-		g_dir_close (dir);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -566,21 +502,19 @@ out:
 static gboolean
 as_util_uninstall (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	GFile *file_xml = NULL;
+	_cleanup_free gchar *path_icons = NULL;
+	_cleanup_free gchar *path_xml = NULL;
+	_cleanup_unref_object GFile *file_xml = NULL;
 	const gchar *destdir;
-	gboolean ret = TRUE;
-	gchar *path_icons = NULL;
-	gchar *path_xml = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     "Not enough arguments, "
 				     "expected appstream-id");
-		goto out;
+		return FALSE;
 	}
 
 	/* remove XML file */
@@ -588,35 +522,27 @@ as_util_uninstall (AsUtilPrivate *priv, gchar **values, GError **error)
 	path_xml = g_strdup_printf ("%s/usr/share/app-info/xmls/%s.xml.gz",
 				    destdir != NULL ? destdir : "", values[0]);
 	if (!g_file_test (path_xml, G_FILE_TEST_EXISTS)) {
-		ret = FALSE;
 		g_set_error (error,
 			     AS_ERROR,
 			     AS_ERROR_INVALID_ARGUMENTS,
 			     "AppStream file with that ID not found: %s",
 			     path_xml);
-		goto out;
+		return FALSE;
 	}
 	file_xml = g_file_new_for_path (path_xml);
-	ret = g_file_delete (file_xml, NULL, error);
-	if (!ret) {
+	if (!g_file_delete (file_xml, NULL, error)) {
 		g_prefix_error (error, "Failed to remove %s: ", path_xml);
-		goto out;
+		return FALSE;
 	}
 
 	/* remove icons */
 	path_icons = g_strdup_printf ("%s/usr/share/app-info/icons/%s",
 				      destdir != NULL ? destdir : "", values[0]);
 	if (g_file_test (path_icons, G_FILE_TEST_EXISTS)) {
-		ret = as_util_rmtree (path_icons, error);
-		if (!ret)
-			goto out;
+		if (!as_util_rmtree (path_icons, error))
+			return FALSE;
 	}
-out:
-	g_free (path_icons);
-	g_free (path_xml);
-	if (file_xml != NULL)
-		g_object_unref (file_xml);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -783,7 +709,6 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 {
 	AsApp *app;
 	const gchar *project_groups[] = { "GNOME", "KDE", "XFCE", NULL };
-	gboolean ret = TRUE;
 	gdouble perc;
 	guint cnt;
 	guint i;
@@ -800,12 +725,11 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 			total++;
 	}
 	if (total == 0) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     "No desktop applications found");
-		goto out;
+		return FALSE;
 	}
 
 	/* long descriptions */
@@ -873,8 +797,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 					total, perc);
 	}
 	g_string_append (html, "</ul>\n");
-out:
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -884,30 +807,27 @@ static gboolean
 as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	AsApp *app;
-	AsStore *store = NULL;
-	GFile *file = NULL;
 	GPtrArray *apps = NULL;
-	GString *html = NULL;
-	gboolean ret = TRUE;
+	_cleanup_free_string GString *html = NULL;
+	_cleanup_unref_object AsStore *store = NULL;
+	_cleanup_unref_object GFile *file = NULL;
 	guint i;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     "Not enough arguments, "
 				     "expected filename.xml.gz");
-		goto out;
+		return FALSE;
 	}
 
 	/* load file */
 	store = as_store_new ();
 	file = g_file_new_for_path (values[0]);
-	ret = as_store_from_file (store, file, NULL, NULL, error);
-	if (!ret)
-		goto out;
+	if (!as_store_from_file (store, file, NULL, NULL, error))
+		return FALSE;
 	apps = as_store_get_apps (store);
 
 	/* create header */
@@ -925,9 +845,8 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* summary section */
 	if (apps->len > 0) {
-		ret = as_util_status_html_write_exec_summary (apps, html, error);
-		if (!ret)
-			goto out;
+		if (!as_util_status_html_write_exec_summary (apps, html, error))
+			return FALSE;
 	}
 
 	/* write applications */
@@ -949,17 +868,9 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	g_string_append (html, "</html>\n");
 
 	/* save file */
-	ret = g_file_set_contents ("./status.html", html->str, -1, error);
-	if (!ret)
-		goto out;
-out:
-	if (html != NULL)
-		g_string_free (html, TRUE);
-	if (store != NULL)
-		g_object_unref (store);
-	if (file != NULL)
-		g_object_unref (file);
-	return ret;
+	if (!g_file_set_contents ("./status.html", html->str, -1, error))
+		return FALSE;
+	return TRUE;
 }
 
 /**
@@ -969,30 +880,27 @@ static gboolean
 as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	AsApp *app;
-	AsStore *store = NULL;
-	GFile *file = NULL;
 	GPtrArray *apps = NULL;
-	GString *yaml = NULL;
-	gboolean ret = TRUE;
+	_cleanup_free_string GString *yaml = NULL;
+	_cleanup_unref_object AsStore *store = NULL;
+	_cleanup_unref_object GFile *file = NULL;
 	guint i;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     "Not enough arguments, "
 				     "expected filename.xml.gz");
-		goto out;
+		return FALSE;
 	}
 
 	/* load file */
 	store = as_store_new ();
 	file = g_file_new_for_path (values[0]);
-	ret = as_store_from_file (store, file, NULL, NULL, error);
-	if (!ret)
-		goto out;
+	if (!as_store_from_file (store, file, NULL, NULL, error))
+		return FALSE;
 	apps = as_store_get_apps (store);
 
 	/* write applications */
@@ -1010,17 +918,9 @@ as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
 	}
 
 	/* save file */
-	ret = g_file_set_contents ("./applications-to-import.yaml", yaml->str, -1, error);
-	if (!ret)
-		goto out;
-out:
-	if (yaml != NULL)
-		g_string_free (yaml, TRUE);
-	if (store != NULL)
-		g_object_unref (store);
-	if (file != NULL)
-		g_object_unref (file);
-	return ret;
+	if (!g_file_set_contents ("./applications-to-import.yaml", yaml->str, -1, error))
+		return FALSE;
+	return TRUE;
 }
 
 /**
@@ -1029,43 +929,29 @@ out:
 static gboolean
 as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	AsApp *app = NULL;
 	AsProblemKind kind;
 	AsProblem *problem;
-	GPtrArray *probs = NULL;
-	gboolean ret = TRUE;
+	_cleanup_unref_object AsApp *app = NULL;
+	_cleanup_unref_ptrarray GPtrArray *probs = NULL;
 	guint i;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     "Not enough arguments, "
 				     "expected example.appdata.xml");
-		goto out;
+		return FALSE;
 	}
 
 	/* load file */
 	app = as_app_new ();
-	ret = as_app_parse_file (app, values[0], AS_APP_PARSE_FLAG_NONE, error);
-	if (!ret)
-		goto out;
+	if (!as_app_parse_file (app, values[0], AS_APP_PARSE_FLAG_NONE, error))
+		return FALSE;
 	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NONE, error);
-	if (probs == NULL) {
-		ret = FALSE;
-		goto out;
-	}
-	if (probs->len == 0) {
-		g_print ("%s\n", _("File validated successfully!"));
-	} else {
-		ret = FALSE;
-		g_set_error_literal (error,
-				     AS_ERROR,
-				     AS_ERROR_INVALID_ARGUMENTS,
-				     _("Validation failed"));
-	}
+	if (probs == NULL)
+		return FALSE;
 	for (i = 0; i < probs->len; i++) {
 		problem = g_ptr_array_index (probs, i);
 		kind = as_problem_get_kind (problem);
@@ -1073,12 +959,16 @@ as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 			 as_problem_kind_to_string (kind),
 			 as_problem_get_message (problem));
 	}
-out:
-	if (probs != NULL)
-		g_ptr_array_unref (probs);
-	if (app != NULL)
-		g_object_unref (app);
-	return ret;
+	if (probs->len == 0) {
+		g_print ("%s\n", _("File validated successfully!"));
+	} else {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     _("Validation failed"));
+		return FALSE;
+	}
+	return TRUE;
 }
 
 /**
@@ -1097,10 +987,10 @@ int
 main (int argc, char *argv[])
 {
 	AsUtilPrivate *priv;
+	_cleanup_free gchar *cmd_descriptions = NULL;
 	gboolean ret;
 	gboolean verbose = FALSE;
 	gboolean version = FALSE;
-	gchar *cmd_descriptions = NULL;
 	GError *error = NULL;
 	guint retval = 1;
 	const GOptionEntry options[] = {
@@ -1223,6 +1113,5 @@ out:
 		g_option_context_free (priv->context);
 		g_free (priv);
 	}
-	g_free (cmd_descriptions);
 	return retval;
 }
