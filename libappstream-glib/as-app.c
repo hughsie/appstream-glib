@@ -2685,7 +2685,7 @@ as_app_parse_desktop_file (AsApp *app,
 			     AS_APP_ERROR,
 			     AS_APP_ERROR_INVALID_TYPE,
 			     "Application %s has no icon",
-			     desktop_file);
+			     app_id);
 		goto out;
 	}
 out:
