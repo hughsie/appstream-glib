@@ -136,6 +136,14 @@ as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper
 	guint length_para_min = 50;
 	guint str_len;
 
+	/* empty */
+	if (text == NULL) {
+		ai_app_validate_add (helper->probs,
+				     AS_PROBLEM_KIND_STYLE_INCORRECT,
+				     "<p> was empty");
+		return;
+	}
+
 	/* relax the requirements a bit */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
 		length_para_max = 1000;
