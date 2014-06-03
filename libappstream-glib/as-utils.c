@@ -78,10 +78,10 @@ as_markup_convert_simple (const gchar *markup,
 {
 	GNode *tmp;
 	GNode *tmp_c;
-	_cleanup_free_string GString *str = NULL;
-	_cleanup_unref_node GNode *root = NULL;
 	const gchar *tag;
 	const gchar *tag_c;
+	_cleanup_free_string GString *str = NULL;
+	_cleanup_unref_node GNode *root = NULL;
 
 	/* is this actually markup */
 	if (g_strstr_len (markup, markup_len, "<") == NULL)

@@ -84,9 +84,9 @@ as_util_add (GPtrArray *array,
 	     const gchar *description,
 	     AsUtilPrivateCb callback)
 {
-	_cleanup_free_strv gchar **names = NULL;
-	guint i;
 	AsUtilItem *item;
+	guint i;
+	_cleanup_free_strv gchar **names = NULL;
 
 	g_return_if_fail (name != NULL);
 	g_return_if_fail (description != NULL);
@@ -163,8 +163,8 @@ static gboolean
 as_util_run (AsUtilPrivate *priv, const gchar *command, gchar **values, GError **error)
 {
 	AsUtilItem *item;
-	_cleanup_free_string GString *string = NULL;
 	guint i;
+	_cleanup_free_string GString *string = NULL;
 
 	/* find command */
 	for (i = 0; i < priv->cmd_array->len; i++) {
@@ -269,8 +269,6 @@ as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 static gboolean
 as_util_install_icons (const gchar *filename, const gchar *origin, GError **error)
 {
-	_cleanup_free gchar *data = NULL;
-	_cleanup_free gchar *dir = NULL;
 	const gchar *destdir;
 	const gchar *tmp;
 	gboolean ret = TRUE;
@@ -279,6 +277,8 @@ as_util_install_icons (const gchar *filename, const gchar *origin, GError **erro
 	int r;
 	struct archive *arch = NULL;
 	struct archive_entry *entry;
+	_cleanup_free gchar *data = NULL;
+	_cleanup_free gchar *dir = NULL;
 
 	destdir = g_getenv ("DESTDIR");
 	dir = g_strdup_printf ("%s/usr/share/app-info/icons/%s",
@@ -367,12 +367,12 @@ out:
 static gboolean
 as_util_install_xml (const gchar *filename, GError **error)
 {
+	const gchar *destdir;
 	_cleanup_free gchar *basename = NULL;
 	_cleanup_free gchar *path_dest = NULL;
 	_cleanup_free gchar *path_parent = NULL;
 	_cleanup_unref_object GFile *file_dest = NULL;
 	_cleanup_unref_object GFile *file_src = NULL;
-	const gchar *destdir;
 
 	/* create directory structure */
 	destdir = g_getenv ("DESTDIR");
@@ -401,8 +401,8 @@ as_util_install_xml (const gchar *filename, GError **error)
 static gboolean
 as_util_install_filename (const gchar *filename, GError **error)
 {
-	_cleanup_free gchar *basename = NULL;
 	gchar *tmp;
+	_cleanup_free gchar *basename = NULL;
 
 	/* xml */
 	tmp = g_strstr_len (filename, -1, ".xml.gz");
@@ -459,8 +459,8 @@ as_util_install (AsUtilPrivate *priv, gchar **values, GError **error)
 static gboolean
 as_util_rmtree (const gchar *directory, GError **error)
 {
-	_cleanup_close_dir GDir *dir = NULL;
 	const gchar *filename;
+	_cleanup_close_dir GDir *dir = NULL;
 
 	/* try to open */
 	dir = g_dir_open (directory, 0, error);
@@ -502,10 +502,10 @@ as_util_rmtree (const gchar *directory, GError **error)
 static gboolean
 as_util_uninstall (AsUtilPrivate *priv, gchar **values, GError **error)
 {
+	const gchar *destdir;
 	_cleanup_free gchar *path_icons = NULL;
 	_cleanup_free gchar *path_xml = NULL;
 	_cleanup_unref_object GFile *file_xml = NULL;
-	const gchar *destdir;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
@@ -808,10 +808,10 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	AsApp *app;
 	GPtrArray *apps = NULL;
+	guint i;
 	_cleanup_free_string GString *html = NULL;
 	_cleanup_unref_object AsStore *store = NULL;
 	_cleanup_unref_object GFile *file = NULL;
-	guint i;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
@@ -881,10 +881,10 @@ as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	AsApp *app;
 	GPtrArray *apps = NULL;
+	guint i;
 	_cleanup_free_string GString *yaml = NULL;
 	_cleanup_unref_object AsStore *store = NULL;
 	_cleanup_unref_object GFile *file = NULL;
-	guint i;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
@@ -931,9 +931,9 @@ as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	AsProblemKind kind;
 	AsProblem *problem;
+	guint i;
 	_cleanup_unref_object AsApp *app = NULL;
 	_cleanup_unref_ptrarray GPtrArray *probs = NULL;
-	guint i;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
@@ -987,12 +987,12 @@ int
 main (int argc, char *argv[])
 {
 	AsUtilPrivate *priv;
-	_cleanup_free gchar *cmd_descriptions = NULL;
 	gboolean ret;
 	gboolean verbose = FALSE;
 	gboolean version = FALSE;
 	GError *error = NULL;
 	guint retval = 1;
+	_cleanup_free gchar *cmd_descriptions = NULL;
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
 			/* TRANSLATORS: command line option */

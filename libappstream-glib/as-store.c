@@ -356,8 +356,8 @@ as_store_from_root (AsStore *store,
 	GError *error_local = NULL;
 	GNode *apps;
 	GNode *n;
-	_cleanup_free gchar *icon_path = NULL;
 	const gchar *tmp;
+	_cleanup_free gchar *icon_path = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
@@ -712,8 +712,8 @@ as_store_guess_origin_fallback (AsStore *store,
 				const gchar *filename,
 				GError **error)
 {
-	_cleanup_free gchar *origin_fallback;
 	gchar *tmp;
+	_cleanup_free gchar *origin_fallback;
 
 	/* the first component of the file (e.g. "fedora-20.xml.gz)
 	 * is used for the icon directory as we might want to clean up
@@ -819,11 +819,11 @@ as_store_load_app_info (AsStore *store,
 			GCancellable *cancellable,
 			GError **error)
 {
+	const gchar *tmp;
 	_cleanup_close_dir GDir *dir = NULL;
 	_cleanup_free_error GError *error_local = NULL;
 	_cleanup_free gchar *icon_root = NULL;
 	_cleanup_free gchar *path_xml = NULL;
-	const gchar *tmp;
 
 	/* watch the directory for changes */
 	if (!as_store_monitor_directory (store, path, cancellable, error))
@@ -863,10 +863,10 @@ static void
 as_store_add_app_install_screenshot (AsApp *app)
 {
 	GPtrArray *pkgnames;
+	const gchar *pkgname;
 	_cleanup_free gchar *url = NULL;
 	_cleanup_unref_object AsImage *im = NULL;
 	_cleanup_unref_object AsScreenshot *ss = NULL;
-	const gchar *pkgname;
 
 	/* get the default package name */
 	pkgnames = as_app_get_pkgnames (app);
@@ -936,11 +936,11 @@ as_store_load_app_install (AsStore *store,
 			   GCancellable *cancellable,
 			   GError **error)
 {
+	const gchar *tmp;
 	_cleanup_free_error GError *error_local = NULL;
 	_cleanup_close_dir GDir *dir = NULL;
 	_cleanup_free gchar *path_desktop = NULL;
 	_cleanup_free gchar *path_icons = NULL;
-	const gchar *tmp;
 
 	path_desktop = g_build_filename (path, "desktop", NULL);
 	if (!g_file_test (path_desktop, G_FILE_TEST_EXISTS))
@@ -990,11 +990,11 @@ as_store_load (AsStore *store,
 	       GCancellable *cancellable,
 	       GError **error)
 {
-	_cleanup_unref_ptrarray GPtrArray *app_info = NULL;
 	const gchar * const * data_dirs;
 	const gchar *tmp;
 	gchar *path;
 	guint i;
+	_cleanup_unref_ptrarray GPtrArray *app_info = NULL;
 
 	/* system locations */
 	app_info = g_ptr_array_new_with_free_func (g_free);

@@ -321,10 +321,6 @@ as_app_validate_image_url_already_exists (AsAppValidateHelper *helper,
 static gboolean
 ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 {
-	_cleanup_unref_object GdkPixbuf *pixbuf = NULL;
-	_cleanup_unref_object GInputStream *stream = NULL;
-	_cleanup_unref_object SoupMessage *msg = NULL;
-	_cleanup_unref_uri SoupURI *base_uri = NULL;
 	const gchar *url;
 	gboolean require_correct_aspect_ratio = FALSE;
 	gdouble desired_aspect = 1.777777778;
@@ -336,6 +332,10 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	guint ss_size_height_min = 351;
 	guint ss_size_width_max = 1600;
 	guint ss_size_width_min = 624;
+	_cleanup_unref_object GdkPixbuf *pixbuf = NULL;
+	_cleanup_unref_object GInputStream *stream = NULL;
+	_cleanup_unref_object SoupMessage *msg = NULL;
+	_cleanup_unref_uri SoupURI *base_uri = NULL;
 
 	/* make the requirements more strict */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_STRICT) > 0) {
@@ -689,8 +689,8 @@ as_app_validate_setup_networking (AsAppValidateHelper *helper, GError **error)
 static gboolean
 as_app_validate_license (const gchar *license_text, GError **error)
 {
-	_cleanup_free_strv gchar **licenses = NULL;
 	guint i;
+	_cleanup_free_strv gchar **licenses = NULL;
 
 	licenses = as_utils_spdx_license_tokenize (license_text);
 	for (i = 0; licenses[i] != NULL; i++) {
@@ -729,7 +729,6 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	GHashTable *urls;
 	GList *l;
 	GPtrArray *probs = NULL;
-	_cleanup_free_list GList *keys = NULL;
 	const gchar *description;
 	const gchar *id_full;
 	const gchar *key;
@@ -752,6 +751,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	guint number_para_max = 4;
 	guint number_para_min = 2;
 	guint str_len;
+	_cleanup_free_list GList *keys = NULL;
 
 	/* relax the requirements a bit */
 	if ((flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {

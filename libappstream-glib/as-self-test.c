@@ -44,8 +44,8 @@ static gchar *
 as_test_get_filename (const gchar *filename)
 {
 	char full_tmp[PATH_MAX];
-	_cleanup_free gchar *path = NULL;
 	gchar *tmp;
+	_cleanup_free gchar *path = NULL;
 
 	path = g_build_filename (TESTDATADIR, filename, NULL);
 	tmp = realpath (path, full_tmp);
@@ -82,9 +82,9 @@ ch_test_release_func (void)
 	GNode *n;
 	GNode *root;
 	GString *xml;
-	_cleanup_unref_object AsRelease *release = NULL;
 	const gchar *src = "<release version=\"0.1.2\" timestamp=\"123\"/>";
 	gboolean ret;
+	_cleanup_unref_object AsRelease *release = NULL;
 
 	release = as_release_new ();
 
@@ -119,9 +119,9 @@ ch_test_provide_func (void)
 	GNode *n;
 	GNode *root;
 	GString *xml;
-	_cleanup_unref_object AsProvide *provide = NULL;
 	const gchar *src = "<binary>/usr/bin/gnome-shell</binary>";
 	gboolean ret;
+	_cleanup_unref_object AsProvide *provide = NULL;
 
 	provide = as_provide_new ();
 
@@ -157,12 +157,12 @@ ch_test_release_desc_func (void)
 	GNode *root;
 	GString *xml;
 	gboolean ret;
-	_cleanup_unref_object AsRelease *release;
 	const gchar *src =
 		"<release version=\"0.1.2\" timestamp=\"123\">"
 		"<description><p>This is a new release</p></description>"
 		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>"
 		"</release>";
+	_cleanup_unref_object AsRelease *release;
 
 	release = as_release_new ();
 
@@ -199,13 +199,13 @@ ch_test_image_func (void)
 	GNode *n;
 	GNode *root;
 	GString *xml;
-	_cleanup_free gchar *filename = NULL;
-	_cleanup_unref_object AsImage *image = NULL;
-	_cleanup_unref_object GdkPixbuf *pixbuf = NULL;
 	const gchar *src =
 		"<image type=\"thumbnail\" height=\"12\" width=\"34\">"
 		"http://www.hughsie.com/a.jpg</image>";
 	gboolean ret;
+	_cleanup_free gchar *filename = NULL;
+	_cleanup_unref_object AsImage *image = NULL;
+	_cleanup_unref_object GdkPixbuf *pixbuf = NULL;
 
 	image = as_image_new ();
 
@@ -270,7 +270,6 @@ ch_test_screenshot_func (void)
 	GNode *n;
 	GNode *root;
 	GString *xml;
-	_cleanup_unref_object AsScreenshot *screenshot = NULL;
 	const gchar *src =
 		"<screenshot type=\"normal\">"
 		"<caption>Hello</caption>"
@@ -278,6 +277,7 @@ ch_test_screenshot_func (void)
 		"<image type=\"thumbnail\">http://2.png</image>"
 		"</screenshot>";
 	gboolean ret;
+	_cleanup_unref_object AsScreenshot *screenshot = NULL;
 
 	screenshot = as_screenshot_new ();
 
@@ -313,7 +313,6 @@ ch_test_screenshot_func (void)
 static void
 ch_test_app_func (void)
 {
-	_cleanup_unref_object AsApp *app = NULL;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
@@ -365,6 +364,7 @@ ch_test_app_func (void)
 		"<value key=\"X-Kudo-GTK3\"/>"
 		"</metadata>"
 		"</component>";
+	_cleanup_unref_object AsApp *app = NULL;
 
 	app = as_app_new ();
 
@@ -444,10 +444,10 @@ ch_test_app_validate_file_good_func (void)
 	GPtrArray *images;
 	GPtrArray *probs;
 	GPtrArray *screenshots;
-	_cleanup_free gchar *filename = NULL;
-	_cleanup_unref_object AsApp *app = NULL;
 	gboolean ret;
 	guint i;
+	_cleanup_free gchar *filename = NULL;
+	_cleanup_unref_object AsApp *app = NULL;
 
 	/* open file */
 	app = as_app_new ();
@@ -498,10 +498,10 @@ ch_test_app_validate_intltool_func (void)
 	AsProblem *problem;
 	GError *error = NULL;
 	GPtrArray *probs;
-	_cleanup_free gchar *filename = NULL;
-	_cleanup_unref_object AsApp *app = NULL;
 	gboolean ret;
 	guint i;
+	_cleanup_free gchar *filename = NULL;
+	_cleanup_unref_object AsApp *app = NULL;
 
 	/* open file */
 	app = as_app_new ();
@@ -553,10 +553,10 @@ ch_test_app_validate_file_bad_func (void)
 	AsProblem *problem;
 	GError *error = NULL;
 	gboolean ret;
+	guint i;
 	_cleanup_free gchar *filename = NULL;
 	_cleanup_unref_object AsApp *app = NULL;
 	_cleanup_unref_ptrarray GPtrArray *probs = NULL;
-	guint i;
 
 	/* open file */
 	app = as_app_new ();
@@ -627,9 +627,9 @@ ch_test_app_validate_style_func (void)
 {
 	AsProblem *problem;
 	GError *error = NULL;
+	guint i;
 	_cleanup_unref_object AsApp *app = NULL;
 	_cleanup_unref_ptrarray GPtrArray *probs = NULL;
-	guint i;
 
 	app = as_app_new ();
 	as_app_add_url (app, AS_URL_KIND_UNKNOWN, "dave.com", -1);
@@ -730,12 +730,12 @@ ch_test_app_no_markup_func (void)
 	GNode *root;
 	GString *xml;
 	gboolean ret;
-	_cleanup_unref_object AsApp *app = NULL;
 	const gchar *src =
 		"<application>"
 		"<id type=\"desktop\">org.gnome.Software.desktop</id>"
 		"<description>Software is awesome:\n\n * Bada\n * Boom!</description>"
 		"</application>";
+	_cleanup_unref_object AsApp *app = NULL;
 
 	app = as_app_new ();
 
@@ -1009,8 +1009,6 @@ ch_test_node_localized_wrap_func (void)
 {
 	GError *error = NULL;
 	GNode *n1;
-	_cleanup_unref_hashtable GHashTable *hash = NULL;
-	_cleanup_unref_node GNode *root = NULL;
 	const gchar *xml =
 		"<description>"
 		" <p>Hi</p>"
@@ -1021,6 +1019,8 @@ ch_test_node_localized_wrap_func (void)
 		"  <li xml:lang=\"en_GB\">Hi</li>"
 		" </ul>"
 		"</description>";
+	_cleanup_unref_hashtable GHashTable *hash = NULL;
+	_cleanup_unref_node GNode *root = NULL;
 
 	root = as_node_from_xml (xml, -1, 0, &error);
 	g_assert_no_error (error);
@@ -1046,8 +1046,6 @@ ch_test_node_localized_wrap2_func (void)
 {
 	GError *error = NULL;
 	GNode *n1;
-	_cleanup_unref_hashtable GHashTable *hash = NULL;
-	_cleanup_unref_node GNode *root = NULL;
 	const gchar *xml =
 		"<description>"
 		" <p>Hi</p>"
@@ -1061,6 +1059,8 @@ ch_test_node_localized_wrap2_func (void)
 		"  <li>Secondski</li>"
 		" </ul>"
 		"</description>";
+	_cleanup_unref_hashtable GHashTable *hash = NULL;
+	_cleanup_unref_node GNode *root = NULL;
 
 	root = as_node_from_xml (xml, -1, 0, &error);
 	g_assert_no_error (error);
@@ -1082,9 +1082,9 @@ ch_test_node_localized_wrap2_func (void)
 static void
 ch_test_app_subsume_func (void)
 {
+	GList *list;
 	_cleanup_unref_object AsApp *app = NULL;
 	_cleanup_unref_object AsApp *donor = NULL;
-	GList *list;
 
 	donor = as_app_new ();
 	as_app_set_icon (donor, "gtk-find", -1);
@@ -1119,10 +1119,10 @@ ch_test_app_subsume_func (void)
 static void
 ch_test_app_search_func (void)
 {
-	_cleanup_unref_object AsApp *app = NULL;
 	const gchar *all[] = { "gnome", "install", "software", NULL };
 	const gchar *none[] = { "gnome", "xxx", "software", NULL };
 	const gchar *mime[] = { "application", "vnd", "oasis", "opendocument","text", NULL };
+	_cleanup_unref_object AsApp *app = NULL;
 
 	app = as_app_new ();
 	as_app_set_name (app, NULL, "GNOME Software", -1);
@@ -1295,13 +1295,13 @@ ch_test_node_no_dup_c_func (void)
 	GNode *root;
 	GString *xml;
 	gboolean ret;
-	_cleanup_unref_object AsApp *app = NULL;
 	const gchar *src =
 		"<application>"
 		"<id type=\"desktop\">test.desktop</id>"
 		"<name>Krita</name>"
 		"<name xml:lang=\"pl\">Krita</name>"
 		"</application>";
+	_cleanup_unref_object AsApp *app = NULL;
 
 	/* to object */
 	app = as_app_new ();
@@ -1363,12 +1363,12 @@ static void
 ch_test_store_speed_func (void)
 {
 	GError *error = NULL;
-	_cleanup_destroy_timer GTimer *timer = NULL;
-	_cleanup_free gchar *filename = NULL;
-	_cleanup_unref_object GFile *file = NULL;
 	gboolean ret;
 	guint i;
 	guint loops = 10;
+	_cleanup_destroy_timer GTimer *timer = NULL;
+	_cleanup_free gchar *filename = NULL;
+	_cleanup_unref_object GFile *file = NULL;
 
 	filename = as_test_get_filename ("example-v04.xml.gz");
 	file = g_file_new_for_path (filename);
@@ -1513,8 +1513,8 @@ static void
 ch_test_store_app_install_func (void)
 {
 	GError *error = NULL;
-	_cleanup_unref_object AsStore *store = NULL;
 	gboolean ret;
+	_cleanup_unref_object AsStore *store = NULL;
 
 	store = as_store_new ();
 	ret = as_store_load (store,
@@ -1531,7 +1531,6 @@ ch_test_store_metadata_func (void)
 	GError *error = NULL;
 	GPtrArray *apps;
 	gboolean ret;
-	_cleanup_unref_object AsStore *store = NULL;
 	const gchar *xml =
 		"<applications version=\"0.3\">"
 		"<application>"
@@ -1547,6 +1546,7 @@ ch_test_store_metadata_func (void)
 		"</metadata>"
 		"</application>"
 		"</applications>";
+	_cleanup_unref_object AsStore *store = NULL;
 
 	store = as_store_new ();
 	ret = as_store_from_xml (store, xml, -1, NULL, &error);

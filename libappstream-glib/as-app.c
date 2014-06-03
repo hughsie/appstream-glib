@@ -1503,10 +1503,10 @@ static void
 as_app_subsume_dict (GHashTable *dest, GHashTable *src, gboolean overwrite)
 {
 	GList *l;
-	_cleanup_free_list GList *keys;
 	const gchar *tmp;
 	const gchar *key;
 	const gchar *value;
+	_cleanup_free_list GList *keys;
 
 	keys = g_hash_table_get_keys (src);
 	for (l = keys; l != NULL; l = l->next) {
@@ -1646,10 +1646,10 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
 {
 	GNode *node_tmp;
 	GList *l;
-	_cleanup_free_list GList *langs;
 	const gchar *locale;
 	gchar tmp[4];
 	gint percentage;
+	_cleanup_free_list GList *langs;
 
 	node_tmp = as_node_insert (parent, "languages", NULL, 0, NULL);
 	langs = as_app_get_languages (app);
@@ -2404,11 +2404,11 @@ as_app_parse_file_key (AsApp *app,
 		       const gchar *key,
 		       GError **error)
 {
+	gchar *dot = NULL;
+	guint i;
 	_cleanup_free gchar *locale = NULL;
 	_cleanup_free gchar *tmp = NULL;
 	_cleanup_free_strv gchar **list = NULL;
-	gchar *dot = NULL;
-	guint i;
 
 	/* NoDisplay */
 	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_NO_DISPLAY) == 0) {
@@ -2567,11 +2567,11 @@ as_app_parse_desktop_file (AsApp *app,
 			   GError **error)
 {
 	GKeyFileFlags kf_flags = G_KEY_FILE_KEEP_TRANSLATIONS;
+	gchar *tmp;
+	guint i;
 	_cleanup_free gchar *app_id = NULL;
 	_cleanup_unref_keyfile GKeyFile *kf = NULL;
 	_cleanup_free_strv gchar **keys = NULL;
-	gchar *tmp;
-	guint i;
 
 	/* load file */
 	kf = g_key_file_new ();
@@ -2652,10 +2652,10 @@ as_app_parse_appdata_file (AsApp *app,
 	GNode *l;
 	GNode *node;
 	gboolean seen_application = FALSE;
-	_cleanup_free gchar *data = NULL;
-	_cleanup_unref_node GNode *root = NULL;
 	gchar *tmp;
 	gsize len;
+	_cleanup_free gchar *data = NULL;
+	_cleanup_unref_node GNode *root = NULL;
 
 	/* open file */
 	if (!g_file_get_contents (filename, &data, &len, error))

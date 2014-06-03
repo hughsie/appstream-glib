@@ -572,9 +572,9 @@ as_node_passthrough_cb (GMarkupParseContext *context,
 			GError             **error)
 {
 	AsNodeToXmlHelper *helper = (AsNodeToXmlHelper *) user_data;
-	_cleanup_free gchar *text = NULL;
 	const gchar *tmp;
 	gchar *found;
+	_cleanup_free gchar *text = NULL;
 
 	/* only keep comments when told to */
 	if ((helper->flags & AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS) == 0)
@@ -620,9 +620,9 @@ as_node_from_xml (const gchar *data,
 {
 	AsNodeToXmlHelper helper;
 	GNode *root = NULL;
+	gboolean ret;
 	_cleanup_unref_markup_parse_context GMarkupParseContext *ctx = NULL;
 	_cleanup_free_error GError *error_local = NULL;
-	gboolean ret;
 	const GMarkupParser parser = {
 		as_node_start_element_cb,
 		as_node_end_element_cb,
@@ -686,16 +686,16 @@ as_node_from_file (GFile *file,
 	AsNodeToXmlHelper helper;
 	GError *error_local = NULL;
 	GNode *root = NULL;
+	const gchar *content_type = NULL;
+	gboolean ret = TRUE;
+	gsize chunk_size = 32 * 1024;
+	gssize len;
 	_cleanup_free gchar *data = NULL;
 	_cleanup_unref_markup_parse_context GMarkupParseContext *ctx = NULL;
 	_cleanup_unref_object GConverter *conv = NULL;
 	_cleanup_unref_object GFileInfo *info = NULL;
 	_cleanup_unref_object GInputStream *file_stream = NULL;
 	_cleanup_unref_object GInputStream *stream_data = NULL;
-	const gchar *content_type = NULL;
-	gboolean ret = TRUE;
-	gsize chunk_size = 32 * 1024;
-	gssize len;
 	const GMarkupParser parser = {
 		as_node_start_element_cb,
 		as_node_end_element_cb,
@@ -1125,8 +1125,8 @@ GNode *
 as_node_find (GNode *root, const gchar *path)
 {
 	GNode *node = root;
-	_cleanup_free_strv gchar **split = NULL;
 	guint i;
+	_cleanup_free_strv gchar **split = NULL;
 
 	g_return_val_if_fail (path != NULL, NULL);
 
@@ -1216,10 +1216,10 @@ as_node_insert_localized (GNode *parent,
 {
 	AsNodeData *data;
 	GList *l;
-	_cleanup_free_list GList *list = NULL;
 	const gchar *key;
 	const gchar *value;
 	const gchar *value_c;
+	_cleanup_free_list GList *list = NULL;
 
 	/* add the untranslated value first */
 	value_c = g_hash_table_lookup (localized, "C");
@@ -1402,8 +1402,8 @@ as_node_denorm_add_to_langs (GHashTable *hash,
 {
 	GList *l;
 	GString *str;
-	_cleanup_free_list GList *keys = NULL;
 	const gchar *xml_lang;
+	_cleanup_free_list GList *keys = NULL;
 
 	keys = g_hash_table_get_keys (hash);
 	for (l = keys; l != NULL; l = l->next) {
@@ -1638,10 +1638,10 @@ as_node_get_localized_unwrap (const GNode *node, GError **error)
 	GList *l;
 	GNode *tmp;
 	GString *str;
-	_cleanup_free_list GList *keys = NULL;
-	_cleanup_unref_hashtable GHashTable *hash = NULL;
 	const gchar *xml_lang;
 	gboolean is_li_translated = TRUE;
+	_cleanup_free_list GList *keys = NULL;
+	_cleanup_unref_hashtable GHashTable *hash = NULL;
 
 	/* work out what kind of normalization this is */
 	for (tmp = node->children; tmp != NULL; tmp = tmp->next) {

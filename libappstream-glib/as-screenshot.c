@@ -321,9 +321,9 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	GList *l;
 	GNode *c;
-	_cleanup_unref_hashtable GHashTable *captions = NULL;
 	const gchar *tmp;
 	guint size;
+	_cleanup_unref_hashtable GHashTable *captions = NULL;
 
 	tmp = as_node_get_attribute (node, "type");
 	if (tmp != NULL) {
