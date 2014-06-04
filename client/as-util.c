@@ -86,7 +86,7 @@ as_util_add (GPtrArray *array,
 {
 	AsUtilItem *item;
 	guint i;
-	_cleanup_free_strv gchar **names = NULL;
+	_cleanup_strv_free_ gchar **names = NULL;
 
 	g_return_if_fail (name != NULL);
 	g_return_if_fail (description != NULL);
@@ -164,7 +164,7 @@ as_util_run (AsUtilPrivate *priv, const gchar *command, gchar **values, GError *
 {
 	AsUtilItem *item;
 	guint i;
-	_cleanup_free_string GString *string = NULL;
+	_cleanup_string_free_ GString *string = NULL;
 
 	/* find command */
 	for (i = 0; i < priv->cmd_array->len; i++) {
@@ -194,9 +194,9 @@ as_util_run (AsUtilPrivate *priv, const gchar *command, gchar **values, GError *
 static gboolean
 as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	_cleanup_unref_object AsStore *store = NULL;
-	_cleanup_unref_object GFile *file_input = NULL;
-	_cleanup_unref_object GFile *file_output = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ GFile *file_input = NULL;
+	_cleanup_object_unref_ GFile *file_output = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 3) {
@@ -233,9 +233,9 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 static gboolean
 as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	_cleanup_free_string GString *xml = NULL;
-	_cleanup_unref_object AsStore *store = NULL;
-	_cleanup_unref_object GFile *file_input = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ GFile *file_input = NULL;
+	_cleanup_string_free_ GString *xml = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
@@ -277,8 +277,8 @@ as_util_install_icons (const gchar *filename, const gchar *origin, GError **erro
 	int r;
 	struct archive *arch = NULL;
 	struct archive_entry *entry;
-	_cleanup_free gchar *data = NULL;
-	_cleanup_free gchar *dir = NULL;
+	_cleanup_free_ gchar *data = NULL;
+	_cleanup_free_ gchar *dir = NULL;
 
 	destdir = g_getenv ("DESTDIR");
 	dir = g_strdup_printf ("%s/usr/share/app-info/icons/%s",
@@ -368,11 +368,11 @@ static gboolean
 as_util_install_xml (const gchar *filename, GError **error)
 {
 	const gchar *destdir;
-	_cleanup_free gchar *basename = NULL;
-	_cleanup_free gchar *path_dest = NULL;
-	_cleanup_free gchar *path_parent = NULL;
-	_cleanup_unref_object GFile *file_dest = NULL;
-	_cleanup_unref_object GFile *file_src = NULL;
+	_cleanup_free_ gchar *basename = NULL;
+	_cleanup_free_ gchar *path_dest = NULL;
+	_cleanup_free_ gchar *path_parent = NULL;
+	_cleanup_object_unref_ GFile *file_dest = NULL;
+	_cleanup_object_unref_ GFile *file_src = NULL;
 
 	/* create directory structure */
 	destdir = g_getenv ("DESTDIR");
@@ -402,7 +402,7 @@ static gboolean
 as_util_install_filename (const gchar *filename, GError **error)
 {
 	gchar *tmp;
-	_cleanup_free gchar *basename = NULL;
+	_cleanup_free_ gchar *basename = NULL;
 
 	/* xml */
 	tmp = g_strstr_len (filename, -1, ".xml.gz");
@@ -460,7 +460,7 @@ static gboolean
 as_util_rmtree (const gchar *directory, GError **error)
 {
 	const gchar *filename;
-	_cleanup_close_dir GDir *dir = NULL;
+	_cleanup_dir_close_ GDir *dir = NULL;
 
 	/* try to open */
 	dir = g_dir_open (directory, 0, error);
@@ -469,7 +469,7 @@ as_util_rmtree (const gchar *directory, GError **error)
 
 	/* find each */
 	while ((filename = g_dir_read_name (dir))) {
-		_cleanup_free gchar *src = NULL;
+		_cleanup_free_ gchar *src = NULL;
 		src = g_build_filename (directory, filename, NULL);
 		if (g_file_test (src, G_FILE_TEST_IS_DIR)) {
 			if (!as_util_rmtree (src, error))
@@ -503,9 +503,9 @@ static gboolean
 as_util_uninstall (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	const gchar *destdir;
-	_cleanup_free gchar *path_icons = NULL;
-	_cleanup_free gchar *path_xml = NULL;
-	_cleanup_unref_object GFile *file_xml = NULL;
+	_cleanup_free_ gchar *path_icons = NULL;
+	_cleanup_free_ gchar *path_xml = NULL;
+	_cleanup_object_unref_ GFile *file_xml = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
@@ -809,9 +809,9 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	AsApp *app;
 	GPtrArray *apps = NULL;
 	guint i;
-	_cleanup_free_string GString *html = NULL;
-	_cleanup_unref_object AsStore *store = NULL;
-	_cleanup_unref_object GFile *file = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+	_cleanup_string_free_ GString *html = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
@@ -882,9 +882,9 @@ as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
 	AsApp *app;
 	GPtrArray *apps = NULL;
 	guint i;
-	_cleanup_free_string GString *yaml = NULL;
-	_cleanup_unref_object AsStore *store = NULL;
-	_cleanup_unref_object GFile *file = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+	_cleanup_string_free_ GString *yaml = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
@@ -932,8 +932,8 @@ as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 	AsProblemKind kind;
 	AsProblem *problem;
 	guint i;
-	_cleanup_unref_object AsApp *app = NULL;
-	_cleanup_unref_ptrarray GPtrArray *probs = NULL;
+	_cleanup_object_unref_ AsApp *app = NULL;
+	_cleanup_ptrarray_unref_ GPtrArray *probs = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
@@ -992,7 +992,7 @@ main (int argc, char *argv[])
 	gboolean version = FALSE;
 	GError *error = NULL;
 	guint retval = 1;
-	_cleanup_free gchar *cmd_descriptions = NULL;
+	_cleanup_free_ gchar *cmd_descriptions = NULL;
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
 			/* TRANSLATORS: command line option */

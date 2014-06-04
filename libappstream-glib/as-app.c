@@ -1506,7 +1506,7 @@ as_app_subsume_dict (GHashTable *dest, GHashTable *src, gboolean overwrite)
 	const gchar *tmp;
 	const gchar *key;
 	const gchar *value;
-	_cleanup_free_list GList *keys;
+	_cleanup_list_free_ GList *keys;
 
 	keys = g_hash_table_get_keys (src);
 	for (l = keys; l != NULL; l = l->next) {
@@ -1536,7 +1536,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	guint i;
 	gint percentage;
 	GList *l;
-	_cleanup_free_list GList *keys;
+	_cleanup_list_free_ GList *keys;
 
 	overwrite = (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) == 0;
 
@@ -1649,7 +1649,7 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
 	const gchar *locale;
 	gchar tmp[4];
 	gint percentage;
-	_cleanup_free_list GList *langs;
+	_cleanup_list_free_ GList *langs;
 
 	node_tmp = as_node_insert (parent, "languages", NULL, 0, NULL);
 	langs = as_app_get_languages (app);
@@ -1933,7 +1933,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 		/* unwrap appdata inline */
 		if (priv->source_kind == AS_APP_SOURCE_KIND_APPDATA) {
-			_cleanup_unref_hashtable GHashTable *unwrapped;
+			_cleanup_hashtable_unref_ GHashTable *unwrapped;
 			unwrapped = as_node_get_localized_unwrap (n, error);
 			if (unwrapped == NULL)
 				return FALSE;
@@ -1948,7 +1948,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 						as_node_get_data (n),
 						-1);
 		} else {
-			_cleanup_free_string GString *xml;
+			_cleanup_string_free_ GString *xml;
 			xml = as_node_to_xml (n->children,
 					      AS_NODE_TO_XML_FLAG_INCLUDE_SIBLINGS);
 			as_app_set_description (app,
@@ -2045,7 +2045,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_SCREENSHOTS:
 		g_ptr_array_set_size (priv->screenshots, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			_cleanup_unref_object AsScreenshot *ss = NULL;
+			_cleanup_object_unref_ AsScreenshot *ss = NULL;
 			if (as_node_get_tag (c) != AS_TAG_SCREENSHOT)
 				continue;
 			ss = as_screenshot_new ();
@@ -2059,7 +2059,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_RELEASES:
 		g_ptr_array_set_size (priv->releases, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			_cleanup_unref_object AsRelease *r = NULL;
+			_cleanup_object_unref_ AsRelease *r = NULL;
 			if (as_node_get_tag (c) != AS_TAG_RELEASE)
 				continue;
 			r = as_release_new ();
@@ -2073,7 +2073,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 	case AS_TAG_PROVIDES:
 		g_ptr_array_set_size (priv->provides, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			_cleanup_unref_object AsProvide *p;
+			_cleanup_object_unref_ AsProvide *p;
 			p = as_provide_new ();
 			if (!as_provide_node_parse (p, c, error))
 				return FALSE;
@@ -2360,7 +2360,7 @@ as_app_infer_file_key (AsApp *app,
 		       const gchar *key,
 		       GError **error)
 {
-	_cleanup_free gchar *tmp = NULL;
+	_cleanup_free_ gchar *tmp = NULL;
 
 	if (g_strcmp0 (key, "X-GNOME-UsesNotifications") == 0) {
 		as_app_add_metadata (app, "X-Kudo-UsesNotifications", "", -1);
@@ -2406,9 +2406,9 @@ as_app_parse_file_key (AsApp *app,
 {
 	gchar *dot = NULL;
 	guint i;
-	_cleanup_free gchar *locale = NULL;
-	_cleanup_free gchar *tmp = NULL;
-	_cleanup_free_strv gchar **list = NULL;
+	_cleanup_free_ gchar *locale = NULL;
+	_cleanup_free_ gchar *tmp = NULL;
+	_cleanup_strv_free_ gchar **list = NULL;
 
 	/* NoDisplay */
 	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_NO_DISPLAY) == 0) {
@@ -2569,9 +2569,9 @@ as_app_parse_desktop_file (AsApp *app,
 	GKeyFileFlags kf_flags = G_KEY_FILE_KEEP_TRANSLATIONS;
 	gchar *tmp;
 	guint i;
-	_cleanup_free gchar *app_id = NULL;
-	_cleanup_unref_keyfile GKeyFile *kf = NULL;
-	_cleanup_free_strv gchar **keys = NULL;
+	_cleanup_free_ gchar *app_id = NULL;
+	_cleanup_keyfile_unref_ GKeyFile *kf = NULL;
+	_cleanup_strv_free_ gchar **keys = NULL;
 
 	/* load file */
 	kf = g_key_file_new ();
@@ -2654,8 +2654,8 @@ as_app_parse_appdata_file (AsApp *app,
 	gboolean seen_application = FALSE;
 	gchar *tmp;
 	gsize len;
-	_cleanup_free gchar *data = NULL;
-	_cleanup_unref_node GNode *root = NULL;
+	_cleanup_free_ gchar *data = NULL;
+	_cleanup_node_unref_ GNode *root = NULL;
 
 	/* open file */
 	if (!g_file_get_contents (filename, &data, &len, error))

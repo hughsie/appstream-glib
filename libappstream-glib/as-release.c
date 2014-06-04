@@ -228,7 +228,7 @@ as_release_node_insert (AsRelease *release, GNode *parent, gdouble api_version)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	GNode *n;
-	_cleanup_free gchar *timestamp_str;
+	_cleanup_free_ gchar *timestamp_str;
 
 	timestamp_str = g_strdup_printf ("%" G_GUINT64_FORMAT,
 					 priv->timestamp);
@@ -276,7 +276,7 @@ as_release_node_parse (AsRelease *release, GNode *node, GError **error)
 
 	/* descriptions are translated and optional */
 	for (n = node->children; n != NULL; n = n->next) {
-		_cleanup_free_string GString *xml = NULL;
+		_cleanup_string_free_ GString *xml = NULL;
 		if (as_node_get_tag (n) != AS_TAG_DESCRIPTION)
 			continue;
 		xml = as_node_to_xml (n->children, AS_NODE_TO_XML_FLAG_NONE);

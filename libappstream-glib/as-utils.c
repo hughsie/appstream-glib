@@ -80,8 +80,8 @@ as_markup_convert_simple (const gchar *markup,
 	GNode *tmp_c;
 	const gchar *tag;
 	const gchar *tag_c;
-	_cleanup_free_string GString *str = NULL;
-	_cleanup_unref_node GNode *root = NULL;
+	_cleanup_node_unref_ GNode *root = NULL;
+	_cleanup_string_free_ GString *str = NULL;
 
 	/* is this actually markup */
 	if (g_strstr_len (markup, markup_len, "<") == NULL)
@@ -192,8 +192,8 @@ as_hash_lookup_by_locale (GHashTable *hash, const gchar *locale)
 gboolean
 as_utils_is_stock_icon_name (const gchar *name)
 {
-	_cleanup_free gchar *key = NULL;
-	_cleanup_unref_bytes GBytes *data;
+	_cleanup_bytes_unref_ GBytes *data;
+	_cleanup_free_ gchar *key = NULL;
 
 	/* load the readonly data section and look for the icon name */
 	data = g_resource_lookup_data (as_get_resource (),
@@ -219,8 +219,8 @@ as_utils_is_stock_icon_name (const gchar *name)
 gboolean
 as_utils_is_spdx_license_id (const gchar *license_id)
 {
-	_cleanup_free gchar *key = NULL;
-	_cleanup_unref_bytes GBytes *data;
+	_cleanup_bytes_unref_ GBytes *data;
+	_cleanup_free_ gchar *key = NULL;
 
 	/* load the readonly data section and look for the icon name */
 	data = g_resource_lookup_data (as_get_resource (),
@@ -357,9 +357,9 @@ as_util_get_possible_kudos (void)
 gboolean
 as_utils_check_url_exists (const gchar *url, guint timeout, GError **error)
 {
-	_cleanup_unref_object SoupMessage *msg = NULL;
-	_cleanup_unref_object SoupSession *session = NULL;
-	_cleanup_unref_uri SoupURI *base_uri = NULL;
+	_cleanup_object_unref_ SoupMessage *msg = NULL;
+	_cleanup_object_unref_ SoupSession *session = NULL;
+	_cleanup_uri_unref_ SoupURI *base_uri = NULL;
 
 	/* GET file */
 	base_uri = soup_uri_new (url);

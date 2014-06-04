@@ -357,7 +357,7 @@ as_store_from_root (AsStore *store,
 	GNode *apps;
 	GNode *n;
 	const gchar *tmp;
-	_cleanup_free gchar *icon_path = NULL;
+	_cleanup_free_ gchar *icon_path = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
@@ -439,8 +439,8 @@ as_store_from_file (AsStore *store,
 		    GCancellable *cancellable,
 		    GError **error)
 {
-	_cleanup_free_error GError *error_local = NULL;
-	_cleanup_unref_node GNode *root = NULL;
+	_cleanup_error_free_ GError *error_local = NULL;
+	_cleanup_node_unref_ GNode *root = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
@@ -484,8 +484,8 @@ as_store_from_xml (AsStore *store,
 		   const gchar *icon_root,
 		   GError **error)
 {
-	_cleanup_free_error GError *error_local = NULL;
-	_cleanup_unref_node GNode *root = NULL;
+	_cleanup_error_free_ GError *error_local = NULL;
+	_cleanup_node_unref_ GNode *root = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
@@ -588,11 +588,11 @@ as_store_to_file (AsStore *store,
 		  GCancellable *cancellable,
 		  GError **error)
 {
-	_cleanup_free_error GError *error_local = NULL;
-	_cleanup_free_string GString *xml = NULL;
-	_cleanup_unref_object GOutputStream *out2 = NULL;
-	_cleanup_unref_object GOutputStream *out = NULL;
-	_cleanup_unref_object GZlibCompressor *compressor = NULL;
+	_cleanup_error_free_ GError *error_local = NULL;
+	_cleanup_object_unref_ GOutputStream *out2 = NULL;
+	_cleanup_object_unref_ GOutputStream *out = NULL;
+	_cleanup_object_unref_ GZlibCompressor *compressor = NULL;
+	_cleanup_string_free_ GString *xml = NULL;
 
 	/* compress as a gzip file */
 	compressor = g_zlib_compressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP, -1);
@@ -713,7 +713,7 @@ as_store_guess_origin_fallback (AsStore *store,
 				GError **error)
 {
 	gchar *tmp;
-	_cleanup_free gchar *origin_fallback;
+	_cleanup_free_ gchar *origin_fallback;
 
 	/* the first component of the file (e.g. "fedora-20.xml.gz)
 	 * is used for the icon directory as we might want to clean up
@@ -746,7 +746,7 @@ as_store_load_app_info_file (AsStore *store,
 			     GCancellable *cancellable,
 			     GError **error)
 {
-	_cleanup_unref_object GFile *file = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
 
 	/* guess this based on the name */
 	if (!as_store_guess_origin_fallback (store, path_xml, error))
@@ -786,9 +786,9 @@ as_store_monitor_directory (AsStore *store,
 			    GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	_cleanup_free_error GError *error_local = NULL;
-	_cleanup_unref_object GFile *file = NULL;
-	_cleanup_unref_object GFileMonitor *monitor = NULL;
+	_cleanup_error_free_ GError *error_local = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+	_cleanup_object_unref_ GFileMonitor *monitor = NULL;
 
 	file = g_file_new_for_path (path);
 	monitor = g_file_monitor_directory (file,
@@ -820,10 +820,10 @@ as_store_load_app_info (AsStore *store,
 			GError **error)
 {
 	const gchar *tmp;
-	_cleanup_close_dir GDir *dir = NULL;
-	_cleanup_free_error GError *error_local = NULL;
-	_cleanup_free gchar *icon_root = NULL;
-	_cleanup_free gchar *path_xml = NULL;
+	_cleanup_dir_close_ GDir *dir = NULL;
+	_cleanup_error_free_ GError *error_local = NULL;
+	_cleanup_free_ gchar *icon_root = NULL;
+	_cleanup_free_ gchar *path_xml = NULL;
 
 	/* watch the directory for changes */
 	if (!as_store_monitor_directory (store, path, cancellable, error))
@@ -844,7 +844,7 @@ as_store_load_app_info (AsStore *store,
 	}
 	icon_root = g_build_filename (path, "icons", NULL);
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free gchar *filename_xml;
+		_cleanup_free_ gchar *filename_xml;
 		filename_xml = g_build_filename (path_xml, tmp, NULL);
 		if (!as_store_load_app_info_file (store,
 						  filename_xml,
@@ -864,9 +864,9 @@ as_store_add_app_install_screenshot (AsApp *app)
 {
 	GPtrArray *pkgnames;
 	const gchar *pkgname;
-	_cleanup_free gchar *url = NULL;
-	_cleanup_unref_object AsImage *im = NULL;
-	_cleanup_unref_object AsScreenshot *ss = NULL;
+	_cleanup_free_ gchar *url = NULL;
+	_cleanup_object_unref_ AsImage *im = NULL;
+	_cleanup_object_unref_ AsScreenshot *ss = NULL;
 
 	/* get the default package name */
 	pkgnames = as_app_get_pkgnames (app);
@@ -897,8 +897,8 @@ as_store_load_app_install_file (AsStore *store,
 				const gchar *path_icons,
 				GError **error)
 {
-	_cleanup_free_error GError *error_local = NULL;
-	_cleanup_unref_object AsApp *app;
+	_cleanup_error_free_ GError *error_local = NULL;
+	_cleanup_object_unref_ AsApp *app;
 
 	app = as_app_new ();
 	if (!as_app_parse_file (app,
@@ -937,10 +937,10 @@ as_store_load_app_install (AsStore *store,
 			   GError **error)
 {
 	const gchar *tmp;
-	_cleanup_free_error GError *error_local = NULL;
-	_cleanup_close_dir GDir *dir = NULL;
-	_cleanup_free gchar *path_desktop = NULL;
-	_cleanup_free gchar *path_icons = NULL;
+	_cleanup_dir_close_ GDir *dir = NULL;
+	_cleanup_error_free_ GError *error_local = NULL;
+	_cleanup_free_ gchar *path_desktop = NULL;
+	_cleanup_free_ gchar *path_icons = NULL;
 
 	path_desktop = g_build_filename (path, "desktop", NULL);
 	if (!g_file_test (path_desktop, G_FILE_TEST_EXISTS))
@@ -958,7 +958,7 @@ as_store_load_app_install (AsStore *store,
 
 	path_icons = g_build_filename (path, "icons", NULL);
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free gchar *filename = NULL;
+		_cleanup_free_ gchar *filename = NULL;
 		if (!g_str_has_suffix (tmp, ".desktop"))
 			continue;
 		filename = g_build_filename (path_desktop, tmp, NULL);
@@ -994,7 +994,7 @@ as_store_load (AsStore *store,
 	const gchar *tmp;
 	gchar *path;
 	guint i;
-	_cleanup_unref_ptrarray GPtrArray *app_info = NULL;
+	_cleanup_ptrarray_unref_ GPtrArray *app_info = NULL;
 
 	/* system locations */
 	app_info = g_ptr_array_new_with_free_func (g_free);

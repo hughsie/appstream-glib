@@ -230,7 +230,7 @@ as_app_validate_description (const gchar *xml,
 {
 	GNode *l;
 	GNode *l2;
-	_cleanup_unref_node GNode *node;
+	_cleanup_node_unref_ GNode *node;
 
 	/* parse xml */
 	node = as_node_from_xml (xml, -1,
@@ -332,10 +332,10 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	guint ss_size_height_min = 351;
 	guint ss_size_width_max = 1600;
 	guint ss_size_width_min = 624;
-	_cleanup_unref_object GdkPixbuf *pixbuf = NULL;
-	_cleanup_unref_object GInputStream *stream = NULL;
-	_cleanup_unref_object SoupMessage *msg = NULL;
-	_cleanup_unref_uri SoupURI *base_uri = NULL;
+	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+	_cleanup_object_unref_ GInputStream *stream = NULL;
+	_cleanup_object_unref_ SoupMessage *msg = NULL;
+	_cleanup_uri_unref_ SoupURI *base_uri = NULL;
 
 	/* make the requirements more strict */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_STRICT) > 0) {
@@ -690,7 +690,7 @@ static gboolean
 as_app_validate_license (const gchar *license_text, GError **error)
 {
 	guint i;
-	_cleanup_free_strv gchar **licenses = NULL;
+	_cleanup_strv_free_ gchar **licenses = NULL;
 
 	licenses = as_utils_spdx_license_tokenize (license_text);
 	for (i = 0; licenses[i] != NULL; i++) {
@@ -751,7 +751,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	guint number_para_max = 4;
 	guint number_para_min = 2;
 	guint str_len;
-	_cleanup_free_list GList *keys = NULL;
+	_cleanup_list_free_ GList *keys = NULL;
 
 	/* relax the requirements a bit */
 	if ((flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
