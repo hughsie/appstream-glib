@@ -2553,7 +2553,26 @@ as_app_parse_file_key (AsApp *app,
 						    NULL);
 		if (tmp != NULL && tmp[0] != '\0')
 			as_app_set_comment (app, locale, tmp, -1);
+
+	/* non-standard */
+	} else if (g_strcmp0 (key, "X-Ubuntu-Software-Center-Name") == 0) {
+		tmp = g_key_file_get_string (kf,
+					     G_KEY_FILE_DESKTOP_GROUP,
+					     key,
+					     NULL);
+		if (tmp != NULL && tmp[0] != '\0')
+			as_app_set_name (app, "C", tmp, -1);
+	} else if (g_str_has_prefix (key, "X-Ubuntu-Software-Center-Name")) {
+		locale = as_app_desktop_key_get_locale (key);
+		tmp = g_key_file_get_locale_string (kf,
+						    G_KEY_FILE_DESKTOP_GROUP,
+						    "X-Ubuntu-Software-Center-Name",
+						    locale,
+						    NULL);
+		if (tmp != NULL && tmp[0] != '\0')
+			as_app_set_name (app, locale, tmp, -1);
 	}
+
 	return TRUE;
 }
 
