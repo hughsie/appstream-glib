@@ -288,8 +288,13 @@ as_screenshot_node_insert (AsScreenshot *screenshot,
 
 	n = as_node_insert (parent, "screenshot", NULL,
 			    AS_NODE_INSERT_FLAG_NONE,
-			    "type", as_screenshot_kind_to_string (priv->kind),
 			    NULL);
+	if (priv->kind != AS_SCREENSHOT_KIND_NORMAL) {
+		as_node_add_attribute (n,
+				       "type",
+				       as_screenshot_kind_to_string (priv->kind),
+				       -1);
+	}
 	if (api_version >= 0.41) {
 		as_node_insert_localized (n,
 					  "caption",

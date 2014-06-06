@@ -271,7 +271,7 @@ ch_test_screenshot_func (void)
 	GNode *root;
 	GString *xml;
 	const gchar *src =
-		"<screenshot type=\"normal\">"
+		"<screenshot>"
 		"<caption>Hello</caption>"
 		"<image type=\"source\">http://1.png</image>"
 		"<image type=\"thumbnail\">http://2.png</image>"
@@ -346,7 +346,7 @@ ch_test_app_func (void)
 		"<screenshot type=\"default\">"
 		"<image type=\"thumbnail\" height=\"351\" width=\"624\">http://a.png</image>"
 		"</screenshot>"
-		"<screenshot type=\"normal\">"
+		"<screenshot>"
 		"<image type=\"thumbnail\">http://b.png</image>"
 		"</screenshot>"
 		"</screenshots>"
