@@ -2654,6 +2654,10 @@ as_app_parse_appdata_unintltoolize_cb (GNode *node, gpointer data)
 		as_node_set_name (node, "p");
 	else if (g_strcmp0 (name, "_li") == 0)
 		as_node_set_name (node, "li");
+	else if (g_strcmp0 (name, "_ul") == 0)
+		as_node_set_name (node, "ul");
+	else if (g_strcmp0 (name, "_ol") == 0)
+		as_node_set_name (node, "ol");
 	return FALSE;
 }
 
