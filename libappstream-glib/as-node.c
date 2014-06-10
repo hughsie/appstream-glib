@@ -877,7 +877,7 @@ as_node_get_data (const GNode *node)
  * as_node_get_comment:
  * @node: a #GNode
  *
- * Gets the node data, e.g. "Copyright 2014 Richard Hughes <richard@hughsie.com>"
+ * Gets the node data, e.g. "Copyright 2014 Richard Hughes"
  *
  * Return value: string value, or %NULL
  *
