@@ -2764,10 +2764,8 @@ as_app_parse_file (AsApp *app,
 	if (priv->source_kind == AS_APP_SOURCE_KIND_UNKNOWN) {
 		if (g_str_has_suffix (filename, ".desktop")) {
 			as_app_set_source_kind (app, AS_APP_SOURCE_KIND_DESKTOP);
-		} else if (g_str_has_suffix (filename, ".appdata.xml")) {
-			as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPDATA);
-		} else if (g_str_has_suffix (filename, ".appdata.xml.in")) {
-			flags |= AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE;
+		} else if (g_str_has_suffix (filename, ".appdata.xml") ||
+			   g_str_has_suffix (filename, ".appdata.xml.in")) {
 			as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPDATA);
 		} else {
 			g_set_error (error,
@@ -2778,6 +2776,10 @@ as_app_parse_file (AsApp *app,
 			return FALSE;
 		}
 	}
+
+	/* convert <_p> into <p> for easy validation */
+	if (g_str_has_suffix (filename, ".appdata.xml.in"))
+		flags |= AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE;
 
 	/* parse */
 	switch (priv->source_kind) {
