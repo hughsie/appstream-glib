@@ -94,6 +94,21 @@ ai_app_validate_fullstop_ending (const gchar *tmp)
 }
 
 /**
+ * as_app_validate_has_hyperlink:
+ **/
+static gboolean
+as_app_validate_has_hyperlink (const gchar *text)
+{
+	if (g_strstr_len (text, -1, "http://") != NULL)
+		return TRUE;
+	if (g_strstr_len (text, -1, "https://") != NULL)
+		return TRUE;
+	if (g_strstr_len (text, -1, "ftp://") != NULL)
+		return TRUE;
+	return FALSE;
+}
+
+/**
  * as_app_validate_description_li:
  **/
 static void
@@ -124,6 +139,11 @@ as_app_validate_description_li (const gchar *text, AsAppValidateHelper *helper)
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
 				     "<li> cannot end in '.'");
+	}
+	if (as_app_validate_has_hyperlink (text)) {
+		ai_app_validate_add (helper->probs,
+				     AS_PROBLEM_KIND_STYLE_INCORRECT,
+				     "<li> cannot contain a hyperlink");
 	}
 }
 
@@ -174,6 +194,11 @@ as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
 				     "<p> should not start with 'This application'");
+	}
+	if (as_app_validate_has_hyperlink (text)) {
+		ai_app_validate_add (helper->probs,
+				     AS_PROBLEM_KIND_STYLE_INCORRECT,
+				     "<p> cannot contain a hyperlink");
 	}
 	if (text[str_len - 1] != '.' &&
 	    text[str_len - 1] != '!' &&
@@ -614,9 +639,7 @@ as_app_validate_release (AsRelease *release, AsAppValidateHelper *helper, GError
 				     AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
 				     "<release> has no description");
 	} else {
-		if (g_strstr_len (tmp, -1, "http://") != NULL ||
-		    g_strstr_len (tmp, -1, "https://") != NULL ||
-		    g_strstr_len (tmp, -1, "ftp://") != NULL) {
+		if (as_app_validate_has_hyperlink (tmp)) {
 			ai_app_validate_add (helper->probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
 					     "<release> description should be "
@@ -953,6 +976,11 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
 					     "<name> cannot end in '.'");
 		}
+		if (as_app_validate_has_hyperlink (name)) {
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<name> cannot contain a hyperlink");
+		}
 	}
 
 	/* comment */
@@ -973,6 +1001,11 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
 					     "<summary> cannot end in '.'");
+		}
+		if (as_app_validate_has_hyperlink (summary)) {
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<summary> cannot contain a hyperlink");
 		}
 	}
 	if (summary != NULL && name != NULL &&

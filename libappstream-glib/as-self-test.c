@@ -575,7 +575,7 @@ ch_test_app_validate_file_bad_func (void)
 		problem = g_ptr_array_index (probs, i);
 		g_debug ("%s", as_problem_get_message (problem));
 	}
-	g_assert_cmpint (probs->len, ==, 23);
+	g_assert_cmpint (probs->len, ==, 24);
 
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				    "<id> has invalid type attribute");
@@ -611,6 +611,8 @@ ch_test_app_validate_file_bad_func (void)
 				    "<p> does not end in '.|:|!'");
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<p> is too short");
+	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<p> cannot contain a hyperlink");
 	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<release> description should be "
 				    "prose and not contain hyperlinks");
