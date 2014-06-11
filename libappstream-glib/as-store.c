@@ -343,6 +343,43 @@ as_store_add_app (AsStore *store, AsApp *app)
 }
 
 /**
+ * as_store_match_addons:
+ **/
+static void
+as_store_match_addons (AsStore *store)
+{
+	AsApp *app;
+	AsApp *parent;
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	GPtrArray *plugin_ids;
+	const gchar *tmp;
+	guint i;
+	guint j;
+
+	for (i = 0; i < priv->array->len; i++) {
+		app = g_ptr_array_index (priv->array, i);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_ADDON)
+			continue;
+		plugin_ids = as_app_get_extends (app);
+		if (plugin_ids->len == 0) {
+			g_warning ("%s was of type plugin but had no plugin_for",
+				   as_app_get_id_full (app));
+			continue;
+		}
+		for (j = 0; j < plugin_ids->len; j++) {
+			tmp = g_ptr_array_index (plugin_ids, j);
+			parent = g_hash_table_lookup (priv->hash_id, tmp);
+			if (parent == NULL) {
+				g_warning ("%s had no parent of '%s'",
+					   as_app_get_id_full (app), tmp);
+				continue;
+			}
+			as_app_add_addon (parent, app);
+		}
+	}
+}
+
+/**
  * as_store_from_root:
  **/
 static gboolean
@@ -411,6 +448,10 @@ as_store_from_root (AsStore *store,
 		as_store_add_app (store, app);
 		g_object_unref (app);
 	}
+
+	/* add addon kinds to their parent AsApp */
+	as_store_match_addons (store);
+
 	return TRUE;
 }
 

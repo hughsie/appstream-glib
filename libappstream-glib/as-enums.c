@@ -57,6 +57,8 @@ as_id_kind_to_string (AsIdKind id_kind)
 		return "webapp";
 	if (id_kind == AS_ID_KIND_SOURCE)
 		return "source";
+	if (id_kind == AS_ID_KIND_ADDON)
+		return "addon";
 	return "unknown";
 }
 
@@ -85,6 +87,8 @@ as_id_kind_from_string (const gchar *id_kind)
 		return AS_ID_KIND_WEB_APP;
 	if (g_strcmp0 (id_kind, "source") == 0)
 		return AS_ID_KIND_SOURCE;
+	if (g_strcmp0 (id_kind, "addon") == 0)
+		return AS_ID_KIND_ADDON;
 	return AS_ID_KIND_UNKNOWN;
 }
 

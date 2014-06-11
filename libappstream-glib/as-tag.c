@@ -168,6 +168,7 @@ as_tag_to_string (AsTag tag)
 		"arch",
 		"metadata_license",
 		"provides",
+		"extends",
 		NULL };
 	if (tag > AS_TAG_LAST)
 		tag = AS_TAG_LAST;

@@ -1286,6 +1286,51 @@ ch_test_store_versions_func (void)
 	g_object_unref (store);
 }
 
+static void
+ch_test_store_addons_func (void)
+{
+	AsApp *app;
+	GError *error = NULL;
+	GPtrArray *data;
+	gboolean ret;
+	const gchar *xml =
+		"<components version=\"0.7\">"
+		"<component type=\"desktop\">"
+		"<id>eclipse.desktop</id>"
+		"</component>"
+		"<component type=\"addon\">"
+		"<id>eclipse-php.jar</id>"
+		"<extends>eclipse.desktop</extends>"
+		"</component>"
+		"</components>";
+	_cleanup_object_unref_ AsStore *store;
+	_cleanup_string_free_ GString *str;
+
+	/* load a file to the store */
+	store = as_store_new ();
+	ret = as_store_from_xml (store, xml, -1, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* check the addon references the main application */
+	app = as_store_get_app_by_id (store, "eclipse-php.jar");
+	g_assert (app != NULL);
+	data = as_app_get_extends (app);
+	g_assert_cmpint (data->len, ==, 1);
+	g_assert_cmpstr (g_ptr_array_index (data, 0), ==, "eclipse.desktop");
+
+	/* check the main application has a ref to the addon */
+	app = as_store_get_app_by_id (store, "eclipse.desktop");
+	data = as_app_get_addons (app);
+	g_assert_cmpint (data->len, ==, 1);
+	app = g_ptr_array_index (data, 0);
+	g_assert_cmpstr (as_app_get_id_full (app), ==, "eclipse-php.jar");
+
+	/* check it marshals back to the same XML */
+	str = as_store_to_xml (store, 0);
+	g_assert_cmpstr (str->str, ==, xml);
+}
+
 /*
  * test that we don't save the same translated data as C back to the file
  */
@@ -1596,6 +1641,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils", ch_test_utils_func);
 	g_test_add_func ("/AppStream/utils{spdx-token}", ch_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/store", ch_test_store_func);
+	g_test_add_func ("/AppStream/store{addons}", ch_test_store_addons_func);
 	g_test_add_func ("/AppStream/store{versions}", ch_test_store_versions_func);
 	g_test_add_func ("/AppStream/store{origin}", ch_test_store_origin_func);
 	g_test_add_func ("/AppStream/store{app-install}", ch_test_store_app_install_func);

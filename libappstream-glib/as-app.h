@@ -159,8 +159,10 @@ AsIconKind	 as_app_get_icon_kind		(AsApp		*app);
 AsIdKind	 as_app_get_id_kind		(AsApp		*app);
 AsAppSourceKind	 as_app_get_source_kind		(AsApp		*app);
 GList		*as_app_get_languages		(AsApp		*app);
+GPtrArray	*as_app_get_addons		(AsApp		*app);
 GPtrArray	*as_app_get_categories		(AsApp		*app);
 GPtrArray	*as_app_get_compulsory_for_desktops (AsApp	*app);
+GPtrArray	*as_app_get_extends		(AsApp		*app);
 GPtrArray	*as_app_get_keywords		(AsApp		*app);
 GPtrArray	*as_app_get_pkgnames		(AsApp		*app);
 GPtrArray	*as_app_get_architectures	(AsApp		*app);
@@ -276,6 +278,11 @@ void		 as_app_add_metadata		(AsApp		*app,
 						 gssize		 value_len);
 void		 as_app_remove_metadata		(AsApp		*app,
 						 const gchar	*key);
+void		 as_app_add_addon		(AsApp		*app,
+						 AsApp		*addon);
+void		 as_app_add_extends		(AsApp		*app,
+						 const gchar	*extends,
+						 gssize		 extends_len);
 
 /* object methods */
 GPtrArray	*as_app_validate		(AsApp		*app,

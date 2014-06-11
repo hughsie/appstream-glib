@@ -59,8 +59,10 @@ struct _AsAppPrivate
 	GHashTable	*metadata;			/* of key:value */
 	GHashTable	*names;				/* of locale:string */
 	GHashTable	*urls;				/* of key:string */
+	GPtrArray	*addons;			/* of AsApp */
 	GPtrArray	*categories;			/* of string */
 	GPtrArray	*compulsory_for_desktops;	/* of string */
+	GPtrArray	*extends;			/* of string */
 	GPtrArray	*keywords;			/* of string */
 	GPtrArray	*mimetypes;			/* of string */
 	GPtrArray	*pkgnames;			/* of string */
@@ -131,8 +133,10 @@ as_app_finalize (GObject *object)
 	g_hash_table_unref (priv->metadata);
 	g_hash_table_unref (priv->names);
 	g_hash_table_unref (priv->urls);
+	g_ptr_array_unref (priv->addons);
 	g_ptr_array_unref (priv->categories);
 	g_ptr_array_unref (priv->compulsory_for_desktops);
+	g_ptr_array_unref (priv->extends);
 	g_ptr_array_unref (priv->keywords);
 	g_ptr_array_unref (priv->mimetypes);
 	g_ptr_array_unref (priv->pkgnames);
@@ -165,10 +169,12 @@ as_app_init (AsApp *app)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->categories = g_ptr_array_new_with_free_func (g_free);
 	priv->compulsory_for_desktops = g_ptr_array_new_with_free_func (g_free);
+	priv->extends = g_ptr_array_new_with_free_func (g_free);
 	priv->keywords = g_ptr_array_new_with_free_func (g_free);
 	priv->mimetypes = g_ptr_array_new_with_free_func (g_free);
 	priv->pkgnames = g_ptr_array_new_with_free_func (g_free);
 	priv->architectures = g_ptr_array_new_with_free_func (g_free);
+	priv->addons = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->releases = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->provides = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->screenshots = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -475,6 +481,40 @@ as_app_get_architectures (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->architectures;
+}
+
+/**
+ * as_app_get_extends:
+ * @app: a #AsApp instance.
+ *
+ * Gets the IDs that are extended from the addon.
+ *
+ * Returns: (element-type utf8) (transfer none): an array
+ *
+ * Since: 0.1.7
+ **/
+GPtrArray *
+as_app_get_extends (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->extends;
+}
+
+/**
+ * as_app_get_addons:
+ * @app: a #AsApp instance.
+ *
+ * Gets all the addons the application has.
+ *
+ * Returns: (element-type AsApp) (transfer none): an array
+ *
+ * Since: 0.1.7
+ **/
+GPtrArray *
+as_app_get_addons (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->addons;
 }
 
 /**
@@ -1493,6 +1533,39 @@ as_app_remove_metadata (AsApp *app, const gchar *key)
 	g_hash_table_remove (priv->metadata, key);
 }
 
+/**
+ * as_app_add_extends:
+ * @app: a #AsApp instance.
+ * @extends: the full ID, e.g. "eclipse.desktop".
+ * @extends_len: the size of @extends, or -1 if %NULL-terminated.
+ *
+ * Adds a parent ID to the application.
+ *
+ * Since: 0.1.7
+ **/
+void
+as_app_add_extends (AsApp *app, const gchar *extends, gssize extends_len)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_ptr_array_add (priv->extends, as_strndup (extends, extends_len));
+}
+
+/**
+ * as_app_add_addon:
+ * @app: a #AsApp instance.
+ * @addon: a #AsApp instance.
+ *
+ * Adds a addon to an application.
+ *
+ * Since: 0.1.7
+ **/
+void
+as_app_add_addon (AsApp *app, AsApp *addon)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_ptr_array_add (priv->addons, g_object_ref (addon));
+}
+
 /******************************************************************************/
 
 
@@ -1835,6 +1908,14 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 		}
 	}
 
+	/* <extends> */
+	if (api_version >= 0.7) {
+		for (i = 0; i < priv->extends->len; i++) {
+			tmp = g_ptr_array_index (priv->extends, i);
+			as_node_insert (node_app, "extends", tmp, 0, NULL);
+		}
+	}
+
 	/* <screenshots> */
 	if (priv->screenshots->len > 0 && api_version >= 0.4) {
 		node_tmp = as_node_insert (node_app, "screenshots", NULL, 0, NULL);
@@ -2041,6 +2122,11 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 				 as_node_take_data (n));
 		break;
 
+	/* <extends> */
+	case AS_TAG_EXTENDS:
+		g_ptr_array_add (priv->extends, as_node_take_data (n));
+		break;
+
 	/* <screenshots> */
 	case AS_TAG_SCREENSHOTS:
 		g_ptr_array_set_size (priv->screenshots, 0);
@@ -2152,6 +2238,7 @@ as_app_node_parse (AsApp *app, GNode *node, GError **error)
 	g_ptr_array_set_size (priv->compulsory_for_desktops, 0);
 	g_ptr_array_set_size (priv->pkgnames, 0);
 	g_ptr_array_set_size (priv->architectures, 0);
+	g_ptr_array_set_size (priv->extends, 0);
 	for (n = node->children; n != NULL; n = n->next) {
 		if (!as_app_node_parse_child (app, n, error))
 			return FALSE;

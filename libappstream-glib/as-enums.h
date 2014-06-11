@@ -50,6 +50,7 @@ typedef enum {
 	AS_ID_KIND_INPUT_METHOD,	/* Since: 0.1.0 */
 	AS_ID_KIND_WEB_APP,		/* Since: 0.1.0 */
 	AS_ID_KIND_SOURCE,		/* Since: 0.1.0 */
+	AS_ID_KIND_ADDON,		/* Since: 0.1.7 */
 	/*< private >*/
 	AS_ID_KIND_LAST
 } AsIdKind;
