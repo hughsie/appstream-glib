@@ -1,6 +1,7 @@
 test_files =						\
 	broken.appdata.xml				\
 	example.desktop					\
+	example.metainfo.xml				\
 	example-v04.xml.gz				\
 	intltool.appdata.xml.in				\
 	origin.xml					\

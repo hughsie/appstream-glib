@@ -560,6 +560,10 @@ as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 		number_screenshots_min = 0;
 	}
 
+	/* metainfo doesn't require any screenshots */
+	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO)
+		number_screenshots_min = 0;
+
 	/* only for AppData and AppStream */
 	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP)
 		return;
@@ -838,6 +842,9 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 				     "<id> has invalid type attribute");
 
 		break;
+	case AS_ID_KIND_ADDON:
+		/* anything goes */
+		ret = TRUE;
 	default:
 		break;
 	}
@@ -859,11 +866,17 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					     "<metadata_license> is not valid");
 		}
 	}
-	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
-	    license == NULL) {
-		ai_app_validate_add (probs,
-				     AS_PROBLEM_KIND_TAG_MISSING,
-				     "<metadata_license> is not present");
+	if (license == NULL) {
+		switch (as_app_get_source_kind (app)) {
+		case AS_APP_SOURCE_KIND_APPDATA:
+		case AS_APP_SOURCE_KIND_METAINFO:
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_TAG_MISSING,
+					     "<metadata_license> is not present");
+			break;
+		default:
+			break;
+		}
 	}
 
 	/* project_license */
@@ -879,11 +892,17 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 			g_clear_error (&error_local);
 		}
 	}
-	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
-	    require_project_license && license == NULL) {
-		ai_app_validate_add (probs,
-				     AS_PROBLEM_KIND_TAG_MISSING,
-				     "<project_license> is not present");
+	if (require_project_license && license == NULL) {
+		switch (as_app_get_source_kind (app)) {
+		case AS_APP_SOURCE_KIND_APPDATA:
+		case AS_APP_SOURCE_KIND_METAINFO:
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_TAG_MISSING,
+					     "<project_license> is not present");
+			break;
+		default:
+			break;
+		}
 	}
 
 	/* updatecontact */
@@ -899,17 +918,23 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
 				     "<update_contact> is too short");
 	}
-	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
-	    require_contactdetails &&
-	    update_contact == NULL) {
-		ai_app_validate_add (probs,
-				     AS_PROBLEM_KIND_TAG_MISSING,
-				     "<updatecontact> is not present");
+	if (require_contactdetails && update_contact == NULL) {
+		switch (as_app_get_source_kind (app)) {
+		case AS_APP_SOURCE_KIND_APPDATA:
+		case AS_APP_SOURCE_KIND_METAINFO:
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_TAG_MISSING,
+					     "<updatecontact> is not present");
+			break;
+		default:
+			break;
+		}
 	}
 
 	/* only found for files */
 	problems = as_app_get_problems (app);
-	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA) {
+	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA ||
+	    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO) {
 		if ((problems & AS_APP_PROBLEM_NO_XML_HEADER) > 0) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_MARKUP_INVALID,
@@ -1060,12 +1085,17 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	}
 
 	/* require homepage */
-	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
-	    require_url &&
-	    as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE) == NULL) {
-		ai_app_validate_add (probs,
-				     AS_PROBLEM_KIND_TAG_MISSING,
-				     "<url> is not present");
+	if (require_url && as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE) == NULL) {
+		switch (as_app_get_source_kind (app)) {
+		case AS_APP_SOURCE_KIND_APPDATA:
+		case AS_APP_SOURCE_KIND_METAINFO:
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_TAG_MISSING,
+					     "<url> is not present");
+			break;
+		default:
+			break;
+		}
 	}
 out:
 	g_ptr_array_unref (helper.screenshot_urls);

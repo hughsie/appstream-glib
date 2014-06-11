@@ -435,7 +435,7 @@ ch_test_app_validate_check (GPtrArray *array,
 }
 
 static void
-ch_test_app_validate_file_good_func (void)
+ch_test_app_validate_appdata_good_func (void)
 {
 	AsImage *im;
 	AsProblem *problem;
@@ -490,6 +490,48 @@ ch_test_app_validate_file_good_func (void)
 	g_assert_cmpint (as_image_get_width (im), ==, 355);
 	g_assert_cmpint (as_image_get_height (im), ==, 134);
 	g_assert_cmpint (as_image_get_kind (im), ==, AS_IMAGE_KIND_SOURCE);
+}
+
+static void
+ch_test_app_validate_metainfo_good_func (void)
+{
+	AsProblem *problem;
+	GError *error = NULL;
+	GPtrArray *probs;
+	gboolean ret;
+	guint i;
+	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_object_unref_ AsApp *app = NULL;
+
+	/* open file */
+	app = as_app_new ();
+	filename = as_test_get_filename ("example.metainfo.xml");
+	ret = as_app_parse_file (app, filename, AS_APP_PARSE_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* check success */
+	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_ADDON);
+	g_assert_cmpstr (as_app_get_id_full (app), ==, "gedit-code-assistance");
+	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "Code assistance");
+	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "Code assistance for C, C++ and Objective-C");
+	g_assert_cmpstr (as_app_get_metadata_license (app), ==, "CC0-1.0");
+	g_assert_cmpstr (as_app_get_project_license (app), ==, "GPL-3.0+");
+	g_assert_cmpstr (as_app_get_update_contact (app), ==, "richard@hughsie.com");
+	g_assert_cmpstr (as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE), ==,
+			 "http://projects.gnome.org/gedit");
+	g_assert_cmpstr (as_app_get_description (app, "C"), ==, NULL);
+
+	/* validate */
+	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NO_NETWORK, &error);
+	g_assert_no_error (error);
+	g_assert (probs != NULL);
+	for (i = 0; i < probs->len; i++) {
+		problem = g_ptr_array_index (probs, i);
+		g_warning ("%s", as_problem_get_message (problem));
+	}
+	g_assert_cmpint (probs->len, ==, 0);
+	g_ptr_array_unref (probs);
 }
 
 static void
@@ -1623,7 +1665,8 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/app", ch_test_app_func);
 	g_test_add_func ("/AppStream/app{translated}", ch_test_app_translated_func);
 	g_test_add_func ("/AppStream/app{validate-style}", ch_test_app_validate_style_func);
-	g_test_add_func ("/AppStream/app{validate-file-good}", ch_test_app_validate_file_good_func);
+	g_test_add_func ("/AppStream/app{validate-appdata-good}", ch_test_app_validate_appdata_good_func);
+	g_test_add_func ("/AppStream/app{validate-metainfo-good}", ch_test_app_validate_metainfo_good_func);
 	g_test_add_func ("/AppStream/app{validate-file-bad}", ch_test_app_validate_file_bad_func);
 	g_test_add_func ("/AppStream/app{validate-intltool}", ch_test_app_validate_intltool_func);
 	g_test_add_func ("/AppStream/app{parse-file}", ch_test_app_parse_file_func);

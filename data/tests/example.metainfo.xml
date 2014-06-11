@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2014 Richard Hughes <richard@hughsie.com> -->
+<component type="addon">
+  <id>gedit-code-assistance</id>
+  <extends>gedit.desktop</extends>
+  <name>Code assistance</name>
+  <summary>Code assistance for C, C++ and Objective-C</summary>
+  <url type="homepage">http://projects.gnome.org/gedit</url>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0+</project_license>
+  <updatecontact>richard_at_hughsie.com</updatecontact>
+</component>
