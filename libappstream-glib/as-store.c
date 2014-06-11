@@ -388,9 +388,7 @@ as_store_from_root (AsStore *store,
 		    const gchar *icon_root,
 		    GError **error)
 {
-	AsApp *app;
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	GError *error_local = NULL;
 	GNode *apps;
 	GNode *n;
 	const gchar *tmp;
@@ -429,6 +427,8 @@ as_store_from_root (AsStore *store,
 					      NULL);
 	}
 	for (n = apps->children; n != NULL; n = n->next) {
+		_cleanup_error_free_ GError *error_local = NULL;
+		_cleanup_object_unref_ AsApp *app = NULL;
 		if (as_node_get_tag (n) != AS_TAG_APPLICATION)
 			continue;
 		app = as_app_new ();
@@ -441,12 +441,9 @@ as_store_from_root (AsStore *store,
 				     AS_STORE_ERROR_FAILED,
 				     "Failed to parse root: %s",
 				     error_local->message);
-			g_error_free (error_local);
-			g_object_unref (app);
 			return FALSE;
 		}
 		as_store_add_app (store, app);
-		g_object_unref (app);
 	}
 
 	/* add addon kinds to their parent AsApp */
