@@ -927,8 +927,7 @@ as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
  * as_util_validate_file:
  **/
 static gboolean
-as_util_validate_file (AsUtilPrivate *priv,
-		       const gchar *filename,
+as_util_validate_file (const gchar *filename,
 		       AsAppValidateFlags flags,
 		       GError **error)
 {
@@ -947,7 +946,7 @@ as_util_validate_file (AsUtilPrivate *priv,
 	if (probs == NULL)
 		return FALSE;
 	if (probs->len > 0) {
-		g_print ("\n");
+		g_print ("%s:\n", _("FAILED"));
 		for (i = 0; i < probs->len; i++) {
 			problem = g_ptr_array_index (probs, i);
 			kind = as_problem_get_kind (problem);
@@ -961,8 +960,54 @@ as_util_validate_file (AsUtilPrivate *priv,
 				     _("Validation failed"));
 		return FALSE;
 	}
-	g_print ("%s\n", _("File validated successfully"));
+	g_print ("%s\n", _("OK"));
 	return TRUE;
+}
+
+/**
+ * as_util_validate_files:
+ **/
+static gboolean
+as_util_validate_files (gchar **filenames,
+		        AsAppValidateFlags flags,
+		        GError **error)
+{
+	GError *error_local = NULL;
+	guint i;
+	guint n_failed = 0;
+
+	/* check args */
+	if (g_strv_length (filenames) < 1) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected example.appdata.xml");
+		return FALSE;
+	}
+
+	/* check each file */
+	for (i = 0; filenames[i] != NULL; i++) {
+		if (as_util_validate_file (filenames[i], flags, &error_local))
+			continue;
+
+		/* anything other than AsProblems bail */
+		n_failed++;
+		if (!g_error_matches (error_local, AS_ERROR,
+				      AS_ERROR_INVALID_ARGUMENTS)) {
+			g_propagate_error (error, error_local);
+			return FALSE;
+		}
+		g_clear_error (&error_local);
+	}
+	if (n_failed > 0) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     _("Validation of files failed"));
+		return FALSE;
+	}
+	return n_failed == 0;
 }
 
 /**
@@ -971,27 +1016,7 @@ as_util_validate_file (AsUtilPrivate *priv,
 static gboolean
 as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	guint i;
-
-	/* check args */
-	if (g_strv_length (values) < 1) {
-		g_set_error_literal (error,
-				     AS_ERROR,
-				     AS_ERROR_INVALID_ARGUMENTS,
-				     "Not enough arguments, "
-				     "expected example.appdata.xml");
-		return FALSE;
-	}
-
-	/* check each file */
-	for (i = 0; values[i] != NULL; i++) {
-		if (!as_util_validate_file (priv,
-					    values[i],
-					    AS_APP_VALIDATE_FLAG_NONE,
-					    error))
-			return FALSE;
-	}
-	return TRUE;
+	return as_util_validate_files (values, AS_APP_VALIDATE_FLAG_NONE, error);
 }
 
 /**
@@ -1000,27 +1025,7 @@ as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 static gboolean
 as_util_validate_relax (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	guint i;
-
-	/* check args */
-	if (g_strv_length (values) < 1) {
-		g_set_error_literal (error,
-				     AS_ERROR,
-				     AS_ERROR_INVALID_ARGUMENTS,
-				     "Not enough arguments, "
-				     "expected example.appdata.xml");
-		return FALSE;
-	}
-
-	/* check each file */
-	for (i = 0; values[i] != NULL; i++) {
-		if (!as_util_validate_file (priv,
-					    values[i],
-					    AS_APP_VALIDATE_FLAG_RELAX,
-					    error))
-			return FALSE;
-	}
-	return TRUE;
+	return as_util_validate_files (values, AS_APP_VALIDATE_FLAG_RELAX, error);
 }
 
 /**
@@ -1029,27 +1034,7 @@ as_util_validate_relax (AsUtilPrivate *priv, gchar **values, GError **error)
 static gboolean
 as_util_validate_strict (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	guint i;
-
-	/* check args */
-	if (g_strv_length (values) < 1) {
-		g_set_error_literal (error,
-				     AS_ERROR,
-				     AS_ERROR_INVALID_ARGUMENTS,
-				     "Not enough arguments, "
-				     "expected example.appdata.xml");
-		return FALSE;
-	}
-
-	/* check each file */
-	for (i = 0; values[i] != NULL; i++) {
-		if (!as_util_validate_file (priv,
-					    values[i],
-					    AS_APP_VALIDATE_FLAG_STRICT,
-					    error))
-			return FALSE;
-	}
-	return TRUE;
+	return as_util_validate_files (values, AS_APP_VALIDATE_FLAG_STRICT, error);
 }
 
 /**
