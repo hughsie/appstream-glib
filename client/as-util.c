@@ -924,10 +924,13 @@ as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
- * as_util_validate:
+ * as_util_validate_file:
  **/
 static gboolean
-as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
+as_util_validate_file (AsUtilPrivate *priv,
+		       const gchar *filename,
+		       AsAppValidateFlags flags,
+		       GError **error)
 {
 	AsProblemKind kind;
 	AsProblem *problem;
@@ -935,8 +938,43 @@ as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 	_cleanup_object_unref_ AsApp *app = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *probs = NULL;
 
+	/* load file */
+	app = as_app_new ();
+	g_print ("%s: ", filename);
+	if (!as_app_parse_file (app, filename, AS_APP_PARSE_FLAG_NONE, error))
+		return FALSE;
+	probs = as_app_validate (app, flags, error);
+	if (probs == NULL)
+		return FALSE;
+	if (probs->len > 0) {
+		g_print ("\n");
+		for (i = 0; i < probs->len; i++) {
+			problem = g_ptr_array_index (probs, i);
+			kind = as_problem_get_kind (problem);
+			g_print ("%s\t%s\n",
+				 as_problem_kind_to_string (kind),
+				 as_problem_get_message (problem));
+		}
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     _("Validation failed"));
+		return FALSE;
+	}
+	g_print ("%s\n", _("File validated successfully"));
+	return TRUE;
+}
+
+/**
+ * as_util_validate:
+ **/
+static gboolean
+as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	guint i;
+
 	/* check args */
-	if (g_strv_length (values) != 1) {
+	if (g_strv_length (values) < 1) {
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
@@ -945,28 +983,71 @@ as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 		return FALSE;
 	}
 
-	/* load file */
-	app = as_app_new ();
-	if (!as_app_parse_file (app, values[0], AS_APP_PARSE_FLAG_NONE, error))
-		return FALSE;
-	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NONE, error);
-	if (probs == NULL)
-		return FALSE;
-	for (i = 0; i < probs->len; i++) {
-		problem = g_ptr_array_index (probs, i);
-		kind = as_problem_get_kind (problem);
-		g_print ("%s\t%s\n",
-			 as_problem_kind_to_string (kind),
-			 as_problem_get_message (problem));
+	/* check each file */
+	for (i = 0; values[i] != NULL; i++) {
+		if (!as_util_validate_file (priv,
+					    values[i],
+					    AS_APP_VALIDATE_FLAG_NONE,
+					    error))
+			return FALSE;
 	}
-	if (probs->len == 0) {
-		g_print ("%s\n", _("File validated successfully!"));
-	} else {
+	return TRUE;
+}
+
+/**
+ * as_util_validate_relax:
+ **/
+static gboolean
+as_util_validate_relax (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	guint i;
+
+	/* check args */
+	if (g_strv_length (values) < 1) {
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
-				     _("Validation failed"));
+				     "Not enough arguments, "
+				     "expected example.appdata.xml");
 		return FALSE;
+	}
+
+	/* check each file */
+	for (i = 0; values[i] != NULL; i++) {
+		if (!as_util_validate_file (priv,
+					    values[i],
+					    AS_APP_VALIDATE_FLAG_RELAX,
+					    error))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
+ * as_util_validate_strict:
+ **/
+static gboolean
+as_util_validate_strict (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	guint i;
+
+	/* check args */
+	if (g_strv_length (values) < 1) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected example.appdata.xml");
+		return FALSE;
+	}
+
+	/* check each file */
+	for (i = 0; values[i] != NULL; i++) {
+		if (!as_util_validate_file (priv,
+					    values[i],
+					    AS_APP_VALIDATE_FLAG_STRICT,
+					    error))
+			return FALSE;
 	}
 	return TRUE;
 }
@@ -1052,6 +1133,18 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Validate an AppData or AppStream file"),
 		     as_util_validate);
+	as_util_add (priv->cmd_array,
+		     "validate-relax",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Validate an AppData or AppStream file (relaxed)"),
+		     as_util_validate_relax);
+	as_util_add (priv->cmd_array,
+		     "validate-strict",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Validate an AppData or AppStream file (strict)"),
+		     as_util_validate_strict);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
