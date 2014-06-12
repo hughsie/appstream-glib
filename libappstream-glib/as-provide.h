@@ -69,6 +69,7 @@ struct _AsProvideClass
  * @AS_PROVIDE_KIND_FIRMWARE:		A firmware file
  * @AS_PROVIDE_KIND_PYTHON2:		A Python 2 module
  * @AS_PROVIDE_KIND_PYTHON3:		A Python 3 module
+ * @AS_PROVIDE_KIND_DBUS:		A D-Bus service
  *
  * The provide type.
  **/
@@ -81,6 +82,7 @@ typedef enum {
 	AS_PROVIDE_KIND_FIRMWARE,
 	AS_PROVIDE_KIND_PYTHON2,
 	AS_PROVIDE_KIND_PYTHON3,
+	AS_PROVIDE_KIND_DBUS,		/* Since: 0.1.7 */
 	/*< private >*/
 	AS_PROVIDE_KIND_LAST
 } AsProvideKind;

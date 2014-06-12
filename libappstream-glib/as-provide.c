@@ -108,6 +108,8 @@ as_provide_kind_from_string (const gchar *kind)
 		return AS_PROVIDE_KIND_PYTHON2;
 	if (g_strcmp0 (kind, "python3") == 0)
 		return AS_PROVIDE_KIND_PYTHON3;
+	if (g_strcmp0 (kind, "dbus") == 0)
+		return AS_PROVIDE_KIND_DBUS;
 	return AS_PROVIDE_KIND_UNKNOWN;
 }
 
@@ -138,6 +140,8 @@ as_provide_kind_to_string (AsProvideKind kind)
 		return "python2";
 	if (kind == AS_PROVIDE_KIND_PYTHON3)
 		return "python3";
+	if (kind == AS_PROVIDE_KIND_DBUS)
+		return "dbus";
 	return NULL;
 }
 
