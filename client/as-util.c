@@ -240,30 +240,40 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
- * as_util_dump:
+ * as_util_dump_filename:
  **/
 static gboolean
-as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
+as_util_dump_filename (AsUtilPrivate *priv, const gchar *filename, GError **error)
 {
+	_cleanup_object_unref_ AsApp *app = NULL;
 	_cleanup_object_unref_ AsStore *store = NULL;
 	_cleanup_object_unref_ GFile *file_input = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
 
-	/* check args */
-	if (g_strv_length (values) != 1) {
+	store = as_store_new ();
+	switch (as_app_guess_source_kind (filename)) {
+	case AS_APP_SOURCE_KIND_APPDATA:
+	case AS_APP_SOURCE_KIND_METAINFO:
+	case AS_APP_SOURCE_KIND_DESKTOP:
+		app = as_app_new ();
+		if (!as_app_parse_file (app, filename,
+					AS_APP_PARSE_FLAG_USE_HEURISTICS, error))
+			return FALSE;
+		as_store_add_app (store, app);
+		break;
+	case AS_APP_SOURCE_KIND_APPSTREAM:
+		/* load file */
+		file_input = g_file_new_for_path (filename);
+		if (!as_store_from_file (store, file_input, NULL, NULL, error))
+			return FALSE;
+		break;
+	default:
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
-				     "Not enough arguments, "
-				     "expected data.xml");
+				     "Format not recognised");
 		return FALSE;
 	}
-
-	/* load file */
-	store = as_store_new ();
-	file_input = g_file_new_for_path (values[0]);
-	if (!as_store_from_file (store, file_input, NULL, NULL, error))
-		return FALSE;
 
 	/* dump to screen */
 	as_store_set_api_version (store, 1.0);
@@ -272,6 +282,30 @@ as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
 			       AS_NODE_TO_XML_FLAG_ADD_HEADER);
 	g_print ("%s\n", xml->str);
+	return TRUE;
+}
+
+/**
+ * as_util_dump:
+ **/
+static gboolean
+as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	guint i;
+
+	/* check args */
+	if (g_strv_length (values) < 1) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected data.xml");
+		return FALSE;
+	}
+	for (i = 0; values[i] != NULL; i++) {
+		if (!as_util_dump_filename (priv, values[0], error))
+			return FALSE;
+	}
 	return TRUE;
 }
 
