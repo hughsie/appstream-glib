@@ -166,6 +166,18 @@ as_util_run (AsUtilPrivate *priv, const gchar *command, gchar **values, GError *
 	guint i;
 	_cleanup_string_free_ GString *string = NULL;
 
+	/* for bash completion */
+	if (g_strcmp0 (command, "list-commands") == 0) {
+		string = g_string_new ("");
+		for (i = 0; i < priv->cmd_array->len; i++) {
+			item = g_ptr_array_index (priv->cmd_array, i);
+			g_string_append_printf  (string, "%s ", item->name);
+		}
+		g_string_truncate (string, string->len - 1);
+		g_print ("%s\n", string->str);
+		return TRUE;
+	}
+
 	/* find command */
 	for (i = 0; i < priv->cmd_array->len; i++) {
 		item = g_ptr_array_index (priv->cmd_array, i);
