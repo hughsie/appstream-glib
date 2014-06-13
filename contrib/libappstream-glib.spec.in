@@ -57,6 +57,8 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libappstream-glib*.la
 %{_libdir}/libappstream-glib.so.1*
 %{_libdir}/girepository-1.0/*.typelib
 %{_bindir}/appstream-util
+%dir %{_datadir}/bash-completion/completions/
+%{_datadir}/bash-completion/completions/appstream-util
 
 %files devel
 %{_libdir}/libappstream-glib.so
