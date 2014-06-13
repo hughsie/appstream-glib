@@ -795,8 +795,8 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 			cnt++;
 	}
 	perc = 100.f * (gdouble) cnt / (gdouble) total;
-	g_string_append_printf (html, "<li>Applications in Fedora with "
-				"long descriptions: %i/%i (%.1f%%)</li>\n",
+	g_string_append_printf (html, "<li>Applications with "
+				"descriptions: %i/%i (%.1f%%)</li>\n",
 				cnt, total, perc);
 
 	/* keywords */
@@ -809,7 +809,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 			cnt++;
 	}
 	perc = 100.f * (gdouble) cnt / (gdouble) total;
-	g_string_append_printf (html, "<li>Applications in Fedora with "
+	g_string_append_printf (html, "<li>Applications with "
 				"keywords: %i/%i (%.1f%%)</li>\n",
 				cnt, total, perc);
 
@@ -823,7 +823,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 			cnt++;
 	}
 	perc = 100.f * (gdouble) cnt / (gdouble) total;
-	g_string_append_printf (html, "<li>Applications in Fedora with "
+	g_string_append_printf (html, "<li>Applications with "
 				"screenshots: %i/%i (%.1f%%)</li>\n",
 				cnt, total, perc);
 
@@ -849,6 +849,16 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 					project_groups[j], cnt,
 					total, perc);
 	}
+
+	/* addons with MetaInfo */
+	cnt = 0;
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_id_kind (app) == AS_ID_KIND_ADDON)
+			cnt++;
+	}
+	g_string_append_printf (html, "<li>Application addons with MetaInfo: %i</li>\n", cnt);
+
 	g_string_append (html, "</ul>\n");
 	return TRUE;
 }
