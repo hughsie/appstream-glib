@@ -377,7 +377,7 @@ out:
  * as_util_install_xml:
  **/
 static gboolean
-as_util_install_xml (const gchar *filename, GError **error)
+as_util_install_xml (const gchar *filename, const gchar *dir, GError **error)
 {
 	const gchar *destdir;
 	_cleanup_free_ gchar *basename = NULL;
@@ -388,8 +388,7 @@ as_util_install_xml (const gchar *filename, GError **error)
 
 	/* create directory structure */
 	destdir = g_getenv ("DESTDIR");
-	path_parent = g_strdup_printf ("%s/usr/share/app-info/xmls",
-				       destdir != NULL ? destdir : "");
+	path_parent = g_strdup_printf ("%s%s", destdir != NULL ? destdir : "", dir);
 	if (g_mkdir_with_parents (path_parent, 0777) != 0) {
 		g_set_error (error,
 			     AS_ERROR,
@@ -416,10 +415,14 @@ as_util_install_filename (const gchar *filename, GError **error)
 	gchar *tmp;
 	_cleanup_free_ gchar *basename = NULL;
 
-	/* xml */
-	tmp = g_strstr_len (filename, -1, ".xml.gz");
-	if (tmp != NULL)
-		return as_util_install_xml (filename, error);
+	/* AppStream XML */
+	if (g_str_has_suffix (filename, ".xml.gz"))
+		return as_util_install_xml (filename, "/usr/share/app-info/xmls", error);
+
+	/* AppData or MetaInfo */
+	if (g_str_has_suffix (filename, ".appdata.xml") ||
+	    g_str_has_suffix (filename, ".metainfo.xml"))
+		return as_util_install_xml (filename, "/usr/share/appdata", error);
 
 	/* icons */
 	basename = g_path_get_basename (filename);
