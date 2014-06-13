@@ -54,6 +54,7 @@ struct _AsAppPrivate
 	AsIconKind	 icon_kind;
 	AsIdKind	 id_kind;
 	GHashTable	*comments;			/* of locale:string */
+	GHashTable	*developer_names;		/* of locale:string */
 	GHashTable	*descriptions;			/* of locale:string */
 	GHashTable	*languages;			/* of locale:string */
 	GHashTable	*metadata;			/* of key:value */
@@ -128,6 +129,7 @@ as_app_finalize (GObject *object)
 	g_free (priv->metadata_license);
 	g_free (priv->update_contact);
 	g_hash_table_unref (priv->comments);
+	g_hash_table_unref (priv->developer_names);
 	g_hash_table_unref (priv->descriptions);
 	g_hash_table_unref (priv->languages);
 	g_hash_table_unref (priv->metadata);
@@ -181,6 +183,7 @@ as_app_init (AsApp *app)
 	priv->token_cache = g_ptr_array_new_with_free_func ((GDestroyNotify) as_app_token_item_free);
 
 	priv->comments = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+	priv->developer_names = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->descriptions = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->languages = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 	priv->metadata = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
@@ -395,6 +398,23 @@ as_app_get_comments (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->comments;
+}
+
+/**
+ * as_app_get_developer_names:
+ * @app: a #AsApp instance.
+ *
+ * Gets the developer_names set for the application.
+ *
+ * Returns: (transfer none): hash table of developer_names
+ *
+ * Since: 0.1.8
+ **/
+GHashTable *
+as_app_get_developer_names (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->developer_names;
 }
 
 /**
@@ -705,6 +725,24 @@ as_app_get_comment (AsApp *app, const gchar *locale)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return as_hash_lookup_by_locale (priv->comments, locale);
+}
+
+/**
+ * as_app_get_developer_name:
+ * @app: a #AsApp instance.
+ * @locale: the locale, or %NULL. e.g. "en_GB"
+ *
+ * Gets the application developer name for a specific locale.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.1.8
+ **/
+const gchar *
+as_app_get_developer_name (AsApp *app, const gchar *locale)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return as_hash_lookup_by_locale (priv->developer_names, locale);
 }
 
 /**
@@ -1211,6 +1249,32 @@ as_app_set_comment (AsApp *app,
 }
 
 /**
+ * as_app_set_developer_name:
+ * @app: a #AsApp instance.
+ * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @developer_name: the application developer name.
+ * @developer_name_len: the size of @developer_name, or -1 if %NULL-terminated.
+ *
+ * Sets the application developer name for a specific locale.
+ *
+ * Since: 0.1.0
+ **/
+void
+as_app_set_developer_name (AsApp *app,
+			   const gchar *locale,
+			   const gchar *developer_name,
+			   gssize developer_name_len)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_return_if_fail (developer_name != NULL);
+	if (locale == NULL)
+		locale = "C";
+	g_hash_table_insert (priv->developer_names,
+			     g_strdup (locale),
+			     as_strndup (developer_name, developer_name_len));
+}
+
+/**
  * as_app_set_description:
  * @app: a #AsApp instance.
  * @locale: the locale, or %NULL. e.g. "en_GB"
@@ -1647,6 +1711,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	/* dictionaries */
 	as_app_subsume_dict (papp->names, priv->names, overwrite);
 	as_app_subsume_dict (papp->comments, priv->comments, overwrite);
+	as_app_subsume_dict (papp->developer_names, priv->developer_names, overwrite);
 	as_app_subsume_dict (papp->descriptions, priv->descriptions, overwrite);
 	as_app_subsume_dict (papp->metadata, priv->metadata, overwrite);
 	as_app_subsume_dict (papp->urls, priv->urls, overwrite);
@@ -1812,6 +1877,13 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	as_node_insert_localized (node_app, "summary",
 				  priv->comments,
 				  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
+
+	/* <developer_name> */
+	if (api_version >= 0.7) {
+		as_node_insert_localized (node_app, "developer_name",
+					  priv->developer_names,
+					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
+	}
 
 	/* <description> */
 	if (api_version < 0.6) {
@@ -2005,6 +2077,16 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 		if (taken == NULL)
 			taken = g_strdup ("C");
 		g_hash_table_insert (priv->comments,
+				     taken,
+				     as_node_take_data (n));
+		break;
+
+	/* <developer_name> */
+	case AS_TAG_DEVELOPER_NAME:
+		taken = as_node_take_attribute (n, "xml:lang");
+		if (taken == NULL)
+			taken = g_strdup ("C");
+		g_hash_table_insert (priv->developer_names,
 				     taken,
 				     as_node_take_data (n));
 		break;

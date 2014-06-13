@@ -172,6 +172,7 @@ GPtrArray	*as_app_get_provides		(AsApp		*app);
 GPtrArray	*as_app_get_screenshots		(AsApp		*app);
 GHashTable	*as_app_get_names		(AsApp		*app);
 GHashTable	*as_app_get_comments		(AsApp		*app);
+GHashTable	*as_app_get_developer_names	(AsApp		*app);
 GHashTable	*as_app_get_metadata		(AsApp		*app);
 GHashTable	*as_app_get_descriptions	(AsApp		*app);
 GHashTable	*as_app_get_urls		(AsApp		*app);
@@ -186,6 +187,8 @@ const gchar	*as_app_get_update_contact	(AsApp		*app);
 const gchar	*as_app_get_name		(AsApp		*app,
 						 const gchar	*locale);
 const gchar	*as_app_get_comment		(AsApp		*app,
+						 const gchar	*locale);
+const gchar	*as_app_get_developer_name	(AsApp		*app,
 						 const gchar	*locale);
 const gchar	*as_app_get_description		(AsApp		*app,
 						 const gchar	*locale);
@@ -235,6 +238,10 @@ void		 as_app_set_comment		(AsApp		*app,
 						 const gchar	*locale,
 						 const gchar	*comment,
 						 gssize		 comment_len);
+void		 as_app_set_developer_name	(AsApp		*app,
+						 const gchar	*locale,
+						 const gchar	*developer_name,
+						 gssize		 developer_name_len);
 void		 as_app_set_description		(AsApp		*app,
 						 const gchar	*locale,
 						 const gchar	*description,

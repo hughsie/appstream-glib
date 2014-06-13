@@ -66,6 +66,7 @@
  * @AS_TAG_METADATA_LICENSE:		`metadata_license`
  * @AS_TAG_PROVIDES:			`provides`
  * @AS_TAG_EXTENDS:			`extends`
+ * @AS_TAG_DEVELOPER_NAME:		`developer_name`
  *
  * The tag type.
  **/
@@ -106,6 +107,7 @@ typedef enum {
 	AS_TAG_METADATA_LICENSE,	/* Since: 0.1.4 */
 	AS_TAG_PROVIDES,		/* Since: 0.1.6 */
 	AS_TAG_EXTENDS,			/* Since: 0.1.7 */
+	AS_TAG_DEVELOPER_NAME,		/* Since: 0.1.8 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;

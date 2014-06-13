@@ -319,13 +319,13 @@ ch_test_app_func (void)
 	GString *xml;
 	gboolean ret;
 	const gchar *src =
-		"<component type=\"desktop\">"
+		"<component priority=\"-4\" type=\"desktop\">"
 		"<id>org.gnome.Software.desktop</id>"
-		"<priority>-4</priority>"
 		"<pkgname>gnome-software</pkgname>"
 		"<name>Software</name>"
 		"<name xml:lang=\"pl\">Oprogramowanie</name>"
 		"<summary>Application manager</summary>"
+		"<developer_name>GNOME Foundation</developer_name>"
 		"<description><p>Software allows you to find stuff</p></description>"
 		"<description xml:lang=\"pt_BR\"><p>O aplicativo Software.</p></description>"
 		"<icon type=\"cached\">org.gnome.Software.png</icon>"
@@ -383,12 +383,14 @@ ch_test_app_func (void)
 	g_assert_cmpstr (as_app_get_id (app), ==, "org.gnome.Software");
 	g_assert_cmpstr (as_app_get_name (app, "pl"), ==, "Oprogramowanie");
 	g_assert_cmpstr (as_app_get_comment (app, NULL), ==, "Application manager");
+	g_assert_cmpstr (as_app_get_developer_name (app, NULL), ==, "GNOME Foundation");
 	g_assert_cmpstr (as_app_get_icon (app), ==, "org.gnome.Software.png");
 	g_assert_cmpint (as_app_get_icon_kind (app), ==, AS_ICON_KIND_CACHED);
 	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_APP_SOURCE_KIND_UNKNOWN);
 	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
 	g_assert_cmpstr (as_app_get_project_license (app), ==, "GPLv2+");
 	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);
+	g_assert_cmpint (as_app_get_priority (app), ==, -4);
 	g_assert_cmpint (as_app_get_screenshots(app)->len, ==, 2);
 	g_assert_cmpint (as_app_get_releases(app)->len, ==, 1);
 	g_assert_cmpint (as_app_get_provides(app)->len, ==, 1);
@@ -400,7 +402,7 @@ ch_test_app_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_app_node_insert (app, root, 0.6);
+	n = as_app_node_insert (app, root, 0.7);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);

@@ -169,6 +169,7 @@ as_tag_to_string (AsTag tag)
 		"metadata_license",
 		"provides",
 		"extends",
+		"developer_name",
 		NULL };
 	if (tag > AS_TAG_LAST)
 		tag = AS_TAG_LAST;
