@@ -2811,22 +2811,44 @@ as_app_parse_desktop_file (AsApp *app,
 static gboolean
 as_app_parse_appdata_unintltoolize_cb (GNode *node, gpointer data)
 {
+	AsAppPrivate *priv = GET_PRIVATE (AS_APP (data));
 	const gchar *name;
+
 	name = as_node_get_name (node);
-	if (g_strcmp0 (name, "_name") == 0)
+	if (g_strcmp0 (name, "_name") == 0) {
 		as_node_set_name (node, "name");
-	else if (g_strcmp0 (name, "_summary") == 0)
+		priv->problems |= AS_APP_PROBLEM_INTLTOOL_NAME;
+		return FALSE;
+	}
+	if (g_strcmp0 (name, "_summary") == 0) {
 		as_node_set_name (node, "summary");
-	else if (g_strcmp0 (name, "_caption") == 0)
+		priv->problems |= AS_APP_PROBLEM_INTLTOOL_SUMMARY;
+		return FALSE;
+	}
+	if (g_strcmp0 (name, "_caption") == 0) {
 		as_node_set_name (node, "caption");
-	else if (g_strcmp0 (name, "_p") == 0)
+		return FALSE;
+	}
+	if (g_strcmp0 (name, "_p") == 0) {
 		as_node_set_name (node, "p");
-	else if (g_strcmp0 (name, "_li") == 0)
+		priv->problems |= AS_APP_PROBLEM_INTLTOOL_DESCRIPTION;
+		return FALSE;
+	}
+	if (g_strcmp0 (name, "_li") == 0) {
 		as_node_set_name (node, "li");
-	else if (g_strcmp0 (name, "_ul") == 0)
+		priv->problems |= AS_APP_PROBLEM_INTLTOOL_DESCRIPTION;
+		return FALSE;
+	}
+	if (g_strcmp0 (name, "_ul") == 0) {
 		as_node_set_name (node, "ul");
-	else if (g_strcmp0 (name, "_ol") == 0)
+		priv->problems |= AS_APP_PROBLEM_INTLTOOL_DESCRIPTION;
+		return FALSE;
+	}
+	if (g_strcmp0 (name, "_ol") == 0) {
 		as_node_set_name (node, "ol");
+		priv->problems |= AS_APP_PROBLEM_INTLTOOL_DESCRIPTION;
+		return FALSE;
+	}
 	return FALSE;
 }
 
@@ -2954,7 +2976,8 @@ as_app_parse_file (AsApp *app,
 	}
 
 	/* convert <_p> into <p> for easy validation */
-	if (g_str_has_suffix (filename, ".appdata.xml.in"))
+	if (g_str_has_suffix (filename, ".appdata.xml.in") ||
+	    g_str_has_suffix (filename, ".metainfo.xml.in"))
 		flags |= AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE;
 
 	/* parse */

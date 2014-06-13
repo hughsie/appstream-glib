@@ -1054,17 +1054,23 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		}
 	}
 	if (require_translations) {
-		if (name != NULL && as_app_get_name_size (app) == 1) {
+		if (name != NULL &&
+		    as_app_get_name_size (app) == 1 &&
+		    (problems & AS_APP_PROBLEM_INTLTOOL_NAME) == 0) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_TRANSLATIONS_REQUIRED,
 					     "<name> has no translations");
 		}
-		if (summary != NULL && as_app_get_comment_size (app) == 1) {
+		if (summary != NULL &&
+		    as_app_get_comment_size (app) == 1 &&
+		    (problems & AS_APP_PROBLEM_INTLTOOL_SUMMARY) == 0) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_TRANSLATIONS_REQUIRED,
 					     "<summary> has no translations");
 		}
-		if (description != NULL && as_app_get_description_size (app) == 1) {
+		if (description != NULL &&
+		    as_app_get_description_size (app) == 1 &&
+		    (problems & AS_APP_PROBLEM_INTLTOOL_DESCRIPTION) == 0) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_TRANSLATIONS_REQUIRED,
 					     "<description> has no translations");
