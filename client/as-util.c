@@ -412,32 +412,36 @@ as_util_install_xml (const gchar *filename, const gchar *dir, GError **error)
 static gboolean
 as_util_install_filename (const gchar *filename, GError **error)
 {
+	gboolean ret = FALSE;
 	gchar *tmp;
 	_cleanup_free_ gchar *basename = NULL;
 
-	/* AppStream XML */
-	if (g_str_has_suffix (filename, ".xml.gz"))
-		return as_util_install_xml (filename, "/usr/share/app-info/xmls", error);
+	switch (as_app_guess_source_kind (filename)) {
+	case AS_APP_SOURCE_KIND_APPSTREAM:
+		ret = as_util_install_xml (filename, "/usr/share/app-info/xmls", error);
+		break;
+	case AS_APP_SOURCE_KIND_APPDATA:
+	case AS_APP_SOURCE_KIND_METAINFO:
+		ret = as_util_install_xml (filename, "/usr/share/appdata", error);
+		break;
+	default:
+		/* icons */
+		basename = g_path_get_basename (filename);
+		tmp = g_strstr_len (basename, -1, "-icons.tar.gz");
+		if (tmp != NULL) {
+			*tmp = '\0';
+			ret = as_util_install_icons (filename, basename, error);
+			break;
+		}
 
-	/* AppData or MetaInfo */
-	if (g_str_has_suffix (filename, ".appdata.xml") ||
-	    g_str_has_suffix (filename, ".metainfo.xml"))
-		return as_util_install_xml (filename, "/usr/share/appdata", error);
-
-	/* icons */
-	basename = g_path_get_basename (filename);
-	tmp = g_strstr_len (basename, -1, "-icons.tar.gz");
-	if (tmp != NULL) {
-		*tmp = '\0';
-		return as_util_install_icons (filename, basename, error);
+		/* unrecognised */
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_FAILED,
+				     "No idea how to process files of this type");
+		break;
 	}
-
-	/* unrecognised */
-	g_set_error_literal (error,
-			     AS_ERROR,
-			     AS_ERROR_FAILED,
-			     "No idea how to process files of this type");
-	return FALSE;
+	return ret;
 }
 
 /**
@@ -953,7 +957,7 @@ as_util_validate_file (const gchar *filename,
 	_cleanup_ptrarray_unref_ GPtrArray *probs = NULL;
 
 	/* is AppStream */
-	if (g_str_has_suffix (filename, ".xml.gz")) {
+	if (as_app_guess_source_kind (filename) == AS_APP_SOURCE_KIND_APPSTREAM) {
 		gboolean ret;
 		_cleanup_object_unref_ AsStore *store;
 		_cleanup_object_unref_ GFile *file;

@@ -145,7 +145,7 @@ typedef enum {
 	AS_APP_SOURCE_KIND_APPSTREAM,			/* Since: 0.1.4 */
 	AS_APP_SOURCE_KIND_DESKTOP,			/* Since: 0.1.4 */
 	AS_APP_SOURCE_KIND_APPDATA,			/* Since: 0.1.4 */
-	AS_APP_SOURCE_KIND_METAINFO,			/* Since: 0.1.4 */
+	AS_APP_SOURCE_KIND_METAINFO,			/* Since: 0.1.7 */
 	/*< private >*/
 	AS_APP_SOURCE_KIND_LAST
 } AsAppSourceKind;

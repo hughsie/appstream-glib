@@ -2985,15 +2985,8 @@ as_app_parse_file (AsApp *app,
 
 	/* autodetect */
 	if (priv->source_kind == AS_APP_SOURCE_KIND_UNKNOWN) {
-		if (g_str_has_suffix (filename, ".desktop")) {
-			as_app_set_source_kind (app, AS_APP_SOURCE_KIND_DESKTOP);
-		} else if (g_str_has_suffix (filename, ".appdata.xml") ||
-			   g_str_has_suffix (filename, ".appdata.xml.in")) {
-			as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPDATA);
-		} else if (g_str_has_suffix (filename, ".metainfo.xml") ||
-			   g_str_has_suffix (filename, ".metainfo.xml.in")) {
-			as_app_set_source_kind (app, AS_APP_SOURCE_KIND_METAINFO);
-		} else {
+		priv->source_kind = as_app_guess_source_kind (filename);
+		if (priv->source_kind == AS_APP_SOURCE_KIND_UNKNOWN) {
 			g_set_error (error,
 				     AS_APP_ERROR,
 				     AS_APP_ERROR_INVALID_TYPE,
