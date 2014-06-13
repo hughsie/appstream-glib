@@ -2858,7 +2858,8 @@ as_app_parse_file (AsApp *app,
 		} else if (g_str_has_suffix (filename, ".appdata.xml") ||
 			   g_str_has_suffix (filename, ".appdata.xml.in")) {
 			as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPDATA);
-		} else if (g_str_has_suffix (filename, ".metainfo.xml")) {
+		} else if (g_str_has_suffix (filename, ".metainfo.xml") ||
+			   g_str_has_suffix (filename, ".metainfo.xml.in")) {
 			as_app_set_source_kind (app, AS_APP_SOURCE_KIND_METAINFO);
 		} else {
 			g_set_error (error,
