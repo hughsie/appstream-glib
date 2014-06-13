@@ -357,10 +357,10 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 		image = as_image_new ();
 		as_image_set_kind (image, AS_IMAGE_KIND_SOURCE);
 		size = as_node_get_attribute_as_int (node, "width");
-		if (size != G_MAXUINT)
+		if (size != G_MAXINT)
 			as_image_set_width (image, size);
 		size = as_node_get_attribute_as_int (node, "height");
-		if (size != G_MAXUINT)
+		if (size != G_MAXINT)
 			as_image_set_height (image, size);
 		as_image_set_url (image, tmp, -1);
 		g_ptr_array_add (priv->images, image);

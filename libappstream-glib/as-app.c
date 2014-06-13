@@ -2175,7 +2175,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 			if (as_node_get_tag (c) != AS_TAG_LANG)
 				continue;
 			percent = as_node_get_attribute_as_int (c, "percentage");
-			if (percent == G_MAXUINT)
+			if (percent == G_MAXINT)
 				percent = 0;
 			as_app_add_language (app, percent,
 					     as_node_get_data (c), -1);
@@ -2230,7 +2230,7 @@ as_app_node_parse (AsApp *app, GNode *node, GError **error)
 		if (tmp != NULL)
 			as_app_set_id_kind (app, as_id_kind_from_string (tmp));
 		prio = as_node_get_attribute_as_int (node, "priority");
-		if (prio != G_MAXUINT && prio != 0)
+		if (prio != G_MAXINT && prio != 0)
 			as_app_set_priority (app, prio);
 	}
 

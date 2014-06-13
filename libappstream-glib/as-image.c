@@ -421,10 +421,10 @@ as_image_node_parse (AsImage *image, GNode *node, GError **error)
 	guint size;
 
 	size = as_node_get_attribute_as_int (node, "width");
-	if (size != G_MAXUINT)
+	if (size != G_MAXINT)
 		as_image_set_width (image, size);
 	size = as_node_get_attribute_as_int (node, "height");
-	if (size != G_MAXUINT)
+	if (size != G_MAXINT)
 		as_image_set_height (image, size);
 	tmp = as_node_get_attribute (node, "type");
 	if (tmp != NULL)

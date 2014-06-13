@@ -1001,7 +1001,7 @@ as_node_take_data (const GNode *node)
  *
  * Gets a node attribute, e.g. 34
  *
- * Return value: integer value
+ * Return value: integer value, or %G_MAXINT for error
  *
  * Since: 0.1.0
  **/
@@ -1010,16 +1010,16 @@ as_node_get_attribute_as_int (const GNode *node, const gchar *key)
 {
 	const gchar *tmp;
 	gchar *endptr = NULL;
-	guint64 value_tmp;
+	gint64 value_tmp;
 
 	tmp = as_node_get_attribute (node, key);
 	if (tmp == NULL)
-		return G_MAXUINT;
+		return G_MAXINT;
 	value_tmp = g_ascii_strtoll (tmp, &endptr, 10);
 	if (value_tmp == 0 && tmp == endptr)
-		return G_MAXUINT;
-	if (value_tmp > G_MAXINT)
-		return G_MAXUINT;
+		return G_MAXINT;
+	if (value_tmp > G_MAXINT || value_tmp < G_MININT)
+		return G_MAXINT;
 	return value_tmp;
 }
 
