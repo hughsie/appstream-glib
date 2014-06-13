@@ -95,6 +95,18 @@ AX_CHECK_COMPILE_FLAG([-fPIE],
 AC_SUBST(PIE_CFLAGS)
 AC_SUBST(PIE_LDFLAGS)
 
+# bash-completion
+AC_ARG_WITH([bashcompletiondir],
+            AS_HELP_STRING([--with-bashcompletiondir=DIR], [Bash completions directory]),
+            [],
+            [AS_IF([$($PKG_CONFIG --exists bash-completion)], [
+                with_bashcompletiondir=$($PKG_CONFIG --variable=completionsdir bash-completion)
+            ] , [
+                with_bashcompletiondir=${datadir}/bash-completion/completions
+            ])])
+AC_SUBST([bashcompletiondir], [$with_bashcompletiondir])
+
+
 # use gperf for faster string -> enum matching
 AC_PATH_PROG(GPERF, [gperf], [no])
 if test x$GPERF != xno ; then
@@ -120,3 +132,13 @@ docs/api/Makefile
 docs/api/version.xml
 ])
 AC_OUTPUT
+AC_MSG_RESULT([
+    $PACKAGE_NAME $VERSION
+
+    prefix:                  ${prefix}
+    sysconf dir:             ${sysconfdir}
+    datarootdir:             ${datarootdir}
+    includedir:              ${includedir}
+    lib dir:                 ${libdir}
+    Bash completion dir:     ${with_bashcompletiondir}
+              ])
