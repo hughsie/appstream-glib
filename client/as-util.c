@@ -952,6 +952,20 @@ as_util_validate_file (const gchar *filename,
 	_cleanup_object_unref_ AsApp *app = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *probs = NULL;
 
+	/* is AppStream */
+	if (g_str_has_suffix (filename, ".xml.gz")) {
+		gboolean ret;
+		_cleanup_object_unref_ AsStore *store;
+		_cleanup_object_unref_ GFile *file;
+		file = g_file_new_for_path (filename);
+		store = as_store_new ();
+		ret = as_store_from_file (store, file, NULL, NULL, error);
+		if (!ret)
+			return FALSE;
+		g_print ("%s: %s\n", filename, _("OK"));
+		return TRUE;
+	}
+
 	/* load file */
 	app = as_app_new ();
 	g_print ("%s: ", filename);
