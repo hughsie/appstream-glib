@@ -136,6 +136,7 @@ typedef enum {
  * @AS_APP_SOURCE_KIND_APPSTREAM:		Sourced from a AppStream file
  * @AS_APP_SOURCE_KIND_DESKTOP:			Sourced from a desktop file
  * @AS_APP_SOURCE_KIND_APPDATA:			Sourced from a AppData file
+ * @AS_APP_SOURCE_KIND_METAINFO:		Sourced from a MetaInfo file
  *
  * The source kind.
  **/
@@ -154,6 +155,7 @@ typedef enum {
 GType		 as_app_get_type		(void);
 AsApp		*as_app_new			(void);
 GQuark		 as_app_error_quark		(void);
+AsAppSourceKind	 as_app_guess_source_kind	(const gchar	*filename);
 
 /* getters */
 AsIconKind	 as_app_get_icon_kind		(AsApp		*app);

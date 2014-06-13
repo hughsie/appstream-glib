@@ -112,6 +112,34 @@ as_app_error_quark (void)
 }
 
 /**
+ * as_app_guess_source_kind:
+ * @filename: a file name
+ *
+ * Guesses the source kind based from the filename.
+ *
+ * Return value: A #AsAppSourceKind, e.g. %AS_APP_SOURCE_KIND_APPSTREAM.
+ *
+ * Since: 0.1.8
+ **/
+AsAppSourceKind
+as_app_guess_source_kind (const gchar *filename)
+{
+	if (g_str_has_suffix (filename, ".xml.gz"))
+		return AS_APP_SOURCE_KIND_APPSTREAM;
+	if (g_str_has_suffix (filename, ".desktop"))
+		return AS_APP_SOURCE_KIND_DESKTOP;
+	if (g_str_has_suffix (filename, ".appdata.xml"))
+		return AS_APP_SOURCE_KIND_APPDATA;
+	if (g_str_has_suffix (filename, ".appdata.xml.in"))
+		return AS_APP_SOURCE_KIND_APPDATA;
+	if (g_str_has_suffix (filename, ".metainfo.xml"))
+		return AS_APP_SOURCE_KIND_METAINFO;
+	if (g_str_has_suffix (filename, ".metainfo.xml.in"))
+		return AS_APP_SOURCE_KIND_METAINFO;
+	return AS_APP_SOURCE_KIND_UNKNOWN;
+}
+
+/**
  * as_app_finalize:
  **/
 static void
