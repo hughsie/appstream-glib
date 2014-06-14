@@ -45,13 +45,16 @@ _appstream-util()
 
         case $command in
             validate|validate-relax|validate-strict)
-                ext='@(appdata|metainfo).xml?(.in)'
+                ext='@(@(appdata|metainfo).xml?(.in)|xml.gz)'
                 ;;
             install|uninstall)
                 ext='@(appdata|metainfo).xml'
                 ;;
             dump)
-                ext='@(desktop|@(appdata|metainfo).xml)'
+                ext='@(desktop|@(appdata|metainfo).xml?(.in))'
+                ;;
+            non-package-yaml|status-html)
+                ext='@(xml.gz)'
                 ;;
             *)
                 ;;
