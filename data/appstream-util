@@ -53,6 +53,9 @@ _appstream-util()
             dump)
                 ext='@(desktop|@(appdata|metainfo).xml?(.in))'
                 ;;
+            non-package-yaml)
+                ext='@(xml.gz)'
+                ;;
             *)
                 ;;
         esac
