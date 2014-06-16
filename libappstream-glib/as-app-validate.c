@@ -783,6 +783,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	gboolean require_project_license = FALSE;
 	gboolean require_translations = FALSE;
 	gboolean require_url = TRUE;
+	gboolean require_content_license = TRUE;
 	gboolean ret;
 	guint length_name_max = 30;
 	guint length_name_min = 3;
@@ -798,6 +799,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		length_name_max = 100;
 		length_summary_max = 200;
 		require_contactdetails = FALSE;
+		require_content_license = FALSE;
 		require_url = FALSE;
 		number_para_max = 10;
 		number_para_min = 1;
@@ -809,6 +811,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		require_copyright = TRUE;
 		require_translations = TRUE;
 		require_project_license = TRUE;
+		require_content_license = TRUE;
 	}
 
 	/* set up networking */
@@ -870,13 +873,25 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	/* metadata_license */
 	license = as_app_get_metadata_license (app);
 	if (license != NULL) {
-		if (g_strcmp0 (license, "CC0-1.0") != 0 &&
-		    g_strcmp0 (license, "CC-BY-3.0") != 0 &&
-		    g_strcmp0 (license, "CC-BY-SA-3.0") != 0 &&
-		    g_strcmp0 (license, "GFDL-1.3") != 0) {
-			ai_app_validate_add (probs,
-					     AS_PROBLEM_KIND_TAG_INVALID,
-					     "<metadata_license> is not valid");
+		if (require_content_license) {
+			if (g_strcmp0 (license, "CC0-1.0") != 0 &&
+			    g_strcmp0 (license, "CC-BY-3.0") != 0 &&
+			    g_strcmp0 (license, "CC-BY-SA-3.0") != 0 &&
+			    g_strcmp0 (license, "GFDL-1.3") != 0) {
+				ai_app_validate_add (probs,
+						     AS_PROBLEM_KIND_TAG_INVALID,
+						     "<metadata_license> is not valid");
+			}
+		} else {
+			ret = as_app_validate_license (license, &error_local);
+			if (!ret) {
+				g_prefix_error (&error_local,
+						"<metadata_license> is not valid: ");
+				ai_app_validate_add (probs,
+						     AS_PROBLEM_KIND_TAG_INVALID,
+						     error_local->message);
+				g_clear_error (&error_local);
+			}
 		}
 	}
 	if (license == NULL) {
