@@ -2412,12 +2412,12 @@ as_app_add_tokens (AsApp *app,
 }
 
 /**
- * as_app_create_token_cache:
+ * as_app_create_token_cache_target:
  **/
 static void
-as_app_create_token_cache (AsApp *app)
+as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 {
-	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsAppPrivate *priv = GET_PRIVATE (donor);
 	const gchar * const *locales;
 	const gchar *tmp;
 	guint i;
@@ -2444,6 +2444,23 @@ as_app_create_token_cache (AsApp *app)
 	for (i = 0; i < priv->mimetypes->len; i++) {
 		tmp = g_ptr_array_index (priv->mimetypes, i);
 		as_app_add_tokens (app, tmp, "C", 1);
+	}
+}
+
+/**
+ * as_app_create_token_cache:
+ **/
+static void
+as_app_create_token_cache (AsApp *app)
+{
+	AsApp *donor;
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	guint i;
+
+	as_app_create_token_cache_target (app, app);
+	for (i = 0; i < priv->addons->len; i++) {
+		donor = g_ptr_array_index (priv->addons, i);
+		as_app_create_token_cache_target (app, donor);
 	}
 }
 

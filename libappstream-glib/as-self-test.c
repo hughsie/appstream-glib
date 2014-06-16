@@ -1344,6 +1344,9 @@ ch_test_store_addons_func (void)
 		"</component>"
 		"<component type=\"addon\">"
 		"<id>eclipse-php.jar</id>"
+		"<mimetypes>"
+		"<mimetype>xtest</mimetype>"
+		"</mimetypes>"
 		"<extends>eclipse.desktop</extends>"
 		"</component>"
 		"</components>";
@@ -1369,6 +1372,9 @@ ch_test_store_addons_func (void)
 	g_assert_cmpint (data->len, ==, 1);
 	app = g_ptr_array_index (data, 0);
 	g_assert_cmpstr (as_app_get_id_full (app), ==, "eclipse-php.jar");
+
+	/* check we can search for token from the addon */
+	g_assert_cmpint (as_app_search_matches (app, "xtest"), >, 0);
 
 	/* check it marshals back to the same XML */
 	str = as_store_to_xml (store, 0);
