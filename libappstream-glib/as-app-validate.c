@@ -109,6 +109,19 @@ as_app_validate_has_hyperlink (const gchar *text)
 }
 
 /**
+ * as_app_validate_has_email:
+ **/
+static gboolean
+as_app_validate_has_email (const gchar *text)
+{
+	if (g_strstr_len (text, -1, "@") != NULL)
+		return TRUE;
+	if (g_strstr_len (text, -1, "_at_") != NULL)
+		return TRUE;
+	return FALSE;
+}
+
+/**
  * as_app_validate_description_li:
  **/
 static void
@@ -1074,6 +1087,32 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_TRANSLATIONS_REQUIRED,
 					     "<description> has no translations");
+		}
+	}
+
+	/* developer_name */
+	name = as_app_get_developer_name (app, NULL);
+	if (name != NULL) {
+		str_len = strlen (name);
+		if (str_len < length_name_min) {
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<developer_name> is too short");
+		}
+		if (str_len > length_name_max) {
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<developer_name> is too long");
+		}
+		if (as_app_validate_has_hyperlink (name)) {
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<developer_name> cannot contain a hyperlink");
+		}
+		if (as_app_validate_has_email (name)) {
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<developer_name> cannot contain an email address");
 		}
 	}
 
