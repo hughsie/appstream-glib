@@ -281,7 +281,7 @@ as_util_dump_filename (AsUtilPrivate *priv, const gchar *filename, GError **erro
 			       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE |
 			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
 			       AS_NODE_TO_XML_FLAG_ADD_HEADER);
-	g_print ("%s\n", xml->str);
+	g_print ("%s", xml->str);
 	return TRUE;
 }
 
