@@ -399,9 +399,9 @@ gchar *
 as_node_reflow_text (const gchar *text, gssize text_len)
 {
 	GString *tmp;
-	gchar **split;
 	guint i;
 	guint newline_count = 0;
+	_cleanup_strv_free_ gchar **split = NULL;
 
 	/* split the text into lines */
 	tmp = g_string_sized_new (text_len + 1);
@@ -435,7 +435,6 @@ as_node_reflow_text (const gchar *text, gssize text_len)
 		/* this last section was paragraph */
 		newline_count = 1;
 	}
-	g_strfreev (split);
 	return g_string_free (tmp, FALSE);
 }
 
