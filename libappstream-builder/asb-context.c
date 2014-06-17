@@ -53,7 +53,6 @@ struct _AsbContextPrivate
 	AsStore			*old_md_cache;
 	GList			*apps;			/* of AsbApp */
 	GMutex			 apps_mutex;		/* for ->apps */
-	GPtrArray		*blacklisted_pkgs;	/* of AsbGlobValue */
 	GPtrArray		*extra_pkgs;		/* of AsbGlobValue */
 	GPtrArray		*file_globs;		/* of AsbPackage */
 	GPtrArray		*packages;		/* of AsbPackage */
@@ -497,16 +496,6 @@ asb_context_add_filename (AsbContext *ctx, const gchar *filename, GError **error
 	if (!asb_package_open (pkg, filename, error))
 		return FALSE;
 
-	/* is package name blacklisted */
-	if (asb_glob_value_search (priv->blacklisted_pkgs,
-				   asb_package_get_name (pkg)) != NULL) {
-		asb_package_log (pkg,
-				 ASB_PACKAGE_LOG_LEVEL_INFO,
-				 "%s is blacklisted",
-				 asb_package_get_filename (pkg));
-		return TRUE;
-	}
-
 	/* add to array */
 	g_ptr_array_add (priv->packages, g_object_ref (pkg));
 	return TRUE;
@@ -844,16 +833,6 @@ asb_context_add_extra_pkg (AsbContext *ctx, const gchar *pkg1, const gchar *pkg2
 }
 
 /**
- * asb_context_add_blacklist_pkg:
- **/
-static void
-asb_context_add_blacklist_pkg (AsbContext *ctx, const gchar *pkg)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	g_ptr_array_add (priv->blacklisted_pkgs, asb_glob_value_new (pkg, ""));
-}
-
-/**
  * asb_context_add_app:
  * @ctx: A #AsbContext
  * @app: A #AsbApp
@@ -886,7 +865,6 @@ asb_context_finalize (GObject *object)
 	g_ptr_array_unref (priv->extra_pkgs);
 	g_list_foreach (priv->apps, (GFunc) g_object_unref, NULL);
 	g_list_free (priv->apps);
-	g_ptr_array_unref (priv->blacklisted_pkgs);
 	g_ptr_array_unref (priv->file_globs);
 	g_mutex_clear (&priv->apps_mutex);
 	g_free (priv->old_metadata);
@@ -911,7 +889,6 @@ asb_context_init (AsbContext *ctx)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 
-	priv->blacklisted_pkgs = asb_glob_value_array_new ();
 	priv->plugins = asb_plugin_loader_new ();
 	priv->packages = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->extra_pkgs = asb_glob_value_array_new ();
@@ -941,14 +918,6 @@ asb_context_init (AsbContext *ctx)
 	asb_context_add_extra_pkg (ctx, "switchdesk-gui", "switchdesk");
 	asb_context_add_extra_pkg (ctx, "transmission-*", "transmission-common");
 	asb_context_add_extra_pkg (ctx, "calligra-krita", "calligra-core");
-
-	/* add blacklisted packages */
-	asb_context_add_blacklist_pkg (ctx, "beneath-a-steel-sky-cd");
-	asb_context_add_blacklist_pkg (ctx, "anaconda");
-	asb_context_add_blacklist_pkg (ctx, "mate-control-center");
-	asb_context_add_blacklist_pkg (ctx, "lxde-common");
-	asb_context_add_blacklist_pkg (ctx, "xscreensaver-*");
-	asb_context_add_blacklist_pkg (ctx, "bmpanel2-cfg");
 }
 
 /**
