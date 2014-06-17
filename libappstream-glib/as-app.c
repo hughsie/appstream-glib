@@ -703,6 +703,25 @@ as_app_get_icon (AsApp *app)
 }
 
 /**
+ * as_app_get_pkgname_default:
+ * @app: a #AsApp instance.
+ *
+ * Gets the default package name.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.2.0
+ **/
+const gchar *
+as_app_get_pkgname_default (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	if (priv->pkgnames->len < 1)
+		return NULL;
+	return g_ptr_array_index (priv->pkgnames, 0);
+}
+
+/**
  * as_app_get_icon_path:
  * @app: a #AsApp instance.
  *

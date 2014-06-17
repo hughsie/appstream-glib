@@ -184,6 +184,7 @@ const gchar	*as_app_get_icon		(AsApp		*app);
 const gchar	*as_app_get_icon_path		(AsApp		*app);
 const gchar	*as_app_get_id			(AsApp		*app);
 const gchar	*as_app_get_id_full		(AsApp		*app);
+const gchar	*as_app_get_pkgname_default	(AsApp		*app);
 const gchar	*as_app_get_project_group	(AsApp		*app);
 const gchar	*as_app_get_project_license	(AsApp		*app);
 const gchar	*as_app_get_metadata_license	(AsApp		*app);
