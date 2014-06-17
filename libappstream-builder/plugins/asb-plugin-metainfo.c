@@ -135,3 +135,59 @@ asb_plugin_process (AsbPlugin *plugin,
 	}
 	return apps;
 }
+
+/**
+ * asb_plugin_merge:
+ */
+void
+asb_plugin_merge (AsbPlugin *plugin, GList **list)
+{
+	AsApp *app;
+	AsApp *found;
+	GList *l;
+	GList *list_new = NULL;
+	_cleanup_hashtable_unref_ GHashTable *hash;
+
+	/* make a hash table of ID->AsApp */
+	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
+				      g_free, (GDestroyNotify) g_object_unref);
+	for (l = *list; l != NULL; l = l->next) {
+		app = AS_APP (l->data);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+			continue;
+		g_hash_table_insert (hash,
+				     g_strdup (as_app_get_id_full (app)),
+				     g_object_ref (app));
+	}
+
+	/* add addons where the pkgname is different from the
+	 * main package */
+	for (l = *list; l != NULL; l = l->next) {
+		if (!ASB_IS_APP (l->data)) {
+			asb_plugin_add_app (&list_new, l->data);
+			continue;
+		}
+		app = AS_APP (l->data);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_ADDON) {
+			asb_plugin_add_app (&list_new, l->data);
+			continue;
+		}
+		found = g_hash_table_lookup (hash, as_app_get_id_full (app));
+		if (found == NULL) {
+			asb_plugin_add_app (&list_new, l->data);
+			continue;
+		}
+		if (g_strcmp0 (as_app_get_pkgname_default (app),
+			       as_app_get_pkgname_default (found)) == 0) {
+			g_warning ("%s addon shipped in main package %s so ignored",
+				   as_app_get_id_full (app),
+				   as_app_get_pkgname_default (app));
+			continue;
+		}
+		asb_plugin_add_app (&list_new, ASB_APP (app));
+	}
+
+	/* success */
+	g_list_free_full (*list, (GDestroyNotify) g_object_unref);
+	*list = list_new;
+}
