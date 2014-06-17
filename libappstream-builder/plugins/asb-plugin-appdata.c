@@ -153,23 +153,6 @@ asb_plugin_appdata_remove_file (AsbPlugin *plugin, const gchar *filename)
 }
 
 /**
- * asb_plugin_appdata_license_valid:
- */
-static gboolean
-asb_plugin_appdata_license_valid (const gchar *license)
-{
-	if (g_strcmp0 (license, "CC0-1.0") == 0)
-		return TRUE;
-	if (g_strcmp0 (license, "CC-BY-3.0") == 0)
-		return TRUE;
-	if (g_strcmp0 (license, "CC-BY-SA-3.0") == 0)
-		return TRUE;
-	if (g_strcmp0 (license, "GFDL-1.3") == 0)
-		return TRUE;
-	return FALSE;
-}
-
-/**
  * asb_plugin_process_filename:
  */
 static void
@@ -341,7 +324,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 			     filename);
 		return FALSE;
 	}
-	if (!asb_plugin_appdata_license_valid (tmp)) {
+	if (!as_utils_is_spdx_license_id (tmp)) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
 			     ASB_PLUGIN_ERROR_FAILED,
