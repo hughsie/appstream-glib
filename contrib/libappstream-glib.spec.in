@@ -98,6 +98,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_libdir}/asb-plugins/*.so
 %{_bindir}/appstream-builder
 %{_libdir}/libappstream-builder.so.1*
+%{_datadir}/bash-completion/completions/appstream-builder
 
 %files builder-devel
 %{_libdir}/libappstream-builder.so
