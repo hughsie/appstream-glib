@@ -89,7 +89,6 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	}
 	asb_app_set_requires_appdata (app, FALSE);
 	asb_plugin_add_app (apps, app);
-	as_app_add_category (AS_APP (app), "ApplicationAddon", -1);
 	return TRUE;
 }
 

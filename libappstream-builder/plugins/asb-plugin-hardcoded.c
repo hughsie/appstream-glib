@@ -310,7 +310,8 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		asb_app_add_requires_appdata (app, "ConsoleOnly");
 
 	/* no categories means we require AppData */
-	if (as_app_get_categories(AS_APP(app))->len == 0)
+	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_DESKTOP &&
+	    as_app_get_categories(AS_APP(app))->len == 0)
 		asb_app_add_requires_appdata (app, "no Categories");
 
 	return TRUE;
