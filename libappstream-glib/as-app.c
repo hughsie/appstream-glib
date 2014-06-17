@@ -1099,6 +1099,8 @@ as_app_set_metadata_license (AsApp *app,
 		{ "CC-BY",	"CC-BY-3.0" },
 		{ "CC-BY-SA",	"CC-BY-SA-3.0" },
 		{ "GFDL",	"GFDL-1.3" },
+		{ "GPL-2",	"GPL-2.0" },
+		{ "GPL-3",	"GPL-3.0" },
 		{ NULL, NULL } };
 
 	/* automatically replace deprecated license names */
