@@ -56,6 +56,8 @@ ChangeLog:
 	  echo A git checkout and git-log is required to generate this file >> $@); \
 	fi
 
+DISTCHECK_CONFIGURE_FLAGS = --with-bashcompletiondir=/${prefix}/share/bash-completion/completions
+
 .PHONY: ChangeLog
 
 -include $(top_srcdir)/git.mk
