@@ -8,14 +8,19 @@ AM_CPPFLAGS =						\
 	-I$(top_builddir)				\
 	-I$(top_srcdir)/libappstream-glib		\
 	-I$(top_builddir)/libappstream-glib		\
+	-I$(top_srcdir)/libappstream-builder		\
+	-I$(top_builddir)/libappstream-builder		\
 	-DG_LOG_DOMAIN=\"As\"				\
 	-DVERSION="\"$(VERSION)\""			\
 	-DLOCALEDIR=\""$(localedir)"\"
 
 AS_GLIB_LIBS =						\
 	$(top_builddir)/libappstream-glib/libappstream-glib.la
+AS_BUILDER_LIBS =					\
+	$(top_builddir)/libappstream-builder/libappstream-builder.la
 
 bin_PROGRAMS =						\
+	appstream-builder				\
 	appstream-util
 
 appstream_util_SOURCES =				\
@@ -28,6 +33,19 @@ appstream_util_LDADD =					\
 appstream_util_LDFLAGS =				\
 	$(PIE_LDFLAGS)
 appstream_util_CFLAGS =					\
+	$(WARNINGFLAGS_C)
+
+appstream_builder_SOURCES =				\
+	as-builder.c
+appstream_builder_LDADD =				\
+	$(AS_GLIB_LIBS)					\
+	$(AS_BUILDER_LIBS)				\
+	$(GLIB_LIBS)					\
+	$(SOUP_LIBS)					\
+	$(LIBARCHIVE_LIBS)
+appstream_builder_LDFLAGS =				\
+	$(PIE_LDFLAGS)
+appstream_builder_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 
 -include $(top_srcdir)/git.mk
