@@ -121,6 +121,7 @@ asb_plugin_initialize (AsbPlugin *plugin)
 		{ "xfce-ui-settings",		"Not an application" },
 		{ "xinput_calibrator",		"Not an application" },
 		{ "xpilot-ng-x11",		"Not an application" },
+		{ "rott-registered",		"Requires purchase of original game: http://icculus.org/rott/" },
 		{ NULL, NULL } };
 
 	plugin->priv = ASB_PLUGIN_GET_PRIVATE (AsbPluginPrivate);
