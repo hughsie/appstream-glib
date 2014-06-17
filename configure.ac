@@ -1,8 +1,8 @@
 AC_PREREQ(2.63)
 
 m4_define([as_major_version], [0])
-m4_define([as_minor_version], [1])
-m4_define([as_micro_version], [8])
+m4_define([as_minor_version], [2])
+m4_define([as_micro_version], [0])
 m4_define([as_version],
           [as_major_version.as_minor_version.as_micro_version])
 
@@ -114,14 +114,34 @@ if test x$GPERF != xno ; then
 fi
 AM_CONDITIONAL(HAVE_GPERF, [test x$GPERF != xno])
 
-PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.16.1 gio-2.0 gobject-2.0 gthread-2.0)
+PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.16.1 gio-2.0 gobject-2.0 gthread-2.0 gio-unix-2.0 gmodule-2.0)
 PKG_CHECK_MODULES(LIBARCHIVE, libarchive)
 PKG_CHECK_MODULES(SOUP, libsoup-2.4 >= 2.24)
-PKG_CHECK_MODULES(GDKPIXBUF, gdk-pixbuf-2.0 >= 2.14)
+PKG_CHECK_MODULES(GDKPIXBUF, gdk-pixbuf-2.0 >= 2.14 gtk+-3.0)
+PKG_CHECK_MODULES(SQLITE, sqlite3)
+PKG_CHECK_MODULES(FREETYPE, pango fontconfig freetype2 >= 9.10.0)
+
+# rpm (default enabled)
+AC_ARG_ENABLE(rpm, AS_HELP_STRING([--disable-rpm],[Disable rpm support]), enable_rpm=$enableval)
+if test x$enable_rpm != xno; then
+	PKG_CHECK_MODULES(RPM, rpm, HAVE_RPM="yes", HAVE_RPM="no")
+	if test "x$HAVE_RPM" = "xyes"; then
+		AC_DEFINE(HAVE_RPM, 1, [define if RPM is installed])
+	else
+		if test x$enable_rpm = xyes; then
+			AC_MSG_ERROR([rpm enabled but not found])
+		fi
+	fi
+else
+	HAVE_RPM=no
+fi
+AM_CONDITIONAL(HAVE_RPM, test x$HAVE_RPM = xyes)
 
 AC_CONFIG_FILES([
 Makefile
 client/Makefile
+libappstream-builder/Makefile
+libappstream-builder/appstream-builder.pc
 libappstream-glib/Makefile
 libappstream-glib/appstream-glib.pc
 libappstream-glib/as-version.h
