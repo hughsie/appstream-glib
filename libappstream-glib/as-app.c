@@ -2061,7 +2061,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
  * as_app_node_parse_child:
  **/
 static gboolean
-as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
+as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	GNode *c;
@@ -2158,7 +2158,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <categories> */
 	case AS_TAG_CATEGORIES:
-		g_ptr_array_set_size (priv->categories, 0);
+		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
+			g_ptr_array_set_size (priv->categories, 0);
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_CATEGORY)
 				continue;
@@ -2168,7 +2169,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <architectures> */
 	case AS_TAG_ARCHITECTURES:
-		g_ptr_array_set_size (priv->architectures, 0);
+		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
+			g_ptr_array_set_size (priv->architectures, 0);
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_ARCH)
 				continue;
@@ -2178,7 +2180,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <keywords> */
 	case AS_TAG_KEYWORDS:
-		g_ptr_array_set_size (priv->keywords, 0);
+		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
+			g_ptr_array_set_size (priv->keywords, 0);
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_KEYWORD)
 				continue;
@@ -2188,7 +2191,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <mimetypes> */
 	case AS_TAG_MIMETYPES:
-		g_ptr_array_set_size (priv->mimetypes, 0);
+		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
+			g_ptr_array_set_size (priv->mimetypes, 0);
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_MIMETYPE)
 				continue;
@@ -2239,7 +2243,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <screenshots> */
 	case AS_TAG_SCREENSHOTS:
-		g_ptr_array_set_size (priv->screenshots, 0);
+		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
+			g_ptr_array_set_size (priv->screenshots, 0);
 		for (c = n->children; c != NULL; c = c->next) {
 			_cleanup_object_unref_ AsScreenshot *ss = NULL;
 			if (as_node_get_tag (c) != AS_TAG_SCREENSHOT)
@@ -2253,7 +2258,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <releases> */
 	case AS_TAG_RELEASES:
-		g_ptr_array_set_size (priv->releases, 0);
+		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
+			g_ptr_array_set_size (priv->releases, 0);
 		for (c = n->children; c != NULL; c = c->next) {
 			_cleanup_object_unref_ AsRelease *r = NULL;
 			if (as_node_get_tag (c) != AS_TAG_RELEASE)
@@ -2267,7 +2273,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <provides> */
 	case AS_TAG_PROVIDES:
-		g_ptr_array_set_size (priv->provides, 0);
+		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
+			g_ptr_array_set_size (priv->provides, 0);
 		for (c = n->children; c != NULL; c = c->next) {
 			_cleanup_object_unref_ AsProvide *p;
 			p = as_provide_new ();
@@ -2279,7 +2286,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <languages> */
 	case AS_TAG_LANGUAGES:
-		g_hash_table_remove_all (priv->languages);
+		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
+			g_hash_table_remove_all (priv->languages);
 		for (c = n->children; c != NULL; c = c->next) {
 			guint percent;
 			if (as_node_get_tag (c) != AS_TAG_LANG)
@@ -2294,7 +2302,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 
 	/* <metadata> */
 	case AS_TAG_METADATA:
-		g_hash_table_remove_all (priv->metadata);
+		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
+			g_hash_table_remove_all (priv->metadata);
 		for (c = n->children; c != NULL; c = c->next) {
 			gchar *key;
 			if (as_node_get_tag (c) != AS_TAG_VALUE)
@@ -2315,19 +2324,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, GError **error)
 }
 
 /**
- * as_app_node_parse:
- * @app: a #AsApp instance.
- * @node: a #GNode.
- * @error: A #GError or %NULL.
- *
- * Populates the object from a DOM node.
- *
- * Returns: %TRUE for success
- *
- * Since: 0.1.0
+ * as_app_node_parse_full:
  **/
-gboolean
-as_app_node_parse (AsApp *app, GNode *node, GError **error)
+static gboolean
+as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags, GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	GNode *n;
@@ -2345,15 +2345,35 @@ as_app_node_parse (AsApp *app, GNode *node, GError **error)
 	}
 
 	/* parse each node */
-	g_ptr_array_set_size (priv->compulsory_for_desktops, 0);
-	g_ptr_array_set_size (priv->pkgnames, 0);
-	g_ptr_array_set_size (priv->architectures, 0);
-	g_ptr_array_set_size (priv->extends, 0);
+	if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA)) {
+		g_ptr_array_set_size (priv->compulsory_for_desktops, 0);
+		g_ptr_array_set_size (priv->pkgnames, 0);
+		g_ptr_array_set_size (priv->architectures, 0);
+		g_ptr_array_set_size (priv->extends, 0);
+	}
 	for (n = node->children; n != NULL; n = n->next) {
-		if (!as_app_node_parse_child (app, n, error))
+		if (!as_app_node_parse_child (app, n, flags, error))
 			return FALSE;
 	}
 	return TRUE;
+}
+
+/**
+ * as_app_node_parse:
+ * @app: a #AsApp instance.
+ * @node: a #GNode.
+ * @error: A #GError or %NULL.
+ *
+ * Populates the object from a DOM node.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.1.0
+ **/
+gboolean
+as_app_node_parse (AsApp *app, GNode *node, GError **error)
+{
+	return as_app_node_parse_full (app, node, AS_APP_PARSE_FLAG_NONE, error);
 }
 
 #if !GLIB_CHECK_VERSION(2,39,1)
