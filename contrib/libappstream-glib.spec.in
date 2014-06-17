@@ -18,6 +18,14 @@ BuildRequires: libarchive-devel
 BuildRequires: libsoup-devel
 BuildRequires: gdk-pixbuf2-devel
 
+# for the builder component
+BuildRequires: fontconfig-devel
+BuildRequires: freetype-devel
+BuildRequires: gtk3-devel
+BuildRequires: pango-devel
+BuildRequires: rpm-devel
+BuildRequires: sqlite-devel
+
 %description
 This library provides GObjects and helper methods to make it easy to read and
 write AppStream metadata. It also provides a simple DOM implementation that
@@ -30,6 +38,21 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
 GLib headers and libraries for appstream-glib.
+
+%package builder
+Summary: Library and command line tools for building AppStream metadata
+Requires: %{name}%{?_isa} = %{version}-%{release}
+
+%description builder
+This library and command line tool is used for building AppStream metadata
+from a directory of packages.
+
+%package builder-devel
+Summary: GLib Libraries and headers for appstream-builder
+Requires: %{name}%{?_isa} = %{version}-%{release}
+
+%description builder-devel
+GLib headers and libraries for appstream-builder.
 
 %prep
 %setup -q -n appstream-glib-%{version}
@@ -46,7 +69,9 @@ make %{?_smp_mflags}
 %install
 make install DESTDIR=$RPM_BUILD_ROOT
 
-rm -f $RPM_BUILD_ROOT%{_libdir}/libappstream-glib*.la
+%__rm -f %{buildroot}%{_libdir}/libappstream-glib*.la
+%__rm -f %{buildroot}%{_libdir}/libappstream-builder*.la
+%__rm -f %{buildroot}%{_libdir}/asb-plugins/*.la
 
 %post -p /sbin/ldconfig
 
@@ -65,8 +90,21 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libappstream-glib*.la
 %{_libdir}/pkgconfig/appstream-glib.pc
 %dir %{_includedir}/libappstream-glib
 %{_includedir}/libappstream-glib/*.h
-%{_datadir}/gtk-doc
-%{_datadir}/gir-1.0/*.gir
+%{_datadir}/gtk-doc/html/appstream-glib
+%{_datadir}/gir-1.0/AppStreamGlib-1.0.gir
+
+%files builder
+%doc AUTHORS COPYING NEWS README.md
+%{_libdir}/asb-plugins/*.so
+%{_bindir}/appstream-builder
+%{_libdir}/libappstream-builder.so.1*
+
+%files builder-devel
+%{_libdir}/libappstream-builder.so
+%{_libdir}/pkgconfig/appstream-builder.pc
+%dir %{_includedir}/libappstream-builder
+%{_includedir}/libappstream-builder/*.h
+%{_datadir}/gir-1.0/AppStreamBuilder-1.0.gir
 
 %changelog
 * #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#
