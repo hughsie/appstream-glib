@@ -2996,7 +2996,7 @@ as_app_parse_appdata_file (AsApp *app,
 			seen_application = TRUE;
 		}
 	}
-	if (!as_app_node_parse (app, node, error))
+	if (!as_app_node_parse_full (app, node, flags, error))
 		return FALSE;
 	return TRUE;
 }
