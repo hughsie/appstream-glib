@@ -1,0 +1,137 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+ *
+ * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ *
+ * Licensed under the GNU Lesser General Public License Version 2.1
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+#include <config.h>
+#include <fnmatch.h>
+
+#include <asb-plugin.h>
+
+/**
+ * asb_plugin_get_name:
+ */
+const gchar *
+asb_plugin_get_name (void)
+{
+	return "metainfo";
+}
+
+/**
+ * asb_plugin_add_globs:
+ */
+void
+asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
+{
+	asb_plugin_add_glob (globs, "/usr/share/appdata/*.metainfo.xml");
+}
+
+/**
+ * _asb_plugin_check_filename:
+ */
+static gboolean
+_asb_plugin_check_filename (const gchar *filename)
+{
+	if (fnmatch ("/usr/share/appdata/*.metainfo.xml", filename, 0) == 0)
+		return TRUE;
+	return FALSE;
+}
+
+/**
+ * asb_plugin_check_filename:
+ */
+gboolean
+asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
+{
+	return _asb_plugin_check_filename (filename);
+}
+
+/**
+ * asb_plugin_process_filename:
+ */
+static gboolean
+asb_plugin_process_filename (AsbPlugin *plugin,
+			     AsbPackage *pkg,
+			     const gchar *filename,
+			     GList **apps,
+			     GError **error)
+{
+	_cleanup_object_unref_ AsbApp *app = NULL;
+
+	app = asb_app_new (pkg, NULL);
+	if (!as_app_parse_file (AS_APP (app), filename,
+				AS_APP_PARSE_FLAG_APPEND_DATA,
+				error))
+		return FALSE;
+	if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_ADDON) {
+		g_set_error (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_FAILED,
+			     "%s is not an addon",
+			     as_app_get_id_full (AS_APP (app)));
+		return FALSE;
+	}
+	asb_app_set_requires_appdata (app, FALSE);
+	asb_plugin_add_app (apps, app);
+	as_app_add_category (AS_APP (app), "ApplicationAddon", -1);
+	return TRUE;
+}
+
+/**
+ * asb_plugin_process:
+ */
+GList *
+asb_plugin_process (AsbPlugin *plugin,
+		    AsbPackage *pkg,
+		    const gchar *tmpdir,
+		    GError **error)
+{
+	gboolean ret;
+	GList *apps = NULL;
+	guint i;
+	gchar **filelist;
+
+	filelist = asb_package_get_filelist (pkg);
+	for (i = 0; filelist[i] != NULL; i++) {
+		_cleanup_free_ gchar *filename_tmp = NULL;
+		if (!_asb_plugin_check_filename (filelist[i]))
+			continue;
+		filename_tmp = g_build_filename (tmpdir, filelist[i], NULL);
+		ret = asb_plugin_process_filename (plugin,
+						   pkg,
+						   filename_tmp,
+						   &apps,
+						   error);
+		if (!ret) {
+			g_list_free_full (apps, (GDestroyNotify) g_object_unref);
+			return NULL;
+		}
+	}
+
+	/* no desktop files we care about */
+	if (apps == NULL) {
+		g_set_error (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_FAILED,
+			     "nothing interesting in %s",
+			     asb_package_get_basename (pkg));
+		return NULL;
+	}
+	return apps;
+}
