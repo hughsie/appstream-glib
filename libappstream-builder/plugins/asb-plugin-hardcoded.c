@@ -173,6 +173,8 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		as_app_add_category (AS_APP (app), "System", -1);
 	if (g_strcmp0 (tmp, "fwfstab") == 0)
 		as_app_add_category (AS_APP (app), "System", -1);
+	if (g_strcmp0 (tmp, "bmpanel2cfg") == 0)
+		as_app_add_category (AS_APP (app), "System", -1);
 
 	/* add extra project groups */
 	if (g_strcmp0 (tmp, "nemo") == 0)
