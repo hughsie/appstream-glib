@@ -17,6 +17,8 @@ BuildRequires: gperf
 BuildRequires: libarchive-devel
 BuildRequires: libsoup-devel
 BuildRequires: gdk-pixbuf2-devel
+BuildRequires: gettext
+BuildRequires: intltool
 
 # for the builder component
 BuildRequires: fontconfig-devel
@@ -73,11 +75,13 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %__rm -f %{buildroot}%{_libdir}/libappstream-builder*.la
 %__rm -f %{buildroot}%{_libdir}/asb-plugins/*.la
 
+%find_lang appstream-glib
+
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
-%files
+%files -f appstream-glib.lang
 %doc README.md AUTHORS NEWS COPYING
 %{_libdir}/libappstream-glib.so.1*
 %{_libdir}/girepository-1.0/*.typelib

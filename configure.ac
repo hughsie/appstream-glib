@@ -58,6 +58,14 @@ AC_HEADER_STDC
 LT_INIT
 AM_PROG_CC_C_O
 
+# internationalization
+GETTEXT_PACKAGE=appstream-glib
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Package name for gettext])
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.17])
+IT_PROG_INTLTOOL([0.40.0])
+
 # set up gtk-doc
 GTK_DOC_CHECK(1.9)
 
@@ -151,6 +159,7 @@ data/tests/Makefile
 docs/Makefile
 docs/api/Makefile
 docs/api/version.xml
+po/Makefile.in
 ])
 AC_OUTPUT
 AC_MSG_RESULT([

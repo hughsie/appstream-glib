@@ -83,47 +83,52 @@ main (int argc, char **argv)
 			_("Add a cache ID to each component"), NULL },
 		{ "log-dir", '\0', 0, G_OPTION_ARG_FILENAME, &log_dir,
 			/* TRANSLATORS: command line option */
-			_("Set the logging directory       [default: ./logs]"), "DIR" },
+			_("Set the logging directory [default: ./logs]"), "DIR" },
 		{ "packages-dir", '\0', 0, G_OPTION_ARG_FILENAME, &packages_dir,
 			/* TRANSLATORS: command line option */
-			_("Set the packages directory      [default: ./packages]"), "DIR" },
+			_("Set the packages directory [default: ./packages]"), "DIR" },
 		{ "temp-dir", '\0', 0, G_OPTION_ARG_FILENAME, &temp_dir,
 			/* TRANSLATORS: command line option */
-			_("Set the temporary directory     [default: ./tmp]"), "DIR" },
+			_("Set the temporary directory [default: ./tmp]"), "DIR" },
 		{ "extra-appstream-dir", '\0', 0, G_OPTION_ARG_FILENAME, &extra_appstream,
 			/* TRANSLATORS: command line option */
-			_("Use extra appstream data        [default: ./appstream-extra]"), "DIR" },
+			_("Use extra appstream data [default: ./appstream-extra]"), "DIR" },
 		{ "extra-appdata-dir", '\0', 0, G_OPTION_ARG_FILENAME, &extra_appdata,
 			/* TRANSLATORS: command line option */
-			_("Use extra appdata data          [default: ./appdata-extra]"), "DIR" },
+			_("Use extra appdata data [default: ./appdata-extra]"), "DIR" },
 		{ "extra-screenshots-dir", '\0', 0, G_OPTION_ARG_FILENAME, &extra_screenshots,
 			/* TRANSLATORS: command line option */
-			_("Use extra screenshots data      [default: ./screenshots-extra]"), "DIR" },
+			_("Use extra screenshots data [default: ./screenshots-extra]"), "DIR" },
 		{ "output-dir", '\0', 0, G_OPTION_ARG_FILENAME, &output_dir,
 			/* TRANSLATORS: command line option */
-			_("Set the output directory        [default: .]"), "DIR" },
+			_("Set the output directory [default: .]"), "DIR" },
 		{ "cache-dir", '\0', 0, G_OPTION_ARG_FILENAME, &output_dir,
 			/* TRANSLATORS: command line option */
-			_("Set the cache directory         [default: ./cache]"), "DIR" },
+			_("Set the cache directory [default: ./cache]"), "DIR" },
 		{ "basename", '\0', 0, G_OPTION_ARG_STRING, &basename,
 			/* TRANSLATORS: command line option */
-			_("Set the origin name             [default: fedora-21]"), "NAME" },
+			_("Set the origin name [default: fedora-21]"), "NAME" },
 		{ "max-threads", '\0', 0, G_OPTION_ARG_INT, &max_threads,
 			/* TRANSLATORS: command line option */
-			_("Set the number of threads       [default: 4]"), "THREAD_COUNT" },
+			_("Set the number of threads [default: 4]"), "THREAD_COUNT" },
 		{ "api-version", '\0', 0, G_OPTION_ARG_DOUBLE, &api_version,
 			/* TRANSLATORS: command line option */
-			_("Set the AppStream version       [default: 0.4]"), "API_VERSION" },
+			_("Set the AppStream version [default: 0.4]"), "API_VERSION" },
 		{ "screenshot-uri", '\0', 0, G_OPTION_ARG_STRING, &screenshot_uri,
 			/* TRANSLATORS: command line option */
-			_("Set the screenshot base URL     [default: none]"), "URI" },
+			_("Set the screenshot base URL [default: none]"), "URI" },
 		{ "old-metadata", '\0', 0, G_OPTION_ARG_FILENAME, &old_metadata,
 			/* TRANSLATORS: command line option */
-			_("Set the old metadata location   [default: none]"), "DIR" },
+			_("Set the old metadata location [default: none]"), "DIR" },
 		{ NULL}
 	};
 
+	setlocale (LC_ALL, "");
+	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
 	option_context = g_option_context_new (NULL);
+
 	g_option_context_add_main_entries (option_context, options, NULL);
 	ret = g_option_context_parse (option_context, &argc, &argv, &error);
 	if (!ret) {

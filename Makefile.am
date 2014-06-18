@@ -5,18 +5,21 @@ SUBDIRS = 						\
 	libappstream-builder				\
 	client						\
 	data						\
-	docs
+	docs						\
+	po
 
 DISTCLEANFILES =					\
 	appstream-glib-*.tar.xz
 
 MAINTAINERCLEANFILES =					\
 	*~						\
+	ABOUT-NLS					\
 	aclocal.m4					\
 	ChangeLog					\
 	compile						\
 	config.guess					\
 	config.h.*					\
+	config.rpath					\
 	config.sub					\
 	configure					\
 	depcomp						\
@@ -27,6 +30,11 @@ MAINTAINERCLEANFILES =					\
 	Makefile.in					\
 	missing						\
 	mkinstalldirs					\
+	po/*.header					\
+	po/Makevars.template				\
+	po/Rules-quot					\
+	po/*.sed					\
+	po/*.sin					\
 	test-driver
 
 EXTRA_DIST =						\

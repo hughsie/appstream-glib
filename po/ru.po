@@ -1,0 +1,300 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: appstream-glib\n"
+"Report-Msgid-Bugs-To: richard@hughsie.com\n"
+"POT-Creation-Date: 2014-06-18 19:20+0400\n"
+"PO-Revision-Date: 2014-06-18 15:21+0000\n"
+"Last-Translator: Igor Gnatenko <i.gnatenko.brain@gmail.com>\n"
+"Language-Team: Russian (http://www.transifex.com/projects/p/appstream-glib/language/ru/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:71 ../client/as-util.c:1370
+msgid "Show extra debugging information"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:74
+msgid "Do not use the network to download screenshots"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:77
+msgid "Do not delete the decompressed package cache"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:80
+msgid "Perform extra checks on the source metadata"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:83
+msgid "Add a cache ID to each component"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:86
+msgid "Set the logging directory [default: ./logs]"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:89
+msgid "Set the packages directory [default: ./packages]"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:92
+msgid "Set the temporary directory [default: ./tmp]"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:95
+msgid "Use extra appstream data [default: ./appstream-extra]"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:98
+msgid "Use extra appdata data [default: ./appdata-extra]"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:101
+msgid "Use extra screenshots data [default: ./screenshots-extra]"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:104
+msgid "Set the output directory [default: .]"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:107
+msgid "Set the cache directory [default: ./cache]"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:110
+msgid "Set the origin name [default: fedora-21]"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:113
+msgid "Set the number of threads [default: 4]"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:116
+msgid "Set the AppStream version [default: 0.4]"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:119
+msgid "Set the screenshot base URL [default: none]"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-builder.c:122
+msgid "Set the old metadata location [default: none]"
+msgstr ""
+
+#. TRANSLATORS: error message
+#: ../client/as-builder.c:136
+#, c-format
+msgid "Failed to parse arguments: %s\n"
+msgstr ""
+
+#. TRANSLATORS: error message
+#: ../client/as-builder.c:182
+msgid "failed to create temp dir"
+msgstr ""
+
+#. TRANSLATORS: error message
+#: ../client/as-builder.c:189
+#, c-format
+msgid "failed to create temp dir: %s"
+msgstr ""
+
+#. TRANSLATORS: error message
+#: ../client/as-builder.c:199
+#, c-format
+msgid "%s has to exist to use old metadata"
+msgstr ""
+
+#. TRANSLATORS: error message
+#: ../client/as-builder.c:206
+#, c-format
+msgid "failed to create icons dir: %s"
+msgstr ""
+
+#. TRANSLATORS: error message
+#: ../client/as-builder.c:214 ../client/as-builder.c:220
+msgid "failed to create log dir"
+msgstr ""
+
+#. TRANSLATORS: error message
+#: ../client/as-builder.c:228 ../client/as-builder.c:236
+#: ../client/as-builder.c:244 ../client/as-builder.c:252
+msgid "failed to create screenshot cache dir"
+msgstr ""
+
+#. TRANSLATORS: error message
+#: ../client/as-builder.c:258
+msgid "failed to create cache dir"
+msgstr ""
+
+#. TRANSLATORS: error message
+#: ../client/as-builder.c:282
+#, c-format
+msgid "failed to set up context: %s"
+msgstr ""
+
+#. TRANSLATORS: error message
+#: ../client/as-builder.c:292
+#, c-format
+msgid "failed to open packages: %s"
+msgstr ""
+
+#. TRANSLATORS: information message
+#: ../client/as-builder.c:305
+#, c-format
+msgid "Scanning packages...\n"
+msgstr ""
+
+#. TRANSLATORS: debug message
+#: ../client/as-builder.c:313
+#, c-format
+msgid "Skipping %s as found in old md cache"
+msgstr ""
+
+#. TRANSLATORS: information message
+#: ../client/as-builder.c:326
+#, c-format
+msgid "Parsed %i/%i files...\n"
+msgstr ""
+
+#. TRANSLATORS: error message
+#: ../client/as-builder.c:339
+#, c-format
+msgid "failed to process context: %s"
+msgstr ""
+
+#. success
+#. TRANSLATORS: information message
+#: ../client/as-builder.c:345
+#, c-format
+msgid "Done!\n"
+msgstr ""
+
+#. TRANSLATORS: this is a command alias
+#: ../client/as-util.c:104
+#, c-format
+msgid "Alias to %s"
+msgstr ""
+
+#: ../client/as-util.c:192
+msgid "Command not found, valid commands are:"
+msgstr ""
+
+#. TRANSLATORS: information message
+#: ../client/as-util.c:305
+#, c-format
+msgid "New API version: %.2f\n"
+msgstr ""
+
+#: ../client/as-util.c:327
+msgid "Not enough arguments, expected old.xml new.xml version"
+msgstr ""
+
+#: ../client/as-util.c:1240 ../client/as-util.c:1267
+msgid "OK"
+msgstr ""
+
+#: ../client/as-util.c:1253
+msgid "FAILED"
+msgstr ""
+
+#: ../client/as-util.c:1264
+msgid "Validation failed"
+msgstr ""
+
+#: ../client/as-util.c:1312
+msgid "Validation of files failed"
+msgstr ""
+
+#. TRANSLATORS: command line option
+#: ../client/as-util.c:1373
+msgid "Show client and daemon versions"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: ../client/as-util.c:1391
+msgid "Converts AppStream metadata from one version to another"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: ../client/as-util.c:1397
+msgid "Creates an example Appdata file from a .desktop file"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: ../client/as-util.c:1403
+msgid "Dumps the applications in the AppStream metadata"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: ../client/as-util.c:1409
+msgid "Installs AppStream metadata"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: ../client/as-util.c:1415
+msgid "Uninstalls AppStream metadata"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: ../client/as-util.c:1421
+msgid "Create an HTML status page"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: ../client/as-util.c:1427
+msgid "List applications not backed by packages"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: ../client/as-util.c:1433
+msgid "Validate an AppData or AppStream file"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: ../client/as-util.c:1439
+msgid "Validate an AppData or AppStream file (relaxed)"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: ../client/as-util.c:1445
+msgid "Validate an AppData or AppStream file (strict)"
+msgstr ""
+
+#. TRANSLATORS: program name
+#: ../client/as-util.c:1458
+msgid "AppStream Utility"
+msgstr ""
+
+#: ../client/as-util.c:1464
+msgid "Failed to parse arguments"
+msgstr ""
+
+#: ../client/as-util.c:1480
+msgid "Version:"
+msgstr ""
