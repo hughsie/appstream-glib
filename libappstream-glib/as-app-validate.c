@@ -45,13 +45,19 @@ typedef struct {
 /**
  * ai_app_validate_add:
  */
-static void
+G_GNUC_PRINTF (3, 4) static void
 ai_app_validate_add (GPtrArray *problems,
 		     AsProblemKind kind,
-		     const gchar *str)
+		     const gchar *fmt, ...)
 {
 	AsProblem *problem;
 	guint i;
+	va_list args;
+	_cleanup_free_ gchar *str;
+
+	va_start (args, fmt);
+	str = g_strdup_vprintf (fmt, args);
+	va_end (args);
 
 	/* already added */
 	for (i = 0; i < problems->len; i++) {
@@ -399,7 +405,7 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	if (base_uri == NULL) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_URL_NOT_FOUND,
-				     "<screenshot> url not valid");
+				     "<screenshot> url '%s' not valid", url);
 		return FALSE;
 	}
 	msg = soup_message_new_from_uri (SOUP_METHOD_GET, base_uri);
@@ -413,7 +419,7 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	if (status_code != SOUP_STATUS_OK) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_URL_NOT_FOUND,
-				     "<screenshot> url not found");
+				     "<screenshot> url '%s' not found", url);
 		return FALSE;
 	}
 
@@ -421,7 +427,7 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	if (msg->response_body->length == 0) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_FILE_INVALID,
-				     "<screenshot> url is a zero length file");
+				     "<screenshot> url '%s' is a zero length file", url);
 		return FALSE;
 	}
 
@@ -432,7 +438,7 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	if (stream == NULL) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_URL_NOT_FOUND,
-				     "<screenshot> failed to load data");
+				     "<screenshot> failed to load data from '%s'", url);
 		return FALSE;
 	}
 
@@ -441,7 +447,8 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	if (pixbuf == NULL) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_FILE_INVALID,
-				     "<screenshot> failed to load image");
+				     "<screenshot> failed to load '%s'",
+				     url);
 		return FALSE;
 	}
 
@@ -889,7 +896,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 						"<metadata_license> is not valid: ");
 				ai_app_validate_add (probs,
 						     AS_PROBLEM_KIND_TAG_INVALID,
-						     error_local->message);
+						     "%s", error_local->message);
 				g_clear_error (&error_local);
 			}
 		}
@@ -916,7 +923,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					"<project_license> is not valid: ");
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_TAG_INVALID,
-					     error_local->message);
+					     "%s", error_local->message);
 			g_clear_error (&error_local);
 		}
 	}
@@ -1077,7 +1084,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		if (!ret) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_MARKUP_INVALID,
-					     error_local->message);
+					     "%s", error_local->message);
 			g_error_free (error_local);
 		}
 	}
