@@ -56,11 +56,25 @@ _appstream-util()
             non-package-yaml|status-html)
                 ext='@(xml.gz)'
                 ;;
+            appdata-from-desktop)
+                ext='@(desktop?(.in))'
+                case $prev in
+                    *.desktop|*.desktop.in)
+                        COMPREPLY=( $( compgen -W '$( echo $prev | \
+                            sed -e "s/desktop/appdata.xml/g" )' -- "$cur" ) )
+                        ext=''
+                        ;;
+                    *.appdata.xml|*.appdata.xml.in)
+                        ext=''
+                        ;;
+                esac
+                ;;
             *)
                 ;;
         esac
         [[ -n $ext ]] && _filedir $ext        
         return
+
     fi
 
     if [[ $cur == -* ]]; then
