@@ -344,6 +344,23 @@ as_app_get_keywords (AsApp *app)
 }
 
 /**
+ * as_app_get_mimetypes:
+ * @app: a #AsApp instance.
+ *
+ * Gets any mimetypes the application will register.
+ *
+ * Returns: (transfer none) (element-type utf8): an array
+ *
+ * Since: 0.2.0
+ **/
+GPtrArray *
+as_app_get_mimetypes (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->mimetypes;
+}
+
+/**
  * as_app_get_releases:
  * @app: a #AsApp instance.
  *

@@ -169,6 +169,7 @@ GPtrArray	*as_app_get_categories		(AsApp		*app);
 GPtrArray	*as_app_get_compulsory_for_desktops (AsApp	*app);
 GPtrArray	*as_app_get_extends		(AsApp		*app);
 GPtrArray	*as_app_get_keywords		(AsApp		*app);
+GPtrArray	*as_app_get_mimetypes		(AsApp		*app);
 GPtrArray	*as_app_get_pkgnames		(AsApp		*app);
 GPtrArray	*as_app_get_architectures	(AsApp		*app);
 GPtrArray	*as_app_get_releases		(AsApp		*app);
