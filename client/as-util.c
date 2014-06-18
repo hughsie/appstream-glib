@@ -360,6 +360,110 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
+ * as_util_appdata_from_desktop:
+ **/
+static gboolean
+as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	gchar *instr = NULL;
+	_cleanup_free_ gchar *id_new = NULL;
+	_cleanup_object_unref_ AsApp *app = NULL;
+	_cleanup_object_unref_ AsImage *im1 = NULL;
+	_cleanup_object_unref_ AsImage *im2 = NULL;
+	_cleanup_object_unref_ AsScreenshot *ss1 = NULL;
+	_cleanup_object_unref_ AsScreenshot *ss2 = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+
+	/* check args */
+	if (g_strv_length (values) != 2) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected app.desktop new.appdata.xml");
+		return FALSE;
+	}
+
+	/* check types */
+	if (as_app_guess_source_kind (values[0]) != AS_APP_SOURCE_KIND_DESKTOP ||
+	    as_app_guess_source_kind (values[1]) != AS_APP_SOURCE_KIND_APPDATA) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Format not recognised");
+		return FALSE;
+	}
+
+	/* import the .desktop file */
+	app = as_app_new ();
+	if (!as_app_parse_file (app, values[0],
+				 AS_APP_PARSE_FLAG_USE_HEURISTICS,
+				error))
+		return FALSE;
+
+	/* set some initial values */
+	as_app_set_description (app, NULL,
+				"\n  <p>\n   This should be long prose.\n  </p>\n"
+				"  <p>\n   This should a second paragraph.\n  </p>\n", -1);
+	as_app_set_developer_name (app, NULL, "XXX: Insert Company or Developer Name", -1);
+	as_app_set_project_group (app, "XXX: Values valid are none, GNOME, KDE or XFCE", -1);
+
+	/* fix the ID */
+	id_new = g_strdup (as_app_get_id_full (app));
+	instr = g_strstr_len (id_new, -1, ".desktop.in");
+	if (instr != NULL) {
+		instr[8] = '\0';
+		as_app_set_id_full (app, id_new, -1);
+	}
+
+	/* set things that don't belong in the AppData file */
+	as_app_set_icon (app, NULL, -1);
+	g_ptr_array_set_size (as_app_get_keywords (app), 0);
+	g_ptr_array_set_size (as_app_get_categories (app), 0);
+	g_ptr_array_set_size (as_app_get_mimetypes (app), 0);
+
+	/* add urls */
+	as_app_add_url (app, AS_URL_KIND_HOMEPAGE,
+			"XXX: http://www.homepage.com/", -1);
+	as_app_add_url (app, AS_URL_KIND_BUGTRACKER,
+			"XXX: http://www.homepage.com/where-to-report_bug.html", -1);
+	as_app_add_url (app, AS_URL_KIND_FAQ,
+			"XXX: http://www.homepage.com/faq.html", -1);
+	as_app_add_url (app, AS_URL_KIND_DONATION,
+			"XXX: http://www.homepage.com/donation.html", -1);
+	as_app_add_url (app, AS_URL_KIND_HELP,
+			"XXX: http://www.homepage.com/docs/", -1);
+	as_app_set_project_license (app, "XXX: Insert SPDX value here", -1);
+	as_app_set_metadata_license (app, "XXX: Insert SPDX value here", -1);
+
+	/* add first screenshot */
+	ss1 = as_screenshot_new ();
+	as_screenshot_set_kind (ss1, AS_SCREENSHOT_KIND_DEFAULT);
+	as_screenshot_set_caption (ss1, NULL, "XXX: Describe the default screenshot", -1);
+	im1 = as_image_new ();
+	as_image_set_url (im1, "XXX: http://www.my-screenshot-default.png", -1);
+	as_image_set_width (im1, 1120);
+	as_image_set_height (im1, 630);
+	as_screenshot_add_image (ss1, im1);
+	as_app_add_screenshot (app, ss1);
+
+	/* add second screenshot */
+	ss2 = as_screenshot_new ();
+	as_screenshot_set_kind (ss2, AS_SCREENSHOT_KIND_NORMAL);
+	as_screenshot_set_caption (ss2, NULL, "XXX: Describe another screenshot", -1);
+	im2 = as_image_new ();
+	as_image_set_url (im2, "XXX: http://www.my-screenshot.png", -1);
+	as_image_set_width (im2, 1120);
+	as_image_set_height (im2, 630);
+	as_screenshot_add_image (ss2, im2);
+	as_app_add_screenshot (app, ss2);
+
+	/* save to disk */
+	file = g_file_new_for_path (values[1]);
+	return as_app_to_file (app, file, NULL, error);
+}
+
+/**
  * as_util_dump_filename:
  **/
 static gboolean
@@ -1279,6 +1383,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Converts AppStream metadata from one version to another"),
 		     as_util_convert);
+	as_util_add (priv->cmd_array,
+		     "appdata-from-desktop",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Creates an example Appdata file from a .desktop file"),
+		     as_util_appdata_from_desktop);
 	as_util_add (priv->cmd_array,
 		     "dump",
 		     NULL,
