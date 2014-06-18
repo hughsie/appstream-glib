@@ -315,6 +315,10 @@ gboolean	 as_app_parse_file		(AsApp		*app,
 						 const gchar	*filename,
 						 AsAppParseFlags flags,
 						 GError		**error);
+gboolean	 as_app_to_file			(AsApp		*app,
+						 GFile		*file,
+						 GCancellable	*cancellable,
+						 GError		**error);
 
 G_END_DECLS
 

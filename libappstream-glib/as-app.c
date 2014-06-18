@@ -3104,6 +3104,45 @@ as_app_parse_file (AsApp *app,
 }
 
 /**
+ * as_app_to_file:
+ * @app: a #AsApp instance.
+ * @file: a #GFile
+ * @cancellable: A #GCancellable, or %NULL
+ * @error: A #GError or %NULL
+ *
+ * Exports a DOM tree to an XML file.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.2.0
+ **/
+gboolean
+as_app_to_file (AsApp *app,
+		GFile *file,
+		GCancellable *cancellable,
+		GError **error)
+{
+	_cleanup_node_unref_ GNode *root = NULL;
+	_cleanup_string_free_ GString *xml = NULL;
+
+	root = as_node_new ();
+	as_app_node_insert (app, root, 1.0);
+	xml = as_node_to_xml (root,
+			      AS_NODE_TO_XML_FLAG_ADD_HEADER |
+			      AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+			      AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	return g_file_replace_contents (file,
+					xml->str,
+					xml->len,
+					NULL,
+					FALSE,
+					G_FILE_CREATE_NONE,
+					NULL,
+					cancellable,
+					error);
+}
+
+/**
  * as_app_new:
  *
  * Creates a new #AsApp.
