@@ -291,6 +291,7 @@ as_util_convert_appstream (GFile *file_input,
 	store = as_store_new ();
 	if (!as_store_from_file (store, file_input, NULL, NULL, error))
 		return FALSE;
+	/* TRANSLATORS: information message */
 	g_print ("Old API version: %.2f\n", as_store_get_api_version (store));
 
 	/* save file */
@@ -300,7 +301,8 @@ as_util_convert_appstream (GFile *file_input,
 				AS_NODE_TO_XML_FLAG_ADD_HEADER,
 				NULL, error))
 		return FALSE;
-	g_print ("New API version: %.2f\n", as_store_get_api_version (store));
+	/* TRANSLATORS: information message */
+	g_print (_("New API version: %.2f\n"), as_store_get_api_version (store));
 	return TRUE;
 }
 
@@ -318,11 +320,12 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* check args */
 	if (g_strv_length (values) != 3) {
+		/* TRANSLATORS: error message */
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
-				     "Not enough arguments, "
-				     "expected old.xml new.xml version");
+				     _("Not enough arguments, "
+				     "expected old.xml new.xml version"));
 		return FALSE;
 	}
 
@@ -1302,6 +1305,7 @@ as_util_validate_files (gchar **filenames,
 		g_clear_error (&error_local);
 	}
 	if (n_failed > 0) {
+		/* TRANSLATORS: error message */
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
