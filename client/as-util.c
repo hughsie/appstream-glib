@@ -40,6 +40,7 @@
 typedef struct {
 	GOptionContext		*context;
 	GPtrArray		*cmd_array;
+	gboolean		 nonet;
 } AsUtilPrivate;
 
 typedef gboolean (*AsUtilPrivateCb)	(AsUtilPrivate	*util,
@@ -1321,7 +1322,10 @@ as_util_validate_files (gchar **filenames,
 static gboolean
 as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	return as_util_validate_files (values, AS_APP_VALIDATE_FLAG_NONE, error);
+	AsAppValidateFlags flags = AS_APP_VALIDATE_FLAG_NONE;
+	if (priv->nonet)
+		flags |= AS_APP_VALIDATE_FLAG_NO_NETWORK;
+	return as_util_validate_files (values, flags, error);
 }
 
 /**
@@ -1330,7 +1334,10 @@ as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 static gboolean
 as_util_validate_relax (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	return as_util_validate_files (values, AS_APP_VALIDATE_FLAG_RELAX, error);
+	AsAppValidateFlags flags = AS_APP_VALIDATE_FLAG_RELAX;
+	if (priv->nonet)
+		flags |= AS_APP_VALIDATE_FLAG_NO_NETWORK;
+	return as_util_validate_files (values, flags, error);
 }
 
 /**
@@ -1339,7 +1346,10 @@ as_util_validate_relax (AsUtilPrivate *priv, gchar **values, GError **error)
 static gboolean
 as_util_validate_strict (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	return as_util_validate_files (values, AS_APP_VALIDATE_FLAG_STRICT, error);
+	AsAppValidateFlags flags = AS_APP_VALIDATE_FLAG_STRICT;
+	if (priv->nonet)
+		flags |= AS_APP_VALIDATE_FLAG_NO_NETWORK;
+	return as_util_validate_files (values, flags, error);
 }
 
 /**
@@ -1359,12 +1369,16 @@ main (int argc, char *argv[])
 {
 	AsUtilPrivate *priv;
 	gboolean ret;
+	gboolean nonet = FALSE;
 	gboolean verbose = FALSE;
 	gboolean version = FALSE;
 	GError *error = NULL;
 	guint retval = 1;
 	_cleanup_free_ gchar *cmd_descriptions = NULL;
 	const GOptionEntry options[] = {
+		{ "nonet", '\0', 0, G_OPTION_ARG_NONE, &nonet,
+			/* TRANSLATORS: this is the --nonet argument */
+			_("Do not use network access"), NULL },
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
 			/* TRANSLATORS: command line option */
 			_("Show extra debugging information"), NULL },
@@ -1466,6 +1480,7 @@ main (int argc, char *argv[])
 		g_error_free (error);
 		goto out;
 	}
+	priv->nonet = nonet;
 
 	/* set verbose? */
 	if (verbose) {
