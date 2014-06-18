@@ -128,6 +128,8 @@ as_app_guess_source_kind (const gchar *filename)
 		return AS_APP_SOURCE_KIND_APPSTREAM;
 	if (g_str_has_suffix (filename, ".desktop"))
 		return AS_APP_SOURCE_KIND_DESKTOP;
+	if (g_str_has_suffix (filename, ".desktop.in"))
+		return AS_APP_SOURCE_KIND_DESKTOP;
 	if (g_str_has_suffix (filename, ".appdata.xml"))
 		return AS_APP_SOURCE_KIND_APPDATA;
 	if (g_str_has_suffix (filename, ".appdata.xml.in"))
@@ -2787,7 +2789,8 @@ as_app_parse_file_key (AsApp *app,
 			as_app_set_project_group (app, list[0], -1);
 
 	/* Name */
-	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_NAME) == 0) {
+	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_NAME) == 0 ||
+	           g_strcmp0 (key, "_Name") == 0) {
 		tmp = g_key_file_get_string (kf,
 					     G_KEY_FILE_DESKTOP_GROUP,
 					     key,
@@ -2807,7 +2810,8 @@ as_app_parse_file_key (AsApp *app,
 			as_app_set_name (app, locale, tmp, -1);
 
 	/* Comment */
-	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_COMMENT) == 0) {
+	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_COMMENT) == 0 ||
+	           g_strcmp0 (key, "_Comment") == 0) {
 		tmp = g_key_file_get_string (kf,
 					     G_KEY_FILE_DESKTOP_GROUP,
 					     key,
