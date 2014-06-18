@@ -136,6 +136,23 @@ asb_plugin_process (AsbPlugin *plugin,
 }
 
 /**
+ * asb_plugin_metainfo_absorb:
+ */
+static void
+asb_plugin_metainfo_absorb (AsApp *app, AsApp *donor)
+{
+	GPtrArray *mimetypes;
+	const gchar *tmp;
+	guint i;
+
+	mimetypes = as_app_get_mimetypes (donor);
+	for (i = 0; i < mimetypes->len; i++) {
+		tmp = g_ptr_array_index (mimetypes, i);
+		as_app_add_mimetype (app, tmp, -1);
+	}
+}
+
+/**
  * asb_plugin_merge:
  */
 void
@@ -178,9 +195,10 @@ asb_plugin_merge (AsbPlugin *plugin, GList **list)
 		}
 		if (g_strcmp0 (as_app_get_pkgname_default (app),
 			       as_app_get_pkgname_default (found)) == 0) {
-			g_warning ("%s addon shipped in main package %s so ignored",
-				   as_app_get_id_full (app),
-				   as_app_get_pkgname_default (app));
+			g_debug ("absorbing addon %s shipped in main package %s",
+				 as_app_get_id_full (app),
+				 as_app_get_pkgname_default (app));
+			asb_plugin_metainfo_absorb (found, app);
 			continue;
 		}
 		asb_plugin_add_app (&list_new, ASB_APP (app));
