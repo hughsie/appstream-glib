@@ -133,6 +133,12 @@ GNode		*as_node_from_file		(GFile		*file,
 						 GCancellable	*cancellable,
 						 GError		**error)
 						 G_GNUC_WARN_UNUSED_RESULT;
+gboolean	 as_node_to_file		(const GNode	*root,
+						 GFile		*file,
+						 AsNodeToXmlFlags flags,
+						 GCancellable	*cancellable,
+						 GError		**error)
+						 G_GNUC_WARN_UNUSED_RESULT;
 
 GNode		*as_node_find			(GNode		*root,
 						 const gchar	*path)

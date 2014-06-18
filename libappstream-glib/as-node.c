@@ -664,6 +664,40 @@ as_node_from_xml (const gchar *data,
 }
 
 /**
+ * as_node_to_file: (skip)
+ * @root: A populated #GNode tree
+ * @file: a #GFile
+ * @flags: #AsNodeToXmlFlags, e.g. %AS_NODE_TO_XML_FLAG_NONE
+ * @cancellable: A #GCancellable, or %NULL
+ * @error: A #GError or %NULL
+ *
+ * Exports a DOM tree to an XML file.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.2.0
+ **/
+gboolean
+as_node_to_file (const GNode *root,
+		 GFile *file,
+		 AsNodeToXmlFlags flags,
+		 GCancellable *cancellable,
+		 GError **error)
+{
+	_cleanup_string_free_ GString *xml = NULL;
+	xml = as_node_to_xml (root, flags);
+	return g_file_replace_contents (file,
+					xml->str,
+					xml->len,
+					NULL,
+					FALSE,
+					G_FILE_CREATE_NONE,
+					NULL,
+					cancellable,
+					error);
+}
+
+/**
  * as_node_from_file: (skip)
  * @file: file
  * @flags: #AsNodeFromXmlFlags, e.g. %AS_NODE_FROM_XML_FLAG_NONE
