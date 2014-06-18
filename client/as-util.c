@@ -1215,6 +1215,84 @@ as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
+ * as_util_validate_output_text:
+ **/
+static void
+as_util_validate_output_text (const gchar *filename, GPtrArray *probs)
+{
+	AsProblem *problem;
+	const gchar *tmp;
+	guint i;
+	guint j;
+
+	/* success */
+	if (probs->len == 0) {
+		/* TRANSLATORS: the file is valid */
+		g_print ("%s\n", _("OK"));
+		return;
+	}
+
+	/* list failures */
+	g_print ("%s:\n", _("FAILED"));
+	for (i = 0; i < probs->len; i++) {
+		problem = g_ptr_array_index (probs, i);
+		tmp = as_problem_kind_to_string (as_problem_get_kind (problem));
+		g_print ("• %s ", tmp);
+		for (j = strlen (tmp); j < 20; j++)
+			g_print (" ");
+		if (as_problem_get_line_number (problem) > 0) {
+			g_print (" : %s [ln:%i]\n",
+				 as_problem_get_message (problem),
+				 as_problem_get_line_number (problem));
+		} else {
+			g_print (" : %s\n", as_problem_get_message (problem));
+		}
+	}
+}
+
+/**
+ * as_util_validate_output_html:
+ **/
+static void
+as_util_validate_output_html (const gchar *filename, GPtrArray *probs)
+{
+	g_print ("<html>\n");
+	g_print ("<head>\n");
+	g_print ("<style type=\"text/css\">\n");
+	g_print ("body {width: 70%%; font: 12px/20px Arial, Helvetica;}\n");
+	g_print ("p {color: #333;}\n");
+	g_print ("</style>\n");
+	g_print ("<title>AppData Validation Results for %s</title>\n", filename);
+	g_print ("</head>\n");
+	g_print ("<body>\n");
+	if (probs->len == 0) {
+		g_print ("<h1>Success!</h1>\n");
+		g_print ("<p>%s validated successfully.</p>\n", filename);
+	} else {
+		guint i;
+		g_print ("<h1>Validation failed!</h1>\n");
+		g_print ("<p>%s did not validate:</p>\n", filename);
+		g_print ("<ul>\n");
+		for (i = 0; i < probs->len; i++) {
+			AsProblem *problem;
+			_cleanup_free_ gchar *tmp = NULL;
+			problem = g_ptr_array_index (probs, i);
+			tmp = g_markup_escape_text (as_problem_get_message (problem), -1);
+			g_print ("<li>");
+			g_print ("%s\n", tmp);
+			if (as_problem_get_line_number (problem) > 0) {
+				g_print (" (line %i)",
+					 as_problem_get_line_number (problem));
+			}
+			g_print ("</li>\n");
+		}
+		g_print ("</ul>\n");
+	}
+	g_print ("</body>\n");
+	g_print ("</html>\n");
+}
+
+/**
  * as_util_validate_file:
  **/
 static gboolean
@@ -1222,9 +1300,6 @@ as_util_validate_file (const gchar *filename,
 		       AsAppValidateFlags flags,
 		       GError **error)
 {
-	AsProblemKind kind;
-	AsProblem *problem;
-	guint i;
 	_cleanup_object_unref_ AsApp *app = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *probs = NULL;
 
@@ -1250,22 +1325,17 @@ as_util_validate_file (const gchar *filename,
 	probs = as_app_validate (app, flags, error);
 	if (probs == NULL)
 		return FALSE;
+	if (g_strcmp0 (g_getenv ("OUTPUT_FORMAT"), "html") == 0)
+		as_util_validate_output_html (filename, probs);
+	else
+		as_util_validate_output_text (filename, probs);
 	if (probs->len > 0) {
-		g_print ("%s:\n", _("FAILED"));
-		for (i = 0; i < probs->len; i++) {
-			problem = g_ptr_array_index (probs, i);
-			kind = as_problem_get_kind (problem);
-			g_print ("%s\t%s\n",
-				 as_problem_kind_to_string (kind),
-				 as_problem_get_message (problem));
-		}
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     _("Validation failed"));
 		return FALSE;
 	}
-	g_print ("%s\n", _("OK"));
 	return TRUE;
 }
 
