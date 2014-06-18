@@ -201,12 +201,118 @@ as_util_run (AsUtilPrivate *priv, const gchar *command, gchar **values, GError *
 }
 
 /**
+ * as_util_convert_appdata:
+ **/
+static gboolean
+as_util_convert_appdata (GFile *file_input,
+			 GFile *file_output,
+			 gdouble new_version,
+			 GError **error)
+{
+	GNode *n;
+	GNode *n2;
+	GNode *n3;
+	const gchar *tmp;
+	_cleanup_node_unref_ GNode *root = NULL;
+
+	/* load to GNode */
+	root = as_node_from_file (file_input,
+				  AS_NODE_FROM_XML_FLAG_LITERAL_TEXT |
+				  AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS,
+				  NULL,
+				  error);
+	if (root == NULL)
+		return FALSE;
+
+	/* convert from <application> to <component> */
+	n = as_node_find (root, "application");
+	if (n != NULL)
+		as_node_set_name (n, "component");
+	n2 = as_node_find (n, "id");
+	if (n2 != NULL) {
+		tmp = as_node_get_attribute (n2, "type");
+		if (tmp != NULL)
+			as_node_add_attribute (n, "type", tmp, -1);
+		as_node_remove_attribute (n2, "type");
+	}
+
+	/* convert from <licence> to <metadata_license> */
+	n2 = as_node_find (n, "licence");
+	if (n2 != NULL)
+		as_node_set_name (n2, "metadata_license");
+
+	/* add <developer_name> */
+	n2 = as_node_find (n, "developer_name");
+	if (n2 == NULL) {
+		as_node_insert (n, "developer_name", "XXX: Insert Company or Developer Name",
+				AS_NODE_INSERT_FLAG_NONE, NULL);
+	}
+
+	/* convert from <screenshot>url</screenshot> to:
+	 *
+	 * <screenshot>
+	 * <caption>XXX: Describe this screenshot</caption>
+	 * <image>url</image>
+	 * </screenshot>
+	 */
+	n = as_node_find (n, "screenshots");
+	if (n != NULL) {
+		for (n2 = n->children; n2 != NULL; n2 = n2->next) {
+			tmp = as_node_get_data (n2);
+			g_print ("* %s\n", tmp);
+			n3 = as_node_insert (n2, "image", tmp,
+					     AS_NODE_INSERT_FLAG_NONE, NULL);
+			as_node_set_data (n3, tmp, -1, AS_NODE_INSERT_FLAG_NONE);
+			as_node_set_data (n2, NULL, -1, AS_NODE_INSERT_FLAG_NONE);
+			as_node_insert (n2, "caption", "XXX: Describe this screenshot",
+					AS_NODE_INSERT_FLAG_NONE, NULL);
+		}
+	}
+
+	/* save to file */
+	return as_node_to_file (root, file_output,
+				AS_NODE_TO_XML_FLAG_ADD_HEADER |
+				AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+				AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE,
+				NULL, error);
+}
+
+/**
+ * as_util_convert_appstream:
+ **/
+static gboolean
+as_util_convert_appstream (GFile *file_input,
+			   GFile *file_output,
+			   gdouble new_version,
+			   GError **error)
+{
+	_cleanup_object_unref_ AsStore *store = NULL;
+
+	store = as_store_new ();
+	if (!as_store_from_file (store, file_input, NULL, NULL, error))
+		return FALSE;
+	g_print ("Old API version: %.2f\n", as_store_get_api_version (store));
+
+	/* save file */
+	as_store_set_api_version (store, new_version);
+	if (!as_store_to_file (store, file_output,
+				AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE |
+				AS_NODE_TO_XML_FLAG_ADD_HEADER,
+				NULL, error))
+		return FALSE;
+	g_print ("New API version: %.2f\n", as_store_get_api_version (store));
+	return TRUE;
+}
+
+/**
  * as_util_convert:
  **/
 static gboolean
 as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	_cleanup_object_unref_ AsStore *store = NULL;
+	AsAppSourceKind input_kind;
+	AsAppSourceKind output_kind;
+	gdouble new_version;
 	_cleanup_object_unref_ GFile *file_input = NULL;
 	_cleanup_object_unref_ GFile *file_output = NULL;
 
@@ -220,23 +326,37 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 		return FALSE;
 	}
 
-	/* load file */
-	store = as_store_new ();
+	/* work out what to do */
+	input_kind = as_app_guess_source_kind (values[0]);
+	output_kind = as_app_guess_source_kind (values[1]);
 	file_input = g_file_new_for_path (values[0]);
-	if (!as_store_from_file (store, file_input, NULL, NULL, error))
-		return FALSE;
-	g_print ("Old API version: %.2f\n", as_store_get_api_version (store));
-
-	/* save file */
-	as_store_set_api_version (store, g_ascii_strtod (values[2], NULL));
 	file_output = g_file_new_for_path (values[1]);
-	if (!as_store_to_file (store, file_output,
-				AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE |
-				AS_NODE_TO_XML_FLAG_ADD_HEADER,
-				NULL, error))
-		return FALSE;
-	g_print ("New API version: %.2f\n", as_store_get_api_version (store));
-	return TRUE;
+	new_version = g_ascii_strtod (values[2], NULL);
+
+	/* AppData -> AppData */
+	if (input_kind == AS_APP_SOURCE_KIND_APPDATA &&
+	    output_kind == AS_APP_SOURCE_KIND_APPDATA) {
+		return as_util_convert_appdata (file_input,
+						file_output,
+						new_version,
+						error);
+	}
+
+	/* AppStream -> AppStream */
+	if (input_kind == AS_APP_SOURCE_KIND_APPSTREAM &&
+	    output_kind == AS_APP_SOURCE_KIND_APPSTREAM) {
+		return as_util_convert_appstream (file_input,
+						  file_output,
+						  new_version,
+						  error);
+	}
+
+	/* don't know what to do */
+	g_set_error_literal (error,
+			     AS_ERROR,
+			     AS_ERROR_INVALID_ARGUMENTS,
+			     "Format not recognised");
+	return FALSE;
 }
 
 /**
