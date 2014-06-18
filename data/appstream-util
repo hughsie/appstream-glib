@@ -69,6 +69,14 @@ _appstream-util()
                         ;;
                 esac
                 ;;
+            convert)
+                ext='@(xml.gz|appdata.xml?(.in))'
+                case $prev in
+                    *.xml.gz|*.appdata.xml?(.in))
+                        ext=''
+                        ;;
+                esac
+                ;;
             *)
                 ;;
         esac
