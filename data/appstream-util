@@ -31,6 +31,12 @@ _appstream-util()
         fi
     done
 
+    # How many'th non-option arg (1-based) for $command are we completing?
+    local i nth=1
+    for (( i=commandix+1; i < cword; i++ )); do
+        [[ ${words[i]} == -* ]] || (( nth++ ))
+    done
+
     case $prev in
         -h|--help|--version)
             return
@@ -57,22 +63,23 @@ _appstream-util()
                 ext='@(xml.gz)'
                 ;;
             appdata-from-desktop)
-                ext='@(desktop?(.in))'
-                case $prev in
-                    *.desktop|*.desktop.in)
+                case $nth in
+                    1)
+                        ext='@(desktop?(.in))'
+                        ;;
+                    2)
                         COMPREPLY=( $( compgen -W '$( echo $prev | \
                             sed -e "s/desktop/appdata.xml/g" )' -- "$cur" ) )
-                        ext=''
-                        ;;
-                    *.appdata.xml|*.appdata.xml.in)
                         ext=''
                         ;;
                 esac
                 ;;
             convert)
-                ext='@(xml.gz|appdata.xml?(.in))'
-                case $prev in
-                    *.xml.gz|*.appdata.xml?(.in))
+                case $nth in
+                    1)
+                        ext='@(xml.gz|appdata.xml?(.in))'
+                        ;;
+                    *)
                         ext=''
                         ;;
                 esac
