@@ -28,6 +28,10 @@ BuildRequires: pango-devel
 BuildRequires: rpm-devel
 BuildRequires: sqlite-devel
 
+# for the manpages
+BuildRequires: libxslt
+BuildRequires: docbook-style-xsl
+
 %description
 This library provides GObjects and helper methods to make it easy to read and
 write AppStream metadata. It also provides a simple DOM implementation that
@@ -88,6 +92,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_bindir}/appstream-util
 %dir %{_datadir}/bash-completion/completions/
 %{_datadir}/bash-completion/completions/appstream-util
+%{_mandir}/man1/appstream-*.1.gz
 
 %files devel
 %{_libdir}/libappstream-glib.so
