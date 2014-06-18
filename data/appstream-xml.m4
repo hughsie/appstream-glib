@@ -46,7 +46,7 @@ mostlyclean-am: clean-appstream-xml
 %.appdata.valid: %.appdata.xml
 	$(AM_V_GEN) if test -f "$<"; then d=; else d="$(srcdir)/"; fi; \
 		if test -n "$(APPSTREAM_UTIL)"; \
-			then $(APPSTREAM_UTIL) --nonet $${d}$<; fi \
+			then $(APPSTREAM_UTIL) --nonet validate $${d}$<; fi \
 		&& touch [$]@
 
 check-am: $(appstream_XML:.appdata.xml=.appdata.valid)
