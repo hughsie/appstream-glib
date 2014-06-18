@@ -1113,6 +1113,34 @@ as_node_take_attribute (const GNode *node, const gchar *key)
 }
 
 /**
+ * as_node_remove_attribute: (skip)
+ * @node: a #GNode
+ * @key: the attribute key
+ *
+ * Removes a node attribute, e.g. "type"
+ *
+ * Since: 0.2.0
+ **/
+void
+as_node_remove_attribute (GNode *node, const gchar *key)
+{
+	AsNodeAttr *attr;
+	AsNodeData *data;
+
+	g_return_if_fail (node != NULL);
+	g_return_if_fail (key != NULL);
+
+	if (node->data == NULL)
+		return;
+	data = (AsNodeData *) node->data;
+	attr = as_node_attr_find (data, key);
+	if (attr == NULL)
+		return;
+	data->attrs = g_list_remove_all (data->attrs, attr);
+	as_node_attr_free (attr);
+}
+
+/**
  * as_node_add_attribute: (skip)
  * @node: a #GNode
  * @key: the attribute key

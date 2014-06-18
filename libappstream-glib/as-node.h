@@ -136,6 +136,8 @@ void		 as_node_add_attribute		(GNode		*node,
 						 const gchar	*key,
 						 const gchar	*value,
 						 gssize		 value_len);
+void		 as_node_remove_attribute	(GNode		*node,
+						 const gchar	*key);
 
 GString		*as_node_to_xml			(const GNode	*node,
 						 AsNodeToXmlFlags flags);

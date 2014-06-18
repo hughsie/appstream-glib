@@ -867,6 +867,10 @@ ch_test_node_func (void)
 	g_assert_cmpstr (as_node_get_data (n2), ==, "hal");
 	g_assert_cmpstr (as_node_get_attribute (n2, "xxx"), ==, NULL);
 
+	/* remove an attribute */
+	as_node_remove_attribute (n1, "version");
+	g_assert_cmpstr (as_node_get_attribute (n1, "version"), ==, NULL);
+
 	/* replace some node data */
 	as_node_set_data (n2, "udev", -1, 0);
 	g_assert_cmpstr (as_node_get_data (n2), ==, "udev");
