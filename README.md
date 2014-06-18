@@ -42,6 +42,17 @@ New functionality or crash fixes should include a test in `libappstream-builder/
 to ensure we don't regress in the future. New functionality should also be
 thread safe and also not leak *any* memory for success or failure cases.
 
+Translations
+------------
+
+Translations of the natural language strings are managed through a
+third party translation interface, transifex.com.
+Newly added strings will be periodically uploaded there for translation,
+and any new translations will be merged back to the project source code.
+
+Please use [https://www.transifex.com/projects/p/appstream-glib/](https://www.transifex.com/projects/p/appstream-glib/) to contribute translations,
+rather than sending pull requests.
+
 appstream-builder
 =================
 
