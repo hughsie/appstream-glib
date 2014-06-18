@@ -1,6 +1,10 @@
 SUBDIRS = 						\
 	tests
 
+m4datadir = $(datadir)/aclocal
+dist_m4data_DATA =					\
+	appstream-xml.m4
+
 man_MANS =
 if ENABLE_MAN
 man_MANS +=						\
