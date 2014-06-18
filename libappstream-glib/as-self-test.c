@@ -859,6 +859,7 @@ ch_test_node_func (void)
 	g_assert_cmpstr (as_node_get_name (n1), ==, "apps");
 	g_assert_cmpstr (as_node_get_data (n1), ==, NULL);
 	g_assert_cmpstr (as_node_get_attribute (n1, "version"), ==, "2");
+	g_assert_cmpint (as_node_get_attribute_as_int (n1, "version"), ==, 2);
 	g_assert_cmpstr (as_node_get_attribute (n1, "xxx"), ==, NULL);
 	n2 = as_node_insert (n1, "id", "hal", 0, NULL);
 	g_assert (n2 != NULL);

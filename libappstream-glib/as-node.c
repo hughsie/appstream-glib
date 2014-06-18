@@ -988,7 +988,6 @@ as_node_set_data (GNode *node,
  * @node: a #GNode
  * @comment: new comment
  * @comment_len: length of @data, or -1 if NULL terminated
- * @insert_flags: any %AsNodeInsertFlags.
  *
  * Sets new comment for the node.
  *
