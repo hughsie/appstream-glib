@@ -3,12 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Igor Gnatenko <i.gnatenko.brain@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
 "POT-Creation-Date: 2014-06-18 19:20+0400\n"
-"PO-Revision-Date: 2014-06-18 15:21+0000\n"
+"PO-Revision-Date: 2014-06-18 17:14+0000\n"
 "Last-Translator: Igor Gnatenko <i.gnatenko.brain@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/appstream-glib/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +21,7 @@ msgstr ""
 #. TRANSLATORS: command line option
 #: ../client/as-builder.c:71 ../client/as-util.c:1370
 msgid "Show extra debugging information"
-msgstr ""
+msgstr "Показывать дополнительную отладочную информацию"
 
 #. TRANSLATORS: command line option
 #: ../client/as-builder.c:74
@@ -111,7 +112,7 @@ msgstr ""
 #: ../client/as-builder.c:136
 #, c-format
 msgid "Failed to parse arguments: %s\n"
-msgstr ""
+msgstr "Ошибка при обработке аргументов: %s\n"
 
 #. TRANSLATORS: error message
 #: ../client/as-builder.c:182
@@ -193,7 +194,7 @@ msgstr ""
 #: ../client/as-builder.c:345
 #, c-format
 msgid "Done!\n"
-msgstr ""
+msgstr "Готово!\n"
 
 #. TRANSLATORS: this is a command alias
 #: ../client/as-util.c:104
@@ -209,11 +210,11 @@ msgstr ""
 #: ../client/as-util.c:305
 #, c-format
 msgid "New API version: %.2f\n"
-msgstr ""
+msgstr "Новая версия API: %.2f\n"
 
 #: ../client/as-util.c:327
 msgid "Not enough arguments, expected old.xml new.xml version"
-msgstr ""
+msgstr "Недостаточно аргументов, ожидается получить old.xml new.xml version"
 
 #: ../client/as-util.c:1240 ../client/as-util.c:1267
 msgid "OK"
@@ -221,7 +222,7 @@ msgstr ""
 
 #: ../client/as-util.c:1253
 msgid "FAILED"
-msgstr ""
+msgstr "ОШИБКА"
 
 #: ../client/as-util.c:1264
 msgid "Validation failed"
