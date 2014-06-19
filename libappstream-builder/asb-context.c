@@ -410,6 +410,23 @@ asb_context_get_add_cache_id (AsbContext *ctx)
 }
 
 /**
+ * asb_context_get_api_version:
+ * @ctx: A #AsbContext
+ *
+ * Gets the target metadata API version.
+ *
+ * Returns: floating point
+ *
+ * Since: 0.1.0
+ **/
+gdouble
+asb_context_get_api_version (AsbContext *ctx)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	return priv->api_version;
+}
+
+/**
  * asb_context_get_temp_dir:
  * @ctx: A #AsbContext
  *

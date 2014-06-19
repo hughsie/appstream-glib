@@ -261,15 +261,17 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 	/* has the application been updated in the last year */
 	releases = as_app_get_releases (AS_APP (app));
-	for (i = 0; i < releases->len; i++) {
-		release = g_ptr_array_index (releases, i);
-		secs = (g_get_real_time () / G_USEC_PER_SEC) -
-			as_release_get_timestamp (release);
-		days = secs / (60 * 60 * 24);
-		if (days < 365) {
-			as_app_add_metadata (AS_APP (app),
-					     "X-Kudo-RecentRelease", "", -1);
-			break;
+	if (asb_context_get_api_version (plugin->ctx) <= 0.8) {
+		for (i = 0; i < releases->len; i++) {
+			release = g_ptr_array_index (releases, i);
+			secs = (g_get_real_time () / G_USEC_PER_SEC) -
+				as_release_get_timestamp (release);
+			days = secs / (60 * 60 * 24);
+			if (days < 365) {
+				as_app_add_metadata (AS_APP (app),
+						     "X-Kudo-RecentRelease", "", -1);
+				break;
+			}
 		}
 	}
 

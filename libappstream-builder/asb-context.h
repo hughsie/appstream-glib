@@ -92,6 +92,7 @@ const gchar	*asb_context_get_temp_dir	(AsbContext	*ctx);
 gboolean	 asb_context_get_add_cache_id	(AsbContext	*ctx);
 gboolean	 asb_context_get_extra_checks	(AsbContext	*ctx);
 gboolean	 asb_context_get_use_package_cache (AsbContext	*ctx);
+gdouble		 asb_context_get_api_version	(AsbContext	*ctx);
 
 gboolean	 asb_context_setup		(AsbContext	*ctx,
 						 GError		**error);

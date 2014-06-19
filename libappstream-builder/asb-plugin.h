@@ -44,6 +44,7 @@ struct AsbPlugin {
 	gboolean		 enabled;
 	gchar			*name;
 	AsbPluginPrivate	*priv;
+	AsbContext		*ctx;
 };
 
 typedef enum {
