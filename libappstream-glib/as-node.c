@@ -67,7 +67,10 @@ typedef struct {
 GNode *
 as_node_new (void)
 {
-	return g_node_new (NULL);
+	AsNodeData *data;
+	data = g_slice_new0 (AsNodeData);
+	data->tag = AS_TAG_LAST;
+	return g_node_new (data);
 }
 
 /**
@@ -335,7 +338,7 @@ as_node_to_xml_string (GString *xml,
 	}
 
 	/* root node */
-	if (data == NULL) {
+	if (data == NULL || as_node_get_tag (n) == AS_TAG_LAST) {
 		for (c = n->children; c != NULL; c = c->next)
 			as_node_to_xml_string (xml, depth_offset, c, flags);
 
@@ -631,7 +634,7 @@ as_node_from_xml (const gchar *data,
 
 	g_return_val_if_fail (data != NULL, FALSE);
 
-	root = g_node_new (NULL);
+	root = as_node_new ();
 	helper.flags = flags;
 	helper.current = root;
 	ctx = g_markup_parse_context_new (&parser,
@@ -766,7 +769,7 @@ as_node_from_file (GFile *file,
 	}
 
 	/* parse */
-	root = g_node_new (NULL);
+	root = as_node_new ();
 	helper.flags = flags;
 	helper.current = root;
 	ctx = g_markup_parse_context_new (&parser,

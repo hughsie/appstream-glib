@@ -894,7 +894,7 @@ ch_test_node_func (void)
 static void
 ch_test_node_xml_func (void)
 {
-	const gchar *valid = "<foo><!-- this documents bar --><bar key=\"value\">baz</bar></foo>";
+	const gchar *valid = "<!-- this documents foo --><foo><!-- this documents bar --><bar key=\"value\">baz</bar></foo>";
 	GError *error = NULL;
 	GNode *n2;
 	GNode *root;
@@ -966,6 +966,9 @@ ch_test_node_xml_func (void)
 	n2 = as_node_find (root, "foo/bar");
 	g_assert (n2 != NULL);
 	g_assert_cmpstr (as_node_get_comment (n2), ==, "this documents bar");
+	n2 = as_node_find (root, "foo");
+	g_assert (n2 != NULL);
+	g_assert_cmpstr (as_node_get_comment (n2), ==, "this documents foo");
 
 	/* check comments were preserved */
 	xml = as_node_to_xml (root, AS_NODE_TO_XML_FLAG_NONE);
