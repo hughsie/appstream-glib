@@ -1501,7 +1501,7 @@ main (int argc, char *argv[])
 			_("Show extra debugging information"), NULL },
 		{ "version", '\0', 0, G_OPTION_ARG_NONE, &version,
 			/* TRANSLATORS: command line option */
-			_("Show client and daemon versions"), NULL },
+			_("Show version"), NULL },
 		{ NULL}
 	};
 
