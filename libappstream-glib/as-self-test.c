@@ -55,7 +55,7 @@ as_test_get_filename (const gchar *filename)
 }
 
 static void
-ch_test_tag_func (void)
+as_test_tag_func (void)
 {
 	guint i;
 
@@ -76,7 +76,7 @@ ch_test_tag_func (void)
 }
 
 static void
-ch_test_release_func (void)
+as_test_release_func (void)
 {
 	GError *error = NULL;
 	GNode *n;
@@ -113,7 +113,7 @@ ch_test_release_func (void)
 }
 
 static void
-ch_test_provide_func (void)
+as_test_provide_func (void)
 {
 	GError *error = NULL;
 	GNode *n;
@@ -150,7 +150,7 @@ ch_test_provide_func (void)
 }
 
 static void
-ch_test_release_desc_func (void)
+as_test_release_desc_func (void)
 {
 	GError *error = NULL;
 	GNode *n;
@@ -193,7 +193,7 @@ ch_test_release_desc_func (void)
 }
 
 static void
-ch_test_image_func (void)
+as_test_image_func (void)
 {
 	GError *error = NULL;
 	GNode *n;
@@ -262,7 +262,7 @@ ch_test_image_func (void)
 }
 
 static void
-ch_test_screenshot_func (void)
+as_test_screenshot_func (void)
 {
 	GPtrArray *images;
 	AsImage *im;
@@ -311,7 +311,7 @@ ch_test_screenshot_func (void)
 }
 
 static void
-ch_test_app_func (void)
+as_test_app_func (void)
 {
 	GError *error = NULL;
 	GNode *n;
@@ -414,7 +414,7 @@ ch_test_app_func (void)
 }
 
 static void
-ch_test_app_validate_check (GPtrArray *array,
+as_test_app_validate_check (GPtrArray *array,
 			    AsProblemKind kind,
 			    const gchar *message)
 {
@@ -437,7 +437,7 @@ ch_test_app_validate_check (GPtrArray *array,
 }
 
 static void
-ch_test_app_validate_appdata_good_func (void)
+as_test_app_validate_appdata_good_func (void)
 {
 	AsImage *im;
 	AsProblem *problem;
@@ -495,7 +495,7 @@ ch_test_app_validate_appdata_good_func (void)
 }
 
 static void
-ch_test_app_validate_metainfo_good_func (void)
+as_test_app_validate_metainfo_good_func (void)
 {
 	AsProblem *problem;
 	GError *error = NULL;
@@ -537,7 +537,7 @@ ch_test_app_validate_metainfo_good_func (void)
 }
 
 static void
-ch_test_app_validate_intltool_func (void)
+as_test_app_validate_intltool_func (void)
 {
 	AsProblem *problem;
 	GError *error = NULL;
@@ -571,7 +571,7 @@ ch_test_app_validate_intltool_func (void)
 }
 
 static void
-ch_test_app_translated_func (void)
+as_test_app_translated_func (void)
 {
 	GError *error = NULL;
 	gboolean ret;
@@ -592,7 +592,7 @@ ch_test_app_translated_func (void)
 }
 
 static void
-ch_test_app_validate_file_bad_func (void)
+as_test_app_validate_file_bad_func (void)
 {
 	AsProblem *problem;
 	GError *error = NULL;
@@ -621,55 +621,55 @@ ch_test_app_validate_file_bad_func (void)
 	}
 	g_assert_cmpint (probs->len, ==, 24);
 
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				    "<id> has invalid type attribute");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
 				    "<id> does not have correct extension for kind");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<metadata_license> is not valid");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<project_license> is not valid: SPDX ID 'CC1' unknown");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<updatecontact> is not present");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<url> does not start with 'http://'");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
 				    "<?xml> header not found");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<name> cannot end in '.'");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<summary> cannot end in '.'");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "Not enough <screenshot> tags");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<li> is too short");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<li> cannot end in '.'");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<ul> cannot start a description");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<ul> cannot start a description");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<p> should not start with 'This application'");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<p> does not end in '.|:|!'");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<p> is too short");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<p> cannot contain a hyperlink");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<release> description should be "
 				    "prose and not contain hyperlinks");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				    "<release> timestamp should be a UNIX time");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
 				    "<release> has no version");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
 				    "<release> has no timestamp");
 }
 
 static void
-ch_test_app_validate_style_func (void)
+as_test_app_validate_style_func (void)
 {
 	AsProblem *problem;
 	GError *error = NULL;
@@ -695,33 +695,33 @@ ch_test_app_validate_style_func (void)
 		problem = g_ptr_array_index (probs, i);
 		g_debug ("%s", as_problem_get_message (problem));
 	}
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<update_contact> is still set to a dummy value");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<url> type invalid");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<url> does not start with 'http://'");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<metadata_license> is not valid");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<name> is too long");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<name> cannot end in '.'");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<summary> is too short");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
 				    "<id> does not have correct extension for kind");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "Not enough <screenshot> tags");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<summary> is shorter than <name>");
-	ch_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<url> is not present");
 	g_assert_cmpint (probs->len, ==, 11);
 }
 
 static void
-ch_test_app_parse_file_func (void)
+as_test_app_parse_file_func (void)
 {
 	GError *error = NULL;
 	gboolean ret;
@@ -769,7 +769,7 @@ ch_test_app_parse_file_func (void)
 }
 
 static void
-ch_test_app_no_markup_func (void)
+as_test_app_no_markup_func (void)
 {
 	GError *error = NULL;
 	GNode *n;
@@ -813,7 +813,7 @@ ch_test_app_no_markup_func (void)
 }
 
 static void
-ch_test_node_reflow_text_func (void)
+as_test_node_reflow_text_func (void)
 {
 	gchar *tmp;
 
@@ -844,7 +844,7 @@ ch_test_node_reflow_text_func (void)
 }
 
 static void
-ch_test_node_func (void)
+as_test_node_func (void)
 {
 	GNode *n1;
 	GNode *n2;
@@ -892,7 +892,7 @@ ch_test_node_func (void)
 }
 
 static void
-ch_test_node_xml_func (void)
+as_test_node_xml_func (void)
 {
 	const gchar *valid = "<!-- this documents foo --><foo><!-- this documents bar --><bar key=\"value\">baz</bar></foo>";
 	GError *error = NULL;
@@ -979,7 +979,7 @@ ch_test_node_xml_func (void)
 }
 
 static void
-ch_test_node_hash_func (void)
+as_test_node_hash_func (void)
 {
 	GHashTable *hash;
 	GNode *n1;
@@ -1018,7 +1018,7 @@ ch_test_node_hash_func (void)
 }
 
 static void
-ch_test_node_localized_func (void)
+as_test_node_localized_func (void)
 {
 	GHashTable *hash;
 	GNode *n1;
@@ -1059,7 +1059,7 @@ ch_test_node_localized_func (void)
 }
 
 static void
-ch_test_node_localized_wrap_func (void)
+as_test_node_localized_wrap_func (void)
 {
 	GError *error = NULL;
 	GNode *n1;
@@ -1096,7 +1096,7 @@ ch_test_node_localized_wrap_func (void)
 }
 
 static void
-ch_test_node_localized_wrap2_func (void)
+as_test_node_localized_wrap2_func (void)
 {
 	GError *error = NULL;
 	GNode *n1;
@@ -1134,7 +1134,7 @@ ch_test_node_localized_wrap2_func (void)
 }
 
 static void
-ch_test_app_subsume_func (void)
+as_test_app_subsume_func (void)
 {
 	GList *list;
 	_cleanup_object_unref_ AsApp *app = NULL;
@@ -1171,7 +1171,7 @@ ch_test_app_subsume_func (void)
 }
 
 static void
-ch_test_app_search_func (void)
+as_test_app_search_func (void)
 {
 	const gchar *all[] = { "gnome", "install", "software", NULL };
 	const gchar *none[] = { "gnome", "xxx", "software", NULL };
@@ -1192,7 +1192,7 @@ ch_test_app_search_func (void)
 }
 
 static void
-ch_test_store_func (void)
+as_test_store_func (void)
 {
 	AsApp *app;
 	GString *xml;
@@ -1248,7 +1248,7 @@ ch_test_store_func (void)
 }
 
 static void
-ch_test_store_versions_func (void)
+as_test_store_versions_func (void)
 {
 	AsApp *app;
 	AsStore *store;
@@ -1339,7 +1339,7 @@ ch_test_store_versions_func (void)
 }
 
 static void
-ch_test_store_addons_func (void)
+as_test_store_addons_func (void)
 {
 	AsApp *app;
 	GError *error = NULL;
@@ -1393,7 +1393,7 @@ ch_test_store_addons_func (void)
  * test that we don't save the same translated data as C back to the file
  */
 static void
-ch_test_node_no_dup_c_func (void)
+as_test_node_no_dup_c_func (void)
 {
 	GError *error = NULL;
 	GNode *n;
@@ -1438,7 +1438,7 @@ ch_test_node_no_dup_c_func (void)
 }
 
 static void
-ch_test_store_origin_func (void)
+as_test_store_origin_func (void)
 {
 	AsApp *app;
 	GError *error = NULL;
@@ -1465,7 +1465,7 @@ ch_test_store_origin_func (void)
 }
 
 static void
-ch_test_store_speed_func (void)
+as_test_store_speed_func (void)
 {
 	GError *error = NULL;
 	gboolean ret;
@@ -1492,7 +1492,7 @@ ch_test_store_speed_func (void)
 }
 
 static void
-ch_test_utils_spdx_token_func (void)
+as_test_utils_spdx_token_func (void)
 {
 	gchar **tok;
 	gchar *tmp;
@@ -1548,7 +1548,7 @@ ch_test_utils_spdx_token_func (void)
 }
 
 static void
-ch_test_utils_func (void)
+as_test_utils_func (void)
 {
 	gboolean ret;
 	gchar *tmp;
@@ -1615,7 +1615,7 @@ ch_test_utils_func (void)
 }
 
 static void
-ch_test_store_app_install_func (void)
+as_test_store_app_install_func (void)
 {
 	GError *error = NULL;
 	gboolean ret;
@@ -1631,7 +1631,7 @@ ch_test_store_app_install_func (void)
 }
 
 static void
-ch_test_store_metadata_func (void)
+as_test_store_metadata_func (void)
 {
 	GError *error = NULL;
 	GPtrArray *apps;
@@ -1672,40 +1672,40 @@ main (int argc, char **argv)
 	g_log_set_fatal_mask (NULL, G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL);
 
 	/* tests go here */
-	g_test_add_func ("/AppStream/tag", ch_test_tag_func);
-	g_test_add_func ("/AppStream/provide", ch_test_provide_func);
-	g_test_add_func ("/AppStream/release", ch_test_release_func);
-	g_test_add_func ("/AppStream/release{description}", ch_test_release_desc_func);
-	g_test_add_func ("/AppStream/image", ch_test_image_func);
-	g_test_add_func ("/AppStream/screenshot", ch_test_screenshot_func);
-	g_test_add_func ("/AppStream/app", ch_test_app_func);
-	g_test_add_func ("/AppStream/app{translated}", ch_test_app_translated_func);
-	g_test_add_func ("/AppStream/app{validate-style}", ch_test_app_validate_style_func);
-	g_test_add_func ("/AppStream/app{validate-appdata-good}", ch_test_app_validate_appdata_good_func);
-	g_test_add_func ("/AppStream/app{validate-metainfo-good}", ch_test_app_validate_metainfo_good_func);
-	g_test_add_func ("/AppStream/app{validate-file-bad}", ch_test_app_validate_file_bad_func);
-	g_test_add_func ("/AppStream/app{validate-intltool}", ch_test_app_validate_intltool_func);
-	g_test_add_func ("/AppStream/app{parse-file}", ch_test_app_parse_file_func);
-	g_test_add_func ("/AppStream/app{no-markup}", ch_test_app_no_markup_func);
-	g_test_add_func ("/AppStream/app{subsume}", ch_test_app_subsume_func);
-	g_test_add_func ("/AppStream/app{search}", ch_test_app_search_func);
-	g_test_add_func ("/AppStream/node", ch_test_node_func);
-	g_test_add_func ("/AppStream/node{reflow}", ch_test_node_reflow_text_func);
-	g_test_add_func ("/AppStream/node{xml}", ch_test_node_xml_func);
-	g_test_add_func ("/AppStream/node{hash}", ch_test_node_hash_func);
-	g_test_add_func ("/AppStream/node{no-dup-c}", ch_test_node_no_dup_c_func);
-	g_test_add_func ("/AppStream/node{localized}", ch_test_node_localized_func);
-	g_test_add_func ("/AppStream/node{localized-wrap}", ch_test_node_localized_wrap_func);
-	g_test_add_func ("/AppStream/node{localized-wrap2}", ch_test_node_localized_wrap2_func);
-	g_test_add_func ("/AppStream/utils", ch_test_utils_func);
-	g_test_add_func ("/AppStream/utils{spdx-token}", ch_test_utils_spdx_token_func);
-	g_test_add_func ("/AppStream/store", ch_test_store_func);
-	g_test_add_func ("/AppStream/store{addons}", ch_test_store_addons_func);
-	g_test_add_func ("/AppStream/store{versions}", ch_test_store_versions_func);
-	g_test_add_func ("/AppStream/store{origin}", ch_test_store_origin_func);
-	g_test_add_func ("/AppStream/store{app-install}", ch_test_store_app_install_func);
-	g_test_add_func ("/AppStream/store{metadata}", ch_test_store_metadata_func);
-	g_test_add_func ("/AppStream/store{speed}", ch_test_store_speed_func);
+	g_test_add_func ("/AppStream/tag", as_test_tag_func);
+	g_test_add_func ("/AppStream/provide", as_test_provide_func);
+	g_test_add_func ("/AppStream/release", as_test_release_func);
+	g_test_add_func ("/AppStream/release{description}", as_test_release_desc_func);
+	g_test_add_func ("/AppStream/image", as_test_image_func);
+	g_test_add_func ("/AppStream/screenshot", as_test_screenshot_func);
+	g_test_add_func ("/AppStream/app", as_test_app_func);
+	g_test_add_func ("/AppStream/app{translated}", as_test_app_translated_func);
+	g_test_add_func ("/AppStream/app{validate-style}", as_test_app_validate_style_func);
+	g_test_add_func ("/AppStream/app{validate-appdata-good}", as_test_app_validate_appdata_good_func);
+	g_test_add_func ("/AppStream/app{validate-metainfo-good}", as_test_app_validate_metainfo_good_func);
+	g_test_add_func ("/AppStream/app{validate-file-bad}", as_test_app_validate_file_bad_func);
+	g_test_add_func ("/AppStream/app{validate-intltool}", as_test_app_validate_intltool_func);
+	g_test_add_func ("/AppStream/app{parse-file}", as_test_app_parse_file_func);
+	g_test_add_func ("/AppStream/app{no-markup}", as_test_app_no_markup_func);
+	g_test_add_func ("/AppStream/app{subsume}", as_test_app_subsume_func);
+	g_test_add_func ("/AppStream/app{search}", as_test_app_search_func);
+	g_test_add_func ("/AppStream/node", as_test_node_func);
+	g_test_add_func ("/AppStream/node{reflow}", as_test_node_reflow_text_func);
+	g_test_add_func ("/AppStream/node{xml}", as_test_node_xml_func);
+	g_test_add_func ("/AppStream/node{hash}", as_test_node_hash_func);
+	g_test_add_func ("/AppStream/node{no-dup-c}", as_test_node_no_dup_c_func);
+	g_test_add_func ("/AppStream/node{localized}", as_test_node_localized_func);
+	g_test_add_func ("/AppStream/node{localized-wrap}", as_test_node_localized_wrap_func);
+	g_test_add_func ("/AppStream/node{localized-wrap2}", as_test_node_localized_wrap2_func);
+	g_test_add_func ("/AppStream/utils", as_test_utils_func);
+	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
+	g_test_add_func ("/AppStream/store", as_test_store_func);
+	g_test_add_func ("/AppStream/store{addons}", as_test_store_addons_func);
+	g_test_add_func ("/AppStream/store{versions}", as_test_store_versions_func);
+	g_test_add_func ("/AppStream/store{origin}", as_test_store_origin_func);
+	g_test_add_func ("/AppStream/store{app-install}", as_test_store_app_install_func);
+	g_test_add_func ("/AppStream/store{metadata}", as_test_store_metadata_func);
+	g_test_add_func ("/AppStream/store{speed}", as_test_store_speed_func);
 
 	return g_test_run ();
 }
