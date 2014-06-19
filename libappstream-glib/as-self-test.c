@@ -942,7 +942,7 @@ ch_test_node_xml_func (void)
 	g_assert (xml != NULL);
 	g_assert_cmpstr (xml->str, ==,
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-		"<foo>\n <bar key=\"value\">baz</bar>\n</foo>\n");
+		"<foo>\n  <bar key=\"value\">baz</bar>\n</foo>\n");
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 

@@ -260,7 +260,7 @@ as_node_add_padding (GString *xml, guint depth)
 {
 	guint i;
 	for (i = 0; i < depth; i++)
-		g_string_append (xml, " ");
+		g_string_append (xml, "  ");
 }
 
 /**
