@@ -25,9 +25,12 @@
 #include <glib-object.h>
 #include <gmodule.h>
 #include <gio/gio.h>
+#include <appstream-glib.h>
+
+#include "as-cleanup.h"
 
 #include "asb-app.h"
-#include "as-cleanup.h"
+#include "asb-context.h"
 #include "asb-package.h"
 #include "asb-utils.h"
 

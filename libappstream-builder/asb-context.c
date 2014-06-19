@@ -56,7 +56,7 @@ struct _AsbContextPrivate
 	GPtrArray		*extra_pkgs;		/* of AsbGlobValue */
 	GPtrArray		*file_globs;		/* of AsbPackage */
 	GPtrArray		*packages;		/* of AsbPackage */
-	GPtrArray		*plugins;		/* of AsbPlugin */
+	AsbPluginLoader		*plugin_loader;
 	gboolean		 add_cache_id;
 	gboolean		 extra_checks;
 	gboolean		 no_net;
@@ -427,20 +427,20 @@ asb_context_get_temp_dir (AsbContext *ctx)
 }
 
 /**
- * asb_context_get_plugins:
+ * asb_context_get_plugin_loader:
  * @ctx: A #AsbContext
  *
  * Gets the plugins available to the metadata extractor.
  *
- * Returns: array of plugins
+ * Returns: (transfer none): the plugin loader in use
  *
  * Since: 0.1.0
  **/
-GPtrArray *
-asb_context_get_plugins (AsbContext *ctx)
+AsbPluginLoader *
+asb_context_get_plugin_loader (AsbContext *ctx)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	return priv->plugins;
+	return priv->plugin_loader;
 }
 
 /**
@@ -535,11 +535,11 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 
 	/* load plugins */
-	if (!asb_plugin_loader_setup (priv->plugins, error))
+	if (!asb_plugin_loader_setup (priv->plugin_loader, error))
 		return FALSE;
 
 	/* get a cache of the file globs */
-	priv->file_globs = asb_plugin_loader_get_globs (priv->plugins);
+	priv->file_globs = asb_plugin_loader_get_globs (priv->plugin_loader);
 
 	/* add old metadata */
 	if (priv->old_metadata != NULL) {
@@ -706,7 +706,7 @@ asb_context_process (AsbContext *ctx, GError **error)
 
 	/* merge */
 	g_print ("Merging applications...\n");
-	asb_plugin_loader_merge (priv->plugins, &priv->apps);
+	asb_plugin_loader_merge (priv->plugin_loader, &priv->apps);
 
 	/* write XML file */
 	ret = asb_context_write_xml (ctx, priv->output_dir, priv->basename, error);
@@ -860,7 +860,7 @@ asb_context_finalize (GObject *object)
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 
 	g_object_unref (priv->old_md_cache);
-	asb_plugin_loader_free (priv->plugins);
+	g_object_unref (priv->plugin_loader);
 	g_ptr_array_unref (priv->packages);
 	g_ptr_array_unref (priv->extra_pkgs);
 	g_list_foreach (priv->apps, (GFunc) g_object_unref, NULL);
@@ -889,7 +889,7 @@ asb_context_init (AsbContext *ctx)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 
-	priv->plugins = asb_plugin_loader_new ();
+	priv->plugin_loader = asb_plugin_loader_new (ctx);
 	priv->packages = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->extra_pkgs = asb_glob_value_array_new ();
 	g_mutex_init (&priv->apps_mutex);

@@ -30,11 +30,62 @@
 
 #include "config.h"
 
-#include <glib.h>
-
 #include "as-cleanup.h"
-#include "asb-plugin.h"
 #include "asb-plugin-loader.h"
+#include "asb-plugin.h"
+
+typedef struct _AsbPluginLoaderPrivate	AsbPluginLoaderPrivate;
+struct _AsbPluginLoaderPrivate
+{
+	GPtrArray		*plugins;
+	AsbContext		*ctx;
+};
+
+G_DEFINE_TYPE_WITH_PRIVATE (AsbPluginLoader, asb_plugin_loader, G_TYPE_OBJECT)
+
+#define GET_PRIVATE(o) (asb_plugin_loader_get_instance_private (o))
+
+/**
+ * asb_plugin_loader_run:
+ **/
+static void
+asb_plugin_loader_run (AsbPluginLoader *plugin_loader, const gchar *function_name)
+{
+	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
+	AsbPluginFunc plugin_func = NULL;
+	AsbPlugin *plugin;
+	gboolean ret;
+	guint i;
+
+	/* run each plugin */
+	for (i = 0; i < priv->plugins->len; i++) {
+		plugin = g_ptr_array_index (priv->plugins, i);
+		ret = g_module_symbol (plugin->module,
+				       function_name,
+				       (gpointer *) &plugin_func);
+		if (!ret)
+			continue;
+		plugin_func (plugin);
+	}
+}
+
+/**
+ * asb_plugin_loader_finalize:
+ **/
+static void
+asb_plugin_loader_finalize (GObject *object)
+{
+	AsbPluginLoader *plugin_loader = ASB_PLUGIN_LOADER (object);
+	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
+
+	asb_plugin_loader_run (plugin_loader, "asb_plugin_destroy");
+
+	if (priv->ctx != NULL)
+		g_object_unref (priv->ctx);
+	g_ptr_array_unref (priv->plugins);
+
+	G_OBJECT_CLASS (asb_plugin_loader_parent_class)->finalize (object);
+}
 
 /**
  * asb_plugin_loader_plugin_free:
@@ -49,27 +100,38 @@ asb_plugin_loader_plugin_free (AsbPlugin *plugin)
 }
 
 /**
+ * asb_plugin_loader_init:
+ **/
+static void
+asb_plugin_loader_init (AsbPluginLoader *plugin_loader)
+{
+	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
+	priv->plugins = g_ptr_array_new_with_free_func ((GDestroyNotify) asb_plugin_loader_plugin_free);
+}
+
+/**
  * asb_plugin_loader_match_fn:
- * @plugins: (element-type AsbPlugin): An array of plugins
+ * @plugin_loader: A #AsbPluginLoader
  * @filename: filename
  *
  * Processes the list of plugins finding a plugin that can process the filename.
  *
  * Returns: (transfer none): a plugin, or %NULL
  *
- * Since: 0.1.0
+ * Since: 0.2.1
  **/
 AsbPlugin *
-asb_plugin_loader_match_fn (GPtrArray *plugins, const gchar *filename)
+asb_plugin_loader_match_fn (AsbPluginLoader *plugin_loader, const gchar *filename)
 {
-	gboolean ret;
 	AsbPluginCheckFilenameFunc plugin_func = NULL;
+	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
 	AsbPlugin *plugin;
+	gboolean ret;
 	guint i;
 
 	/* run each plugin */
-	for (i = 0; i < plugins->len; i++) {
-		plugin = g_ptr_array_index (plugins, i);
+	for (i = 0; i < priv->plugins->len; i++) {
+		plugin = g_ptr_array_index (priv->plugins, i);
 		ret = g_module_symbol (plugin->module,
 				       "asb_plugin_check_filename",
 				       (gpointer *) &plugin_func);
@@ -83,7 +145,7 @@ asb_plugin_loader_match_fn (GPtrArray *plugins, const gchar *filename)
 
 /**
  * asb_plugin_loader_process_app:
- * @plugins: (element-type AsbPlugin): An array of plugins
+ * @plugin_loader: A #AsbPluginLoader
  * @pkg: The #AsbPackage
  * @app: The #AsbApp to refine
  * @tmpdir: A temporary location to use
@@ -93,23 +155,24 @@ asb_plugin_loader_match_fn (GPtrArray *plugins, const gchar *filename)
  *
  * Returns: %TRUE for success, %FALSE otherwise
  *
- * Since: 0.1.0
+ * Since: 0.2.1
  **/
 gboolean
-asb_plugin_loader_process_app (GPtrArray *plugins,
+asb_plugin_loader_process_app (AsbPluginLoader *plugin_loader,
 			       AsbPackage *pkg,
 			       AsbApp *app,
 			       const gchar *tmpdir,
 			       GError **error)
 {
-	gboolean ret;
-	AsbPluginProcessAppFunc plugin_func = NULL;
+	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
 	AsbPlugin *plugin;
+	AsbPluginProcessAppFunc plugin_func = NULL;
+	gboolean ret;
 	guint i;
 
 	/* run each plugin */
-	for (i = 0; i < plugins->len; i++) {
-		plugin = g_ptr_array_index (plugins, i);
+	for (i = 0; i < priv->plugins->len; i++) {
+		plugin = g_ptr_array_index (priv->plugins, i);
 		ret = g_module_symbol (plugin->module,
 				       "asb_plugin_process_app",
 				       (gpointer *) &plugin_func);
@@ -126,51 +189,46 @@ asb_plugin_loader_process_app (GPtrArray *plugins,
 }
 
 /**
- * asb_plugin_loader_run:
+ * asb_plugin_loader_get_plugins:
+ * @plugin_loader: A #AsbPluginLoader
+ *
+ * Gets the list of plugins.
+ *
+ * Returns: (transfer none) (element-type AsbPlugin): plugins
+ *
+ * Since: 0.2.1
  **/
-static void
-asb_plugin_loader_run (GPtrArray *plugins, const gchar *function_name)
+GPtrArray *
+asb_plugin_loader_get_plugins (AsbPluginLoader *plugin_loader)
 {
-	gboolean ret;
-	AsbPluginFunc plugin_func = NULL;
-	AsbPlugin *plugin;
-	guint i;
-
-	/* run each plugin */
-	for (i = 0; i < plugins->len; i++) {
-		plugin = g_ptr_array_index (plugins, i);
-		ret = g_module_symbol (plugin->module,
-				       function_name,
-				       (gpointer *) &plugin_func);
-		if (!ret)
-			continue;
-		plugin_func (plugin);
-	}
+	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
+	return priv->plugins;
 }
 
 /**
  * asb_plugin_loader_get_globs:
- * @plugins: (element-type AsbPlugin): An array of plugins
+ * @plugin_loader: A #AsbPluginLoader
  *
  * Gets the list of globs.
  *
  * Returns: (transfer container) (element-type utf8): globs
  *
- * Since: 0.1.0
+ * Since: 0.2.1
  **/
 GPtrArray *
-asb_plugin_loader_get_globs (GPtrArray *plugins)
+asb_plugin_loader_get_globs (AsbPluginLoader *plugin_loader)
 {
-	gboolean ret;
 	AsbPluginGetGlobsFunc plugin_func = NULL;
+	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
 	AsbPlugin *plugin;
-	guint i;
 	GPtrArray *globs;
+	gboolean ret;
+	guint i;
 
 	/* run each plugin */
 	globs = asb_glob_value_array_new ();
-	for (i = 0; i < plugins->len; i++) {
-		plugin = g_ptr_array_index (plugins, i);
+	for (i = 0; i < priv->plugins->len; i++) {
+		plugin = g_ptr_array_index (priv->plugins, i);
 		ret = g_module_symbol (plugin->module,
 				       "asb_plugin_add_globs",
 				       (gpointer *) &plugin_func);
@@ -183,30 +241,31 @@ asb_plugin_loader_get_globs (GPtrArray *plugins)
 
 /**
  * asb_plugin_loader_merge:
- * @plugins: (element-type AsbPlugin): An array of plugins
+ * @plugin_loader: A #AsbPluginLoader
  * @apps: (element-type AsbApp): a list of applications that need merging
  *
  * Merge the list of applications using the plugins.
  *
- * Since: 0.1.0
+ * Since: 0.2.1
  **/
 void
-asb_plugin_loader_merge (GPtrArray *plugins, GList **apps)
+asb_plugin_loader_merge (AsbPluginLoader *plugin_loader, GList **apps)
 {
-	const gchar *key;
-	const gchar *tmp;
 	AsbApp *app;
 	AsbApp *found;
+	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
 	AsbPluginMergeFunc plugin_func = NULL;
 	AsbPlugin *plugin;
-	gboolean ret;
 	GList *l;
+	const gchar *key;
+	const gchar *tmp;
+	gboolean ret;
 	guint i;
 	_cleanup_hashtable_unref_ GHashTable *hash;
 
 	/* run each plugin */
-	for (i = 0; i < plugins->len; i++) {
-		plugin = g_ptr_array_index (plugins, i);
+	for (i = 0; i < priv->plugins->len; i++) {
+		plugin = g_ptr_array_index (priv->plugins, i);
 		ret = g_module_symbol (plugin->module,
 				       "asb_plugin_merge",
 				       (gpointer *) &plugin_func);
@@ -256,13 +315,14 @@ asb_plugin_loader_merge (GPtrArray *plugins, GList **apps)
  * asb_plugin_loader_open_plugin:
  **/
 static AsbPlugin *
-asb_plugin_loader_open_plugin (GPtrArray *plugins,
+asb_plugin_loader_open_plugin (AsbPluginLoader *plugin_loader,
 			       const gchar *filename)
 {
-	gboolean ret;
-	GModule *module;
 	AsbPluginGetNameFunc plugin_name = NULL;
+	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
 	AsbPlugin *plugin = NULL;
+	GModule *module;
+	gboolean ret;
 
 	module = g_module_open (filename, 0);
 	if (module == NULL) {
@@ -284,12 +344,13 @@ asb_plugin_loader_open_plugin (GPtrArray *plugins,
 	/* print what we know */
 	plugin = g_slice_new0 (AsbPlugin);
 	plugin->enabled = TRUE;
+	plugin->ctx = priv->ctx;
 	plugin->module = module;
 	plugin->name = g_strdup (plugin_name ());
 	g_debug ("opened plugin %s: %s", filename, plugin->name);
 
 	/* add to array */
-	g_ptr_array_add (plugins, plugin);
+	g_ptr_array_add (priv->plugins, plugin);
 	return plugin;
 }
 
@@ -306,18 +367,19 @@ asb_plugin_loader_sort_cb (gconstpointer a, gconstpointer b)
 
 /**
  * asb_plugin_loader_setup:
- * @plugins: (element-type AsbPlugin): An array of plugins
+ * @plugin_loader: A #AsbPluginLoader
  * @error: A #GError or %NULL
  *
  * Set up the plugin loader.
  *
  * Returns: %TRUE for success, %FALSE otherwise
  *
- * Since: 0.1.0
+ * Since: 0.2.1
  **/
 gboolean
-asb_plugin_loader_setup (GPtrArray *plugins, GError **error)
+asb_plugin_loader_setup (AsbPluginLoader *plugin_loader, GError **error)
 {
+	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
 	const gchar *filename_tmp;
 	const gchar *location = "./plugins/.libs/";
 	_cleanup_dir_close_ GDir *dir;
@@ -343,41 +405,44 @@ asb_plugin_loader_setup (GPtrArray *plugins, GError **error)
 		filename_plugin = g_build_filename (location,
 						    filename_tmp,
 						    NULL);
-		asb_plugin_loader_open_plugin (plugins, filename_plugin);
+		asb_plugin_loader_open_plugin (plugin_loader, filename_plugin);
 	} while (TRUE);
 
 	/* run the plugins */
-	asb_plugin_loader_run (plugins, "asb_plugin_initialize");
-	g_ptr_array_sort (plugins, asb_plugin_loader_sort_cb);
+	asb_plugin_loader_run (plugin_loader, "asb_plugin_initialize");
+	g_ptr_array_sort (priv->plugins, asb_plugin_loader_sort_cb);
 	return TRUE;
+}
+
+
+/**
+ * asb_plugin_loader_class_init:
+ **/
+static void
+asb_plugin_loader_class_init (AsbPluginLoaderClass *klass)
+{
+	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+	object_class->finalize = asb_plugin_loader_finalize;
 }
 
 /**
  * asb_plugin_loader_new:
+ * @ctx: A #AsbContext, or %NULL
  *
- * Creates a new plugin loader interface.
+ * Creates a new plugin loader instance.
  *
- * Returns: (transfer container) (element-type AsbPlugin): state
+ * Returns: a #AsbPluginLoader
  *
- * Since: 0.1.0
+ * Since: 0.2.1
  **/
-GPtrArray *
-asb_plugin_loader_new (void)
+AsbPluginLoader *
+asb_plugin_loader_new (AsbContext *ctx)
 {
-	return g_ptr_array_new_with_free_func ((GDestroyNotify) asb_plugin_loader_plugin_free);
-}
-
-/**
- * asb_plugin_loader_free:
- * @plugins: (element-type AsbPlugin): An array of plugins
- *
- * Destroy the plugin state.
- *
- * Since: 0.1.0
- **/
-void
-asb_plugin_loader_free (GPtrArray *plugins)
-{
-	asb_plugin_loader_run (plugins, "asb_plugin_destroy");
-	g_ptr_array_unref (plugins);
+	AsbPluginLoader *plugin_loader;
+	AsbPluginLoaderPrivate *priv;
+	plugin_loader = g_object_new (ASB_TYPE_PLUGIN_LOADER, NULL);
+	priv = GET_PRIVATE (plugin_loader);
+	if (ctx != NULL)
+		priv->ctx = g_object_ref (ctx);
+	return ASB_PLUGIN_LOADER (plugin_loader);
 }

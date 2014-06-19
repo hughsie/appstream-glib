@@ -57,8 +57,9 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsbTask, asb_task, G_TYPE_OBJECT)
  * asb_task_add_suitable_plugins:
  **/
 static void
-asb_task_add_suitable_plugins (AsbTask *task, GPtrArray *plugins)
+asb_task_add_suitable_plugins (AsbTask *task)
 {
+	AsbPluginLoader *plugin_loader;
 	AsbPlugin *plugin;
 	AsbTaskPrivate *priv = GET_PRIVATE (task);
 	gchar **filelist;
@@ -68,8 +69,9 @@ asb_task_add_suitable_plugins (AsbTask *task, GPtrArray *plugins)
 	filelist = asb_package_get_filelist (priv->pkg);
 	if (filelist == NULL)
 		return;
+	plugin_loader = asb_context_get_plugin_loader (priv->ctx);
 	for (i = 0; filelist[i] != NULL; i++) {
-		plugin = asb_plugin_loader_match_fn (plugins, filelist[i]);
+		plugin = asb_plugin_loader_match_fn (plugin_loader, filelist[i]);
 		if (plugin == NULL)
 			continue;
 
@@ -214,7 +216,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 			 "Getting filename match for %s",
 			 basename);
-	asb_task_add_suitable_plugins (task, asb_context_get_plugins (priv->ctx));
+	asb_task_add_suitable_plugins (task);
 	if (priv->plugins_to_run->len == 0)
 		goto out;
 
@@ -309,7 +311,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		}
 
 		/* run each refine plugin on each app */
-		ret = asb_plugin_loader_process_app (asb_context_get_plugins (priv->ctx),
+		ret = asb_plugin_loader_process_app (asb_context_get_plugin_loader (priv->ctx),
 						     priv->pkg,
 						     app,
 						     priv->tmpdir,
