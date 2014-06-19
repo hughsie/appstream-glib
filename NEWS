@@ -1,3 +1,50 @@
+Version 0.2.0
+~~~~~~~~~~~~~
+Released: 2014-06-19
+
+Notes:
+ - This is the first release that merges the createrepo_as project with this one.
+   A new experimental command 'appstream-builder' has been added and can be used
+   by distributors to build metadata. Normal users don't need this or the shared
+   library libappstream-bulder, and this can be split off into a subpackage by
+   downstream if required.
+ - We're slowly merging parts of appdata-tools into this project too, but we'll
+   provide more details when the merge is complete.
+
+New Features:
+ - Add an m4 file to easily validate AppData and MetaInfo files (Richard Hughes)
+ - Add a --nonet option to appstream-util (Richard Hughes)
+ - Add 'appstream appdata-from-desktop' to autogenerate a boilerplate file (Richard Hughes)
+ - Add as_app_get_mimetypes() (Richard Hughes)
+ - Add as_app_get_pkgname_default() (Richard Hughes)
+ - Add as_app_guess_source_kind() (Richard Hughes)
+ - Add as_app_to_file() (Richard Hughes)
+ - Add as_node_remove_attribute() (Richard Hughes)
+ - Add as_node_to_file() (Richard Hughes)
+ - Add bash-completion files for appstream-builder and appstream-util (Igor Gnatenko)
+ - Add <developer_name> from the draft AppStream 0.7 specification (Richard Hughes)
+ - Add manpages for appstream-util and appstream-builder (Richard Hughes)
+ - Add Russian translation (Igor Gnatenko)
+ - Allow installing AppData and MetaInfo files using appstream-util (Richard Hughes)
+ - Allow validating more types of files (Richard Hughes)
+ - Make the project translatable using transifex (Igor Gnatenko)
+
+Bugfixes:
+ - Accept slightly truncated SPDX IDs (Richard Hughes)
+ - Add a AsAppParseFlags flag to be able to append non-duplicate data (Richard Hughes)
+ - Add appstream-build from the createrepo_as project (Richard Hughes)
+ - Allow any SPDX license when validating in relaxed mode (Richard Hughes)
+ - Allow 'appstream-util convert' to work with two AppData files (Richard Hughes)
+ - Allow as_node_get_attribute_as_int() to parse negative numbers (Richard Hughes)
+ - Allow comments on the root XML node (Richard Hughes)
+ - Allow dumping .desktop, .appdata.xml and .metainfo.xml files in appstream-util (Richard Hughes)
+ - Do not add addons that are packaged in the parent package (Richard Hughes)
+ - Do not require a content license to be included into the metadata (Richard Hughes)
+ - Don't add the fake ApplicationAddon category for addons (Richard Hughes)
+ - Inherit search tokens from the addon to the main application (Richard Hughes)
+ - Return the URL in the validation error when screenshots fail to be loaded (Richard Hughes)
+ - Validate the <developer_name> tag values (Richard Hughes)
+
 Version 0.1.7
 ~~~~~~~~~~~~~
 Released: 2014-06-12
