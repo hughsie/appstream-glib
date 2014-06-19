@@ -242,11 +242,59 @@ as_util_convert_appdata (GFile *file_input,
 	if (n2 != NULL)
 		as_node_set_name (n2, "metadata_license");
 
+	/* ensure this exists */
+	n2 = as_node_find (n, "metadata_license");
+	if (n2 == NULL) {
+		n2 = as_node_insert (n, "metadata_license", "XXX: Insert SPDX ID Here",
+				     AS_NODE_INSERT_FLAG_NONE, NULL);
+	} else {
+		tmp = as_node_get_data (n2);
+
+		/* convert the old license defines */
+		if (g_strcmp0 (tmp, "CC0") == 0)
+			as_node_set_data (n2, "CC0-1.0", -1,
+					  AS_NODE_INSERT_FLAG_NONE);
+		else if (g_strcmp0 (tmp, "CC-BY") == 0)
+			as_node_set_data (n2, "CC-BY-3.0", -1,
+					  AS_NODE_INSERT_FLAG_NONE);
+		else if (g_strcmp0 (tmp, "CC-BY-SA") == 0)
+			as_node_set_data (n2, "CC-BY-SA-3.0", -1,
+					  AS_NODE_INSERT_FLAG_NONE);
+		else if (g_strcmp0 (tmp, "GFDL") == 0)
+			as_node_set_data (n2, "GFDL-1.3", -1,
+					  AS_NODE_INSERT_FLAG_NONE);
+
+		/* ensure in SPDX format */
+		if (!as_utils_is_spdx_license_id (as_node_get_data (n2)))
+			as_node_set_comment (n2, "FIXME: convert to an SPDX ID", -1);
+	}
+
+	/* ensure this exists */
+	n2 = as_node_find (n, "project_license");
+	if (n2 == NULL) {
+		n2 = as_node_insert (n, "project_license", "XXX: Insert SPDX ID Here",
+				     AS_NODE_INSERT_FLAG_NONE, NULL);
+	} else {
+		/* ensure in SPDX format */
+		if (!as_utils_is_spdx_license_id (as_node_get_data (n2)))
+			as_node_set_comment (n2, "FIXME: convert to an SPDX ID", -1);
+	}
+
 	/* add <developer_name> */
 	n2 = as_node_find (n, "developer_name");
 	if (n2 == NULL) {
-		as_node_insert (n, "developer_name", "XXX: Insert Company or Developer Name",
-				AS_NODE_INSERT_FLAG_NONE, NULL);
+		n3 = as_node_insert (n, "developer_name", "XXX: Company Name",
+				     AS_NODE_INSERT_FLAG_NONE, NULL);
+		as_node_set_comment (n3, "FIXME: You can use a project or "
+				     "developer name if there's no company", -1);
+	}
+
+	/* add <updatecontact> */
+	n2 = as_node_find (n, "updatecontact");
+	if (n2 == NULL) {
+		n3 = as_node_insert (n, "updatecontact", "XXX: upstream_contact_at_email.com",
+				     AS_NODE_INSERT_FLAG_NONE, NULL);
+		as_node_set_comment (n3, "FIXME: this is optional, but recommended", -1);
 	}
 
 	/* convert from <screenshot>url</screenshot> to:
@@ -260,7 +308,6 @@ as_util_convert_appdata (GFile *file_input,
 	if (n != NULL) {
 		for (n2 = n->children; n2 != NULL; n2 = n2->next) {
 			tmp = as_node_get_data (n2);
-			g_print ("* %s\n", tmp);
 			n3 = as_node_insert (n2, "image", tmp,
 					     AS_NODE_INSERT_FLAG_NONE, NULL);
 			as_node_set_data (n3, tmp, -1, AS_NODE_INSERT_FLAG_NONE);
