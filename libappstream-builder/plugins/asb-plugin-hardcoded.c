@@ -200,8 +200,8 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	for (i = 0; filelist[i] != NULL; i++) {
 		if (g_str_has_prefix (filelist[i],
 				      "/usr/share/help/")) {
-			as_app_add_metadata (AS_APP (app),
-					     "X-Kudo-InstallsUserDocs", "", -1);
+			as_app_add_kudo_kind (AS_APP (app),
+					      AS_KUDO_KIND_USER_DOCS);
 			break;
 		}
 	}
@@ -210,8 +210,8 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	for (i = 0; filelist[i] != NULL; i++) {
 		if (g_str_has_prefix (filelist[i],
 				      "/usr/share/gnome-shell/search-providers/")) {
-			as_app_add_metadata (AS_APP (app),
-					     "X-Kudo-SearchProvider", "", -1);
+			as_app_add_kudo_kind (AS_APP (app),
+					      AS_KUDO_KIND_SEARCH_PROVIDER);
 			break;
 		}
 	}
@@ -219,14 +219,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	/* look for a modern toolkit */
 	deps = asb_package_get_deps (pkg);
 	for (i = 0; deps != NULL && deps[i] != NULL; i++) {
-		if (g_strcmp0 (deps[i], "libgtk-3.so.0") == 0) {
-			as_app_add_metadata (AS_APP (app),
-					     "X-Kudo-GTK3", "", -1);
-			break;
-		}
-		if (g_strcmp0 (deps[i], "libQt5Core.so.5") == 0) {
-			as_app_add_metadata (AS_APP (app),
-					     "X-Kudo-QT5", "", -1);
+		if (g_strcmp0 (deps[i], "libgtk-3.so.0") == 0 ||
+		    g_strcmp0 (deps[i], "libQt5Core.so.5") == 0) {
+			as_app_add_kudo_kind (AS_APP (app),
+					      AS_KUDO_KIND_MODERN_TOOLKIT);
 			break;
 		}
 	}

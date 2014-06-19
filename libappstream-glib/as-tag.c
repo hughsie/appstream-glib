@@ -170,6 +170,8 @@ as_tag_to_string (AsTag tag)
 		"provides",
 		"extends",
 		"developer_name",
+		"kudos",
+		"kudo",
 		NULL };
 	if (tag > AS_TAG_LAST)
 		tag = AS_TAG_LAST;

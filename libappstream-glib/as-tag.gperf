@@ -44,3 +44,5 @@ metadata_license, AS_TAG_METADATA_LICENSE
 provides, AS_TAG_PROVIDES
 extends, AS_TAG_EXTENDS
 developer_name, AS_TAG_DEVELOPER_NAME
+kudos, AS_TAG_KUDOS
+kudo, AS_TAG_KUDO

@@ -67,9 +67,9 @@ asb_plugin_nm_app (AsbApp *app, const gchar *filename, GError **error)
 	if (!ret)
 		return FALSE;
 	if (g_strstr_len (data_out, -1, "gtk_application_new") != NULL)
-		as_app_add_metadata (AS_APP (app), "X-Kudo-GTK3", "", -1);
+		as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_MODERN_TOOLKIT);
 	if (g_strstr_len (data_out, -1, "gtk_application_set_app_menu") != NULL)
-		as_app_add_metadata (AS_APP (app), "X-Kudo-UsesAppMenu", "", -1);
+		as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_APP_MENU);
 	return TRUE;
 }
 

@@ -37,6 +37,7 @@
 #include <libsoup/soup.h>
 
 #include "as-cleanup.h"
+#include "as-enums.h"
 #include "as-node.h"
 #include "as-resources.h"
 #include "as-utils.h"
@@ -359,22 +360,17 @@ as_utils_spdx_license_tokenize (const gchar *license)
  *
  * Returns: a static list of possible metadata keys
  *
- * Since: 0.1.4
+ * Since: 0.2.2
  **/
 const gchar * const *
 as_util_get_possible_kudos (void)
 {
-	static const gchar * const kudos[] = {
-		"X-Kudo-SearchProvider",
-		"X-Kudo-InstallsUserDocs",
-		"X-Kudo-UsesAppMenu",
-		"X-Kudo-GTK3",
-		"X-Kudo-QT5",
-		"X-Kudo-RecentRelease",
-		"X-Kudo-UsesNotifications",
-		"X-Kudo-Popular",
-		NULL };
-	return kudos;
+	guint i;
+	static const gchar *kudos[AS_KUDO_KIND_LAST + 1];
+	for (i = 0; i < AS_KUDO_KIND_LAST; i++)
+		kudos[i] = as_kudo_kind_to_string (i);
+	kudos[AS_KUDO_KIND_LAST] = NULL;
+	return (const gchar * const *) kudos;
 }
 
 /**

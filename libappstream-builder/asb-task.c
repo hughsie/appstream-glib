@@ -391,7 +391,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 				continue;
 			asb_package_log (priv->pkg,
 					 ASB_PACKAGE_LOG_LEVEL_INFO,
-					 "Application does not have %s",
+					 "Application does not have kudo '%s'",
 					 kudos[i]);
 		}
 

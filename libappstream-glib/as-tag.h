@@ -67,6 +67,8 @@
  * @AS_TAG_PROVIDES:			`provides`
  * @AS_TAG_EXTENDS:			`extends`
  * @AS_TAG_DEVELOPER_NAME:		`developer_name`
+ * @AS_TAG_KUDOS:			`kudos`
+ * @AS_TAG_KUDO:			`kudo`
  *
  * The tag type.
  **/
@@ -108,6 +110,8 @@ typedef enum {
 	AS_TAG_PROVIDES,		/* Since: 0.1.6 */
 	AS_TAG_EXTENDS,			/* Since: 0.1.7 */
 	AS_TAG_DEVELOPER_NAME,		/* Since: 0.1.8 */
+	AS_TAG_KUDOS,			/* Since: 0.2.1 */
+	AS_TAG_KUDO,			/* Since: 0.2.1 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;

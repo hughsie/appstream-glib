@@ -97,6 +97,28 @@ typedef enum {
 	AS_URL_KIND_LAST
 } AsUrlKind;
 
+/**
+ * AsKudoKind:
+ * @AS_KUDO_KIND_UNKNOWN:		Type invalid or not known
+ * @AS_KUDO_KIND_SEARCH_PROVIDER:	Installs a search provider
+ * @AS_KUDO_KIND_USER_DOCS:		Installs user documentation
+ * @AS_KUDO_KIND_APP_MENU		Uses the GNOME application menu
+ * @AS_KUDO_KIND_MODERN_TOOLKIT:	Uses a modern toolkit like GTK3 or QT5
+ * @AS_KUDO_KIND_NOTIFICATIONS:		Registers notifications with KDE or GNOME
+ *
+ * The kudo type.
+ **/
+typedef enum {
+	AS_KUDO_KIND_UNKNOWN,		/* Since: 0.2.2 */
+	AS_KUDO_KIND_SEARCH_PROVIDER,	/* Since: 0.2.2 */
+	AS_KUDO_KIND_USER_DOCS, 	/* Since: 0.2.2 */
+	AS_KUDO_KIND_APP_MENU,		/* Since: 0.2.2 */
+	AS_KUDO_KIND_MODERN_TOOLKIT,	/* Since: 0.2.2 */
+	AS_KUDO_KIND_NOTIFICATIONS,	/* Since: 0.2.2 */
+	/*< private >*/
+	AS_KUDO_KIND_LAST
+} AsKudoKind;
+
 const gchar	*as_id_kind_to_string		(AsIdKind	 id_kind);
 AsIdKind	 as_id_kind_from_string		(const gchar	*id_kind);
 
@@ -105,6 +127,9 @@ AsIconKind	 as_icon_kind_from_string	(const gchar	*icon_kind);
 
 const gchar	*as_url_kind_to_string		(AsUrlKind	 url_kind);
 AsUrlKind	 as_url_kind_from_string	(const gchar	*url_kind);
+
+const gchar	*as_kudo_kind_to_string		(AsKudoKind	 kudo_kind);
+AsKudoKind	 as_kudo_kind_from_string	(const gchar	*kudo_kind);
 
 G_END_DECLS
 

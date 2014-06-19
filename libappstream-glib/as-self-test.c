@@ -533,6 +533,12 @@ as_test_app_func (void)
 		"<architectures>"
 		"<arch>i386</arch>"
 		"</architectures>"
+		"<keywords>"
+		"<keyword>Installing</keyword>"
+		"</keywords>"
+		"<kudos>"
+		"<kudo>SearchProvider</kudo>"
+		"</kudos>"
 		"<mimetypes>"
 		"<mimetype>application/vnd.oasis.opendocument.spreadsheet</mimetype>"
 		"</mimetypes>"
@@ -559,7 +565,7 @@ as_test_app_func (void)
 		"<lang>pl</lang>"
 		"</languages>"
 		"<metadata>"
-		"<value key=\"X-Kudo-GTK3\"/>"
+		"<value key=\"SomethingRandom\"/>"
 		"</metadata>"
 		"</component>";
 	_cleanup_object_unref_ AsApp *app = NULL;
@@ -592,15 +598,20 @@ as_test_app_func (void)
 	g_assert_cmpint (as_app_get_screenshots(app)->len, ==, 2);
 	g_assert_cmpint (as_app_get_releases(app)->len, ==, 1);
 	g_assert_cmpint (as_app_get_provides(app)->len, ==, 1);
-	g_assert_cmpstr (as_app_get_metadata_item (app, "X-Kudo-GTK3"), ==, "");
+	g_assert_cmpint (as_app_get_kudos(app)->len, ==, 1);
+	g_assert_cmpstr (as_app_get_metadata_item (app, "SomethingRandom"), ==, "");
 	g_assert_cmpint (as_app_get_language (app, "en_GB"), ==, 90);
 	g_assert_cmpint (as_app_get_language (app, "pl"), ==, 0);
 	g_assert_cmpint (as_app_get_language (app, "xx_XX"), ==, -1);
+	g_assert (as_app_has_kudo (app, "SearchProvider"));
+	g_assert (as_app_has_kudo_kind (app, AS_KUDO_KIND_SEARCH_PROVIDER));
+	g_assert (!as_app_has_kudo (app, "MagicValue"));
+	g_assert (!as_app_has_kudo_kind (app, AS_KUDO_KIND_USER_DOCS));
 	as_node_unref (root);
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_app_node_insert (app, root, 0.7);
+	n = as_app_node_insert (app, root, 0.8);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);

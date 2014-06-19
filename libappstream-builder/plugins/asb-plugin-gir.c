@@ -90,8 +90,8 @@ asb_plugin_process_gir (AsbApp *app,
 		version = as_node_get_attribute (l, "version");
 		if (g_strcmp0 (name, "Gtk") == 0 &&
 		    g_strcmp0 (version, "3.0") == 0) {
-			as_app_add_metadata (AS_APP (app),
-					     "X-Kudo-GTK3", "", -1);
+			as_app_add_kudo_kind (AS_APP (app),
+					      AS_KUDO_KIND_MODERN_TOOLKIT);
 		}
 	}
 out:

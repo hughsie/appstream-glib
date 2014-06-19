@@ -187,3 +187,55 @@ as_url_kind_from_string (const gchar *url_kind)
 		return AS_URL_KIND_HELP;
 	return AS_URL_KIND_UNKNOWN;
 }
+
+/**
+ * as_kudo_kind_to_string:
+ * @kudo_kind: the @AsKudoKind.
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @kudo_kind
+ *
+ * Since: 0.2.2
+ **/
+const gchar *
+as_kudo_kind_to_string (AsKudoKind kudo_kind)
+{
+	if (kudo_kind == AS_KUDO_KIND_SEARCH_PROVIDER)
+		return "SearchProvider";
+	if (kudo_kind == AS_KUDO_KIND_USER_DOCS)
+		return "UserDocs";
+	if (kudo_kind == AS_KUDO_KIND_APP_MENU)
+		return "AppMenu";
+	if (kudo_kind == AS_KUDO_KIND_MODERN_TOOLKIT)
+		return "ModernToolkit";
+	if (kudo_kind == AS_KUDO_KIND_NOTIFICATIONS)
+		return "Notifications";
+	return NULL;
+}
+
+/**
+ * as_kudo_kind_from_string:
+ * @kudo_kind: the string.
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Returns: a #AsKudoKind or %AS_KUDO_KIND_UNKNOWN for unknown
+ *
+ * Since: 0.2.2
+ **/
+AsKudoKind
+as_kudo_kind_from_string (const gchar *kudo_kind)
+{
+	if (g_strcmp0 (kudo_kind, "SearchProvider") == 0)
+		return AS_KUDO_KIND_SEARCH_PROVIDER;
+	if (g_strcmp0 (kudo_kind, "UserDocs") == 0)
+		return AS_KUDO_KIND_USER_DOCS;
+	if (g_strcmp0 (kudo_kind, "AppMenu") == 0)
+		return AS_KUDO_KIND_APP_MENU;
+	if (g_strcmp0 (kudo_kind, "ModernToolkit") == 0)
+		return AS_KUDO_KIND_MODERN_TOOLKIT;
+	if (g_strcmp0 (kudo_kind, "Notifications") == 0)
+		return AS_KUDO_KIND_NOTIFICATIONS;
+	return AS_KUDO_KIND_UNKNOWN;
+}

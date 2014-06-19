@@ -217,6 +217,7 @@ GPtrArray	*as_app_get_categories		(AsApp		*app);
 GPtrArray	*as_app_get_compulsory_for_desktops (AsApp	*app);
 GPtrArray	*as_app_get_extends		(AsApp		*app);
 GPtrArray	*as_app_get_keywords		(AsApp		*app);
+GPtrArray	*as_app_get_kudos		(AsApp		*app);
 GPtrArray	*as_app_get_mimetypes		(AsApp		*app);
 GPtrArray	*as_app_get_pkgnames		(AsApp		*app);
 GPtrArray	*as_app_get_architectures	(AsApp		*app);
@@ -256,6 +257,10 @@ const gchar	*as_app_get_url_item		(AsApp		*app,
 						 AsUrlKind	 url_kind);
 gboolean	 as_app_has_category		(AsApp		*app,
 						 const gchar	*category);
+gboolean	 as_app_has_kudo		(AsApp		*app,
+						 const gchar	*kudo);
+gboolean	 as_app_has_kudo_kind		(AsApp		*app,
+						 AsKudoKind	 kudo);
 
 /* setters */
 void		 as_app_set_id_full		(AsApp		*app,
@@ -315,6 +320,11 @@ void		 as_app_add_category		(AsApp		*app,
 void		 as_app_add_keyword		(AsApp		*app,
 						 const gchar	*keyword,
 						 gssize		 keyword_len);
+void		 as_app_add_kudo		(AsApp		*app,
+						 const gchar	*kudo,
+						 gssize		 kudo_len);
+void		 as_app_add_kudo_kind		(AsApp		*app,
+						 AsKudoKind	 kudo_kind);
 void		 as_app_add_mimetype		(AsApp		*app,
 						 const gchar	*mimetype,
 						 gssize		 mimetype_len);
