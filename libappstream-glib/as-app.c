@@ -1897,6 +1897,10 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	const gchar *tmp;
 	guint i;
 
+	/* no addons allowed here */
+	if (api_version < 0.7 && priv->id_kind == AS_ID_KIND_ADDON)
+		return NULL;
+
 	/* <component> or <application> */
 	if (api_version >= 0.6) {
 		node_app = as_node_insert (parent, "component", NULL, 0, NULL);
