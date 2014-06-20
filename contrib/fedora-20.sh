@@ -1,5 +1,5 @@
 time client/appstream-builder \
-	--api-version=0.41 \
+	--api-version=0.3 \
 	--log-dir=../createrepo_as_logs \
 	--temp-dir=./contrib/tmp \
 	--cache-dir=./contrib/cache \

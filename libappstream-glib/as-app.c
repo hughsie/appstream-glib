@@ -1925,7 +1925,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 		g_snprintf (prio, sizeof (prio), "%i", priv->priority);
 		if (api_version >= 0.61) {
 			as_node_add_attribute (node_app, "priority", prio, -1);
-		} else {
+		} else if (api_version >= 0.4) {
 			as_node_insert (node_app, "priority", prio, 0, NULL);
 		}
 	}
@@ -2011,7 +2011,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	}
 
 	/* <mimetypes> */
-	if (priv->mimetypes->len > 0) {
+	if (priv->mimetypes->len > 0 && api_version >= 0.4) {
 		node_tmp = as_node_insert (node_app, "mimetypes", NULL, 0, NULL);
 		for (i = 0; i < priv->mimetypes->len; i++) {
 			tmp = g_ptr_array_index (priv->mimetypes, i);
@@ -2024,7 +2024,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 		if (api_version >= 0.4) {
 			as_node_insert (node_app, "project_license",
 					priv->project_license, 0, NULL);
-		} else {
+		} else if (api_version >= 0.31) { {
 			as_node_insert (node_app, "licence",
 					priv->project_license, 0, NULL);
 		}
