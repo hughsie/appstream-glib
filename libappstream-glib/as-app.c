@@ -2024,7 +2024,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 		if (api_version >= 0.4) {
 			as_node_insert (node_app, "project_license",
 					priv->project_license, 0, NULL);
-		} else if (api_version >= 0.31) { {
+		} else if (api_version >= 0.31) {
 			as_node_insert (node_app, "licence",
 					priv->project_license, 0, NULL);
 		}
