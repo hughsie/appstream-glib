@@ -2093,7 +2093,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 		as_app_node_insert_languages (app, node_app);
 
 	/* <metadata> */
-	if (g_hash_table_size (priv->metadata) > 0) {
+	if (g_hash_table_size (priv->metadata) > 0 && api_version >= 0.4) {
 		node_tmp = as_node_insert (node_app, "metadata", NULL, 0, NULL);
 		as_node_insert_hash (node_tmp, "value", "key", priv->metadata, FALSE);
 	}
