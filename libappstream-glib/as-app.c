@@ -1896,6 +1896,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	GNode *node_tmp;
 	const gchar *tmp;
 	guint i;
+	static gint old_prio_value = 0;
 
 	/* no addons allowed here */
 	if (api_version < 0.7 && priv->id_kind == AS_ID_KIND_ADDON)
@@ -1928,10 +1929,20 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 		gchar prio[6];
 		g_snprintf (prio, sizeof (prio), "%i", priv->priority);
 		if (api_version >= 0.61) {
-			as_node_add_attribute (node_app, "priority", prio, -1);
-		} else if (api_version >= 0.4) {
-			as_node_insert (node_app, "priority", prio, 0, NULL);
+			as_node_add_attribute (node_app,
+					       "priority", prio, -1);
 		}
+	}
+
+	/* this looks crazy, but priority was initially implemented on
+	 * the <applications> node and was designed to be per-file */
+	if (api_version <= 0.5 &&
+	    api_version > 0.3 &&
+	    old_prio_value != priv->priority) {
+		gchar prio[6];
+		g_snprintf (prio, sizeof (prio), "%i", priv->priority);
+		as_node_insert (parent, "priority", prio, 0, NULL);
+		old_prio_value = priv->priority;
 	}
 
 	/* <pkgname> */
