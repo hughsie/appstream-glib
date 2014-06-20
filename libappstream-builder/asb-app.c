@@ -105,6 +105,7 @@ asb_app_to_xml (AsbApp *app)
 	_cleanup_object_unref_ AsStore *store;
 
 	store = as_store_new ();
+	as_store_set_api_version (store, 1.0f);
 	as_store_add_app (store, AS_APP (app));
 	str = as_store_to_xml (store,
 			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
