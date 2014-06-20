@@ -221,7 +221,7 @@ as_provide_set_kind (AsProvide *provide, AsProvideKind kind)
  *
  * Inserts the provide into the DOM tree.
  *
- * Returns: (transfer full): A populated #GNode
+ * Returns: (transfer none): A populated #GNode
  *
  * Since: 0.1.6
  **/

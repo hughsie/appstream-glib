@@ -610,7 +610,7 @@ as_node_passthrough_cb (GMarkupParseContext *context,
  *
  * Parses XML data into a DOM tree.
  *
- * Returns: (transfer full): A populated #GNode tree
+ * Returns: (transfer none): A populated #GNode tree
  *
  * Since: 0.1.0
  **/
@@ -709,7 +709,7 @@ as_node_to_file (const GNode *root,
  *
  * Parses an XML file into a DOM tree.
  *
- * Returns: (transfer full): A populated #GNode tree
+ * Returns: (transfer none): A populated #GNode tree
  *
  * Since: 0.1.0
  **/
@@ -1212,7 +1212,7 @@ as_node_find (GNode *root, const gchar *path)
  *
  * Inserts a node into the DOM.
  *
- * Returns: (transfer full): A populated #GNode
+ * Returns: (transfer none): A populated #GNode
  *
  * Since: 0.1.0
  **/

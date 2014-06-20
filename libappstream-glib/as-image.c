@@ -370,7 +370,7 @@ as_image_set_pixbuf (AsImage *image, GdkPixbuf *pixbuf)
  *
  * Inserts the image into the DOM tree.
  *
- * Returns: (transfer full): A populated #GNode
+ * Returns: (transfer none): A populated #GNode
  *
  * Since: 0.1.0
  **/

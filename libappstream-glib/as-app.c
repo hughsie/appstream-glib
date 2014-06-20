@@ -1882,7 +1882,7 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
  *
  * Inserts the application into the DOM tree.
  *
- * Returns: (transfer full): A populated #GNode
+ * Returns: (transfer none): A populated #GNode, or %NULL
  *
  * Since: 0.1.0
  **/

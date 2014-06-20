@@ -272,7 +272,7 @@ as_screenshot_set_caption (AsScreenshot *screenshot,
  *
  * Inserts the screenshot into the DOM tree.
  *
- * Returns: (transfer full): A populated #GNode
+ * Returns: (transfer none): A populated #GNode
  *
  * Since: 0.1.1
  **/

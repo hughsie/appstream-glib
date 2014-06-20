@@ -219,7 +219,7 @@ as_release_set_description (AsRelease *release,
  *
  * Inserts the release into the DOM tree.
  *
- * Returns: (transfer full): A populated #GNode
+ * Returns: (transfer none): A populated #GNode
  *
  * Since: 0.1.1
  **/
