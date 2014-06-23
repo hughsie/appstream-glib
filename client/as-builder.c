@@ -31,6 +31,31 @@
 #include "asb-utils.h"
 
 /**
+ * as_builder_search_path:
+ **/
+static gboolean
+as_builder_search_path (GPtrArray *array, const gchar *path, GError **error)
+{
+	const gchar *filename;
+	_cleanup_dir_close_ GDir *dir = NULL;
+
+	dir = g_dir_open (path, 0, error);
+	if (dir == NULL)
+		return FALSE;
+	while ((filename = g_dir_read_name (dir)) != NULL) {
+		_cleanup_free_ gchar *tmp = NULL;
+		tmp = g_build_filename (path, filename, NULL);
+		if (g_file_test (tmp, G_FILE_TEST_IS_DIR)) {
+			if (!as_builder_search_path (array, tmp, error))
+				return FALSE;
+		} else {
+			g_ptr_array_add (array, g_strdup (tmp));
+		}
+	}
+	return TRUE;
+}
+
+/**
  * main:
  **/
 int
@@ -286,16 +311,10 @@ main (int argc, char **argv)
 	/* scan each package */
 	packages = g_ptr_array_new_with_free_func (g_free);
 	if (argc == 1) {
-		dir = g_dir_open (packages_dir, 0, &error);
-		if (dir == NULL) {
+		if (!as_builder_search_path (packages, packages_dir, &error)) {
 			/* TRANSLATORS: error message */
 			g_warning (_("failed to open packages: %s"), error->message);
 			goto out;
-		}
-		while ((filename = g_dir_read_name (dir)) != NULL) {
-			tmp = g_build_filename (packages_dir,
-						filename, NULL);
-			g_ptr_array_add (packages, tmp);
 		}
 	} else {
 		for (i = 1; i < (guint) argc; i++)
