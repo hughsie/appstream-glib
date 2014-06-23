@@ -305,6 +305,8 @@ main (int argc, char **argv)
 	g_print (_("Scanning packages...\n"));
 	timer = g_timer_new ();
 	for (i = 0; i < packages->len; i++) {
+		_cleanup_error_free_ GError *error_local = NULL;
+
 		filename = g_ptr_array_index (packages, i);
 
 		/* anything in the cache */
@@ -316,11 +318,8 @@ main (int argc, char **argv)
 		}
 
 		/* add to list */
-		ret = asb_context_add_filename (ctx, filename, &error);
-		if (!ret) {
-			g_warning ("%s", error->message);
-			goto out;
-		}
+		if (!asb_context_add_filename (ctx, filename, &error_local))
+			continue;
 		if (g_timer_elapsed (timer, NULL) > 3.f) {
 			/* TRANSLATORS: information message */
 			g_print (_("Parsed %i/%i files...\n"),
