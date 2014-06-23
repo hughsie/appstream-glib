@@ -1,8 +1,7 @@
 time client/appstream-builder						\
 	--api-version=0.3						\
-	--use-package-cache						\
 	--log-dir=../createrepo_as_logs					\
-	--temp-dir=./contrib/tmp					\
+	--temp-dir=./tmp/fedora-20					\
 	--cache-dir=./contrib/cache					\
 	--packages-dir=../fedora-appstream/fedora-20/packages/		\
 	--extra-appstream-dir=../fedora-appstream/appstream-extra	\

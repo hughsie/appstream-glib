@@ -68,7 +68,6 @@ main (int argc, char **argv)
 	gboolean extra_checks = FALSE;
 	gboolean no_net = FALSE;
 	gboolean ret;
-	gboolean use_package_cache = FALSE;
 	gboolean verbose = FALSE;
 	gchar *tmp;
 	gdouble api_version = 0.0f;
@@ -97,9 +96,6 @@ main (int argc, char **argv)
 		{ "no-net", '\0', 0, G_OPTION_ARG_NONE, &no_net,
 			/* TRANSLATORS: command line option */
 			_("Do not use the network to download screenshots"), NULL },
-		{ "use-package-cache", '\0', 0, G_OPTION_ARG_NONE, &use_package_cache,
-			/* TRANSLATORS: command line option */
-			_("Do not delete the decompressed package cache"), NULL },
 		{ "extra-checks", '\0', 0, G_OPTION_ARG_NONE, &extra_checks,
 			/* TRANSLATORS: command line option */
 			_("Perform extra checks on the source metadata"), NULL },
@@ -200,20 +196,11 @@ main (int argc, char **argv)
 	setlocale (LC_ALL, "");
 
 	/* set up state */
-	if (use_package_cache) {
-		rc = g_mkdir_with_parents (temp_dir, 0700);
-		if (rc != 0) {
-			/* TRANSLATORS: error message */
-			g_warning (_("failed to create temp dir"));
-			goto out;
-		}
-	} else {
-		ret = asb_utils_ensure_exists_and_empty (temp_dir, &error);
-		if (!ret) {
-			/* TRANSLATORS: error message */
-			g_warning (_("failed to create temp dir: %s"), error->message);
-			goto out;
-		}
+	ret = asb_utils_ensure_exists_and_empty (temp_dir, &error);
+	if (!ret) {
+		/* TRANSLATORS: error message */
+		g_warning (_("failed to create temp dir: %s"), error->message);
+		goto out;
 	}
 	tmp = g_build_filename (temp_dir, "icons", NULL);
 	if (old_metadata != NULL) {
@@ -289,7 +276,6 @@ main (int argc, char **argv)
 	asb_context_set_api_version (ctx, api_version);
 	asb_context_set_add_cache_id (ctx, add_cache_id);
 	asb_context_set_extra_checks (ctx, extra_checks);
-	asb_context_set_use_package_cache (ctx, use_package_cache);
 	asb_context_set_old_metadata (ctx, old_metadata);
 	asb_context_set_extra_appstream (ctx, extra_appstream);
 	asb_context_set_extra_appdata (ctx, extra_appdata);

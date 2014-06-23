@@ -60,7 +60,6 @@ struct _AsbContextPrivate
 	gboolean		 add_cache_id;
 	gboolean		 extra_checks;
 	gboolean		 no_net;
-	gboolean		 use_package_cache;
 	guint			 max_threads;
 	gdouble			 api_version;
 	gchar			*old_metadata;
@@ -142,22 +141,6 @@ asb_context_set_extra_checks (AsbContext *ctx, gboolean extra_checks)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	priv->extra_checks = extra_checks;
-}
-
-/**
- * asb_context_set_use_package_cache:
- * @ctx: A #AsbContext
- * @use_package_cache: boolean
- *
- * Sets if the package cache should be used.
- *
- * Since: 0.1.0
- **/
-void
-asb_context_set_use_package_cache (AsbContext *ctx, gboolean use_package_cache)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->use_package_cache = use_package_cache;
 }
 
 /**
@@ -356,23 +339,6 @@ asb_context_get_extra_package (AsbContext *ctx, const gchar *pkgname)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	return asb_glob_value_search (priv->extra_pkgs, pkgname);
-}
-
-/**
- * asb_context_get_use_package_cache:
- * @ctx: A #AsbContext
- *
- * Gets if the package cache should be used.
- *
- * Returns: boolean
- *
- * Since: 0.1.0
- **/
-gboolean
-asb_context_get_use_package_cache (AsbContext *ctx)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	return priv->use_package_cache;
 }
 
 /**

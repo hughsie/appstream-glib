@@ -221,14 +221,12 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		goto out;
 
 	/* delete old tree if it exists */
-	if (!asb_context_get_use_package_cache (priv->ctx)) {
-		ret = asb_utils_ensure_exists_and_empty (priv->tmpdir, &error);
-		if (!ret) {
-			asb_package_log (priv->pkg,
-					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "Failed to clear: %s", error->message);
-			goto out;
-		}
+	ret = asb_utils_ensure_exists_and_empty (priv->tmpdir, &error);
+	if (!ret) {
+		asb_package_log (priv->pkg,
+				 ASB_PACKAGE_LOG_LEVEL_WARNING,
+				 "Failed to clear: %s", error->message);
+		goto out;
 	}
 
 	/* explode tree */
@@ -236,25 +234,22 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 			 "Exploding tree for %s",
 			 asb_package_get_name (priv->pkg));
-	if (!asb_context_get_use_package_cache (priv->ctx) ||
-	    !g_file_test (priv->tmpdir, G_FILE_TEST_EXISTS)) {
-		ret = asb_package_explode (priv->pkg,
-					   priv->tmpdir,
-					   asb_context_get_file_globs (priv->ctx),
-					   &error);
-		if (!ret) {
-			asb_package_log (priv->pkg,
-					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "Failed to explode: %s", error->message);
-			g_clear_error (&error);
-			goto skip;
-		}
-
-		/* add extra packages */
-		ret = asb_task_explode_extra_packages (task);
-		if (!ret)
-			goto skip;
+	ret = asb_package_explode (priv->pkg,
+				   priv->tmpdir,
+				   asb_context_get_file_globs (priv->ctx),
+				   &error);
+	if (!ret) {
+		asb_package_log (priv->pkg,
+				 ASB_PACKAGE_LOG_LEVEL_WARNING,
+				 "Failed to explode: %s", error->message);
+		g_clear_error (&error);
+		goto skip;
 	}
+
+	/* add extra packages */
+	ret = asb_task_explode_extra_packages (task);
+	if (!ret)
+		goto skip;
 
 	/* run plugins */
 	for (i = 0; i < priv->plugins_to_run->len; i++) {
@@ -434,14 +429,12 @@ skip:
 	}
 
 	/* delete tree */
-	if (!asb_context_get_use_package_cache (priv->ctx)) {
-		if (!asb_utils_rmtree (priv->tmpdir, &error)) {
-			asb_package_log (priv->pkg,
-					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "Failed to delete tree: %s",
-					 error->message);
-			goto out;
-		}
+	if (!asb_utils_rmtree (priv->tmpdir, &error)) {
+		asb_package_log (priv->pkg,
+				 ASB_PACKAGE_LOG_LEVEL_WARNING,
+				 "Failed to delete tree: %s",
+				 error->message);
+		goto out;
 	}
 
 	/* write log */

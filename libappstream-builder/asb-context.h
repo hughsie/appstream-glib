@@ -64,8 +64,6 @@ void		 asb_context_set_add_cache_id	(AsbContext	*ctx,
 						 gboolean	 add_cache_id);
 void		 asb_context_set_extra_checks	(AsbContext	*ctx,
 						 gboolean	 extra_checks);
-void		 asb_context_set_use_package_cache (AsbContext	*ctx,
-						 gboolean	 use_package_cache);
 void		 asb_context_set_max_threads	(AsbContext	*ctx,
 						 guint		 max_threads);
 void		 asb_context_set_old_metadata	(AsbContext	*ctx,
@@ -91,7 +89,6 @@ void		 asb_context_set_basename	(AsbContext	*ctx,
 const gchar	*asb_context_get_temp_dir	(AsbContext	*ctx);
 gboolean	 asb_context_get_add_cache_id	(AsbContext	*ctx);
 gboolean	 asb_context_get_extra_checks	(AsbContext	*ctx);
-gboolean	 asb_context_get_use_package_cache (AsbContext	*ctx);
 gdouble		 asb_context_get_api_version	(AsbContext	*ctx);
 
 gboolean	 asb_context_setup		(AsbContext	*ctx,
