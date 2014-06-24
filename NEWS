@@ -1,3 +1,24 @@
+Version 0.2.1
+~~~~~~~~~~~~~
+Released: 2014-06-24
+
+New Features:
+ - Add AS_NODE_INSERT_FLAG_MARK_TRANSLATABLE (Richard Hughes)
+ - Add AS_NODE_TO_XML_FLAG_SORT_CHILDREN (Richard Hughes)
+ - Add an 'appstream-util upgrade' command to convert version < 0.6 metadata (Richard Hughes)
+ - Add as_node_find_with_attribute() (Richard Hughes)
+
+Bugfixes:
+ - Add packages recursively when using appstream-builder --packages-dir (Richard Hughes)
+ - Allow empty URL sections (Richard Hughes)
+ - Always use the latest version of AppStream for logs (Richard Hughes)
+ - Do not abort the build if a non-package file is found while building (Richard Hughes)
+ - Do not include <metadata> for pre-0.4 metadata (Richard Hughes)
+ - Do not ship Addons in metadata version less than 0.7 (Richard Hughes)
+ - Do not write X-Kudo-RecentRelease for new versions of the metadata (Richard Hughes)
+ - Fix the xmldir in the APPSTREAM_XML_RULES m4 helper (Richard Hughes)
+ - Include a newline before XML comments to help them stand out (Richard Hughes)
+
 Version 0.2.0
 ~~~~~~~~~~~~~
 Released: 2014-06-19

@@ -1,6 +1,6 @@
 # appstream-xml.m4
 #
-# serial 5
+# serial 6
 
 dnl APPSTREAM_XML
 dnl Installs and validates AppData XML files.
