@@ -67,7 +67,8 @@ endif
 libappstream_builder_la_LIBADD =				\
 	$(AS_GLIB_LIBS)						\
 	$(RPM_LIBS)						\
-	$(GLIB_LIBS)
+	$(GLIB_LIBS)						\
+	$(LIBARCHIVE_LIBS)
 
 libappstream_builder_la_LDFLAGS =				\
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)	\
