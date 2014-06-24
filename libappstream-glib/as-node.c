@@ -364,6 +364,10 @@ as_node_to_xml_string (GString *xml,
 	/* comment */
 	comment = as_node_get_comment (n);
 	if (comment != NULL) {
+		/* do not put additional spacing for the root node */
+		if (depth_offset < g_node_depth ((GNode *) n) &&
+		    (flags & AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE) > 0)
+			g_string_append (xml, "\n");
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_INDENT) > 0)
 			as_node_add_padding (xml, depth - depth_offset);
 		g_string_append_printf (xml, "<!-- %s -->", comment);
