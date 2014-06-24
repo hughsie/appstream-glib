@@ -844,6 +844,22 @@ as_test_node_reflow_text_func (void)
 }
 
 static void
+as_test_node_sort_func (void)
+{
+	_cleanup_error_free_ GError *error = NULL;
+	_cleanup_node_unref_ GNode *root = NULL;
+	_cleanup_string_free_ GString *str;
+
+	root = as_node_from_xml ("<d>ddd</d><c>ccc</c><b>bbb</b><a>aaa</a>", -1, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+
+	/* verify that the tags are sorted */
+	str = as_node_to_xml (root, AS_NODE_TO_XML_FLAG_SORT_CHILDREN);
+	g_assert_cmpstr (str->str, ==, "<a>aaa</a><b>bbb</b><c>ccc</c><d>ddd</d>");
+}
+
+static void
 as_test_node_func (void)
 {
 	GNode *n1;
@@ -1720,6 +1736,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{localized-wrap}", as_test_node_localized_wrap_func);
 	g_test_add_func ("/AppStream/node{localized-wrap2}", as_test_node_localized_wrap2_func);
 	g_test_add_func ("/AppStream/node{intltool}", as_test_node_intltool_func);
+	g_test_add_func ("/AppStream/node{sort}", as_test_node_sort_func);
 	g_test_add_func ("/AppStream/utils", as_test_utils_func);
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);

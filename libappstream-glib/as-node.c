@@ -317,6 +317,35 @@ as_node_data_set_name (AsNodeData *data, const gchar *name, AsNodeInsertFlags fl
 }
 
 /**
+ * as_node_sort_children:
+ **/
+static void
+as_node_sort_children (GNode *first)
+{
+	AsNodeData *d1;
+	AsNodeData *d2;
+	GNode *child;
+	gpointer tmp;
+
+	d1 = (AsNodeData *) first->data;
+	for (child = first->next; child != NULL; child = child->next) {
+		d2 = (AsNodeData *) child->data;
+		if (g_strcmp0 (as_tag_data_get_name (d1),
+			       as_tag_data_get_name (d2)) > 0) {
+			tmp = child->data;
+			child->data = first->data;
+			first->data = tmp;
+			tmp = child->children;
+			child->children = first->children;
+			first->children = tmp;
+			as_node_sort_children (first);
+		}
+	}
+	if (first->next != NULL)
+		as_node_sort_children (first->next);
+}
+
+/**
  * as_node_to_xml_string:
  **/
 static void
@@ -344,6 +373,8 @@ as_node_to_xml_string (GString *xml,
 
 	/* root node */
 	if (data == NULL || as_node_get_tag (n) == AS_TAG_LAST) {
+		if ((flags & AS_NODE_TO_XML_FLAG_SORT_CHILDREN) > 0)
+			as_node_sort_children (n->children);
 		for (c = n->children; c != NULL; c = c->next)
 			as_node_to_xml_string (xml, depth_offset, c, flags);
 
@@ -378,7 +409,8 @@ as_node_to_xml_string (GString *xml,
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE) > 0)
 			g_string_append (xml, "\n");
 		g_free (attrs);
-
+		if ((flags & AS_NODE_TO_XML_FLAG_SORT_CHILDREN) > 0)
+			as_node_sort_children (n->children);
 		for (c = n->children; c != NULL; c = c->next)
 			as_node_to_xml_string (xml, depth_offset, c, flags);
 
