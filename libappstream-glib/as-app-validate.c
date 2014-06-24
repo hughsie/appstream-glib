@@ -1001,6 +1001,8 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					     "<url> type invalid");
 		}
 		tmp = g_hash_table_lookup (urls, key);
+		if (tmp == NULL || tmp[0] == '\0')
+			continue;
 		if (!g_str_has_prefix (tmp, "http://") &&
 		    !g_str_has_prefix (tmp, "https://")) {
 			ai_app_validate_add (probs,
