@@ -1148,6 +1148,11 @@ as_test_node_localized_wrap2_func (void)
 		"<p>Hi</p><ul><li>First</li><li>Second</li></ul>");
 	g_assert_cmpstr (g_hash_table_lookup (hash, "pl"), ==,
 		"<p>Czesc</p><ul><li>Pierwszy</li><li>Secondski</li></ul>");
+
+	/* find the Polish first paragraph */
+	n1 = as_node_find_with_attribute (root, "description/p", "xml:lang", "pl");
+	g_assert (n1 != NULL);
+	g_assert_cmpstr (as_node_get_data (n1), ==, "Czesc");
 }
 
 static void

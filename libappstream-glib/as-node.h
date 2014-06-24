@@ -163,6 +163,11 @@ gboolean	 as_node_to_file		(const GNode	*root,
 GNode		*as_node_find			(GNode		*root,
 						 const gchar	*path)
 						 G_GNUC_WARN_UNUSED_RESULT;
+GNode		*as_node_find_with_attribute	(GNode		*root,
+						 const gchar	*path,
+						 const gchar	*attr_key,
+						 const gchar	*attr_value)
+						 G_GNUC_WARN_UNUSED_RESULT;
 
 GNode		*as_node_insert			(GNode		*parent,
 						 const gchar	*name,

@@ -823,7 +823,8 @@ as_node_from_file (GFile *file,
  * as_node_get_child_node:
  **/
 static GNode *
-as_node_get_child_node (const GNode *root, const gchar *name)
+as_node_get_child_node (const GNode *root, const gchar *name,
+			const gchar *attr_key, const gchar *attr_value)
 {
 	AsNodeData *data;
 	GNode *node;
@@ -837,8 +838,15 @@ as_node_get_child_node (const GNode *root, const gchar *name)
 		data = node->data;
 		if (data == NULL)
 			return NULL;
-		if (g_strcmp0 (as_tag_data_get_name (data), name) == 0)
+		if (g_strcmp0 (as_tag_data_get_name (data), name) == 0) {
+			if (attr_key != NULL) {
+				if (g_strcmp0 (as_node_get_attribute (node, attr_key),
+					       attr_value) != 0) {
+					continue;
+				}
+			}
 			return node;
+		}
 	}
 	return NULL;
 }
@@ -1200,9 +1208,49 @@ as_node_find (GNode *root, const gchar *path)
 
 	split = g_strsplit (path, "/", -1);
 	for (i = 0; split[i] != NULL; i++) {
-		node = as_node_get_child_node (node, split[i]);
+		node = as_node_get_child_node (node, split[i], NULL, NULL);
 		if (node == NULL)
 			return NULL;
+	}
+	return node;
+}
+
+/**
+ * as_node_find_with_attribute: (skip)
+ * @root: a root node, or %NULL
+ * @path: a path in the DOM, e.g. "html/body"
+ * @attr_key: the attribute key
+ * @attr_value: the attribute value
+ *
+ * Gets a node from the DOM tree with a specified attribute.
+ *
+ * Return value: A #GNode, or %NULL if not found
+ *
+ * Since: 0.1.0
+ **/
+GNode *
+as_node_find_with_attribute (GNode *root, const gchar *path,
+			     const gchar *attr_key, const gchar *attr_value)
+{
+	GNode *node = root;
+	guint i;
+	_cleanup_strv_free_ gchar **split = NULL;
+
+	g_return_val_if_fail (path != NULL, NULL);
+
+	split = g_strsplit (path, "/", -1);
+	for (i = 0; split[i] != NULL; i++) {
+		/* only check the last element */
+		if (split[i + 1] == NULL) {
+			node = as_node_get_child_node (node, split[i],
+						       attr_key, attr_value);
+			if (node == NULL)
+				return NULL;
+		} else {
+			node = as_node_get_child_node (node, split[i], NULL, NULL);
+			if (node == NULL)
+				return NULL;
+		}
 	}
 	return node;
 }
@@ -1402,7 +1450,7 @@ as_node_get_localized (const GNode *node, const gchar *key)
 	GNode *tmp;
 
 	/* does it exist? */
-	tmp = as_node_get_child_node (node, key);
+	tmp = as_node_get_child_node (node, key, NULL, NULL);
 	if (tmp == NULL)
 		return NULL;
 	data_unlocalized = as_node_get_data (tmp);
