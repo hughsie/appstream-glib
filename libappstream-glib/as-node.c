@@ -303,12 +303,17 @@ as_tag_data_get_name (AsNodeData *data)
  * as_node_data_set_name:
  **/
 static void
-as_node_data_set_name (AsNodeData *data, const gchar *name)
+as_node_data_set_name (AsNodeData *data, const gchar *name, AsNodeInsertFlags flags)
 {
-	/* only store the name if the tag is not recognised */
-	data->tag = as_tag_from_string (name);
-	if (data->tag == AS_TAG_UNKNOWN)
-		data->name = g_strdup (name);
+	if ((flags & AS_NODE_INSERT_FLAG_MARK_TRANSLATABLE) == 0) {
+		/* only store the name if the tag is not recognised */
+		data->tag = as_tag_from_string (name);
+		if (data->tag == AS_TAG_UNKNOWN)
+			data->name = g_strdup (name);
+	} else {
+		/* always store the translated tag */
+		data->name = g_strdup_printf ("_%s", name);
+	}
 }
 
 /**
@@ -494,7 +499,7 @@ as_node_start_element_cb (GMarkupParseContext *context,
 
 	/* create the new node data */
 	data = g_slice_new0 (AsNodeData);
-	as_node_data_set_name (data, element_name);
+	as_node_data_set_name (data, element_name, AS_NODE_INSERT_FLAG_NONE);
 	for (i = 0; attribute_names[i] != NULL; i++) {
 		as_node_attr_insert (data,
 				     attribute_names[i],
@@ -882,7 +887,7 @@ as_node_set_name (GNode *node, const gchar *name)
 	/* overwrite */
 	g_free (data->name);
 	data->name = NULL;
-	as_node_data_set_name (data, name);
+	as_node_data_set_name (data, name, AS_NODE_INSERT_FLAG_NONE);
 }
 
 /**
@@ -1230,7 +1235,7 @@ as_node_insert (GNode *parent,
 	va_list args;
 
 	data = g_slice_new0 (AsNodeData);
-	as_node_data_set_name (data, name);
+	as_node_data_set_name (data, name, insert_flags);
 	if (cdata != NULL)
 		data->cdata = g_strdup (cdata);
 	data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
@@ -1289,7 +1294,7 @@ as_node_insert_localized (GNode *parent,
 	if (value_c == NULL)
 		return;
 	data = g_slice_new0 (AsNodeData);
-	as_node_data_set_name (data, name);
+	as_node_data_set_name (data, name, insert_flags);
 	if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
 		data->cdata = as_markup_convert_simple (value_c, -1, NULL);
 		data->cdata_escaped = FALSE;
@@ -1316,7 +1321,7 @@ as_node_insert_localized (GNode *parent,
 			continue;
 		data = g_slice_new0 (AsNodeData);
 		as_node_attr_insert (data, "xml:lang", key);
-		as_node_data_set_name (data, name);
+		as_node_data_set_name (data, name, insert_flags);
 		if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
 			data->cdata = as_markup_convert_simple (value, -1, NULL);
 			data->cdata_escaped = FALSE;
@@ -1360,7 +1365,7 @@ as_node_insert_hash (GNode *parent,
 		key = l->data;
 		value = g_hash_table_lookup (hash, key);
 		data = g_slice_new0 (AsNodeData);
-		as_node_data_set_name (data, name);
+		as_node_data_set_name (data, name, insert_flags);
 		data->cdata = g_strdup (!swapped ? value : key);
 		data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 		if (!swapped) {

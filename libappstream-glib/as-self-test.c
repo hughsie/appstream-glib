@@ -1096,6 +1096,23 @@ as_test_node_localized_wrap_func (void)
 }
 
 static void
+as_test_node_intltool_func (void)
+{
+	GNode *n;
+	_cleanup_node_unref_ GNode *root;
+	_cleanup_string_free_ GString *str;
+
+	root = as_node_new ();
+	n = as_node_insert (root, "description", NULL, AS_NODE_INSERT_FLAG_NONE, NULL);
+	as_node_insert (n, "name", "Hello",
+			AS_NODE_INSERT_FLAG_MARK_TRANSLATABLE, NULL);
+
+	/* verify that the tags get prefixed with '_' */
+	str = as_node_to_xml (root, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert_cmpstr (str->str, ==, "<description><_name>Hello</_name></description>");
+}
+
+static void
 as_test_node_localized_wrap2_func (void)
 {
 	GError *error = NULL;
@@ -1697,6 +1714,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{localized}", as_test_node_localized_func);
 	g_test_add_func ("/AppStream/node{localized-wrap}", as_test_node_localized_wrap_func);
 	g_test_add_func ("/AppStream/node{localized-wrap2}", as_test_node_localized_wrap2_func);
+	g_test_add_func ("/AppStream/node{intltool}", as_test_node_intltool_func);
 	g_test_add_func ("/AppStream/utils", as_test_utils_func);
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);

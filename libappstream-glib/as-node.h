@@ -77,6 +77,7 @@ typedef enum {
  * @AS_NODE_INSERT_FLAG_SWAPPED:		The name and key should be swapped
  * @AS_NODE_INSERT_FLAG_NO_MARKUP:		Preformat the 'description' markup
  * @AS_NODE_INSERT_FLAG_DEDUPE_LANG:		No xml:lang keys where text matches 'C'
+ * @AS_NODE_INSERT_FLAG_MARK_TRANSLATABLE:	Mark the tag name as translatable
  *
  * The flags to use when inserting a node.
  **/
@@ -86,6 +87,7 @@ typedef enum {
 	AS_NODE_INSERT_FLAG_SWAPPED		= 2,	/* Since: 0.1.0 */
 	AS_NODE_INSERT_FLAG_NO_MARKUP		= 4,	/* Since: 0.1.1 */
 	AS_NODE_INSERT_FLAG_DEDUPE_LANG		= 8,	/* Since: 0.1.4 */
+	AS_NODE_INSERT_FLAG_MARK_TRANSLATABLE	= 16,	/* Since: 0.2.1 */
 	/*< private >*/
 	AS_NODE_INSERT_FLAG_LAST
 } AsNodeInsertFlags;
