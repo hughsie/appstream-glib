@@ -237,6 +237,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			asb_app_add_veto (app, "Uses obsolete GTK1 toolkit");
 			break;
 		}
+		if (g_strcmp0 (deps[i], "libglib-1.2.so.0") == 0) {
+			asb_app_add_veto (app, "Uses obsolete GLib library");
+			break;
+		}
 		if (g_strcmp0 (deps[i], "libqt-mt.so.3") == 0) {
 			asb_app_add_veto (app, "Uses obsolete QT3 toolkit");
 			break;
