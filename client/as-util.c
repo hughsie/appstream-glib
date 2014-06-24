@@ -210,10 +210,13 @@ as_util_convert_appdata (GFile *file_input,
 			 gdouble new_version,
 			 GError **error)
 {
+	AsNodeInsertFlags flags_translate = AS_NODE_INSERT_FLAG_NONE;
 	GNode *n;
 	GNode *n2;
 	GNode *n3;
 	const gchar *tmp;
+	const gchar *project_group = NULL;
+	gboolean action_required = FALSE;
 	_cleanup_node_unref_ GNode *root = NULL;
 
 	/* load to GNode */
@@ -227,14 +230,24 @@ as_util_convert_appdata (GFile *file_input,
 
 	/* convert from <application> to <component> */
 	n = as_node_find (root, "application");
-	if (n != NULL)
+	if (n != NULL) {
 		as_node_set_name (n, "component");
-	n2 = as_node_find (n, "id");
-	if (n2 != NULL) {
-		tmp = as_node_get_attribute (n2, "type");
-		if (tmp != NULL)
-			as_node_add_attribute (n, "type", tmp, -1);
-		as_node_remove_attribute (n2, "type");
+		n2 = as_node_find (n, "id");
+		if (n2 != NULL) {
+			tmp = as_node_get_attribute (n2, "type");
+			if (tmp != NULL)
+				as_node_add_attribute (n, "type", tmp, -1);
+			as_node_remove_attribute (n2, "type");
+		}
+	}
+
+	/* anything translatable */
+	n = as_node_find (root, "component");
+	if (as_node_find (n, "_name") != NULL ||
+	    as_node_find (n, "_summary") != NULL ||
+	    as_node_find (n, "screenshots/_caption") != NULL ||
+	    as_node_find (n, "description/_p") != NULL) {
+		flags_translate = AS_NODE_INSERT_FLAG_MARK_TRANSLATABLE;
 	}
 
 	/* convert from <licence> to <metadata_license> */
@@ -245,7 +258,8 @@ as_util_convert_appdata (GFile *file_input,
 	/* ensure this exists */
 	n2 = as_node_find (n, "metadata_license");
 	if (n2 == NULL) {
-		n2 = as_node_insert (n, "metadata_license", "XXX: Insert SPDX ID Here",
+		action_required = TRUE;
+		n2 = as_node_insert (n, "metadata_license", "FIXME: Insert SPDX ID Here",
 				     AS_NODE_INSERT_FLAG_NONE, NULL);
 	} else {
 		tmp = as_node_get_data (n2);
@@ -265,34 +279,137 @@ as_util_convert_appdata (GFile *file_input,
 					  AS_NODE_INSERT_FLAG_NONE);
 
 		/* ensure in SPDX format */
-		if (!as_utils_is_spdx_license_id (as_node_get_data (n2)))
+		if (!as_utils_is_spdx_license_id (as_node_get_data (n2))) {
+			action_required = TRUE;
 			as_node_set_comment (n2, "FIXME: convert to an SPDX ID", -1);
+		}
 	}
 
 	/* ensure this exists */
 	n2 = as_node_find (n, "project_license");
 	if (n2 == NULL) {
-		n2 = as_node_insert (n, "project_license", "XXX: Insert SPDX ID Here",
+		action_required = TRUE;
+		n2 = as_node_insert (n, "project_license", "FIXME: Insert SPDX ID Here",
 				     AS_NODE_INSERT_FLAG_NONE, NULL);
 	} else {
 		/* ensure in SPDX format */
-		if (!as_utils_is_spdx_license_id (as_node_get_data (n2)))
+		if (!as_utils_is_spdx_license_id (as_node_get_data (n2))) {
+			action_required = TRUE;
 			as_node_set_comment (n2, "FIXME: convert to an SPDX ID", -1);
+		}
+	}
+
+	/* ensure <project_group> exists for <compulsory_for_desktop> */
+	n2 = as_node_find (n, "compulsory_for_desktop");
+	if (n2 != NULL && as_node_find (n, "project_group") == NULL) {
+		as_node_insert (n, "project_group", as_node_get_data (n2),
+				AS_NODE_INSERT_FLAG_NONE, NULL);
 	}
 
 	/* add <developer_name> */
-	n2 = as_node_find (n, "developer_name");
+	n2 = as_node_find (n, "_developer_name");
 	if (n2 == NULL) {
-		n3 = as_node_insert (n, "developer_name", "XXX: Company Name",
-				     AS_NODE_INSERT_FLAG_NONE, NULL);
-		as_node_set_comment (n3, "FIXME: You can use a project or "
-				     "developer name if there's no company", -1);
+		n3 = as_node_find (n, "project_group");
+		if (n3 != NULL) {
+			if (g_strcmp0 (as_node_get_data (n3), "GNOME") == 0) {
+				as_node_insert (n, "developer_name", "The GNOME Project",
+						flags_translate, NULL);
+			} else if (g_strcmp0 (as_node_get_data (n3), "KDE") == 0) {
+				as_node_insert (n, "developer_name", "KDE e.V.",
+						AS_NODE_INSERT_FLAG_NONE, NULL);
+			} else if (g_strcmp0 (as_node_get_data (n3), "XFCE") == 0) {
+				as_node_insert (n, "developer_name", "Xfce Development Team",
+						flags_translate, NULL);
+			} else if (g_strcmp0 (as_node_get_data (n3), "MATE") == 0) {
+				as_node_insert (n, "developer_name", "The MATE Project",
+						flags_translate, NULL);
+			} else {
+				action_required = TRUE;
+				n3 = as_node_insert (n, "developer_name", "FIXME: Company Name",
+						     AS_NODE_INSERT_FLAG_NONE, NULL);
+				as_node_set_comment (n3, "FIXME: compulsory_for_desktop was not recognised", -1);
+			}
+		} else {
+			action_required = TRUE;
+			n3 = as_node_insert (n, "developer_name", "FIXME: Company Name",
+					     AS_NODE_INSERT_FLAG_NONE, NULL);
+			as_node_set_comment (n3, "FIXME: You can use a project or "
+					     "developer name if there's no company", -1);
+		}
+	}
+
+	n3 = as_node_find (n, "project_group");
+	if (n3 != NULL)
+		project_group = as_node_get_data (n3);
+
+	/* ensure each URL type exists */
+	if (as_node_find_with_attribute (n, "url", "type", "homepage") == NULL) {
+		if (g_strcmp0 (project_group, "GNOME") == 0) {
+			n3 = as_node_insert (n, "url", "FIXME: https://wiki.gnome.org/Apps/FIXME",
+					     AS_NODE_INSERT_FLAG_NONE,
+					     "type", "homepage", NULL);
+		} else {
+			n3 = as_node_insert (n, "url", "FIXME: http://www.homepage.com/",
+					     AS_NODE_INSERT_FLAG_NONE,
+					     "type", "homepage", NULL);
+			as_node_set_comment (n3, "FIXME: homepage for the application", -1);
+		}
+	}
+	if (as_node_find_with_attribute (n, "url", "type", "bugtracker") == NULL) {
+		if (g_strcmp0 (project_group, "GNOME") == 0) {
+			n3 = as_node_insert (n, "url", "FIXME: https://bugzilla.gnome.org/enter_bug.cgi?product=FIXME",
+					     AS_NODE_INSERT_FLAG_NONE,
+					     "type", "bugtracker", NULL);
+		} else if (g_strcmp0 (project_group, "KDE") == 0) {
+			n3 = as_node_insert (n, "url", "FIXME: https://bugs.kde.org/enter_bug.cgi?format=guided",
+					     AS_NODE_INSERT_FLAG_NONE,
+					     "type", "bugtracker", NULL);
+		} else if (g_strcmp0 (project_group, "XFCE") == 0) {
+			n3 = as_node_insert (n, "url", "FIXME: https://bugzilla.xfce.org/enter_bug.cgi",
+					     AS_NODE_INSERT_FLAG_NONE,
+					     "type", "bugtracker", NULL);
+		} else {
+			n3 = as_node_insert (n, "url", "FIXME: http://www.homepage.com/where-to-report_bug.html",
+					     AS_NODE_INSERT_FLAG_NONE,
+					     "type", "bugtracker", NULL);
+			as_node_set_comment (n3, "FIXME: where to report bugs for "
+					     "the application, or empty for none", -1);
+		}
+	}
+	if (as_node_find_with_attribute (n, "url", "type", "donation") == NULL) {
+		if (g_strcmp0 (project_group, "GNOME") == 0) {
+			n3 = as_node_insert (n, "url", "http://www.gnome.org/friends/",
+					     AS_NODE_INSERT_FLAG_NONE,
+					     "type", "donation", NULL);
+			as_node_set_comment (n3, "GNOME Projects usually have no per-app donation page", -1);
+		} else {
+			n3 = as_node_insert (n, "url", "FIXME: http://www.homepage.com/donation.html",
+					     AS_NODE_INSERT_FLAG_NONE,
+					     "type", "donation", NULL);
+			as_node_set_comment (n3, "FIXME: where to donate to the application", -1);
+		}
+	}
+	if (as_node_find_with_attribute (n, "url", "type", "help") == NULL) {
+		if (g_strcmp0 (project_group, "GNOME") == 0) {
+			n3 = as_node_insert (n, "url", "FIXME: https://help.gnome.org/users/FIXME/stable/",
+					     AS_NODE_INSERT_FLAG_NONE,
+					     "type", "help", NULL);
+			as_node_set_comment (n3, "FIXME: where on the internet users "
+					     "can find help or empty for none", -1);
+		} else {
+			n3 = as_node_insert (n, "url", "FIXME: http://www.homepage.com/docs/",
+					     AS_NODE_INSERT_FLAG_NONE,
+					     "type", "help", NULL);
+			as_node_set_comment (n3, "FIXME: where to report bugs for "
+					     "the application, or empty for none", -1);
+		}
 	}
 
 	/* add <updatecontact> */
 	n2 = as_node_find (n, "updatecontact");
 	if (n2 == NULL) {
-		n3 = as_node_insert (n, "updatecontact", "XXX: upstream_contact_at_email.com",
+		action_required = TRUE;
+		n3 = as_node_insert (n, "updatecontact", "FIXME: upstream_contact_at_email.com",
 				     AS_NODE_INSERT_FLAG_NONE, NULL);
 		as_node_set_comment (n3, "FIXME: this is optional, but recommended", -1);
 	}
@@ -308,21 +425,34 @@ as_util_convert_appdata (GFile *file_input,
 	if (n != NULL) {
 		for (n2 = n->children; n2 != NULL; n2 = n2->next) {
 			tmp = as_node_get_data (n2);
+			if (tmp == NULL)
+				continue;
 			n3 = as_node_insert (n2, "image", tmp,
 					     AS_NODE_INSERT_FLAG_NONE, NULL);
 			as_node_set_data (n3, tmp, -1, AS_NODE_INSERT_FLAG_NONE);
 			as_node_set_data (n2, NULL, -1, AS_NODE_INSERT_FLAG_NONE);
-			as_node_insert (n2, "caption", "XXX: Describe this screenshot",
-					AS_NODE_INSERT_FLAG_NONE, NULL);
+			action_required = TRUE;
+			as_node_insert (n2, "caption", "FIXME: Describe this "
+					"screenshot in less than ~10 words",
+					flags_translate, NULL);
 		}
 	}
 
 	/* save to file */
-	return as_node_to_file (root, file_output,
-				AS_NODE_TO_XML_FLAG_ADD_HEADER |
-				AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
-				AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE,
-				NULL, error);
+	if (!as_node_to_file (root, file_output,
+			      AS_NODE_TO_XML_FLAG_ADD_HEADER |
+			      AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+			      AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE,
+			      NULL, error))
+		return FALSE;
+
+	/* TRANSLATORS: any manual changes required? */
+	if (action_required) {
+		g_print (_("Please review the file and fix any '%s' items"), "FIXME");
+		g_print ("\n");
+	}
+
+	return TRUE;
 }
 
 /**
@@ -400,6 +530,38 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 						  file_output,
 						  new_version,
 						  error);
+	}
+
+	/* don't know what to do */
+	g_set_error_literal (error,
+			     AS_ERROR,
+			     AS_ERROR_INVALID_ARGUMENTS,
+			     "Format not recognised");
+	return FALSE;
+}
+
+/**
+ * as_util_upgrade:
+ **/
+static gboolean
+as_util_upgrade (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	/* check args */
+	if (g_strv_length (values) != 1) {
+		/* TRANSLATORS: error message */
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     _("Not enough arguments, "
+				     "expected file.xml"));
+		return FALSE;
+	}
+
+	/* AppData */
+	if (as_app_guess_source_kind (values[0]) == AS_APP_SOURCE_KIND_APPDATA) {
+		_cleanup_object_unref_ GFile *file = NULL;
+		file = g_file_new_for_path (values[0]);
+		return as_util_convert_appdata (file, file, 1.0, error);
 	}
 
 	/* don't know what to do */
@@ -1521,6 +1683,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Converts AppStream metadata from one version to another"),
 		     as_util_convert);
+	as_util_add (priv->cmd_array,
+		     "upgrade",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Upgrade AppData metadata to the latest version"),
+		     as_util_upgrade);
 	as_util_add (priv->cmd_array,
 		     "appdata-from-desktop",
 		     NULL,

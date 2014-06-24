@@ -59,6 +59,9 @@ _appstream-util()
             dump)
                 ext='@(desktop|@(appdata|metainfo).xml?(.in))'
                 ;;
+            upgrade)
+                ext='@(appdata).xml?(.in)'
+                ;;
             non-package-yaml|status-html)
                 ext='@(xml.gz)'
                 ;;
