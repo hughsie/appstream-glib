@@ -547,7 +547,17 @@ as_app_validate_screenshot (AsScreenshot *ss, AsAppValidateHelper *helper)
 {
 	AsImage *im;
 	GPtrArray *images;
+	const gchar *tmp;
 	guint i;
+	guint length_caption_max = 50;
+	guint length_caption_min = 10;
+	guint str_len;
+
+	/* relax the requirements a bit */
+	if ((helper->flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
+		length_caption_max = 100;
+		length_caption_min = 5;
+	}
 
 	if (as_screenshot_get_kind (ss) == AS_SCREENSHOT_KIND_UNKNOWN) {
 		ai_app_validate_add (helper->probs,
@@ -558,6 +568,30 @@ as_app_validate_screenshot (AsScreenshot *ss, AsAppValidateHelper *helper)
 	for (i = 0; i < images->len; i++) {
 		im = g_ptr_array_index (images, i);
 		as_app_validate_image (im, helper);
+	}
+	tmp = as_screenshot_get_caption (ss, NULL);
+	if (tmp != NULL) {
+		str_len = strlen (tmp);
+		if (str_len < length_caption_min) {
+			ai_app_validate_add (helper->probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<caption> is too short");
+		}
+		if (str_len > length_caption_max) {
+			ai_app_validate_add (helper->probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<caption> is too long");
+		}
+		if (ai_app_validate_fullstop_ending (tmp)) {
+			ai_app_validate_add (helper->probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<caption> cannot end in '.'");
+		}
+		if (as_app_validate_has_hyperlink (tmp)) {
+			ai_app_validate_add (helper->probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<caption> cannot contain a hyperlink");
+		}
 	}
 }
 
