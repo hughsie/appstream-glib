@@ -54,13 +54,13 @@ _appstream-util()
                 ext='@(@(appdata|metainfo).xml?(.in)|xml.gz)'
                 ;;
             install|uninstall)
-                ext='@(appdata|metainfo).xml'
+                ext='@(@(appdata|metainfo).xml|xml.gz)'
                 ;;
             dump)
                 ext='@(desktop|@(appdata|metainfo).xml?(.in))'
                 ;;
             upgrade)
-                ext='@(appdata).xml?(.in)'
+                ext='@(appdata.xml?(.in))'
                 ;;
             non-package-yaml|status-html)
                 ext='@(xml.gz)'
