@@ -263,64 +263,6 @@ asb_package_rpm_ensure_simple (AsbPackage *pkg, GError **error)
 }
 
 /**
- * asb_package_rpm_release_set_text:
- **/
-static gboolean
-asb_package_rpm_release_set_text (AsRelease *release,
-					 const gchar *text)
-{
-	guint i;
-	_cleanup_free_ gchar *markup = NULL;
-	const gchar *blacklisted[] = { " BR ",
-				       " >= ",
-				       "BuildRequires",
-				       "Buildroot",
-				       "Bump release",
-				       "compile fixes",
-				       "%configure",
-				       "%doc",
-				       "ExcludeArch",
-				       "fix build",
-				       "fix typo",
-				       "FTBFS",
-				       "initial version",
-				       "Latest upstream",
-				       "missing BR",
-				       "New release",
-				       "New upstream",
-				       "New version",
-				       "%post",
-				       "rebuild",
-				       "Rebuild",
-				       "rebuilt",
-				       "Rebuilt",
-				       " Requires ",
-				       "revbump",
-				       "scriptlets",
-				       "spec file",
-				       "subpackage",
-				       "Updated to ",
-				       "Update to ",
-				       "Upgrade to ",
-				       "Upstream new release",
-				       "upstream release",
-				       "Upstream update",
-				       "vendor prefix",
-				       as_release_get_version (release),
-				       NULL };
-	for (i = 0; blacklisted[i] != NULL; i++) {
-		if (g_strstr_len (text, -1, blacklisted[i]) != NULL)
-			return FALSE;
-	}
-	/* remove prefix */
-	if (g_str_has_prefix (text, "- "))
-		text += 2;
-	markup = g_markup_printf_escaped ("<p>%s</p>", text);
-	as_release_set_description (release, NULL, markup, -1);
-	return TRUE;
-}
-
-/**
  * asb_package_rpm_add_release:
  **/
 static void
@@ -363,15 +305,10 @@ asb_package_rpm_add_release (AsbPackage *pkg,
 		 * a bumped release */
 		if (timestamp < as_release_get_timestamp (release))
 			as_release_set_timestamp (release, timestamp);
-
-		/* we didn't have anything interesting before; try now */
-		if (as_release_get_description (release, NULL) == NULL)
-			asb_package_rpm_release_set_text (release, text);
 	} else {
 		release = as_release_new ();
 		as_release_set_version (release, version, -1);
 		as_release_set_timestamp (release, timestamp);
-		asb_package_rpm_release_set_text (release, text);
 		asb_package_add_release (pkg, version, release);
 		g_object_unref (release);
 	}
