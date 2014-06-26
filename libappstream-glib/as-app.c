@@ -1787,6 +1787,8 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	/* icon */
 	if (priv->icon != NULL)
 		as_app_set_icon (app, priv->icon, -1);
+	if (priv->icon_kind != AS_ICON_KIND_UNKNOWN)
+		as_app_set_icon_kind (app, priv->icon_kind);
 
 	/* project_group */
 	if (priv->project_group != NULL)
