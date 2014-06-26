@@ -69,6 +69,8 @@ struct _AsStoreClass
  * @AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM:		The system app-info AppStream data
  * @AS_STORE_LOAD_FLAG_APP_INFO_USER:		The per-user app-info AppStream data
  * @AS_STORE_LOAD_FLAG_APP_INSTALL:		The ubuntu-specific app-install data
+ * @AS_STORE_LOAD_FLAG_APPDATA:			The installed AppData files
+ * @AS_STORE_LOAD_FLAG_DESKTOP:			The installed desktop files
  *
  * The flags to use when loading the store.
  **/
@@ -77,6 +79,8 @@ typedef enum {
 	AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM	= 1,	/* Since: 0.1.2 */
 	AS_STORE_LOAD_FLAG_APP_INFO_USER	= 2,	/* Since: 0.1.2 */
 	AS_STORE_LOAD_FLAG_APP_INSTALL		= 4,	/* Since: 0.1.2 */
+	AS_STORE_LOAD_FLAG_APPDATA		= 8,	/* Since: 0.2.2 */
+	AS_STORE_LOAD_FLAG_DESKTOP		= 16,	/* Since: 0.2.2 */
 	/*< private >*/
 	AS_STORE_LOAD_FLAG_LAST
 } AsStoreLoadFlags;

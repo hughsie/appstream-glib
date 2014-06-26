@@ -1010,6 +1010,45 @@ as_store_load_app_install (AsStore *store,
 }
 
 /**
+ * as_store_load_installed:
+ **/
+static gboolean
+as_store_load_installed (AsStore *store, const gchar *path,
+			 GCancellable *cancellable, GError **error)
+{
+	const gchar *tmp;
+	_cleanup_dir_close_ GDir *dir = NULL;
+	GError *error_local = NULL;
+
+	dir = g_dir_open (path, 0, error);
+	if (dir == NULL)
+		return FALSE;
+
+	while ((tmp = g_dir_read_name (dir)) != NULL) {
+		_cleanup_free_ gchar *filename = NULL;
+		_cleanup_object_unref_ AsApp *app = NULL;
+		filename = g_build_filename (path, tmp, NULL);
+		app = as_app_new ();
+		if (!as_app_parse_file (app, filename,
+					AS_APP_PARSE_FLAG_USE_HEURISTICS,
+					&error_local)) {
+			if (g_error_matches (error_local,
+					     AS_APP_ERROR,
+					     AS_APP_ERROR_INVALID_TYPE)) {
+				g_clear_error (&error_local);
+				continue;
+			}
+			g_propagate_error (error, error_local);
+			return FALSE;
+		}
+		/* set lower priority than AppStream entries */
+		as_app_set_priority (app, -1);
+		as_store_add_app (store, app);
+	}
+	return TRUE;
+}
+
+/**
  * as_store_load:
  * @store: a #AsStore instance.
  * @flags: #AsStoreLoadFlags, e.g. %AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM
@@ -1033,25 +1072,43 @@ as_store_load (AsStore *store,
 	gchar *path;
 	guint i;
 	_cleanup_ptrarray_unref_ GPtrArray *app_info = NULL;
+	_cleanup_ptrarray_unref_ GPtrArray *installed = NULL;
 
 	/* system locations */
 	app_info = g_ptr_array_new_with_free_func (g_free);
-	if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM) > 0) {
-		data_dirs = g_get_system_data_dirs ();
-		for (i = 0; data_dirs[i] != NULL; i++) {
+	installed = g_ptr_array_new_with_free_func (g_free);
+	data_dirs = g_get_system_data_dirs ();
+	for (i = 0; data_dirs[i] != NULL; i++) {
+		if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM) > 0) {
 			path = g_build_filename (data_dirs[i], "app-info", NULL);
 			g_ptr_array_add (app_info, path);
+			path = g_build_filename (LOCALSTATEDIR, "lib", "app-info", NULL);
+			g_ptr_array_add (app_info, path);
+			path = g_build_filename (LOCALSTATEDIR, "cache", "app-info", NULL);
+			g_ptr_array_add (app_info, path);
 		}
-		path = g_build_filename (LOCALSTATEDIR, "lib", "app-info", NULL);
-		g_ptr_array_add (app_info, path);
-		path = g_build_filename (LOCALSTATEDIR, "cache", "app-info", NULL);
-		g_ptr_array_add (app_info, path);
+		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
+			path = g_build_filename (data_dirs[i], "appdata", NULL);
+			g_ptr_array_add (installed, path);
+		}
+		if ((flags & AS_STORE_LOAD_FLAG_DESKTOP) > 0) {
+			path = g_build_filename (data_dirs[i], "applications", NULL);
+			g_ptr_array_add (installed, path);
+		}
 	}
 
 	/* per-user locations */
 	if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_USER) > 0) {
 		path = g_build_filename (g_get_user_data_dir (), "app-info", NULL);
 		g_ptr_array_add (app_info, path);
+	}
+	if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
+		path = g_build_filename (g_get_user_data_dir (), "appdata", NULL);
+		g_ptr_array_add (installed, path);
+	}
+	if ((flags & AS_STORE_LOAD_FLAG_DESKTOP) > 0) {
+		path = g_build_filename (g_get_user_data_dir (), "applications", NULL);
+		g_ptr_array_add (installed, path);
 	}
 
 	/* load each app-info path if it exists */
@@ -1060,6 +1117,15 @@ as_store_load (AsStore *store,
 		if (!g_file_test (tmp, G_FILE_TEST_EXISTS))
 			continue;
 		if (!as_store_load_app_info (store, tmp, cancellable, error))
+			return FALSE;
+	}
+
+	/* load each appdata and desktop path if it exists */
+	for (i = 0; i < installed->len; i++) {
+		tmp = g_ptr_array_index (installed, i);
+		if (!g_file_test (tmp, G_FILE_TEST_EXISTS))
+			continue;
+		if (!as_store_load_installed (store, tmp, cancellable, error))
 			return FALSE;
 	}
 
