@@ -306,16 +306,34 @@ as_store_add_app (AsStore *store, AsApp *app)
 	if (item != NULL) {
 
 		/* the previously stored app is higher priority */
+		if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
+		    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM) {
+			g_debug ("ignoring AppData entry as AppStream exists: %s", id);
+			return;
+		}
+		if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP &&
+		    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM) {
+			g_debug ("ignoring desktop entry as AppStream exists: %s", id);
+			return;
+		}
+
+		/* the previously stored app is higher priority */
 		if (as_app_get_priority (item) >
 		    as_app_get_priority (app)) {
-			g_debug ("ignoring duplicate AppStream entry: %s", id);
+			g_debug ("ignoring duplicate %s:%s entry: %s",
+				 as_app_source_kind_to_string (as_app_get_source_kind (app)),
+				 as_app_source_kind_to_string (as_app_get_source_kind (item)),
+				 id);
 			return;
 		}
 
 		/* same priority */
 		if (as_app_get_priority (item) ==
 		    as_app_get_priority (app)) {
-			g_debug ("merging duplicate AppStream entries: %s", id);
+			g_debug ("merging duplicate %s:%s entries: %s",
+				 as_app_source_kind_to_string (as_app_get_source_kind (app)),
+				 as_app_source_kind_to_string (as_app_get_source_kind (item)),
+				 id);
 			as_app_subsume_full (item, app,
 					     AS_APP_SUBSUME_FLAG_BOTH_WAYS);
 			return;
