@@ -1048,6 +1048,11 @@ as_store_load_installed (AsStore *store, const gchar *path,
 		filename = g_build_filename (path, tmp, NULL);
 		if (!g_file_test (filename, G_FILE_TEST_IS_REGULAR))
 			continue;
+		if (as_store_get_app_by_id (store, tmp) != NULL) {
+			g_debug ("not parsing %s as %s already exists",
+				 filename, tmp);
+			continue;
+		}
 		app = as_app_new ();
 		if (!as_app_parse_file (app, filename,
 					AS_APP_PARSE_FLAG_USE_HEURISTICS,
