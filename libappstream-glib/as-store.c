@@ -1028,6 +1028,8 @@ as_store_load_installed (AsStore *store, const gchar *path,
 		_cleanup_free_ gchar *filename = NULL;
 		_cleanup_object_unref_ AsApp *app = NULL;
 		filename = g_build_filename (path, tmp, NULL);
+		if (!g_file_test (filename, G_FILE_TEST_IS_REGULAR))
+			continue;
 		app = as_app_new ();
 		if (!as_app_parse_file (app, filename,
 					AS_APP_PARSE_FLAG_USE_HEURISTICS,
