@@ -113,6 +113,54 @@ as_app_error_quark (void)
 }
 
 /**
+ * as_app_source_kind_from_string:
+ * @source_kind: a source kind string
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Return value: A #AsAppSourceKind, e.g. %AS_APP_SOURCE_KIND_APPSTREAM.
+ *
+ * Since: 0.2.2
+ **/
+AsAppSourceKind
+as_app_source_kind_from_string (const gchar *source_kind)
+{
+	if (g_strcmp0 (source_kind, "appstream") == 0)
+		return AS_APP_SOURCE_KIND_APPSTREAM;
+	if (g_strcmp0 (source_kind, "appdata") == 0)
+		return AS_APP_SOURCE_KIND_APPDATA;
+	if (g_strcmp0 (source_kind, "metainfo") == 0)
+		return AS_APP_SOURCE_KIND_METAINFO;
+	if (g_strcmp0 (source_kind, "desktop") == 0)
+		return AS_APP_SOURCE_KIND_DESKTOP;
+	return AS_APP_SOURCE_KIND_UNKNOWN;
+}
+
+/**
+ * as_app_source_kind_to_string:
+ * @source_kind: the #AsAppSourceKind.
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @source_kind, or %NULL for unknown
+ *
+ * Since: 0.2.2
+ **/
+const gchar *
+as_app_source_kind_to_string (AsAppSourceKind source_kind)
+{
+	if (source_kind == AS_APP_SOURCE_KIND_APPSTREAM)
+		return "appstream";
+	if (source_kind == AS_APP_SOURCE_KIND_APPDATA)
+		return "appdata";
+	if (source_kind == AS_APP_SOURCE_KIND_METAINFO)
+		return "metainfo";
+	if (source_kind == AS_APP_SOURCE_KIND_DESKTOP)
+		return "desktop";
+	return NULL;
+}
+
+/**
  * as_app_guess_source_kind:
  * @filename: a file name
  *

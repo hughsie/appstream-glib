@@ -158,6 +158,8 @@ GType		 as_app_get_type		(void);
 AsApp		*as_app_new			(void);
 GQuark		 as_app_error_quark		(void);
 AsAppSourceKind	 as_app_guess_source_kind	(const gchar	*filename);
+AsAppSourceKind	 as_app_source_kind_from_string	(const gchar	*source_kind);
+const gchar	*as_app_source_kind_to_string	(AsAppSourceKind source_kind);
 
 /* getters */
 AsIconKind	 as_app_get_icon_kind		(AsApp		*app);
