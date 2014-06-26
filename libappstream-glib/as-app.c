@@ -80,6 +80,7 @@ struct _AsAppPrivate
 	gchar		*project_license;
 	gchar		*metadata_license;
 	gchar		*update_contact;
+	gchar		*source_file;
 	gint		 priority;
 	gsize		 token_cache_valid;
 	GPtrArray	*token_cache;			/* of AsAppTokenItem */
@@ -158,6 +159,7 @@ as_app_finalize (GObject *object)
 	g_free (priv->project_license);
 	g_free (priv->metadata_license);
 	g_free (priv->update_contact);
+	g_free (priv->source_file);
 	g_hash_table_unref (priv->comments);
 	g_hash_table_unref (priv->developer_names);
 	g_hash_table_unref (priv->descriptions);
@@ -995,6 +997,25 @@ as_app_get_update_contact (AsApp *app)
 	return priv->update_contact;
 }
 
+/**
+ * as_app_get_source_file:
+ * @app: a #AsApp instance.
+ *
+ * Gets the source filename the instance was populated from.
+ *
+ * NOTE: this is not set for %AS_APP_SOURCE_KIND_APPSTREAM entries.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.2.2
+ **/
+const gchar *
+as_app_get_source_file (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->source_file;
+}
+
 /******************************************************************************/
 
 /**
@@ -1154,6 +1175,23 @@ as_app_set_metadata_license (AsApp *app,
 
 	g_free (priv->metadata_license);
 	priv->metadata_license = as_strndup (metadata_license, metadata_license_len);
+}
+
+/**
+ * as_app_set_source_file:
+ * @app: a #AsApp instance.
+ * @source_file: the filename.
+ *
+ * Set the file that the instance was sourced from.
+ *
+ * Since: 0.2.2
+ **/
+void
+as_app_set_source_file (AsApp *app, const gchar *source_file)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_free (priv->source_file);
+	priv->source_file = g_strdup (source_file);
 }
 
 /**
@@ -1789,6 +1827,10 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		as_app_set_icon (app, priv->icon, -1);
 	if (priv->icon_kind != AS_ICON_KIND_UNKNOWN)
 		as_app_set_icon_kind (app, priv->icon_kind);
+
+	/* source */
+	if (priv->source_file != NULL)
+		as_app_set_source_file (app, priv->source_file);
 
 	/* project_group */
 	if (priv->project_group != NULL)
@@ -3120,6 +3162,10 @@ as_app_parse_file (AsApp *app,
 		return FALSE;
 		break;
 	}
+
+	/* set the source location */
+	as_app_set_source_file (app, filename);
+
 	return TRUE;
 }
 
