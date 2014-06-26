@@ -1504,7 +1504,7 @@ as_test_store_origin_func (void)
 }
 
 static void
-as_test_store_speed_func (void)
+as_test_store_speed_appstream_func (void)
 {
 	GError *error = NULL;
 	gboolean ret;
@@ -1526,6 +1526,48 @@ as_test_store_speed_func (void)
 		g_assert_cmpint (as_store_get_apps (store)->len, >=, 1415);
 		g_assert (as_store_get_app_by_id (store, "org.gnome.Software.desktop") != NULL);
 		g_assert (as_store_get_app_by_pkgname (store, "gnome-software") != NULL);
+	}
+	g_print ("%.0f ms: ", g_timer_elapsed (timer, NULL) * 1000 / loops);
+}
+
+static void
+as_test_store_speed_appdata_func (void)
+{
+	GError *error = NULL;
+	gboolean ret;
+	guint i;
+	guint loops = 10;
+	_cleanup_timer_destroy_ GTimer *timer = NULL;
+
+	timer = g_timer_new ();
+	for (i = 0; i < loops; i++) {
+		_cleanup_object_unref_ AsStore *store;
+		store = as_store_new ();
+		ret = as_store_load (store, AS_STORE_LOAD_FLAG_APPDATA, NULL, &error);
+		g_assert_no_error (error);
+		g_assert (ret);
+		g_assert_cmpint (as_store_get_apps (store)->len, >, 0);
+	}
+	g_print ("%.0f ms: ", g_timer_elapsed (timer, NULL) * 1000 / loops);
+}
+
+static void
+as_test_store_speed_desktop_func (void)
+{
+	GError *error = NULL;
+	gboolean ret;
+	guint i;
+	guint loops = 10;
+	_cleanup_timer_destroy_ GTimer *timer = NULL;
+
+	timer = g_timer_new ();
+	for (i = 0; i < loops; i++) {
+		_cleanup_object_unref_ AsStore *store;
+		store = as_store_new ();
+		ret = as_store_load (store, AS_STORE_LOAD_FLAG_DESKTOP, NULL, &error);
+		g_assert_no_error (error);
+		g_assert (ret);
+		g_assert_cmpint (as_store_get_apps (store)->len, >, 0);
 	}
 	g_print ("%.0f ms: ", g_timer_elapsed (timer, NULL) * 1000 / loops);
 }
@@ -1746,7 +1788,9 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{origin}", as_test_store_origin_func);
 	g_test_add_func ("/AppStream/store{app-install}", as_test_store_app_install_func);
 	g_test_add_func ("/AppStream/store{metadata}", as_test_store_metadata_func);
-	g_test_add_func ("/AppStream/store{speed}", as_test_store_speed_func);
+	g_test_add_func ("/AppStream/store{speed-appstream}", as_test_store_speed_appstream_func);
+	g_test_add_func ("/AppStream/store{speed-appdata}", as_test_store_speed_appdata_func);
+	g_test_add_func ("/AppStream/store{speed-desktop}", as_test_store_speed_desktop_func);
 
 	return g_test_run ();
 }
