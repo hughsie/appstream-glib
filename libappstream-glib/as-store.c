@@ -1043,6 +1043,7 @@ as_store_load_installed (AsStore *store, const gchar *path,
 		}
 		/* set lower priority than AppStream entries */
 		as_app_set_priority (app, -1);
+		as_app_set_icon_kind (app, AS_ICON_KIND_STOCK);
 		as_store_add_app (store, app);
 	}
 	return TRUE;

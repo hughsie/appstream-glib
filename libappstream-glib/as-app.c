@@ -2967,10 +2967,6 @@ as_app_parse_desktop_file (AsApp *app,
 			     app_id);
 		return FALSE;
 	}
-
-	/* desktop files can only have stock icons */
-	as_app_set_icon_kind (app, AS_ICON_KIND_STOCK);
-
 	return TRUE;
 }
 
