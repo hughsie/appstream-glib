@@ -3062,8 +3062,12 @@ as_app_parse_appdata_file (AsApp *app,
 	root = as_node_from_xml (data, len,
 				 from_xml_flags,
 				 error);
-	if (root == NULL)
+	if (root == NULL) {
+		g_prefix_error (error,
+				"failed to parse '%s': ",
+				filename);
 		return FALSE;
+	}
 
 	/* make the <_summary> tags into <summary> */
 	if (flags & AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE) {
