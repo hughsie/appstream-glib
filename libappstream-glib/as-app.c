@@ -2938,6 +2938,16 @@ as_app_parse_desktop_file (AsApp *app,
 	app_id = g_path_get_basename (desktop_file);
 	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
 
+	/* is blacklisted */
+	if (as_utils_is_blacklisted_id (app_id)) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "Application %s is not an application",
+			     app_id);
+		return FALSE;
+	}
+
 	/* Ubuntu helpfully put the package name in the desktop file name */
 	tmp = g_strstr_len (app_id, -1, ":");
 	if (tmp != NULL)

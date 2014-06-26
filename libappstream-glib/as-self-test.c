@@ -1654,6 +1654,11 @@ as_test_utils_func (void)
 	g_assert (as_utils_is_stock_icon_name ("insert-image"));
 	g_assert (as_utils_is_stock_icon_name ("zoom-out"));
 
+	/* blacklist */
+	g_assert (as_utils_is_blacklisted_id ("gnome-system-monitor-kde.desktop"));
+	g_assert (as_utils_is_blacklisted_id ("doom-*-demo.desktop"));
+	g_assert (!as_utils_is_blacklisted_id ("gimp.desktop"));
+
 	/* valid description markup */
 	tmp = as_markup_convert_simple ("<p>Hello world!</p>", -1, &error);
 	g_assert_no_error (error);

@@ -26,7 +26,7 @@ as-tag-private.h: as-tag.gperf
 	$(AM_V_GEN) gperf < $< > $@
 endif
 
-as-resources.c: appstream-glib.gresource.xml as-stock-icons.txt as-license-ids.txt
+as-resources.c: appstream-glib.gresource.xml as-stock-icons.txt as-license-ids.txt as-blacklist-ids.txt
 	$(AM_V_GEN)						\
 	glib-compile-resources					\
 		--sourcedir=$(srcdir)				\
@@ -35,7 +35,7 @@ as-resources.c: appstream-glib.gresource.xml as-stock-icons.txt as-license-ids.t
 		--generate-source				\
 		--c-name as					\
 		$(srcdir)/appstream-glib.gresource.xml
-as-resources.h: appstream-glib.gresource.xml as-stock-icons.txt as-license-ids.txt
+as-resources.h: appstream-glib.gresource.xml as-stock-icons.txt as-license-ids.txt as-blacklist-ids.txt
 	$(AM_V_GEN)						\
 	glib-compile-resources					\
 		--sourcedir=$(srcdir)				\
@@ -183,6 +183,7 @@ DISTCLEANFILES =						\
 EXTRA_DIST =							\
 	appstream-glib.gresource.xml				\
 	appstream-glib.pc.in					\
+	as-blacklist-ids.txt					\
 	as-license-ids.txt					\
 	as-stock-icons.txt					\
 	as-tag.gperf						\

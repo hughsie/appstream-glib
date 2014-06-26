@@ -31,6 +31,7 @@
 
 #include "config.h"
 
+#include <fnmatch.h>
 #include <string.h>
 #include <libsoup/soup.h>
 
@@ -231,6 +232,39 @@ as_utils_is_spdx_license_id (const gchar *license_id)
 		return FALSE;
 	key = g_strdup_printf ("\n%s\n", license_id);
 	return g_strstr_len (g_bytes_get_data (data, NULL), -1, key) != NULL;
+}
+
+/**
+ * as_utils_is_blacklisted_id:
+ * @desktop_id: a desktop ID, e.g. "gimp.desktop"
+ *
+ * Searches the known list of blacklisted desktop IDs.
+ *
+ * Returns: %TRUE if the desktop ID is blacklisted
+ *
+ * Since: 0.2.2
+ **/
+gboolean
+as_utils_is_blacklisted_id (const gchar *desktop_id)
+{
+	_cleanup_bytes_unref_ GBytes *data;
+	_cleanup_free_ gchar *key = NULL;
+	_cleanup_strv_free_ gchar **split = NULL;
+	guint i;
+
+	/* load the readonly data section and look for the icon name */
+	data = g_resource_lookup_data (as_get_resource (),
+				       "/org/freedesktop/appstream-glib/as-blacklist-ids.txt",
+				       G_RESOURCE_LOOKUP_FLAGS_NONE,
+				       NULL);
+	if (data == NULL)
+		return FALSE;
+	split = g_strsplit (g_bytes_get_data (data, NULL), "\n", -1);
+	for (i = 0; split[i] != NULL; i++) {
+		if (fnmatch (split[i], desktop_id, 0) == 0)
+			return TRUE;
+	}
+	return FALSE;
 }
 
 /**
