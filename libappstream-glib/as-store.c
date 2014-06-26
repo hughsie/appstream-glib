@@ -1037,6 +1037,8 @@ as_store_load_installed (AsStore *store, const gchar *path,
 			if (g_error_matches (error_local,
 					     AS_APP_ERROR,
 					     AS_APP_ERROR_INVALID_TYPE)) {
+				g_debug ("Ignoring %s: %s", filename,
+					 error_local->message);
 				g_clear_error (&error_local);
 				continue;
 			}
