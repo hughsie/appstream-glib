@@ -1,4 +1,9 @@
-# these are desktop IDs that have been blacklisted as they are not applications.desktop
+# these are desktop IDs that have been blacklisted as they are not apps
+active-about.desktop
+active-alarms.desktop
+active-filebrowser.desktop
+active-imageviewer.desktop
+active-web-browser.desktop
 authconfig.desktop
 bf-*-editor.desktop
 bitmap2component.desktop
