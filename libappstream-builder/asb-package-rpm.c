@@ -285,13 +285,17 @@ asb_package_rpm_add_release (AsbPackage *pkg,
 
 	/* get last string chunk */
 	version = vr + 1;
-	tmp = g_strstr_len (version, -1, "-");
-	if (tmp == NULL) {
-		if (g_strstr_len (version, -1, ">") != NULL)
-			return;
-	} else {
+
+	/* ignore version-less dashed email address, e.g.
+	 * 'Fedora Release Engineering <rel-eng@lists.fedoraproject.org>' */
+	if (g_strstr_len (version, -1, "@") != NULL ||
+	    g_strstr_len (version, -1, "<") != NULL ||
+	    g_strstr_len (version, -1, ">") != NULL)
+		return;
+
+	tmp = g_strrstr_len (version, -1, "-");
+	if (tmp != NULL)
 		*tmp = '\0';
-	}
 
 	/* remove any epoch */
 	tmp = g_strstr_len (version, -1, ":");
