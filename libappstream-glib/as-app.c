@@ -72,6 +72,7 @@ struct _AsAppPrivate
 	GPtrArray	*provides;			/* of AsProvide */
 	GPtrArray	*screenshots;			/* of AsScreenshot */
 	AsAppSourceKind	 source_kind;
+	AsAppTrustFlags	 trust_flags;
 	gchar		*icon;
 	gchar		*icon_path;
 	gchar		*id;
@@ -720,6 +721,23 @@ as_app_get_source_kind (AsApp *app)
 }
 
 /**
+ * as_app_get_trust_flags:
+ * @app: a #AsApp instance.
+ *
+ * Gets the trust flags, i.e. how trusted the incoming data is.
+ *
+ * Returns: bitfield
+ *
+ * Since: 0.2.2
+ **/
+AsAppTrustFlags
+as_app_get_trust_flags (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->trust_flags;
+}
+
+/**
  * as_app_get_problems: (skip)
  * @app: a #AsApp instance.
  *
@@ -1064,6 +1082,30 @@ as_app_get_source_file (AsApp *app)
 	return priv->source_file;
 }
 
+/**
+ * as_app_validate_utf8:
+ **/
+static gboolean
+as_app_validate_utf8 (const gchar *text, gssize text_len)
+{
+	guint i;
+
+	/* nothing */
+	if (text == NULL)
+		return TRUE;
+
+	/* standard UTF-8 checks */
+	if (!g_utf8_validate (text, text_len, NULL))
+		return FALSE;
+
+	/* additional check for xmllint */
+	for (i = 0; text[i] != '\0'; i++) {
+		if (text[i] == 0x1f)
+			return FALSE;
+	}
+	return TRUE;
+}
+
 /******************************************************************************/
 
 /**
@@ -1081,6 +1123,13 @@ as_app_set_id_full (AsApp *app, const gchar *id_full, gssize id_full_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	gchar *tmp;
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (id_full, id_full_len)) {
+		g_warning ("invalid UTF-8 id");
+		return;
+	}
 
 	g_free (priv->id_full);
 	g_free (priv->id);
@@ -1107,6 +1156,23 @@ as_app_set_source_kind (AsApp *app, AsAppSourceKind source_kind)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->source_kind = source_kind;
+}
+
+/**
+ * as_app_set_trust_flags:
+ * @app: a #AsApp instance.
+ * @trust_flags: the #AsAppSourceKind.
+ *
+ * Sets the check flags, where %AS_APP_TRUST_FLAG_COMPLETE is completely
+ * trusted input.
+ *
+ * Since: 0.2.2
+ **/
+void
+as_app_set_trust_flags (AsApp *app, AsAppTrustFlags trust_flags)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	priv->trust_flags = trust_flags;
 }
 
 /**
@@ -1141,6 +1207,15 @@ as_app_set_project_group (AsApp *app,
 			  gssize project_group_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (project_group, project_group_len)) {
+		g_warning ("%s: invalid UTF-8 project_group",
+			   priv->id_full);
+		return;
+	}
+
 	g_free (priv->project_group);
 	priv->project_group = as_strndup (project_group, project_group_len);
 }
@@ -1161,6 +1236,15 @@ as_app_set_project_license (AsApp *app,
 			    gssize project_license_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (project_license, project_license_len)) {
+		g_warning ("%s: invalid UTF-8 project_license",
+			   priv->id_full);
+		return;
+	}
+
 	g_free (priv->project_license);
 	priv->project_license = as_strndup (project_license, project_license_len);
 }
@@ -1209,6 +1293,14 @@ as_app_set_metadata_license (AsApp *app,
 		{ "GPL-2",	"GPL-2.0" },
 		{ "GPL-3",	"GPL-3.0" },
 		{ NULL, NULL } };
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (metadata_license, metadata_license_len)) {
+		g_warning ("%s: invalid UTF-8 metadata_license",
+			   priv->id_full);
+		return;
+	}
 
 	/* automatically replace deprecated license names */
 	for (i = 0; licenses[i].old != NULL; i++) {
@@ -1275,6 +1367,14 @@ as_app_set_update_contact (AsApp *app,
 		{ " DOT ",	'.' },
 		{ NULL,		'\0' } };
 
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (update_contact, update_contact_len)) {
+		g_warning ("%s: invalid UTF-8 update_contact",
+			   priv->id_full);
+		return;
+	}
+
 	/* copy as-is */
 	g_free (priv->update_contact);
 	priv->update_contact = as_strndup (update_contact, update_contact_len);
@@ -1313,6 +1413,15 @@ void
 as_app_set_icon (AsApp *app, const gchar *icon, gssize icon_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (icon, icon_len)) {
+		g_warning ("%s: invalid UTF-8 icon",
+			   priv->id_full);
+		return;
+	}
+
 	g_free (priv->icon);
 	priv->icon = as_strndup (icon, icon_len);
 }
@@ -1331,6 +1440,15 @@ void
 as_app_set_icon_path (AsApp *app, const gchar *icon_path, gssize icon_path_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (icon_path, icon_path_len)) {
+		g_warning ("%s: invalid UTF-8 icon_path",
+			   priv->id_full);
+		return;
+	}
+
 	g_free (priv->icon_path);
 	priv->icon_path = as_strndup (icon_path, icon_path_len);
 }
@@ -1369,6 +1487,15 @@ as_app_set_name (AsApp *app,
 		 gssize name_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (name, name_len)) {
+		g_warning ("%s: invalid UTF-8 name for %s",
+			   priv->id_full, locale);
+		return;
+	}
+
 	if (locale == NULL)
 		locale = "C";
 	g_hash_table_insert (priv->names,
@@ -1395,6 +1522,15 @@ as_app_set_comment (AsApp *app,
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_return_if_fail (comment != NULL);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (comment, comment_len)) {
+		g_warning ("%s: invalid UTF-8 comment for %s",
+			   priv->id_full, locale);
+		return;
+	}
+
 	if (locale == NULL)
 		locale = "C";
 	g_hash_table_insert (priv->comments,
@@ -1421,6 +1557,15 @@ as_app_set_developer_name (AsApp *app,
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_return_if_fail (developer_name != NULL);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (developer_name, developer_name_len)) {
+		g_warning ("%s: invalid UTF-8 developer_name for %s",
+			   priv->id_full, locale);
+		return;
+	}
+
 	if (locale == NULL)
 		locale = "C";
 	g_hash_table_insert (priv->developer_names,
@@ -1447,6 +1592,15 @@ as_app_set_description (AsApp *app,
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_return_if_fail (description != NULL);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (description, description_len)) {
+		g_warning ("%s: invalid UTF-8 description for %s",
+			   priv->id_full, locale);
+		return;
+	}
+
 	if (locale == NULL)
 		locale = "C";
 	g_hash_table_insert (priv->descriptions,
@@ -1503,12 +1657,22 @@ as_app_add_category (AsApp *app, const gchar *category, gssize category_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (category, category_len)) {
+		g_warning ("%s: invalid UTF-8 category",
+			   priv->id_full);
+		return;
+	}
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
+	    as_app_array_find_string (priv->categories, category)) {
+		return;
+	}
+
 	/* simple substitution */
 	if (g_strcmp0 (category, "Feed") == 0)
 		category = "News";
 
-	if (as_app_array_find_string (priv->categories, category))
-		return;
 	g_ptr_array_add (priv->categories, as_strndup (category, category_len));
 }
 
@@ -1529,9 +1693,20 @@ as_app_add_compulsory_for_desktop (AsApp *app,
 				   gssize compulsory_for_desktop_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	if (as_app_array_find_string (priv->compulsory_for_desktops,
-				      compulsory_for_desktop))
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (compulsory_for_desktop, compulsory_for_desktop_len)) {
+		g_warning ("%s: invalid UTF-8 compulsory_for_desktop",
+			   priv->id_full);
 		return;
+	}
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
+	    as_app_array_find_string (priv->compulsory_for_desktops,
+				      compulsory_for_desktop)) {
+		return;
+	}
+
 	g_ptr_array_add (priv->compulsory_for_desktops,
 			 as_strndup (compulsory_for_desktop,
 				     compulsory_for_desktop_len));
@@ -1551,8 +1726,19 @@ void
 as_app_add_keyword (AsApp *app, const gchar *keyword, gssize keyword_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	if (as_app_array_find_string (priv->keywords, keyword))
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (keyword, keyword_len)) {
+		g_warning ("%s: invalid UTF-8 keyword",
+			   priv->id_full);
 		return;
+	}
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
+	    as_app_array_find_string (priv->keywords, keyword)) {
+		return;
+	}
+
 	g_ptr_array_add (priv->keywords, as_strndup (keyword, keyword_len));
 }
 
@@ -1570,8 +1756,19 @@ void
 as_app_add_mimetype (AsApp *app, const gchar *mimetype, gssize mimetype_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	if (as_app_array_find_string (priv->mimetypes, mimetype))
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (mimetype, mimetype_len)) {
+		g_warning ("%s: invalid UTF-8 mimetype",
+			   priv->id_full);
 		return;
+	}
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
+	    as_app_array_find_string (priv->mimetypes, mimetype)) {
+		return;
+	}
+
 	g_ptr_array_add (priv->mimetypes, as_strndup (mimetype, mimetype_len));
 }
 
@@ -1637,8 +1834,19 @@ void
 as_app_add_pkgname (AsApp *app, const gchar *pkgname, gssize pkgname_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	if (as_app_array_find_string (priv->pkgnames, pkgname))
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (pkgname, pkgname_len)) {
+		g_warning ("%s: invalid UTF-8 pkgname",
+			   priv->id_full);
 		return;
+	}
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
+	    as_app_array_find_string (priv->pkgnames, pkgname)) {
+		return;
+	}
+
 	g_ptr_array_add (priv->pkgnames, as_strndup (pkgname, pkgname_len));
 }
 
@@ -1656,8 +1864,19 @@ void
 as_app_add_arch (AsApp *app, const gchar *arch, gssize arch_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	if (as_app_array_find_string (priv->architectures, arch))
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (arch, arch_len)) {
+		g_warning ("%s: invalid UTF-8 arch",
+			   priv->id_full);
 		return;
+	}
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
+	    as_app_array_find_string (priv->architectures, arch)) {
+		return;
+	}
+
 	g_ptr_array_add (priv->architectures, as_strndup (arch, arch_len));
 }
 
@@ -1679,6 +1898,15 @@ as_app_add_language (AsApp *app,
 		     gssize locale_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (locale, locale_len)) {
+		g_warning ("%s: invalid UTF-8 locale",
+			   priv->id_full);
+		return;
+	}
+
 	if (locale == NULL)
 		locale = "C";
 	g_hash_table_insert (priv->languages,
@@ -1704,6 +1932,15 @@ as_app_add_url (AsApp *app,
 		gssize url_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (url, url_len)) {
+		g_warning ("%s: invalid UTF-8 url",
+			   priv->id_full);
+		return;
+	}
+
 	g_hash_table_insert (priv->urls,
 			     g_strdup (as_url_kind_to_string (url_kind)),
 			     as_strndup (url, url_len));
@@ -1728,6 +1965,15 @@ as_app_add_metadata (AsApp *app,
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_return_if_fail (key != NULL);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (value, value_len)) {
+		g_warning ("%s: invalid UTF-8 value",
+			   priv->id_full);
+		return;
+	}
+
 	if (value == NULL)
 		value = "";
 	g_hash_table_insert (priv->metadata,
@@ -1765,6 +2011,15 @@ void
 as_app_add_extends (AsApp *app, const gchar *extends, gssize extends_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (extends, extends_len)) {
+		g_warning ("%s: invalid UTF-8 extends",
+			   priv->id_full);
+		return;
+	}
+
 	g_ptr_array_add (priv->extends, as_strndup (extends, extends_len));
 }
 

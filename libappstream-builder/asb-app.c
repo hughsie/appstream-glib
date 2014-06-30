@@ -76,6 +76,11 @@ asb_app_init (AsbApp *app)
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 	priv->vetos = g_ptr_array_new_with_free_func (g_free);
 	priv->requires_appdata = g_ptr_array_new_with_free_func (g_free);
+
+	/* all untrusted */
+	as_app_set_trust_flags (AS_APP (app),
+				AS_APP_TRUST_FLAG_CHECK_DUPLICATES |
+				AS_APP_TRUST_FLAG_CHECK_VALID_UTF8);
 }
 
 /**

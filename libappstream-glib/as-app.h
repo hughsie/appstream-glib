@@ -133,6 +133,22 @@ typedef enum {
 } AsAppValidateFlags;
 
 /**
+ * AsAppTrustFlags:
+ * @AS_APP_TRUST_FLAG_COMPLETE:			Trusted data with no validation
+ * @AS_APP_TRUST_FLAG_CHECK_DUPLICATES:		Check for duplicates
+ * @AS_APP_TRUST_FLAG_CHECK_VALID_UTF8:		Check for valid UTF-8
+ *
+ * The flags to use when checking input.
+ **/
+typedef enum {
+	AS_APP_TRUST_FLAG_COMPLETE		= 0,	/* Since: 0.2.2 */
+	AS_APP_TRUST_FLAG_CHECK_DUPLICATES	= 1,	/* Since: 0.2.2 */
+	AS_APP_TRUST_FLAG_CHECK_VALID_UTF8	= 2,	/* Since: 0.2.2 */
+	/*< private >*/
+	AS_APP_TRUST_FLAG_LAST
+} AsAppTrustFlags;
+
+/**
  * AsAppSourceKind:
  * @AS_APP_SOURCE_KIND_UNKNOWN:			Not sourced from a file
  * @AS_APP_SOURCE_KIND_APPSTREAM:		Sourced from a AppStream file
@@ -165,6 +181,7 @@ const gchar	*as_app_source_kind_to_string	(AsAppSourceKind source_kind);
 AsIconKind	 as_app_get_icon_kind		(AsApp		*app);
 AsIdKind	 as_app_get_id_kind		(AsApp		*app);
 AsAppSourceKind	 as_app_get_source_kind		(AsApp		*app);
+AsAppTrustFlags	 as_app_get_trust_flags		(AsApp		*app);
 GList		*as_app_get_languages		(AsApp		*app);
 GPtrArray	*as_app_get_addons		(AsApp		*app);
 GPtrArray	*as_app_get_categories		(AsApp		*app);
@@ -219,6 +236,8 @@ void		 as_app_set_id_kind		(AsApp		*app,
 						 AsIdKind	 id_kind);
 void		 as_app_set_source_kind		(AsApp		*app,
 						 AsAppSourceKind source_kind);
+void		 as_app_set_trust_flags		(AsApp		*app,
+						 AsAppTrustFlags trust_flags);
 void		 as_app_set_project_group	(AsApp		*app,
 						 const gchar	*project_group,
 						 gssize		 project_group_len);
