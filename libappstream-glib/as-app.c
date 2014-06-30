@@ -3455,6 +3455,11 @@ as_app_parse_file (AsApp *app,
 	    g_str_has_suffix (filename, ".metainfo.xml.in"))
 		flags |= AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE;
 
+	/* all untrusted */
+	as_app_set_trust_flags (AS_APP (app),
+				AS_APP_TRUST_FLAG_CHECK_DUPLICATES |
+				AS_APP_TRUST_FLAG_CHECK_VALID_UTF8);
+
 	/* parse */
 	switch (priv->source_kind) {
 	case AS_APP_SOURCE_KIND_DESKTOP:
