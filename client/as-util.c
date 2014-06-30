@@ -677,17 +677,14 @@ as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **erro
 }
 
 /**
- * as_util_dump_filename:
+ * as_util_add_file_to_store:
  **/
 static gboolean
-as_util_dump_filename (AsUtilPrivate *priv, const gchar *filename, GError **error)
+as_util_add_file_to_store (AsStore *store, const gchar *filename, GError **error)
 {
 	_cleanup_object_unref_ AsApp *app = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
 	_cleanup_object_unref_ GFile *file_input = NULL;
-	_cleanup_string_free_ GString *xml = NULL;
 
-	store = as_store_new ();
 	switch (as_app_guess_source_kind (filename)) {
 	case AS_APP_SOURCE_KIND_APPDATA:
 	case AS_APP_SOURCE_KIND_METAINFO:
@@ -711,39 +708,6 @@ as_util_dump_filename (AsUtilPrivate *priv, const gchar *filename, GError **erro
 				     "Format not recognised");
 		return FALSE;
 	}
-
-	/* dump to screen */
-	as_store_set_api_version (store, 1.0);
-	xml = as_store_to_xml (store,
-			       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE |
-			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
-			       AS_NODE_TO_XML_FLAG_ADD_HEADER);
-	g_print ("%s", xml->str);
-	return TRUE;
-}
-
-/**
- * as_util_dump_installed:
- **/
-static gboolean
-as_util_dump_installed (AsUtilPrivate *priv, GError **error)
-{
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_string_free_ GString *xml = NULL;
-
-	/* dump to screen */
-	store = as_store_new ();
-	if (!as_store_load (store,
-			    AS_STORE_LOAD_FLAG_APPDATA |
-			    AS_STORE_LOAD_FLAG_DESKTOP,
-			    NULL, error))
-		return FALSE;
-	as_store_set_api_version (store, 1.0);
-	xml = as_store_to_xml (store,
-			       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE |
-			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
-			       AS_NODE_TO_XML_FLAG_ADD_HEADER);
-	g_print ("%s", xml->str);
 	return TRUE;
 }
 
@@ -754,6 +718,8 @@ static gboolean
 as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	guint i;
+	_cleanup_string_free_ GString *xml = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
 
 	/* check args */
 	if (g_strv_length (values) < 1) {
@@ -766,13 +732,28 @@ as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 	}
 
 	/* magic value */
-	if (g_strcmp0 (values[0], "installed") == 0)
-		return as_util_dump_installed (priv, error);
-
-	for (i = 0; values[i] != NULL; i++) {
-		if (!as_util_dump_filename (priv, values[0], error))
+	store = as_store_new ();
+	if (g_strcmp0 (values[0], "installed") == 0) {
+		if (!as_store_load (store,
+				    AS_STORE_LOAD_FLAG_APPDATA |
+				    AS_STORE_LOAD_FLAG_DESKTOP,
+				    NULL, error)) {
 			return FALSE;
+		}
+	} else {
+		for (i = 0; values[i] != NULL; i++) {
+			if (!as_util_add_file_to_store (store, values[i], error))
+				return FALSE;
+		}
 	}
+
+	/* dump to screen */
+	as_store_set_api_version (store, 1.0);
+	xml = as_store_to_xml (store,
+			       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE |
+			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+			       AS_NODE_TO_XML_FLAG_ADD_HEADER);
+	g_print ("%s", xml->str);
 	return TRUE;
 }
 
