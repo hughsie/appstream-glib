@@ -1817,6 +1817,18 @@ void
 as_app_add_screenshot (AsApp *app, AsScreenshot *screenshot)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
+		AsScreenshot *ss;
+		guint i;
+		for (i = 0; i < priv->screenshots->len; i++) {
+			ss = g_ptr_array_index (priv->screenshots, i);
+			if (ss == screenshot)
+				return;
+		}
+	}
+
 	g_ptr_array_add (priv->screenshots, g_object_ref (screenshot));
 }
 
@@ -2083,6 +2095,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	gint percentage;
 	GList *l;
 	_cleanup_list_free_ GList *keys;
+
+	/* stop us shooting ourselves in the foot */
+	papp->trust_flags |= AS_APP_TRUST_FLAG_CHECK_DUPLICATES;
 
 	overwrite = (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) == 0;
 

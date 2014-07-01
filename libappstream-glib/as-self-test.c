@@ -1186,6 +1186,7 @@ as_test_app_subsume_func (void)
 	GList *list;
 	_cleanup_object_unref_ AsApp *app = NULL;
 	_cleanup_object_unref_ AsApp *donor = NULL;
+	_cleanup_object_unref_ AsScreenshot *ss = NULL;
 
 	donor = as_app_new ();
 	as_app_set_icon (donor, "gtk-find", -1);
@@ -1193,12 +1194,15 @@ as_test_app_subsume_func (void)
 	as_app_add_language (donor, -1, "en_GB", -1);
 	as_app_add_metadata (donor, "donor", "true", -1);
 	as_app_add_metadata (donor, "overwrite", "1111", -1);
+	ss = as_screenshot_new ();
+	as_app_add_screenshot (donor, ss);
 
 	/* copy all useful properties */
 	app = as_app_new ();
 	as_app_add_metadata (app, "overwrite", "2222", -1);
 	as_app_add_metadata (app, "recipient", "true", -1);
 	as_app_subsume_full (app, donor, AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
+	as_app_add_screenshot (app, ss);
 
 	g_assert_cmpstr (as_app_get_icon (app), ==, "gtk-find");
 	g_assert_cmpstr (as_app_get_metadata_item (app, "donor"), ==, "true");
@@ -1215,6 +1219,7 @@ as_test_app_subsume_func (void)
 	g_assert_cmpstr (as_app_get_metadata_item (app, "recipient"), ==, "true");
 	g_assert_cmpstr (as_app_get_metadata_item (donor, "donor"), ==, "true");
 	g_assert_cmpstr (as_app_get_metadata_item (donor, "recipient"), ==, "true");
+	g_assert_cmpint (as_app_get_screenshots(app)->len, ==, 1);
 }
 
 static void

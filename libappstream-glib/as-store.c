@@ -369,7 +369,9 @@ as_store_add_app (AsStore *store, AsApp *app)
 
 		/* this new item has a higher priority than the one we've
 		 * previously stored */
-		g_debug ("replacing old entry: %s", id);
+		g_debug ("removing %s entry: %s",
+			 as_app_source_kind_to_string (as_app_get_source_kind (item)),
+			 id);
 		g_hash_table_remove (priv->hash_id, id);
 		g_ptr_array_remove (priv->array, item);
 	}
