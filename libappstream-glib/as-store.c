@@ -1112,17 +1112,20 @@ as_store_load_installed (AsStore *store, const gchar *path,
 		return FALSE;
 
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
+		AsApp *app_tmp;
 		_cleanup_free_ gchar *filename = NULL;
 		_cleanup_object_unref_ AsApp *app = NULL;
 		filename = g_build_filename (path, tmp, NULL);
 		if (!g_file_test (filename, G_FILE_TEST_IS_REGULAR))
 			continue;
-		if ((priv->add_flags & AS_STORE_ADD_FLAG_PREFER_LOCAL) == 0 &&
-		    as_store_get_app_by_id (store, tmp) != NULL) {
-			as_app_set_state (app, AS_APP_STATE_INSTALLED);
-			g_debug ("not parsing %s as %s already exists",
-				 filename, tmp);
-			continue;
+		if ((priv->add_flags & AS_STORE_ADD_FLAG_PREFER_LOCAL) == 0) {
+			app_tmp = as_store_get_app_by_id (store, tmp);
+			if (app_tmp != NULL) {
+				as_app_set_state (app_tmp, AS_APP_STATE_INSTALLED);
+				g_debug ("not parsing %s as %s already exists",
+					 filename, tmp);
+				continue;
+			}
 		}
 		app = as_app_new ();
 		if (!as_app_parse_file (app, filename,
