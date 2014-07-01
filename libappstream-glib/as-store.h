@@ -86,6 +86,18 @@ typedef enum {
 } AsStoreLoadFlags;
 
 /**
+ * AsStoreAddFlags:
+ * @AS_STORE_ADD_FLAG_NONE:				No extra flags to use
+ *
+ * The flags to use when adding applications to the store.
+ **/
+typedef enum {
+	AS_STORE_ADD_FLAG_NONE			= 0,	/* Since: 0.2.2 */
+	/*< private >*/
+	AS_STORE_ADD_FLAG_LAST
+} AsStoreAddFlags;
+
+/**
  * AsStoreError:
  * @AS_STORE_ERROR_FAILED:			Generic failure
  *
@@ -146,6 +158,9 @@ void		 as_store_set_origin		(AsStore	*store,
 gdouble		 as_store_get_api_version	(AsStore	*store);
 void		 as_store_set_api_version	(AsStore	*store,
 						 gdouble	 api_version);
+AsStoreAddFlags	 as_store_get_add_flags		(AsStore	*store);
+void		 as_store_set_add_flags		(AsStore	*store,
+						 AsStoreAddFlags add_flags);
 
 G_END_DECLS
 

@@ -53,6 +53,7 @@ struct _AsStorePrivate
 	GHashTable		*hash_id;	/* of AsApp{id_full} */
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
 	GPtrArray		*file_monitors;	/* of GFileMonitor */
+	AsStoreAddFlags		 add_flags;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsStore, as_store, G_TYPE_OBJECT)
@@ -758,6 +759,39 @@ as_store_set_api_version (AsStore *store, gdouble api_version)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	priv->api_version = api_version;
+}
+
+/**
+ * as_store_get_add_flags:
+ * @store: a #AsStore instance.
+ *
+ * Gets the flags used for adding applications to the store.
+ *
+ * Returns: the #AsStoreAddFlags, or 0 if unset
+ *
+ * Since: 0.2.2
+ **/
+AsStoreAddFlags
+as_store_get_add_flags (AsStore *store)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	return priv->add_flags;
+}
+
+/**
+ * as_store_set_add_flags:
+ * @store: a #AsStore instance.
+ * @add_flags: the #AsStoreAddFlags, e.g. %AS_STORE_ADD_FLAG_NONE
+ *
+ * Sets the flags used when adding applications to the store.
+ *
+ * Since: 0.2.2
+ **/
+void
+as_store_set_add_flags (AsStore *store, AsStoreAddFlags add_flags)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	priv->add_flags = add_flags;
 }
 
 /**
