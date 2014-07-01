@@ -306,43 +306,70 @@ as_store_add_app (AsStore *store, AsApp *app)
 	item = g_hash_table_lookup (priv->hash_id, id);
 	if (item != NULL) {
 
-		/* the previously stored app is higher priority */
-		if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
-		    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM) {
-			g_debug ("ignoring AppData entry as AppStream exists: %s", id);
-			return;
-		}
-		if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP &&
-		    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM) {
-			g_debug ("ignoring desktop entry as AppStream exists: %s", id);
-			return;
-		}
+		/* the previously stored app is what we actually want */
+		if ((priv->add_flags & AS_STORE_ADD_FLAG_PREFER_LOCAL) > 0) {
 
-		/* the previously stored app is higher priority */
-		if (as_app_get_priority (item) >
-		    as_app_get_priority (app)) {
-			g_debug ("ignoring duplicate %s:%s entry: %s",
-				 as_app_source_kind_to_string (as_app_get_source_kind (app)),
-				 as_app_source_kind_to_string (as_app_get_source_kind (item)),
-				 id);
-			return;
-		}
+			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPSTREAM &&
+			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPDATA) {
+				g_debug ("ignoring AppStream entry as AppData exists: %s", id);
+				return;
+			}
+			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPSTREAM &&
+			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_DESKTOP) {
+				g_debug ("ignoring AppStream entry as desktop exists: %s", id);
+				return;
+			}
+			if ((as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
+			     as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_DESKTOP) ||
+			    (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP &&
+			     as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPDATA)) {
+				g_debug ("merging duplicate %s:%s entries: %s",
+					 as_app_source_kind_to_string (as_app_get_source_kind (app)),
+					 as_app_source_kind_to_string (as_app_get_source_kind (item)),
+					 id);
+				as_app_subsume_full (app, item,
+						     AS_APP_SUBSUME_FLAG_BOTH_WAYS);
+				return;
+			}
 
-		/* same priority */
-		if (as_app_get_priority (item) ==
-		    as_app_get_priority (app)) {
-			g_debug ("merging duplicate %s:%s entries: %s",
-				 as_app_source_kind_to_string (as_app_get_source_kind (app)),
-				 as_app_source_kind_to_string (as_app_get_source_kind (item)),
-				 id);
-			as_app_subsume_full (item, app,
-					     AS_APP_SUBSUME_FLAG_BOTH_WAYS);
-			return;
+		} else {
+			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
+			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM) {
+				g_debug ("ignoring AppData entry as AppStream exists: %s", id);
+				return;
+			}
+			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP &&
+			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM) {
+				g_debug ("ignoring desktop entry as AppStream exists: %s", id);
+				return;
+			}
+
+			/* the previously stored app is higher priority */
+			if (as_app_get_priority (item) >
+			    as_app_get_priority (app)) {
+				g_debug ("ignoring duplicate %s:%s entry: %s",
+					 as_app_source_kind_to_string (as_app_get_source_kind (app)),
+					 as_app_source_kind_to_string (as_app_get_source_kind (item)),
+					 id);
+				return;
+			}
+
+			/* same priority */
+			if (as_app_get_priority (item) ==
+			    as_app_get_priority (app)) {
+				g_debug ("merging duplicate %s:%s entries: %s",
+					 as_app_source_kind_to_string (as_app_get_source_kind (app)),
+					 as_app_source_kind_to_string (as_app_get_source_kind (item)),
+					 id);
+				as_app_subsume_full (app, item,
+						     AS_APP_SUBSUME_FLAG_BOTH_WAYS);
+				return;
+			}
 		}
 
 		/* this new item has a higher priority than the one we've
 		 * previously stored */
-		g_debug ("replacing duplicate AppStream entry: %s", id);
+		g_debug ("replacing old entry: %s", id);
 		g_hash_table_remove (priv->hash_id, id);
 		g_ptr_array_remove (priv->array, item);
 	}
@@ -785,6 +812,9 @@ as_store_get_add_flags (AsStore *store)
  *
  * Sets the flags used when adding applications to the store.
  *
+ * NOTE: Using %AS_STORE_ADD_FLAG_PREFER_LOCAL may be a privacy risk depending on
+ * your level of paranoia, and should not be used by default.
+ *
  * Since: 0.2.2
  **/
 void
@@ -1068,9 +1098,10 @@ static gboolean
 as_store_load_installed (AsStore *store, const gchar *path,
 			 GCancellable *cancellable, GError **error)
 {
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	GError *error_local = NULL;
 	const gchar *tmp;
 	_cleanup_dir_close_ GDir *dir = NULL;
-	GError *error_local = NULL;
 
 	dir = g_dir_open (path, 0, error);
 	if (dir == NULL)
@@ -1082,7 +1113,8 @@ as_store_load_installed (AsStore *store, const gchar *path,
 		filename = g_build_filename (path, tmp, NULL);
 		if (!g_file_test (filename, G_FILE_TEST_IS_REGULAR))
 			continue;
-		if (as_store_get_app_by_id (store, tmp) != NULL) {
+		if ((priv->add_flags & AS_STORE_ADD_FLAG_PREFER_LOCAL) == 0 &&
+		    as_store_get_app_by_id (store, tmp) != NULL) {
 			g_debug ("not parsing %s as %s already exists",
 				 filename, tmp);
 			continue;

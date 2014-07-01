@@ -1295,6 +1295,57 @@ as_test_store_merges_func (void)
 }
 
 static void
+as_test_store_merges_local_func (void)
+{
+	AsApp *app_tmp;
+	_cleanup_object_unref_ AsApp *app_appdata = NULL;
+	_cleanup_object_unref_ AsApp *app_appinfo = NULL;
+	_cleanup_object_unref_ AsApp *app_desktop = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+
+	/* test desktop + appdata + appstream */
+	store = as_store_new ();
+	as_store_set_add_flags (store, AS_STORE_ADD_FLAG_PREFER_LOCAL);
+
+	app_desktop = as_app_new ();
+	as_app_set_id_full (app_desktop, "gimp.desktop", -1);
+	as_app_set_source_kind (app_desktop, AS_APP_SOURCE_KIND_DESKTOP);
+	as_app_set_name (app_desktop, NULL, "GIMP", -1);
+	as_app_set_comment (app_desktop, NULL, "GNU Bla Bla", -1);
+	as_app_set_priority (app_desktop, -1);
+
+	app_appdata = as_app_new ();
+	as_app_set_id_full (app_appdata, "gimp.desktop", -1);
+	as_app_set_source_kind (app_appdata, AS_APP_SOURCE_KIND_APPDATA);
+	as_app_set_description (app_appdata, NULL, "<p>Gimp is awesome</p>", -1);
+	as_app_add_pkgname (app_appdata, "gimp", -1);
+	as_app_set_priority (app_appdata, -1);
+
+	app_appinfo = as_app_new ();
+	as_app_set_id_full (app_appinfo, "gimp.desktop", -1);
+	as_app_set_source_kind (app_appinfo, AS_APP_SOURCE_KIND_APPSTREAM);
+	as_app_set_name (app_appinfo, NULL, "GIMP", -1);
+	as_app_set_comment (app_appinfo, NULL, "Fedora GNU Bla Bla", -1);
+	as_app_set_description (app_appinfo, NULL, "<p>Gimp is Distro</p>", -1);
+	as_app_add_pkgname (app_appinfo, "gimp", -1);
+	as_app_set_priority (app_appinfo, 0);
+
+	/* this is actually the install order we get at startup */
+	as_store_add_app (store, app_appinfo);
+	as_store_add_app (store, app_desktop);
+	as_store_add_app (store, app_appdata);
+
+	/* ensure the local entry 'wins' */
+	app_tmp = as_store_get_app_by_id (store, "gimp.desktop");
+	g_assert (app_tmp != NULL);
+	g_assert_cmpstr (as_app_get_name (app_tmp, NULL), ==, "GIMP");
+	g_assert_cmpstr (as_app_get_comment (app_tmp, NULL), ==, "GNU Bla Bla");
+	g_assert_cmpstr (as_app_get_description (app_tmp, NULL), ==, "<p>Gimp is awesome</p>");
+	g_assert_cmpstr (as_app_get_pkgname_default (app_tmp), ==, "gimp");
+	g_assert_cmpint (as_app_get_source_kind (app_tmp), ==, AS_APP_SOURCE_KIND_DESKTOP);
+}
+
+static void
 as_test_store_func (void)
 {
 	AsApp *app;
@@ -1853,6 +1904,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
 	g_test_add_func ("/AppStream/store{merges}", as_test_store_merges_func);
+	g_test_add_func ("/AppStream/store{merges-local}", as_test_store_merges_local_func);
 	g_test_add_func ("/AppStream/store{addons}", as_test_store_addons_func);
 	g_test_add_func ("/AppStream/store{versions}", as_test_store_versions_func);
 	g_test_add_func ("/AppStream/store{origin}", as_test_store_origin_func);

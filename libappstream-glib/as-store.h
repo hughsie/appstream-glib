@@ -88,11 +88,13 @@ typedef enum {
 /**
  * AsStoreAddFlags:
  * @AS_STORE_ADD_FLAG_NONE:				No extra flags to use
+ * @AS_STORE_ADD_FLAG_PREFER_LOCAL:			Local files will be used by default
  *
  * The flags to use when adding applications to the store.
  **/
 typedef enum {
 	AS_STORE_ADD_FLAG_NONE			= 0,	/* Since: 0.2.2 */
+	AS_STORE_ADD_FLAG_PREFER_LOCAL		= 1,	/* Since: 0.2.2 */
 	/*< private >*/
 	AS_STORE_ADD_FLAG_LAST
 } AsStoreAddFlags;
