@@ -189,8 +189,6 @@ as_screenshot_get_image (AsScreenshot *screenshot, guint width, guint height)
 	guint tmp;
 
 	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), NULL);
-	g_return_val_if_fail (width > 0, NULL);
-	g_return_val_if_fail (height > 0, NULL);
 
 	for (i = 0; i < priv->images->len; i++) {
 		im = g_ptr_array_index (priv->images, i);
