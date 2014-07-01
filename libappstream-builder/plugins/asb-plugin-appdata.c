@@ -522,13 +522,12 @@ asb_plugin_process_app (AsbPlugin *plugin,
 						    error);
 	}
 
-	/* we're going to require this for F22 */
+	/* we're going to require this soon */
 	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_DESKTOP &&
 	    as_app_get_metadata_item (AS_APP (app), "NoDisplay") == NULL) {
 		asb_package_log (pkg,
 				 ASB_PACKAGE_LOG_LEVEL_WARNING,
-				 "desktop application %s has no AppData and "
-				 "will not be shown in Fedora 22 and later",
+				 "desktop application %s has no AppData",
 				 as_app_get_id (AS_APP (app)));
 	}
 	return TRUE;
