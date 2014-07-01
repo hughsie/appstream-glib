@@ -165,6 +165,46 @@ as_screenshot_get_images (AsScreenshot *screenshot)
 }
 
 /**
+ * as_screenshot_get_image:
+ * @screenshot: a #AsScreenshot instance.
+ * @width: target width
+ * @height: target height
+ *
+ * Gets the AsImage closest to the target size. The #AsImage may not actually
+ * be the requested size, and the application may have to pad / rescale the
+ * image to make it fit.
+ *
+ * Returns: (transfer none): an #AsImage, or %NULL
+ *
+ * Since: 0.2.2
+ **/
+AsImage *
+as_screenshot_get_image (AsScreenshot *screenshot, guint width, guint height)
+{
+	AsImage *im;
+	AsImage *im_best = NULL;
+	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	guint best_size = G_MAXUINT;
+	guint i;
+	guint tmp;
+
+	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), NULL);
+	g_return_val_if_fail (width > 0, NULL);
+	g_return_val_if_fail (height > 0, NULL);
+
+	for (i = 0; i < priv->images->len; i++) {
+		im = g_ptr_array_index (priv->images, i);
+		tmp = ABS ((gint64) (width * height) -
+			   (gint64) (as_image_get_width (im) * as_image_get_height (im)));
+		if (tmp < best_size) {
+			best_size = tmp;
+			im_best = im;
+		}
+	}
+	return im_best;
+}
+
+/**
  * as_screenshot_get_source:
  * @screenshot: a #AsScreenshot instance.
  *

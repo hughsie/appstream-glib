@@ -273,8 +273,8 @@ as_test_screenshot_func (void)
 	const gchar *src =
 		"<screenshot>"
 		"<caption>Hello</caption>"
-		"<image type=\"source\">http://1.png</image>"
-		"<image type=\"thumbnail\">http://2.png</image>"
+		"<image type=\"source\" height=\"800\" width=\"600\">http://1.png</image>"
+		"<image type=\"thumbnail\" height=\"100\" width=\"100\">http://2.png</image>"
 		"</screenshot>";
 	gboolean ret;
 	_cleanup_object_unref_ AsScreenshot *screenshot = NULL;
@@ -300,6 +300,14 @@ as_test_screenshot_func (void)
 	g_assert (im != NULL);
 	g_assert_cmpstr (as_image_get_url (im), ==, "http://1.png");
 	as_node_unref (root);
+
+	/* get closest */
+	im = as_screenshot_get_image (screenshot, 120, 120);
+	g_assert (im != NULL);
+	g_assert_cmpstr (as_image_get_url (im), ==, "http://2.png");
+	im = as_screenshot_get_image (screenshot, 800, 560);
+	g_assert (im != NULL);
+	g_assert_cmpstr (as_image_get_url (im), ==, "http://1.png");
 
 	/* back to node */
 	root = as_node_new ();
