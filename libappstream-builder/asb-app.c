@@ -396,12 +396,15 @@ gboolean
 asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **error)
 {
 	gboolean is_default;
-	guint sizes[] = { 624, 351, 112, 63, 752, 423, 0 };
 	const gchar *mirror_uri;
 	guint i;
 	_cleanup_free_ gchar *basename = NULL;
 	_cleanup_object_unref_ AsImage *im_src;
 	_cleanup_object_unref_ AsScreenshot *ss = NULL;
+	guint sizes[] = { AS_IMAGE_NORMAL_WIDTH,    AS_IMAGE_NORMAL_HEIGHT,
+			  AS_IMAGE_THUMBNAIL_WIDTH, AS_IMAGE_THUMBNAIL_HEIGHT,
+			  AS_IMAGE_LARGE_WIDTH,     AS_IMAGE_LARGE_HEIGHT,
+			  0 };
 
 	im_src = as_image_new ();
 	if (!as_image_load_filename (im_src, filename, error))

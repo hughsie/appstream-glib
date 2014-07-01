@@ -90,6 +90,14 @@ typedef enum {
 	AS_IMAGE_SAVE_FLAG_LAST
 } AsImageSaveFlags;
 
+/* some useful constants */
+#define AS_IMAGE_LARGE_HEIGHT		423	/* Since: 0.2.2 */
+#define AS_IMAGE_LARGE_WIDTH		752	/* Since: 0.2.2 */
+#define AS_IMAGE_NORMAL_HEIGHT		351	/* Since: 0.2.2 */
+#define AS_IMAGE_NORMAL_WIDTH		624	/* Since: 0.2.2 */
+#define AS_IMAGE_THUMBNAIL_HEIGHT	63	/* Since: 0.2.2 */
+#define AS_IMAGE_THUMBNAIL_WIDTH 	112	/* Since: 0.2.2 */
+
 GType		 as_image_get_type		(void);
 AsImage		*as_image_new			(void);
 
