@@ -1385,6 +1385,70 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
+ * as_util_status_csv:
+ **/
+static gboolean
+as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsApp *app;
+	GPtrArray *apps = NULL;
+	guint i;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+	_cleanup_string_free_ GString *data = NULL;
+
+	/* check args */
+	if (g_strv_length (values) != 1) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected filename.xml.gz");
+		return FALSE;
+	}
+
+	/* load file */
+	store = as_store_new ();
+	file = g_file_new_for_path (values[0]);
+	if (!as_store_from_file (store, file, NULL, NULL, error))
+		return FALSE;
+	apps = as_store_get_apps (store);
+
+	/* write applications */
+	data = g_string_new ("id,pkgname,name,comment,description,url\n");
+	for (i = 0; i < apps->len; i++) {
+		_cleanup_free_ gchar *description = NULL;
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_id_kind (app) == AS_ID_KIND_FONT)
+			continue;
+		if (as_app_get_id_kind (app) == AS_ID_KIND_INPUT_METHOD)
+			continue;
+		if (as_app_get_id_kind (app) == AS_ID_KIND_CODEC)
+			continue;
+		if (as_app_get_id_kind (app) == AS_ID_KIND_SOURCE)
+			continue;
+		g_string_append_printf (data, "%s,", as_app_get_id (app));
+		g_string_append_printf (data, "%s,", as_app_get_pkgname_default (app));
+		g_string_append_printf (data, "\"%s\",", as_app_get_name (app, "C"));
+		g_string_append_printf (data, "\"%s\",", as_app_get_comment (app, "C"));
+		description = g_strdup (as_app_get_description (app, "C"));
+		if (description != NULL) {
+			g_strdelimit (description, "\n", '|');
+			g_strdelimit (description, "\"", '\'');
+		}
+		g_string_append_printf (data, "\"%s\",", description);
+		g_string_append_printf (data, "\"%s\",", as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE));
+		g_string_truncate (data, data->len - 1);
+		g_string_append (data, "\n");
+	}
+
+	/* save file */
+	if (!g_file_set_contents ("./status.csv", data->str, -1, error))
+		return FALSE;
+	return TRUE;
+}
+
+/**
  * as_util_non_package_yaml:
  **/
 static gboolean
@@ -1730,6 +1794,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Create an HTML status page"),
 		     as_util_status_html);
+	as_util_add (priv->cmd_array,
+		     "status-csv",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Create an CSV status document"),
+		     as_util_status_csv);
 	as_util_add (priv->cmd_array,
 		     "non-package-yaml",
 		     NULL,

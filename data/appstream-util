@@ -62,7 +62,7 @@ _appstream-util()
             upgrade)
                 ext='@(appdata.xml?(.in))'
                 ;;
-            non-package-yaml|status-html)
+            non-package-yaml|status-html|status-csv)
                 ext='@(xml.gz)'
                 ;;
             appdata-from-desktop)
