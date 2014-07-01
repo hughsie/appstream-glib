@@ -335,11 +335,13 @@ as_store_add_app (AsStore *store, AsApp *app)
 		} else {
 			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
 			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM) {
+				as_app_set_state (item, AS_APP_STATE_INSTALLED);
 				g_debug ("ignoring AppData entry as AppStream exists: %s", id);
 				return;
 			}
 			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP &&
 			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM) {
+				as_app_set_state (item, AS_APP_STATE_INSTALLED);
 				g_debug ("ignoring desktop entry as AppStream exists: %s", id);
 				return;
 			}
@@ -1117,6 +1119,7 @@ as_store_load_installed (AsStore *store, const gchar *path,
 			continue;
 		if ((priv->add_flags & AS_STORE_ADD_FLAG_PREFER_LOCAL) == 0 &&
 		    as_store_get_app_by_id (store, tmp) != NULL) {
+			as_app_set_state (app, AS_APP_STATE_INSTALLED);
 			g_debug ("not parsing %s as %s already exists",
 				 filename, tmp);
 			continue;
@@ -1139,6 +1142,7 @@ as_store_load_installed (AsStore *store, const gchar *path,
 		/* set lower priority than AppStream entries */
 		as_app_set_priority (app, -1);
 		as_app_set_icon_kind (app, AS_ICON_KIND_STOCK);
+		as_app_set_state (app, AS_APP_STATE_INSTALLED);
 		as_store_add_app (store, app);
 	}
 	return TRUE;

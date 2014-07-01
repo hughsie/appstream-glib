@@ -168,6 +168,33 @@ typedef enum {
 	AS_APP_SOURCE_KIND_LAST
 } AsAppSourceKind;
 
+/**
+ * AsAppState:
+ * @AS_APP_STATE_UNKNOWN:			Unknown state
+ * @AS_APP_STATE_INSTALLED:			Application is installed
+ * @AS_APP_STATE_AVAILABLE:			Application is available
+ * @AS_APP_STATE_AVAILABLE_LOCAL:		Application is locally available as a file
+ * @AS_APP_STATE_UPDATABLE:			Application is installed and updatable
+ * @AS_APP_STATE_UNAVAILABLE:			Application is referenced, but not available
+ * @AS_APP_STATE_QUEUED_FOR_INSTALL:		Application is queued for install
+ * @AS_APP_STATE_INSTALLING:			Application is being installed
+ * @AS_APP_STATE_REMOVING:			Application is being removed
+ *
+ * The application state.
+ **/
+typedef enum {
+	AS_APP_STATE_UNKNOWN,				/* Since: 0.2.2 */
+	AS_APP_STATE_INSTALLED,				/* Since: 0.2.2 */
+	AS_APP_STATE_AVAILABLE,				/* Since: 0.2.2 */
+	AS_APP_STATE_AVAILABLE_LOCAL,			/* Since: 0.2.2 */
+	AS_APP_STATE_UPDATABLE,				/* Since: 0.2.2 */
+	AS_APP_STATE_UNAVAILABLE,			/* Since: 0.2.2 */
+	AS_APP_STATE_QUEUED_FOR_INSTALL,		/* Since: 0.2.2 */
+	AS_APP_STATE_INSTALLING,			/* Since: 0.2.2 */
+	AS_APP_STATE_REMOVING,				/* Since: 0.2.2 */
+	AS_APP_STATE_LAST
+} AsAppState;
+
 #define	AS_APP_ERROR				as_app_error_quark ()
 
 GType		 as_app_get_type		(void);
@@ -176,11 +203,13 @@ GQuark		 as_app_error_quark		(void);
 AsAppSourceKind	 as_app_guess_source_kind	(const gchar	*filename);
 AsAppSourceKind	 as_app_source_kind_from_string	(const gchar	*source_kind);
 const gchar	*as_app_source_kind_to_string	(AsAppSourceKind source_kind);
+const gchar	*as_app_state_to_string		(AsAppState	 state);
 
 /* getters */
 AsIconKind	 as_app_get_icon_kind		(AsApp		*app);
 AsIdKind	 as_app_get_id_kind		(AsApp		*app);
 AsAppSourceKind	 as_app_get_source_kind		(AsApp		*app);
+AsAppState	 as_app_get_state		(AsApp		*app);
 AsAppTrustFlags	 as_app_get_trust_flags		(AsApp		*app);
 GList		*as_app_get_languages		(AsApp		*app);
 GPtrArray	*as_app_get_addons		(AsApp		*app);
@@ -236,6 +265,8 @@ void		 as_app_set_id_kind		(AsApp		*app,
 						 AsIdKind	 id_kind);
 void		 as_app_set_source_kind		(AsApp		*app,
 						 AsAppSourceKind source_kind);
+void		 as_app_set_state		(AsApp		*app,
+						 AsAppState	 state);
 void		 as_app_set_trust_flags		(AsApp		*app,
 						 AsAppTrustFlags trust_flags);
 void		 as_app_set_project_group	(AsApp		*app,

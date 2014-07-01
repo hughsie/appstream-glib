@@ -72,6 +72,7 @@ struct _AsAppPrivate
 	GPtrArray	*provides;			/* of AsProvide */
 	GPtrArray	*screenshots;			/* of AsScreenshot */
 	AsAppSourceKind	 source_kind;
+	AsAppState	 state;
 	AsAppTrustFlags	 trust_flags;
 	gchar		*icon;
 	gchar		*icon_path;
@@ -158,6 +159,40 @@ as_app_source_kind_to_string (AsAppSourceKind source_kind)
 		return "metainfo";
 	if (source_kind == AS_APP_SOURCE_KIND_DESKTOP)
 		return "desktop";
+	return NULL;
+}
+
+/**
+ * as_app_state_to_string:
+ * @state: the #AsAppState.
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @state, or %NULL for unknown
+ *
+ * Since: 0.2.2
+ **/
+const gchar *
+as_app_state_to_string (AsAppState state)
+{
+	if (state == AS_APP_STATE_UNKNOWN)
+		return "unknown";
+	if (state == AS_APP_STATE_INSTALLED)
+		return "installed";
+	if (state == AS_APP_STATE_AVAILABLE)
+		return "available";
+	if (state == AS_APP_STATE_AVAILABLE_LOCAL)
+		return "local";
+	if (state == AS_APP_STATE_QUEUED_FOR_INSTALL)
+		return "queued";
+	if (state == AS_APP_STATE_INSTALLING)
+		return "installing";
+	if (state == AS_APP_STATE_REMOVING)
+		return "removing";
+	if (state == AS_APP_STATE_UPDATABLE)
+		return "updatable";
+	if (state == AS_APP_STATE_UNAVAILABLE)
+		return "unavailable";
 	return NULL;
 }
 
@@ -721,6 +756,23 @@ as_app_get_source_kind (AsApp *app)
 }
 
 /**
+ * as_app_get_state:
+ * @app: a #AsApp instance.
+ *
+ * Gets the application state.
+ *
+ * Returns: enumerated value
+ *
+ * Since: 0.2.2
+ **/
+AsAppState
+as_app_get_state (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->state;
+}
+
+/**
  * as_app_get_trust_flags:
  * @app: a #AsApp instance.
  *
@@ -1156,6 +1208,22 @@ as_app_set_source_kind (AsApp *app, AsAppSourceKind source_kind)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->source_kind = source_kind;
+}
+
+/**
+ * as_app_set_state:
+ * @app: a #AsApp instance.
+ * @state: the #AsAppState.
+ *
+ * Sets the application state.
+ *
+ * Since: 0.2.2
+ **/
+void
+as_app_set_state (AsApp *app, AsAppState state)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	priv->state = state;
 }
 
 /**
@@ -2100,6 +2168,10 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	papp->trust_flags |= AS_APP_TRUST_FLAG_CHECK_DUPLICATES;
 
 	overwrite = (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) == 0;
+
+	/* state */
+	if (papp->state == AS_APP_STATE_UNKNOWN)
+		as_app_set_state (app, priv->state);
 
 	/* pkgnames */
 	for (i = 0; i < priv->pkgnames->len; i++) {

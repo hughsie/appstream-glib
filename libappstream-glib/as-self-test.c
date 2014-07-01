@@ -1189,6 +1189,7 @@ as_test_app_subsume_func (void)
 	_cleanup_object_unref_ AsScreenshot *ss = NULL;
 
 	donor = as_app_new ();
+	as_app_set_state (donor, AS_APP_STATE_INSTALLED);
 	as_app_set_icon (donor, "gtk-find", -1);
 	as_app_add_pkgname (donor, "hal", -1);
 	as_app_add_language (donor, -1, "en_GB", -1);
@@ -1209,6 +1210,7 @@ as_test_app_subsume_func (void)
 	g_assert_cmpstr (as_app_get_metadata_item (app, "overwrite"), ==, "2222");
 	g_assert_cmpstr (as_app_get_metadata_item (donor, "recipient"), ==, NULL);
 	g_assert_cmpint (as_app_get_pkgnames(app)->len, ==, 1);
+	g_assert_cmpint (as_app_get_state (app), ==, AS_APP_STATE_INSTALLED);
 	list = as_app_get_languages (app);
 	g_assert_cmpint (g_list_length (list), ==, 1);
 	g_list_free (list);
@@ -1262,6 +1264,7 @@ as_test_store_merges_func (void)
 	as_app_set_name (app_desktop, NULL, "GIMP", -1);
 	as_app_set_comment (app_desktop, NULL, "GNU Bla Bla", -1);
 	as_app_set_priority (app_desktop, -1);
+	as_app_set_state (app_desktop, AS_APP_STATE_INSTALLED);
 
 	app_appdata = as_app_new ();
 	as_app_set_id_full (app_appdata, "gimp.desktop", -1);
@@ -1269,6 +1272,7 @@ as_test_store_merges_func (void)
 	as_app_set_description (app_appdata, NULL, "<p>Gimp is awesome</p>", -1);
 	as_app_add_pkgname (app_appdata, "gimp", -1);
 	as_app_set_priority (app_appdata, -1);
+	as_app_set_state (app_appdata, AS_APP_STATE_INSTALLED);
 
 	as_store_add_app (store_desktop_appdata, app_desktop);
 	as_store_add_app (store_desktop_appdata, app_appdata);
@@ -1280,6 +1284,7 @@ as_test_store_merges_func (void)
 	g_assert_cmpstr (as_app_get_description (app_tmp, NULL), ==, "<p>Gimp is awesome</p>");
 	g_assert_cmpstr (as_app_get_pkgname_default (app_tmp), ==, "gimp");
 	g_assert_cmpint (as_app_get_source_kind (app_tmp), ==, AS_APP_SOURCE_KIND_DESKTOP);
+	g_assert_cmpint (as_app_get_state (app_tmp), ==, AS_APP_STATE_INSTALLED);
 
 	/* test desktop + appdata + appstream */
 	store_all = as_store_new ();
@@ -1305,6 +1310,7 @@ as_test_store_merges_func (void)
 	g_assert_cmpstr (as_app_get_description (app_tmp, NULL), ==, "<p>Gimp is Distro</p>");
 	g_assert_cmpstr (as_app_get_pkgname_default (app_tmp), ==, "gimp");
 	g_assert_cmpint (as_app_get_source_kind (app_tmp), ==, AS_APP_SOURCE_KIND_APPSTREAM);
+	g_assert_cmpint (as_app_get_state (app_tmp), ==, AS_APP_STATE_INSTALLED);
 }
 
 static void
@@ -1326,6 +1332,7 @@ as_test_store_merges_local_func (void)
 	as_app_set_name (app_desktop, NULL, "GIMP", -1);
 	as_app_set_comment (app_desktop, NULL, "GNU Bla Bla", -1);
 	as_app_set_priority (app_desktop, -1);
+	as_app_set_state (app_desktop, AS_APP_STATE_INSTALLED);
 
 	app_appdata = as_app_new ();
 	as_app_set_id_full (app_appdata, "gimp.desktop", -1);
@@ -1333,6 +1340,7 @@ as_test_store_merges_local_func (void)
 	as_app_set_description (app_appdata, NULL, "<p>Gimp is awesome</p>", -1);
 	as_app_add_pkgname (app_appdata, "gimp", -1);
 	as_app_set_priority (app_appdata, -1);
+	as_app_set_state (app_appdata, AS_APP_STATE_INSTALLED);
 
 	app_appinfo = as_app_new ();
 	as_app_set_id_full (app_appinfo, "gimp.desktop", -1);
@@ -1356,6 +1364,7 @@ as_test_store_merges_local_func (void)
 	g_assert_cmpstr (as_app_get_description (app_tmp, NULL), ==, "<p>Gimp is awesome</p>");
 	g_assert_cmpstr (as_app_get_pkgname_default (app_tmp), ==, "gimp");
 	g_assert_cmpint (as_app_get_source_kind (app_tmp), ==, AS_APP_SOURCE_KIND_DESKTOP);
+	g_assert_cmpint (as_app_get_state (app_tmp), ==, AS_APP_STATE_INSTALLED);
 }
 
 static void
