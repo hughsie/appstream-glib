@@ -137,47 +137,6 @@ out:
 }
 
 /**
- * asb_plugin_hardcoded_are_screenshots_perfect:
- */
-static gboolean
-asb_plugin_hardcoded_are_screenshots_perfect (AsApp *app)
-{
-	AsImage *image;
-	AsScreenshot *screenshot;
-	GPtrArray *screenshots;
-	guint height;
-	guint i;
-	guint width;
-
-	screenshots = as_app_get_screenshots (app);
-	if (screenshots->len == 0)
-		return FALSE;
-	for (i = 0; i < screenshots->len; i++) {
-		screenshot = g_ptr_array_index (screenshots, i);
-
-		/* get a good default if more than one specified */
-		image = as_screenshot_get_image (screenshot,
-						 AS_IMAGE_LARGE_WIDTH,
-						 AS_IMAGE_LARGE_HEIGHT);
-		width = as_image_get_width (image);
-		height = as_image_get_height (image);
-
-		/* too small */
-		if (width < AS_IMAGE_LARGE_WIDTH || height < AS_IMAGE_LARGE_HEIGHT)
-			return FALSE;
-
-		/* too large */
-		if (width > AS_IMAGE_LARGE_WIDTH * 2 || height > AS_IMAGE_LARGE_HEIGHT * 2)
-			return FALSE;
-
-		/* not 16:9 */
-		if ((width / 16) * 9 != height)
-			return FALSE;
-	}
-	return TRUE;
-}
-
-/**
  * asb_plugin_process_app:
  */
 gboolean
@@ -351,10 +310,6 @@ asb_plugin_process_app (AsbPlugin *plugin,
 				return FALSE;
 		}
 	}
-
-	/* are all screenshots perfect */
-	if (asb_plugin_hardcoded_are_screenshots_perfect (AS_APP (app)))
-		as_app_add_metadata (AS_APP (app), "X-Kudo-Perfect-Screenshots", "", -1);
 
 	/* a ConsoleOnly category means we require AppData */
 	if (as_app_has_category (AS_APP(app), "ConsoleOnly"))
