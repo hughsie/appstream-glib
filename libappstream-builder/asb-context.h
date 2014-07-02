@@ -78,6 +78,8 @@ void		 asb_context_set_screenshot_uri	(AsbContext	*ctx,
 						 const gchar	*screenshot_uri);
 void		 asb_context_set_log_dir	(AsbContext	*ctx,
 						 const gchar	*log_dir);
+void		 asb_context_set_screenshot_dir	(AsbContext	*ctx,
+						 const gchar	*screenshot_dir);
 void		 asb_context_set_cache_dir	(AsbContext	*ctx,
 						 const gchar	*cache_dir);
 void		 asb_context_set_temp_dir	(AsbContext	*ctx,

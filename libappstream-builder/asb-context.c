@@ -68,6 +68,7 @@ struct _AsbContextPrivate
 	gchar			*extra_screenshots;
 	gchar			*screenshot_uri;
 	gchar			*log_dir;
+	gchar			*screenshot_dir;
 	gchar			*cache_dir;
 	gchar			*temp_dir;
 	gchar			*output_dir;
@@ -257,6 +258,22 @@ asb_context_set_log_dir (AsbContext *ctx, const gchar *log_dir)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	priv->log_dir = g_strdup (log_dir);
+}
+
+/**
+ * asb_context_set_screenshot_dir:
+ * @ctx: A #AsbContext
+ * @screenshot_dir: directory
+ *
+ * Sets the screenshot directory to use when building metadata.
+ *
+ * Since: 0.2.2
+ **/
+void
+asb_context_set_screenshot_dir (AsbContext *ctx, const gchar *screenshot_dir)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	priv->screenshot_dir = g_strdup (screenshot_dir);
 }
 
 /**
@@ -668,6 +685,7 @@ asb_context_process (AsbContext *ctx, GError **error)
 		asb_package_set_config (pkg, "ScreenshotsExtra", priv->extra_screenshots);
 		asb_package_set_config (pkg, "MirrorURI", priv->screenshot_uri);
 		asb_package_set_config (pkg, "LogDir", priv->log_dir);
+		asb_package_set_config (pkg, "ScreenshotDir", priv->screenshot_dir);
 		asb_package_set_config (pkg, "CacheDir", priv->cache_dir);
 		asb_package_set_config (pkg, "TempDir", priv->temp_dir);
 		asb_package_set_config (pkg, "OutputDir", priv->output_dir);
@@ -856,6 +874,7 @@ asb_context_finalize (GObject *object)
 	g_free (priv->extra_screenshots);
 	g_free (priv->screenshot_uri);
 	g_free (priv->log_dir);
+	g_free (priv->screenshot_dir);
 	g_free (priv->cache_dir);
 	g_free (priv->temp_dir);
 	g_free (priv->output_dir);

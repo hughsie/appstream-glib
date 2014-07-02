@@ -85,6 +85,7 @@ main (int argc, char **argv)
 	_cleanup_free_ gchar *old_metadata = NULL;
 	_cleanup_free_ gchar *output_dir = NULL;
 	_cleanup_free_ gchar *packages_dir = NULL;
+	_cleanup_free_ gchar *screenshot_dir = NULL;
 	_cleanup_free_ gchar *screenshot_uri = NULL;
 	_cleanup_free_ gchar *temp_dir = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *packages = NULL;
@@ -105,6 +106,9 @@ main (int argc, char **argv)
 		{ "log-dir", '\0', 0, G_OPTION_ARG_FILENAME, &log_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the logging directory [default: ./logs]"), "DIR" },
+		{ "screenshot-dir", '\0', 0, G_OPTION_ARG_FILENAME, &screenshot_dir,
+			/* TRANSLATORS: command line option */
+			_("Set the screenshots directory [default: ./screenshots]"), "DIR" },
 		{ "packages-dir", '\0', 0, G_OPTION_ARG_FILENAME, &packages_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the packages directory [default: ./packages]"), "DIR" },
@@ -179,6 +183,8 @@ main (int argc, char **argv)
 		temp_dir = g_strdup ("./tmp");
 	if (log_dir == NULL)
 		log_dir = g_strdup ("./logs");
+	if (screenshot_dir == NULL)
+		screenshot_dir = g_strdup ("./screenshots");
 	if (output_dir == NULL)
 		output_dir = g_strdup (".");
 	if (cache_dir == NULL)
@@ -232,7 +238,7 @@ main (int argc, char **argv)
 		g_warning (_("failed to create log dir"));
 		goto out;
 	}
-	tmp = g_build_filename (output_dir, "screenshots", "112x63", NULL);
+	tmp = g_build_filename (screenshot_dir, "112x63", NULL);
 	rc = g_mkdir_with_parents (tmp, 0700);
 	g_free (tmp);
 	if (rc != 0) {
@@ -240,7 +246,7 @@ main (int argc, char **argv)
 		g_warning (_("failed to create screenshot cache dir"));
 		goto out;
 	}
-	tmp = g_build_filename (output_dir, "screenshots", "624x351", NULL);
+	tmp = g_build_filename (screenshot_dir, "624x351", NULL);
 	rc = g_mkdir_with_parents (tmp, 0700);
 	g_free (tmp);
 	if (rc != 0) {
@@ -248,7 +254,7 @@ main (int argc, char **argv)
 		g_warning (_("failed to create screenshot cache dir"));
 		goto out;
 	}
-	tmp = g_build_filename (output_dir, "screenshots", "752x423", NULL);
+	tmp = g_build_filename (screenshot_dir, "752x423", NULL);
 	rc = g_mkdir_with_parents (tmp, 0700);
 	g_free (tmp);
 	if (rc != 0) {
@@ -256,7 +262,7 @@ main (int argc, char **argv)
 		g_warning (_("failed to create screenshot cache dir"));
 		goto out;
 	}
-	tmp = g_build_filename (output_dir, "screenshots", "source", NULL);
+	tmp = g_build_filename (screenshot_dir, "source", NULL);
 	rc = g_mkdir_with_parents (tmp, 0700);
 	g_free (tmp);
 	if (rc != 0) {
@@ -282,6 +288,7 @@ main (int argc, char **argv)
 	asb_context_set_extra_screenshots (ctx, extra_screenshots);
 	asb_context_set_screenshot_uri (ctx, screenshot_uri);
 	asb_context_set_log_dir (ctx, log_dir);
+	asb_context_set_screenshot_dir (ctx, screenshot_dir);
 	asb_context_set_temp_dir (ctx, temp_dir);
 	asb_context_set_output_dir (ctx, output_dir);
 	asb_context_set_cache_dir (ctx, cache_dir);
