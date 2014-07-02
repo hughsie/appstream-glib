@@ -1283,7 +1283,7 @@ as_test_store_merges_func (void)
 	g_assert_cmpstr (as_app_get_comment (app_tmp, NULL), ==, "GNU Bla Bla");
 	g_assert_cmpstr (as_app_get_description (app_tmp, NULL), ==, "<p>Gimp is awesome</p>");
 	g_assert_cmpstr (as_app_get_pkgname_default (app_tmp), ==, "gimp");
-	g_assert_cmpint (as_app_get_source_kind (app_tmp), ==, AS_APP_SOURCE_KIND_DESKTOP);
+	g_assert_cmpint (as_app_get_source_kind (app_tmp), ==, AS_APP_SOURCE_KIND_APPDATA);
 	g_assert_cmpint (as_app_get_state (app_tmp), ==, AS_APP_STATE_INSTALLED);
 
 	/* test desktop + appdata + appstream */
@@ -1363,7 +1363,7 @@ as_test_store_merges_local_func (void)
 	g_assert_cmpstr (as_app_get_comment (app_tmp, NULL), ==, "GNU Bla Bla");
 	g_assert_cmpstr (as_app_get_description (app_tmp, NULL), ==, "<p>Gimp is awesome</p>");
 	g_assert_cmpstr (as_app_get_pkgname_default (app_tmp), ==, "gimp");
-	g_assert_cmpint (as_app_get_source_kind (app_tmp), ==, AS_APP_SOURCE_KIND_DESKTOP);
+	g_assert_cmpint (as_app_get_source_kind (app_tmp), ==, AS_APP_SOURCE_KIND_APPDATA);
 	g_assert_cmpint (as_app_get_state (app_tmp), ==, AS_APP_STATE_INSTALLED);
 }
 

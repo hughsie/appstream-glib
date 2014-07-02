@@ -319,16 +319,18 @@ as_store_add_app (AsStore *store, AsApp *app)
 				g_debug ("ignoring AppStream entry as desktop exists: %s", id);
 				return;
 			}
-			if ((as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
-			     as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_DESKTOP) ||
-			    (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP &&
-			     as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPDATA)) {
-				g_debug ("merging duplicate %s:%s entries: %s",
-					 as_app_source_kind_to_string (as_app_get_source_kind (app)),
-					 as_app_source_kind_to_string (as_app_get_source_kind (item)),
-					 id);
-				as_app_subsume_full (app, item,
-						     AS_APP_SUBSUME_FLAG_BOTH_WAYS);
+			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
+			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_DESKTOP) {
+				g_debug ("merging duplicate AppData:desktop entries: %s", id);
+				as_app_subsume_full (app, item, AS_APP_SUBSUME_FLAG_BOTH_WAYS);
+				/* promote the desktop source to AppData */
+				as_app_set_source_kind (item, AS_APP_SOURCE_KIND_APPDATA);
+				return;
+			}
+			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP &&
+			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPDATA) {
+				g_debug ("merging duplicate desktop:AppData entries: %s", id);
+				as_app_subsume_full (app, item, AS_APP_SUBSUME_FLAG_BOTH_WAYS);
 				return;
 			}
 
@@ -365,6 +367,11 @@ as_store_add_app (AsStore *store, AsApp *app)
 					 id);
 				as_app_subsume_full (app, item,
 						     AS_APP_SUBSUME_FLAG_BOTH_WAYS);
+
+				/* promote the desktop source to AppData */
+				if (as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_DESKTOP &&
+				    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA)
+					as_app_set_source_kind (item, AS_APP_SOURCE_KIND_APPDATA);
 				return;
 			}
 		}
