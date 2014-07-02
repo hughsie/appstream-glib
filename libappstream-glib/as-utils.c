@@ -372,6 +372,7 @@ as_util_get_possible_kudos (void)
 		"X-Kudo-RecentRelease",
 		"X-Kudo-UsesNotifications",
 		"X-Kudo-Popular",
+		"X-Kudo-Perfect-Screenshots",
 		NULL };
 	return kudos;
 }
