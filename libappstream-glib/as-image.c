@@ -515,9 +515,22 @@ as_image_save_pixbuf (AsImage *image,
 	if (height == 0)
 		height = gdk_pixbuf_get_height (priv->pixbuf);
 
-	/* is the aspect ratio of the source perfectly 16:9 */
+	/* never scale up, just pad */
 	pixbuf_width = gdk_pixbuf_get_width (priv->pixbuf);
 	pixbuf_height = gdk_pixbuf_get_height (priv->pixbuf);
+	if (pixbuf_width < width && pixbuf_height < height) {
+		pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
+					 TRUE, 8, width, height);
+		gdk_pixbuf_fill (pixbuf, 0x00000000);
+		gdk_pixbuf_copy_area (priv->pixbuf,
+				      0, 0, /* of src */
+				      pixbuf_width, pixbuf_height,
+				      pixbuf,
+				      (width - pixbuf_width) / 2,
+				      (height - pixbuf_height) / 2);
+	}
+
+	/* is the aspect ratio of the source perfectly 16:9 */
 	if (flags == AS_IMAGE_SAVE_FLAG_NONE ||
 	    (pixbuf_width / 16) * 9 == pixbuf_height) {
 		return gdk_pixbuf_scale_simple (priv->pixbuf,
