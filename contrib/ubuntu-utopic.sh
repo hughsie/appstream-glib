@@ -1,4 +1,5 @@
 time client/appstream-builder						\
+	--api-version=0.7						\
 	--log-dir=./contrib/logs-ubu					\
 	--temp-dir=./contrib/tmp-ubu					\
 	--cache-dir=./contrib/cache-ubu					\
