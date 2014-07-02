@@ -1,12 +1,13 @@
 time client/appstream-builder						\
 	--api-version=0.3						\
-	--log-dir=../createrepo_as_logs					\
+	--log-dir=./contrib/logs/fedora-20				\
 	--temp-dir=./tmp/fedora-20					\
 	--cache-dir=./contrib/cache					\
-	--packages-dir=../fedora-appstream/fedora-20/packages/		\
+	--packages-dir=./contrib/packages/fedora-20/packages/		\
 	--extra-appstream-dir=../fedora-appstream/appstream-extra	\
 	--extra-appdata-dir=../fedora-appstream/appdata-extra		\
 	--extra-screenshots-dir=../fedora-appstream/screenshots-extra	\
-	--output-dir=./contrib/f20					\
+	--output-dir=./contrib/metadata					\
+	--screenshot-dir=./contrib/screenshots/fedora-20		\
 	--basename=fedora-20						\
 	--screenshot-uri=http://alt.fedoraproject.org/pub/alt/screenshots/f20/

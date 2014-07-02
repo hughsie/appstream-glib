@@ -1,12 +1,13 @@
 time client/appstream-builder						\
 	--api-version=0.41						\
-	--log-dir=./contrib/fedora-20-gnome-3-12/logs			\
-	--temp-dir=./tmp/f20-gnome-3-12					\
+	--log-dir=./contrib/logs/fedora-20-gnome-3-12			\
+	--temp-dir=./tmp/fedora-20-gnome-3-12				\
 	--cache-dir=./contrib/cache					\
-	--packages-dir=../fedora-appstream/fedora-20-gnome-3-12/packages/ \
+	--packages-dir=./contrib/packages/fedora-20-gnome-3-12/packages/ \
 	--extra-appstream-dir=../fedora-appstream/appstream-extra	\
 	--extra-appdata-dir=../fedora-appstream/appdata-extra		\
 	--extra-screenshots-dir=../fedora-appstream/screenshots-extra	\
-	--output-dir=./contrib/f20-gnome-3-12				\
+	--output-dir=./contrib/metadata					\
+	--screenshot-dir=./contrib/screenshots/fedora-20-gnome-3-12	\
 	--basename=fedora-20-gnome-3-12					\
 	--screenshot-uri=http://alt.fedoraproject.org/pub/alt/screenshots/f20/
