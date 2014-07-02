@@ -399,6 +399,7 @@ asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **erro
 	const gchar *mirror_uri;
 	guint i;
 	_cleanup_free_ gchar *basename = NULL;
+	_cleanup_free_ gchar *url_src = NULL;
 	_cleanup_object_unref_ AsImage *im_src;
 	_cleanup_object_unref_ AsScreenshot *ss = NULL;
 	guint sizes[] = { AS_IMAGE_NORMAL_WIDTH,    AS_IMAGE_NORMAL_HEIGHT,
@@ -430,18 +431,13 @@ asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **erro
 				    as_image_get_md5 (im_src));
 	as_image_set_basename (im_src, basename);
 
-	/* only fonts have full sized screenshots */
+	/* fonts only have full sized screenshots */
 	mirror_uri = asb_package_get_config (asb_app_get_package (app), "MirrorURI");
-	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_FONT) {
-		_cleanup_free_ gchar *url_tmp;
-		url_tmp = g_build_filename (mirror_uri,
-					    "source",
-					    basename,
-					    NULL);
-		as_image_set_url (im_src, url_tmp, -1);
-		as_image_set_kind (im_src, AS_IMAGE_KIND_SOURCE);
-		as_screenshot_add_image (ss, im_src);
-	} else {
+	url_src = g_build_filename (mirror_uri, "source", basename, NULL);
+	as_image_set_url (im_src, url_src, -1);
+	as_image_set_kind (im_src, AS_IMAGE_KIND_SOURCE);
+	as_screenshot_add_image (ss, im_src);
+	if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_FONT) {
 		for (i = 0; sizes[i] != 0; i += 2) {
 			_cleanup_free_ gchar *size_str;
 			_cleanup_free_ gchar *url_tmp;
