@@ -323,8 +323,11 @@ main (int argc, char **argv)
 		}
 
 		/* add to list */
-		if (!asb_context_add_filename (ctx, filename, &error_local))
+		if (!asb_context_add_filename (ctx, filename, &error_local)) {
+			g_print ("Failed to add %s: %s\n",
+				 filename, error_local->message);
 			continue;
+		}
 		if (g_timer_elapsed (timer, NULL) > 3.f) {
 			/* TRANSLATORS: information message */
 			g_print (_("Parsed %i/%i files...\n"),
