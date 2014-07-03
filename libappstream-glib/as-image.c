@@ -515,9 +515,13 @@ as_image_save_pixbuf (AsImage *image,
 	if (height == 0)
 		height = gdk_pixbuf_get_height (priv->pixbuf);
 
-	/* never scale up, just pad */
+	/* don't do anything to an image with the correct size */
 	pixbuf_width = gdk_pixbuf_get_width (priv->pixbuf);
 	pixbuf_height = gdk_pixbuf_get_height (priv->pixbuf);
+	if (width == pixbuf_width && height == pixbuf_height)
+		return g_object_ref (priv->pixbuf);
+
+	/* never scale up, just pad */
 	if (pixbuf_width < width && pixbuf_height < height) {
 		pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
 					 TRUE, 8, width, height);
