@@ -26,6 +26,8 @@
 #ifndef __AS_UTILS_PRIVATE_H
 #define __AS_UTILS_PRIVATE_H
 
+#include <gdk-pixbuf/gdk-pixbuf.h>
+
 #include "as-utils.h"
 
 G_BEGIN_DECLS
@@ -34,6 +36,9 @@ gchar		*as_strndup			(const gchar	*text,
 						 gssize		 text_len);
 const gchar	*as_hash_lookup_by_locale	(GHashTable	*hash,
 						 const gchar	*locale);
+void		 as_pixbuf_sharpen		(GdkPixbuf	*src,
+						 gint		 radius,
+						 gdouble	 amount);
 
 G_END_DECLS
 

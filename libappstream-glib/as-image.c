@@ -533,9 +533,11 @@ as_image_save_pixbuf (AsImage *image,
 	/* is the aspect ratio of the source perfectly 16:9 */
 	if (flags == AS_IMAGE_SAVE_FLAG_NONE ||
 	    (pixbuf_width / 16) * 9 == pixbuf_height) {
-		return gdk_pixbuf_scale_simple (priv->pixbuf,
-						width, height,
-						GDK_INTERP_BILINEAR);
+		pixbuf = gdk_pixbuf_scale_simple (priv->pixbuf,
+						  width, height,
+						  GDK_INTERP_HYPER);
+		as_pixbuf_sharpen (pixbuf, 1, -0.5);
+		return pixbuf;
 	}
 
 	/* create new 16:9 pixbuf with alpha padding */
@@ -553,7 +555,8 @@ as_image_save_pixbuf (AsImage *image,
 	}
 	pixbuf_tmp = gdk_pixbuf_scale_simple (priv->pixbuf,
 					      tmp_width, tmp_height,
-					      GDK_INTERP_BILINEAR);
+					      GDK_INTERP_HYPER);
+	as_pixbuf_sharpen (pixbuf_tmp, 1, -0.5);
 	gdk_pixbuf_copy_area (pixbuf_tmp,
 			      0, 0, /* of src */
 			      tmp_width, tmp_height,

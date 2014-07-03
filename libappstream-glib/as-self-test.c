@@ -192,6 +192,130 @@ as_test_release_desc_func (void)
 	as_node_unref (root);
 }
 
+typedef enum {
+	AS_TEST_RESIZE_NEAREST,
+	AS_TEST_RESIZE_TILES,
+	AS_TEST_RESIZE_BILINEAR,
+	AS_TEST_RESIZE_HYPER,
+	AS_TEST_RESIZE_BILINEAR_SHARP,
+	AS_TEST_RESIZE_HYPER_SHARP,
+	AS_TEST_RESIZE_LAST,
+} AsTestResize;
+
+static const gchar *
+as_test_resize_to_string (AsTestResize rz)
+{
+	if (rz == AS_TEST_RESIZE_NEAREST)
+		return "nearest";
+	if (rz == AS_TEST_RESIZE_TILES)
+		return "tiles";
+	if (rz == AS_TEST_RESIZE_BILINEAR)
+		return "bilinear";
+	if (rz == AS_TEST_RESIZE_HYPER)
+		return "hyper";
+	if (rz == AS_TEST_RESIZE_BILINEAR_SHARP)
+		return "bilinear-sharp";
+	if (rz == AS_TEST_RESIZE_HYPER_SHARP)
+		return "hyper-sharp";
+	return NULL;
+}
+
+static void
+as_test_image_resize_filename (AsTestResize rz, const gchar *in, const gchar *out)
+{
+	gboolean ret;
+	_cleanup_object_unref_ GdkPixbuf *pb = NULL;
+	_cleanup_object_unref_ GdkPixbuf *pb2 = NULL;
+
+	pb = gdk_pixbuf_new_from_file (in, NULL);
+	g_assert (pb != NULL);
+
+	switch (rz) {
+	case AS_TEST_RESIZE_NEAREST:
+		pb2 = gdk_pixbuf_scale_simple (pb,
+					       AS_IMAGE_LARGE_WIDTH,
+					       AS_IMAGE_LARGE_HEIGHT,
+					       GDK_INTERP_NEAREST);
+		break;
+	case AS_TEST_RESIZE_TILES:
+		pb2 = gdk_pixbuf_scale_simple (pb,
+					       AS_IMAGE_LARGE_WIDTH,
+					       AS_IMAGE_LARGE_HEIGHT,
+					       GDK_INTERP_TILES);
+		break;
+	case AS_TEST_RESIZE_BILINEAR:
+		pb2 = gdk_pixbuf_scale_simple (pb,
+					       AS_IMAGE_LARGE_WIDTH,
+					       AS_IMAGE_LARGE_HEIGHT,
+					       GDK_INTERP_BILINEAR);
+		break;
+	case AS_TEST_RESIZE_HYPER:
+		pb2 = gdk_pixbuf_scale_simple (pb,
+					       AS_IMAGE_LARGE_WIDTH,
+					       AS_IMAGE_LARGE_HEIGHT,
+					       GDK_INTERP_HYPER);
+		break;
+	case AS_TEST_RESIZE_BILINEAR_SHARP:
+		pb2 = gdk_pixbuf_scale_simple (pb,
+					       AS_IMAGE_LARGE_WIDTH,
+					       AS_IMAGE_LARGE_HEIGHT,
+					       GDK_INTERP_BILINEAR);
+		as_pixbuf_sharpen (pb2, 1, -0.5);
+		break;
+	case AS_TEST_RESIZE_HYPER_SHARP:
+		pb2 = gdk_pixbuf_scale_simple (pb,
+					       AS_IMAGE_LARGE_WIDTH,
+					       AS_IMAGE_LARGE_HEIGHT,
+					       GDK_INTERP_HYPER);
+		as_pixbuf_sharpen (pb2, 1, -0.5);
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+
+	ret = gdk_pixbuf_save (pb2, out, "png", NULL, NULL);
+	g_assert (ret);
+}
+
+static void
+as_test_image_resize_func (void)
+{
+	GError *error = NULL;
+	const gchar *tmp;
+	_cleanup_dir_close_ GDir *dir = NULL;
+	_cleanup_free_ gchar *output_dir = NULL;
+
+	/* only do this test if an "output" directory exists */
+	output_dir = g_build_filename (TESTDATADIR, "output", NULL);
+	if (!g_file_test (output_dir, G_FILE_TEST_EXISTS))
+		return;
+
+	/* look for test screenshots */
+	dir = g_dir_open (TESTDATADIR, 0, &error);
+	g_assert_no_error (error);
+	g_assert (dir != NULL);
+	while ((tmp = g_dir_read_name (dir)) != NULL) {
+		guint i;
+		_cleanup_free_ gchar *path = NULL;
+
+		if (!g_str_has_prefix (tmp, "ss-"))
+			continue;
+		path = g_build_filename (TESTDATADIR, tmp, NULL);
+
+		for (i = 0; i < AS_TEST_RESIZE_LAST; i++) {
+			_cleanup_free_ gchar *new_path = NULL;
+			_cleanup_string_free_ GString *basename = NULL;
+
+			basename = g_string_new (tmp);
+			g_string_truncate (basename, basename->len - 4);
+			g_string_append_printf (basename, "-%s.png",
+						as_test_resize_to_string (i));
+			new_path = g_build_filename (output_dir, basename->str, NULL);
+			as_test_image_resize_filename (i, path, new_path);
+		}
+	}
+}
+
 static void
 as_test_image_func (void)
 {
@@ -1900,6 +2024,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/release", as_test_release_func);
 	g_test_add_func ("/AppStream/release{description}", as_test_release_desc_func);
 	g_test_add_func ("/AppStream/image", as_test_image_func);
+	g_test_add_func ("/AppStream/image{resize}", as_test_image_resize_func);
 	g_test_add_func ("/AppStream/screenshot", as_test_screenshot_func);
 	g_test_add_func ("/AppStream/app", as_test_app_func);
 	g_test_add_func ("/AppStream/app{translated}", as_test_app_translated_func);

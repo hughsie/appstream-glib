@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
  * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2011 Paolo Bacchilega <paobac@src.gnome.org>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -443,4 +444,199 @@ as_utils_check_url_exists (const gchar *url, guint timeout, GError **error)
 		return FALSE;
 	}
 	return TRUE;
+}
+
+/**
+ * as_pixbuf_box_blur_private:
+ **/
+static void
+as_pixbuf_box_blur_private (GdkPixbuf *src, GdkPixbuf *dest, gint radius, guchar *div_kernel_size)
+{
+	gint width, height, src_rowstride, dest_rowstride, n_channels;
+	guchar *p_src, *p_dest, *c1, *c2;
+	gint x, y, i, i1, i2, width_minus_1, height_minus_1, radius_plus_1;
+	gint r, g, b, a;
+	guchar *p_dest_row, *p_dest_col;
+
+	width = gdk_pixbuf_get_width (src);
+	height = gdk_pixbuf_get_height (src);
+	n_channels = gdk_pixbuf_get_n_channels (src);
+	radius_plus_1 = radius + 1;
+
+	/* horizontal blur */
+	p_src = gdk_pixbuf_get_pixels (src);
+	p_dest = gdk_pixbuf_get_pixels (dest);
+	src_rowstride = gdk_pixbuf_get_rowstride (src);
+	dest_rowstride = gdk_pixbuf_get_rowstride (dest);
+	width_minus_1 = width - 1;
+	for (y = 0; y < height; y++) {
+
+		/* calc the initial sums of the kernel */
+		r = g = b = a = 0;
+		for (i = -radius; i <= radius; i++) {
+			c1 = p_src + (CLAMP (i, 0, width_minus_1) * n_channels);
+			r += c1[0];
+			g += c1[1];
+			b += c1[2];
+		}
+
+		p_dest_row = p_dest;
+		for (x = 0; x < width; x++) {
+			/* set as the mean of the kernel */
+			p_dest_row[0] = div_kernel_size[r];
+			p_dest_row[1] = div_kernel_size[g];
+			p_dest_row[2] = div_kernel_size[b];
+			p_dest_row += n_channels;
+
+			/* the pixel to add to the kernel */
+			i1 = x + radius_plus_1;
+			if (i1 > width_minus_1)
+				i1 = width_minus_1;
+			c1 = p_src + (i1 * n_channels);
+
+			/* the pixel to remove from the kernel */
+			i2 = x - radius;
+			if (i2 < 0)
+				i2 = 0;
+			c2 = p_src + (i2 * n_channels);
+
+			/* calc the new sums of the kernel */
+			r += c1[0] - c2[0];
+			g += c1[1] - c2[1];
+			b += c1[2] - c2[2];
+		}
+
+		p_src += src_rowstride;
+		p_dest += dest_rowstride;
+	}
+
+	/* vertical blur */
+	p_src = gdk_pixbuf_get_pixels (dest);
+	p_dest = gdk_pixbuf_get_pixels (src);
+	src_rowstride = gdk_pixbuf_get_rowstride (dest);
+	dest_rowstride = gdk_pixbuf_get_rowstride (src);
+	height_minus_1 = height - 1;
+	for (x = 0; x < width; x++) {
+
+		/* calc the initial sums of the kernel */
+		r = g = b = a = 0;
+		for (i = -radius; i <= radius; i++) {
+			c1 = p_src + (CLAMP (i, 0, height_minus_1) * src_rowstride);
+			r += c1[0];
+			g += c1[1];
+			b += c1[2];
+		}
+
+		p_dest_col = p_dest;
+		for (y = 0; y < height; y++) {
+			/* set as the mean of the kernel */
+
+			p_dest_col[0] = div_kernel_size[r];
+			p_dest_col[1] = div_kernel_size[g];
+			p_dest_col[2] = div_kernel_size[b];
+			p_dest_col += dest_rowstride;
+
+			/* the pixel to add to the kernel */
+			i1 = y + radius_plus_1;
+			if (i1 > height_minus_1)
+				i1 = height_minus_1;
+			c1 = p_src + (i1 * src_rowstride);
+
+			/* the pixel to remove from the kernel */
+			i2 = y - radius;
+			if (i2 < 0)
+				i2 = 0;
+			c2 = p_src + (i2 * src_rowstride);
+
+			/* calc the new sums of the kernel */
+			r += c1[0] - c2[0];
+			g += c1[1] - c2[1];
+			b += c1[2] - c2[2];
+		}
+
+		p_src += n_channels;
+		p_dest += n_channels;
+	}
+}
+
+/**
+ * as_pixbuf_box_blur:
+ **/
+static void
+as_pixbuf_box_blur (GdkPixbuf *src, gint radius, gint iterations)
+{
+	gint kernel_size;
+	gint i;
+	_cleanup_free_ guchar *div_kernel_size;
+	_cleanup_object_unref_ GdkPixbuf *tmp = NULL;
+
+	tmp = gdk_pixbuf_new (gdk_pixbuf_get_colorspace (src),
+			      gdk_pixbuf_get_has_alpha (src),
+			      gdk_pixbuf_get_bits_per_sample (src),
+			      gdk_pixbuf_get_width (src),
+			      gdk_pixbuf_get_height (src));
+	kernel_size = 2 * radius + 1;
+	div_kernel_size = g_new (guchar, 256 * kernel_size);
+	for (i = 0; i < 256 * kernel_size; i++)
+		div_kernel_size[i] = (guchar) (i / kernel_size);
+
+	while (iterations-- > 0)
+		as_pixbuf_box_blur_private (src, tmp, radius, div_kernel_size);
+}
+
+#define interpolate_value(original, reference, distance)		\
+	(CLAMP (((distance) * (reference)) +				\
+		((1.0 - (distance)) * (original)), 0, 255))
+
+/**
+ * as_pixbuf_sharpen: (skip)
+ * @src: the GdkPixbuf.
+ * @radius: the pixel radius for the unsharp mask, typical values are 1..3
+ * @amount: Amount to sharpen the image, typical values are -0.1 to -0.9
+ *
+ * Sharpens an image. Warning, this method is s..l..o..w... for large images.
+ *
+ * Since: 0.2.2
+ **/
+void
+as_pixbuf_sharpen (GdkPixbuf *src, gint radius, gdouble amount)
+{
+	gint width, height, rowstride, n_channels;
+	gint x, y;
+	guchar *p_blurred;
+	guchar *p_blurred_row;
+	guchar *p_src;
+	guchar *p_src_row;
+	_cleanup_object_unref_ GdkPixbuf *blurred = NULL;
+
+	blurred = gdk_pixbuf_copy (src);
+	as_pixbuf_box_blur (blurred, radius, 3);
+
+	width = gdk_pixbuf_get_width (src);
+	height = gdk_pixbuf_get_height (src);
+	rowstride = gdk_pixbuf_get_rowstride (src);
+	n_channels = gdk_pixbuf_get_n_channels (src);
+
+	p_src = gdk_pixbuf_get_pixels (src);
+	p_blurred = gdk_pixbuf_get_pixels (blurred);
+
+	for (y = 0; y < height; y++) {
+		p_src_row = p_src;
+		p_blurred_row = p_blurred;
+		for (x = 0; x < width; x++) {
+			p_src_row[0] = interpolate_value (p_src_row[0],
+							  p_blurred_row[0],
+							  amount);
+			p_src_row[1] = interpolate_value (p_src_row[1],
+							  p_blurred_row[1],
+							  amount);
+			p_src_row[2] = interpolate_value (p_src_row[2],
+							  p_blurred_row[2],
+							  amount);
+			p_src_row += n_channels;
+			p_blurred_row += n_channels;
+		}
+		p_src += rowstride;
+		p_blurred += rowstride;
+	}
 }
