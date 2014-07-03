@@ -532,6 +532,7 @@ as_image_save_pixbuf (AsImage *image,
 				      pixbuf,
 				      (width - pixbuf_width) / 2,
 				      (height - pixbuf_height) / 2);
+		return pixbuf;
 	}
 
 	/* is the aspect ratio of the source perfectly 16:9 */
