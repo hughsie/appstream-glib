@@ -11,3 +11,9 @@ time client/appstream-builder						\
 	--screenshot-dir=./contrib/screenshots/fedora-20		\
 	--basename=fedora-20						\
 	--screenshot-uri=http://alt.fedoraproject.org/pub/alt/screenshots/f20/
+./client/appstream-util non-package-yaml 				\
+	./contrib/metadata/fedora-20.xml.gz				\
+	./contrib/screenshots/fedora-20/applications-to-import.yaml
+./client/appstream-util status-html 					\
+	./contrib/metadata/fedora-20.xml.gz				\
+	./contrib/screenshots/fedora-20/status.html

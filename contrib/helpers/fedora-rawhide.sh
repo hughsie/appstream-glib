@@ -11,3 +11,9 @@ time client/appstream-builder						\
 	--screenshot-dir=./contrib/screenshots/fedora-21		\
 	--basename=fedora-21						\
 	--screenshot-uri=http://alt.fedoraproject.org/pub/alt/screenshots/f21/
+./client/appstream-util non-package-yaml 				\
+	./contrib/metadata/fedora-21.xml.gz				\
+	./contrib/screenshots/fedora-21/applications-to-import.yaml
+./client/appstream-util status-html 					\
+	./contrib/metadata/fedora-21.xml.gz				\
+	./contrib/screenshots/fedora-21/status.html
