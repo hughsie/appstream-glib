@@ -1325,12 +1325,12 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	_cleanup_string_free_ GString *html = NULL;
 
 	/* check args */
-	if (g_strv_length (values) != 1) {
+	if (g_strv_length (values) != 2) {
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     "Not enough arguments, "
-				     "expected filename.xml.gz");
+				     "expected filename.xml.gz status.html");
 		return FALSE;
 	}
 
@@ -1379,7 +1379,7 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	g_string_append (html, "</html>\n");
 
 	/* save file */
-	if (!g_file_set_contents ("./status.html", html->str, -1, error))
+	if (!g_file_set_contents (values[1], html->str, -1, error))
 		return FALSE;
 	return TRUE;
 }
@@ -1398,12 +1398,12 @@ as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 	_cleanup_string_free_ GString *data = NULL;
 
 	/* check args */
-	if (g_strv_length (values) != 1) {
+	if (g_strv_length (values) != 2) {
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     "Not enough arguments, "
-				     "expected filename.xml.gz");
+				     "expected filename.xml.gz status.csv");
 		return FALSE;
 	}
 
@@ -1443,7 +1443,7 @@ as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 	}
 
 	/* save file */
-	if (!g_file_set_contents ("./status.csv", data->str, -1, error))
+	if (!g_file_set_contents (values[1], data->str, -1, error))
 		return FALSE;
 	return TRUE;
 }
