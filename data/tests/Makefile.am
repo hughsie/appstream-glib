@@ -1,4 +1,9 @@
 test_files =						\
+	alpha-both.png					\
+	alpha-horiz.png					\
+	alpha-internal1.png				\
+	alpha-internal2.png				\
+	alpha-vert.png					\
 	broken.appdata.xml				\
 	example.desktop					\
 	example.metainfo.xml				\
