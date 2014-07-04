@@ -661,6 +661,9 @@ as_image_get_alpha_flags (AsImage *image)
 	guint cnt_content_to_alpha_h;
 	guint cnt_content_to_alpha_v = 0;
 
+	if (!gdk_pixbuf_get_has_alpha (priv->pixbuf))
+		return AS_IMAGE_ALPHA_FLAG_NONE;
+
 	width = gdk_pixbuf_get_width (priv->pixbuf);
 	height = gdk_pixbuf_get_height (priv->pixbuf);
 	for (y = 0; y < height; y++) {
