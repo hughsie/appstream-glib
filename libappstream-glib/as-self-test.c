@@ -278,6 +278,77 @@ as_test_image_resize_filename (AsTestResize rz, const gchar *in, const gchar *ou
 }
 
 static void
+as_test_image_alpha_func (void)
+{
+	gboolean ret;
+	_cleanup_error_free_ GError *error = NULL;
+	_cleanup_free_ gchar *fn_both = NULL;
+	_cleanup_free_ gchar *fn_horiz = NULL;
+	_cleanup_free_ gchar *fn_internal1 = NULL;
+	_cleanup_free_ gchar *fn_internal2 = NULL;
+	_cleanup_free_ gchar *fn_none = NULL;
+	_cleanup_free_ gchar *fn_vert = NULL;
+	_cleanup_object_unref_ AsImage *im;
+
+	/* horiz */
+	fn_horiz = as_test_get_filename ("alpha-horiz.png");
+	im = as_image_new ();
+	ret = as_image_load_filename (im, fn_horiz, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_image_get_alpha_flags (im), ==,
+			 AS_IMAGE_ALPHA_FLAG_LEFT |
+			 AS_IMAGE_ALPHA_FLAG_RIGHT);
+
+	/* vert */
+	fn_vert = as_test_get_filename ("alpha-vert.png");
+	im = as_image_new ();
+	ret = as_image_load_filename (im, fn_vert, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_image_get_alpha_flags (im), ==,
+			 AS_IMAGE_ALPHA_FLAG_TOP |
+			 AS_IMAGE_ALPHA_FLAG_BOTTOM);
+
+	/* both */
+	fn_both = as_test_get_filename ("alpha-both.png");
+	im = as_image_new ();
+	ret = as_image_load_filename (im, fn_both, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_image_get_alpha_flags (im), ==,
+			 AS_IMAGE_ALPHA_FLAG_LEFT |
+			 AS_IMAGE_ALPHA_FLAG_RIGHT |
+			 AS_IMAGE_ALPHA_FLAG_TOP |
+			 AS_IMAGE_ALPHA_FLAG_BOTTOM);
+
+	/* internal */
+	fn_internal1 = as_test_get_filename ("alpha-internal1.png");
+	im = as_image_new ();
+	ret = as_image_load_filename (im, fn_internal1, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_image_get_alpha_flags (im), ==,
+			 AS_IMAGE_ALPHA_FLAG_INTERNAL);
+
+	fn_internal2 = as_test_get_filename ("alpha-internal2.png");
+	im = as_image_new ();
+	ret = as_image_load_filename (im, fn_internal2, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_image_get_alpha_flags (im), ==,
+			 AS_IMAGE_ALPHA_FLAG_INTERNAL);
+
+	fn_none = as_test_get_filename ("ss-small.png");
+	im = as_image_new ();
+	ret = as_image_load_filename (im, fn_none, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_image_get_alpha_flags (im), ==,
+			 AS_IMAGE_ALPHA_FLAG_NONE);
+}
+
+static void
 as_test_image_resize_func (void)
 {
 	GError *error = NULL;
@@ -2025,6 +2096,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/release{description}", as_test_release_desc_func);
 	g_test_add_func ("/AppStream/image", as_test_image_func);
 	g_test_add_func ("/AppStream/image{resize}", as_test_image_resize_func);
+	g_test_add_func ("/AppStream/image{alpha}", as_test_image_alpha_func);
 	g_test_add_func ("/AppStream/screenshot", as_test_screenshot_func);
 	g_test_add_func ("/AppStream/app", as_test_app_func);
 	g_test_add_func ("/AppStream/app{translated}", as_test_app_translated_func);

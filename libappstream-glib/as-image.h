@@ -89,6 +89,27 @@ typedef enum {
 	/*< private >*/
 	AS_IMAGE_SAVE_FLAG_LAST
 } AsImageSaveFlags;
+/**
+ * AsImageAlphaFlags:
+ * @AS_IMAGE_ALPHA_FLAG_NONE:		No padding detected
+ * @AS_IMAGE_ALPHA_FLAG_TOP:		Padding detected at the image top
+ * @AS_IMAGE_ALPHA_FLAG_BOTTOM:		Padding detected at the image bottom
+ * @AS_IMAGE_ALPHA_FLAG_LEFT:		Padding detected at the image left side
+ * @AS_IMAGE_ALPHA_FLAG_RIGHT:		Padding detected at the image right side
+ * @AS_IMAGE_ALPHA_FLAG_INTERNAL:	Internal alpha cut out areas detected
+ *
+ * The flags used for reporting the alpha cutouts in the image.
+ **/
+typedef enum {
+	AS_IMAGE_ALPHA_FLAG_NONE	= 0,	/* Since: 0.2.2 */
+	AS_IMAGE_ALPHA_FLAG_TOP		= 1,	/* Since: 0.2.2 */
+	AS_IMAGE_ALPHA_FLAG_BOTTOM	= 2,	/* Since: 0.2.2 */
+	AS_IMAGE_ALPHA_FLAG_LEFT	= 4,	/* Since: 0.2.2 */
+	AS_IMAGE_ALPHA_FLAG_RIGHT	= 8,	/* Since: 0.2.2 */
+	AS_IMAGE_ALPHA_FLAG_INTERNAL	= 16,	/* Since: 0.2.2 */
+	/*< private >*/
+	AS_IMAGE_ALPHA_FLAG_LAST
+} AsImageAlphaFlags;
 
 /* some useful constants */
 #define AS_IMAGE_LARGE_HEIGHT		423	/* Since: 0.2.2 */
@@ -130,6 +151,7 @@ void		 as_image_set_pixbuf		(AsImage	*image,
 						 GdkPixbuf	*pixbuf);
 
 /* object methods */
+AsImageAlphaFlags as_image_get_alpha_flags	(AsImage	*image);
 gboolean	 as_image_load_filename		(AsImage	*image,
 						 const gchar	*filename,
 						 GError		**error);

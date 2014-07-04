@@ -606,6 +606,148 @@ as_image_save_filename (AsImage *image,
 }
 
 /**
+ * is_pixel_alpha:
+ **/
+static gboolean
+is_pixel_alpha (GdkPixbuf *pixbuf, guint x, guint y)
+{
+	gint rowstride, n_channels;
+	guchar *pixels, *p;
+
+	n_channels = gdk_pixbuf_get_n_channels (pixbuf);
+	rowstride = gdk_pixbuf_get_rowstride (pixbuf);
+	pixels = gdk_pixbuf_get_pixels (pixbuf);
+
+	p = pixels + y * rowstride + x * n_channels;
+	return p[3] == 0;
+}
+
+typedef enum {
+	AS_IMAGE_ALPHA_MODE_START,
+	AS_IMAGE_ALPHA_MODE_PADDING,
+	AS_IMAGE_ALPHA_MODE_CONTENT,
+} AsImageAlphaMode;
+
+/**
+ * as_image_get_alpha_flags: (skip)
+ * @image: a #AsImage instance.
+ *
+ * Gets the alpha flags for the image. The following image would have all flags
+ * set, where 'x' is alpha and '@' is non-alpha.
+ *
+ * xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ * xx@@@@@@@@@@@@@@@@@@@@@@@@xx
+ * xx@@@@@@@xxxxxx@@@@@@@@@@@xx
+ * xx@@@@@@@xxxxxx@@@@@@@@@@@xx
+ * xx@@@@@@@@@@@@@@@@@@@@@@@@xx
+ * xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ *
+ * Since: 0.2.2
+ **/
+AsImageAlphaFlags
+as_image_get_alpha_flags (AsImage *image)
+{
+	AsImageAlphaFlags flags = AS_IMAGE_ALPHA_FLAG_TOP |
+				  AS_IMAGE_ALPHA_FLAG_BOTTOM |
+				  AS_IMAGE_ALPHA_FLAG_LEFT |
+				  AS_IMAGE_ALPHA_FLAG_RIGHT;
+	AsImageAlphaMode mode_h;
+	AsImageAlphaMode mode_v = AS_IMAGE_ALPHA_MODE_START;
+	AsImagePrivate *priv = GET_PRIVATE (image);
+	gboolean complete_line_of_alpha;
+	gboolean is_alpha;
+	gint width, height;
+	gint x, y;
+	guint cnt_content_to_alpha_h;
+	guint cnt_content_to_alpha_v = 0;
+
+	width = gdk_pixbuf_get_width (priv->pixbuf);
+	height = gdk_pixbuf_get_height (priv->pixbuf);
+	for (y = 0; y < height; y++) {
+		mode_h = AS_IMAGE_ALPHA_MODE_START;
+		complete_line_of_alpha = TRUE;
+		cnt_content_to_alpha_h = 0;
+		for (x = 0; x < width; x++) {
+			is_alpha = is_pixel_alpha (priv->pixbuf, x, y);
+			/* use the frame */
+			if (!is_alpha) {
+				if (x == 0)
+					flags &= ~AS_IMAGE_ALPHA_FLAG_LEFT;
+				if (x == width - 1)
+					flags &= ~AS_IMAGE_ALPHA_FLAG_RIGHT;
+				if (y == 0)
+					flags &= ~AS_IMAGE_ALPHA_FLAG_TOP;
+				if (y == height - 1)
+					flags &= ~AS_IMAGE_ALPHA_FLAG_BOTTOM;
+				complete_line_of_alpha = FALSE;
+			}
+
+			/* use line state machine */
+			switch (mode_h) {
+			case AS_IMAGE_ALPHA_MODE_START:
+				mode_h = is_alpha ? AS_IMAGE_ALPHA_MODE_PADDING :
+						    AS_IMAGE_ALPHA_MODE_CONTENT;
+				break;
+			case AS_IMAGE_ALPHA_MODE_PADDING:
+				if (!is_alpha)
+					mode_h = AS_IMAGE_ALPHA_MODE_CONTENT;
+				break;
+			case AS_IMAGE_ALPHA_MODE_CONTENT:
+				if (is_alpha) {
+					mode_h = AS_IMAGE_ALPHA_MODE_PADDING;
+					cnt_content_to_alpha_h++;
+				}
+				break;
+			default:
+				g_assert_not_reached ();
+			}
+		}
+
+		/* use column state machine */
+		switch (mode_v) {
+		case AS_IMAGE_ALPHA_MODE_START:
+			if (complete_line_of_alpha) {
+				mode_v = AS_IMAGE_ALPHA_MODE_PADDING;
+			} else {
+				mode_v = AS_IMAGE_ALPHA_MODE_CONTENT;
+			}
+			break;
+		case AS_IMAGE_ALPHA_MODE_PADDING:
+			if (!complete_line_of_alpha)
+				mode_v = AS_IMAGE_ALPHA_MODE_CONTENT;
+			break;
+		case AS_IMAGE_ALPHA_MODE_CONTENT:
+			if (complete_line_of_alpha) {
+				mode_v = AS_IMAGE_ALPHA_MODE_PADDING;
+				cnt_content_to_alpha_v++;
+			}
+			break;
+		default:
+			g_assert_not_reached ();
+		}
+
+		/* detect internal alpha */
+		if (mode_h == AS_IMAGE_ALPHA_MODE_PADDING) {
+			if (cnt_content_to_alpha_h >= 2)
+				flags |= AS_IMAGE_ALPHA_FLAG_INTERNAL;
+		} else if (mode_h == AS_IMAGE_ALPHA_MODE_CONTENT) {
+			if (cnt_content_to_alpha_h >= 1)
+				flags |= AS_IMAGE_ALPHA_FLAG_INTERNAL;
+		}
+	}
+
+	/* detect internal alpha */
+	if (mode_v == AS_IMAGE_ALPHA_MODE_PADDING) {
+		if (cnt_content_to_alpha_v >= 2)
+			flags |= AS_IMAGE_ALPHA_FLAG_INTERNAL;
+	} else if (mode_v == AS_IMAGE_ALPHA_MODE_CONTENT) {
+		if (cnt_content_to_alpha_v >= 1)
+			flags |= AS_IMAGE_ALPHA_FLAG_INTERNAL;
+	}
+	return flags;
+}
+
+/**
  * as_image_new:
  *
  * Creates a new #AsImage.
