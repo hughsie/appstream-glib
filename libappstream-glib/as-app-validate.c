@@ -365,6 +365,7 @@ as_app_validate_image_url_already_exists (AsAppValidateHelper *helper,
 static gboolean
 ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 {
+	AsImageAlphaFlags alpha_flags;
 	const gchar *url;
 	gboolean require_correct_aspect_ratio = FALSE;
 	gdouble desired_aspect = 1.777777778;
@@ -490,6 +491,22 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				     "<screenshot> height was too large");
+	}
+
+	/* check padding */
+	as_image_set_pixbuf (im, pixbuf);
+	alpha_flags = as_image_get_alpha_flags (im);
+	if ((alpha_flags & AS_IMAGE_ALPHA_FLAG_TOP) > 0||
+	    (alpha_flags & AS_IMAGE_ALPHA_FLAG_BOTTOM) > 0) {
+		ai_app_validate_add (helper->probs,
+				     AS_PROBLEM_KIND_STYLE_INCORRECT,
+				     "<image> has vertical alpha padding");
+	}
+	if ((alpha_flags & AS_IMAGE_ALPHA_FLAG_LEFT) > 0||
+	    (alpha_flags & AS_IMAGE_ALPHA_FLAG_RIGHT) > 0) {
+		ai_app_validate_add (helper->probs,
+				     AS_PROBLEM_KIND_STYLE_INCORRECT,
+				     "<image> has horizontal alpha padding");
 	}
 
 	/* check aspect ratio */

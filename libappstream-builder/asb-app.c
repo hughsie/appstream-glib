@@ -394,6 +394,7 @@ asb_app_save_resources (AsbApp *app, GError **error)
 gboolean
 asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **error)
 {
+	AsImageAlphaFlags alpha_flags;
 	gboolean is_default;
 	const gchar *mirror_uri;
 	guint i;
@@ -417,6 +418,21 @@ asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **erro
 				 ASB_PACKAGE_LOG_LEVEL_WARNING,
 				 "%s is not in 16:9 aspect ratio",
 				 filename);
+	}
+
+	/* check the image is not padded */
+	alpha_flags = as_image_get_alpha_flags (im_src);
+	if ((alpha_flags & AS_IMAGE_ALPHA_FLAG_TOP) > 0||
+	    (alpha_flags & AS_IMAGE_ALPHA_FLAG_BOTTOM) > 0) {
+		asb_package_log (asb_app_get_package (app),
+				 ASB_PACKAGE_LOG_LEVEL_WARNING,
+				 "%s has vertical alpha padding", filename);
+	}
+	if ((alpha_flags & AS_IMAGE_ALPHA_FLAG_LEFT) > 0||
+	    (alpha_flags & AS_IMAGE_ALPHA_FLAG_RIGHT) > 0) {
+		asb_package_log (asb_app_get_package (app),
+				 ASB_PACKAGE_LOG_LEVEL_WARNING,
+				 "%s has horizontal alpha padding", filename);
 	}
 
 	ss = as_screenshot_new ();
