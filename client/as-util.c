@@ -1494,7 +1494,7 @@ as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
 	}
 
 	/* save file */
-	if (!g_file_set_contents (values[0], yaml->str, -1, error))
+	if (!g_file_set_contents (values[1], yaml->str, -1, error))
 		return FALSE;
 	return TRUE;
 }
