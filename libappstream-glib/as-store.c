@@ -1159,6 +1159,26 @@ as_store_load_installed (AsStore *store, const gchar *path,
 }
 
 /**
+ * as_store_load_path:
+ * @store: a #AsStore instance.
+ * @path: A path to load
+ * @cancellable: a #GCancellable.
+ * @error: A #GError or %NULL.
+ *
+ * Loads the store from a specific path.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.2.2
+ **/
+gboolean
+as_store_load_path (AsStore *store, const gchar *path,
+		    GCancellable *cancellable, GError **error)
+{
+	return as_store_load_installed (store, path, cancellable, error);
+}
+
+/**
  * as_store_load:
  * @store: a #AsStore instance.
  * @flags: #AsStoreLoadFlags, e.g. %AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM

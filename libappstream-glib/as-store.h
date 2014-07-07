@@ -135,6 +135,10 @@ gboolean	 as_store_load			(AsStore	*store,
 						 AsStoreLoadFlags flags,
 						 GCancellable	*cancellable,
 						 GError		**error);
+gboolean	 as_store_load_path		(AsStore	*store,
+						 const gchar	*path,
+						 GCancellable	*cancellable,
+						 GError		**error);
 GPtrArray	*as_store_get_apps		(AsStore	*store);
 GPtrArray	*as_store_get_apps_by_metadata	(AsStore	*store,
 						 const gchar	*key,
