@@ -497,20 +497,12 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		    g_file_test (appdata_filename_extra, G_FILE_TEST_EXISTS)) {
 			asb_package_log (pkg,
 					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "extra AppData file %s exists for no reason",
+					 "extra AppData file %s overwrites upstream",
 					 appdata_filename_extra);
 		}
 
 		/* we used this */
 		asb_plugin_appdata_remove_file (plugin, appdata_filename_extra);
-	}
-
-	/* any installed appdata file */
-	if (g_file_test (appdata_filename, G_FILE_TEST_EXISTS)) {
-		return asb_plugin_process_filename (plugin,
-						    app,
-						    appdata_filename,
-						    error);
 	}
 
 	/* any appdata-extra file */
@@ -519,6 +511,14 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		return asb_plugin_process_filename (plugin,
 						    app,
 						    appdata_filename_extra,
+						    error);
+	}
+
+	/* any installed appdata file */
+	if (g_file_test (appdata_filename, G_FILE_TEST_EXISTS)) {
+		return asb_plugin_process_filename (plugin,
+						    app,
+						    appdata_filename,
 						    error);
 	}
 
