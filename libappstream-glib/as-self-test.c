@@ -302,7 +302,6 @@ as_test_image_alpha_func (void)
 
 	/* vert */
 	fn_vert = as_test_get_filename ("alpha-vert.png");
-	im = as_image_new ();
 	ret = as_image_load_filename (im, fn_vert, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -312,7 +311,6 @@ as_test_image_alpha_func (void)
 
 	/* both */
 	fn_both = as_test_get_filename ("alpha-both.png");
-	im = as_image_new ();
 	ret = as_image_load_filename (im, fn_both, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -324,7 +322,6 @@ as_test_image_alpha_func (void)
 
 	/* internal */
 	fn_internal1 = as_test_get_filename ("alpha-internal1.png");
-	im = as_image_new ();
 	ret = as_image_load_filename (im, fn_internal1, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -332,7 +329,6 @@ as_test_image_alpha_func (void)
 			 AS_IMAGE_ALPHA_FLAG_INTERNAL);
 
 	fn_internal2 = as_test_get_filename ("alpha-internal2.png");
-	im = as_image_new ();
 	ret = as_image_load_filename (im, fn_internal2, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -340,7 +336,6 @@ as_test_image_alpha_func (void)
 			 AS_IMAGE_ALPHA_FLAG_INTERNAL);
 
 	fn_none = as_test_get_filename ("ss-small.png");
-	im = as_image_new ();
 	ret = as_image_load_filename (im, fn_none, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
