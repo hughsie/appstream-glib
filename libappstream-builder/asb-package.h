@@ -129,6 +129,7 @@ AsRelease	*asb_package_get_release	(AsbPackage	*pkg,
 void		 asb_package_add_release	(AsbPackage	*pkg,
 						 const gchar	*version,
 						 AsRelease	*release);
+AsbPackage	*asb_package_new		(void);
 
 G_END_DECLS
 

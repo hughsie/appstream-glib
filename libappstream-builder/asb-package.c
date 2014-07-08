@@ -778,3 +778,23 @@ asb_package_add_release	(AsbPackage *pkg,
 			     g_object_ref (release));
 	g_ptr_array_add (priv->releases, g_object_ref (release));
 }
+
+/**
+ * asb_package_new:
+ *
+ * Creates a new %AsbPackage.
+ *
+ * You don't need to use this function unless you want a memory-backed package
+ * for testing purposes.
+ *
+ * Returns: a package
+ *
+ * Since: 0.2.2
+ **/
+AsbPackage *
+asb_package_new (void)
+{
+	AsbPackage *pkg;
+	pkg = g_object_new (ASB_TYPE_PACKAGE, NULL);
+	return ASB_PACKAGE (pkg);
+}
