@@ -327,6 +327,9 @@ asb_app_save_resources_screenshot (AsbApp *app,
 		im = g_ptr_array_index (images, i);
 		if (!asb_app_save_resources_image (app, im, error))
 			return FALSE;
+
+		/* clear the image data to reduce memory usage */
+		as_image_set_pixbuf (im, NULL);
 	}
 	return TRUE;
 }
