@@ -471,6 +471,7 @@ as_image_load_filename (AsImage *image,
 	 * rather than the unpredicatable (for JPEG) pixel data */
 	if (!g_file_get_contents (filename, &data, &len, error))
 		return FALSE;
+	g_free (priv->md5);
 	priv->md5 = g_compute_checksum_for_data (G_CHECKSUM_MD5,
 						 (guchar * )data, len);
 
