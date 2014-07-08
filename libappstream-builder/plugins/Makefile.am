@@ -25,7 +25,19 @@ plugin_LTLIBRARIES =					\
 	libasb_plugin_ibus_sql.la			\
 	libasb_plugin_ibus_xml.la			\
 	libasb_plugin_metainfo.la			\
+	libasb_plugin_kde_services.la			\
+	libasb_plugin_kde_notifyrc.la			\
 	libasb_plugin_nm.la
+
+libasb_plugin_kde_services_la_SOURCES = asb-plugin-kde-services.c
+libasb_plugin_kde_services_la_LIBADD = $(GLIB_LIBS)
+libasb_plugin_kde_services_la_LDFLAGS = -module -avoid-version
+libasb_plugin_kde_services_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
+
+libasb_plugin_kde_notifyrc_la_SOURCES = asb-plugin-kde-notifyrc.c
+libasb_plugin_kde_notifyrc_la_LIBADD = $(GLIB_LIBS)
+libasb_plugin_kde_notifyrc_la_LDFLAGS = -module -avoid-version
+libasb_plugin_kde_notifyrc_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
 libasb_plugin_gstreamer_la_SOURCES = asb-plugin-gstreamer.c
 libasb_plugin_gstreamer_la_LIBADD = $(GLIB_LIBS)
