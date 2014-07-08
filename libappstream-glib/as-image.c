@@ -337,7 +337,7 @@ as_image_set_kind (AsImage *image, AsImageKind kind)
 /**
  * as_image_set_pixbuf:
  * @image: a #AsImage instance.
- * @pixbuf: the #GdkPixbuf
+ * @pixbuf: the #GdkPixbuf, or %NULL
  *
  * Sets the image pixbuf.
  *
@@ -352,6 +352,10 @@ as_image_set_pixbuf (AsImage *image, GdkPixbuf *pixbuf)
 
 	if (priv->pixbuf != NULL)
 		g_object_unref (priv->pixbuf);
+	if (pixbuf == NULL) {
+		priv->pixbuf = NULL;
+		return;
+	}
 	if (priv->md5 == NULL) {
 		data = gdk_pixbuf_get_pixels_with_length (pixbuf, &len);
 		priv->md5 = g_compute_checksum_for_data (G_CHECKSUM_MD5,
