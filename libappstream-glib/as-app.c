@@ -2459,6 +2459,15 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
 }
 
 /**
+ * as_app_ptr_array_sort_cb:
+ **/
+static gint
+as_app_ptr_array_sort_cb (gconstpointer a, gconstpointer b)
+{
+	return g_strcmp0 (*((const gchar **) a), *((const gchar **) b));
+}
+
+/**
  * as_app_node_insert: (skip)
  * @app: a #AsApp instance.
  * @parent: the parent #GNode to use..
@@ -2530,6 +2539,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	}
 
 	/* <pkgname> */
+	g_ptr_array_sort (priv->pkgnames, as_app_ptr_array_sort_cb);
 	for (i = 0; i < priv->pkgnames->len; i++) {
 		tmp = g_ptr_array_index (priv->pkgnames, i);
 		as_node_insert (node_app, "pkgname", tmp, 0, NULL);
@@ -2574,6 +2584,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 
 	/* <categories> */
 	if (api_version >= 0.5) {
+		g_ptr_array_sort (priv->categories, as_app_ptr_array_sort_cb);
 		if (priv->categories->len > 0) {
 			node_tmp = as_node_insert (node_app, "categories", NULL, 0, NULL);
 			for (i = 0; i < priv->categories->len; i++) {
@@ -2582,6 +2593,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 			}
 		}
 	} else {
+		g_ptr_array_sort (priv->categories, as_app_ptr_array_sort_cb);
 		if (priv->categories->len > 0) {
 			node_tmp = as_node_insert (node_app, "appcategories", NULL, 0, NULL);
 			for (i = 0; i < priv->categories->len; i++) {
@@ -2593,6 +2605,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 
 	/* <architectures> */
 	if (priv->architectures->len > 0 && api_version >= 0.6) {
+		g_ptr_array_sort (priv->architectures, as_app_ptr_array_sort_cb);
 		node_tmp = as_node_insert (node_app, "architectures", NULL, 0, NULL);
 		for (i = 0; i < priv->architectures->len; i++) {
 			tmp = g_ptr_array_index (priv->architectures, i);
@@ -2602,6 +2615,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 
 	/* <keywords> */
 	if (priv->keywords->len > 0) {
+		g_ptr_array_sort (priv->keywords, as_app_ptr_array_sort_cb);
 		node_tmp = as_node_insert (node_app, "keywords", NULL, 0, NULL);
 		for (i = 0; i < priv->keywords->len; i++) {
 			tmp = g_ptr_array_index (priv->keywords, i);
@@ -2611,6 +2625,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 
 	/* <kudos> */
 	if (priv->kudos->len > 0 && api_version >= 0.8) {
+		g_ptr_array_sort (priv->kudos, as_app_ptr_array_sort_cb);
 		node_tmp = as_node_insert (node_app, "kudos", NULL, 0, NULL);
 		for (i = 0; i < priv->kudos->len; i++) {
 			tmp = g_ptr_array_index (priv->kudos, i);
@@ -2620,6 +2635,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 
 	/* <mimetypes> */
 	if (priv->mimetypes->len > 0 && api_version >= 0.4) {
+		g_ptr_array_sort (priv->mimetypes, as_app_ptr_array_sort_cb);
 		node_tmp = as_node_insert (node_app, "mimetypes", NULL, 0, NULL);
 		for (i = 0; i < priv->mimetypes->len; i++) {
 			tmp = g_ptr_array_index (priv->mimetypes, i);
@@ -2649,6 +2665,8 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 
 	/* <compulsory_for_desktop> */
 	if (priv->compulsory_for_desktops != NULL && api_version >= 0.4) {
+		g_ptr_array_sort (priv->compulsory_for_desktops,
+				  as_app_ptr_array_sort_cb);
 		for (i = 0; i < priv->compulsory_for_desktops->len; i++) {
 			tmp = g_ptr_array_index (priv->compulsory_for_desktops, i);
 			as_node_insert (node_app, "compulsory_for_desktop",
@@ -2658,6 +2676,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 
 	/* <extends> */
 	if (api_version >= 0.7) {
+		g_ptr_array_sort (priv->extends, as_app_ptr_array_sort_cb);
 		for (i = 0; i < priv->extends->len; i++) {
 			tmp = g_ptr_array_index (priv->extends, i);
 			as_node_insert (node_app, "extends", tmp, 0, NULL);
