@@ -53,7 +53,6 @@ struct _AsbContextPrivate
 	AsStore			*old_md_cache;
 	GList			*apps;			/* of AsbApp */
 	GMutex			 apps_mutex;		/* for ->apps */
-	GPtrArray		*extra_pkgs;		/* of AsbGlobValue */
 	GPtrArray		*file_globs;		/* of AsbPackage */
 	GPtrArray		*packages;		/* of AsbPackage */
 	AsbPluginLoader		*plugin_loader;
@@ -360,24 +359,6 @@ asb_context_set_basename (AsbContext *ctx, const gchar *basename)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	priv->basename = g_strdup (basename);
-}
-
-/**
- * asb_context_get_extra_package:
- * @ctx: A #AsbContext
- * @pkgname: package name
- *
- * Gets an extra package that should be used when processing an application.
- *
- * Returns: a pakage name, or %NULL
- *
- * Since: 0.1.0
- **/
-const gchar *
-asb_context_get_extra_package (AsbContext *ctx, const gchar *pkgname)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	return asb_glob_value_search (priv->extra_pkgs, pkgname);
 }
 
 /**
@@ -901,16 +882,6 @@ asb_context_find_by_pkgname (AsbContext *ctx, const gchar *pkgname)
 }
 
 /**
- * asb_context_add_extra_pkg:
- **/
-static void
-asb_context_add_extra_pkg (AsbContext *ctx, const gchar *pkg1, const gchar *pkg2)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	g_ptr_array_add (priv->extra_pkgs, asb_glob_value_new (pkg1, pkg2));
-}
-
-/**
  * asb_context_add_app:
  * @ctx: A #AsbContext
  * @app: A #AsbApp
@@ -940,7 +911,6 @@ asb_context_finalize (GObject *object)
 	g_object_unref (priv->old_md_cache);
 	g_object_unref (priv->plugin_loader);
 	g_ptr_array_unref (priv->packages);
-	g_ptr_array_unref (priv->extra_pkgs);
 	g_list_foreach (priv->apps, (GFunc) g_object_unref, NULL);
 	g_list_free (priv->apps);
 	g_ptr_array_unref (priv->file_globs);
@@ -970,33 +940,9 @@ asb_context_init (AsbContext *ctx)
 
 	priv->plugin_loader = asb_plugin_loader_new (ctx);
 	priv->packages = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
-	priv->extra_pkgs = asb_glob_value_array_new ();
 	g_mutex_init (&priv->apps_mutex);
 	priv->old_md_cache = as_store_new ();
 	priv->max_threads = 1;
-
-	/* add extra data */
-	asb_context_add_extra_pkg (ctx, "alliance-libs", "alliance");
-	asb_context_add_extra_pkg (ctx, "beneath-a-steel-sky*", "scummvm");
-	asb_context_add_extra_pkg (ctx, "coq-coqide", "coq");
-	asb_context_add_extra_pkg (ctx, "drascula*", "scummvm");
-	asb_context_add_extra_pkg (ctx, "efte-*", "efte-common");
-	asb_context_add_extra_pkg (ctx, "fcitx-*", "fcitx-data");
-	asb_context_add_extra_pkg (ctx, "flight-of-the-amazon-queen", "scummvm");
-	asb_context_add_extra_pkg (ctx, "gcin", "gcin-data");
-	asb_context_add_extra_pkg (ctx, "hotot-gtk", "hotot-common");
-	asb_context_add_extra_pkg (ctx, "hotot-qt", "hotot-common");
-	asb_context_add_extra_pkg (ctx, "java-1.7.0-openjdk-devel", "java-1.7.0-openjdk");
-	asb_context_add_extra_pkg (ctx, "kchmviewer-qt", "kchmviewer");
-	asb_context_add_extra_pkg (ctx, "libreoffice-*", "libreoffice-core");
-	asb_context_add_extra_pkg (ctx, "lure", "scummvm");
-	asb_context_add_extra_pkg (ctx, "nntpgrab-gui", "nntpgrab-core");
-	asb_context_add_extra_pkg (ctx, "projectM-*", "libprojectM-qt");
-	asb_context_add_extra_pkg (ctx, "scummvm-tools", "scummvm");
-	asb_context_add_extra_pkg (ctx, "speed-dreams", "speed-dreams-robots-base");
-	asb_context_add_extra_pkg (ctx, "switchdesk-gui", "switchdesk");
-	asb_context_add_extra_pkg (ctx, "transmission-*", "transmission-common");
-	asb_context_add_extra_pkg (ctx, "calligra-krita", "calligra-core");
 }
 
 /**

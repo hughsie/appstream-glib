@@ -48,6 +48,7 @@ typedef struct {
 typedef struct {
 	guint		 max_nstrings;
 	GList		*data;
+	gchar		*prefered_mo_filename;
 } AsbGettextContext;
 
 /**
@@ -109,6 +110,7 @@ asb_gettext_ctx_free (AsbGettextContext *ctx)
 	GList *l;
 	for (l = ctx->data; l != NULL; l = l->next)
 		asb_gettext_entry_free (l->data);
+	g_free (ctx->prefered_mo_filename);
 	g_free (ctx);
 }
 
@@ -149,19 +151,37 @@ asb_gettext_ctx_search_locale (AsbGettextContext *ctx,
 			       GError **error)
 {
 	const gchar *filename;
+	guint i;
 	_cleanup_dir_close_ GDir *dir;
+	_cleanup_ptrarray_unref_ GPtrArray *mo_paths = NULL;
 
 	dir = g_dir_open (messages_path, 0, error);
 	if (dir == NULL)
 		return FALSE;
+
+	/* do a first pass at this, trying to find the prefered .mo */
+	mo_paths = g_ptr_array_new_with_free_func (g_free);
 	while ((filename = g_dir_read_name (dir)) != NULL) {
 		_cleanup_free_ gchar *path;
 		path = g_build_filename (messages_path, filename, NULL);
-		if (g_file_test (path, G_FILE_TEST_EXISTS)) {
+		if (!g_file_test (path, G_FILE_TEST_EXISTS))
+			continue;
+		if (g_strcmp0 (filename, ctx->prefered_mo_filename) == 0) {
 			if (!asb_gettext_parse_file (ctx, locale, path, error))
 				return FALSE;
+			return TRUE;
 		}
+		g_ptr_array_add (mo_paths, g_strdup (path));
 	}
+
+	/* fall back to parsing *everything*, which might give us more
+	 * language results than is actually true */
+	for (i = 0; i < mo_paths->len; i++) {
+		filename = g_ptr_array_index (mo_paths, i);
+		if (!asb_gettext_parse_file (ctx, locale, filename, error))
+			return FALSE;
+	}
+
 	return TRUE;
 }
 
@@ -229,6 +249,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 	/* search */
 	ctx = asb_gettext_ctx_new ();
+	ctx->prefered_mo_filename = g_strdup_printf ("%s.mo", asb_package_get_name (pkg));
 	ret = asb_gettext_ctx_search_path (ctx, tmpdir, error);
 	if (!ret)
 		goto out;

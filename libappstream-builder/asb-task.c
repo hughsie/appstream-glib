@@ -103,7 +103,7 @@ asb_task_explode_extra_package (AsbTask *task, const gchar *pkg_name)
 	if (pkg_extra == NULL)
 		return TRUE;
 	asb_package_log (priv->pkg,
-			 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+			 ASB_PACKAGE_LOG_LEVEL_INFO,
 			 "Adding extra package %s for %s",
 			 asb_package_get_name (pkg_extra),
 			 asb_package_get_name (priv->pkg));
@@ -127,19 +127,55 @@ asb_task_explode_extra_packages (AsbTask *task)
 {
 	AsbTaskPrivate *priv = GET_PRIVATE (task);
 	const gchar *tmp;
+	const gchar *ignore[] = { ""
+				  "audacious",
+				  "cogl",
+				  "control-center",
+				  "exo",
+				  "fontforge",
+				  "gconf-editor",
+				  "gedit",
+				  "gnome-shell",
+				  "gstreamer1",
+				  "gstreamer1-plugins-base",
+				  "gucharmap",
+				  "ibus",
+				  "rtld",
+				  "system-config-keyboard",
+				  "system-config-kickstart",
+				  "system-config-printer-libs",
+				  "xfce4-panel",
+				  "xterm",
+				  "yelp",
+				  NULL };
+	gchar **deps;
 	guint i;
+	_cleanup_hashtable_unref_ GHashTable *hash;
 	_cleanup_ptrarray_unref_ GPtrArray *array;
 
-	/* anything hardcoded */
+	/* anything the package requires */
+	hash = g_hash_table_new (g_str_hash, g_str_equal);
+	for (i = 0; ignore[i] != NULL; i++) {
+		g_hash_table_insert (hash,
+				     (gchar *) ignore[i],
+				     GINT_TO_POINTER (1));
+	}
 	array = g_ptr_array_new_with_free_func (g_free);
-	tmp = asb_context_get_extra_package (priv->ctx, asb_package_get_name (priv->pkg));
-	if (tmp != NULL)
-		g_ptr_array_add (array, g_strdup (tmp));
+	deps = asb_package_get_deps (priv->pkg);
+	for (i = 0; deps[i] != NULL; i++) {
+		if (g_strstr_len (deps[i], -1, " ") != NULL)
+			continue;
+		if (g_strstr_len (deps[i], -1, ".so") != NULL)
+			continue;
+		if (g_str_has_prefix (deps[i], "/"))
+			continue;
+		if (g_hash_table_lookup (hash, deps[i]) != NULL)
+			continue;
+		g_ptr_array_add (array, g_strdup (deps[i]));
+		g_hash_table_insert (hash, deps[i], GINT_TO_POINTER (1));
+	}
 
-	/* add all variants of %NAME-common, %NAME-data etc */
-	tmp = asb_package_get_name (priv->pkg);
-	g_ptr_array_add (array, g_strdup_printf ("%s-data", tmp));
-	g_ptr_array_add (array, g_strdup_printf ("%s-common", tmp));
+	/* explode any potential packages */
 	for (i = 0; i < array->len; i++) {
 		tmp = g_ptr_array_index (array, i);
 		if (!asb_task_explode_extra_package (task, tmp))

@@ -103,8 +103,6 @@ gboolean	 asb_context_add_filename	(AsbContext	*ctx,
 void		 asb_context_disable_older_pkgs	(AsbContext	*ctx);
 gboolean	 asb_context_find_in_cache	(AsbContext	*ctx,
 						 const gchar	*filename);
-const gchar	*asb_context_get_extra_package	(AsbContext	*ctx,
-						 const gchar	*pkgname);
 
 G_END_DECLS
 
