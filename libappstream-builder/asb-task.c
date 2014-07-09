@@ -197,7 +197,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	GList *apps = NULL;
 	GList *l;
 	GPtrArray *array;
-	const gchar * const *kudos;
 	gboolean ret;
 	gboolean valid;
 	gchar *cache_id;

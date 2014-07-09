@@ -402,7 +402,7 @@ asb_utils_add_apps_from_file (GList **apps, const gchar *filename, GError **erro
 	array = as_store_get_apps (store);
 	for (i = 0; i < array->len; i++) {
 		app = g_ptr_array_index (array, i);
-		asb_plugin_add_app (apps, (AsbApp *) app);
+		asb_plugin_add_app (apps, app);
 	}
 out:
 	g_object_unref (file);

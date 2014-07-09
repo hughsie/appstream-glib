@@ -902,7 +902,7 @@ asb_context_add_app (AsbContext *ctx, AsbApp *app)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	g_mutex_lock (&priv->apps_mutex);
-	asb_plugin_add_app (&priv->apps, app);
+	asb_plugin_add_app (&priv->apps, AS_APP (app));
 	g_mutex_unlock (&priv->apps_mutex);
 }
 

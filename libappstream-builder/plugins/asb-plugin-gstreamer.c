@@ -203,6 +203,6 @@ asb_plugin_process (AsbPlugin *plugin,
 	as_app_set_comment (AS_APP (app), "C", str->str, -1);
 
 	/* add */
-	asb_plugin_add_app (&apps, app);
+	asb_plugin_add_app (&apps, AS_APP (app));
 	return apps;
 }

@@ -88,7 +88,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		return FALSE;
 	}
 	asb_app_set_requires_appdata (app, FALSE);
-	asb_plugin_add_app (apps, app);
+	asb_plugin_add_app (apps, AS_APP (app));
 	return TRUE;
 }
 
@@ -184,7 +184,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList **list)
 			as_app_subsume_full (found, app, AS_APP_SUBSUME_FLAG_PARTIAL);
 			continue;
 		}
-		asb_plugin_add_app (&list_new, ASB_APP (app));
+		asb_plugin_add_app (&list_new, app);
 	}
 
 	/* success */

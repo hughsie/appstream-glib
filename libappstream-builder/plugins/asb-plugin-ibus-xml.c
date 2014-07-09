@@ -168,7 +168,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	}
 
 	/* add */
-	asb_plugin_add_app (apps, app);
+	asb_plugin_add_app (apps, AS_APP (app));
 out:
 	if (root != NULL)
 		as_node_unref (root);

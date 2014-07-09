@@ -631,7 +631,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	}
 
 	/* add */
-	asb_plugin_add_app (apps, app);
+	asb_plugin_add_app (apps, AS_APP (app));
 out:
 	FcConfigAppFontClear (config);
 	FcConfigDestroy (config);
@@ -750,7 +750,7 @@ asb_font_merge_family (GList **list, const gchar *md_key)
 		/* no family, or not a font */
 		tmp = as_app_get_metadata_item (AS_APP (app), md_key);
 		if (tmp == NULL) {
-			asb_plugin_add_app (&list_new, app);
+			asb_plugin_add_app (&list_new, AS_APP (app));
 			continue;
 		}
 
@@ -778,7 +778,7 @@ asb_font_merge_family (GList **list, const gchar *md_key)
 	hash_values = g_hash_table_get_values (hash);
 	for (l = hash_values; l != NULL; l = l->next) {
 		app = ASB_APP (l->data);
-		asb_plugin_add_app (&list_new, app);
+		asb_plugin_add_app (&list_new, AS_APP (app));
 	}
 	g_list_free (hash_values);
 

@@ -205,7 +205,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		}
 	}
 	asb_app_set_requires_appdata (app, TRUE);
-	asb_plugin_add_app (apps, app);
+	asb_plugin_add_app (apps, AS_APP (app));
 out:
 	if (db != NULL)
 		sqlite3_close (db);

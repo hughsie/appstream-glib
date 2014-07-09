@@ -91,15 +91,15 @@ asb_plugin_process (AsbPlugin *plugin,
 
 /**
  * asb_plugin_add_app:
- * @list: (element-type AsbApp): A list of #AsbApp's
- * @app: A #AsbApp
+ * @list: (element-type AsApp): A list of #AsApp's
+ * @app: A #AsApp
  *
  * Adds an application to a list.
  *
  * Since: 0.1.0
  **/
 void
-asb_plugin_add_app (GList **list, AsbApp *app)
+asb_plugin_add_app (GList **list, AsApp *app)
 {
 	*list = g_list_prepend (*list, g_object_ref (app));
 }

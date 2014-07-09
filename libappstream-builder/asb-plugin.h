@@ -97,7 +97,7 @@ gboolean	 asb_plugin_process_app			(AsbPlugin	*plugin,
 gboolean	 asb_plugin_check_filename		(AsbPlugin	*plugin,
 							 const gchar	*filename);
 void		 asb_plugin_add_app			(GList		**list,
-							 AsbApp		*app);
+							 AsApp		*app);
 void		 asb_plugin_add_glob			(GPtrArray	*array,
 							 const gchar	*glob);
 

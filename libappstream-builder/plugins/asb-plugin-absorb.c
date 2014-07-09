@@ -63,7 +63,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList **list)
 		/* no absorb metadata */
 		tmp = as_app_get_metadata_item (app, "X-Merge-With-Parent");
 		if (tmp == NULL) {
-			asb_plugin_add_app (&list_new, ASB_APP (app));
+			asb_plugin_add_app (&list_new, app);
 			continue;
 		}
 
