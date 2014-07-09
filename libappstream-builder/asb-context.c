@@ -80,6 +80,28 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsbContext, asb_context, G_TYPE_OBJECT)
 #define GET_PRIVATE(o) (asb_context_get_instance_private (o))
 
 /**
+ * asb_context_realpath:
+ **/
+static gchar *
+asb_context_realpath (const gchar *path)
+{
+	char *temp;
+	gchar *real;
+
+	/* don't trust realpath one little bit */
+	if (path == NULL)
+		return NULL;
+
+	/* glibc allocates us a buffer to try and fix some brain damage */
+	temp = realpath (path, NULL);
+	if (temp == NULL)
+		return NULL;
+	real = g_strdup (temp);
+	free (temp);
+	return real;
+}
+
+/**
  * asb_context_set_no_net:
  * @ctx: A #AsbContext
  * @no_net: if network is disallowed
@@ -174,7 +196,7 @@ void
 asb_context_set_old_metadata (AsbContext *ctx, const gchar *old_metadata)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->old_metadata = g_strdup (old_metadata);
+	priv->old_metadata = asb_context_realpath (old_metadata);
 }
 
 /**
@@ -191,7 +213,7 @@ void
 asb_context_set_extra_appstream (AsbContext *ctx, const gchar *extra_appstream)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->extra_appstream = g_strdup (extra_appstream);
+	priv->extra_appstream = asb_context_realpath (extra_appstream);
 }
 
 /**
@@ -208,7 +230,7 @@ void
 asb_context_set_extra_appdata (AsbContext *ctx, const gchar *extra_appdata)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->extra_appdata = g_strdup (extra_appdata);
+	priv->extra_appdata = asb_context_realpath (extra_appdata);
 }
 
 /**
@@ -225,7 +247,7 @@ void
 asb_context_set_extra_screenshots (AsbContext *ctx, const gchar *extra_screenshots)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->extra_screenshots = g_strdup (extra_screenshots);
+	priv->extra_screenshots = asb_context_realpath (extra_screenshots);
 }
 
 /**
@@ -257,7 +279,7 @@ void
 asb_context_set_log_dir (AsbContext *ctx, const gchar *log_dir)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->log_dir = g_strdup (log_dir);
+	priv->log_dir = asb_context_realpath (log_dir);
 }
 
 /**
@@ -273,7 +295,7 @@ void
 asb_context_set_screenshot_dir (AsbContext *ctx, const gchar *screenshot_dir)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->screenshot_dir = g_strdup (screenshot_dir);
+	priv->screenshot_dir = asb_context_realpath (screenshot_dir);
 }
 
 /**
@@ -289,7 +311,7 @@ void
 asb_context_set_cache_dir (AsbContext *ctx, const gchar *cache_dir)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->cache_dir = g_strdup (cache_dir);
+	priv->cache_dir = asb_context_realpath (cache_dir);
 }
 
 /**
@@ -305,7 +327,7 @@ void
 asb_context_set_temp_dir (AsbContext *ctx, const gchar *temp_dir)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->temp_dir = g_strdup (temp_dir);
+	priv->temp_dir = asb_context_realpath (temp_dir);
 }
 
 /**
@@ -321,7 +343,7 @@ void
 asb_context_set_output_dir (AsbContext *ctx, const gchar *output_dir)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->output_dir = g_strdup (output_dir);
+	priv->output_dir = asb_context_realpath (output_dir);
 }
 
 /**
