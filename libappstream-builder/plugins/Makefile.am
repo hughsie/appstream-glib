@@ -14,6 +14,7 @@ AM_CPPFLAGS =						\
 
 plugindir = $(libdir)/asb-plugins
 plugin_LTLIBRARIES =					\
+	libasb_plugin_absorb.la				\
 	libasb_plugin_appdata.la			\
 	libasb_plugin_blacklist.la			\
 	libasb_plugin_desktop.la			\
@@ -28,6 +29,11 @@ plugin_LTLIBRARIES =					\
 	libasb_plugin_kde_services.la			\
 	libasb_plugin_kde_notifyrc.la			\
 	libasb_plugin_nm.la
+
+libasb_plugin_absorb_la_SOURCES = asb-plugin-absorb.c
+libasb_plugin_absorb_la_LIBADD = $(GLIB_LIBS)
+libasb_plugin_absorb_la_LDFLAGS = -module -avoid-version
+libasb_plugin_absorb_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
 libasb_plugin_kde_services_la_SOURCES = asb-plugin-kde-services.c
 libasb_plugin_kde_services_la_LIBADD = $(GLIB_LIBS)
