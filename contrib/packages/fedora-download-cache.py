@@ -89,6 +89,33 @@ def search_package_list(pkg):
             return True
     return False
 
+def ensure_pkg_exists(yb, existing, pkg):
+
+    # get base name without the slash
+    relativepath = pkg.returnSimple('relativepath')
+    pos = relativepath.rfind('/')
+    if pos != -1:
+        relativepath = relativepath[pos+1:]
+
+    # is in cache?
+    path = './packages/' + relativepath
+    if os.path.exists(path) and os.path.getsize(path) == int(pkg.returnSimple('packagesize')):
+        print("INFO: %s up to date" % pkg.nvra)
+        return
+
+    # make sure the metadata exists
+    repo = yb.repos.getRepo(pkg.repoid)
+
+    # download now
+    print("INFO: downloading %s" % os.path.basename(path))
+    pkg.localpath = path
+    repo.getPackage(pkg)
+
+    # do we have an old version of this?
+    if existing.has_key(pkg.name) and os.path.exists(existing[pkg.name]):
+        print("INFO: deleting %s" % os.path.basename(existing[pkg.name]))
+        os.remove(existing[pkg.name])
+
 def update():
 
     # create if we're starting from nothing
@@ -173,35 +200,19 @@ def update():
         if pkg.arch not in basearch_list:
             continue
 
-        # make sure the metadata exists
-        repo = yb.repos.getRepo(pkg.repoid)
-
         # don't download packages without desktop files
         if not search_package_list(pkg) and pkg.name not in extra_packages:
             continue
 
-        # get base name without the slash
-        relativepath = pkg.returnSimple('relativepath')
-        pos = relativepath.rfind('/')
-        if pos != -1:
-            relativepath = relativepath[pos+1:]
-
-        # is in cache?
-        path = './packages/' + relativepath
-        if os.path.exists(path) and os.path.getsize(path) == int(pkg.returnSimple('packagesize')):
-            #print("INFO: %s up to date" % pkg.nvra)
-            downloaded[pkg.name] = True
-        else:
-            pkg.localpath = path
-
-            # download now
-            print("INFO: downloading %s" % os.path.basename(path))
-            repo.getPackage(pkg)
-
-            # do we have an old version of this?
-            if existing.has_key(pkg.name) and os.path.exists(existing[pkg.name]):
-                print("INFO: deleting %s" % os.path.basename(existing[pkg.name]))
-                os.remove(existing[pkg.name])
+        # ensure this package exists
+        ensure_pkg_exists(yb, existing, pkg)
+        for require in pkg.strong_requires_names:
+            if require.startswith(pkg.name):
+                #print("INFO: " + pkg.name + " also needs " + require)
+                for dep in newest_packages:
+                    if dep.name == require:
+                        ensure_pkg_exists(yb, existing, dep)
+                        downloaded[dep.name] = True
         downloaded[pkg.name] = True
 
     if len(downloaded) == 0:
