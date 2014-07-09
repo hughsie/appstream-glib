@@ -89,6 +89,7 @@ typedef enum {
  * @AS_APP_SUBSUME_FLAG_NONE:		No special actions to use
  * @AS_APP_SUBSUME_FLAG_NO_OVERWRITE:	Do not overwrite already set properties
  * @AS_APP_SUBSUME_FLAG_BOTH_WAYS:	Copy unset properties both ways
+ * @AS_APP_SUBSUME_FLAG_PARTIAL:	Only subsume a safe subset
  *
  * The flags to use when subsuming applications.
  **/
@@ -96,6 +97,7 @@ typedef enum {
 	AS_APP_SUBSUME_FLAG_NONE,
 	AS_APP_SUBSUME_FLAG_NO_OVERWRITE = 1,	/* Since: 0.1.4 */
 	AS_APP_SUBSUME_FLAG_BOTH_WAYS	 = 2,	/* Since: 0.1.4 */
+	AS_APP_SUBSUME_FLAG_PARTIAL	 = 4,	/* Since: 0.2.2 */
 	/*< private >*/
 	AS_APP_SUBSUME_FLAG_LAST,
 } AsAppSubsumeFlags;

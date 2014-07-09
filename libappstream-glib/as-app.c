@@ -2266,7 +2266,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	guint i;
 	gint percentage;
 	GList *l;
-	_cleanup_list_free_ GList *keys;
+	_cleanup_list_free_ GList *keys = NULL;
 
 	/* stop us shooting ourselves in the foot */
 	papp->trust_flags |= AS_APP_TRUST_FLAG_CHECK_DUPLICATES;
@@ -2300,6 +2300,22 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		ss = g_ptr_array_index (priv->screenshots, i);
 		as_app_add_screenshot (app, ss);
 	}
+
+	/* mimetypes */
+	for (i = 0; i < priv->mimetypes->len; i++) {
+		tmp = g_ptr_array_index (priv->mimetypes, i);
+		as_app_add_mimetype (app, tmp, -1);
+	}
+
+	/* keywords */
+	for (i = 0; i < priv->keywords->len; i++) {
+		tmp = g_ptr_array_index (priv->keywords, i);
+		as_app_add_keyword (app, tmp, -1);
+	}
+
+	/* do not subsume all properties */
+	if ((flags & AS_APP_SUBSUME_FLAG_PARTIAL) > 0)
+		return;
 
 	/* languages */
 	keys = g_hash_table_get_keys (priv->languages);
