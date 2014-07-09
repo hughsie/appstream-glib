@@ -353,27 +353,6 @@ as_utils_spdx_license_tokenize (const gchar *license)
 }
 
 /**
- * as_util_get_possible_kudos:
- *
- * Returns a list of all known kudos, which are metadata values that
- * infer a level of integration or quality.
- *
- * Returns: a static list of possible metadata keys
- *
- * Since: 0.2.2
- **/
-const gchar * const *
-as_util_get_possible_kudos (void)
-{
-	guint i;
-	static const gchar *kudos[AS_KUDO_KIND_LAST + 1];
-	for (i = 0; i < AS_KUDO_KIND_LAST; i++)
-		kudos[i] = as_kudo_kind_to_string (i);
-	kudos[AS_KUDO_KIND_LAST] = NULL;
-	return (const gchar * const *) kudos;
-}
-
-/**
  * as_utils_check_url_exists:
  * @url: the URL to check.
  * @timeout: the timeout in seconds.

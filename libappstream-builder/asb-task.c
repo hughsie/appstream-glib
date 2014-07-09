@@ -384,17 +384,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			goto skip;
 		}
 
-		/* print Kudos the might have */
-		kudos = as_util_get_possible_kudos ();
-		for (i = 0; kudos[i] != NULL; i++) {
-			if (as_app_get_metadata_item (AS_APP (app), kudos[i]) != NULL)
-				continue;
-			asb_package_log (priv->pkg,
-					 ASB_PACKAGE_LOG_LEVEL_INFO,
-					 "Application does not have kudo '%s'",
-					 kudos[i]);
-		}
-
 		/* set cache-id in case we want to use the metadata directly */
 		if (asb_context_get_add_cache_id (priv->ctx)) {
 			cache_id = asb_utils_get_cache_id_for_filename (priv->filename);

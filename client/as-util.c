@@ -1087,7 +1087,7 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 	gchar *tmp;
 	guint i;
 	guint j;
-	const gchar * const *kudos;
+	GPtrArray *kudos;
 
 	g_string_append_printf (html, "<a name=\"%s\"/><h2>%s</h2>\n",
 				as_app_get_id (app), as_app_get_id (app));
@@ -1187,12 +1187,11 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 
 	/* add all possible Kudo's for desktop files */
 	if (as_app_get_id_kind (app) == AS_ID_KIND_DESKTOP) {
-		kudos = as_util_get_possible_kudos ();
-		for (i = 0; kudos[i] != NULL; i++) {
-			pkgname = as_app_get_metadata_item (app, kudos[i]) ?
-					"Yes" : "No";
+		kudos = as_app_get_kudos (app);
+		for (i = 0; i < kudos->len; i++) {
+			pkgname = g_ptr_array_index (kudos, i);
 			g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
-						kudos[i], pkgname);
+						pkgname, "Yes");
 		}
 	}
 
