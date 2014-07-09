@@ -34,6 +34,54 @@ asb_plugin_get_name (void)
 }
 
 /**
+ * asb_plugin_absorb_parent_for_pkgname:
+ */
+static void
+asb_plugin_absorb_parent_for_pkgname (GList *list, AsApp *parent, const gchar *pkgname)
+{
+	AsApp *app;
+	GList *l;
+
+	for (l = list; l != NULL; l = l->next) {
+		app = AS_APP (l->data);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_ADDON)
+			continue;
+		if (g_strcmp0 (as_app_get_pkgname_default (app), pkgname) != 0)
+			continue;
+		g_debug ("Adding X-Merge-With-Parent on %s as %s depends on %s",
+			 as_app_get_id_full (app),
+			 as_app_get_pkgname_default (parent),
+			 as_app_get_pkgname_default (app));
+		as_app_add_metadata (app,
+				     "X-Merge-With-Parent",
+				     as_app_get_id_full (parent), -1);
+	}
+}
+
+/**
+ * asb_plugin_merge_prepare_deps:
+ */
+static void
+asb_plugin_merge_prepare_deps (GList *list)
+{
+	AsApp *app;
+	AsbPackage *pkg;
+	GList *l;
+	gchar **deps;
+	guint i;
+
+	for (l = list; l != NULL; l = l->next) {
+		app = AS_APP (l->data);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+			continue;
+		pkg = asb_app_get_package (ASB_APP (app));
+		deps = asb_package_get_deps (pkg);
+		for (i = 0; deps[i] != NULL; i++)
+			asb_plugin_absorb_parent_for_pkgname (list, app, deps[i]);
+	}
+}
+
+/**
  * asb_plugin_merge:
  */
 void
@@ -45,6 +93,10 @@ asb_plugin_merge (AsbPlugin *plugin, GList **list)
 	GList *list_new = NULL;
 	const gchar *tmp;
 	_cleanup_hashtable_unref_ GHashTable *hash;
+
+	/* add X-Merge-With-Parent on any metainfo files that are in a package
+	 * required by a desktop package */
+	asb_plugin_merge_prepare_deps (*list);
 
 	/* add all packages to the hash */
 	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
