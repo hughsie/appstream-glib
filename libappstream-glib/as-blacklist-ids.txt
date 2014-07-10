@@ -12,6 +12,10 @@ caja-home.desktop
 cinnamon-settings.desktop
 *-demo.desktop
 display-properties.desktop
+exo-file-manager.desktop
+exo-mail-reader.desktop
+exo-terminal-emulator.desktop
+exo-web-browser
 freedink-dfarc.desktop
 freedinkedit.desktop
 gcompris-edit.desktop
