@@ -1330,7 +1330,10 @@ as_util_status_html_write_css (GString *html)
 	g_string_append (html, "table.app {\n");
 	g_string_append (html, "	border: 1px solid #dddddd;\n");
 	g_string_append (html, "	border-collapse: collapse;\n");
-	g_string_append (html, "	width: 50%;\n");
+	g_string_append (html, "	width: 80%;\n");
+	g_string_append (html, "}\n");
+	g_string_append (html, "img {\n");
+	g_string_append (html, "	border: 1px solid #dddddd;\n");
 	g_string_append (html, "}\n");
 	g_string_append (html, "table.summary {\n");
 	g_string_append (html, "	border: 1px solid #dddddd;\n");
