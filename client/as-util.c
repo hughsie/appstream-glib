@@ -1087,7 +1087,6 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 	gchar *tmp;
 	guint i;
 	guint j;
-	GPtrArray *kudos;
 
 	g_string_append_printf (html, "<a name=\"%s\"/><h2>%s</h2>\n",
 				as_app_get_id (app), as_app_get_id (app));
@@ -1122,17 +1121,17 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 		}
 	}
 
-	g_string_append (html, "<table>\n");
+	g_string_append (html, "<table class=\"app\">\n");
 
 	/* summary */
-	g_string_append_printf (html, "<tr><td>%s</td><td><code>%s</code></td></tr>\n",
+	g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td><code>%s</code></td></tr>\n",
 				"Type", as_id_kind_to_string (as_app_get_id_kind (app)));
-	g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+	g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
 				"Name", as_app_get_name (app, "C"));
-	g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+	g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
 				"Comment", as_app_get_comment (app, "C"));
 	if (as_app_get_description (app, "C") != NULL) {
-		g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
 				"Description", as_app_get_description (app, "C"));
 	}
 
@@ -1140,7 +1139,7 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 	tmp = as_util_status_html_join (as_app_get_pkgnames (app));
 	if (tmp != NULL) {
 		pkgname = g_ptr_array_index (as_app_get_pkgnames(app), 0);
-		g_string_append_printf (html, "<tr><td>%s</td><td>"
+		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>"
 					"<a href=\"https://apps.fedoraproject.org/packages/%s\">"
 					"<code>%s</code></a></td></tr>\n",
 					"Package", pkgname, tmp);
@@ -1150,7 +1149,7 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 	/* categories */
 	tmp = as_util_status_html_join (as_app_get_categories (app));
 	if (tmp != NULL) {
-		g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
 					"Categories", tmp);
 	}
 	g_free (tmp);
@@ -1158,7 +1157,7 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 	/* keywords */
 	tmp = as_util_status_html_join (as_app_get_keywords (app));
 	if (tmp != NULL) {
-		g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
 					"Keywords", tmp);
 	}
 	g_free (tmp);
@@ -1166,37 +1165,37 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 	/* homepage */
 	pkgname = as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE);
 	if (pkgname != NULL) {
-		g_string_append_printf (html, "<tr><td>%s</td><td><a href=\"%s\">"
+		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td><a href=\"%s\">"
 					"%s</a></td></tr>\n",
 					"Homepage", pkgname, pkgname);
 	}
 
 	/* project */
 	if (as_app_get_project_group (app) != NULL) {
-		g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
 					"Project", as_app_get_project_group (app));
 	}
 
 	/* desktops */
 	tmp = as_util_status_html_join (as_app_get_compulsory_for_desktops (app));
 	if (tmp != NULL) {
-		g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
+		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
 					"Compulsory for", tmp);
 	}
 	g_free (tmp);
 
-	/* add all possible Kudo's for desktop files */
+	/* kudos */
 	if (as_app_get_id_kind (app) == AS_ID_KIND_DESKTOP) {
-		kudos = as_app_get_kudos (app);
-		for (i = 0; i < kudos->len; i++) {
-			pkgname = g_ptr_array_index (kudos, i);
-			g_string_append_printf (html, "<tr><td>%s</td><td>%s</td></tr>\n",
-						pkgname, "Yes");
+		tmp = as_util_status_html_join (as_app_get_kudos (app));
+		if (tmp != NULL) {
+			g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
+						"Kudos", tmp);
 		}
+		g_free (tmp);
 	}
 
 	g_string_append (html, "</table>\n");
-	g_string_append (html, "<hr/>\n");
+	g_string_append (html, "<br/>\n");
 }
 
 /**
@@ -1215,8 +1214,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 	guint j;
 	guint total = 0;
 
-	g_string_append (html, "<h1>Executive summary</h1>\n");
-	g_string_append (html, "<ul>\n");
+	g_string_append (html, "<h1>Executive Summary</h1>\n");
 
 	/* count number of desktop apps */
 	for (i = 0; i < apps->len; i++) {
@@ -1231,6 +1229,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 				     "No desktop applications found");
 		return FALSE;
 	}
+	g_string_append (html, "<table class=\"summary\">\n");
 
 	/* long descriptions */
 	cnt = 0;
@@ -1242,8 +1241,9 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 			cnt++;
 	}
 	perc = 100.f * (gdouble) cnt / (gdouble) total;
-	g_string_append_printf (html, "<li>Applications with "
-				"descriptions: %i/%i (%.1f%%)</li>\n",
+	g_string_append_printf (html, "<tr><td class=\"alt\">Descriptions</td>"
+				"<td>%i/%i</td>"
+				"<td class=\"thin\">%.1f%%</td></tr>\n",
 				cnt, total, perc);
 
 	/* keywords */
@@ -1256,8 +1256,8 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 			cnt++;
 	}
 	perc = 100.f * (gdouble) cnt / (gdouble) total;
-	g_string_append_printf (html, "<li>Applications with "
-				"keywords: %i/%i (%.1f%%)</li>\n",
+	g_string_append_printf (html, "<tr><td class=\"alt\">Keywords</td>"
+				"<td>%i/%i</td><td class=\"thin\">%.1f%%</td></tr>\n",
 				cnt, total, perc);
 
 	/* screenshots */
@@ -1270,8 +1270,8 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 			cnt++;
 	}
 	perc = 100.f * (gdouble) cnt / (gdouble) total;
-	g_string_append_printf (html, "<li>Applications with "
-				"screenshots: %i/%i (%.1f%%)</li>\n",
+	g_string_append_printf (html, "<tr><td class=\"alt\">Screenshots</td>"
+				"<td>%i/%i</td><td class=\"thin\">%.1f%%</td></tr>\n",
 				cnt, total, perc);
 
 	/* project apps with appdata */
@@ -1291,8 +1291,9 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 		perc = 0;
 		if (total > 0)
 			perc = 100.f * (gdouble) cnt / (gdouble) total;
-		g_string_append_printf (html, "<li>Applications in %s "
-					"with AppData: %i/%i (%.1f%%)</li>\n",
+		g_string_append_printf (html, "<tr><td class=\"alt\">%s "
+					"AppData</td><td>%i/%i</td>"
+					"<td class=\"thin\">%.1f%%</td></tr>\n",
 					project_groups[j], cnt,
 					total, perc);
 	}
@@ -1304,10 +1305,57 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 		if (as_app_get_id_kind (app) == AS_ID_KIND_ADDON)
 			cnt++;
 	}
-	g_string_append_printf (html, "<li>Application addons with MetaInfo: %i</li>\n", cnt);
+	g_string_append_printf (html, "<tr><td class=\"alt\">MetaInfo</td>"
+				"<td>%i</td><td class=\"thin\"></td></tr>\n", cnt);
 
-	g_string_append (html, "</ul>\n");
+
+	g_string_append (html, "</table>\n");
+	g_string_append (html, "<br/>\n");
 	return TRUE;
+}
+
+/**
+ * as_util_status_html_write_css:
+ */
+static void
+as_util_status_html_write_css (GString *html)
+{
+	g_string_append (html, "<style type=\"text/css\">\n");
+	g_string_append (html, "body {\n");
+	g_string_append (html, "	margin-top: 2em;\n");
+	g_string_append (html, "	margin-left: 5%;\n");
+	g_string_append (html, "	margin-right: 5%;\n");
+	g_string_append (html, "	font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif;\n");
+	g_string_append (html, "}\n");
+	g_string_append (html, "table.app {\n");
+	g_string_append (html, "	border: 1px solid #dddddd;\n");
+	g_string_append (html, "	border-collapse: collapse;\n");
+	g_string_append (html, "	width: 50%;\n");
+	g_string_append (html, "}\n");
+	g_string_append (html, "table.summary {\n");
+	g_string_append (html, "	border: 1px solid #dddddd;\n");
+	g_string_append (html, "	border-collapse: collapse;\n");
+	g_string_append (html, "	width: 20%;\n");
+	g_string_append (html, "}\n");
+	g_string_append (html, "td {\n");
+	g_string_append (html, "	padding: 7px;\n");
+	g_string_append (html, "}\n");
+	g_string_append (html, "td.alt {\n");
+	g_string_append (html, "	background-color: #eeeeee;\n");
+	g_string_append (html, "	width: 150px;\n");
+	g_string_append (html, "}\n");
+	g_string_append (html, "td.thin {\n");
+	g_string_append (html, "	width: 100px;\n");
+	g_string_append (html, "	text-align: right;\n");
+	g_string_append (html, "}\n");
+	g_string_append (html, "a:link {\n");
+	g_string_append (html, "	color: #2b5e82;\n");
+	g_string_append (html, "	text-decoration: none;\n");
+	g_string_append (html, "}\n");
+	g_string_append (html, "a:visited {\n");
+	g_string_append (html, "	color: #52188b;\n");
+	g_string_append (html, "}\n");
+	g_string_append (html, "</style>\n");
 }
 
 /**
@@ -1350,6 +1398,7 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	g_string_append (html, "<meta http-equiv=\"Content-Type\" content=\"text/html; "
 			       "charset=UTF-8\" />\n");
 	g_string_append (html, "<title>Application Data Review</title>\n");
+	as_util_status_html_write_css (html);
 	g_string_append (html, "</head>\n");
 	g_string_append (html, "<body>\n");
 
