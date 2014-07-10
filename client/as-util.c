@@ -1128,11 +1128,15 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 				"Type", as_id_kind_to_string (as_app_get_id_kind (app)));
 	g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
 				"Name", as_app_get_name (app, "C"));
-	g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
-				"Comment", as_app_get_comment (app, "C"));
+	if (as_app_get_comment (app, "C") != NULL) {
+		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td>"
+					"<td>%s</td></tr>\n",
+					"Comment", as_app_get_comment (app, "C"));
+	}
 	if (as_app_get_description (app, "C") != NULL) {
-		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
-				"Description", as_app_get_description (app, "C"));
+		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td>"
+					"<td>%s</td></tr>\n",
+					"Description", as_app_get_description (app, "C"));
 	}
 
 	/* packages */
