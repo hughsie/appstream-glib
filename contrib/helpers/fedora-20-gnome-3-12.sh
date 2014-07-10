@@ -14,3 +14,6 @@ time client/appstream-builder						\
 ./client/appstream-util status-html 					\
 	./contrib/metadata/fedora-20-gnome-3-12.xml.gz			\
 	./contrib/screenshots/fedora-20-gnome-3-12/status.html
+./client/appstream-util status-html 					\
+	./contrib/metadata/fedora-20-gnome-3-12-failed.xml.gz		\
+	./contrib/screenshots/fedora-20-gnome-3-12/failed.html
