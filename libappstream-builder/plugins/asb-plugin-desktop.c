@@ -77,7 +77,10 @@ asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
  * asb_app_load_icon:
  */
 static GdkPixbuf *
-asb_app_load_icon (const gchar *filename, const gchar *logfn, GError **error)
+asb_app_load_icon (AsbPackage *pkg,
+		   const gchar *filename,
+		   const gchar *logfn,
+		   GError **error)
 {
 	GdkPixbuf *pixbuf = NULL;
 	guint pixbuf_height;
@@ -111,6 +114,14 @@ asb_app_load_icon (const gchar *filename, const gchar *logfn, GError **error)
 		return NULL;
 	}
 
+	/* does the icon not have an alpha channel */
+	if (!gdk_pixbuf_get_has_alpha (pixbuf_src)) {
+		asb_package_log (pkg,
+				 ASB_PACKAGE_LOG_LEVEL_INFO,
+				 "icon %s does not have an alpha channel",
+				 logfn);
+	}
+
 	/* don't do anything to an icon with the perfect size */
 	pixbuf_width = gdk_pixbuf_get_width (pixbuf_src);
 	pixbuf_height = gdk_pixbuf_get_height (pixbuf_src);
@@ -119,6 +130,10 @@ asb_app_load_icon (const gchar *filename, const gchar *logfn, GError **error)
 
 	/* never scale up, just pad */
 	if (pixbuf_width < 64 && pixbuf_height < 64) {
+		asb_package_log (pkg,
+				 ASB_PACKAGE_LOG_LEVEL_INFO,
+				 "icon %s padded to 64x64 as size %ix%i",
+				 logfn, pixbuf_width, pixbuf_height);
 		pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8, 64, 64);
 		gdk_pixbuf_fill (pixbuf, 0x00000000);
 		gdk_pixbuf_copy_area (pixbuf_src,
@@ -164,7 +179,10 @@ asb_app_load_icon (const gchar *filename, const gchar *logfn, GError **error)
  * asb_app_find_icon:
  */
 static GdkPixbuf *
-asb_app_find_icon (const gchar *tmpdir, const gchar *something, GError **error)
+asb_app_find_icon (AsbPackage *pkg,
+		   const gchar *tmpdir,
+		   const gchar *something,
+		   GError **error)
 {
 	guint i;
 	guint j;
@@ -198,7 +216,7 @@ asb_app_find_icon (const gchar *tmpdir, const gchar *something, GError **error)
 				     something);
 			return NULL;
 		}
-		return asb_app_load_icon (tmp, something, error);
+		return asb_app_load_icon (pkg, tmp, something, error);
 	}
 
 	/* hicolor apps */
@@ -212,7 +230,7 @@ asb_app_find_icon (const gchar *tmpdir, const gchar *something, GError **error)
 					       supported_ext[j]);
 			tmp = g_build_filename (tmpdir, log, NULL);
 			if (g_file_test (tmp, G_FILE_TEST_EXISTS))
-				return asb_app_load_icon (tmp, log, error);
+				return asb_app_load_icon (pkg, tmp, log, error);
 		}
 	}
 
@@ -227,7 +245,7 @@ asb_app_find_icon (const gchar *tmpdir, const gchar *something, GError **error)
 					       supported_ext[j]);
 			tmp = g_build_filename (tmpdir, log, NULL);
 			if (g_file_test (tmp, G_FILE_TEST_EXISTS))
-				return asb_app_load_icon (tmp, log, error);
+				return asb_app_load_icon (pkg, tmp, log, error);
 		}
 	}
 
@@ -297,7 +315,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				asb_app_add_veto (app, "Uses ICO icon: %s", key);
 
 			/* find icon */
-			pixbuf = asb_app_find_icon (tmpdir, key, error);
+			pixbuf = asb_app_find_icon (pkg, tmpdir, key, error);
 			if (pixbuf == NULL)
 				return FALSE;
 
