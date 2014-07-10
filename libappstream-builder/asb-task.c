@@ -192,7 +192,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	GList *l;
 	GPtrArray *array;
 	gboolean ret;
-	gboolean valid;
 	gchar *cache_id;
 	gchar *tmp;
 	guint i;
@@ -268,9 +267,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	for (l = apps; l != NULL; l = l->next) {
 		app = l->data;
 
-		/* all apps assumed to be okay */
-		valid = TRUE;
-
 		/* never set */
 		if (as_app_get_id_full (AS_APP (app)) == NULL) {
 			asb_package_log (priv->pkg,
@@ -326,51 +322,49 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 				asb_app_add_veto (app, "Has no Icon");
 		}
 
+		/* veto apps that *still* require appdata */
+		array = asb_app_get_requires_appdata (app);
+		for (i = 0; i < array->len; i++) {
+			tmp = g_ptr_array_index (array, i);
+			if (tmp == NULL) {
+				asb_app_add_veto (app, "Required AppData");
+				continue;
+			}
+			asb_app_add_veto (app, "Required AppData: %s", tmp);
+		}
+
 		/* list all the reasons we're ignoring the app */
 		array = asb_app_get_vetos (app);
 		if (array->len > 0) {
+			_cleanup_string_free_ GString *str = NULL;
 			asb_package_log (priv->pkg,
 					 ASB_PACKAGE_LOG_LEVEL_WARNING,
 					 "%s not included in metadata:",
 					 as_app_get_id_full (AS_APP (app)));
+			str = g_string_new ("<p>Not included in metadata because:</p>");
+			g_string_append (str, "<ul>");
 			for (i = 0; i < array->len; i++) {
 				tmp = g_ptr_array_index (array, i);
 				asb_package_log (priv->pkg,
 						 ASB_PACKAGE_LOG_LEVEL_WARNING,
 						 " - %s", tmp);
+				g_string_append_printf (str, "<li>%s</li>", tmp);
 			}
-			valid = FALSE;
+			g_string_append (str, "</ul>");
+			as_app_set_description (AS_APP (app), NULL, str->str, -1);
 		}
-
-		/* don't include apps that *still* require appdata */
-		array = asb_app_get_requires_appdata (app);
-		if (array->len > 0) {
-			asb_package_log (priv->pkg,
-					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "%s required appdata but none provided",
-					 as_app_get_id_full (AS_APP (app)));
-			for (i = 0; i < array->len; i++) {
-				tmp = g_ptr_array_index (array, i);
-				if (tmp == NULL)
-					continue;
-				asb_package_log (priv->pkg,
-						 ASB_PACKAGE_LOG_LEVEL_WARNING,
-						 " - %s", tmp);
-			}
-			valid = FALSE;
-		}
-		if (!valid)
-			continue;
 
 		/* save icon and screenshots */
-		ret = asb_app_save_resources (app, &error);
-		if (!ret) {
-			asb_package_log (priv->pkg,
-					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "Failed to save resources: %s",
-					 error->message);
-			g_clear_error (&error);
-			goto skip;
+		if (array->len == 0) {
+			ret = asb_app_save_resources (app, &error);
+			if (!ret) {
+				asb_package_log (priv->pkg,
+						 ASB_PACKAGE_LOG_LEVEL_WARNING,
+						 "Failed to save resources: %s",
+						 error->message);
+				g_clear_error (&error);
+				goto skip;
+			}
 		}
 
 		/* set cache-id in case we want to use the metadata directly */

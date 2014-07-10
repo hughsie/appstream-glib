@@ -659,6 +659,45 @@ asb_context_write_xml (AsbContext *ctx,
 }
 
 /**
+ * asb_context_write_xml_fail:
+ **/
+static gboolean
+asb_context_write_xml_fail (AsbContext *ctx,
+			     const gchar *output_dir,
+			     const gchar *basename,
+			     GError **error)
+{
+	AsApp *app;
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	GList *l;
+	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_object_unref_ AsStore *store;
+	_cleanup_object_unref_ GFile *file;
+
+	store = as_store_new ();
+	for (l = priv->apps; l != NULL; l = l->next) {
+		app = AS_APP (l->data);
+		if (ASB_IS_APP (app)) {
+			if (asb_app_get_vetos(ASB_APP(app))->len == 0)
+				continue;
+		}
+		as_store_add_app (store, app);
+	}
+	filename = g_strdup_printf ("%s/%s-failed.xml.gz", output_dir, basename);
+	file = g_file_new_for_path (filename);
+
+	g_print ("Writing %s...\n", filename);
+	as_store_set_origin (store, basename);
+	as_store_set_api_version (store, priv->api_version);
+	return as_store_to_file (store,
+				 file,
+				 AS_NODE_TO_XML_FLAG_ADD_HEADER |
+				 AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+				 AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE,
+				 NULL, error);
+}
+
+/**
  * asb_context_process:
  * @ctx: A #AsbContext
  * @error: A #GError or %NULL
@@ -734,6 +773,11 @@ asb_context_process (AsbContext *ctx, GError **error)
 
 	/* write XML file */
 	ret = asb_context_write_xml (ctx, priv->output_dir, priv->basename, error);
+	if (!ret)
+		goto out;
+
+	/* write XML file */
+	ret = asb_context_write_xml_fail (ctx, priv->output_dir, priv->basename, error);
 	if (!ret)
 		goto out;
 
