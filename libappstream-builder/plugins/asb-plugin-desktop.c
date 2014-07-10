@@ -74,7 +74,7 @@ asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
  * asb_app_load_icon:
  */
 static GdkPixbuf *
-asb_app_load_icon (const gchar *filename, GError **error)
+asb_app_load_icon (const gchar *filename, const gchar *logfn, GError **error)
 {
 	GdkPixbuf *pixbuf = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf_tmp;
@@ -91,7 +91,7 @@ asb_app_load_icon (const gchar *filename, GError **error)
 			     ASB_PLUGIN_ERROR,
 			     ASB_PLUGIN_ERROR_FAILED,
 			     "icon %s was too small %ix%i",
-			     filename,
+			     logfn,
 			     gdk_pixbuf_get_width (pixbuf_tmp),
 			     gdk_pixbuf_get_height (pixbuf_tmp));
 		return NULL;
@@ -101,7 +101,7 @@ asb_app_load_icon (const gchar *filename, GError **error)
 	pixbuf = gdk_pixbuf_new_from_file_at_scale (filename, 64, 64,
 						    FALSE, error);
 	if (pixbuf == NULL) {
-		g_prefix_error (error, "Failed to open icon %s: ", filename);
+		g_prefix_error (error, "Failed to open icon %s: ", logfn);
 		return NULL;
 	}
 	return pixbuf;
@@ -145,34 +145,36 @@ asb_app_find_icon (const gchar *tmpdir, const gchar *something, GError **error)
 				     something);
 			return NULL;
 		}
-		return asb_app_load_icon (tmp, error);
+		return asb_app_load_icon (tmp, something, error);
 	}
 
 	/* hicolor apps */
 	for (i = 0; sizes[i] != NULL; i++) {
 		for (j = 0; supported_ext[j] != NULL; j++) {
+			_cleanup_free_ gchar *log;
 			_cleanup_free_ gchar *tmp;
-			tmp = g_strdup_printf ("%s/usr/share/icons/hicolor/%s/apps/%s%s",
-					       tmpdir,
+			log = g_strdup_printf ("/usr/share/icons/hicolor/%s/apps/%s%s",
 					       sizes[i],
 					       something,
 					       supported_ext[j]);
+			tmp = g_build_filename (tmpdir, log, NULL);
 			if (g_file_test (tmp, G_FILE_TEST_EXISTS))
-				return asb_app_load_icon (tmp, error);
+				return asb_app_load_icon (tmp, log, error);
 		}
 	}
 
 	/* pixmap */
 	for (i = 0; pixmap_dirs[i] != NULL; i++) {
 		for (j = 0; supported_ext[j] != NULL; j++) {
+			_cleanup_free_ gchar *log;
 			_cleanup_free_ gchar *tmp;
-			tmp = g_strdup_printf ("%s/usr/share/%s/%s%s",
-					       tmpdir,
+			log = g_strdup_printf ("/usr/share/%s/%s%s",
 					       pixmap_dirs[i],
 					       something,
 					       supported_ext[j]);
+			tmp = g_build_filename (tmpdir, log, NULL);
 			if (g_file_test (tmp, G_FILE_TEST_EXISTS))
-				return asb_app_load_icon (tmp, error);
+				return asb_app_load_icon (tmp, log, error);
 		}
 	}
 
