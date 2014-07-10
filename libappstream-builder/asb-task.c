@@ -102,6 +102,12 @@ asb_task_explode_extra_package (AsbTask *task, const gchar *pkg_name)
 	pkg_extra = asb_context_find_by_pkgname (priv->ctx, pkg_name);
 	if (pkg_extra == NULL)
 		return TRUE;
+
+	/* check it's from the same source package */
+	if (g_strcmp0 (asb_package_get_source (pkg_extra),
+		       asb_package_get_source (priv->pkg)) != 0)
+		return TRUE;
+
 	asb_package_log (priv->pkg,
 			 ASB_PACKAGE_LOG_LEVEL_INFO,
 			 "Adding extra package %s for %s",
@@ -126,28 +132,8 @@ static gboolean
 asb_task_explode_extra_packages (AsbTask *task)
 {
 	AsbTaskPrivate *priv = GET_PRIVATE (task);
+	const gchar *ignore[] = { "rtld", NULL };
 	const gchar *tmp;
-	const gchar *ignore[] = { ""
-				  "audacious",
-				  "cogl",
-				  "control-center",
-				  "exo",
-				  "fontforge",
-				  "gconf-editor",
-				  "gedit",
-				  "gnome-shell",
-				  "gstreamer1",
-				  "gstreamer1-plugins-base",
-				  "gucharmap",
-				  "ibus",
-				  "rtld",
-				  "system-config-keyboard",
-				  "system-config-kickstart",
-				  "system-config-printer-libs",
-				  "xfce4-panel",
-				  "xterm",
-				  "yelp",
-				  NULL };
 	gchar **deps;
 	guint i;
 	_cleanup_hashtable_unref_ GHashTable *hash;
