@@ -1768,7 +1768,7 @@ as_app_set_priority (AsApp *app, gint priority)
  * as_app_array_find_string:
  **/
 static gboolean
-as_app_array_find_string (GPtrArray *array, const gchar *value)
+as_app_array_find_string (GPtrArray *array, const gchar *value, gssize value_len)
 {
 	const gchar *tmp;
 	guint i;
@@ -1804,7 +1804,7 @@ as_app_add_category (AsApp *app, const gchar *category, gssize category_len)
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_app_array_find_string (priv->categories, category)) {
+	    as_app_array_find_string (priv->categories, category, category_len)) {
 		return;
 	}
 
@@ -1842,7 +1842,8 @@ as_app_add_compulsory_for_desktop (AsApp *app,
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
 	    as_app_array_find_string (priv->compulsory_for_desktops,
-				      compulsory_for_desktop)) {
+				      compulsory_for_desktop,
+				      compulsory_for_desktop_len)) {
 		return;
 	}
 
@@ -1874,7 +1875,7 @@ as_app_add_keyword (AsApp *app, const gchar *keyword, gssize keyword_len)
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_app_array_find_string (priv->keywords, keyword)) {
+	    as_app_array_find_string (priv->keywords, keyword, keyword_len)) {
 		return;
 	}
 
@@ -1895,6 +1896,18 @@ void
 as_app_add_kudo (AsApp *app, const gchar *kudo, gssize kudo_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (kudo, kudo_len)) {
+		g_warning ("%s: invalid UTF-8 keyword",
+			   priv->id_full);
+		return;
+	}
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
+	    as_app_array_find_string (priv->kudos, kudo, kudo_len)) {
+		return;
+	}
 	g_ptr_array_add (priv->kudos, as_strndup (kudo, kudo_len));
 }
 
@@ -1937,7 +1950,7 @@ as_app_add_mimetype (AsApp *app, const gchar *mimetype, gssize mimetype_len)
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_app_array_find_string (priv->mimetypes, mimetype)) {
+	    as_app_array_find_string (priv->mimetypes, mimetype, mimetype_len)) {
 		return;
 	}
 
@@ -2027,7 +2040,7 @@ as_app_add_pkgname (AsApp *app, const gchar *pkgname, gssize pkgname_len)
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_app_array_find_string (priv->pkgnames, pkgname)) {
+	    as_app_array_find_string (priv->pkgnames, pkgname, pkgname_len)) {
 		return;
 	}
 
@@ -2057,7 +2070,7 @@ as_app_add_arch (AsApp *app, const gchar *arch, gssize arch_len)
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_app_array_find_string (priv->architectures, arch)) {
+	    as_app_array_find_string (priv->architectures, arch, arch_len)) {
 		return;
 	}
 
