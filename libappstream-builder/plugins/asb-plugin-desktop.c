@@ -25,6 +25,9 @@
 
 #include <asb-plugin.h>
 
+#define __APPSTREAM_GLIB_PRIVATE_H
+#include <as-utils-private.h>
+
 /**
  * asb_plugin_get_name:
  */
@@ -77,33 +80,77 @@ static GdkPixbuf *
 asb_app_load_icon (const gchar *filename, const gchar *logfn, GError **error)
 {
 	GdkPixbuf *pixbuf = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf_tmp;
+	guint pixbuf_height;
+	guint pixbuf_width;
+	guint tmp_height;
+	guint tmp_width;
+	_cleanup_object_unref_ GdkPixbuf *pixbuf_src = NULL;
+	_cleanup_object_unref_ GdkPixbuf *pixbuf_tmp = NULL;
 
 	/* open file in native size */
-	pixbuf_tmp = gdk_pixbuf_new_from_file (filename, error);
-	if (pixbuf_tmp == NULL)
+	pixbuf_src = gdk_pixbuf_new_from_file (filename, error);
+	if (pixbuf_src == NULL)
 		return NULL;
 
 	/* check size */
-	if (gdk_pixbuf_get_width (pixbuf_tmp) < 32 ||
-	    gdk_pixbuf_get_height (pixbuf_tmp) < 32) {
+	if (gdk_pixbuf_get_width (pixbuf_src) < 32 ||
+	    gdk_pixbuf_get_height (pixbuf_src) < 32) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
 			     ASB_PLUGIN_ERROR_FAILED,
 			     "icon %s was too small %ix%i",
 			     logfn,
-			     gdk_pixbuf_get_width (pixbuf_tmp),
-			     gdk_pixbuf_get_height (pixbuf_tmp));
+			     gdk_pixbuf_get_width (pixbuf_src),
+			     gdk_pixbuf_get_height (pixbuf_src));
 		return NULL;
 	}
 
-	/* re-open file at correct size */
-	pixbuf = gdk_pixbuf_new_from_file_at_scale (filename, 64, 64,
-						    FALSE, error);
-	if (pixbuf == NULL) {
-		g_prefix_error (error, "Failed to open icon %s: ", logfn);
-		return NULL;
+	/* don't do anything to an icon with the perfect size */
+	pixbuf_width = gdk_pixbuf_get_width (pixbuf_src);
+	pixbuf_height = gdk_pixbuf_get_height (pixbuf_src);
+	if (pixbuf_width == 64 && pixbuf_height == 64)
+		return g_object_ref (pixbuf_src);
+
+	/* never scale up, just pad */
+	if (pixbuf_width < 64 && pixbuf_height < 64) {
+		pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8, 64, 64);
+		gdk_pixbuf_fill (pixbuf, 0x00000000);
+		gdk_pixbuf_copy_area (pixbuf_src,
+				      0, 0, /* of src */
+				      pixbuf_width, pixbuf_height,
+				      pixbuf,
+				      (64 - pixbuf_width) / 2,
+				      (64 - pixbuf_height) / 2);
+		return pixbuf;
 	}
+
+	/* is the aspect ratio perfectly square */
+	if (pixbuf_width == pixbuf_height) {
+		pixbuf = gdk_pixbuf_scale_simple (pixbuf_src, 64, 64,
+						  GDK_INTERP_HYPER);
+		as_pixbuf_sharpen (pixbuf, 1, -0.5);
+		return pixbuf;
+	}
+
+	/* create new square pixbuf with alpha padding */
+	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8, 64, 64);
+	gdk_pixbuf_fill (pixbuf, 0x00000000);
+	if (pixbuf_width > pixbuf_height) {
+		tmp_width = 64;
+		tmp_height = 64 * pixbuf_height / pixbuf_width;
+	} else {
+		tmp_width = 64 * pixbuf_width / pixbuf_height;
+		tmp_height = 64;
+	}
+	pixbuf_tmp = gdk_pixbuf_scale_simple (pixbuf_src, tmp_width, tmp_height,
+					      GDK_INTERP_HYPER);
+	as_pixbuf_sharpen (pixbuf_tmp, 1, -0.5);
+	gdk_pixbuf_copy_area (pixbuf_tmp,
+			      0, 0, /* of src */
+			      tmp_width, tmp_height,
+			      pixbuf,
+			      (64 - tmp_width) / 2,
+			      (64 - tmp_height) / 2);
 	return pixbuf;
 }
 
