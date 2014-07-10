@@ -88,7 +88,13 @@ asb_app_load_icon (const gchar *filename, const gchar *logfn, GError **error)
 	_cleanup_object_unref_ GdkPixbuf *pixbuf_tmp = NULL;
 
 	/* open file in native size */
-	pixbuf_src = gdk_pixbuf_new_from_file (filename, error);
+	if (g_str_has_suffix (filename, ".svg")) {
+		pixbuf_src = gdk_pixbuf_new_from_file_at_scale (filename,
+								64, 64, TRUE,
+								error);
+	} else {
+		pixbuf_src = gdk_pixbuf_new_from_file (filename, error);
+	}
 	if (pixbuf_src == NULL)
 		return NULL;
 
