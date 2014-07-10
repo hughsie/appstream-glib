@@ -57,7 +57,6 @@ struct _AsbContextPrivate
 	GPtrArray		*packages;		/* of AsbPackage */
 	AsbPluginLoader		*plugin_loader;
 	gboolean		 add_cache_id;
-	gboolean		 extra_checks;
 	gboolean		 no_net;
 	guint			 max_threads;
 	gdouble			 api_version;
@@ -146,23 +145,6 @@ asb_context_set_add_cache_id (AsbContext *ctx, gboolean add_cache_id)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	priv->add_cache_id = add_cache_id;
-}
-
-/**
- * asb_context_set_extra_checks:
- * @ctx: A #AsbContext
- * @extra_checks: boolean
- *
- * Sets if extra checks should be performed when building the metadata.
- * Doing this requires internet access and may take a lot longer.
- *
- * Since: 0.1.0
- **/
-void
-asb_context_set_extra_checks (AsbContext *ctx, gboolean extra_checks)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->extra_checks = extra_checks;
 }
 
 /**
@@ -359,23 +341,6 @@ asb_context_set_basename (AsbContext *ctx, const gchar *basename)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	priv->basename = g_strdup (basename);
-}
-
-/**
- * asb_context_get_extra_checks:
- * @ctx: A #AsbContext
- *
- * Gets if extra checks should be performed.
- *
- * Returns: boolean
- *
- * Since: 0.1.0
- **/
-gboolean
-asb_context_get_extra_checks (AsbContext *ctx)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	return priv->extra_checks;
 }
 
 /**

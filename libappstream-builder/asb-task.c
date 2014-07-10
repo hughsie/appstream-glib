@@ -171,34 +171,6 @@ asb_task_explode_extra_packages (AsbTask *task)
 }
 
 /**
- * asb_task_check_urls:
- **/
-static void
-asb_task_check_urls (AsApp *app, AsbPackage *pkg)
-{
-	const gchar *url;
-	gboolean ret;
-	guint i;
-	_cleanup_error_free_ GError *error = NULL;
-
-	for (i = 0; i < AS_URL_KIND_LAST; i++) {
-		url = as_app_get_url_item (app, i);
-		if (url == NULL)
-			continue;
-		ret = as_utils_check_url_exists (url, 5, &error);
-		if (!ret) {
-			asb_package_log (pkg,
-					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "%s URL %s invalid: %s",
-					 as_url_kind_to_string (i),
-					 url,
-					 error->message);
-			g_clear_error (&error);
-		}
-	}
-}
-
-/**
  * asb_task_process:
  * @task: A #AsbTask
  * @error_not_used: A #GError or %NULL
@@ -389,10 +361,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		}
 		if (!valid)
 			continue;
-
-		/* verify URLs still exist */
-		if (asb_context_get_extra_checks (priv->ctx))
-			asb_task_check_urls (AS_APP (app), priv->pkg);
 
 		/* save icon and screenshots */
 		ret = asb_app_save_resources (app, &error);
