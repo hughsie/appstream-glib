@@ -24,6 +24,8 @@ gnome-glade-2.desktop
 gnome-system-monitor-kde.desktop
 gnome-wacom-panel.desktop
 java-*-openjdk
+libsvm-svm-toy-gtk
+libsvm-svm-toy-qt
 luckybackup-*.desktop
 lxde-desktop-preferences.desktop
 lxinput.desktop
