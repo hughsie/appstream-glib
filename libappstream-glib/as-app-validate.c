@@ -842,6 +842,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	gboolean require_translations = FALSE;
 	gboolean require_url = TRUE;
 	gboolean require_content_license = TRUE;
+	gboolean validate_license = TRUE;
 	gboolean ret;
 	guint length_name_max = 30;
 	guint length_name_min = 3;
@@ -858,6 +859,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		length_summary_max = 200;
 		require_contactdetails = FALSE;
 		require_content_license = FALSE;
+		validate_license = FALSE;
 		require_url = FALSE;
 		number_para_max = 10;
 		number_para_min = 1;
@@ -940,7 +942,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 						     AS_PROBLEM_KIND_TAG_INVALID,
 						     "<metadata_license> is not valid");
 			}
-		} else {
+		} else if (validate_license) {
 			ret = as_app_validate_license (license, &error_local);
 			if (!ret) {
 				g_prefix_error (&error_local,
@@ -967,7 +969,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 
 	/* project_license */
 	license = as_app_get_project_license (app);
-	if (license != NULL) {
+	if (license != NULL && validate_license) {
 		ret = as_app_validate_license (license, &error_local);
 		if (!ret) {
 			g_prefix_error (&error_local,
