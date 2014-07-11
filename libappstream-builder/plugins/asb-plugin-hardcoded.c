@@ -283,14 +283,8 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			as_release_get_timestamp (release);
 		days = secs / (60 * 60 * 24);
 
-		/* this is just too old for us to care about */
-		if (days > 365 * 10) {
-			asb_app_add_veto (app, "Dead upstream for %i years",
-					  secs / (60 * 60 * 24 * 365));
-		}
-
 		/* we need AppData if the app needs saving */
-		else if (days > 365 * 5) {
+		if (days > 365 * 5) {
 			asb_app_add_requires_appdata (app,
 				"Dead upstream for > %i years", 5);
 		}
