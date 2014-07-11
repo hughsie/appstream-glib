@@ -1,3 +1,58 @@
+Version 0.2.2
+~~~~~~~~~~~~~
+Released: 2014-07-11
+
+New Features:
+ - Add as_app_get_source_file() to return the file that created the AsApp (Richard Hughes)
+ - Add as_app_set_state() (Richard Hughes)
+ - Add as_app_set_trust_flags() (Richard Hughes)
+ - Add as_app_source_kind_to_string() (Richard Hughes)
+ - Add AS_APP_SUBSUME_FLAG_PARTIAL (Richard Hughes)
+ - Add a script to download the Fedora package cache (Richard Hughes)
+ - Add as_image_get_alpha_flags() (Richard Hughes)
+ - Add as_screenshot_get_image() (Richard Hughes)
+ - Add AS_STORE_ADD_FLAG_PREFER_LOCAL to allow the client to prefer local files (Richard Hughes)
+ - Add as_store_load_path() (Richard Hughes)
+ - Add as_store_set_add_flags() (Richard Hughes)
+ - Add a 'status-csv' command to appstream-util (Richard Hughes)
+ - Add as_utils_is_blacklisted_id() (Richard Hughes)
+ - Add --screenshot-dir to appstream-builder (Richard Hughes)
+ - Add some useful image size constants (Richard Hughes)
+ - Add support for <kudo> introduced in AppStream 0.8 (Richard Hughes)
+ - Add two new builder plugins to add kudos on KDE applications (Richard Hughes)
+ - Allow AsStore to load directories of AppData and desktop files (Richard Hughes)
+ - Remove asb_context_set_extra_checks() (Richard Hughes)
+ - Remove as_util_get_possible_kudos() as it's now unused (Richard Hughes)
+ - Sharpen resized screenshots after resizing with a cubic interpolation (Richard Hughes)
+
+Bugfixes:
+ - Allow calling as_image_set_pixbuf() with a NULL pixbuf (Richard Hughes)
+ - Allow install/uninstall xml.gz (Igor Gnatenko)
+ - Allow old applications in the metadata if they have AppData (Richard Hughes)
+ - Allow per-distro AppData files to be used when upstream supplies a broken one (Richard Hughes)
+ - Allow users to specify the location and name of the status files (Richard Hughes)
+ - Always check for duplicate screenshots when using as_app_subsume() (Richard Hughes)
+ - Always download data files for each application on Fedora (Richard Hughes)
+ - Always write a 'source' screenshot image (Richard Hughes)
+ - Assume local files are untrusted when parsing (Richard Hughes)
+ - Copy the icon kind when removing duplicates (Richard Hughes)
+ - Deallocate the pixbuf data when the AsbApp has been saved (Richard Hughes)
+ - Do not allow NoDisplay=true applications to ever be in the metadata (Richard Hughes)
+ - Do not allow RequiresAppdata to become true with AppData (Richard Hughes)
+ - Do not hardcode a blacklist of package extra deps (Richard Hughes)
+ - Fix linking with libarchive (Igor Gnatenko)
+ - Load extra screenshots for any apps created in appstream-extra (Richard Hughes)
+ - Never load SVG files at the native size (Richard Hughes)
+ - Never scale up small screenshots (Richard Hughes)
+ - Never upscale icons, either pad or downscale with sharpening (Richard Hughes)
+ - Never use release descriptions from package files (Richard Hughes)
+ - Promote DESKTOP sources to APPDATA if we subsume an appdata.xml file (Richard Hughes)
+ - Sort the <component> values alphabetically (Richard Hughes)
+ - Use as_image_get_alpha_flags() when validating and building metadata (Richard Hughes)
+ - Use realpath() when setting AsbContext paths (Richard Hughes)
+ - Validate screenshot captions (Richard Hughes)
+ - Write metadata of the failed applications (Richard Hughes)
+
 Version 0.2.1
 ~~~~~~~~~~~~~
 Released: 2014-06-24

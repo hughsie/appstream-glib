@@ -12,6 +12,7 @@ test_files =						\
 	origin.xml					\
 	settings-panel.desktop				\
 	screenshot.png					\
+	ss-small.png					\
 	success.appdata.xml				\
 	translated.appdata.xml
 
