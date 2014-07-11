@@ -100,7 +100,7 @@ def ensure_pkg_exists(yb, existing, pkg):
     # is in cache?
     path = './packages/' + relativepath
     if os.path.exists(path) and os.path.getsize(path) == int(pkg.returnSimple('packagesize')):
-        print("INFO: %s up to date" % pkg.nvra)
+        #print("INFO: %s up to date" % pkg.nvra)
         return
 
     # make sure the metadata exists
