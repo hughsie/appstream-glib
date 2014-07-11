@@ -56,6 +56,7 @@ asb_plugin_initialize (AsbPlugin *plugin)
 		{ "conduit",			"Upstream abandoned" },
 		{ "doom-shareware",		"Upstream abandoned, see: https://www.ohloh.net/p/8278" },
 		{ "emesene",			"Upstream abandoned, see: https://github.com/emesene/emesene/issues/1588" },
+		{ "flightdeck",			"Upstream abandoned" },
 		{ "fusion-icon",		"Upstream abandoned" },
 		{ "gnome-dasher",		"Upstream abandoned" },
 		{ "kupfer",			"Upstream abandoned" },
