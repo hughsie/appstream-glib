@@ -42,6 +42,7 @@ struct _AsbAppPrivate
 	GPtrArray	*requires_appdata;
 	GdkPixbuf	*pixbuf;
 	AsbPackage	*pkg;
+	gboolean	 ignore_requires_appdata;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbApp, asb_app, AS_TYPE_APP)
@@ -156,6 +157,8 @@ asb_app_add_requires_appdata (AsbApp *app, const gchar *fmt, ...)
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 	gchar *tmp;
 	va_list args;
+	if (priv->ignore_requires_appdata)
+		return;
 	va_start (args, fmt);
 	tmp = g_strdup_vprintf (fmt, args);
 	va_end (args);
@@ -176,9 +179,12 @@ asb_app_set_requires_appdata (AsbApp *app, gboolean requires_appdata)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 	if (requires_appdata) {
+		if (priv->ignore_requires_appdata)
+			return;
 		g_ptr_array_add (priv->requires_appdata, NULL);
 	} else {
 		g_ptr_array_set_size (priv->requires_appdata, 0);
+		priv->ignore_requires_appdata = TRUE;
 	}
 }
 
