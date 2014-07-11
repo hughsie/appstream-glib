@@ -131,6 +131,7 @@ asb_plugin_hardcoded_add_screenshots (AsbApp *app,
 		if (!ret)
 			goto out;
 	}
+	as_app_add_metadata (AS_APP (app), "DistroScreenshots", NULL, -1);
 out:
 	g_list_free_full (list, g_free);
 	return ret;

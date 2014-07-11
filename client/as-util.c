@@ -1087,6 +1087,9 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 	gchar *tmp;
 	guint i;
 	guint j;
+	const gchar *important_md[] = { "DistroMetadata",
+					"DistroScreenshots",
+					NULL };
 
 	g_string_append_printf (html, "<a name=\"%s\"/><h2>%s</h2>\n",
 				as_app_get_id (app), as_app_get_id (app));
@@ -1187,6 +1190,14 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 					"Compulsory for", tmp);
 	}
 	g_free (tmp);
+
+	/* certain metadata keys */
+	for (i = 0; important_md[i] != NULL; i++) {
+		if (as_app_get_metadata_item (app, important_md[i]) == NULL)
+			continue;
+		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
+					important_md[i], "Yes");
+	}
 
 	/* kudos */
 	if (as_app_get_id_kind (app) == AS_ID_KIND_DESKTOP) {

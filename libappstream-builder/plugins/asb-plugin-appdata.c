@@ -508,6 +508,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	/* any appdata-extra file */
 	if (appdata_filename_extra != NULL &&
 	    g_file_test (appdata_filename_extra, G_FILE_TEST_EXISTS)) {
+		as_app_add_metadata (AS_APP (app), "DistroMetadata", NULL, -1);
 		return asb_plugin_process_filename (plugin,
 						    app,
 						    appdata_filename_extra,
