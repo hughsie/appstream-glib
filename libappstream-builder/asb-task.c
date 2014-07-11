@@ -312,9 +312,9 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 
 		/* don't include components that have no name or comment */
 		if (as_app_get_name (AS_APP (app), "C") == NULL)
-			asb_app_add_veto (app, "Has no Name");
+			asb_app_add_veto (app, "No 'Name' in desktop or <name> in AppData");
 		if (as_app_get_comment (AS_APP (app), "C") == NULL)
-			asb_app_add_veto (app, "Has no Comment");
+			asb_app_add_veto (app, "No 'Comment' in desktop or <summary> in AppData");
 
 		/* don't include apps that have no icon */
 		if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_ADDON) {
