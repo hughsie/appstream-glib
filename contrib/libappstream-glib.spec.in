@@ -55,7 +55,7 @@ from a directory of packages.
 
 %package builder-devel
 Summary: GLib Libraries and headers for appstream-builder
-Requires: %{name}%{?_isa} = %{version}-%{release}
+Requires: %{name}-builder%{?_isa} = %{version}-%{release}
 
 %description builder-devel
 GLib headers and libraries for appstream-builder.
@@ -82,8 +82,10 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %find_lang appstream-glib
 
 %post -p /sbin/ldconfig
+%post builder -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
+%postun builder -p /sbin/ldconfig
 
 %files -f appstream-glib.lang
 %doc README.md AUTHORS NEWS COPYING
@@ -92,7 +94,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_bindir}/appstream-util
 %dir %{_datadir}/bash-completion/completions/
 %{_datadir}/bash-completion/completions/appstream-util
-%{_mandir}/man1/appstream-*.1.gz
+%{_mandir}/man1/appstream-util.1.gz
 
 %files devel
 %{_libdir}/libappstream-glib.so
@@ -104,13 +106,15 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_datadir}/aclocal/appstream-xml.m4
 
 %files builder
-%doc AUTHORS COPYING NEWS README.md
-%{_libdir}/asb-plugins/*.so
+%doc COPYING
 %{_bindir}/appstream-builder
-%{_libdir}/libappstream-builder.so.1*
 %{_datadir}/bash-completion/completions/appstream-builder
+%{_libdir}/asb-plugins/*.so
+%{_libdir}/libappstream-builder.so.1*
+%{_mandir}/man1/appstream-builder.1.gz
 
 %files builder-devel
+%doc COPYING
 %{_libdir}/libappstream-builder.so
 %{_libdir}/pkgconfig/appstream-builder.pc
 %dir %{_includedir}/libappstream-builder
