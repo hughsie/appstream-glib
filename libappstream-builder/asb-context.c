@@ -670,6 +670,7 @@ asb_context_write_xml_fail (AsbContext *ctx,
 	AsApp *app;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	GList *l;
+	_cleanup_free_ gchar *basename_failed = NULL;
 	_cleanup_free_ gchar *filename = NULL;
 	_cleanup_object_unref_ AsStore *store;
 	_cleanup_object_unref_ GFile *file;
@@ -677,17 +678,20 @@ asb_context_write_xml_fail (AsbContext *ctx,
 	store = as_store_new ();
 	for (l = priv->apps; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
-		if (ASB_IS_APP (app)) {
-			if (asb_app_get_vetos(ASB_APP(app))->len == 0)
-				continue;
-		}
+		if (!ASB_IS_APP (app))
+			continue;
+		if (asb_app_get_vetos(ASB_APP(app))->len == 0)
+			continue;
+		if (as_app_get_metadata_item (app, "NoDisplay") != NULL)
+			continue;
 		as_store_add_app (store, app);
 	}
 	filename = g_strdup_printf ("%s/%s-failed.xml.gz", output_dir, basename);
 	file = g_file_new_for_path (filename);
 
 	g_print ("Writing %s...\n", filename);
-	as_store_set_origin (store, basename);
+	basename_failed = g_strdup_printf ("%s-failed", basename);
+	as_store_set_origin (store, basename_failed);
 	as_store_set_api_version (store, priv->api_version);
 	return as_store_to_file (store,
 				 file,

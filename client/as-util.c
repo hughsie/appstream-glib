@@ -1410,7 +1410,7 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	g_string_append (html, "<body>\n");
 
 	/* summary section */
-	if (apps->len > 0) {
+	if (!g_str_has_suffix (as_store_get_origin (store), "failed")) {
 		if (!as_util_status_html_write_exec_summary (apps, html, error))
 			return FALSE;
 	}
