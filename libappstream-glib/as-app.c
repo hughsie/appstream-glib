@@ -1211,11 +1211,20 @@ as_app_get_source_file (AsApp *app)
 static gboolean
 as_app_validate_utf8 (const gchar *text, gssize text_len)
 {
+	gboolean is_whitespace = TRUE;
 	guint i;
 
 	/* nothing */
 	if (text == NULL)
 		return TRUE;
+	if (text[0] == '\0')
+		return TRUE;
+
+	/* is just whitespace */
+	for (i = 0; text[i] != '\0' && is_whitespace; i++)
+		is_whitespace = g_ascii_isspace (text[i]);
+	if (is_whitespace)
+		return FALSE;
 
 	/* standard UTF-8 checks */
 	if (!g_utf8_validate (text, text_len, NULL))
@@ -1870,8 +1879,6 @@ as_app_add_keyword (AsApp *app, const gchar *keyword, gssize keyword_len)
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (keyword, keyword_len)) {
-		g_warning ("%s: invalid UTF-8 keyword",
-			   priv->id_full);
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
@@ -1900,8 +1907,6 @@ as_app_add_kudo (AsApp *app, const gchar *kudo, gssize kudo_len)
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (kudo, kudo_len)) {
-		g_warning ("%s: invalid UTF-8 keyword",
-			   priv->id_full);
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
@@ -2166,8 +2171,6 @@ as_app_add_metadata (AsApp *app,
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (value, value_len)) {
-		g_warning ("%s: invalid UTF-8 value",
-			   priv->id_full);
 		return;
 	}
 
@@ -2875,7 +2878,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_CATEGORY)
 				continue;
-			g_ptr_array_add (priv->categories, as_node_take_data (c));
+			taken = as_node_take_data (c);
+			if (taken == NULL)
+				continue;
+			g_ptr_array_add (priv->categories, taken);
 		}
 		break;
 
@@ -2886,7 +2892,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_ARCH)
 				continue;
-			g_ptr_array_add (priv->architectures, as_node_take_data (c));
+			taken = as_node_take_data (c);
+			if (taken == NULL)
+				continue;
+			g_ptr_array_add (priv->architectures, taken);
 		}
 		break;
 
@@ -2897,7 +2906,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_KEYWORD)
 				continue;
-			g_ptr_array_add (priv->keywords, as_node_take_data (c));
+			taken = as_node_take_data (c);
+			if (taken == NULL)
+				continue;
+			g_ptr_array_add (priv->keywords, taken);
 		}
 		break;
 
@@ -2908,7 +2920,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_KUDO)
 				continue;
-			g_ptr_array_add (priv->kudos, as_node_take_data (c));
+			taken = as_node_take_data (c);
+			if (taken == NULL)
+				continue;
+			g_ptr_array_add (priv->kudos, taken);
 		}
 		break;
 
@@ -2919,7 +2934,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_MIMETYPE)
 				continue;
-			g_ptr_array_add (priv->mimetypes, as_node_take_data (c));
+			taken = as_node_take_data (c);
+			if (taken == NULL)
+				continue;
+			g_ptr_array_add (priv->mimetypes, taken);
 		}
 		break;
 
