@@ -1090,7 +1090,27 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 	const gchar *important_md[] = { "DistroMetadata",
 					"DistroScreenshots",
 					NULL };
+	_cleanup_string_free_ GString *classes = NULL;
 
+	/* generate class list */
+	classes = g_string_new ("");
+	if (as_app_get_screenshots(app)->len > 0)
+		g_string_append (classes, "screenshots ");
+	if (as_app_get_description(app, NULL) != NULL)
+		g_string_append (classes, "description ");
+	if (as_app_get_keywords(app)->len > 0)
+		g_string_append (classes, "keywords ");
+	if (g_strcmp0 (as_app_get_project_group (app), "GNOME") == 0)
+		g_string_append (classes, "gnome ");
+	if (g_strcmp0 (as_app_get_project_group (app), "KDE") == 0)
+		g_string_append (classes, "kde ");
+	if (g_strcmp0 (as_app_get_project_group (app), "XFCE") == 0)
+		g_string_append (classes, "xfce ");
+	if (classes->len > 0)
+		g_string_truncate (classes, classes->len - 1);
+
+	g_string_append_printf (html, "<div id=\"app-%s\" class=\"%s\">\n",
+				as_app_get_id (app), classes->str);
 	g_string_append_printf (html, "<a name=\"%s\"/><h2>%s</h2>\n",
 				as_app_get_id (app), as_app_get_id (app));
 
@@ -1211,6 +1231,7 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 
 	g_string_append (html, "</table>\n");
 	g_string_append (html, "<br/>\n");
+	g_string_append (html, "</div>\n");
 }
 
 /**
@@ -1330,50 +1351,161 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 }
 
 /**
+ * as_util_status_html_write_javascript:
+ */
+static void
+as_util_status_html_write_javascript (GString *html)
+{
+	g_string_append (html,
+	"<script type=\"text/javascript\"><!--\n"
+	"function\n"
+	"setVisibility(what, val)\n"
+	"{\n"
+	"	var obj = typeof what == 'object' ? what : document.getElementById(what);\n"
+	"	obj.style.display = val ? 'block' : 'none';\n"
+	"}\n"
+	"function\n"
+	"getVisibility(what)\n"
+	"{\n"
+	"	var obj = typeof what == 'object' ? what : document.getElementById(what);\n"
+	"	return obj.style.display != 'none';\n"
+	"}\n"
+	"function\n"
+	"statusReset(class_name, val)\n"
+	"{\n"
+	"	var class_names = [ 'description', 'screenshots', 'keywords', 'gnome', 'kde', 'xfce' ];\n"
+	"	for (var i = 0; i < class_names.length; i++) {\n"
+	"		document.getElementById('button-' + class_names[i] + '-with').disabled = false;\n"
+	"		document.getElementById('button-' + class_names[i] + '-without').disabled = false;\n"
+	"	}\n"
+	"	var apps = document.getElementById('apps');\n"
+	"	for (var i = 0; i < apps.children.length; i++) {\n"
+	"		var child_id = apps.children[i].id;\n"
+	"		if (!child_id)\n"
+	"			continue;\n"
+	"		setVisibility(child_id, true);\n"
+	"	}\n"
+	"}\n"
+	"function\n"
+	"statusHideFilter(class_name, val)\n"
+	"{\n"
+	"	document.getElementById('button-' + class_name + '-with').disabled = true;\n"
+	"	document.getElementById('button-' + class_name + '-without').disabled = true;\n"
+	"	var apps = document.getElementById('apps');\n"
+	"	for (var i = 0; i < apps.children.length; i++) {\n"
+	"		var child_id = apps.children[i].id\n"
+	"		if (!child_id)\n"
+	"			continue;\n"
+	"		if (!getVisibility(apps.children[i]))\n"
+	"			continue;\n"
+	"		var classes = apps.children[i].className.split(' ');\n"
+	"		var has_classname = false;\n"
+	"		for (var j = 0; j < classes.length; j++) {\n"
+	"			if (classes[j] == class_name) {\n"
+	"				has_classname = true;\n"
+	"				break;\n"
+	"			}\n"
+	"		}\n"
+	"		if ((val && !has_classname) || (!val && has_classname))\n"
+	"			setVisibility(child_id, false);\n"
+	"	}\n"
+	"	return;\n"
+	"}\n"
+	"//-->\n"
+	"</script>\n");
+}
+
+/**
  * as_util_status_html_write_css:
  */
 static void
 as_util_status_html_write_css (GString *html)
 {
-	g_string_append (html, "<style type=\"text/css\">\n");
-	g_string_append (html, "body {\n");
-	g_string_append (html, "	margin-top: 2em;\n");
-	g_string_append (html, "	margin-left: 5%;\n");
-	g_string_append (html, "	margin-right: 5%;\n");
-	g_string_append (html, "	font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif;\n");
-	g_string_append (html, "}\n");
-	g_string_append (html, "table.app {\n");
-	g_string_append (html, "	border: 1px solid #dddddd;\n");
-	g_string_append (html, "	border-collapse: collapse;\n");
-	g_string_append (html, "	width: 80%;\n");
-	g_string_append (html, "}\n");
-	g_string_append (html, "img {\n");
-	g_string_append (html, "	border: 1px solid #dddddd;\n");
-	g_string_append (html, "}\n");
-	g_string_append (html, "table.summary {\n");
-	g_string_append (html, "	border: 1px solid #dddddd;\n");
-	g_string_append (html, "	border-collapse: collapse;\n");
-	g_string_append (html, "	width: 20%;\n");
-	g_string_append (html, "}\n");
-	g_string_append (html, "td {\n");
-	g_string_append (html, "	padding: 7px;\n");
-	g_string_append (html, "}\n");
-	g_string_append (html, "td.alt {\n");
-	g_string_append (html, "	background-color: #eeeeee;\n");
-	g_string_append (html, "	width: 150px;\n");
-	g_string_append (html, "}\n");
-	g_string_append (html, "td.thin {\n");
-	g_string_append (html, "	width: 100px;\n");
-	g_string_append (html, "	text-align: right;\n");
-	g_string_append (html, "}\n");
-	g_string_append (html, "a:link {\n");
-	g_string_append (html, "	color: #2b5e82;\n");
-	g_string_append (html, "	text-decoration: none;\n");
-	g_string_append (html, "}\n");
-	g_string_append (html, "a:visited {\n");
-	g_string_append (html, "	color: #52188b;\n");
-	g_string_append (html, "}\n");
-	g_string_append (html, "</style>\n");
+	g_string_append (html,
+	"<style type=\"text/css\">\n"
+	"body {\n"
+	"	margin-top: 2em;\n"
+	"	margin-left: 5%;\n"
+	"	margin-right: 5%;\n"
+	"	font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif;\n"
+	"}\n"
+	"table.app {\n"
+	"	border: 1px solid #dddddd;\n"
+	"	border-collapse: collapse;\n"
+	"	width: 80%;\n"
+	"}\n"
+	"img {\n"
+	"	border: 1px solid #dddddd;\n"
+	"}\n"
+	"table.summary {\n"
+	"	border: 1px solid #dddddd;\n"
+	"	border-collapse: collapse;\n"
+	"	width: 20%;\n"
+	"}\n"
+	"td {\n"
+	"	padding: 7px;\n"
+	"}\n"
+	"td.alt {\n"
+	"	background-color: #eeeeee;\n"
+	"	width: 150px;\n"
+	"}\n"
+	"td.thin {\n"
+	"	width: 100px;\n"
+	"	text-align: right;\n"
+	"}\n"
+	"a:link {\n"
+	"	color: #2b5e82;\n"
+	"	text-decoration: none;\n"
+	"}\n"
+	"a:visited {\n"
+	"	color: #52188b;\n"
+	"}\n"
+	"</style>\n");
+}
+
+/**
+ * as_util_status_html_write_filter_section:
+ */
+static void
+as_util_status_html_write_filter_section (GString *html)
+{
+	g_string_append (html,
+	"<h2>Filtering</h2>\n"
+	"<table class=\"summary\">\n"
+	"<tr>\n"
+	"<td class=\"alt\">Hide Descriptions</td>\n"
+	"<td><button id=\"button-description-with\" onclick=\"statusHideFilter('description', false);\">&#10003;</button></td>\n"
+	"<td><button id=\"button-description-without\" onclick=\"statusHideFilter('description', true);\">&#x2715;</button></td>\n"
+	"</tr>\n"
+	"<tr>\n"
+	"<td class=\"alt\">Hide Screenshots</td>\n"
+	"<td><button id=\"button-screenshots-with\" onclick=\"statusHideFilter('screenshots', false);\">&#10003;</button></td>\n"
+	"<td><button id=\"button-screenshots-without\" onclick=\"statusHideFilter('screenshots', true);\">&#x2715;</button></td>\n"
+	"</tr>\n"
+	"<tr>\n"
+	"<td class=\"alt\">Hide Keywords</td>\n"
+	"<td><button id=\"button-keywords-with\" onclick=\"statusHideFilter('keywords', false);\">&#10003;</button></td>\n"
+	"<td><button id=\"button-keywords-without\" onclick=\"statusHideFilter('keywords', true);\">&#x2715;</button></td>\n"
+	"</tr>\n"
+	"<tr>\n"
+	"<td class=\"alt\">Hide GNOME</td>\n"
+	"<td><button id=\"button-gnome-with\" onclick=\"statusHideFilter('gnome', false);\">&#10003;</button></td>\n"
+	"<td><button id=\"button-gnome-without\" onclick=\"statusHideFilter('gnome', true);\">&#x2715;</button></td>\n"
+	"</tr>\n"
+	"<tr>\n"
+	"<td class=\"alt\">Hide KDE</td>\n"
+	"<td><button id=\"button-kde-with\" onclick=\"statusHideFilter('kde', false);\">&#10003;</button></td>\n"
+	"<td><button id=\"button-kde-without\" onclick=\"statusHideFilter('kde', true);\">&#x2715;</button></td>\n"
+	"</tr>\n"
+	"<tr>\n"
+	"<td class=\"alt\">Hide XFCE</td>\n"
+	"<td><button id=\"button-xfce-with\" onclick=\"statusHideFilter('xfce', false);\">&#10003;</button></td>\n"
+	"<td><button id=\"button-xfce-without\" onclick=\"statusHideFilter('xfce', true);\">&#x2715;</button></td>\n"
+	"</tr>\n"
+	"<tr>\n"
+	"<td colspan=\"3\"><button id=\"button-reset\" onclick=\"statusReset('description');\">Reset Filters</button></td>\n"
+	"</tr>\n"
+	"</table>\n");
 }
 
 /**
@@ -1417,6 +1549,7 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 			       "charset=UTF-8\" />\n");
 	g_string_append (html, "<title>Application Data Review</title>\n");
 	as_util_status_html_write_css (html);
+	as_util_status_html_write_javascript (html);
 	g_string_append (html, "</head>\n");
 	g_string_append (html, "<body>\n");
 
@@ -1426,8 +1559,12 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 			return FALSE;
 	}
 
+	/* write */
+	as_util_status_html_write_filter_section (html);
+
 	/* write applications */
 	g_string_append (html, "<h1>Applications</h1>\n");
+	g_string_append (html, "<div id=\"apps\">\n");
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
 		if (as_app_get_id_kind (app) == AS_ID_KIND_FONT)
@@ -1440,6 +1577,7 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 			continue;
 		as_util_status_html_write_app (app, html);
 	}
+	g_string_append (html, "</div>\n");
 
 	g_string_append (html, "</body>\n");
 	g_string_append (html, "</html>\n");
