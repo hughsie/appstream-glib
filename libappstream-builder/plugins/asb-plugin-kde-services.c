@@ -43,6 +43,30 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 }
 
 /**
+ * asb_plugin_process_filename:
+ */
+static gboolean
+asb_plugin_process_filename (const gchar *filename,
+			     AsbApp *app,
+			     const gchar *tmpdir,
+			     GError **error)
+{
+	_cleanup_free_ gchar *types = NULL;
+	_cleanup_keyfile_unref_ GKeyFile *kf = NULL;
+	kf = g_key_file_new ();
+	if (!g_key_file_load_from_file (kf, filename, G_KEY_FILE_NONE, error))
+		return FALSE;
+	types = g_key_file_get_string (kf, G_KEY_FILE_DESKTOP_GROUP,
+				       "X-KDE-ServiceTypes", NULL);
+	if (types == NULL)
+		return TRUE;
+	if (g_strcmp0 (types, "Plasma/Runner") != 0)
+		return TRUE;
+	as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_SEARCH_PROVIDER);
+	return TRUE;
+}
+
+/**
  * asb_plugin_process_app:
  */
 gboolean
@@ -58,20 +82,21 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	/* look for a krunner provider */
 	filelist = asb_package_get_filelist (pkg);
 	for (i = 0; filelist[i] != NULL; i++) {
-		_cleanup_keyfile_unref_ GKeyFile *kf = NULL;
+		_cleanup_error_free_ GError *error_local = NULL;
 		_cleanup_free_ gchar *filename = NULL;
-		_cleanup_free_ gchar *types = NULL;
 		if (fnmatch ("/usr/share/kde4/services/*.desktop", filelist[i], 0) != 0)
 			continue;
-		kf = g_key_file_new ();
 		filename = g_build_filename (tmpdir, filelist[i], NULL);
-		if (!g_key_file_load_from_file (kf, filename, G_KEY_FILE_NONE, error))
-			return FALSE;
-		types = g_key_file_get_string (kf, G_KEY_FILE_DESKTOP_GROUP, "X-KDE-ServiceTypes", NULL);
-		if (g_strcmp0 (types, "Plasma/Runner") == 0) {
-			as_app_add_kudo_kind (AS_APP (app),
-					      AS_KUDO_KIND_SEARCH_PROVIDER);
-			break;
+		if (!asb_plugin_process_filename (filename,
+						  app,
+						  tmpdir,
+						  &error_local)) {
+			asb_package_log (pkg,
+					 ASB_PACKAGE_LOG_LEVEL_INFO,
+					 "Failed to read KDE service file %s: %s",
+					 filelist[i],
+					 error_local->message);
+			g_clear_error (&error_local);
 		}
 	}
 
