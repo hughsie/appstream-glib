@@ -59,6 +59,8 @@ asb_plugin_initialize (AsbPlugin *plugin)
 		{ "flightdeck",			"Upstream abandoned" },
 		{ "fusion-icon",		"Upstream abandoned" },
 		{ "gnome-dasher",		"Upstream abandoned" },
+		{ "hotwire",			"Upstream abandoned" },
+		{ "jigdo",			"Upstream abandoned, see http://atterer.org/jigdo/" },
 		{ "kupfer",			"Upstream abandoned" },
 		{ "listen",			"Upstream abandoned" },
 		{ "logjam",			"Upstream abandoned, see: http://andy-shev.github.io/LogJam/dev/" },
