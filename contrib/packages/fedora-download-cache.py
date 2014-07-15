@@ -27,6 +27,7 @@ import rpm
 import rpmUtils
 import sys
 import yum
+import hashlib
 import fnmatch
 import datetime
 import ConfigParser
@@ -89,6 +90,13 @@ def search_package_list(pkg):
             return True
     return False
 
+def get_sha256_hash(filename, block_size=256*128):
+    md5 = hashlib.sha256()
+    with open(filename,'rb') as f:
+        for chunk in iter(lambda: f.read(block_size), b''):
+             md5.update(chunk)
+    return md5.hexdigest()
+
 def ensure_pkg_exists(yb, existing, pkg):
 
     # get base name without the slash
@@ -99,9 +107,14 @@ def ensure_pkg_exists(yb, existing, pkg):
 
     # is in cache?
     path = './packages/' + relativepath
-    if os.path.exists(path) and os.path.getsize(path) == int(pkg.returnSimple('packagesize')):
+    if os.path.exists(path) and get_sha256_hash(path) == pkg.checksum:
         #print("INFO: %s up to date" % pkg.nvra)
         return
+
+    # do we have an old version of this?
+    if existing.has_key(pkg.name) and os.path.exists(existing[pkg.name]):
+        print("INFO: deleting %s" % os.path.basename(existing[pkg.name]))
+        os.remove(existing[pkg.name])
 
     # make sure the metadata exists
     repo = yb.repos.getRepo(pkg.repoid)
@@ -110,11 +123,6 @@ def ensure_pkg_exists(yb, existing, pkg):
     print("INFO: downloading %s" % os.path.basename(path))
     pkg.localpath = path
     repo.getPackage(pkg)
-
-    # do we have an old version of this?
-    if existing.has_key(pkg.name) and os.path.exists(existing[pkg.name]):
-        print("INFO: deleting %s" % os.path.basename(existing[pkg.name]))
-        os.remove(existing[pkg.name])
 
 def update():
 
