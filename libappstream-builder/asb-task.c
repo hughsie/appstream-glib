@@ -255,8 +255,8 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		if (apps == NULL) {
 			asb_package_log (priv->pkg,
 					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "Failed to run process: %s",
-					 error->message);
+					 "Failed to run process '%s': %s",
+					 plugin->name, error->message);
 			g_clear_error (&error);
 		}
 	}
