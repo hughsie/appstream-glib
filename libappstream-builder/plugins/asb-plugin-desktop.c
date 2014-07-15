@@ -104,11 +104,14 @@ asb_app_load_icon (AsbApp *app,
 	/* check size */
 	if (gdk_pixbuf_get_width (pixbuf_src) < 32 ||
 	    gdk_pixbuf_get_height (pixbuf_src) < 32) {
-		asb_app_add_veto (app,
-				  "icon %s was too small %ix%i",
-				  logfn,
-				  gdk_pixbuf_get_width (pixbuf_src),
-				  gdk_pixbuf_get_height (pixbuf_src));
+		g_set_error (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_FAILED,
+			     "icon %s was too small %ix%i",
+			     logfn,
+			     gdk_pixbuf_get_width (pixbuf_src),
+			     gdk_pixbuf_get_height (pixbuf_src));
+		return NULL;
 	}
 
 	/* does the icon not have an alpha channel */
@@ -302,6 +305,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 					 "using stock icon %s", key);
 		} else {
+			_cleanup_error_free_ GError *error_local = NULL;
 
 			/* is icon XPM or GIF */
 			if (g_str_has_suffix (key, ".xpm"))
@@ -312,16 +316,18 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				asb_app_add_veto (app, "Uses ICO icon: %s", key);
 
 			/* find icon */
-			pixbuf = asb_app_find_icon (app, tmpdir, key, error);
-			if (pixbuf == NULL)
-				return FALSE;
-
-			/* save in target directory */
-			icon_filename = g_strdup_printf ("%s.png",
-							 as_app_get_id (AS_APP (app)));
-			as_app_set_icon (AS_APP (app), icon_filename, -1);
-			as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_CACHED);
-			asb_app_set_pixbuf (app, pixbuf);
+			pixbuf = asb_app_find_icon (app, tmpdir, key, &error_local);
+			if (pixbuf == NULL) {
+				asb_app_add_veto (app, "Failed to use icon %s: %s",
+						  key, error_local->message);
+			} else {
+				/* save in target directory */
+				icon_filename = g_strdup_printf ("%s.png",
+								 as_app_get_id (AS_APP (app)));
+				as_app_set_icon (AS_APP (app), icon_filename, -1);
+				as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_CACHED);
+				asb_app_set_pixbuf (app, pixbuf);
+			}
 		}
 	}
 
