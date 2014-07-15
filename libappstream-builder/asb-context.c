@@ -659,6 +659,39 @@ asb_context_write_xml (AsbContext *ctx,
 }
 
 /**
+ * asb_context_detect_pkgname_dups:
+ **/
+static gboolean
+asb_context_detect_pkgname_dups (AsbContext *ctx, GError **error)
+{
+	AsApp *app;
+	AsApp *found;
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	GList *l;
+	const gchar *pkgname;
+	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
+
+	hash = g_hash_table_new (g_str_hash, g_str_equal);
+	for (l = priv->apps; l != NULL; l = l->next) {
+		app = AS_APP (l->data);
+		pkgname = as_app_get_pkgname_default (app);
+		if (pkgname == NULL)
+			continue;
+		if (ASB_IS_APP (app) &&  asb_app_get_vetos(ASB_APP(app))->len > 0)
+			continue;
+		found = g_hash_table_lookup (hash, pkgname);
+		if (found != NULL) {
+			g_print ("WARNING: %s and %s share the package '%s'\n",
+				 as_app_get_id_full (app),
+				 as_app_get_id_full (found), pkgname);
+			continue;
+		}
+		g_hash_table_insert (hash, (gpointer) pkgname, app);
+	}
+	return TRUE;
+}
+
+/**
  * asb_context_write_xml_fail:
  **/
 static gboolean
@@ -791,6 +824,11 @@ asb_context_process (AsbContext *ctx, GError **error)
 				       priv->output_dir,
 				       priv->basename,
 				       error);
+	if (!ret)
+		goto out;
+
+	/* print any warnings */
+	ret = asb_context_detect_pkgname_dups (ctx, error);
 	if (!ret)
 		goto out;
 out:
