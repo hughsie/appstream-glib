@@ -318,8 +318,8 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 			/* find icon */
 			pixbuf = asb_app_find_icon (app, tmpdir, key, &error_local);
 			if (pixbuf == NULL) {
-				asb_app_add_veto (app, "Failed to use icon %s: %s",
-						  key, error_local->message);
+				asb_app_add_veto (app, "Failed to find icon: %s",
+						  error_local->message);
 			} else {
 				/* save in target directory */
 				icon_filename = g_strdup_printf ("%s.png",
