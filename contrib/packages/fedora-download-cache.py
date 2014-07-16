@@ -214,6 +214,10 @@ def update():
         print("INFO: Checking for %s..." % pkg.name)
         ensure_pkg_exists(yb, existing, pkg)
         for require in pkg.strong_requires_names:
+            # remove helpful package suffixes
+            idx = require.find('(x86-64)')
+            if idx > 0:
+                require = require[0:idx]
             if downloaded.has_key(require):
                 continue
             dep = pkg_from_name(available_packages, require)
