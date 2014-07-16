@@ -162,13 +162,8 @@ asb_plugin_appdata_log_overwrite (AsbApp *app,
 				  const gchar *new)
 {
 	/* does the value already exist with this value */
-	if (g_strcmp0 (old, new) == 0) {
-		asb_package_log (asb_app_get_package (app),
-				 ASB_PACKAGE_LOG_LEVEL_WARNING,
-				 "AppData %s=%s already set",
-				 property_name, old);
+	if (g_strcmp0 (old, new) == 0)
 		return;
-	}
 
 	/* does the metadata exist with any value */
 	if (old != NULL) {
