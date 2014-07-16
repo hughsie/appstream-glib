@@ -124,6 +124,12 @@ def ensure_pkg_exists(yb, existing, pkg):
     pkg.localpath = path
     repo.getPackage(pkg)
 
+def pkg_from_name(sack, name):
+    for pkg in sack:
+        if pkg.name == name:
+            return pkg
+    return None
+
 def update():
 
     # create if we're starting from nothing
@@ -134,22 +140,15 @@ def update():
     cfg = Config()
     extra_packages = []
     extra_packages.append('alliance')
-    extra_packages.append('calligra-core')
-    extra_packages.append('coq')
-    extra_packages.append('efte-common')
-    extra_packages.append('fcitx-data')
-    extra_packages.append('gcin-data')
     extra_packages.append('hotot-common')
     extra_packages.append('java-1.7.0-openjdk')
     extra_packages.append('kchmviewer')
     extra_packages.append('libprojectM-qt')
-    extra_packages.append('libreoffice-core')
     extra_packages.append('nntpgrab-core')
     extra_packages.append('scummvm')
-    extra_packages.append('speed-dreams-robots-base')
     extra_packages.append('switchdesk')
     extra_packages.append('transmission-common')
-    extra_packages.append('vegastrike-data')
+    extra_packages.append('oxygen-icon-theme')
 
     # find out what we've got already
     files = glob.glob("./packages/*.rpm")
@@ -164,7 +163,7 @@ def update():
         else:
             existing[hdr.name] = f
         os.close(fd)
-    print("INFO: found %i existing packages for %s" % (len(existing), cfg.distro_tag))
+    print("INFO: Found %i existing packages for %s" % (len(existing), cfg.distro_tag))
 
     # setup yum
     yb = yum.YumBase()
@@ -180,16 +179,16 @@ def update():
         basearch_list = [basearch]
     basearch_list.append('noarch')
 
-    # ensure all the repos are enabled
-    for repo_id in cfg.repo_ids:
-        repo = yb.repos.getRepo(repo_id)
-        repo.enable()
-
-    # reget the metadata every day
+    # reget the correct metadata every day
     for repo in yb.repos.listEnabled():
-        repo.metadata_expire = 60 * 60 * 12  # 12 hours
+        if repo.id in cfg.repo_ids:
+            repo.enable()
+            repo.metadata_expire = 60 * 60 * 12  # 12 hours
+        else:
+            repo.disable()
 
     # find all packages
+    print("INFO: Checking metadata...")
     downloaded = {}
     try:
         pkgs = yb.pkgSack
@@ -197,30 +196,36 @@ def update():
         print("FAILED:" % str(e))
         sys.exit(1)
     newest_packages = _do_newest_filtering(pkgs)
-    newest_packages.sort()
+
+    # restrict this down so we have less to search
+    print("INFO: Finding interesting packages...")
+    available_packages = []
+    matched_packages = []
     for pkg in newest_packages:
+        if pkg.repoid in cfg.repo_ids and pkg.arch in basearch_list:
+            available_packages.append(pkg)
+            if pkg.name in extra_packages or search_package_list(pkg):
+                matched_packages.append(pkg)
 
-        # not our repo
-        if pkg.repoid not in cfg.repo_ids:
-            continue
-
-        # not our arch
-        if pkg.arch not in basearch_list:
-            continue
-
-        # don't download packages without desktop files
-        if not search_package_list(pkg) and pkg.name not in extra_packages:
-            continue
-
-        # ensure this package exists
+    # ensure the package, and the first level of deps is downloaded
+    print("INFO: Downloading packages...")
+    matched_packages.sort()
+    for pkg in matched_packages:
+        print("INFO: Checking for %s..." % pkg.name)
         ensure_pkg_exists(yb, existing, pkg)
         for require in pkg.strong_requires_names:
-            if require.startswith(pkg.name):
-                #print("INFO: " + pkg.name + " also needs " + require)
-                for dep in newest_packages:
-                    if dep.name == require:
-                        ensure_pkg_exists(yb, existing, dep)
-                        downloaded[dep.name] = True
+            if downloaded.has_key(require):
+                continue
+            dep = pkg_from_name(available_packages, require)
+            if not dep:
+                continue
+            if dep.base_package_name != pkg.base_package_name and not require.startswith(pkg.name):
+                continue
+            print ("INFO: " + pkg.name + " also needs " + require)
+            if require in extra_packages:
+                print("WARNING: Remove %s from whitelist" % require)
+            ensure_pkg_exists(yb, existing, dep)
+            downloaded[dep.name] = True
         downloaded[pkg.name] = True
 
     if len(downloaded) == 0:
