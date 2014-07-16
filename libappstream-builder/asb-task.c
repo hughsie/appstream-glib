@@ -91,7 +91,9 @@ asb_task_add_suitable_plugins (AsbTask *task)
  * asb_task_explode_extra_package:
  **/
 static gboolean
-asb_task_explode_extra_package (AsbTask *task, const gchar *pkg_name)
+asb_task_explode_extra_package (AsbTask *task,
+				const gchar *pkg_name,
+				gboolean require_same_srpm)
 {
 	AsbTaskPrivate *priv = GET_PRIVATE (task);
 	AsbPackage *pkg_extra;
@@ -104,8 +106,9 @@ asb_task_explode_extra_package (AsbTask *task, const gchar *pkg_name)
 		return TRUE;
 
 	/* check it's from the same source package */
-	if (g_strcmp0 (asb_package_get_source (pkg_extra),
-		       asb_package_get_source (priv->pkg)) != 0)
+	if (require_same_srpm &&
+	    (g_strcmp0 (asb_package_get_source (pkg_extra),
+		        asb_package_get_source (priv->pkg)) != 0))
 		return TRUE;
 
 	asb_package_log (priv->pkg,
@@ -138,6 +141,7 @@ asb_task_explode_extra_packages (AsbTask *task)
 	guint i;
 	_cleanup_hashtable_unref_ GHashTable *hash;
 	_cleanup_ptrarray_unref_ GPtrArray *array;
+	_cleanup_ptrarray_unref_ GPtrArray *icon_themes;
 
 	/* anything the package requires */
 	hash = g_hash_table_new (g_str_hash, g_str_equal);
@@ -147,6 +151,7 @@ asb_task_explode_extra_packages (AsbTask *task)
 				     GINT_TO_POINTER (1));
 	}
 	array = g_ptr_array_new_with_free_func (g_free);
+	icon_themes = g_ptr_array_new_with_free_func (g_free);
 	deps = asb_package_get_deps (priv->pkg);
 	for (i = 0; deps[i] != NULL; i++) {
 		if (g_strstr_len (deps[i], -1, " ") != NULL)
@@ -157,14 +162,31 @@ asb_task_explode_extra_packages (AsbTask *task)
 			continue;
 		if (g_hash_table_lookup (hash, deps[i]) != NULL)
 			continue;
-		g_ptr_array_add (array, g_strdup (deps[i]));
+		/* if an app depends on kde-runtime, that means the
+		 * oxygen icon set is available to them */
+		if (g_strcmp0 (deps[i], "oxygen-icon-theme") == 0 ||
+		    g_strcmp0 (deps[i], "kde-runtime") == 0) {
+			g_hash_table_insert (hash, (gpointer) "oxygen-icon-theme",
+					     GINT_TO_POINTER (1));
+			g_ptr_array_add (icon_themes,
+					 g_strdup ("oxygen-icon-theme"));
+		} else {
+			g_ptr_array_add (array, g_strdup (deps[i]));
+		}
 		g_hash_table_insert (hash, deps[i], GINT_TO_POINTER (1));
 	}
 
 	/* explode any potential packages */
 	for (i = 0; i < array->len; i++) {
 		tmp = g_ptr_array_index (array, i);
-		if (!asb_task_explode_extra_package (task, tmp))
+		if (!asb_task_explode_extra_package (task, tmp, TRUE))
+			return FALSE;
+	}
+
+	/* explode any icon themes */
+	for (i = 0; i < icon_themes->len; i++) {
+		tmp = g_ptr_array_index (icon_themes, i);
+		if (!asb_task_explode_extra_package (task, tmp, FALSE))
 			return FALSE;
 	}
 	return TRUE;

@@ -45,7 +45,6 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
 	asb_plugin_add_glob (globs, "/usr/share/applications/*.desktop");
 	asb_plugin_add_glob (globs, "/usr/share/applications/kde4/*.desktop");
-	asb_plugin_add_glob (globs, "/usr/share/icons/hicolor/*/apps/*");
 	asb_plugin_add_glob (globs, "/usr/share/pixmaps/*");
 	asb_plugin_add_glob (globs, "/usr/share/icons/*");
 	asb_plugin_add_glob (globs, "/usr/share/*/icons/*");
@@ -186,7 +185,10 @@ asb_app_find_icon (AsbApp *app,
 {
 	guint i;
 	guint j;
+	guint k;
+	guint m;
 	const gchar *pixmap_dirs[] = { "pixmaps", "icons", NULL };
+	const gchar *theme_dirs[] = { "hicolor", "oxygen", NULL };
 	const gchar *supported_ext[] = { ".png",
 					 ".gif",
 					 ".svg",
@@ -202,6 +204,20 @@ asb_app_find_icon (AsbApp *app,
 				 "32x32",
 				 "24x24",
 				 "16x16",
+				 NULL };
+	const gchar *types[] = { "actions",
+				 "animations",
+				 "apps",
+				 "categories",
+				 "devices",
+				 "emblems",
+				 "emotes",
+				 "filesystems",
+				 "intl",
+				 "mimetypes",
+				 "places",
+				 "status",
+				 "stock",
 				 NULL };
 
 	/* is this an absolute path */
@@ -219,18 +235,25 @@ asb_app_find_icon (AsbApp *app,
 		return asb_app_load_icon (app, tmp, something, error);
 	}
 
-	/* hicolor apps */
-	for (i = 0; sizes[i] != NULL; i++) {
-		for (j = 0; supported_ext[j] != NULL; j++) {
-			_cleanup_free_ gchar *log;
-			_cleanup_free_ gchar *tmp;
-			log = g_strdup_printf ("/usr/share/icons/hicolor/%s/apps/%s%s",
-					       sizes[i],
-					       something,
-					       supported_ext[j]);
-			tmp = g_build_filename (tmpdir, log, NULL);
-			if (g_file_test (tmp, G_FILE_TEST_EXISTS))
-				return asb_app_load_icon (app, tmp, log, error);
+	/* icon theme apps */
+	for (k = 0; theme_dirs[k] != NULL; k++) {
+		for (i = 0; sizes[i] != NULL; i++) {
+			for (m = 0; types[m] != NULL; m++) {
+				for (j = 0; supported_ext[j] != NULL; j++) {
+					_cleanup_free_ gchar *log;
+					_cleanup_free_ gchar *tmp;
+					log = g_strdup_printf ("/usr/share/icons/"
+							       "%s/%s/%s/%s%s",
+							       theme_dirs[k],
+							       sizes[i],
+							       types[m],
+							       something,
+							       supported_ext[j]);
+					tmp = g_build_filename (tmpdir, log, NULL);
+					if (g_file_test (tmp, G_FILE_TEST_EXISTS))
+						return asb_app_load_icon (app, tmp, log, error);
+				}
+			}
 		}
 	}
 
