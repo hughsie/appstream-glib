@@ -1928,8 +1928,7 @@ as_app_add_kudo (AsApp *app, const gchar *kudo, gssize kudo_len)
 void
 as_app_add_kudo_kind (AsApp *app, AsKudoKind kudo_kind)
 {
-	AsAppPrivate *priv = GET_PRIVATE (app);
-	g_ptr_array_add (priv->kudos, g_strdup (as_kudo_kind_to_string (kudo_kind)));
+	as_app_add_kudo (app, as_kudo_kind_to_string (kudo_kind), -1);
 }
 
 /**
