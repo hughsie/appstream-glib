@@ -36,6 +36,7 @@
 #include "as-cleanup.h"
 #include "asb-context.h"
 #include "asb-context-private.h"
+#include "asb-panel.h"
 #include "asb-plugin.h"
 #include "asb-plugin-loader.h"
 #include "asb-task.h"
@@ -55,6 +56,7 @@ struct _AsbContextPrivate
 	GMutex			 apps_mutex;		/* for ->apps */
 	GPtrArray		*file_globs;		/* of AsbPackage */
 	GPtrArray		*packages;		/* of AsbPackage */
+	AsbPanel		*panel;
 	AsbPluginLoader		*plugin_loader;
 	gboolean		 add_cache_id;
 	gboolean		 no_net;
@@ -767,6 +769,7 @@ asb_context_process (AsbContext *ctx, GError **error)
 
 	/* add each package */
 	g_print ("Processing packages...\n");
+	asb_panel_set_job_total (priv->panel, priv->packages->len);
 	tasks = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	for (i = 0; i < priv->packages->len; i++) {
 		pkg = g_ptr_array_index (priv->packages, i);
@@ -793,6 +796,7 @@ asb_context_process (AsbContext *ctx, GError **error)
 		task = asb_task_new (ctx);
 		asb_task_set_id (task, i);
 		asb_task_set_package (task, pkg);
+		asb_task_set_panel (task, priv->panel);
 		g_ptr_array_add (tasks, task);
 
 		/* add task to pool */
@@ -961,6 +965,7 @@ asb_context_finalize (GObject *object)
 
 	g_object_unref (priv->old_md_cache);
 	g_object_unref (priv->plugin_loader);
+	g_object_unref (priv->panel);
 	g_ptr_array_unref (priv->packages);
 	g_list_foreach (priv->apps, (GFunc) g_object_unref, NULL);
 	g_list_free (priv->apps);
@@ -990,6 +995,7 @@ asb_context_init (AsbContext *ctx)
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 
 	priv->plugin_loader = asb_plugin_loader_new (ctx);
+	priv->panel = asb_panel_new ();
 	priv->packages = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	g_mutex_init (&priv->apps_mutex);
 	priv->old_md_cache = as_store_new ();
