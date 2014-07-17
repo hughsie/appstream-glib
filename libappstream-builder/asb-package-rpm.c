@@ -555,6 +555,32 @@ asb_package_rpm_compare (AsbPackage *pkg1, AsbPackage *pkg2)
 }
 
 /**
+ * asb_package_rpm_explode:
+ **/
+static gboolean
+asb_package_rpm_explode (AsbPackage *pkg,
+			 const gchar *dir,
+			 GPtrArray *glob,
+			 GError **error)
+{
+	const gchar *filename;
+	gchar *found;
+	_cleanup_free_ gchar *cachefile = NULL;
+
+	/* is there a pre-decompressed version? */
+	filename = asb_package_get_filename (pkg);
+	cachefile = g_strdup (filename);
+	found = g_strrstr (cachefile, ".rpm");
+	if (found != NULL) {
+		g_strlcpy (found, ".tar", strlen (cachefile));
+		if (g_file_test (cachefile, G_FILE_TEST_EXISTS))
+			filename = cachefile;
+	}
+
+	return asb_utils_explode (filename, dir, glob, error);
+}
+
+/**
  * asb_package_rpm_class_init:
  **/
 static void
@@ -565,6 +591,7 @@ asb_package_rpm_class_init (AsbPackageRpmClass *klass)
 
 	object_class->finalize = asb_package_rpm_finalize;
 	package_class->open = asb_package_rpm_open;
+	package_class->explode = asb_package_rpm_explode;
 	package_class->compare = asb_package_rpm_compare;
 }
 
