@@ -1259,7 +1259,7 @@ as_app_set_id_full (AsApp *app, const gchar *id_full, gssize id_full_len)
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (id_full, id_full_len)) {
-		g_warning ("invalid UTF-8 id");
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
@@ -1359,8 +1359,7 @@ as_app_set_project_group (AsApp *app,
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (project_group, project_group_len)) {
-		g_warning ("%s: invalid UTF-8 project_group",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
@@ -1388,8 +1387,7 @@ as_app_set_project_license (AsApp *app,
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (project_license, project_license_len)) {
-		g_warning ("%s: invalid UTF-8 project_license",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
@@ -1445,8 +1443,7 @@ as_app_set_metadata_license (AsApp *app,
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (metadata_license, metadata_license_len)) {
-		g_warning ("%s: invalid UTF-8 metadata_license",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
@@ -1518,8 +1515,7 @@ as_app_set_update_contact (AsApp *app,
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (update_contact, update_contact_len)) {
-		g_warning ("%s: invalid UTF-8 update_contact",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
@@ -1565,8 +1561,7 @@ as_app_set_icon (AsApp *app, const gchar *icon, gssize icon_len)
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (icon, icon_len)) {
-		g_warning ("%s: invalid UTF-8 icon",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
@@ -1592,8 +1587,7 @@ as_app_set_icon_path (AsApp *app, const gchar *icon_path, gssize icon_path_len)
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (icon_path, icon_path_len)) {
-		g_warning ("%s: invalid UTF-8 icon_path",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
@@ -1639,8 +1633,7 @@ as_app_set_name (AsApp *app,
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (name, name_len)) {
-		g_warning ("%s: invalid UTF-8 name for %s",
-			   priv->id_full, locale);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
@@ -1674,8 +1667,7 @@ as_app_set_comment (AsApp *app,
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (comment, comment_len)) {
-		g_warning ("%s: invalid UTF-8 comment for %s",
-			   priv->id_full, locale);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
@@ -1709,8 +1701,7 @@ as_app_set_developer_name (AsApp *app,
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (developer_name, developer_name_len)) {
-		g_warning ("%s: invalid UTF-8 developer_name for %s",
-			   priv->id_full, locale);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
@@ -1744,8 +1735,7 @@ as_app_set_description (AsApp *app,
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (description, description_len)) {
-		g_warning ("%s: invalid UTF-8 description for %s",
-			   priv->id_full, locale);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
@@ -1808,8 +1798,7 @@ as_app_add_category (AsApp *app, const gchar *category, gssize category_len)
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (category, category_len)) {
-		g_warning ("%s: invalid UTF-8 category",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
@@ -1845,8 +1834,7 @@ as_app_add_compulsory_for_desktop (AsApp *app,
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (compulsory_for_desktop, compulsory_for_desktop_len)) {
-		g_warning ("%s: invalid UTF-8 compulsory_for_desktop",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
@@ -1949,8 +1937,7 @@ as_app_add_mimetype (AsApp *app, const gchar *mimetype, gssize mimetype_len)
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (mimetype, mimetype_len)) {
-		g_warning ("%s: invalid UTF-8 mimetype",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
@@ -2039,8 +2026,7 @@ as_app_add_pkgname (AsApp *app, const gchar *pkgname, gssize pkgname_len)
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (pkgname, pkgname_len)) {
-		g_warning ("%s: invalid UTF-8 pkgname",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
@@ -2069,8 +2055,7 @@ as_app_add_arch (AsApp *app, const gchar *arch, gssize arch_len)
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (arch, arch_len)) {
-		g_warning ("%s: invalid UTF-8 arch",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
@@ -2103,8 +2088,7 @@ as_app_add_language (AsApp *app,
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (locale, locale_len)) {
-		g_warning ("%s: invalid UTF-8 locale",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
@@ -2137,8 +2121,7 @@ as_app_add_url (AsApp *app,
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (url, url_len)) {
-		g_warning ("%s: invalid UTF-8 url",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
@@ -2214,8 +2197,7 @@ as_app_add_extends (AsApp *app, const gchar *extends, gssize extends_len)
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (extends, extends_len)) {
-		g_warning ("%s: invalid UTF-8 extends",
-			   priv->id_full);
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
