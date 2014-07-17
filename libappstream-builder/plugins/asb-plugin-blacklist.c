@@ -54,6 +54,7 @@ asb_plugin_initialize (AsbPlugin *plugin)
 		{ "chromium-bsu",		"Upstream abandoned, see: http://chromium-bsu.sourceforge.net/faq.htm#q11" },
 		{ "coccinella",			"Upstream abandoned" },
 		{ "conduit",			"Upstream abandoned" },
+		{ "dissy",			"Upstream abandoned, see: https://code.google.com/p/dissy/" },
 		{ "doom-shareware",		"Upstream abandoned, see: https://www.ohloh.net/p/8278" },
 		{ "emesene",			"Upstream abandoned, see: https://github.com/emesene/emesene/issues/1588" },
 		{ "flightdeck",			"Upstream abandoned" },
