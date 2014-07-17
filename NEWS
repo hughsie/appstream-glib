@@ -1,3 +1,22 @@
+Version 0.2.3
+~~~~~~~~~~~~~
+Released: 2014-07-17
+
+New Features:
+ - Add some simple filtering in the status.html page (Richard Hughes)
+ - Record if distro metadata and screenshots are being used (Richard Hughes)
+ - Show the builder progress in a ncurses-style panel (Richard Hughes)
+ - Support pre-decompressed RPMs (Richard Hughes)
+
+Bugfixes:
+ - Add oxygen-icon-theme when an application depends on kde-runtime (Richard Hughes)
+ - Be more careful with untrusted XML data (Richard Hughes)
+ - Do not allow duplicates to be added when using as_app_add_kudo_kind() (Richard Hughes)
+ - Do not fail to build packages with invalid KDE service files (Richard Hughes)
+ - Do not warn if the AppData file duplicates the .desktop value (Richard Hughes)
+ - Show any package duplicates when generating metadata (Richard Hughes)
+ - Show apps with missing icons in the failed metadata (Richard Hughes)
+
 Version 0.2.2
 ~~~~~~~~~~~~~
 Released: 2014-07-11
