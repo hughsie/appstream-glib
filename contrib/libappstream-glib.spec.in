@@ -16,6 +16,7 @@ BuildRequires: gobject-introspection-devel
 BuildRequires: gperf
 BuildRequires: libarchive-devel
 BuildRequires: libsoup-devel
+BuildRequires: json-glib-devel
 BuildRequires: gdk-pixbuf2-devel
 BuildRequires: gettext
 BuildRequires: intltool

@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <gio/gio.h>
+#include <json-glib/json-glib.h>
 
 #include <appstream-glib.h>
 #include <archive_entry.h>
@@ -1079,12 +1080,18 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 {
 	GPtrArray *images;
 	GPtrArray *screenshots;
+	GInputStream *pkgdb;
+	SoupSession *session;
+	SoupMessage *msg;
+	JsonParser *parser;
 	AsImage *im;
 	AsImage *im_thumb;
 	AsImage *im_scaled;
 	AsScreenshot *ss;
 	const gchar *pkgname;
 	gchar *tmp;
+	gchar *url;
+	const gchar *poc;
 	guint i;
 	guint j;
 	const gchar *important_md[] = { "DistroMetadata",
@@ -1170,6 +1177,44 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 					"<a href=\"https://apps.fedoraproject.org/packages/%s\">"
 					"<code>%s</code></a></td></tr>\n",
 					"Package", pkgname, tmp);
+	}
+	g_free (tmp);
+
+	/* point of contact */
+	tmp = as_util_status_html_join (as_app_get_pkgnames (app));
+	if (tmp != NULL) {
+		pkgname = g_ptr_array_index (as_app_get_pkgnames(app), 0);
+		url = g_strdup_printf (
+					"https://admin.fedoraproject.org/pkgdb/api/package/%s?acls=0&branches=master",
+					pkgname);
+		session = soup_session_new ();
+		msg = soup_message_new ("GET", url);
+		pkgdb = soup_session_send (session, msg, NULL, NULL);
+		parser = json_parser_new ();
+		if (json_parser_load_from_stream (parser, pkgdb, NULL, NULL)) {
+			JsonReader *reader = json_reader_new (NULL);
+
+			json_reader_set_root (reader, json_parser_get_root (parser));
+
+			json_reader_read_member (reader, "packages");
+			json_reader_read_element (reader, 0);
+			json_reader_read_member (reader, "point_of_contact");
+
+			poc = json_reader_get_string_value (reader);
+
+			json_reader_end_member (reader);
+			json_reader_end_element (reader);
+			json_reader_end_member (reader);
+
+			if (poc) {
+				g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>"
+							"<a href=\"https://admin.fedoraproject.org/accounts/view/%s\">"
+							"<code>%s</code></a></td></tr>\n",
+							"Point of contact", poc, poc);
+			}
+			g_object_unref (reader);
+		}
+		g_object_unref (session);
 	}
 	g_free (tmp);
 
