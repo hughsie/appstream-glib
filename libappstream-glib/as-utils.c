@@ -35,6 +35,7 @@
 #include <fnmatch.h>
 #include <string.h>
 #include <libsoup/soup.h>
+#include <json-glib/json-glib.h>
 
 #include "as-cleanup.h"
 #include "as-enums.h"
@@ -419,6 +420,65 @@ as_utils_check_url_exists (const gchar *url, guint timeout, GError **error)
 		return FALSE;
 	}
 	return TRUE;
+}
+
+/**
+ * as_utils_get_fedora_maintainer_for_pkg:
+ * @pkgname: the name of package to get maintainer.
+ *
+ * Get Fedora Project maintainer (FAS name) of specified package using PkgDB.
+ *
+ * Returns: (transfer full): a string with maintainer FAS name
+ *
+ * Since: 0.2.4
+ **/
+gchar *
+as_utils_get_fedora_maintainer_for_pkg (const gchar *pkgname)
+{
+	_cleanup_object_unref_ SoupMessage *msg = NULL;
+	_cleanup_object_unref_ SoupSession *session = NULL;
+	_cleanup_uri_unref_ SoupURI *base_uri = NULL;
+	_cleanup_object_unref_ JsonParser *parser = NULL;
+	_cleanup_object_unref_ JsonReader *reader = NULL;
+	GInputStream *pkgdb;
+	const gchar *url;
+	const gchar *poc;
+	guint timeout = 30;
+
+	url = g_strdup_printf (
+				"https://admin.fedoraproject.org/pkgdb/api/package/%s?acls=0&branches=master",
+				pkgname);
+	base_uri = soup_uri_new (url);
+	if (as_utils_check_url_exists (url, timeout, NULL)) {
+		msg = soup_message_new_from_uri (SOUP_METHOD_GET, base_uri);
+		session = soup_session_sync_new_with_options (SOUP_SESSION_USER_AGENT,
+								"libappstream-glib",
+								SOUP_SESSION_TIMEOUT,
+								timeout,
+								NULL);
+		pkgdb = soup_session_send (session, msg, NULL, NULL);
+		parser = json_parser_new ();
+		if (json_parser_load_from_stream (parser, pkgdb, NULL, NULL)) {
+			reader = json_reader_new (NULL);
+
+			json_reader_set_root (reader, json_parser_get_root (parser));
+
+			json_reader_read_member (reader, "packages");
+			json_reader_read_element (reader, 0);
+			json_reader_read_member (reader, "point_of_contact");
+
+			poc = json_reader_get_string_value (reader);
+
+			json_reader_end_member (reader);
+			json_reader_end_element (reader);
+			json_reader_end_member (reader);
+
+			if (poc) {
+				return (gchar *) poc;
+			}
+		}
+	}
+	return NULL;
 }
 
 /**

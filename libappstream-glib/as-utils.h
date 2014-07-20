@@ -40,6 +40,7 @@ gchar		**as_utils_spdx_license_tokenize (const gchar	*license);
 gboolean	 as_utils_check_url_exists	(const gchar	*url,
 						 guint		 timeout,
 						 GError		**error);
+gchar		*as_utils_get_fedora_maintainer_for_pkg	(const gchar	*pkgname);
 
 G_END_DECLS
 

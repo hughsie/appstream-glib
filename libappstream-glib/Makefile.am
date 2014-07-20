@@ -8,6 +8,7 @@ endif
 AM_CPPFLAGS =							\
 	$(GLIB_CFLAGS)						\
 	$(GDKPIXBUF_CFLAGS)					\
+	$(JSONGLIB_CFLAGS)					\
 	$(SOUP_CFLAGS)						\
 	-I$(top_srcdir)/libappstream-glib			\
 	-I$(top_builddir)/libappstream-glib			\
@@ -104,6 +105,7 @@ CLEANFILES = $(BUILT_SOURCES)
 libappstream_glib_la_LIBADD =					\
 	$(GLIB_LIBS)						\
 	$(GDKPIXBUF_LIBS)					\
+	$(JSONGLIB_LIBS)					\
 	$(SOUP_LIBS)
 
 libappstream_glib_la_LDFLAGS =					\
