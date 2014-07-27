@@ -70,6 +70,8 @@ asb_plugin_nm_app (AsbApp *app, const gchar *filename, GError **error)
 		as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_MODERN_TOOLKIT);
 	if (g_strstr_len (data_out, -1, "gtk_application_set_app_menu") != NULL)
 		as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_APP_MENU);
+	if (g_strstr_len (data_out, -1, "gtk_application_get_menu_by_id") != NULL)
+		as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_APP_MENU);
 	return TRUE;
 }
 
