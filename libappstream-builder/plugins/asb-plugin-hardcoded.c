@@ -262,7 +262,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 	/* has the application been updated in the last year */
 	releases = as_app_get_releases (AS_APP (app));
-	if (asb_context_get_api_version (plugin->ctx) <= 0.8) {
+	if (asb_context_get_api_version (plugin->ctx) < 0.8) {
 		for (i = 0; i < releases->len; i++) {
 			release = g_ptr_array_index (releases, i);
 			secs = (g_get_real_time () / G_USEC_PER_SEC) -
