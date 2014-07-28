@@ -95,7 +95,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 		if (!g_str_has_prefix (filelist[i], "/usr/bin/"))
 			continue;
-		if (as_app_get_metadata_item (AS_APP (app), "X-Kudo-UsesAppMenu") != NULL)
+		if (as_app_has_kudo_kind (AS_APP (app), AS_KUDO_KIND_APP_MENU))
 			break;
 		filename = g_build_filename (tmpdir, filelist[i], NULL);
 		if (!asb_plugin_nm_app (app, filename, &error_local)) {
