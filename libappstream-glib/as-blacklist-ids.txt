@@ -34,6 +34,7 @@ manaplustest.desktop
 megaglest_*.desktop
 midori-private.desktop
 nm-connection-editor.desktop
+open-raw.desktop
 pioneers-editor.desktop
 qterminal_*.desktop
 razor-config*.desktop
