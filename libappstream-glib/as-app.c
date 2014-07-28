@@ -3731,7 +3731,8 @@ as_app_parse_appdata_file (AsApp *app,
 		return FALSE;
 	}
 	for (l = node->children; l != NULL; l = l->next) {
-		if (g_strcmp0 (as_node_get_name (l), "licence") == 0) {
+		if (g_strcmp0 (as_node_get_name (l), "licence") == 0 ||
+		    g_strcmp0 (as_node_get_name (l), "license") == 0) {
 			as_node_set_name (l, "metadata_license");
 			priv->problems |= AS_APP_PROBLEM_DEPRECATED_LICENCE;
 			continue;
