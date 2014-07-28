@@ -180,12 +180,15 @@ def update():
     basearch_list.append('noarch')
 
     # reget the correct metadata every day
+    yb.repos.enableRepo('rawhide')
     for repo in yb.repos.listEnabled():
         if repo.id in cfg.repo_ids:
             repo.enable()
             repo.metadata_expire = 60 * 60 * 12  # 12 hours
+            print("INFO: enabled: %s" % repo.id)
         else:
             repo.disable()
+            print("INFO: disabled: %s" % repo.id)
 
     # find all packages
     print("INFO: Checking metadata...")
