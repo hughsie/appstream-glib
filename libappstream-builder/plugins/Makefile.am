@@ -19,6 +19,7 @@ plugin_LTLIBRARIES =					\
 	libasb_plugin_blacklist.la			\
 	libasb_plugin_desktop.la			\
 	libasb_plugin_gir.la				\
+	libasb_plugin_gresource.la			\
 	libasb_plugin_font.la				\
 	libasb_plugin_gettext.la			\
 	libasb_plugin_gstreamer.la			\
@@ -79,6 +80,11 @@ libasb_plugin_gir_la_SOURCES = asb-plugin-gir.c
 libasb_plugin_gir_la_LIBADD = $(GLIB_LIBS) $(GDKPIXBUF_LIBS)
 libasb_plugin_gir_la_LDFLAGS = -module -avoid-version
 libasb_plugin_gir_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
+
+libasb_plugin_gresource_la_SOURCES = asb-plugin-gresource.c
+libasb_plugin_gresource_la_LIBADD = $(GLIB_LIBS) $(GDKPIXBUF_LIBS)
+libasb_plugin_gresource_la_LDFLAGS = -module -avoid-version
+libasb_plugin_gresource_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
 libasb_plugin_appdata_la_SOURCES = asb-plugin-appdata.c
 libasb_plugin_appdata_la_LIBADD = $(GLIB_LIBS) $(GDKPIXBUF_LIBS)
