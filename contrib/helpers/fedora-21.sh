@@ -1,5 +1,5 @@
 time client/appstream-builder						\
-	--api-version=0.7						\
+	--api-version=0.8						\
 	--log-dir=../createrepo_as_logs					\
 	--temp-dir=./tmp/fedora-21					\
 	--cache-dir=./contrib/cache					\
