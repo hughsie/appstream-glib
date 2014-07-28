@@ -366,28 +366,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		}
 
 		/* list all the reasons we're ignoring the app */
-		array = asb_app_get_vetos (app);
-		if (array->len > 0) {
-			_cleanup_string_free_ GString *str = NULL;
-			asb_package_log (priv->pkg,
-					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "%s not included in metadata:",
-					 as_app_get_id_full (AS_APP (app)));
-			str = g_string_new ("<p>Not included in metadata because:</p>");
-			g_string_append (str, "<ul>");
-			for (i = 0; i < array->len; i++) {
-				_cleanup_free_ gchar *tmp_safe = NULL;
-				tmp = g_ptr_array_index (array, i);
-				asb_package_log (priv->pkg,
-						 ASB_PACKAGE_LOG_LEVEL_WARNING,
-						 " - %s", tmp);
-				tmp_safe = g_markup_escape_text (tmp, -1);
-				g_string_append_printf (str, "<li>%s</li>",
-							tmp_safe);
-			}
-			g_string_append (str, "</ul>");
-			as_app_set_description (AS_APP (app), NULL, str->str, -1);
-		}
+		asb_app_set_veto_description (app);
 
 		/* save icon and screenshots */
 		if (array->len == 0) {

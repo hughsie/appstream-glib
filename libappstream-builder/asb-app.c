@@ -120,6 +120,49 @@ asb_app_to_xml (AsbApp *app)
 }
 
 /**
+ * asb_app_set_veto_description:
+ * @app: A #AsbApp
+ *
+ * Overwrites the application description with the veto information.
+ *
+ * Since: 0.2.4
+ **/
+void
+asb_app_set_veto_description (AsbApp *app)
+{
+	AsbAppPrivate *priv = GET_PRIVATE (app);
+	const gchar *tmp;
+	guint i;
+	_cleanup_string_free_ GString *str = NULL;
+
+	/* application has no vetos */
+	if (priv->vetos->len == 0)
+		return;
+
+	/* log */
+	asb_package_log (priv->pkg,
+			 ASB_PACKAGE_LOG_LEVEL_WARNING,
+			 "%s not included in metadata:",
+			 as_app_get_id_full (AS_APP (app)));
+
+	/* update description */
+	str = g_string_new ("<p>Not included in metadata because:</p>");
+	g_string_append (str, "<ul>");
+	for (i = 0; i < priv->vetos->len; i++) {
+		_cleanup_free_ gchar *tmp_safe = NULL;
+		tmp = g_ptr_array_index (priv->vetos, i);
+		asb_package_log (priv->pkg,
+				 ASB_PACKAGE_LOG_LEVEL_WARNING,
+				 " - %s", tmp);
+		tmp_safe = g_markup_escape_text (tmp, -1);
+		g_string_append_printf (str, "<li>%s</li>",
+					tmp_safe);
+	}
+	g_string_append (str, "</ul>");
+	as_app_set_description (AS_APP (app), NULL, str->str, -1);
+}
+
+/**
  * asb_app_add_veto:
  * @app: A #AsbApp
  * @fmt: format string
