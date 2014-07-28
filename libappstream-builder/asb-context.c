@@ -694,6 +694,60 @@ asb_context_detect_pkgname_dups (AsbContext *ctx, GError **error)
 }
 
 /**
+ * asb_context_detect_missing_parents:
+ **/
+static gboolean
+asb_context_detect_missing_parents (AsbContext *ctx, GError **error)
+{
+	AsApp *app;
+	AsApp *found;
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	GList *l;
+	const gchar *tmp;
+	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
+
+	/* add all desktop apps to the hash */
+	hash = g_hash_table_new (g_str_hash, g_str_equal);
+	for (l = priv->apps; l != NULL; l = l->next) {
+		app = AS_APP (l->data);
+		if (!ASB_IS_APP (app))
+			continue;
+		if (as_app_get_pkgname_default (app) == NULL)
+			continue;
+		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+			continue;
+		g_hash_table_insert (hash,
+				     (gpointer) as_app_get_id_full (app),
+				     app);
+	}
+
+	/* look for the thing that an addon extends */
+	for (l = priv->apps; l != NULL; l = l->next) {
+		app = AS_APP (l->data);
+		if (!ASB_IS_APP (app))
+			continue;
+		if (as_app_get_pkgname_default (app) == NULL)
+			continue;
+		if (as_app_get_id_kind (app) != AS_ID_KIND_ADDON)
+			continue;
+		if (as_app_get_extends(app)->len == 0)
+			continue;
+		tmp = g_ptr_array_index (as_app_get_extends(app), 0);
+		found = g_hash_table_lookup (hash, tmp);
+		if (found != NULL)
+			continue;
+
+		/* do not add the addon */
+		asb_app_add_veto (ASB_APP (app), "%s has no parent of '%s'\n",
+				  as_app_get_id_full (app), tmp);
+		g_print ("WARNING: %s has no parent of '%s'\n",
+			 as_app_get_id_full (app), tmp);
+		asb_app_set_veto_description (ASB_APP (app));
+	}
+	return TRUE;
+}
+
+/**
  * asb_context_write_xml_fail:
  **/
 static gboolean
@@ -811,6 +865,11 @@ asb_context_process (AsbContext *ctx, GError **error)
 	/* merge */
 	g_print ("Merging applications...\n");
 	asb_plugin_loader_merge (priv->plugin_loader, &priv->apps);
+
+	/* print any warnings */
+	ret = asb_context_detect_missing_parents (ctx, error);
+	if (!ret)
+		goto out;
 
 	/* write XML file */
 	ret = asb_context_write_xml (ctx, priv->output_dir, priv->basename, error);

@@ -419,18 +419,15 @@ as_store_match_addons (AsStore *store)
 			continue;
 		plugin_ids = as_app_get_extends (app);
 		if (plugin_ids->len == 0) {
-			g_warning ("%s was of type plugin but had no plugin_for",
+			g_warning ("%s was of type addon but had no extends",
 				   as_app_get_id_full (app));
 			continue;
 		}
 		for (j = 0; j < plugin_ids->len; j++) {
 			tmp = g_ptr_array_index (plugin_ids, j);
 			parent = g_hash_table_lookup (priv->hash_id, tmp);
-			if (parent == NULL) {
-				g_warning ("%s had no parent of '%s'",
-					   as_app_get_id_full (app), tmp);
+			if (parent == NULL)
 				continue;
-			}
 			as_app_add_addon (parent, app);
 		}
 	}
