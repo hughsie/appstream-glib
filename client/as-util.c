@@ -1046,6 +1046,12 @@ as_util_uninstall (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
+typedef enum {
+	AS_UTIL_DISTRO_UNKNOWN,
+	AS_UTIL_DISTRO_FEDORA,
+	AS_UTIL_DISTRO_LAST
+} AsUtilDistro;
+
 /**
  * as_util_status_html_join:
  */
@@ -1075,7 +1081,7 @@ as_util_status_html_join (GPtrArray *array)
  * as_util_status_html_write_app:
  */
 static void
-as_util_status_html_write_app (AsApp *app, GString *html)
+as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 {
 	GPtrArray *images;
 	GPtrArray *screenshots;
@@ -1163,15 +1169,24 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 	}
 
 	/* packages */
-	tmp = as_util_status_html_join (as_app_get_pkgnames (app));
-	if (tmp != NULL) {
-		pkgname = g_ptr_array_index (as_app_get_pkgnames(app), 0);
-		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>"
-					"<a href=\"https://apps.fedoraproject.org/packages/%s\">"
-					"<code>%s</code></a></td></tr>\n",
-					"Package", pkgname, tmp);
+	pkgname = as_app_get_pkgname_default (app);
+	if (pkgname != NULL) {
+		tmp = as_util_status_html_join (as_app_get_pkgnames (app));
+		switch (distro) {
+		case AS_UTIL_DISTRO_FEDORA:
+			g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>"
+						"<a href=\"https://apps.fedoraproject.org/packages/%s\">"
+						"<code>%s</code></a></td></tr>\n",
+						"Package", pkgname, tmp);
+			break;
+		default:
+			g_string_append_printf (html, "<tr><td class=\"alt\">%s</td>"
+						"<td><code>%s</code></td></tr>\n",
+						"Package", tmp);
+			break;
+		}
+		g_free (tmp);
 	}
-	g_free (tmp);
 
 	/* categories */
 	tmp = as_util_status_html_join (as_app_get_categories (app));
@@ -1515,6 +1530,7 @@ static gboolean
 as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	AsApp *app;
+	AsUtilDistro distro = AS_UTIL_DISTRO_UNKNOWN;
 	GPtrArray *apps = NULL;
 	guint i;
 	_cleanup_object_unref_ AsStore *store = NULL;
@@ -1537,6 +1553,10 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	if (!as_store_from_file (store, file, NULL, NULL, error))
 		return FALSE;
 	apps = as_store_get_apps (store);
+
+	/* detect distro */
+	if (g_strstr_len (values[0], -1, "fedora") != NULL)
+		distro = AS_UTIL_DISTRO_FEDORA;
 
 	/* create header */
 	html = g_string_new ("");
@@ -1575,7 +1595,7 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 			continue;
 		if (as_app_get_id_kind (app) == AS_ID_KIND_SOURCE)
 			continue;
-		as_util_status_html_write_app (app, html);
+		as_util_status_html_write_app (app, html, distro);
 	}
 	g_string_append (html, "</div>\n");
 
