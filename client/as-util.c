@@ -1091,6 +1091,7 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 	AsScreenshot *ss;
 	const gchar *pkgname;
 	gchar *tmp;
+	gchar *tmp2;
 	guint i;
 	guint j;
 	const gchar *important_md[] = { "DistroMetadata",
@@ -1152,9 +1153,23 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 
 	g_string_append (html, "<table class=\"app\">\n");
 
-	/* summary */
+	/* type */
 	g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td><code>%s</code></td></tr>\n",
 				"Type", as_id_kind_to_string (as_app_get_id_kind (app)));
+
+	/* extends */
+	tmp = as_util_status_html_join (as_app_get_extends (app));
+	if (tmp != NULL) {
+		tmp2 = g_strrstr (tmp, ".desktop");
+		if (tmp2 != NULL)
+			*tmp2 = '\0';
+		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td>"
+					"<td><a href=\"#%s\">%s</a></td></tr>\n",
+					"Extends", tmp, tmp);
+	}
+	g_free (tmp);
+
+	/* summary */
 	g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
 				"Name", as_app_get_name (app, "C"));
 	if (as_app_get_comment (app, "C") != NULL) {
