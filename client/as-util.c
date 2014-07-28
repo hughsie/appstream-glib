@@ -1085,6 +1085,7 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 	AsScreenshot *ss;
 	const gchar *pkgname;
 	gchar *tmp;
+	gchar *poc;
 	guint i;
 	guint j;
 	const gchar *important_md[] = { "DistroMetadata",
@@ -1170,6 +1171,20 @@ as_util_status_html_write_app (AsApp *app, GString *html)
 					"<a href=\"https://apps.fedoraproject.org/packages/%s\">"
 					"<code>%s</code></a></td></tr>\n",
 					"Package", pkgname, tmp);
+	}
+	g_free (tmp);
+
+	/* point of contact */
+	tmp = as_util_status_html_join (as_app_get_pkgnames (app));
+	if (tmp != NULL) {
+		pkgname = g_ptr_array_index (as_app_get_pkgnames(app), 0);
+		poc = as_utils_get_fedora_maintainer_for_pkg (pkgname);
+		if (poc != NULL) {
+			g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>"
+						"<a href=\"https://admin.fedoraproject.org/accounts/view/%s\">"
+						"<code>%s</code></a></td></tr>\n",
+						"Point of contact", poc, poc);
+		}
 	}
 	g_free (tmp);
 
