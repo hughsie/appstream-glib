@@ -237,6 +237,7 @@ const gchar	*as_app_get_icon_path		(AsApp		*app);
 const gchar	*as_app_get_id			(AsApp		*app);
 const gchar	*as_app_get_id_full		(AsApp		*app);
 const gchar	*as_app_get_pkgname_default	(AsApp		*app);
+const gchar	*as_app_get_source_pkgname	(AsApp		*app);
 const gchar	*as_app_get_project_group	(AsApp		*app);
 const gchar	*as_app_get_project_license	(AsApp		*app);
 const gchar	*as_app_get_metadata_license	(AsApp		*app);
@@ -285,6 +286,9 @@ void		 as_app_set_project_license	(AsApp		*app,
 void		 as_app_set_metadata_license	(AsApp		*app,
 						 const gchar	*metadata_license,
 						 gssize		 metadata_license_len);
+void		 as_app_set_source_pkgname	(AsApp		*app,
+						 const gchar	*source_pkgname,
+						 gssize		 source_pkgname_len);
 void		 as_app_set_update_contact	(AsApp		*app,
 						 const gchar	*update_contact,
 						 gssize		 update_contact_len);

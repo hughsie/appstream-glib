@@ -543,6 +543,7 @@ as_test_app_func (void)
 		"<mimetype>application/vnd.oasis.opendocument.spreadsheet</mimetype>"
 		"</mimetypes>"
 		"<project_license>GPLv2+</project_license>"
+		"<source_pkgname>gnome-software-src</source_pkgname>"
 		"<url type=\"homepage\">https://wiki.gnome.org/Design/Apps/Software</url>"
 		"<project_group>GNOME</project_group>"
 		"<compulsory_for_desktop>GNOME</compulsory_for_desktop>"
@@ -591,6 +592,7 @@ as_test_app_func (void)
 	g_assert_cmpstr (as_app_get_comment (app, NULL), ==, "Application manager");
 	g_assert_cmpstr (as_app_get_developer_name (app, NULL), ==, "GNOME Foundation");
 	g_assert_cmpstr (as_app_get_icon (app), ==, "org.gnome.Software.png");
+	g_assert_cmpstr (as_app_get_source_pkgname (app), ==, "gnome-software-src");
 	g_assert_cmpint (as_app_get_icon_kind (app), ==, AS_ICON_KIND_CACHED);
 	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_APP_SOURCE_KIND_UNKNOWN);
 	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");

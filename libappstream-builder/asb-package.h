@@ -91,6 +91,7 @@ const gchar	*asb_package_get_evr		(AsbPackage	*pkg);
 const gchar	*asb_package_get_url		(AsbPackage	*pkg);
 const gchar	*asb_package_get_license	(AsbPackage	*pkg);
 const gchar	*asb_package_get_source		(AsbPackage	*pkg);
+const gchar	*asb_package_get_source_pkgname	(AsbPackage	*pkg);
 void		 asb_package_set_name		(AsbPackage	*pkg,
 						 const gchar	*name);
 void		 asb_package_set_version	(AsbPackage	*pkg,
@@ -107,6 +108,8 @@ void		 asb_package_set_license	(AsbPackage	*pkg,
 						 const gchar	*license);
 void		 asb_package_set_source		(AsbPackage	*pkg,
 						 const gchar	*source);
+void		 asb_package_set_source_pkgname	(AsbPackage	*pkg,
+						 const gchar	*source_pkgname);
 void		 asb_package_set_deps		(AsbPackage	*pkg,
 						 gchar		**deps);
 void		 asb_package_set_filelist	(AsbPackage	*pkg,

@@ -82,6 +82,7 @@ struct _AsAppPrivate
 	gchar		*project_group;
 	gchar		*project_license;
 	gchar		*metadata_license;
+	gchar		*source_pkgname;
 	gchar		*update_contact;
 	gchar		*source_file;
 	gint		 priority;
@@ -243,6 +244,7 @@ as_app_finalize (GObject *object)
 	g_free (priv->project_group);
 	g_free (priv->project_license);
 	g_free (priv->metadata_license);
+	g_free (priv->source_pkgname);
 	g_free (priv->update_contact);
 	g_free (priv->source_file);
 	g_hash_table_unref (priv->comments);
@@ -932,6 +934,25 @@ as_app_get_pkgname_default (AsApp *app)
 }
 
 /**
+ * as_app_get_source_pkgname:
+ * @app: a #AsApp instance.
+ *
+ * Gets the source package name that produced the binary package.
+ * Only source packages producing more than one binary package will have this
+ * entry set.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.2.4
+ **/
+const gchar *
+as_app_get_source_pkgname (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->source_pkgname;
+}
+
+/**
  * as_app_get_icon_path:
  * @app: a #AsApp instance.
  *
@@ -1460,6 +1481,33 @@ as_app_set_metadata_license (AsApp *app,
 
 	g_free (priv->metadata_license);
 	priv->metadata_license = as_strndup (metadata_license, metadata_license_len);
+}
+
+/**
+ * as_app_set_source_pkgname:
+ * @app: a #AsApp instance.
+ * @source_pkgname: the project license string.
+ * @source_pkgname_len: the size of @source_pkgname, or -1 if %NULL-terminated.
+ *
+ * Set the project license.
+ *
+ * Since: 0.2.4
+ **/
+void
+as_app_set_source_pkgname (AsApp *app,
+			     const gchar *source_pkgname,
+			     gssize source_pkgname_len)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (source_pkgname, source_pkgname_len)) {
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
+		return;
+	}
+	g_free (priv->source_pkgname);
+	priv->source_pkgname = as_strndup (source_pkgname, source_pkgname_len);
 }
 
 /**
@@ -2667,6 +2715,12 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 		}
 	}
 
+	/* <source_pkgname> */
+	if (priv->source_pkgname != NULL && api_version >= 0.8) {
+		as_node_insert (node_app, "source_pkgname",
+				priv->source_pkgname, 0, NULL);
+	}
+
 	/* <url> */
 	as_node_insert_hash (node_app, "url", "type", priv->urls, 0);
 
@@ -2931,6 +2985,11 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 	/* <project_license> */
 	case AS_TAG_METADATA_LICENSE:
 		as_app_set_metadata_license (app, as_node_get_data (n), -1);
+		break;
+
+	/* <source_pkgname> */
+	case AS_TAG_SOURCE_PKGNAME:
+		as_app_set_source_pkgname (app, as_node_get_data (n), -1);
 		break;
 
 	/* <updatecontact> */

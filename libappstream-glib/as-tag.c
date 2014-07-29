@@ -172,6 +172,7 @@ as_tag_to_string (AsTag tag)
 		"developer_name",
 		"kudos",
 		"kudo",
+		"source_pkgname",
 		NULL };
 	if (tag > AS_TAG_LAST)
 		tag = AS_TAG_LAST;

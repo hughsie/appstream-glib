@@ -52,7 +52,8 @@ struct _AsbPackagePrivate
 	gchar		*nevr;
 	gchar		*evr;
 	gchar		*license;
-	gchar		*source;
+	gchar		*source_nevra;
+	gchar		*source_pkgname;
 	GString		*log;
 	GHashTable	*configs;
 	GTimer		*timer;
@@ -86,7 +87,8 @@ asb_package_finalize (GObject *object)
 	g_free (priv->nevr);
 	g_free (priv->evr);
 	g_free (priv->license);
-	g_free (priv->source);
+	g_free (priv->source_nevra);
+	g_free (priv->source_pkgname);
 	g_string_free (priv->log, TRUE);
 	g_timer_destroy (priv->timer);
 	g_hash_table_unref (priv->configs);
@@ -326,7 +328,7 @@ asb_package_get_license (AsbPackage *pkg)
  * asb_package_get_source:
  * @pkg: A #AsbPackage
  *
- * Gets the package source name.
+ * Gets the package source nevra.
  *
  * Returns: utf8 string
  *
@@ -336,7 +338,24 @@ const gchar *
 asb_package_get_source (AsbPackage *pkg)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
-	return priv->source;
+	return priv->source_nevra;
+}
+
+/**
+ * asb_package_get_source_pkgname:
+ * @pkg: A #AsbPackage
+ *
+ * Gets the package source name.
+ *
+ * Returns: utf8 string
+ *
+ * Since: 0.2.4
+ **/
+const gchar *
+asb_package_get_source_pkgname (AsbPackage *pkg)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	return priv->source_pkgname;
 }
 
 /**
@@ -494,7 +513,7 @@ asb_package_set_license (AsbPackage *pkg, const gchar *license)
 /**
  * asb_package_set_source:
  * @pkg: A #AsbPackage
- * @source: source string, e.g. the srpm name
+ * @source: source string, e.g. the srpm nevra
  *
  * Sets the package source name, which is usually the parent of a set of
  * subpackages.
@@ -505,8 +524,26 @@ void
 asb_package_set_source (AsbPackage *pkg, const gchar *source)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
-	g_free (priv->source);
-	priv->source = g_strdup (source);
+	g_free (priv->source_nevra);
+	priv->source_nevra = g_strdup (source);
+}
+
+/**
+ * asb_package_set_source_pkgname:
+ * @pkg: A #AsbPackage
+ * @source_pkgname: source string, e.g. the srpm name
+ *
+ * Sets the package source name, which is usually the parent of a set of
+ * subpackages.
+ *
+ * Since: 0.2.4
+ **/
+void
+asb_package_set_source_pkgname (AsbPackage *pkg, const gchar *source_pkgname)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	g_free (priv->source_pkgname);
+	priv->source_pkgname = g_strdup (source_pkgname);
 }
 
 /**

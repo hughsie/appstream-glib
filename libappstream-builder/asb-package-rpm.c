@@ -227,6 +227,15 @@ asb_package_rpm_set_source (AsbPackage *pkg, const gchar *source)
 	if (tmp != NULL)
 		*tmp = '\0';
 	asb_package_set_source (pkg, srcrpm);
+
+	/* get the srpm name */
+	tmp = g_strrstr (srcrpm, "-");
+	if (tmp != NULL)
+		*tmp = '\0';
+	tmp = g_strrstr (srcrpm, "-");
+	if (tmp != NULL)
+		*tmp = '\0';
+	asb_package_set_source_pkgname (pkg, srcrpm);
 }
 
 /**

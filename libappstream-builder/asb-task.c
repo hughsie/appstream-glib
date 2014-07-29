@@ -399,6 +399,15 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		asb_package_log (priv->pkg, ASB_PACKAGE_LOG_LEVEL_NONE, "%s", tmp);
 		g_free (tmp);
 	}
+
+	/* add the source name so we can suggest these together */
+	if (nr_added > 1) {
+		for (l = apps; l != NULL; l = l->next) {
+			as_app_set_source_pkgname (AS_APP (l->data),
+						   asb_package_get_source_pkgname (priv->pkg),
+						   -1);
+		}
+	}
 skip:
 	/* add a dummy element to the AppStream metadata so that we don't keep
 	 * parsing this every time */

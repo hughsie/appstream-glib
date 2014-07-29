@@ -69,6 +69,7 @@
  * @AS_TAG_DEVELOPER_NAME:		`developer_name`
  * @AS_TAG_KUDOS:			`kudos`
  * @AS_TAG_KUDO:			`kudo`
+ * @AS_TAG_SOURCE_PKGNAME:		`source_pkgname`
  *
  * The tag type.
  **/
@@ -112,6 +113,7 @@ typedef enum {
 	AS_TAG_DEVELOPER_NAME,		/* Since: 0.1.8 */
 	AS_TAG_KUDOS,			/* Since: 0.2.1 */
 	AS_TAG_KUDO,			/* Since: 0.2.1 */
+	AS_TAG_SOURCE_PKGNAME,		/* Since: 0.2.4 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;
