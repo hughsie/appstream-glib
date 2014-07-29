@@ -3433,6 +3433,14 @@ as_app_parse_file_key (AsApp *app,
 				return FALSE;
 			}
 
+			/* not a standard category */
+			if (g_str_has_prefix (list[i], "X-"))
+				continue;
+
+			/* check the category is valid */
+			if (!as_utils_is_category_id (list[i]))
+				continue;
+
 			/* ignore some useless keys */
 			if (g_strcmp0 (list[i], "GTK") == 0)
 				continue;
@@ -3441,8 +3449,6 @@ as_app_parse_file_key (AsApp *app,
 			if (g_strcmp0 (list[i], "KDE") == 0)
 				continue;
 			if (g_strcmp0 (list[i], "GNOME") == 0)
-				continue;
-			if (g_str_has_prefix (list[i], "X-"))
 				continue;
 			as_app_add_category (app, list[i], -1);
 		}

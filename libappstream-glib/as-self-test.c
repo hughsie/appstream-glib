@@ -1997,6 +1997,14 @@ as_test_utils_func (void)
 	g_assert (as_utils_is_stock_icon_name ("insert-image"));
 	g_assert (as_utils_is_stock_icon_name ("zoom-out"));
 
+	/* environments */
+	g_assert (as_utils_is_environment_id ("GNOME"));
+	g_assert (!as_utils_is_environment_id ("RandomDE"));
+
+	/* categories */
+	g_assert (as_utils_is_category_id ("AudioVideoEditing"));
+	g_assert (!as_utils_is_category_id ("SpellEditing"));
+
 	/* blacklist */
 	g_assert (as_utils_is_blacklisted_id ("gnome-system-monitor-kde.desktop"));
 	g_assert (as_utils_is_blacklisted_id ("doom-*-demo.desktop"));

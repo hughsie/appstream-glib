@@ -1,0 +1,12 @@
+# these are registered desktop environments
+GNOME
+KDE
+LXDE
+MATE
+Razor
+ROX
+TDE
+Unity
+XFCE
+EDE
+Cinnamon

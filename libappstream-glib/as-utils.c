@@ -270,6 +270,60 @@ as_utils_is_blacklisted_id (const gchar *desktop_id)
 }
 
 /**
+ * as_utils_is_environment_id:
+ * @environment_id: a desktop ID, e.g. "GNOME"
+ *
+ * Searches the known list of registered environment IDs.
+ *
+ * Returns: %TRUE if the environment ID is valid
+ *
+ * Since: 0.2.4
+ **/
+gboolean
+as_utils_is_environment_id (const gchar *environment_id)
+{
+	_cleanup_bytes_unref_ GBytes *data;
+	_cleanup_free_ gchar *key = NULL;
+
+	/* load the readonly data section and look for the icon name */
+	data = g_resource_lookup_data (as_get_resource (),
+				       "/org/freedesktop/appstream-glib/as-environment-ids.txt",
+				       G_RESOURCE_LOOKUP_FLAGS_NONE,
+				       NULL);
+	if (data == NULL)
+		return FALSE;
+	key = g_strdup_printf ("\n%s\n", environment_id);
+	return g_strstr_len (g_bytes_get_data (data, NULL), -1, key) != NULL;
+}
+
+/**
+ * as_utils_is_category_id:
+ * @category_id: a desktop ID, e.g. "AudioVideoEditing"
+ *
+ * Searches the known list of registered category IDs.
+ *
+ * Returns: %TRUE if the category ID is valid
+ *
+ * Since: 0.2.4
+ **/
+gboolean
+as_utils_is_category_id (const gchar *category_id)
+{
+	_cleanup_bytes_unref_ GBytes *data;
+	_cleanup_free_ gchar *key = NULL;
+
+	/* load the readonly data section and look for the icon name */
+	data = g_resource_lookup_data (as_get_resource (),
+				       "/org/freedesktop/appstream-glib/as-category-ids.txt",
+				       G_RESOURCE_LOOKUP_FLAGS_NONE,
+				       NULL);
+	if (data == NULL)
+		return FALSE;
+	key = g_strdup_printf ("\n%s\n", category_id);
+	return g_strstr_len (g_bytes_get_data (data, NULL), -1, key) != NULL;
+}
+
+/**
  * as_utils_spdx_license_tokenize:
  * @license: a license string, e.g. "LGPLv2+ and (QPL or GPLv2) and MIT"
  *

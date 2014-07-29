@@ -4,5 +4,7 @@
   <file>as-stock-icons.txt</file>
   <file>as-blacklist-ids.txt</file>
   <file>as-license-ids.txt</file>
+  <file>as-category-ids.txt</file>
+  <file>as-environment-ids.txt</file>
  </gresource>
 </gresources>
