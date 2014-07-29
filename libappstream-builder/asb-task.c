@@ -319,6 +319,14 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 						    asb_package_get_license (priv->pkg),
 						    -1);
 
+		/* add the source name so we can suggest these together */
+		if (g_strcmp0 (asb_package_get_source_pkgname (priv->pkg),
+			       asb_package_get_name (priv->pkg)) != 0) {
+			as_app_set_source_pkgname (AS_APP (app),
+						   asb_package_get_source_pkgname (priv->pkg),
+						   -1);
+		}
+
 		/* set all the releases on the app */
 		array = asb_package_get_releases (priv->pkg);
 		for (i = 0; i < array->len; i++) {
@@ -398,15 +406,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		tmp = asb_app_to_xml (app);
 		asb_package_log (priv->pkg, ASB_PACKAGE_LOG_LEVEL_NONE, "%s", tmp);
 		g_free (tmp);
-	}
-
-	/* add the source name so we can suggest these together */
-	if (nr_added > 1) {
-		for (l = apps; l != NULL; l = l->next) {
-			as_app_set_source_pkgname (AS_APP (l->data),
-						   asb_package_get_source_pkgname (priv->pkg),
-						   -1);
-		}
 	}
 skip:
 	/* add a dummy element to the AppStream metadata so that we don't keep

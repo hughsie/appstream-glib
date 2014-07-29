@@ -2606,6 +2606,12 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 		as_node_insert (node_app, "pkgname", tmp, 0, NULL);
 	}
 
+	/* <source_pkgname> */
+	if (priv->source_pkgname != NULL && api_version >= 0.8) {
+		as_node_insert (node_app, "source_pkgname",
+				priv->source_pkgname, 0, NULL);
+	}
+
 	/* <name> */
 	as_node_insert_localized (node_app, "name",
 				  priv->names,
@@ -2713,12 +2719,6 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 			as_node_insert (node_app, "licence",
 					priv->project_license, 0, NULL);
 		}
-	}
-
-	/* <source_pkgname> */
-	if (priv->source_pkgname != NULL && api_version >= 0.8) {
-		as_node_insert (node_app, "source_pkgname",
-				priv->source_pkgname, 0, NULL);
 	}
 
 	/* <url> */
