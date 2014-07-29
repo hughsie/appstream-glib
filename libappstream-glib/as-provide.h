@@ -70,6 +70,7 @@ struct _AsProvideClass
  * @AS_PROVIDE_KIND_PYTHON2:		A Python 2 module
  * @AS_PROVIDE_KIND_PYTHON3:		A Python 3 module
  * @AS_PROVIDE_KIND_DBUS:		A D-Bus service
+ * @AS_PROVIDE_KIND_DBUS_SYSTEM:	A D-Bus system service
  *
  * The provide type.
  **/
@@ -83,6 +84,7 @@ typedef enum {
 	AS_PROVIDE_KIND_PYTHON2,
 	AS_PROVIDE_KIND_PYTHON3,
 	AS_PROVIDE_KIND_DBUS,		/* Since: 0.1.7 */
+	AS_PROVIDE_KIND_DBUS_SYSTEM,	/* Since: 0.2.4 */
 	/*< private >*/
 	AS_PROVIDE_KIND_LAST
 } AsProvideKind;

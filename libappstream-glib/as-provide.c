@@ -110,6 +110,8 @@ as_provide_kind_from_string (const gchar *kind)
 		return AS_PROVIDE_KIND_PYTHON3;
 	if (g_strcmp0 (kind, "dbus") == 0)
 		return AS_PROVIDE_KIND_DBUS;
+	if (g_strcmp0 (kind, "dbus-system") == 0)
+		return AS_PROVIDE_KIND_DBUS_SYSTEM;
 	return AS_PROVIDE_KIND_UNKNOWN;
 }
 
@@ -142,6 +144,8 @@ as_provide_kind_to_string (AsProvideKind kind)
 		return "python3";
 	if (kind == AS_PROVIDE_KIND_DBUS)
 		return "dbus";
+	if (kind == AS_PROVIDE_KIND_DBUS_SYSTEM)
+		return "dbus-system";
 	return NULL;
 }
 
@@ -235,6 +239,16 @@ as_provide_node_insert (AsProvide *provide, GNode *parent, gdouble api_version)
 			    priv->value,
 			    AS_NODE_INSERT_FLAG_NONE,
 			    NULL);
+	switch (priv->kind) {
+	case AS_PROVIDE_KIND_DBUS:
+		as_node_add_attribute (n, "type", "session", -1);
+		break;
+	case AS_PROVIDE_KIND_DBUS_SYSTEM:
+		as_node_add_attribute (n, "type", "system", -1);
+		break;
+	default:
+		break;
+	}
 	return n;
 }
 
