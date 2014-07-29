@@ -828,7 +828,7 @@ as_test_app_validate_file_bad_func (void)
 		problem = g_ptr_array_index (probs, i);
 		g_debug ("%s", as_problem_get_message (problem));
 	}
-	g_assert_cmpint (probs->len, ==, 24);
+	g_assert_cmpint (probs->len, ==, 26);
 
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				    "<id> has invalid type attribute");
@@ -875,6 +875,10 @@ as_test_app_validate_file_bad_func (void)
 				    "<release> has no version");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
 				    "<release> has no timestamp");
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<p> requires sentance case");
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+				    "<li> requires sentance case");
 }
 
 static void

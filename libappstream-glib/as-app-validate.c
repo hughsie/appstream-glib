@@ -33,6 +33,7 @@
 #include "as-utils.h"
 
 typedef struct {
+	AsApp			*app;
 	AsAppValidateFlags	 flags;
 	GPtrArray		*screenshot_urls;
 	GPtrArray		*probs;
@@ -128,6 +129,44 @@ as_app_validate_has_email (const gchar *text)
 }
 
 /**
+ * as_app_validate_has_first_word_capital:
+ **/
+static gboolean
+as_app_validate_has_first_word_capital (AsAppValidateHelper *helper, const gchar *text)
+{
+	_cleanup_free_ gchar *first_word = NULL;
+	gchar *tmp;
+	guint i;
+
+	if (text == NULL || text[0] == '\0')
+		return TRUE;
+
+	/* text starts with a number */
+	if (g_ascii_isdigit (text[0]))
+		return TRUE;
+
+	/* get the first word */
+	first_word = g_strdup (text);
+	tmp = g_strstr_len (first_word, -1, " ");
+	if (tmp != NULL)
+		*tmp = '\0';
+
+	/* does the word have caps anywhere? */
+	for (i = 0; first_word[i] != '\0'; i++) {
+		if (first_word[i] >= 'A' && first_word[i] <= 'Z')
+			return TRUE;
+	}
+
+	/* is the first word the project name */
+	if (g_strcmp0 (first_word, as_app_get_id (helper->app)) == 0)
+		return TRUE;
+	if (g_strcmp0 (first_word, as_app_get_name (helper->app, NULL)) == 0)
+		return TRUE;
+
+	return FALSE;
+}
+
+/**
  * as_app_validate_description_li:
  **/
 static void
@@ -163,6 +202,11 @@ as_app_validate_description_li (const gchar *text, AsAppValidateHelper *helper)
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
 				     "<li> cannot contain a hyperlink");
+	}
+	if (!as_app_validate_has_first_word_capital (helper, text)) {
+		ai_app_validate_add (helper->probs,
+				     AS_PROBLEM_KIND_STYLE_INCORRECT,
+				     "<li> requires sentance case");
 	}
 }
 
@@ -218,6 +262,11 @@ as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
 				     "<p> cannot contain a hyperlink");
+	}
+	if (!as_app_validate_has_first_word_capital (helper, text)) {
+		ai_app_validate_add (helper->probs,
+				     AS_PROBLEM_KIND_STYLE_INCORRECT,
+				     "<p> requires sentance case");
 	}
 	if (text[str_len - 1] != '.' &&
 	    text[str_len - 1] != '!' &&
@@ -609,6 +658,11 @@ as_app_validate_screenshot (AsScreenshot *ss, AsAppValidateHelper *helper)
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
 					     "<caption> cannot contain a hyperlink");
 		}
+		if (!as_app_validate_has_first_word_capital (helper, tmp)) {
+			ai_app_validate_add (helper->probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<caption> requires sentance case");
+		}
 	}
 }
 
@@ -875,6 +929,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	}
 
 	/* set up networking */
+	helper.app = app;
 	helper.probs = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	helper.screenshot_urls = g_ptr_array_new_with_free_func (g_free);
 	helper.flags = flags;
@@ -1096,6 +1151,11 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
 					     "<name> cannot contain a hyperlink");
 		}
+		if (!as_app_validate_has_first_word_capital (&helper, name)) {
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<name> requires sentance case");
+		}
 	}
 
 	/* comment */
@@ -1121,6 +1181,11 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
 					     "<summary> cannot contain a hyperlink");
+		}
+		if (!as_app_validate_has_first_word_capital (&helper, summary)) {
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_STYLE_INCORRECT,
+					     "<summary> requires sentance case");
 		}
 	}
 	if (summary != NULL && name != NULL &&

@@ -9,7 +9,7 @@
   <description>
     <ul>
      <li>One</li>
-     <li>Two.</li>
+     <li>two.</li>
     </ul>
     <p xml:lang="C">
       This application is awesome
@@ -29,7 +29,7 @@
     </release>
     <release>
       <description>
-        <p>Too little text.</p>
+        <p>too little text.</p>
       </description>
     </release>
   </releases>
