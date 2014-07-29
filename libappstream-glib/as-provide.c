@@ -235,18 +235,26 @@ as_provide_node_insert (AsProvide *provide, GNode *parent, gdouble api_version)
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
 	GNode *n;
 
-	n = as_node_insert (parent, as_provide_kind_to_string (priv->kind),
-			    priv->value,
-			    AS_NODE_INSERT_FLAG_NONE,
-			    NULL);
 	switch (priv->kind) {
 	case AS_PROVIDE_KIND_DBUS:
-		as_node_add_attribute (n, "type", "session", -1);
+		n = as_node_insert (parent, "dbus",
+				    priv->value,
+				    AS_NODE_INSERT_FLAG_NONE,
+				    "type", "session",
+				    NULL);
 		break;
 	case AS_PROVIDE_KIND_DBUS_SYSTEM:
-		as_node_add_attribute (n, "type", "system", -1);
+		n = as_node_insert (parent, "dbus",
+				    priv->value,
+				    AS_NODE_INSERT_FLAG_NONE,
+				    "type", "system",
+				    NULL);
 		break;
 	default:
+		n = as_node_insert (parent, as_provide_kind_to_string (priv->kind),
+				    priv->value,
+				    AS_NODE_INSERT_FLAG_NONE,
+				    NULL);
 		break;
 	}
 	return n;
@@ -269,6 +277,9 @@ as_provide_node_parse (AsProvide *provide, GNode *node, GError **error)
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
 	priv->kind = as_provide_kind_from_string (as_node_get_name (node));
+	if (priv->kind == AS_PROVIDE_KIND_DBUS &&
+	    g_strcmp0 (as_node_get_attribute (node, "type"), "system") == 0)
+		priv->kind = AS_PROVIDE_KIND_DBUS_SYSTEM;
 	g_free (priv->value);
 	priv->value = as_node_take_data (node);
 	return TRUE;

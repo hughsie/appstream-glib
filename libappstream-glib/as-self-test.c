@@ -559,6 +559,8 @@ as_test_app_func (void)
 		"</releases>"
 		"<provides>"
 		"<binary>/usr/bin/gnome-shell</binary>"
+		"<dbus type=\"session\">org.gnome.Software</dbus>"
+		"<dbus type=\"system\">org.gnome.Software2</dbus>"
 		"</provides>"
 		"<languages>"
 		"<lang percentage=\"90\">en_GB</lang>"
@@ -597,7 +599,7 @@ as_test_app_func (void)
 	g_assert_cmpint (as_app_get_priority (app), ==, -4);
 	g_assert_cmpint (as_app_get_screenshots(app)->len, ==, 2);
 	g_assert_cmpint (as_app_get_releases(app)->len, ==, 1);
-	g_assert_cmpint (as_app_get_provides(app)->len, ==, 1);
+	g_assert_cmpint (as_app_get_provides(app)->len, ==, 3);
 	g_assert_cmpint (as_app_get_kudos(app)->len, ==, 1);
 	g_assert_cmpstr (as_app_get_metadata_item (app, "SomethingRandom"), ==, "");
 	g_assert_cmpint (as_app_get_language (app, "en_GB"), ==, 90);
