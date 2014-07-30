@@ -1146,6 +1146,11 @@ as_store_load_installed (AsStore *store, const gchar *path,
 			g_propagate_error (error, error_local);
 			return FALSE;
 		}
+
+		/* do not load applications with NoDisplay=true */
+		if (as_app_get_metadata_item (app, "NoDisplay") != NULL)
+			continue;
+
 		/* set lower priority than AppStream entries */
 		as_app_set_priority (app, -1);
 		as_app_set_icon_kind (app, AS_ICON_KIND_STOCK);
