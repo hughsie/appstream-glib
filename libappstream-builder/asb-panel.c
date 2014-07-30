@@ -42,12 +42,14 @@ struct _AsbPanelPrivate
 {
 	GPtrArray		*items;
 	GMutex			 mutex;
+	GTimer			*timer;
 	gint			 tty_fd;
 	guint			 job_number_max;
 	guint			 job_total;
 	guint			 line_width_max;
 	guint			 number_cleared;
 	guint			 title_width;
+	guint			 time_secs_min;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbPanel, asb_panel, G_TYPE_OBJECT)
@@ -126,6 +128,29 @@ asb_panel_print (AsbPanel *panel, const gchar *fmt, ...)
 }
 
 /**
+ * asb_panel_get_time_string:
+ **/
+static gchar *
+asb_panel_get_time_string (AsbPanel *panel)
+{
+	AsbPanelPrivate *priv = GET_PRIVATE (panel);
+	guint seconds;
+
+	/* not enough jobs to get an accurate time */
+	if (priv->job_number_max < 20)
+		return g_strdup ("??");
+
+	/* calculate time */
+	seconds = (g_timer_elapsed (priv->timer, NULL) / (gdouble) priv->job_number_max) *
+		   (gdouble) (priv->job_total - priv->job_number_max);
+	if (seconds < priv->time_secs_min)
+		priv->time_secs_min = seconds;
+	if (priv->time_secs_min > 60)
+		return g_strdup_printf ("~%im", priv->time_secs_min / 60);
+	return g_strdup_printf ("~%is", priv->time_secs_min);
+}
+
+/**
  * asb_panel_refresh:
  **/
 static void
@@ -169,9 +194,12 @@ asb_panel_refresh (AsbPanel *panel)
 
 	/* print percentage completion */
 	if (item != NULL) {
-		asb_panel_print (panel, "Done: %.1f%%",
+		_cleanup_free_ gchar *time_str = NULL;
+		time_str = asb_panel_get_time_string (panel);
+		asb_panel_print (panel, "Done: %.1f%% [%s]",
 				 (gdouble) priv->job_number_max * 100.f /
-				 (gdouble) priv->job_total);
+				 (gdouble) priv->job_total,
+				 time_str);
 	} else {
 		asb_panel_print (panel, "Done: 100.0%%");
 	}
@@ -327,6 +355,7 @@ asb_panel_finalize (GObject *object)
 
 	g_ptr_array_unref (priv->items);
 	g_mutex_clear (&priv->mutex);
+	g_timer_destroy (priv->timer);
 
 	G_OBJECT_CLASS (asb_panel_parent_class)->finalize (object);
 }
@@ -340,6 +369,8 @@ asb_panel_init (AsbPanel *panel)
 	AsbPanelPrivate *priv = GET_PRIVATE (panel);
 	priv->items = g_ptr_array_new_with_free_func ((GDestroyNotify) asb_panel_item_free);
 	priv->title_width = 20;
+	priv->timer = g_timer_new ();
+	priv->time_secs_min = G_MAXUINT;
 	g_mutex_init (&priv->mutex);
 
 	/* find an actual TTY */
