@@ -1899,6 +1899,7 @@ as_util_validate_file (const gchar *filename,
 	_cleanup_ptrarray_unref_ GPtrArray *probs = NULL;
 
 	/* is AppStream */
+	g_print ("%s: ", filename);
 	if (as_app_guess_source_kind (filename) == AS_APP_SOURCE_KIND_APPSTREAM) {
 		gboolean ret;
 		_cleanup_object_unref_ AsStore *store;
@@ -1908,18 +1909,18 @@ as_util_validate_file (const gchar *filename,
 		ret = as_store_from_file (store, file, NULL, NULL, error);
 		if (!ret)
 			return FALSE;
-		g_print ("%s: %s\n", filename, _("OK"));
-		return TRUE;
+		probs = as_store_validate (store, flags, error);
+		if (probs == NULL)
+			return FALSE;
+	} else {
+		/* load file */
+		app = as_app_new ();
+		if (!as_app_parse_file (app, filename, AS_APP_PARSE_FLAG_NONE, error))
+			return FALSE;
+		probs = as_app_validate (app, flags, error);
+		if (probs == NULL)
+			return FALSE;
 	}
-
-	/* load file */
-	app = as_app_new ();
-	g_print ("%s: ", filename);
-	if (!as_app_parse_file (app, filename, AS_APP_PARSE_FLAG_NONE, error))
-		return FALSE;
-	probs = as_app_validate (app, flags, error);
-	if (probs == NULL)
-		return FALSE;
 	if (g_strcmp0 (g_getenv ("OUTPUT_FORMAT"), "html") == 0)
 		as_util_validate_output_html (filename, probs);
 	else

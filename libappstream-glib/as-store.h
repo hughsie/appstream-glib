@@ -167,6 +167,9 @@ void		 as_store_set_api_version	(AsStore	*store,
 AsStoreAddFlags	 as_store_get_add_flags		(AsStore	*store);
 void		 as_store_set_add_flags		(AsStore	*store,
 						 AsStoreAddFlags add_flags);
+GPtrArray	*as_store_validate		(AsStore	*store,
+						 AsAppValidateFlags flags,
+						 GError		**error);
 
 G_END_DECLS
 

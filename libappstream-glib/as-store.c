@@ -39,10 +39,17 @@
 #include "as-app-private.h"
 #include "as-cleanup.h"
 #include "as-node-private.h"
+#include "as-problem.h"
 #include "as-store.h"
 #include "as-utils-private.h"
 
 #define AS_API_VERSION_NEWEST	0.6
+
+typedef enum {
+	AS_STORE_PROBLEM_NONE			= 0,
+	AS_STORE_PROBLEM_LEGACY_ROOT		= 1 << 0,
+	AS_STORE_PROBLEM_LAST
+} AsStoreProblems;
 
 typedef struct _AsStorePrivate	AsStorePrivate;
 struct _AsStorePrivate
@@ -54,6 +61,7 @@ struct _AsStorePrivate
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
 	GPtrArray		*file_monitors;	/* of GFileMonitor */
 	AsStoreAddFlags		 add_flags;
+	AsStoreProblems		 problems;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsStore, as_store, G_TYPE_OBJECT)
@@ -460,6 +468,7 @@ as_store_from_root (AsStore *store,
 					     "No valid root node specified");
 			return FALSE;
 		}
+		priv->problems |= AS_STORE_PROBLEM_LEGACY_ROOT;
 	}
 
 	/* get version */
@@ -1270,6 +1279,209 @@ as_store_load (AsStore *store,
 			return FALSE;
 	}
 	return TRUE;
+}
+
+/**
+ * as_store_validate_add:
+ */
+G_GNUC_PRINTF (3, 4) static void
+as_store_validate_add (GPtrArray *problems, AsProblemKind kind, const gchar *fmt, ...)
+{
+	AsProblem *problem;
+	guint i;
+	va_list args;
+	_cleanup_free_ gchar *str;
+
+	va_start (args, fmt);
+	str = g_strdup_vprintf (fmt, args);
+	va_end (args);
+
+	/* already added */
+	for (i = 0; i < problems->len; i++) {
+		problem = g_ptr_array_index (problems, i);
+		if (g_strcmp0 (as_problem_get_message (problem), str) == 0)
+			return;
+	}
+
+	/* add new problem to list */
+	problem = as_problem_new ();
+	as_problem_set_kind (problem, kind);
+	as_problem_set_message (problem, str);
+	g_ptr_array_add (problems, problem);
+}
+
+/**
+ * as_store_validate:
+ * @store: a #AsStore instance.
+ * @flags: the #AsAppValidateFlags to use, e.g. %AS_APP_VALIDATE_FLAG_NONE
+ * @error: A #GError or %NULL.
+ *
+ * Validates infomation in the store for data applicable to the defined
+ * metadata version.
+ *
+ * Returns: (transfer container) (element-type AsProblem): A list of problems, or %NULL
+ *
+ * Since: 0.2.4
+ **/
+GPtrArray *
+as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	AsApp *app;
+	GPtrArray *probs;
+	guint i;
+
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+
+	probs = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+
+	/* check the root node */
+	if (priv->api_version < 0.6) {
+		if ((priv->problems & AS_STORE_PROBLEM_LEGACY_ROOT) == 0) {
+			as_store_validate_add (probs,
+					       AS_PROBLEM_KIND_TAG_INVALID,
+					       "metdata version is v%.and "
+					       "XML root is not <applications>",
+					       priv->api_version);
+		}
+	} else {
+		if ((priv->problems & AS_STORE_PROBLEM_LEGACY_ROOT) != 0) {
+			as_store_validate_add (probs,
+					       AS_PROBLEM_KIND_TAG_INVALID,
+					       "metdata version is v%.and "
+					       "XML root is not <components>",
+					       priv->api_version);
+		}
+		if (priv->origin == NULL) {
+			as_store_validate_add (probs,
+					       AS_PROBLEM_KIND_TAG_MISSING,
+					       "metdata version is v%.and "
+					       "origin attribute is missing",
+					       priv->api_version);
+		}
+	}
+
+	/* check each application */
+	for (i = 0; i < priv->array->len; i++) {
+		app = g_ptr_array_index (priv->array, i);
+		if (priv->api_version < 0.3) {
+			if (as_app_get_source_pkgname (app) != NULL) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<source_pkgname> only introduced in v0.3",
+						       priv->api_version);
+			}
+			if (as_app_get_priority (app) != 0) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<priority> only introduced in v0.3",
+						       priv->api_version);
+			}
+		}
+		if (priv->api_version < 0.4) {
+			if (as_app_get_project_group (app) != NULL) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<project_group> only introduced in v0.4",
+						       priv->api_version);
+			}
+			if (as_app_get_mimetypes(app)->len > 0) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<mimetypes> only introduced in v0.4",
+						       priv->api_version);
+			}
+			if (as_app_get_screenshots(app)->len > 0) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<screenshots> only introduced in v0.4",
+						       priv->api_version);
+			}
+			if (as_app_get_compulsory_for_desktops(app)->len > 0) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<compulsory_for_desktop> only introduced in v0.4",
+						       priv->api_version);
+			}
+			if (g_list_length (as_app_get_languages(app)) > 0) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<languages> only introduced in v0.4",
+						       priv->api_version);
+			}
+		}
+		if (priv->api_version < 0.6) {
+			if ((as_app_get_problems (app) & AS_APP_PROBLEM_PREFORMATTED_DESCRIPTION) == 0) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<description> markup "
+						       "was introduced in v0.6",
+						       priv->api_version);
+			}
+			if (as_app_get_architectures(app)->len > 0) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<architectures> only introduced in v0.6",
+						       priv->api_version);
+			}
+			if (as_app_get_releases(app)->len > 0) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<releases> only introduced in v0.6",
+						       priv->api_version);
+			}
+			if (as_app_get_provides(app)->len > 0) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<provides> only introduced in v0.6",
+						       priv->api_version);
+			}
+		} else {
+			if ((as_app_get_problems (app) & AS_APP_PROBLEM_PREFORMATTED_DESCRIPTION) != 0) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<description> requiring markup "
+						       "was introduced in v0.6",
+						       priv->api_version);
+			}
+		}
+		if (priv->api_version < 0.7) {
+			if (as_app_get_id_kind (app) == AS_ID_KIND_ADDON) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "addon kinds only introduced in v0.7",
+						       priv->api_version);
+			}
+			if (as_app_get_developer_name (app, NULL) != NULL) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<developer_name> only introduced in v0.7",
+						       priv->api_version);
+			}
+			if (as_app_get_extends(app)->len > 0) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_TAG_INVALID,
+						       "metdata version is v%.1f and "
+						       "<extends> only introduced in v0.7",
+						       priv->api_version);
+			}
+		}
+	}
+	return probs;
 }
 
 /**
