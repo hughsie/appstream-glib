@@ -712,7 +712,7 @@ as_store_to_file (AsStore *store,
 	/* write file */
 	if (!g_file_replace_contents (file,
 		g_memory_output_stream_get_data (G_MEMORY_OUTPUT_STREAM (out)),
-		g_memory_output_stream_get_size (G_MEMORY_OUTPUT_STREAM (out)),
+		g_memory_output_stream_get_data_size (G_MEMORY_OUTPUT_STREAM (out)),
 				      NULL,
 				      FALSE,
 				      G_FILE_CREATE_NONE,
