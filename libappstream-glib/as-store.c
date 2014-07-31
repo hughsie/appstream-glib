@@ -1340,7 +1340,7 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 		if ((priv->problems & AS_STORE_PROBLEM_LEGACY_ROOT) == 0) {
 			as_store_validate_add (probs,
 					       AS_PROBLEM_KIND_TAG_INVALID,
-					       "metdata version is v%.and "
+					       "metdata version is v%.1f and "
 					       "XML root is not <applications>",
 					       priv->api_version);
 		}
@@ -1348,14 +1348,14 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 		if ((priv->problems & AS_STORE_PROBLEM_LEGACY_ROOT) != 0) {
 			as_store_validate_add (probs,
 					       AS_PROBLEM_KIND_TAG_INVALID,
-					       "metdata version is v%.and "
+					       "metdata version is v%.1f and "
 					       "XML root is not <components>",
 					       priv->api_version);
 		}
 		if (priv->origin == NULL) {
 			as_store_validate_add (probs,
 					       AS_PROBLEM_KIND_TAG_MISSING,
-					       "metdata version is v%.and "
+					       "metdata version is v%.1f and "
 					       "origin attribute is missing",
 					       priv->api_version);
 		}
