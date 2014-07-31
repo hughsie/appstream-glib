@@ -53,7 +53,7 @@ _appstream-util()
             validate|validate-relax|validate-strict)
                 ext='@(@(appdata|metainfo).xml?(.in)|xml.gz)'
                 ;;
-            install|uninstall)
+            install|install-origin|uninstall)
                 ext='@(@(appdata|metainfo).xml|xml.gz)'
                 ;;
             dump)

@@ -859,9 +859,13 @@ out:
  * as_util_install_xml:
  **/
 static gboolean
-as_util_install_xml (const gchar *filename, const gchar *dir, GError **error)
+as_util_install_xml (const gchar *filename,
+		     const gchar *origin,
+		     const gchar *dir,
+		     GError **error)
 {
 	const gchar *destdir;
+	gchar *tmp;
 	_cleanup_free_ gchar *basename = NULL;
 	_cleanup_free_ gchar *path_dest = NULL;
 	_cleanup_free_ gchar *path_parent = NULL;
@@ -879,20 +883,55 @@ as_util_install_xml (const gchar *filename, const gchar *dir, GError **error)
 		return FALSE;
 	}
 
-	/* copy XML file */
+	/* calculate the new destination */
 	file_src = g_file_new_for_path (filename);
 	basename = g_path_get_basename (filename);
-	path_dest = g_build_filename (path_parent, basename, NULL);
+	if (origin != NULL) {
+		_cleanup_free_ gchar *basename_new = NULL;
+		tmp = g_strstr_len (basename, -1, ".");
+		if (tmp == NULL) {
+			g_set_error (error,
+				     AS_ERROR,
+				     AS_ERROR_FAILED,
+				     "Name of XML file invalid %s",
+				     basename);
+			return FALSE;
+		}
+		basename_new = g_strdup_printf ("%s%s", origin, tmp);
+		/* replace the fedora.xml.gz into %{origin}.xml.gz */
+		path_dest = g_build_filename (path_parent, basename_new, NULL);
+	} else {
+		path_dest = g_build_filename (path_parent, basename, NULL);
+	}
+
+	/* actually copy file */
 	file_dest = g_file_new_for_path (path_dest);
-	return g_file_copy (file_src, file_dest, G_FILE_COPY_OVERWRITE,
-			    NULL, NULL, NULL, error);
+	if (!g_file_copy (file_src, file_dest, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, error))
+		return FALSE;
+
+	/* fix the origin */
+	if (origin != NULL) {
+		_cleanup_object_unref_ AsStore *store = NULL;
+		store = as_store_new ();
+		if (!as_store_from_file (store, file_dest, NULL, NULL, error))
+			return FALSE;
+		as_store_set_origin (store, origin);
+		if (!as_store_to_file (store, file_dest,
+				       AS_NODE_TO_XML_FLAG_ADD_HEADER |
+				       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE,
+				       NULL, error))
+			return FALSE;
+	}
+	return TRUE;
 }
 
 /**
  * as_util_install_filename:
  **/
 static gboolean
-as_util_install_filename (const gchar *filename, GError **error)
+as_util_install_filename (const gchar *filename,
+			  const gchar *origin,
+			  GError **error)
 {
 	gboolean ret = FALSE;
 	gchar *tmp;
@@ -900,14 +939,20 @@ as_util_install_filename (const gchar *filename, GError **error)
 
 	switch (as_app_guess_source_kind (filename)) {
 	case AS_APP_SOURCE_KIND_APPSTREAM:
-		ret = as_util_install_xml (filename, "/usr/share/app-info/xmls", error);
+		ret = as_util_install_xml (filename, origin,
+					   "/usr/share/app-info/xmls", error);
 		break;
 	case AS_APP_SOURCE_KIND_APPDATA:
 	case AS_APP_SOURCE_KIND_METAINFO:
-		ret = as_util_install_xml (filename, "/usr/share/appdata", error);
+		ret = as_util_install_xml (filename, NULL,
+					   "/usr/share/appdata", error);
 		break;
 	default:
 		/* icons */
+		if (origin != NULL) {
+			ret = as_util_install_icons (filename, origin, error);
+			break;
+		}
 		basename = g_path_get_basename (filename);
 		tmp = g_strstr_len (basename, -1, "-icons.tar.gz");
 		if (tmp != NULL) {
@@ -947,12 +992,38 @@ as_util_install (AsUtilPrivate *priv, gchar **values, GError **error)
 	/* for each item on the command line, install the xml files and
 	 * explode the icon files */
 	for (i = 0; values[i] != NULL; i++) {
-		if (!as_util_install_filename (values[i], error))
+		if (!as_util_install_filename (values[i], NULL, error))
 			return FALSE;
 	}
 	return TRUE;
 }
 
+/**
+ * as_util_install_origin:
+ **/
+static gboolean
+as_util_install_origin (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	guint i;
+
+	/* check args */
+	if (g_strv_length (values) < 2) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected origin filename(s)");
+		return FALSE;
+	}
+
+	/* for each item on the command line, install the xml files and
+	 * explode the icon files */
+	for (i = 1; values[i] != NULL; i++) {
+		if (!as_util_install_filename (values[i], values[0], error))
+			return FALSE;
+	}
+	return TRUE;
+}
 
 /**
  * as_util_rmtree:
@@ -2022,6 +2093,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Installs AppStream metadata"),
 		     as_util_install);
+	as_util_add (priv->cmd_array,
+		     "install-origin",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Installs AppStream metadata with new origin"),
+		     as_util_install_origin);
 	as_util_add (priv->cmd_array,
 		     "uninstall",
 		     NULL,
