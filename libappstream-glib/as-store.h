@@ -161,6 +161,9 @@ gboolean	 as_store_to_file		(AsStore	*store,
 const gchar	*as_store_get_origin		(AsStore	*store);
 void		 as_store_set_origin		(AsStore	*store,
 						 const gchar	*origin);
+const gchar	*as_store_get_destdir		(AsStore	*store);
+void		 as_store_set_destdir		(AsStore	*store,
+						 const gchar	*destdir);
 gdouble		 as_store_get_api_version	(AsStore	*store);
 void		 as_store_set_api_version	(AsStore	*store,
 						 gdouble	 api_version);

@@ -54,6 +54,7 @@ typedef enum {
 typedef struct _AsStorePrivate	AsStorePrivate;
 struct _AsStorePrivate
 {
+	gchar			*destdir;
 	gchar			*origin;
 	gdouble			 api_version;
 	GPtrArray		*array;		/* of AsApp */
@@ -100,6 +101,7 @@ as_store_finalize (GObject *object)
 	AsStore *store = AS_STORE (object);
 	AsStorePrivate *priv = GET_PRIVATE (store);
 
+	g_free (priv->destdir);
 	g_free (priv->origin);
 	g_ptr_array_unref (priv->array);
 	g_ptr_array_unref (priv->file_monitors);
@@ -773,6 +775,40 @@ as_store_set_origin (AsStore *store, const gchar *origin)
 }
 
 /**
+ * as_store_set_destdir:
+ * @store: a #AsStore instance.
+ * @destdir: the destdir, e.g. "/tmp"
+ *
+ * Sets the destdir, which is used to prefix usr.
+ *
+ * Since: 0.2.4
+ **/
+void
+as_store_set_destdir (AsStore *store, const gchar *destdir)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_free (priv->destdir);
+	priv->destdir = g_strdup (destdir);
+}
+
+/**
+ * as_store_get_destdir:
+ * @store: a #AsStore instance.
+ *
+ * Gets the destdir, which is used to prefix usr.
+ *
+ * Returns: the destdir path, or %NULL if unset
+ *
+ * Since: 0.2.4
+ **/
+const gchar *
+as_store_get_destdir (AsStore *store)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	return priv->destdir;
+}
+
+/**
  * as_store_get_api_version:
  * @store: a #AsStore instance.
  *
@@ -1208,6 +1244,7 @@ as_store_load (AsStore *store,
 	       GCancellable *cancellable,
 	       GError **error)
 {
+	AsStorePrivate *priv = GET_PRIVATE (store);
 	const gchar * const * data_dirs;
 	const gchar *tmp;
 	gchar *path;
@@ -1254,28 +1291,32 @@ as_store_load (AsStore *store,
 
 	/* load each app-info path if it exists */
 	for (i = 0; i < app_info->len; i++) {
+		_cleanup_free_ gchar *dest = NULL;
 		tmp = g_ptr_array_index (app_info, i);
-		if (!g_file_test (tmp, G_FILE_TEST_EXISTS))
+		dest = g_build_filename (priv->destdir ? priv->destdir : "/", tmp, NULL);
+		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 			continue;
-		if (!as_store_load_app_info (store, tmp, cancellable, error))
+		if (!as_store_load_app_info (store, dest, cancellable, error))
 			return FALSE;
 	}
 
 	/* load each appdata and desktop path if it exists */
 	for (i = 0; i < installed->len; i++) {
+		_cleanup_free_ gchar *dest = NULL;
 		tmp = g_ptr_array_index (installed, i);
-		if (!g_file_test (tmp, G_FILE_TEST_EXISTS))
+		dest = g_build_filename (priv->destdir ? priv->destdir : "/", tmp, NULL);
+		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 			continue;
-		if (!as_store_load_installed (store, tmp, cancellable, error))
+		if (!as_store_load_installed (store, dest, cancellable, error))
 			return FALSE;
 	}
 
 	/* ubuntu specific */
 	if ((flags & AS_STORE_LOAD_FLAG_APP_INSTALL) > 0) {
-		if (!as_store_load_app_install (store,
-						"/usr/share/app-install",
-						cancellable,
-						error))
+		_cleanup_free_ gchar *dest = NULL;
+		dest = g_build_filename (priv->destdir ? priv->destdir : "/",
+					 "/usr/share/app-install", NULL);
+		if (!as_store_load_app_install (store, dest, cancellable, error))
 			return FALSE;
 	}
 	return TRUE;
