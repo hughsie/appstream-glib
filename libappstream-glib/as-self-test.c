@@ -886,6 +886,43 @@ as_test_app_validate_file_bad_func (void)
 }
 
 static void
+as_test_store_validate_func (void)
+{
+	GError *error = NULL;
+	gboolean ret;
+	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+	_cleanup_ptrarray_unref_ GPtrArray *probs = NULL;
+
+	/* open file */
+	store = as_store_new ();
+	filename = as_test_get_filename ("validate.xml.gz");
+	file = g_file_new_for_path (filename);
+	ret = as_store_from_file (store, file, NULL, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_store_get_size (store), ==, 1);
+
+	probs = as_store_validate (store, AS_APP_VALIDATE_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (probs != NULL);
+	g_assert_cmpint (probs->len, ==, 4);
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "metdata version is v0.1 and "
+				    "<screenshots> only introduced in v0.4");
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "metdata version is v0.1 and "
+				    "<compulsory_for_desktop> only introduced in v0.4");
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "metdata version is v0.1 and "
+				    "<project_group> only introduced in v0.4");
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "metdata version is v0.1 and "
+				    "<description> markup was introduced in v0.6");
+}
+
+static void
 as_test_app_validate_style_func (void)
 {
 	AsProblem *problem;
@@ -2152,6 +2189,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{origin}", as_test_store_origin_func);
 	g_test_add_func ("/AppStream/store{app-install}", as_test_store_app_install_func);
 	g_test_add_func ("/AppStream/store{metadata}", as_test_store_metadata_func);
+	g_test_add_func ("/AppStream/store{validate}", as_test_store_validate_func);
 	g_test_add_func ("/AppStream/store{speed-appstream}", as_test_store_speed_appstream_func);
 	g_test_add_func ("/AppStream/store{speed-appdata}", as_test_store_speed_appdata_func);
 	g_test_add_func ("/AppStream/store{speed-desktop}", as_test_store_speed_desktop_func);

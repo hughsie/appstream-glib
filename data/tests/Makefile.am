@@ -14,7 +14,8 @@ test_files =						\
 	screenshot.png					\
 	ss-small.png					\
 	success.appdata.xml				\
-	translated.appdata.xml
+	translated.appdata.xml				\
+	validate.xml.gz
 
 EXTRA_DIST = $(test_files)
 
