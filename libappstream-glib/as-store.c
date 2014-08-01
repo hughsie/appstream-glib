@@ -1097,6 +1097,11 @@ as_store_load_app_install_file (AsStore *store,
 	as_app_set_icon_path (app, path_icons, -1);
 	as_store_add_app_install_screenshot (app);
 	as_store_add_app (store, app);
+
+	/* this isn't strictly true, but setting it AS_APP_SOURCE_KIND_DESKTOP
+	 * means that it's considered installed by the front-end */
+	 as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
+
 	return TRUE;
 }
 

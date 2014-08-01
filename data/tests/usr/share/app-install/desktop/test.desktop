@@ -1,0 +1,17 @@
+# Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+
+[Desktop Entry]
+X-AppInstall-Package=testpkg
+X-AppInstall-Popcon=1
+X-AppInstall-Section=cosmos
+
+Version=1.0
+Name=Test
+Comment=A test program
+Exec=test
+Icon=test
+Terminal=false
+Type=Application
+Categories=Game;
+
+X-Ubuntu-Gettext-Domain=app-install-data

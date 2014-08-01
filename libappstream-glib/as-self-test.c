@@ -886,6 +886,40 @@ as_test_app_validate_file_bad_func (void)
 }
 
 static void
+as_test_store_local_app_install_func (void)
+{
+	AsApp *app;
+	GError *error = NULL;
+	gboolean ret;
+	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_free_ gchar *source_file = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+
+	/* open test store */
+	store = as_store_new ();
+	filename = as_test_get_filename (".");
+	as_store_set_destdir (store, filename);
+	ret = as_store_load (store, AS_STORE_LOAD_FLAG_APP_INSTALL, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_store_get_size (store), ==, 1);
+
+	/* make sure app is valid */
+	app = as_store_get_app_by_id (store, "test.desktop");
+	g_assert (app != NULL);
+	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "Test");
+	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "A test program");
+	g_assert_cmpstr (as_app_get_icon (app), ==, "test");
+	g_assert_cmpint (as_app_get_icon_kind (app), ==, AS_ICON_KIND_CACHED);
+	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_APP_SOURCE_KIND_APPSTREAM);
+
+	/* ensure we reference the correct file */
+	source_file = g_build_filename (filename, "/usr", "share", "app-install",
+					"desktop", "test.desktop", NULL);
+	g_assert_cmpstr (as_app_get_source_file (app), ==, source_file);
+}
+
+static void
 as_test_store_validate_func (void)
 {
 	GError *error = NULL;
@@ -2190,6 +2224,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{app-install}", as_test_store_app_install_func);
 	g_test_add_func ("/AppStream/store{metadata}", as_test_store_metadata_func);
 	g_test_add_func ("/AppStream/store{validate}", as_test_store_validate_func);
+	g_test_add_func ("/AppStream/store{local-app-install}", as_test_store_local_app_install_func);
 	g_test_add_func ("/AppStream/store{speed-appstream}", as_test_store_speed_appstream_func);
 	g_test_add_func ("/AppStream/store{speed-appdata}", as_test_store_speed_appdata_func);
 	g_test_add_func ("/AppStream/store{speed-desktop}", as_test_store_speed_desktop_func);
