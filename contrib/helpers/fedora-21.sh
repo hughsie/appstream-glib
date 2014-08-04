@@ -7,7 +7,7 @@ time client/appstream-builder						\
 	--extra-appstream-dir=../fedora-appstream/appstream-extra	\
 	--extra-appdata-dir=../fedora-appstream/appdata-extra		\
 	--extra-screenshots-dir=../fedora-appstream/screenshots-extra	\
-	--output-dir=./contrib/metadata					\
+	--output-dir=./contrib/screenshots/fedora-21			\
 	--screenshot-dir=./contrib/screenshots/fedora-21		\
 	--basename=fedora-21						\
 	--screenshot-uri=http://alt.fedoraproject.org/pub/alt/screenshots/f21/
@@ -20,3 +20,8 @@ time client/appstream-builder						\
 ./client/appstream-util status-html 					\
 	./contrib/metadata/fedora-21-failed.xml.gz			\
 	./contrib/screenshots/fedora-21/failed.html
+
+# sync the screenshots and metadata
+cd contrib/screenshots/fedora-21/
+./upload-screenshots.sh
+cd -
