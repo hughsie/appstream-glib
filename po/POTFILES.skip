@@ -1,1 +1,2 @@
 data/tests/intltool.appdata.xml.in
+data/tests/usr/share/appdata/broken.appdata.xml

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2014 Richard Hughes <richard@hughsie.com>  -->
+<application>
+ <id type="desktop">broken.desktop</id>
+ <name>Broken</name>
+ <description><_p>tag is broken.</_p></description>
+</application>

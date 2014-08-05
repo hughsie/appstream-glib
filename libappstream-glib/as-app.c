@@ -2874,10 +2874,24 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 
 		/* unwrap appdata inline */
 		if (priv->source_kind == AS_APP_SOURCE_KIND_APPDATA) {
+			GError *error_local = NULL;
 			_cleanup_hashtable_unref_ GHashTable *unwrapped;
-			unwrapped = as_node_get_localized_unwrap (n, error);
-			if (unwrapped == NULL)
+			unwrapped = as_node_get_localized_unwrap (n, &error_local);
+			if (unwrapped == NULL) {
+				if (g_error_matches (error_local,
+						     AS_NODE_ERROR,
+						     AS_NODE_ERROR_INVALID_MARKUP)) {
+					_cleanup_string_free_ GString *debug = NULL;
+					debug = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+					g_warning ("ignoring description '%s' from %s: %s",
+						   debug->str,
+						   as_app_get_source_file (app),
+						   error_local->message);
+					break;
+				}
+				g_propagate_error (error, error_local);
 				return FALSE;
+			}
 			as_app_subsume_dict (priv->descriptions, unwrapped, FALSE);
 			break;
 		}

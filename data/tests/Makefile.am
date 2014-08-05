@@ -15,6 +15,7 @@ test_files =						\
 	ss-small.png					\
 	success.appdata.xml				\
 	translated.appdata.xml				\
+	usr/share/appdata/broken.appdata.xml		\
 	usr/share/app-install/desktop/test.desktop	\
 	usr/share/app-install/icons/test.png		\
 	validate.xml.gz

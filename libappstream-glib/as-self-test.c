@@ -920,6 +920,36 @@ as_test_store_local_app_install_func (void)
 }
 
 static void
+as_test_store_local_appdata_func (void)
+{
+	AsApp *app;
+	GError *error = NULL;
+	gboolean ret;
+	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+
+	/* this are the warnings expected */
+	g_test_expect_message (G_LOG_DOMAIN,
+			       G_LOG_LEVEL_WARNING,
+			       "ignoring description '*' from */broken.appdata.xml: Unknown tag '_p'");
+
+	/* open test store */
+	store = as_store_new ();
+	filename = as_test_get_filename (".");
+	as_store_set_destdir (store, filename);
+	ret = as_store_load (store, AS_STORE_LOAD_FLAG_APPDATA, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_store_get_size (store), ==, 1);
+
+	/* make sure app is valid */
+	app = as_store_get_app_by_id (store, "broken.desktop");
+	g_assert (app != NULL);
+	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "Broken");
+	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_APP_SOURCE_KIND_APPDATA);
+}
+
+static void
 as_test_store_validate_func (void)
 {
 	GError *error = NULL;
@@ -2225,6 +2255,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{metadata}", as_test_store_metadata_func);
 	g_test_add_func ("/AppStream/store{validate}", as_test_store_validate_func);
 	g_test_add_func ("/AppStream/store{local-app-install}", as_test_store_local_app_install_func);
+	g_test_add_func ("/AppStream/store{local-appdata}", as_test_store_local_appdata_func);
 	g_test_add_func ("/AppStream/store{speed-appstream}", as_test_store_speed_appstream_func);
 	g_test_add_func ("/AppStream/store{speed-appdata}", as_test_store_speed_appdata_func);
 	g_test_add_func ("/AppStream/store{speed-desktop}", as_test_store_speed_desktop_func);
