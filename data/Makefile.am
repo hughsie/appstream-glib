@@ -1,4 +1,5 @@
 SUBDIRS = 						\
+	installed-tests					\
 	tests
 
 m4datadir = $(datadir)/aclocal

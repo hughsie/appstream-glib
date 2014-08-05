@@ -177,6 +177,7 @@ libappstream-glib/Makefile
 libappstream-glib/appstream-glib.pc
 libappstream-glib/as-version.h
 data/Makefile
+data/installed-tests/Makefile
 data/tests/Makefile
 docs/Makefile
 docs/api/Makefile

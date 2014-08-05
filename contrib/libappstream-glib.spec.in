@@ -104,6 +104,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_datadir}/gtk-doc/html/appstream-glib
 %{_datadir}/gir-1.0/AppStreamGlib-1.0.gir
 %{_datadir}/aclocal/appstream-xml.m4
+%{_datadir}/installed-tests/appstream-glib/*.test
 
 %files builder
 %doc COPYING
