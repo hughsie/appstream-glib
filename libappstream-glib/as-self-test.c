@@ -1985,12 +1985,18 @@ as_test_store_speed_appdata_func (void)
 	gboolean ret;
 	guint i;
 	guint loops = 10;
+	_cleanup_free_ gchar *filename = NULL;
 	_cleanup_timer_destroy_ GTimer *timer = NULL;
 
+	filename = as_test_get_filename (".");
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
 		_cleanup_object_unref_ AsStore *store;
 		store = as_store_new ();
+		as_store_set_destdir (store, filename);
+		g_test_expect_message (G_LOG_DOMAIN,
+				       G_LOG_LEVEL_WARNING,
+				       "ignoring description '*' from */broken.appdata.xml: Unknown tag '_p'");
 		ret = as_store_load (store, AS_STORE_LOAD_FLAG_APPDATA, NULL, &error);
 		g_assert_no_error (error);
 		g_assert (ret);
