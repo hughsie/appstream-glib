@@ -2887,6 +2887,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 						   debug->str,
 						   as_app_get_source_file (app),
 						   error_local->message);
+					g_error_free (error_local);
 					break;
 				}
 				g_propagate_error (error, error_local);
