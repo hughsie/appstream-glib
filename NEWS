@@ -1,3 +1,31 @@
+Version 0.2.4
+~~~~~~~~~~~~~
+Released: 2014-08-05
+
+New Features:
+ - Add AS_PROVIDE_KIND_DBUS_SYSTEM (Richard Hughes)
+ - Add an 'install-origin' command to appstream-util (Richard Hughes)
+ - Add an installed tests to validate appdata (Matthias Clasen)
+ - Add as_store_set_destdir() so we can use a different root (Richard Hughes)
+ - Add as_store_validate() (Richard Hughes)
+ - Add asb_app_set_veto_description() (Richard Hughes)
+ - Add support for <source_pkgname> which will be in AppStream 0.8 (Richard Hughes)
+ - Add the <dbus> provide for applications automatically (Richard Hughes)
+
+Bugfixes:
+ - Add a plugin to detect new-style 'gtk/menus.ui' AppMenu support (Richard Hughes)
+ - Avoid using rsync's -a parameter (Kalev Lember)
+ - Detect any addons with missing parents (Richard Hughes)
+ - Do not load applications with NoDisplay=true when loading local (Richard Hughes)
+ - Do not pad the compressed AppStream metadata with NUL bytes (Richard Hughes)
+ - Do not treat app-install metadata as installed (Richard Hughes)
+ - Markup errors should not be fatal when assembling a store (Richard Hughes)
+ - Only add registered projects and categories to the metadata (Richard Hughes)
+ - Only link to apps.fedoraproject.org when processing Fedora metadata (Richard Hughes)
+ - Show the time remaining when building metadata (Richard Hughes)
+ - Show what application addons extend in status.html (Richard Hughes)
+ - Validate for a sentence case start in <p>, <li> and <name> tags (Richard Hughes)
+
 Version 0.2.3
 ~~~~~~~~~~~~~
 Released: 2014-07-17
