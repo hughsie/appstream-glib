@@ -1657,7 +1657,7 @@ as_node_get_localized_unwrap_type_li (const GNode *node,
 					/* only <li> is valid in lists */
 					g_set_error (error,
 						     AS_NODE_ERROR,
-						     AS_NODE_ERROR_FAILED,
+						     AS_NODE_ERROR_INVALID_MARKUP,
 						     "Tag %s in %s invalid",
 						     data_c->name, data->name);
 					return FALSE;
@@ -1668,7 +1668,7 @@ as_node_get_localized_unwrap_type_li (const GNode *node,
 			/* only <p>, <ul> and <ol> is valid here */
 			g_set_error (error,
 				     AS_NODE_ERROR,
-				     AS_NODE_ERROR_FAILED,
+				     AS_NODE_ERROR_INVALID_MARKUP,
 				     "Unknown tag '%s'",
 				     data->name);
 			return FALSE;
@@ -1733,7 +1733,7 @@ as_node_get_localized_unwrap_type_ul (const GNode *node,
 					/* only <li> is valid in lists */
 					g_set_error (error,
 						     AS_NODE_ERROR,
-						     AS_NODE_ERROR_FAILED,
+						     AS_NODE_ERROR_INVALID_MARKUP,
 						     "Tag %s in %s invalid",
 						     data_c->name, data->name);
 					return FALSE;
@@ -1744,7 +1744,7 @@ as_node_get_localized_unwrap_type_ul (const GNode *node,
 			/* only <p>, <ul> and <ol> is valid here */
 			g_set_error (error,
 				     AS_NODE_ERROR,
-				     AS_NODE_ERROR_FAILED,
+				     AS_NODE_ERROR_INVALID_MARKUP,
 				     "Unknown tag '%s'",
 				     data->name);
 			return FALSE;

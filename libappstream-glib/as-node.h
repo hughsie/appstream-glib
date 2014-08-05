@@ -97,11 +97,13 @@ typedef enum {
 /**
  * AsNodeError:
  * @AS_NODE_ERROR_FAILED:			Generic failure
+ * @AS_NODE_ERROR_INVALID_MARKUP:		XML markup was invalid
  *
  * The error type.
  **/
 typedef enum {
 	AS_NODE_ERROR_FAILED,
+	AS_NODE_ERROR_INVALID_MARKUP,		/* Since: 0.2.4 */
 	/*< private >*/
 	AS_NODE_ERROR_LAST
 } AsNodeError;
