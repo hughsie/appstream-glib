@@ -32,6 +32,21 @@
 
 G_BEGIN_DECLS
 
+/**
+ * AsAppProblems:
+ * @AS_APP_PROBLEM_NONE:			No problems detected
+ * @AS_APP_PROBLEM_NO_XML_HEADER:		No XML header found
+ * @AS_APP_PROBLEM_NO_COPYRIGHT_INFO:		No copyright header found
+ * @AS_APP_PROBLEM_DEPRECATED_LICENCE:		Deprecated <license> tag
+ * @AS_APP_PROBLEM_MULTIPLE_ENTRIES:		Multiple <components> defined
+ * @AS_APP_PROBLEM_INTLTOOL_NAME:		<_name> tag detected
+ * @AS_APP_PROBLEM_INTLTOOL_SUMMARY:		<_summary> tag detected
+ * @AS_APP_PROBLEM_INTLTOOL_DESCRIPTION:	<_p>, <_li> tag detected
+ * @AS_APP_PROBLEM_NOT_VALID_UTF8:		Text with invalid UTF-8
+ * @AS_APP_PROBLEM_PREFORMATTED_DESCRIPTION:	Preformatted description found
+ *
+ * The application problems detected when loading.
+ **/
 typedef enum {
 	AS_APP_PROBLEM_NONE			= 0,
 	AS_APP_PROBLEM_NO_XML_HEADER		= 1 << 0,
@@ -43,6 +58,7 @@ typedef enum {
 	AS_APP_PROBLEM_INTLTOOL_DESCRIPTION	= 1 << 6,
 	AS_APP_PROBLEM_NOT_VALID_UTF8		= 1 << 7,
 	AS_APP_PROBLEM_PREFORMATTED_DESCRIPTION	= 1 << 8,
+	/*< private >*/
 	AS_APP_PROBLEM_LAST
 } AsAppProblems;
 

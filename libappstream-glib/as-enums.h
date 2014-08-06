@@ -39,6 +39,7 @@ G_BEGIN_DECLS
  * @AS_ID_KIND_INPUT_METHOD:		A input method add-on
  * @AS_ID_KIND_WEB_APP:			A web appication
  * @AS_ID_KIND_SOURCE:			A software source
+ * @AS_ID_KIND_ADDON:			An addon, e.g. a plugin
  *
  * The ID type.
  **/
@@ -102,7 +103,7 @@ typedef enum {
  * @AS_KUDO_KIND_UNKNOWN:		Type invalid or not known
  * @AS_KUDO_KIND_SEARCH_PROVIDER:	Installs a search provider
  * @AS_KUDO_KIND_USER_DOCS:		Installs user documentation
- * @AS_KUDO_KIND_APP_MENU		Uses the GNOME application menu
+ * @AS_KUDO_KIND_APP_MENU:		Uses the GNOME application menu
  * @AS_KUDO_KIND_MODERN_TOOLKIT:	Uses a modern toolkit like GTK3 or QT5
  * @AS_KUDO_KIND_NOTIFICATIONS:		Registers notifications with KDE or GNOME
  *

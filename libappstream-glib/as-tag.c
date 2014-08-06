@@ -60,6 +60,7 @@ as_tag_from_string (const gchar *tag)
 /**
  * as_tag_from_string_full:
  * @tag: the string.
+ * @flags: the #AsTagFlags e.g. %AS_TAG_FLAG_USE_FALLBACKS
  *
  * Converts the text representation to an enumerated value also converting
  * legacy key names.

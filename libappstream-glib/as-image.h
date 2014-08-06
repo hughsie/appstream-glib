@@ -77,7 +77,7 @@ typedef enum {
 } AsImageKind;
 
 /**
- * AsImageSaveFlag:
+ * AsImageSaveFlags:
  * @AS_IMAGE_SAVE_FLAG_NONE:		No special flags set
  * @AS_IMAGE_SAVE_FLAG_PAD_16_9:	Pad with alpha to 16:9 aspect
  *
@@ -89,6 +89,7 @@ typedef enum {
 	/*< private >*/
 	AS_IMAGE_SAVE_FLAG_LAST
 } AsImageSaveFlags;
+
 /**
  * AsImageAlphaFlags:
  * @AS_IMAGE_ALPHA_FLAG_NONE:		No padding detected

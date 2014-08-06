@@ -194,6 +194,7 @@ typedef enum {
 	AS_APP_STATE_QUEUED_FOR_INSTALL,		/* Since: 0.2.2 */
 	AS_APP_STATE_INSTALLING,			/* Since: 0.2.2 */
 	AS_APP_STATE_REMOVING,				/* Since: 0.2.2 */
+	/*< private >*/
 	AS_APP_STATE_LAST
 } AsAppState;
 

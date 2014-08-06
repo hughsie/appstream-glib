@@ -647,6 +647,8 @@ typedef enum {
  * xx@@@@@@@@@@@@@@@@@@@@@@@@xx
  * xxxxxxxxxxxxxxxxxxxxxxxxxxxx
  *
+ * Returns: #AsImageAlphaFlags, e.g. %AS_IMAGE_ALPHA_FLAG_LEFT
+ *
  * Since: 0.2.2
  **/
 AsImageAlphaFlags
