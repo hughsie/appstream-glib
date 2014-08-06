@@ -31,6 +31,7 @@
   </description>
   <screenshots>
     <screenshot type="default" width="355" height="134">https://projects.gnome.org/gnome-power-manager/images/gpm-low-batt.png</screenshot>
+    <screenshot xml:lang="as" type="default" width="355" height="134">https://projects.gnome.org/gnome-power-manager/images/gpm-low-batt.png</screenshot>
   </screenshots>
   <url type="homepage">http://www.gnome.org/projects/gnome-power-manager/</url>
   <updatecontact>richard_at_hughsie.com</updatecontact>

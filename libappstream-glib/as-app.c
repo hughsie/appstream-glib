@@ -3046,6 +3046,9 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 			_cleanup_object_unref_ AsScreenshot *ss = NULL;
 			if (as_node_get_tag (c) != AS_TAG_SCREENSHOT)
 				continue;
+			/* we don't yet support localised screenshots */
+			if (as_node_get_attribute (c, "xml:lang") != NULL)
+				continue;
 			ss = as_screenshot_new ();
 			if (!as_screenshot_node_parse (ss, c, error))
 				return FALSE;
