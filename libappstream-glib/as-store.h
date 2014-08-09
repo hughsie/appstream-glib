@@ -71,6 +71,7 @@ struct _AsStoreClass
  * @AS_STORE_LOAD_FLAG_APP_INSTALL:		The ubuntu-specific app-install data
  * @AS_STORE_LOAD_FLAG_APPDATA:			The installed AppData files
  * @AS_STORE_LOAD_FLAG_DESKTOP:			The installed desktop files
+ * @AS_STORE_LOAD_FLAG_ALLOW_VETO:		Add vetoed applications
  *
  * The flags to use when loading the store.
  **/
@@ -81,6 +82,7 @@ typedef enum {
 	AS_STORE_LOAD_FLAG_APP_INSTALL		= 4,	/* Since: 0.1.2 */
 	AS_STORE_LOAD_FLAG_APPDATA		= 8,	/* Since: 0.2.2 */
 	AS_STORE_LOAD_FLAG_DESKTOP		= 16,	/* Since: 0.2.2 */
+	AS_STORE_LOAD_FLAG_ALLOW_VETO		= 32,	/* Since: 0.2.5 */
 	/*< private >*/
 	AS_STORE_LOAD_FLAG_LAST
 } AsStoreLoadFlags;

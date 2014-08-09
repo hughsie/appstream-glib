@@ -1153,9 +1153,13 @@ as_store_load_app_install (AsStore *store,
  * as_store_load_installed:
  **/
 static gboolean
-as_store_load_installed (AsStore *store, const gchar *path,
-			 GCancellable *cancellable, GError **error)
+as_store_load_installed (AsStore *store,
+			 AsStoreLoadFlags flags,
+			 const gchar *path,
+			 GCancellable *cancellable,
+			 GError **error)
 {
+	AsAppParseFlags parse_flags = AS_APP_PARSE_FLAG_USE_HEURISTICS;
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	GError *error_local = NULL;
 	const gchar *tmp;
@@ -1164,6 +1168,10 @@ as_store_load_installed (AsStore *store, const gchar *path,
 	dir = g_dir_open (path, 0, error);
 	if (dir == NULL)
 		return FALSE;
+
+	/* relax the checks when parsing */
+	if (flags & AS_STORE_LOAD_FLAG_ALLOW_VETO)
+		parse_flags |= AS_APP_PARSE_FLAG_ALLOW_VETO;
 
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
 		AsApp *app_tmp;
@@ -1182,9 +1190,7 @@ as_store_load_installed (AsStore *store, const gchar *path,
 			}
 		}
 		app = as_app_new ();
-		if (!as_app_parse_file (app, filename,
-					AS_APP_PARSE_FLAG_USE_HEURISTICS,
-					&error_local)) {
+		if (!as_app_parse_file (app, filename, parse_flags, &error_local)) {
 			if (g_error_matches (error_local,
 					     AS_APP_ERROR,
 					     AS_APP_ERROR_INVALID_TYPE)) {
@@ -1198,7 +1204,8 @@ as_store_load_installed (AsStore *store, const gchar *path,
 		}
 
 		/* do not load applications with NoDisplay=true */
-		if (as_app_get_metadata_item (app, "NoDisplay") != NULL)
+		if ((flags & AS_STORE_LOAD_FLAG_ALLOW_VETO) == 0 &&
+		    as_app_get_vetos(app)->len > 0)
 			continue;
 
 		/* set lower priority than AppStream entries */
@@ -1227,7 +1234,8 @@ gboolean
 as_store_load_path (AsStore *store, const gchar *path,
 		    GCancellable *cancellable, GError **error)
 {
-	return as_store_load_installed (store, path, cancellable, error);
+	return as_store_load_installed (store, AS_STORE_LOAD_FLAG_NONE,
+					path, cancellable, error);
 }
 
 /**
@@ -1312,7 +1320,7 @@ as_store_load (AsStore *store,
 		dest = g_build_filename (priv->destdir ? priv->destdir : "/", tmp, NULL);
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 			continue;
-		if (!as_store_load_installed (store, dest, cancellable, error))
+		if (!as_store_load_installed (store, flags, dest, cancellable, error))
 			return FALSE;
 	}
 
