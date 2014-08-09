@@ -303,7 +303,7 @@ asb_plugin_loader_merge (AsbPluginLoader *plugin_loader, GList **apps)
 			continue;
 		}
 		tmp = asb_package_get_nevr (asb_app_get_package (found));
-		asb_app_add_veto (app, "duplicate of %s", tmp);
+		as_app_add_veto (AS_APP (app), "duplicate of %s", tmp);
 		asb_package_log (asb_app_get_package (app),
 				 ASB_PACKAGE_LOG_LEVEL_WARNING,
 				 "duplicate %s not included as added from %s",

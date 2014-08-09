@@ -352,14 +352,14 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 
 		/* don't include components that have no name or comment */
 		if (as_app_get_name (AS_APP (app), "C") == NULL)
-			asb_app_add_veto (app, "No 'Name' in desktop or <name> in AppData");
+			as_app_add_veto (AS_APP (app), "No 'Name' in desktop or <name> in AppData");
 		if (as_app_get_comment (AS_APP (app), "C") == NULL)
-			asb_app_add_veto (app, "No 'Comment' in desktop or <summary> in AppData");
+			as_app_add_veto (AS_APP (app), "No 'Comment' in desktop or <summary> in AppData");
 
 		/* don't include apps that have no icon */
 		if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_ADDON) {
 			if (as_app_get_icon (AS_APP (app)) == NULL)
-				asb_app_add_veto (app, "Has no Icon");
+				as_app_add_veto (AS_APP (app), "Has no Icon");
 		}
 
 		/* veto apps that *still* require appdata */
@@ -367,10 +367,10 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		for (i = 0; i < array->len; i++) {
 			tmp = g_ptr_array_index (array, i);
 			if (tmp == NULL) {
-				asb_app_add_veto (app, "Required AppData");
+				as_app_add_veto (AS_APP (app), "Required AppData");
 				continue;
 			}
-			asb_app_add_veto (app, "Required AppData: %s", tmp);
+			as_app_add_veto (AS_APP (app), "Required AppData: %s", tmp);
 		}
 
 		/* list all the reasons we're ignoring the app */

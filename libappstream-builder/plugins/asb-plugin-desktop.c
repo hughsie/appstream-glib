@@ -312,7 +312,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 
 	/* NoDisplay apps are never included */
 	if (as_app_get_metadata_item (AS_APP (app), "NoDisplay") != NULL)
-		asb_app_add_veto (app, "NoDisplay=true");
+		as_app_add_veto (AS_APP (app), "NoDisplay=true");
 
 	/* Settings or DesktopSettings requires AppData */
 	if (as_app_has_category (AS_APP (app), "Settings"))
@@ -332,17 +332,17 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 
 			/* is icon XPM or GIF */
 			if (g_str_has_suffix (key, ".xpm"))
-				asb_app_add_veto (app, "Uses XPM icon: %s", key);
+				as_app_add_veto (AS_APP (app), "Uses XPM icon: %s", key);
 			else if (g_str_has_suffix (key, ".gif"))
-				asb_app_add_veto (app, "Uses GIF icon: %s", key);
+				as_app_add_veto (AS_APP (app), "Uses GIF icon: %s", key);
 			else if (g_str_has_suffix (key, ".ico"))
-				asb_app_add_veto (app, "Uses ICO icon: %s", key);
+				as_app_add_veto (AS_APP (app), "Uses ICO icon: %s", key);
 
 			/* find icon */
 			pixbuf = asb_app_find_icon (app, tmpdir, key, &error_local);
 			if (pixbuf == NULL) {
-				asb_app_add_veto (app, "Failed to find icon: %s",
-						  error_local->message);
+				as_app_add_veto (AS_APP (app), "Failed to find icon: %s",
+						 error_local->message);
 			} else {
 				/* save in target directory */
 				icon_filename = g_strdup_printf ("%s.png",

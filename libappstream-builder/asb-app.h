@@ -57,10 +57,6 @@ GType		 asb_app_get_type		(void);
 AsbApp		*asb_app_new			(AsbPackage	*pkg,
 						 const gchar	*id_full);
 gchar		*asb_app_to_xml			(AsbApp		*app);
-void		 asb_app_add_veto		(AsbApp		*app,
-						 const gchar	*fmt,
-						 ...)
-						 G_GNUC_PRINTF(2,3);
 void		 asb_app_add_requires_appdata	(AsbApp		*app,
 						 const gchar	*fmt,
 						 ...)
@@ -75,7 +71,6 @@ gboolean	 asb_app_add_screenshot_source	(AsbApp		*app,
 						 GError		**error);
 
 GPtrArray	*asb_app_get_requires_appdata	(AsbApp		*app);
-GPtrArray	*asb_app_get_vetos		(AsbApp		*app);
 AsbPackage	*asb_app_get_package		(AsbApp		*app);
 
 gboolean	 asb_app_save_resources		(AsbApp		*app,

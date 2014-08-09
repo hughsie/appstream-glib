@@ -233,6 +233,7 @@ GHashTable	*as_app_get_developer_names	(AsApp		*app);
 GHashTable	*as_app_get_metadata		(AsApp		*app);
 GHashTable	*as_app_get_descriptions	(AsApp		*app);
 GHashTable	*as_app_get_urls		(AsApp		*app);
+GPtrArray	*as_app_get_vetos		(AsApp		*app);
 const gchar	*as_app_get_icon		(AsApp		*app);
 const gchar	*as_app_get_icon_path		(AsApp		*app);
 const gchar	*as_app_get_id			(AsApp		*app);
@@ -379,6 +380,10 @@ void		 as_app_subsume			(AsApp		*app,
 void		 as_app_subsume_full		(AsApp		*app,
 						 AsApp		*donor,
 						 AsAppSubsumeFlags flags);
+void		 as_app_add_veto		(AsApp		*app,
+						 const gchar	*fmt,
+						 ...)
+						 G_GNUC_PRINTF(2,3);
 guint		 as_app_search_matches_all	(AsApp		*app,
 						 gchar		**search);
 guint		 as_app_search_matches		(AsApp		*app,

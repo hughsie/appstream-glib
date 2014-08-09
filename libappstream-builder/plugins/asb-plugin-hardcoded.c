@@ -231,23 +231,23 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	/* look for ancient toolkits */
 	for (i = 0; deps != NULL && deps[i] != NULL; i++) {
 		if (g_strcmp0 (deps[i], "libgtk-1.2.so.0") == 0) {
-			asb_app_add_veto (app, "Uses obsolete GTK1 toolkit");
+			as_app_add_veto (AS_APP (app), "Uses obsolete GTK1 toolkit");
 			break;
 		}
 		if (g_strcmp0 (deps[i], "libglib-1.2.so.0") == 0) {
-			asb_app_add_veto (app, "Uses obsolete GLib library");
+			as_app_add_veto (AS_APP (app), "Uses obsolete GLib library");
 			break;
 		}
 		if (g_strcmp0 (deps[i], "libqt-mt.so.3") == 0) {
-			asb_app_add_veto (app, "Uses obsolete QT3 toolkit");
+			as_app_add_veto (AS_APP (app), "Uses obsolete QT3 toolkit");
 			break;
 		}
 		if (g_strcmp0 (deps[i], "liblcms.so.1") == 0) {
-			asb_app_add_veto (app, "Uses obsolete LCMS library");
+			as_app_add_veto (AS_APP (app), "Uses obsolete LCMS library");
 			break;
 		}
 		if (g_strcmp0 (deps[i], "libelektra.so.4") == 0) {
-			asb_app_add_veto (app, "Uses obsolete Elektra library");
+			as_app_add_veto (AS_APP (app), "Uses obsolete Elektra library");
 			break;
 		}
 		if (g_strcmp0 (deps[i], "libXt.so.6") == 0) {

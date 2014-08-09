@@ -72,6 +72,7 @@ struct _AsAppPrivate
 	GPtrArray	*releases;			/* of AsRelease */
 	GPtrArray	*provides;			/* of AsProvide */
 	GPtrArray	*screenshots;			/* of AsScreenshot */
+	GPtrArray	*vetos;				/* of string */
 	AsAppSourceKind	 source_kind;
 	AsAppState	 state;
 	AsAppTrustFlags	 trust_flags;
@@ -267,6 +268,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->provides);
 	g_ptr_array_unref (priv->screenshots);
 	g_ptr_array_unref (priv->token_cache);
+	g_ptr_array_unref (priv->vetos);
 
 	G_OBJECT_CLASS (as_app_parent_class)->finalize (object);
 }
@@ -302,6 +304,7 @@ as_app_init (AsApp *app)
 	priv->provides = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->screenshots = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->token_cache = g_ptr_array_new_with_free_func ((GDestroyNotify) as_app_token_item_free);
+	priv->vetos = g_ptr_array_new_with_free_func (g_free);
 
 	priv->comments = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->developer_names = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
@@ -3940,6 +3943,45 @@ as_app_to_file (AsApp *app,
 					NULL,
 					cancellable,
 					error);
+}
+
+/**
+ * as_app_get_vetos:
+ * @app: A #AsApp
+ *
+ * Gets the list of vetos.
+ *
+ * Returns: (transfer none) (element-type utf8): A list of vetos
+ *
+ * Since: 0.2.5
+ **/
+GPtrArray *
+as_app_get_vetos (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->vetos;
+}
+
+/**
+ * as_app_add_veto:
+ * @app: A #AsApp
+ * @fmt: format string
+ * @...: varargs
+ *
+ * Adds a reason to not include the application in the metadata.
+ *
+ * Since: 0.2.5
+ **/
+void
+as_app_add_veto (AsApp *app, const gchar *fmt, ...)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	gchar *tmp;
+	va_list args;
+	va_start (args, fmt);
+	tmp = g_strdup_vprintf (fmt, args);
+	va_end (args);
+	g_ptr_array_add (priv->vetos, tmp);
 }
 
 /**

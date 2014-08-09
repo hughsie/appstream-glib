@@ -38,7 +38,6 @@
 typedef struct _AsbAppPrivate	AsbAppPrivate;
 struct _AsbAppPrivate
 {
-	GPtrArray	*vetos;
 	GPtrArray	*requires_appdata;
 	GdkPixbuf	*pixbuf;
 	AsbPackage	*pkg;
@@ -58,7 +57,6 @@ asb_app_finalize (GObject *object)
 	AsbApp *app = ASB_APP (object);
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 
-	g_ptr_array_unref (priv->vetos);
 	g_ptr_array_unref (priv->requires_appdata);
 	if (priv->pixbuf != NULL)
 		g_object_unref (priv->pixbuf);
@@ -75,7 +73,6 @@ static void
 asb_app_init (AsbApp *app)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
-	priv->vetos = g_ptr_array_new_with_free_func (g_free);
 	priv->requires_appdata = g_ptr_array_new_with_free_func (g_free);
 
 	/* all untrusted */
@@ -131,12 +128,14 @@ void
 asb_app_set_veto_description (AsbApp *app)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
+	GPtrArray *vetos;
 	const gchar *tmp;
 	guint i;
 	_cleanup_string_free_ GString *str = NULL;
 
 	/* application has no vetos */
-	if (priv->vetos->len == 0)
+	vetos = as_app_get_vetos (AS_APP (app));
+	if (vetos->len == 0)
 		return;
 
 	/* log */
@@ -148,9 +147,9 @@ asb_app_set_veto_description (AsbApp *app)
 	/* update description */
 	str = g_string_new ("<p>Not included in metadata because:</p>");
 	g_string_append (str, "<ul>");
-	for (i = 0; i < priv->vetos->len; i++) {
+	for (i = 0; i < vetos->len; i++) {
 		_cleanup_free_ gchar *tmp_safe = NULL;
-		tmp = g_ptr_array_index (priv->vetos, i);
+		tmp = g_ptr_array_index (vetos, i);
 		asb_package_log (priv->pkg,
 				 ASB_PACKAGE_LOG_LEVEL_WARNING,
 				 " - %s", tmp);
@@ -160,28 +159,6 @@ asb_app_set_veto_description (AsbApp *app)
 	}
 	g_string_append (str, "</ul>");
 	as_app_set_description (AS_APP (app), NULL, str->str, -1);
-}
-
-/**
- * asb_app_add_veto:
- * @app: A #AsbApp
- * @fmt: format string
- * @...: varargs
- *
- * Adds a reason to not include the application.
- *
- * Since: 0.1.0
- **/
-void
-asb_app_add_veto (AsbApp *app, const gchar *fmt, ...)
-{
-	AsbAppPrivate *priv = GET_PRIVATE (app);
-	gchar *tmp;
-	va_list args;
-	va_start (args, fmt);
-	tmp = g_strdup_vprintf (fmt, args);
-	va_end (args);
-	g_ptr_array_add (priv->vetos, tmp);
 }
 
 /**
@@ -264,23 +241,6 @@ asb_app_get_requires_appdata (AsbApp *app)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 	return priv->requires_appdata;
-}
-
-/**
- * asb_app_get_vetos:
- * @app: A #AsbApp
- *
- * Gets the list of vetos.
- *
- * Returns: (transfer none) (element-type utf8): A list of vetos
- *
- * Since: 0.1.0
- **/
-GPtrArray *
-asb_app_get_vetos (AsbApp *app)
-{
-	AsbAppPrivate *priv = GET_PRIVATE (app);
-	return priv->vetos;
 }
 
 /**

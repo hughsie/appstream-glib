@@ -641,7 +641,7 @@ asb_context_write_xml (AsbContext *ctx,
 	for (l = priv->apps; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
 		if (ASB_IS_APP (app)) {
-			if (asb_app_get_vetos(ASB_APP(app))->len > 0)
+			if (as_app_get_vetos(app)->len > 0)
 				continue;
 		}
 		as_store_add_app (store, app);
@@ -679,7 +679,7 @@ asb_context_detect_pkgname_dups (AsbContext *ctx, GError **error)
 		pkgname = as_app_get_pkgname_default (app);
 		if (pkgname == NULL)
 			continue;
-		if (ASB_IS_APP (app) &&  asb_app_get_vetos(ASB_APP(app))->len > 0)
+		if (ASB_IS_APP (app) &&  as_app_get_vetos(app)->len > 0)
 			continue;
 		found = g_hash_table_lookup (hash, pkgname);
 		if (found != NULL) {
@@ -738,7 +738,7 @@ asb_context_detect_missing_parents (AsbContext *ctx, GError **error)
 			continue;
 
 		/* do not add the addon */
-		asb_app_add_veto (ASB_APP (app), "%s has no parent of '%s'\n",
+		as_app_add_veto (app, "%s has no parent of '%s'\n",
 				  as_app_get_id_full (app), tmp);
 		g_print ("WARNING: %s has no parent of '%s'\n",
 			 as_app_get_id_full (app), tmp);
@@ -769,7 +769,7 @@ asb_context_write_xml_fail (AsbContext *ctx,
 		app = AS_APP (l->data);
 		if (!ASB_IS_APP (app))
 			continue;
-		if (asb_app_get_vetos(ASB_APP(app))->len == 0)
+		if (as_app_get_vetos(app)->len == 0)
 			continue;
 		if (as_app_get_metadata_item (app, "NoDisplay") != NULL)
 			continue;
