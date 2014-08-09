@@ -28,6 +28,7 @@
 
 #define __APPSTREAM_GLIB_PRIVATE_H
 #include <as-utils-private.h>
+#include <as-app-private.h>
 
 /**
  * asb_plugin_get_name:
@@ -93,8 +94,9 @@ asb_app_load_icon (AsbApp *app,
 	/* open file in native size */
 	if (g_str_has_suffix (filename, ".svg")) {
 		pixbuf_src = gdk_pixbuf_new_from_file_at_scale (filename,
-								64, 64, TRUE,
-								error);
+								AS_APP_ICON_DEFAULT_WIDTH,
+								AS_APP_ICON_DEFAULT_HEIGHT,
+								TRUE, error);
 	} else {
 		pixbuf_src = gdk_pixbuf_new_from_file (filename, error);
 	}
@@ -102,8 +104,8 @@ asb_app_load_icon (AsbApp *app,
 		return NULL;
 
 	/* check size */
-	if (gdk_pixbuf_get_width (pixbuf_src) < 32 ||
-	    gdk_pixbuf_get_height (pixbuf_src) < 32) {
+	if (gdk_pixbuf_get_width (pixbuf_src) < AS_APP_ICON_MIN_WIDTH ||
+	    gdk_pixbuf_get_height (pixbuf_src) < AS_APP_ICON_MIN_HEIGHT) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
 			     ASB_PLUGIN_ERROR_FAILED,
@@ -125,43 +127,54 @@ asb_app_load_icon (AsbApp *app,
 	/* don't do anything to an icon with the perfect size */
 	pixbuf_width = gdk_pixbuf_get_width (pixbuf_src);
 	pixbuf_height = gdk_pixbuf_get_height (pixbuf_src);
-	if (pixbuf_width == 64 && pixbuf_height == 64)
+	if (pixbuf_width == AS_APP_ICON_DEFAULT_WIDTH &&
+	    pixbuf_height == AS_APP_ICON_DEFAULT_HEIGHT)
 		return g_object_ref (pixbuf_src);
 
 	/* never scale up, just pad */
-	if (pixbuf_width < 64 && pixbuf_height < 64) {
+	if (pixbuf_width < AS_APP_ICON_DEFAULT_WIDTH &&
+	    pixbuf_height < AS_APP_ICON_DEFAULT_HEIGHT) {
 		asb_package_log (asb_app_get_package (app),
 				 ASB_PACKAGE_LOG_LEVEL_INFO,
-				 "icon %s padded to 64x64 as size %ix%i",
-				 logfn, pixbuf_width, pixbuf_height);
-		pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8, 64, 64);
+				 "icon %s padded to %ix%i as size %ix%i",
+				 logfn,
+				 AS_APP_ICON_DEFAULT_WIDTH,
+				 AS_APP_ICON_DEFAULT_HEIGHT,
+				 pixbuf_width, pixbuf_height);
+		pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8,
+					 AS_APP_ICON_DEFAULT_WIDTH,
+					 AS_APP_ICON_DEFAULT_HEIGHT);
 		gdk_pixbuf_fill (pixbuf, 0x00000000);
 		gdk_pixbuf_copy_area (pixbuf_src,
 				      0, 0, /* of src */
 				      pixbuf_width, pixbuf_height,
 				      pixbuf,
-				      (64 - pixbuf_width) / 2,
-				      (64 - pixbuf_height) / 2);
+				      (AS_APP_ICON_DEFAULT_WIDTH - pixbuf_width) / 2,
+				      (AS_APP_ICON_DEFAULT_HEIGHT - pixbuf_height) / 2);
 		return pixbuf;
 	}
 
 	/* is the aspect ratio perfectly square */
 	if (pixbuf_width == pixbuf_height) {
-		pixbuf = gdk_pixbuf_scale_simple (pixbuf_src, 64, 64,
+		pixbuf = gdk_pixbuf_scale_simple (pixbuf_src,
+						  AS_APP_ICON_DEFAULT_WIDTH,
+						  AS_APP_ICON_DEFAULT_HEIGHT,
 						  GDK_INTERP_HYPER);
 		as_pixbuf_sharpen (pixbuf, 1, -0.5);
 		return pixbuf;
 	}
 
 	/* create new square pixbuf with alpha padding */
-	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8, 64, 64);
+	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8,
+				 AS_APP_ICON_DEFAULT_WIDTH,
+				 AS_APP_ICON_DEFAULT_HEIGHT);
 	gdk_pixbuf_fill (pixbuf, 0x00000000);
 	if (pixbuf_width > pixbuf_height) {
-		tmp_width = 64;
-		tmp_height = 64 * pixbuf_height / pixbuf_width;
+		tmp_width = AS_APP_ICON_DEFAULT_WIDTH;
+		tmp_height = AS_APP_ICON_DEFAULT_HEIGHT * pixbuf_height / pixbuf_width;
 	} else {
-		tmp_width = 64 * pixbuf_width / pixbuf_height;
-		tmp_height = 64;
+		tmp_width = AS_APP_ICON_DEFAULT_WIDTH * pixbuf_width / pixbuf_height;
+		tmp_height = AS_APP_ICON_DEFAULT_HEIGHT;
 	}
 	pixbuf_tmp = gdk_pixbuf_scale_simple (pixbuf_src, tmp_width, tmp_height,
 					      GDK_INTERP_HYPER);
@@ -170,8 +183,8 @@ asb_app_load_icon (AsbApp *app,
 			      0, 0, /* of src */
 			      tmp_width, tmp_height,
 			      pixbuf,
-			      (64 - tmp_width) / 2,
-			      (64 - tmp_height) / 2);
+			      (AS_APP_ICON_DEFAULT_WIDTH - tmp_width) / 2,
+			      (AS_APP_ICON_DEFAULT_HEIGHT - tmp_height) / 2);
 	return pixbuf;
 }
 

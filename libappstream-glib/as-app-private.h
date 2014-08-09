@@ -62,6 +62,12 @@ typedef enum {
 	AS_APP_PROBLEM_LAST
 } AsAppProblems;
 
+/* some useful constants */
+#define AS_APP_ICON_MIN_HEIGHT			32
+#define AS_APP_ICON_MIN_WIDTH			32
+#define AS_APP_ICON_DEFAULT_HEIGHT		64
+#define AS_APP_ICON_DEFAULT_WIDTH		64
+
 AsAppProblems	 as_app_get_problems		(AsApp		*app);
 guint		 as_app_get_name_size		(AsApp		*app);
 guint		 as_app_get_comment_size	(AsApp		*app);

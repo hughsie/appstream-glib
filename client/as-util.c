@@ -30,6 +30,9 @@
 #include <archive.h>
 #include <locale.h>
 
+#define __APPSTREAM_GLIB_PRIVATE_H
+#include <as-app-private.h>
+
 #include "as-cleanup.h"
 
 #define AS_ERROR			1
@@ -2086,12 +2089,29 @@ as_util_check_root (AsUtilPrivate *priv, gchar **values, GError **error)
 				     as_app_get_id_full (app));
 			return FALSE;
 		}
+
+		/* check icon exists and is large enough */
 		if (!as_utils_is_stock_icon_name (as_app_get_icon (app))) {
+			_cleanup_object_unref_ GdkPixbuf *pb = NULL;
 			icon = as_utils_find_icon_filename (g_getenv ("DESTDIR"),
 							    as_app_get_icon (app),
 							    error);
 			if (icon == NULL) {
 				g_prefix_error (error, "%s: ", as_app_get_id_full (app));
+				return FALSE;
+			}
+			pb = gdk_pixbuf_new_from_file (icon, error);
+			if (pb == NULL)
+				return FALSE;
+			if (gdk_pixbuf_get_width (pb) < AS_APP_ICON_MIN_WIDTH ||
+			    gdk_pixbuf_get_height (pb) < AS_APP_ICON_MIN_HEIGHT) {
+				g_set_error (error,
+					     AS_ERROR,
+					     AS_ERROR_FAILED,
+					     "%s has an undersized icon (%ix%i)",
+					     as_app_get_id_full (app),
+					     gdk_pixbuf_get_width (pb),
+					     gdk_pixbuf_get_height (pb));
 				return FALSE;
 			}
 		}
