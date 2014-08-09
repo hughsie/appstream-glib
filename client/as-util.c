@@ -2019,6 +2019,96 @@ as_util_validate_strict (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
+ * as_util_check_root:
+ *
+ * What kind of errors this will detect:
+ *
+ * - No applications found
+ * if not application in blacklist:
+ *   - Application icon too small
+ *   - Application icon not present
+ *   - Application has no comment
+ **/
+static gboolean
+as_util_check_root (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	GPtrArray *apps;
+	guint i;
+	_cleanup_object_unref_ AsStore *store = NULL;
+
+	/* check args */
+	if (g_strv_length (values) != 0) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "No arguments expected");
+		return FALSE;
+	}
+
+	/* load root */
+	store = as_store_new ();
+	as_store_set_add_flags (store, AS_STORE_ADD_FLAG_PREFER_LOCAL);
+	as_store_set_destdir (store, g_getenv ("DESTDIR"));
+	if (!as_store_load (store,
+			    AS_STORE_LOAD_FLAG_DESKTOP |
+			    AS_STORE_LOAD_FLAG_APPDATA |
+			    AS_STORE_LOAD_FLAG_ALLOW_VETO,
+			    NULL,
+			    error))
+		return FALSE;
+
+	/* no apps found */
+	if (as_store_get_size (store) == 0) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "No applications found");
+		return FALSE;
+	}
+
+	/* sanity check each */
+	apps = as_store_get_apps (store);
+	for (i = 0; i < apps->len; i++) {
+		AsApp *app;
+		_cleanup_free_ gchar *icon = NULL;
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_metadata_item (app, "NoDisplay") != NULL)
+			continue;
+		if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO)
+			continue;
+		if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP)
+			continue; /* relax this for now */
+		if (as_app_get_icon (app) == NULL) {
+			g_set_error (error,
+				     AS_ERROR,
+				     AS_ERROR_FAILED,
+				     "%s has no Icon",
+				     as_app_get_id_full (app));
+			return FALSE;
+		}
+		if (!as_utils_is_stock_icon_name (as_app_get_icon (app))) {
+			icon = as_utils_find_icon_filename (g_getenv ("DESTDIR"),
+							    as_app_get_icon (app),
+							    error);
+			if (icon == NULL) {
+				g_prefix_error (error, "%s: ", as_app_get_id_full (app));
+				return FALSE;
+			}
+		}
+		if (as_app_get_comment (app, NULL) == NULL) {
+			g_set_error (error,
+				     AS_ERROR,
+				     AS_ERROR_FAILED,
+				     "%s has no Comment",
+				     as_app_get_id_full (app));
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
+/**
  * as_util_ignore_cb:
  **/
 static void
@@ -2142,6 +2232,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Validate an AppData or AppStream file (strict)"),
 		     as_util_validate_strict);
+	as_util_add (priv->cmd_array,
+		     "check-root",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Check installed application data"),
+		     as_util_check_root);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
