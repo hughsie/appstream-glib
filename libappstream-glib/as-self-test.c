@@ -2027,6 +2027,60 @@ as_test_store_speed_desktop_func (void)
 }
 
 static void
+as_test_utils_icons_func (void)
+{
+	gchar *tmp;
+	GError *error = NULL;
+	_cleanup_free_ gchar *destdir = NULL;
+
+	destdir = as_test_get_filename (".");
+
+	/* full path */
+	tmp = as_utils_find_icon_filename (destdir, "/usr/share/pixmaps/test.png", &error);
+	g_assert_cmpstr (tmp, !=, NULL);
+	g_assert_no_error (error);
+	g_free (tmp);
+
+	/* full pixmaps name */
+	tmp = as_utils_find_icon_filename (destdir, "test.png", &error);
+	g_assert_cmpstr (tmp, !=, NULL);
+	g_assert_no_error (error);
+	g_free (tmp);
+
+	/* pixmaps name */
+	tmp = as_utils_find_icon_filename (destdir, "test", &error);
+	g_assert_cmpstr (tmp, !=, NULL);
+	g_assert_no_error (error);
+	g_free (tmp);
+
+	/* full theme name */
+	tmp = as_utils_find_icon_filename (destdir, "test2.png", &error);
+	g_assert_cmpstr (tmp, !=, NULL);
+	g_assert_no_error (error);
+	g_free (tmp);
+
+	/* theme name */
+	tmp = as_utils_find_icon_filename (destdir, "test2", &error);
+	g_assert_cmpstr (tmp, !=, NULL);
+	g_assert_no_error (error);
+	g_free (tmp);
+
+	/* full pixmaps invalid */
+	tmp = as_utils_find_icon_filename (destdir, "/usr/share/pixmaps/not-going-to-exist.png", &error);
+	g_assert_cmpstr (tmp, ==, NULL);
+	g_assert_error (error, AS_APP_ERROR, AS_APP_ERROR_FAILED);
+	g_free (tmp);
+	g_clear_error (&error);
+
+	/* all invalid */
+	tmp = as_utils_find_icon_filename (destdir, "not-going-to-exist.png", &error);
+	g_assert_cmpstr (tmp, ==, NULL);
+	g_assert_error (error, AS_APP_ERROR, AS_APP_ERROR_FAILED);
+	g_free (tmp);
+	g_clear_error (&error);
+}
+
+static void
 as_test_utils_spdx_token_func (void)
 {
 	gchar **tok;
@@ -2250,6 +2304,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{intltool}", as_test_node_intltool_func);
 	g_test_add_func ("/AppStream/node{sort}", as_test_node_sort_func);
 	g_test_add_func ("/AppStream/utils", as_test_utils_func);
+	g_test_add_func ("/AppStream/utils{icons}", as_test_utils_icons_func);
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
 	g_test_add_func ("/AppStream/store{merges}", as_test_store_merges_func);

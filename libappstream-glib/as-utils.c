@@ -36,6 +36,7 @@
 #include <string.h>
 #include <libsoup/soup.h>
 
+#include "as-app.h"
 #include "as-cleanup.h"
 #include "as-enums.h"
 #include "as-node.h"
@@ -668,4 +669,120 @@ as_pixbuf_sharpen (GdkPixbuf *src, gint radius, gdouble amount)
 		p_src += rowstride;
 		p_blurred += rowstride;
 	}
+}
+
+/**
+ * as_utils_find_icon_filename:
+ * @destdir: the destdir.
+ * @search: the icon search name, e.g. "microphone.svg"
+ * @error: A #GError or %NULL
+ *
+ * Finds an icon filename from a filesystem root.
+ *
+ * Returns: (transfer full): a newly allocated %NULL terminated string
+ *
+ * Since: 0.2.5
+ **/
+gchar *
+as_utils_find_icon_filename (const gchar *destdir,
+			     const gchar *search,
+			     GError **error)
+{
+	guint i;
+	guint j;
+	guint k;
+	guint m;
+	const gchar *pixmap_dirs[] = { "pixmaps", "icons", NULL };
+	const gchar *theme_dirs[] = { "hicolor", "oxygen", NULL };
+	const gchar *supported_ext[] = { ".png",
+					 ".gif",
+					 ".svg",
+					 ".xpm",
+					 "",
+					 NULL };
+	const gchar *sizes[] = { "64x64",
+				 "128x128",
+				 "96x96",
+				 "256x256",
+				 "scalable",
+				 "48x48",
+				 "32x32",
+				 "24x24",
+				 "16x16",
+				 NULL };
+	const gchar *types[] = { "actions",
+				 "animations",
+				 "apps",
+				 "categories",
+				 "devices",
+				 "emblems",
+				 "emotes",
+				 "filesystems",
+				 "intl",
+				 "mimetypes",
+				 "places",
+				 "status",
+				 "stock",
+				 NULL };
+
+	/* fallback */
+	if (destdir == NULL)
+		destdir = "";
+
+	/* is this an absolute path */
+	if (search[0] == '/') {
+		_cleanup_free_ gchar *tmp;
+		tmp = g_build_filename (destdir, search, NULL);
+		if (!g_file_test (tmp, G_FILE_TEST_EXISTS)) {
+			g_set_error (error,
+				     AS_APP_ERROR,
+				     AS_APP_ERROR_FAILED,
+				     "specified icon '%s' does not exist",
+				     search);
+			return NULL;
+		}
+		return g_strdup (tmp);
+	}
+
+	/* icon theme apps */
+	for (k = 0; theme_dirs[k] != NULL; k++) {
+		for (i = 0; sizes[i] != NULL; i++) {
+			for (m = 0; types[m] != NULL; m++) {
+				for (j = 0; supported_ext[j] != NULL; j++) {
+					_cleanup_free_ gchar *tmp;
+					tmp = g_strdup_printf ("%s/usr/share/icons/"
+							       "%s/%s/%s/%s%s",
+							       destdir,
+							       theme_dirs[k],
+							       sizes[i],
+							       types[m],
+							       search,
+							       supported_ext[j]);
+					if (g_file_test (tmp, G_FILE_TEST_EXISTS))
+						return g_strdup (tmp);
+				}
+			}
+		}
+	}
+
+	/* pixmap */
+	for (i = 0; pixmap_dirs[i] != NULL; i++) {
+		for (j = 0; supported_ext[j] != NULL; j++) {
+			_cleanup_free_ gchar *tmp;
+			tmp = g_strdup_printf ("%s/usr/share/%s/%s%s",
+					       destdir,
+					       pixmap_dirs[i],
+					       search,
+					       supported_ext[j]);
+			if (g_file_test (tmp, G_FILE_TEST_EXISTS))
+				return g_strdup (tmp);
+		}
+	}
+
+	/* failed */
+	g_set_error (error,
+		     AS_APP_ERROR,
+		     AS_APP_ERROR_FAILED,
+		     "Failed to find icon %s", search);
+	return NULL;
 }

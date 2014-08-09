@@ -20,6 +20,7 @@
  */
 
 #include <config.h>
+#include <string.h>
 #include <fnmatch.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
@@ -183,101 +184,15 @@ asb_app_find_icon (AsbApp *app,
 		   const gchar *something,
 		   GError **error)
 {
-	guint i;
-	guint j;
-	guint k;
-	guint m;
-	const gchar *pixmap_dirs[] = { "pixmaps", "icons", NULL };
-	const gchar *theme_dirs[] = { "hicolor", "oxygen", NULL };
-	const gchar *supported_ext[] = { ".png",
-					 ".gif",
-					 ".svg",
-					 ".xpm",
-					 "",
-					 NULL };
-	const gchar *sizes[] = { "64x64",
-				 "128x128",
-				 "96x96",
-				 "256x256",
-				 "scalable",
-				 "48x48",
-				 "32x32",
-				 "24x24",
-				 "16x16",
-				 NULL };
-	const gchar *types[] = { "actions",
-				 "animations",
-				 "apps",
-				 "categories",
-				 "devices",
-				 "emblems",
-				 "emotes",
-				 "filesystems",
-				 "intl",
-				 "mimetypes",
-				 "places",
-				 "status",
-				 "stock",
-				 NULL };
+	_cleanup_free_ gchar *fn = NULL;
 
-	/* is this an absolute path */
-	if (something[0] == '/') {
-		_cleanup_free_ gchar *tmp;
-		tmp = g_build_filename (tmpdir, something, NULL);
-		if (!g_file_test (tmp, G_FILE_TEST_EXISTS)) {
-			g_set_error (error,
-				     ASB_PLUGIN_ERROR,
-				     ASB_PLUGIN_ERROR_FAILED,
-				     "specified icon '%s' does not exist",
-				     something);
-			return NULL;
-		}
-		return asb_app_load_icon (app, tmp, something, error);
-	}
+	/* find file */
+	fn = as_utils_find_icon_filename (tmpdir, something, error);
+	if (fn == NULL)
+		return NULL;
 
-	/* icon theme apps */
-	for (k = 0; theme_dirs[k] != NULL; k++) {
-		for (i = 0; sizes[i] != NULL; i++) {
-			for (m = 0; types[m] != NULL; m++) {
-				for (j = 0; supported_ext[j] != NULL; j++) {
-					_cleanup_free_ gchar *log;
-					_cleanup_free_ gchar *tmp;
-					log = g_strdup_printf ("/usr/share/icons/"
-							       "%s/%s/%s/%s%s",
-							       theme_dirs[k],
-							       sizes[i],
-							       types[m],
-							       something,
-							       supported_ext[j]);
-					tmp = g_build_filename (tmpdir, log, NULL);
-					if (g_file_test (tmp, G_FILE_TEST_EXISTS))
-						return asb_app_load_icon (app, tmp, log, error);
-				}
-			}
-		}
-	}
-
-	/* pixmap */
-	for (i = 0; pixmap_dirs[i] != NULL; i++) {
-		for (j = 0; supported_ext[j] != NULL; j++) {
-			_cleanup_free_ gchar *log;
-			_cleanup_free_ gchar *tmp;
-			log = g_strdup_printf ("/usr/share/%s/%s%s",
-					       pixmap_dirs[i],
-					       something,
-					       supported_ext[j]);
-			tmp = g_build_filename (tmpdir, log, NULL);
-			if (g_file_test (tmp, G_FILE_TEST_EXISTS))
-				return asb_app_load_icon (app, tmp, log, error);
-		}
-	}
-
-	/* failed */
-	g_set_error (error,
-		     ASB_PLUGIN_ERROR,
-		     ASB_PLUGIN_ERROR_FAILED,
-		     "Failed to find icon %s", something);
-	return NULL;
+	/* load the icon */
+	return asb_app_load_icon (app, fn, fn + strlen (tmpdir), error);
 }
 
 /**

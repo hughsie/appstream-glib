@@ -18,6 +18,8 @@ test_files =						\
 	usr/share/appdata/broken.appdata.xml		\
 	usr/share/app-install/desktop/test.desktop	\
 	usr/share/app-install/icons/test.png		\
+	usr/share/icons/hicolor/64x64/apps/test2.png	\
+	usr/share/pixmaps/test.png			\
 	validate.xml.gz
 
 EXTRA_DIST = $(test_files)
