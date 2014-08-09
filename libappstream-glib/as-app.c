@@ -3506,12 +3506,8 @@ as_app_parse_file_key (AsApp *app,
 			if (fnmatch ("X-*-Settings-Panel", list[i], 0) == 0 ||
 			    fnmatch ("X-*-Settings", list[i], 0) == 0 ||
 			    fnmatch ("X-*-SettingsDialog", list[i], 0) == 0) {
-				g_set_error (error,
-					     AS_APP_ERROR,
-					     AS_APP_ERROR_INVALID_TYPE,
-					     "category %s is blacklisted",
-					     list[i]);
-				return FALSE;
+				as_app_add_veto (app, "category '%s' blacklisted", list[i]);
+				continue;
 			}
 
 			/* not a standard category */
@@ -3660,14 +3656,8 @@ as_app_parse_desktop_file (AsApp *app,
 	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
 
 	/* is blacklisted */
-	if (as_utils_is_blacklisted_id (app_id)) {
-		g_set_error (error,
-			     AS_APP_ERROR,
-			     AS_APP_ERROR_INVALID_TYPE,
-			     "Application %s is not an application",
-			     app_id);
-		return FALSE;
-	}
+	if (as_utils_is_blacklisted_id (app_id))
+		as_app_add_veto (app, "%s is not an application", app_id);
 
 	/* Ubuntu helpfully put the package name in the desktop file name */
 	tmp = g_strstr_len (app_id, -1, ":");
@@ -3690,14 +3680,9 @@ as_app_parse_desktop_file (AsApp *app,
 	}
 
 	/* all applications require icons */
-	if (as_app_get_icon (app) == NULL) {
-		g_set_error (error,
-			     AS_APP_ERROR,
-			     AS_APP_ERROR_INVALID_TYPE,
-			     "Application %s has no icon",
-			     app_id);
-		return FALSE;
-	}
+	if (as_app_get_icon (app) == NULL)
+		as_app_add_veto (app, "%s has no icon", app_id);
+
 	return TRUE;
 }
 
@@ -3844,6 +3829,8 @@ as_app_parse_appdata_file (AsApp *app,
  *
  * Parses a desktop or AppData file and populates the application state.
  *
+ * Applications that are not suitable for the store will have vetos added.
+ *
  * Returns: %TRUE for success
  *
  * Since: 0.1.2
@@ -3855,6 +3842,7 @@ as_app_parse_file (AsApp *app,
 		   GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	GPtrArray *vetos;
 
 	/* autodetect */
 	if (priv->source_kind == AS_APP_SOURCE_KIND_UNKNOWN) {
@@ -3901,6 +3889,17 @@ as_app_parse_file (AsApp *app,
 			     filename);
 		return FALSE;
 		break;
+	}
+
+	/* vetos are errors by default */
+	vetos = as_app_get_vetos (app);
+	if ((flags & AS_APP_PARSE_FLAG_ALLOW_VETO) == 0 && vetos->len > 0) {
+		const gchar *tmp = g_ptr_array_index (vetos, 0);
+		g_set_error_literal (error,
+				     AS_APP_ERROR,
+				     AS_APP_ERROR_INVALID_TYPE,
+				     tmp);
+		return FALSE;
 	}
 
 	return TRUE;

@@ -71,6 +71,7 @@ struct _AsAppClass
  * @AS_APP_PARSE_FLAG_KEEP_COMMENTS:	Save comments from the file
  * @AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE:	Allow translatable flags like <_p>
  * @AS_APP_PARSE_FLAG_APPEND_DATA:	Append new data rather than replacing
+ * @AS_APP_PARSE_FLAG_ALLOW_VETO:	Do not return errors for vetoed apps
  *
  * The flags to use when parsing resources.
  **/
@@ -80,6 +81,7 @@ typedef enum {
 	AS_APP_PARSE_FLAG_KEEP_COMMENTS		= 2,	/* Since: 0.1.6 */
 	AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE	= 4,	/* Since: 0.1.6 */
 	AS_APP_PARSE_FLAG_APPEND_DATA		= 8,	/* Since: 0.1.8 */
+	AS_APP_PARSE_FLAG_ALLOW_VETO		= 16,	/* Since: 0.2.5 */
 	/*< private >*/
 	AS_APP_PARSE_FLAG_LAST,
 } AsAppParseFlags;
