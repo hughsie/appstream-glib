@@ -325,6 +325,31 @@ as_utils_is_category_id (const gchar *category_id)
 }
 
 /**
+ * as_utils_spdx_convert:
+ **/
+static gchar *
+as_utils_spdx_convert (const gchar *id)
+{
+	guint i;
+	struct {
+		const gchar	*old;
+		const gchar	*new;
+	} licenses[] =  {
+		{ "CC0",	"CC0-1.0" },
+		{ "CC-BY",	"CC-BY-3.0" },
+		{ "CC-BY-SA",	"CC-BY-SA-3.0" },
+		{ "GFDL",	"GFDL-1.3" },
+		{ "GPL-2",	"GPL-2.0" },
+		{ "GPL-3",	"GPL-3.0" },
+		{ NULL, NULL } };
+	for (i = 0; licenses[i].old != NULL; i++) {
+		if (g_strcmp0 (id, licenses[i].old) == 0)
+			return g_strdup (licenses[i].new);
+	}
+	return g_strdup (id);
+}
+
+/**
  * as_utils_spdx_license_tokenize:
  * @license: a license string, e.g. "LGPLv2+ and (QPL or GPLv2) and MIT"
  *
@@ -374,7 +399,7 @@ as_utils_spdx_license_tokenize (const gchar *license)
 
 			/* get previous token */
 			g_snprintf (buf, i - old + 1, "%s", &license[old]);
-			g_ptr_array_add (array, g_strdup (buf));
+			g_ptr_array_add (array, as_utils_spdx_convert (buf));
 
 			/* brackets */
 			if (license[i + matchlen] == '(')
@@ -393,7 +418,7 @@ as_utils_spdx_license_tokenize (const gchar *license)
 	if (i > 0 && license[i - 1] == ')') {
 		/* token */
 		g_snprintf (buf, i - old, "%s", &license[old]);
-		g_ptr_array_add (array, g_strdup (buf));
+		g_ptr_array_add (array, as_utils_spdx_convert (buf));
 
 		/* brackets */
 		g_snprintf (buf, i - 1, "#%s", &license[i - 1]);

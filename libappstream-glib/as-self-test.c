@@ -2134,6 +2134,13 @@ as_test_utils_spdx_token_func (void)
 	g_assert_cmpstr (tmp, ==, "MPLv1.1|# and (|LGPLv3|# or |GPLv3|#)");
 	g_strfreev (tok);
 	g_free (tmp);
+
+	/*  deprecated names */
+	tok = as_utils_spdx_license_tokenize ("CC0 and (CC0 or CC0)");
+	tmp = g_strjoinv ("|", tok);
+	g_assert_cmpstr (tmp, ==, "CC0-1.0|# and (|CC0-1.0|# or |CC0-1.0|#)");
+	g_strfreev (tok);
+	g_free (tmp);
 }
 
 static void
