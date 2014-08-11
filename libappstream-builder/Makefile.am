@@ -81,6 +81,19 @@ libappstream_builder_la_LDFLAGS =				\
 libappstream_builder_la_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 
+check_PROGRAMS =						\
+	asb-self-test
+asb_self_test_SOURCES =						\
+	asb-self-test.c
+asb_self_test_LDADD =						\
+	$(GLIB_LIBS)						\
+	$(GDKPIXBUF_LIBS)					\
+	$(SOUP_LIBS)						\
+	$(lib_LTLIBRARIES)
+asb_self_test_CFLAGS = $(WARNINGFLAGS_C)
+
+TESTS = asb-self-test
+
 if HAVE_INTROSPECTION
 introspection_sources =						\
 	asb-app.c						\

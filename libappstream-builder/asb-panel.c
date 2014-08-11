@@ -50,6 +50,7 @@ struct _AsbPanelPrivate
 	guint			 number_cleared;
 	guint			 title_width;
 	guint			 time_secs_min;
+	gboolean		 enabled;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbPanel, asb_panel, G_TYPE_OBJECT)
@@ -117,6 +118,13 @@ asb_panel_print (AsbPanel *panel, const gchar *fmt, ...)
 	for (i = str->len; i < priv->line_width_max; i++)
 		g_string_append (str, " ");
 
+	/* don't do console cleverness in make check */
+	if (!priv->enabled) {
+		g_debug ("%s", str->str);
+		priv->line_width_max = str->len - 1;
+		return;
+	}
+
 	/* is this bigger than anything else we've seen? */
 	len = asb_panel_print_raw (panel, str->str);
 	if (len - 1 > priv->line_width_max)
@@ -164,7 +172,7 @@ asb_panel_refresh (AsbPanel *panel)
 	g_mutex_lock (&priv->mutex);
 
 	/* clear four lines of blank */
-	if (priv->number_cleared < priv->items->len) {
+	if (priv->enabled && priv->number_cleared < priv->items->len) {
 		for (i = 0; i < priv->items->len + 1; i++)
 			asb_panel_print_raw (panel, "\n");
 		for (i = 0; i < priv->items->len + 1; i++)
@@ -205,8 +213,10 @@ asb_panel_refresh (AsbPanel *panel)
 	}
 
 	/* go back up to the start */
-	for (i = 0; i < priv->number_cleared + 1; i++)
-		asb_panel_print_raw (panel, "\033[1A");
+	if (priv->enabled) {
+		for (i = 0; i < priv->number_cleared + 1; i++)
+			asb_panel_print_raw (panel, "\033[1A");
+	}
 
 	g_mutex_unlock (&priv->mutex);
 }
@@ -372,6 +382,9 @@ asb_panel_init (AsbPanel *panel)
 	priv->timer = g_timer_new ();
 	priv->time_secs_min = G_MAXUINT;
 	g_mutex_init (&priv->mutex);
+
+	/* self test fix */
+	priv->enabled = g_getenv ("ASB_IS_SELF_TEST") == NULL;
 
 	/* find an actual TTY */
 	priv->tty_fd = open ("/dev/tty", O_RDWR, 0);

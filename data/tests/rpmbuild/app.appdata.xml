@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+  <id type="desktop">app.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LGPL-2.0+</project_license>
+  <description>
+    <p>Long description goes here.</p>
+  </description>
+  <screenshots>
+    <screenshot type="default">http://people.freedesktop.org/~hughsient/appdata/long-description.png</screenshot>
+  </screenshots>
+  <url type="homepage">http://people.freedesktop.org/~hughsient/appdata/</url>
+  <updatecontact>richard_at_hughsie.com</updatecontact>
+</application>

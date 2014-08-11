@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=App
+Comment=A test application
+Icon=app
+Exec=app
+Terminal=false
+Type=Application
+Categories=GNOME;GTK;System;Profiling;
+Keywords=Remote;Administration;
