@@ -425,7 +425,7 @@ as_utils_spdx_license_tokenize (const gchar *license)
 		g_ptr_array_add (array, g_strdup (buf));
 	} else {
 		/* token */
-		g_ptr_array_add (array, g_strdup (&license[old]));
+		g_ptr_array_add (array, as_utils_spdx_convert (&license[old]));
 	}
 	g_ptr_array_add (array, NULL);
 
