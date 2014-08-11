@@ -460,6 +460,36 @@ as_utils_spdx_license_detokenize (gchar **license_tokens)
 }
 
 /**
+ * as_utils_is_spdx_license:
+ * @license: a SPDX license string, e.g. "CC-BY-3.0 and GFDL-1.3"
+ *
+ * Checks the licence string to check it being a valid licence.
+ * NOTE: SPDX licences can't typically contain brackets.
+ *
+ * Returns: %TRUE if the icon is a valid "SPDX license"
+ *
+ * Since: 0.2.5
+ **/
+gboolean
+as_utils_is_spdx_license (const gchar *license)
+{
+	guint i;
+	_cleanup_strv_free_ gchar **tokens = NULL;
+
+	tokens = as_utils_spdx_license_tokenize (license);
+	for (i = 0; tokens[i] != NULL; i++) {
+		if (as_utils_is_spdx_license_id (tokens[i]))
+			continue;
+		if (g_strcmp0 (tokens[i], "# and ") == 0)
+			continue;
+		if (g_strcmp0 (tokens[i], "# or ") == 0)
+			continue;
+		return FALSE;
+	}
+	return TRUE;
+}
+
+/**
  * as_utils_check_url_exists:
  * @url: the URL to check.
  * @timeout: the timeout in seconds.

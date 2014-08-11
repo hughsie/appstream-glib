@@ -35,6 +35,7 @@ gchar		*as_markup_convert_simple	(const gchar	*markup,
 						 GError		**error);
 gboolean	 as_utils_is_stock_icon_name	(const gchar	*name);
 gboolean	 as_utils_is_spdx_license_id	(const gchar	*license_id);
+gboolean	 as_utils_is_spdx_license	(const gchar	*license);
 gboolean	 as_utils_is_environment_id	(const gchar	*environment_id);
 gboolean	 as_utils_is_category_id	(const gchar	*category_id);
 gboolean	 as_utils_is_blacklisted_id	(const gchar	*desktop_id);
