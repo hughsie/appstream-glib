@@ -475,7 +475,7 @@ asb_string_replace (GString *string, const gchar *search, const gchar *replace)
 	split = g_strsplit (string->str, search, -1);
 	tmp = g_strjoinv (replace, split);
 	g_string_assign (string, tmp);
-	count = g_strv_length (split);
+	count = g_strv_length (split) - 1;
 out:
 	g_strfreev (split);
 	g_free (tmp);
