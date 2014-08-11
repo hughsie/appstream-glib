@@ -433,6 +433,33 @@ as_utils_spdx_license_tokenize (const gchar *license)
 }
 
 /**
+ * as_utils_spdx_license_detokenize:
+ * @license_tokens: license tokens, typically from as_utils_spdx_license_tokenize()
+ *
+ * De-tokenizes the SPDX licenses into a string.
+ *
+ * Returns: (transfer full): string
+ *
+ * Since: 0.2.5
+ **/
+gchar *
+as_utils_spdx_license_detokenize (gchar **license_tokens)
+{
+	GString *tmp;
+	guint i;
+
+	tmp = g_string_new ("");
+	for (i = 0; license_tokens[i] != NULL; i++) {
+		if (license_tokens[i][0] != '#') {
+			g_string_append (tmp, license_tokens[i]);
+			continue;
+		}
+		g_string_append (tmp, license_tokens[i] + 1);
+	}
+	return g_string_free (tmp, FALSE);
+}
+
+/**
  * as_utils_check_url_exists:
  * @url: the URL to check.
  * @timeout: the timeout in seconds.

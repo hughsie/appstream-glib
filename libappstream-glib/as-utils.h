@@ -39,6 +39,7 @@ gboolean	 as_utils_is_environment_id	(const gchar	*environment_id);
 gboolean	 as_utils_is_category_id	(const gchar	*category_id);
 gboolean	 as_utils_is_blacklisted_id	(const gchar	*desktop_id);
 gchar		**as_utils_spdx_license_tokenize (const gchar	*license);
+gchar		*as_utils_spdx_license_detokenize (gchar	**license_tokens);
 gboolean	 as_utils_check_url_exists	(const gchar	*url,
 						 guint		 timeout,
 						 GError		**error);
