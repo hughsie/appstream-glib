@@ -2022,6 +2022,98 @@ as_util_validate_strict (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
+ * as_util_check_root_app_icon:
+ **/
+static gboolean
+as_util_check_root_app_icon (AsApp *app, GError **error)
+{
+	_cleanup_free_ gchar *icon = NULL;
+	_cleanup_object_unref_ GdkPixbuf *pb = NULL;
+
+	/* nothing found */
+	if (as_app_get_icon (app) == NULL) {
+		g_set_error (error,
+			     AS_ERROR,
+			     AS_ERROR_FAILED,
+			     "%s has no Icon",
+			     as_app_get_id_full (app));
+		return FALSE;
+	}
+
+	/* is stock icon */
+	if (as_utils_is_stock_icon_name (as_app_get_icon (app)))
+		return TRUE;
+
+	/* can we find it */
+	icon = as_utils_find_icon_filename (g_getenv ("DESTDIR"),
+					    as_app_get_icon (app),
+					    error);
+	if (icon == NULL) {
+		g_prefix_error (error,
+				"%s missing icon %s: ",
+				as_app_get_id_full (app),
+				as_app_get_icon (app));
+		return FALSE;
+	}
+
+	/* can we can load it */
+	pb = gdk_pixbuf_new_from_file (icon, error);
+	if (pb == NULL) {
+		g_prefix_error (error,
+				"%s invalid icon %s: ",
+				as_app_get_id_full (app),
+				as_app_get_icon (app));
+		return FALSE;
+	}
+
+	/* check size */
+	if (gdk_pixbuf_get_width (pb) < AS_APP_ICON_MIN_WIDTH ||
+	    gdk_pixbuf_get_height (pb) < AS_APP_ICON_MIN_HEIGHT) {
+		g_set_error (error,
+			     AS_ERROR,
+			     AS_ERROR_FAILED,
+			     "%s has undersized icon (%ix%i)",
+			     as_app_get_id_full (app),
+			     gdk_pixbuf_get_width (pb),
+			     gdk_pixbuf_get_height (pb));
+		return FALSE;
+	}
+	return TRUE;
+}
+
+/**
+ * as_util_check_root_app:
+ **/
+static void
+as_util_check_root_app (AsApp *app, GPtrArray *problems)
+{
+	GError *error_local = NULL;
+
+	/* skip */
+	if (as_app_get_metadata_item (app, "NoDisplay") != NULL)
+		return;
+	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO)
+		return;
+
+	/* relax this for now */
+	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP)
+		return;
+
+	/* check one line summary */
+	if (as_app_get_comment (app, NULL) == NULL) {
+		g_ptr_array_add (problems,
+				 g_strdup_printf ("%s has no Comment",
+						  as_app_get_id_full (app)));
+	}
+
+	/* check icon exists and is large enough */
+	if (!as_util_check_root_app_icon (app, &error_local)) {
+		g_ptr_array_add (problems, g_strdup (error_local->message));
+		g_clear_error (&error_local);
+	}
+}
+
+/**
  * as_util_check_root:
  *
  * What kind of errors this will detect:
@@ -2036,8 +2128,10 @@ static gboolean
 as_util_check_root (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	GPtrArray *apps;
+	const gchar *tmp;
 	guint i;
 	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_ptrarray_unref_ GPtrArray *problems = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 0) {
@@ -2070,59 +2164,26 @@ as_util_check_root (AsUtilPrivate *priv, gchar **values, GError **error)
 	}
 
 	/* sanity check each */
+	problems = g_ptr_array_new_with_free_func (g_free);
 	apps = as_store_get_apps (store);
 	for (i = 0; i < apps->len; i++) {
 		AsApp *app;
-		_cleanup_free_ gchar *icon = NULL;
 		app = g_ptr_array_index (apps, i);
-		if (as_app_get_metadata_item (app, "NoDisplay") != NULL)
-			continue;
-		if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO)
-			continue;
-		if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP)
-			continue; /* relax this for now */
-		if (as_app_get_icon (app) == NULL) {
-			g_set_error (error,
-				     AS_ERROR,
-				     AS_ERROR_FAILED,
-				     "%s has no Icon",
-				     as_app_get_id_full (app));
-			return FALSE;
-		}
+		as_util_check_root_app (app, problems);
+	}
 
-		/* check icon exists and is large enough */
-		if (!as_utils_is_stock_icon_name (as_app_get_icon (app))) {
-			_cleanup_object_unref_ GdkPixbuf *pb = NULL;
-			icon = as_utils_find_icon_filename (g_getenv ("DESTDIR"),
-							    as_app_get_icon (app),
-							    error);
-			if (icon == NULL) {
-				g_prefix_error (error, "%s: ", as_app_get_id_full (app));
-				return FALSE;
-			}
-			pb = gdk_pixbuf_new_from_file (icon, error);
-			if (pb == NULL)
-				return FALSE;
-			if (gdk_pixbuf_get_width (pb) < AS_APP_ICON_MIN_WIDTH ||
-			    gdk_pixbuf_get_height (pb) < AS_APP_ICON_MIN_HEIGHT) {
-				g_set_error (error,
-					     AS_ERROR,
-					     AS_ERROR_FAILED,
-					     "%s has an undersized icon (%ix%i)",
-					     as_app_get_id_full (app),
-					     gdk_pixbuf_get_width (pb),
-					     gdk_pixbuf_get_height (pb));
-				return FALSE;
-			}
+	/* show problems */
+	if (problems->len) {
+		for (i = 0; i < problems->len; i++) {
+			tmp = g_ptr_array_index (problems, i);
+			g_printerr ("• %s\n", tmp);
 		}
-		if (as_app_get_comment (app, NULL) == NULL) {
-			g_set_error (error,
-				     AS_ERROR,
-				     AS_ERROR_FAILED,
-				     "%s has no Comment",
-				     as_app_get_id_full (app));
-			return FALSE;
-		}
+		g_set_error (error,
+			     AS_ERROR,
+			     AS_ERROR_FAILED,
+			     "Failed to check root, %i problems detected",
+			     problems->len);
+		return FALSE;
 	}
 
 	return TRUE;
@@ -2302,10 +2363,10 @@ main (int argc, char *argv[])
 		if (g_error_matches (error, AS_ERROR, AS_ERROR_NO_SUCH_CMD)) {
 			gchar *tmp;
 			tmp = g_option_context_get_help (priv->context, TRUE, NULL);
-			g_print ("%s", tmp);
+			g_printerr ("%s", tmp);
 			g_free (tmp);
 		} else {
-			g_print ("%s\n", error->message);
+			g_printerr ("%s\n", error->message);
 		}
 		g_error_free (error);
 		goto out;
