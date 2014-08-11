@@ -628,10 +628,12 @@ asb_context_write_icons (AsbContext *ctx,
 			 const gchar *basename,
 			 GError **error)
 {
-	_cleanup_free_ gchar *filename;
-	_cleanup_free_ gchar *icons_dir;
+	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_free_ gchar *icons_dir = NULL;
 
 	icons_dir = g_build_filename (temp_dir, "icons", NULL);
+	if (!g_file_test (icons_dir, G_FILE_TEST_EXISTS))
+		return TRUE;
 	filename = g_strdup_printf ("%s/%s-icons.tar.gz", output_dir, basename);
 	g_print ("Writing %s...\n", filename);
 	return asb_utils_write_archive_dir (filename, icons_dir, error);
