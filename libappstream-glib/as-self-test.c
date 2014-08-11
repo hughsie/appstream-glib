@@ -676,7 +676,7 @@ as_test_app_validate_appdata_good_func (void)
 	g_assert_cmpstr (as_app_get_id_full (app), ==, "gnome-power-statistics.desktop");
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "0 A.D.");
 	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "Observe power management");
-	g_assert_cmpstr (as_app_get_metadata_license (app), ==, "CC0-1.0");
+	g_assert_cmpstr (as_app_get_metadata_license (app), ==, "CC0-1.0 and CC-BY-3.0");
 	g_assert_cmpstr (as_app_get_update_contact (app), ==, "richard@hughsie.com");
 	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
 	g_assert_cmpstr (as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE), ==,

@@ -1420,22 +1420,6 @@ as_app_set_project_license (AsApp *app,
 }
 
 /**
- * as_strncmp:
- **/
-static gint
-as_strncmp (const gchar *s1, const gchar *s2, gssize n)
-{
-	if (n < 0) return g_strcmp0 (s1, s2);
-	if (s1 == NULL && s2 == NULL)
-		return 0;
-	if (s1 != NULL && s2 == NULL)
-		return 1;
-	if (s1 == NULL && s2 != NULL)
-		return -1;
-	return strncmp (s1, s2, n);
-}
-
-/**
  * as_app_set_metadata_license:
  * @app: a #AsApp instance.
  * @metadata_license: the project license string.
@@ -1451,18 +1435,7 @@ as_app_set_metadata_license (AsApp *app,
 			     gssize metadata_license_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	guint i;
-	struct {
-		const gchar	*old;
-		const gchar	*new;
-	} licenses[] =  {
-		{ "CC0",	"CC0-1.0" },
-		{ "CC-BY",	"CC-BY-3.0" },
-		{ "CC-BY-SA",	"CC-BY-SA-3.0" },
-		{ "GFDL",	"GFDL-1.3" },
-		{ "GPL-2",	"GPL-2.0" },
-		{ "GPL-3",	"GPL-3.0" },
-		{ NULL, NULL } };
+	_cleanup_strv_free_ gchar **tokens = NULL;
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
@@ -1472,18 +1445,9 @@ as_app_set_metadata_license (AsApp *app,
 	}
 
 	/* automatically replace deprecated license names */
-	for (i = 0; licenses[i].old != NULL; i++) {
-		if (as_strncmp (metadata_license,
-				licenses[i].old,
-				metadata_license_len) == 0) {
-			metadata_license = licenses[i].new;
-			metadata_license_len = -1;
-			break;
-		}
-	}
-
 	g_free (priv->metadata_license);
-	priv->metadata_license = as_strndup (metadata_license, metadata_license_len);
+	tokens = as_utils_spdx_license_tokenize (metadata_license);
+	priv->metadata_license = as_utils_spdx_license_detokenize (tokens);
 }
 
 /**

@@ -870,6 +870,31 @@ as_app_validate_license (const gchar *license_text, GError **error)
 }
 
 /**
+ * as_app_validate_is_content_license:
+ **/
+static gboolean
+as_app_validate_is_content_license (const gchar *license)
+{
+	guint i;
+	_cleanup_strv_free_ gchar **tokens = NULL;
+	tokens = as_utils_spdx_license_tokenize (license);
+	for (i = 0; tokens[i] != NULL; i++) {
+		if (g_strcmp0 (tokens[i], "CC0-1.0") == 0)
+			continue;
+		if (g_strcmp0 (tokens[i], "CC-BY-3.0") == 0)
+			continue;
+		if (g_strcmp0 (tokens[i], "CC-BY-SA-3.0") == 0)
+			continue;
+		if (g_strcmp0 (tokens[i], "GFDL-1.3") == 0)
+			continue;
+		if (g_strcmp0 (tokens[i], "# and ") == 0)
+			continue;
+		return FALSE;
+	}
+	return TRUE;
+}
+
+/**
  * as_app_validate:
  * @app: a #AsApp instance.
  * @flags: the #AsAppValidateFlags to use, e.g. %AS_APP_VALIDATE_FLAG_NONE
@@ -999,15 +1024,11 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	/* metadata_license */
 	license = as_app_get_metadata_license (app);
 	if (license != NULL) {
-		if (require_content_license) {
-			if (g_strcmp0 (license, "CC0-1.0") != 0 &&
-			    g_strcmp0 (license, "CC-BY-3.0") != 0 &&
-			    g_strcmp0 (license, "CC-BY-SA-3.0") != 0 &&
-			    g_strcmp0 (license, "GFDL-1.3") != 0) {
-				ai_app_validate_add (probs,
-						     AS_PROBLEM_KIND_TAG_INVALID,
-						     "<metadata_license> is not valid");
-			}
+		if (require_content_license &&
+		    !as_app_validate_is_content_license (license)) {
+			ai_app_validate_add (probs,
+					     AS_PROBLEM_KIND_TAG_INVALID,
+					     "<metadata_license> is not valid");
 		} else if (validate_license) {
 			ret = as_app_validate_license (license, &error_local);
 			if (!ret) {
