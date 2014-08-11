@@ -554,6 +554,22 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	GList *l;
 
+	/* required stuff set */
+	if (priv->basename == NULL) {
+		g_set_error_literal (error,
+				     ASB_PLUGIN_ERROR,
+				     ASB_PLUGIN_ERROR_FAILED,
+				     "basename not set!");
+		return FALSE;
+	}
+	if (priv->output_dir == NULL) {
+		g_set_error_literal (error,
+				     ASB_PLUGIN_ERROR,
+				     ASB_PLUGIN_ERROR_FAILED,
+				     "output_dir not set!");
+		return FALSE;
+	}
+
 	/* load plugins */
 	if (!asb_plugin_loader_setup (priv->plugin_loader, error))
 		return FALSE;
