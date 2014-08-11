@@ -122,8 +122,8 @@ asb_plugin_merge (AsbPlugin *plugin, GList **list)
 		/* find the parent app */
 		found = g_hash_table_lookup (hash, tmp);
 		if (found == NULL) {
-			g_error ("Cannot find referenced '%s' from '%s'",
-				 tmp, as_app_get_id_full (app));
+			g_warning ("Cannot find referenced '%s' from '%s'",
+				   tmp, as_app_get_id_full (app));
 			continue;
 		}
 
