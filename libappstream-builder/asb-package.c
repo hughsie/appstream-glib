@@ -230,7 +230,11 @@ gboolean
 asb_package_log_flush (AsbPackage *pkg, GError **error)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
-	_cleanup_free_ gchar *logfile;
+	_cleanup_free_ gchar *logfile = NULL;
+
+	/* don't write if unset */
+	if (asb_package_get_config (pkg, "LogDir") == NULL)
+		return TRUE;
 
 	/* overwrite old log */
 	logfile = g_strdup_printf ("%s/%s.log",
