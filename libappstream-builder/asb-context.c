@@ -363,6 +363,23 @@ asb_context_get_add_cache_id (AsbContext *ctx)
 }
 
 /**
+ * asb_context_get_no_net:
+ * @ctx: A #AsbContext
+ *
+ * Gets if network access is forbidden.
+ *
+ * Returns: boolean
+ *
+ * Since: 0.2.5
+ **/
+gboolean
+asb_context_get_no_net (AsbContext *ctx)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	return priv->no_net;
+}
+
+/**
  * asb_context_get_api_version:
  * @ctx: A #AsbContext
  *

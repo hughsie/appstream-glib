@@ -88,6 +88,7 @@ void		 asb_context_set_basename	(AsbContext	*ctx,
 						 const gchar	*basename);
 const gchar	*asb_context_get_temp_dir	(AsbContext	*ctx);
 gboolean	 asb_context_get_add_cache_id	(AsbContext	*ctx);
+gboolean	 asb_context_get_no_net		(AsbContext	*ctx);
 gdouble		 asb_context_get_api_version	(AsbContext	*ctx);
 
 gboolean	 asb_context_setup		(AsbContext	*ctx,

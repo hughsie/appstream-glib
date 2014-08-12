@@ -199,6 +199,12 @@ asb_plugin_appdata_load_url (AsbPlugin *plugin,
 					  as_app_get_id (AS_APP (app)),
 					  basename);
 	if (!g_file_test (cache_filename, G_FILE_TEST_EXISTS)) {
+		if (asb_context_get_no_net (plugin->ctx)) {
+			asb_package_log (asb_app_get_package (app),
+					 ASB_PACKAGE_LOG_LEVEL_WARNING,
+					 "Could not download %s as no network", url);
+			goto out;
+		}
 		uri = soup_uri_new (url);
 		if (uri == NULL) {
 			ret = FALSE;
