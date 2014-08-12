@@ -342,31 +342,20 @@ asb_utils_write_archive_dir (const gchar *filename,
 			     const gchar *directory,
 			     GError **error)
 {
-	GPtrArray *files = NULL;
-	GDir *dir;
 	const gchar *tmp;
-	gboolean ret = TRUE;
+	_cleanup_dir_close_ GDir *dir = NULL;
+	_cleanup_ptrarray_unref_ GPtrArray *files = NULL;
 
 	/* add all files in the directory to the archive */
 	dir = g_dir_open (directory, 0, error);
-	if (dir == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (dir == NULL)
+		return FALSE;
 	files = g_ptr_array_new_with_free_func (g_free);
 	while ((tmp = g_dir_read_name (dir)) != NULL)
 		g_ptr_array_add (files, g_build_filename (directory, tmp, NULL));
 
 	/* write tar file */
-	ret = asb_utils_write_archive (filename, files, error);
-	if (!ret)
-		goto out;
-out:
-	if (dir != NULL)
-		g_dir_close (dir);
-	if (files != NULL)
-		g_ptr_array_unref (files);
-	return ret;
+	return asb_utils_write_archive (filename, files, error);
 }
 
 /**
@@ -385,18 +374,16 @@ gboolean
 asb_utils_add_apps_from_file (GList **apps, const gchar *filename, GError **error)
 {
 	AsApp *app;
-	AsStore *store;
-	GFile *file;
 	GPtrArray *array;
-	gboolean ret;
 	guint i;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
 
 	/* parse file */
 	store = as_store_new ();
 	file = g_file_new_for_path (filename);
-	ret = as_store_from_file (store, file, NULL, NULL, error);
-	if (!ret)
-		goto out;
+	if (!as_store_from_file (store, file, NULL, NULL, error))
+		return FALSE;
 
 	/* copy Asapp's into AsbApp's */
 	array = as_store_get_apps (store);
@@ -404,10 +391,7 @@ asb_utils_add_apps_from_file (GList **apps, const gchar *filename, GError **erro
 		app = g_ptr_array_index (array, i);
 		asb_plugin_add_app (apps, app);
 	}
-out:
-	g_object_unref (file);
-	g_object_unref (store);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -426,26 +410,18 @@ gboolean
 asb_utils_add_apps_from_dir (GList **apps, const gchar *path, GError **error)
 {
 	const gchar *tmp;
-	gboolean ret = TRUE;
-	gchar *filename;
-	GDir *dir;
+	_cleanup_dir_close_ GDir *dir = NULL;
 
 	dir = g_dir_open (path, 0, error);
-	if (dir == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (dir == NULL)
+		return FALSE;
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
+		_cleanup_free_ gchar *filename = NULL;
 		filename = g_build_filename (path, tmp, NULL);
-		ret = asb_utils_add_apps_from_file (apps, filename, error);
-		g_free (filename);
-		if (!ret)
-			goto out;
+		if (!asb_utils_add_apps_from_file (apps, filename, error))
+			return FALSE;
 	}
-out:
-	if (dir != NULL)
-		g_dir_close (dir);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -463,23 +439,18 @@ out:
 guint
 asb_string_replace (GString *string, const gchar *search, const gchar *replace)
 {
-	gchar **split = NULL;
-	gchar *tmp = NULL;
-	guint count = 0;
+	_cleanup_free_ gchar *tmp = NULL;
+	_cleanup_strv_free_ gchar **split = NULL;
 
 	/* quick search */
 	if (g_strstr_len (string->str, -1, search) == NULL)
-		goto out;
+		return 0;
 
 	/* replace */
 	split = g_strsplit (string->str, search, -1);
 	tmp = g_strjoinv (replace, split);
 	g_string_assign (string, tmp);
-	count = g_strv_length (split) - 1;
-out:
-	g_strfreev (split);
-	g_free (tmp);
-	return count;
+	return g_strv_length (split) - 1;
 }
 
 /******************************************************************************/

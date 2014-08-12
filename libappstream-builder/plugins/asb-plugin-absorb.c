@@ -92,7 +92,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList **list)
 	GList *l;
 	GList *list_new = NULL;
 	const gchar *tmp;
-	_cleanup_hashtable_unref_ GHashTable *hash;
+	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
 
 	/* add X-Merge-With-Parent on any metainfo files that are in a package
 	 * required by a desktop package */
