@@ -107,9 +107,7 @@ asb_gettext_ctx_new (void)
 static void
 asb_gettext_ctx_free (AsbGettextContext *ctx)
 {
-	GList *l;
-	for (l = ctx->data; l != NULL; l = l->next)
-		asb_gettext_entry_free (l->data);
+	g_list_free_full (ctx->data, (GDestroyNotify) asb_gettext_entry_free);
 	g_free (ctx->prefered_mo_filename);
 	g_free (ctx);
 }
