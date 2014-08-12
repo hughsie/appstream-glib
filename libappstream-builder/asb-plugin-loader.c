@@ -80,8 +80,10 @@ asb_plugin_loader_finalize (GObject *object)
 
 	asb_plugin_loader_run (plugin_loader, "asb_plugin_destroy");
 
-	if (priv->ctx != NULL)
-		g_object_unref (priv->ctx);
+	if (priv->ctx != NULL) {
+		g_object_remove_weak_pointer (G_OBJECT (priv->ctx),
+					      (gpointer*) &priv->ctx);
+	}
 	g_ptr_array_unref (priv->plugins);
 
 	G_OBJECT_CLASS (asb_plugin_loader_parent_class)->finalize (object);
@@ -442,7 +444,10 @@ asb_plugin_loader_new (AsbContext *ctx)
 	AsbPluginLoaderPrivate *priv;
 	plugin_loader = g_object_new (ASB_TYPE_PLUGIN_LOADER, NULL);
 	priv = GET_PRIVATE (plugin_loader);
-	if (ctx != NULL)
-		priv->ctx = g_object_ref (ctx);
+	if (ctx != NULL) {
+		priv->ctx = ctx;
+		g_object_add_weak_pointer (G_OBJECT (priv->ctx),
+					   (gpointer*) &priv->ctx);
+	}
 	return ASB_PLUGIN_LOADER (plugin_loader);
 }

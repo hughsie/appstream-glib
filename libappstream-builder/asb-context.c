@@ -1046,7 +1046,8 @@ asb_context_finalize (GObject *object)
 	g_ptr_array_unref (priv->packages);
 	g_list_foreach (priv->apps, (GFunc) g_object_unref, NULL);
 	g_list_free (priv->apps);
-	g_ptr_array_unref (priv->file_globs);
+	if (priv->file_globs != NULL)
+		g_ptr_array_unref (priv->file_globs);
 	g_mutex_clear (&priv->apps_mutex);
 	g_free (priv->old_metadata);
 	g_free (priv->extra_appstream);
