@@ -28,6 +28,7 @@ appstream_util_SOURCES =				\
 appstream_util_LDADD =					\
 	$(AS_GLIB_LIBS)					\
 	$(GLIB_LIBS)					\
+	$(GDKPIXBUF_LIBS)				\
 	$(SOUP_LIBS)					\
 	$(LIBARCHIVE_LIBS)
 appstream_util_LDFLAGS =				\
