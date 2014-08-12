@@ -153,7 +153,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	gchar **filelist;
 	GPtrArray *releases;
 	guint i;
-	guint secs;
+	gint64 secs;
 	guint days;
 
 	/* add extra categories */
@@ -268,7 +268,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			secs = (g_get_real_time () / G_USEC_PER_SEC) -
 				as_release_get_timestamp (release);
 			days = secs / (60 * 60 * 24);
-			if (days < 365) {
+			if (secs > 0 && days < 365) {
 				as_app_add_metadata (AS_APP (app),
 						     "X-Kudo-RecentRelease", "", -1);
 				break;
@@ -283,9 +283,8 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		secs = (g_get_real_time () / G_USEC_PER_SEC) -
 			as_release_get_timestamp (release);
 		days = secs / (60 * 60 * 24);
-
 		/* we need AppData if the app needs saving */
-		if (days > 365 * 5) {
+		if (secs > 0 && days > 365 * 5) {
 			asb_app_add_requires_appdata (app,
 				"Dead upstream for > %i years", 5);
 		}
