@@ -2215,6 +2215,10 @@ as_app_add_extends (AsApp *app, const gchar *extends, gssize extends_len)
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
+	    as_app_array_find_string (priv->extends, extends, extends_len)) {
+		return;
+	}
 
 	g_ptr_array_add (priv->extends, as_strndup (extends, extends_len));
 }
