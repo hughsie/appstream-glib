@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2014 Richard Hughes <richard@hughsie.com> -->
+<application>
+  <id type="addon">example.desktop</id>
+  <metadata_license>CC0 and CC-BY-3.0</metadata_license>
+  <project_license>GPL-2.0+ and GFDL-1.3</project_license>
+  <description><p>Demote application to addon.</p></description>
+  <extends>firefox.desktop</extends>
+</application>

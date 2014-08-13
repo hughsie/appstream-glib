@@ -1556,6 +1556,57 @@ as_test_app_search_func (void)
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) mime), ==, 5);
 }
 
+/* demote the .desktop "application" to an addon */
+static void
+as_test_store_demote_func (void)
+{
+	AsApp *app;
+	GError *error = NULL;
+	gboolean ret;
+	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_object_unref_ AsApp *app_appdata = NULL;
+	_cleanup_object_unref_ AsApp *app_desktop = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_string_free_ GString *xml = NULL;
+
+	/* load example desktop file */
+	app_desktop = as_app_new ();
+	filename = as_test_get_filename ("example.desktop");
+	ret = as_app_parse_file (app_desktop, filename,
+				 AS_APP_PARSE_FLAG_ALLOW_VETO, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_app_get_id_kind (app_desktop), ==, AS_ID_KIND_DESKTOP);
+
+	/* load example appdata file */
+	app_appdata = as_app_new ();
+	filename = as_test_get_filename ("example.appdata.xml");
+	ret = as_app_parse_file (app_appdata, filename,
+				 AS_APP_PARSE_FLAG_ALLOW_VETO, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_app_get_id_kind (app_appdata), ==, AS_ID_KIND_ADDON);
+
+	/* add apps */
+	store = as_store_new ();
+	as_store_set_api_version (store, 0.8);
+	as_store_add_app (store, app_desktop);
+	as_store_add_app (store, app_appdata);
+
+	/* check we demoted */
+	g_assert_cmpint (as_store_get_size (store), ==, 1);
+	app = as_store_get_app_by_id (store, "example.desktop");
+	g_assert (app != NULL);
+	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_ADDON);
+	g_assert_cmpint (as_app_get_extends(app)->len, >, 0);
+
+	/* dump */
+	xml = as_store_to_xml (store,
+			       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE |
+			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT);
+	g_debug ("%s", xml->str);
+}
+
 static void
 as_test_store_merges_func (void)
 {
@@ -2326,6 +2377,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils{icons}", as_test_utils_icons_func);
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
+	g_test_add_func ("/AppStream/store{demote}", as_test_store_demote_func);
 	g_test_add_func ("/AppStream/store{merges}", as_test_store_merges_func);
 	g_test_add_func ("/AppStream/store{merges-local}", as_test_store_merges_local_func);
 	g_test_add_func ("/AppStream/store{addons}", as_test_store_addons_func);

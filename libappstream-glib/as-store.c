@@ -1182,7 +1182,8 @@ as_store_load_installed (AsStore *store,
 			continue;
 		if ((priv->add_flags & AS_STORE_ADD_FLAG_PREFER_LOCAL) == 0) {
 			app_tmp = as_store_get_app_by_id (store, tmp);
-			if (app_tmp != NULL) {
+			if (app_tmp != NULL &&
+			    as_app_get_source_kind (app_tmp) == AS_APP_SOURCE_KIND_DESKTOP) {
 				as_app_set_state (app_tmp, AS_APP_STATE_INSTALLED);
 				g_debug ("not parsing %s as %s already exists",
 					 filename, tmp);

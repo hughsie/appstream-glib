@@ -5,6 +5,7 @@ test_files =						\
 	alpha-internal2.png				\
 	alpha-vert.png					\
 	broken.appdata.xml				\
+	example.appdata.xml				\
 	example.desktop					\
 	example.metainfo.xml				\
 	example-v04.xml.gz				\
