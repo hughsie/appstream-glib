@@ -7,6 +7,7 @@ test_files =						\
 	app-1-1.fc21.x86_64.rpm				\
 	app-extra-1-1.fc21.noarch.rpm			\
 	broken.appdata.xml				\
+	example.appdata.xml				\
 	example.desktop					\
 	example.metainfo.xml				\
 	example-v04.xml.gz				\

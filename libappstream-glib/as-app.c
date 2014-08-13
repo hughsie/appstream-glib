@@ -2293,6 +2293,12 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	if (papp->id_kind == AS_ID_KIND_UNKNOWN)
 		as_app_set_id_kind (app, priv->id_kind);
 
+	/* AppData or AppStream can overwrite the id-kind of desktop files */
+	if ((priv->source_kind == AS_APP_SOURCE_KIND_APPDATA ||
+	     priv->source_kind == AS_APP_SOURCE_KIND_APPSTREAM) &&
+	    papp->source_kind == AS_APP_SOURCE_KIND_DESKTOP)
+		as_app_set_id_kind (app, priv->id_kind);
+
 	/* state */
 	if (papp->state == AS_APP_STATE_UNKNOWN)
 		as_app_set_state (app, priv->state);
