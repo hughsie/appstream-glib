@@ -1332,6 +1332,10 @@ as_store_load (AsStore *store,
 		if (!as_store_load_app_install (store, dest, cancellable, error))
 			return FALSE;
 	}
+
+	/* match again, for applications extended from different roots */
+	as_store_match_addons (store);
+
 	return TRUE;
 }
 
