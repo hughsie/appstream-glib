@@ -2301,6 +2301,12 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		as_app_add_kudo (app, tmp, -1);
 	}
 
+	/* extends */
+	for (i = 0; i < priv->extends->len; i++) {
+		tmp = g_ptr_array_index (priv->extends, i);
+		as_app_add_extends (app, tmp, -1);
+	}
+
 	/* compulsory_for_desktops */
 	for (i = 0; i < priv->compulsory_for_desktops->len; i++) {
 		tmp = g_ptr_array_index (priv->compulsory_for_desktops, i);
