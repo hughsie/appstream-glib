@@ -2285,6 +2285,10 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	overwrite = (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) == 0;
 
+	/* id-kind */
+	if (papp->id_kind == AS_ID_KIND_UNKNOWN)
+		as_app_set_id_kind (app, priv->id_kind);
+
 	/* state */
 	if (papp->state == AS_APP_STATE_UNKNOWN)
 		as_app_set_state (app, priv->state);
