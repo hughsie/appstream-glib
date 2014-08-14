@@ -2540,8 +2540,11 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	static gint old_prio_value = 0;
 
 	/* no addons allowed here */
-	if (api_version < 0.7 && priv->id_kind == AS_ID_KIND_ADDON)
+	if (api_version < 0.7 && priv->id_kind == AS_ID_KIND_ADDON) {
+		g_warning ("Not writing addon '%s' as API version %.1f < 0.7",
+			   priv->id_full, api_version);
 		return NULL;
+	}
 
 	/* <component> or <application> */
 	if (api_version >= 0.6) {
