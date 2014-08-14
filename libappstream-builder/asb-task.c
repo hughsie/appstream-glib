@@ -196,6 +196,23 @@ asb_task_explode_extra_packages (AsbTask *task)
 }
 
 /**
+ * asb_context_add_dummy_pkg:
+ **/
+static void
+asb_context_add_dummy_pkg (AsbTask *task)
+{
+	AsbTaskPrivate *priv = GET_PRIVATE (task);
+	_cleanup_free_ gchar *cache_id = NULL;
+	_cleanup_object_unref_ AsApp *app = NULL;
+
+	app = as_app_new ();
+	as_app_set_id_full (app, asb_package_get_name (priv->pkg), -1);
+	cache_id = asb_utils_get_cache_id_for_filename (priv->filename);
+	as_app_add_metadata (app, "X-CreaterepoAsCacheID", cache_id, -1);
+	asb_context_add_app (priv->ctx, (AsbApp *) app);
+}
+
+/**
  * asb_task_process:
  * @task: A #AsbTask
  * @error_not_used: A #GError or %NULL
@@ -238,8 +255,10 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			 "Getting filename match for %s",
 			 basename);
 	asb_task_add_suitable_plugins (task);
-	if (priv->plugins_to_run->len == 0)
+	if (priv->plugins_to_run->len == 0) {
+		asb_context_add_dummy_pkg (task);
 		goto out;
+	}
 
 	/* delete old tree if it exists */
 	ret = asb_utils_ensure_exists_and_empty (priv->tmpdir, &error);
@@ -410,17 +429,8 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 skip:
 	/* add a dummy element to the AppStream metadata so that we don't keep
 	 * parsing this every time */
-	if (asb_context_get_add_cache_id (priv->ctx) && nr_added == 0) {
-		_cleanup_object_unref_ AsApp *dummy;
-		dummy = as_app_new ();
-		as_app_set_id_full (dummy, asb_package_get_name (priv->pkg), -1);
-		cache_id = asb_utils_get_cache_id_for_filename (priv->filename);
-		as_app_add_metadata (dummy,
-				     "X-CreaterepoAsCacheID",
-				     cache_id, -1);
-		asb_context_add_app (priv->ctx, (AsbApp *) dummy);
-		g_free (cache_id);
-	}
+	if (asb_context_get_add_cache_id (priv->ctx) && nr_added == 0)
+		asb_context_add_dummy_pkg (task);
 
 	/* delete tree */
 	asb_panel_set_status (priv->panel, "Deleting temp files");
