@@ -31,6 +31,8 @@ typedef struct	AsbGlobValue		AsbGlobValue;
 
 gboolean	 asb_utils_rmtree			(const gchar	*directory,
 							 GError		**error);
+gboolean	 asb_utils_ensure_exists		(const gchar	*directory,
+							 GError		**error);
 gboolean	 asb_utils_ensure_exists_and_empty	(const gchar	*directory,
 							 GError		**error);
 gboolean	 asb_utils_write_archive_dir		(const gchar	*filename,

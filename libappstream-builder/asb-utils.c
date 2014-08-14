@@ -93,6 +93,32 @@ asb_utils_rmtree (const gchar *directory, GError **error)
 }
 
 /**
+ * asb_utils_ensure_exists:
+ * @directory: utf8 directory name
+ * @error: A #GError or %NULL
+ *
+ * Ensures a directory exists.
+ *
+ * Returns: %TRUE for success, %FALSE otherwise
+ *
+ * Since: 0.2.5
+ **/
+gboolean
+asb_utils_ensure_exists (const gchar *directory, GError **error)
+{
+	if (g_file_test (directory, G_FILE_TEST_EXISTS))
+		return TRUE;
+	if (g_mkdir_with_parents (directory, 0700) != 0) {
+		g_set_error (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_FAILED,
+			     "Failed to create: %s", directory);
+		return FALSE;
+	}
+	return TRUE;
+}
+
+/**
  * asb_utils_ensure_exists_and_empty:
  * @directory: utf8 directory name
  * @error: A #GError or %NULL
@@ -110,16 +136,8 @@ asb_utils_ensure_exists_and_empty (const gchar *directory, GError **error)
 	_cleanup_dir_close_ GDir *dir = NULL;
 
 	/* does directory exist */
-	if (!g_file_test (directory, G_FILE_TEST_EXISTS)) {
-		if (g_mkdir_with_parents (directory, 0700) != 0) {
-			g_set_error (error,
-				     ASB_PLUGIN_ERROR,
-				     ASB_PLUGIN_ERROR_FAILED,
-				     "Failed to create: %s", directory);
-			return FALSE;
-		}
-		return TRUE;
-	}
+	if (!asb_utils_ensure_exists (directory, error))
+		return FALSE;
 
 	/* try to open */
 	dir = g_dir_open (directory, 0, error);
