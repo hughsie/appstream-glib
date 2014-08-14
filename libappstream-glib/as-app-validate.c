@@ -1080,6 +1080,22 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		}
 	}
 
+	/* pkgname */
+	if (as_app_get_pkgname_default (app) != NULL &&
+	    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO) {
+		ai_app_validate_add (probs,
+				     AS_PROBLEM_KIND_TAG_INVALID,
+				     "<pkgname> not allowed in metainfo");
+	}
+
+	/* extends */
+	if (as_app_get_extends(app)->len == 0 &&
+	    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO) {
+		ai_app_validate_add (probs,
+				     AS_PROBLEM_KIND_TAG_MISSING,
+				     "<extends> is not present");
+	}
+
 	/* updatecontact */
 	update_contact = as_app_get_update_contact (app);
 	if (g_strcmp0 (update_contact,
@@ -1189,6 +1205,10 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
 					     "<name> requires sentence case");
 		}
+	} else if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO) {
+		ai_app_validate_add (probs,
+				     AS_PROBLEM_KIND_TAG_MISSING,
+				     "<name> is not present");
 	}
 
 	/* comment */
@@ -1221,6 +1241,10 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
 					     "<summary> requires sentence case");
 		}
+	} else if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO) {
+		ai_app_validate_add (probs,
+				     AS_PROBLEM_KIND_TAG_MISSING,
+				     "<summary> is not present");
 	}
 	if (summary != NULL && name != NULL &&
 	    strlen (summary) < strlen (name)) {
