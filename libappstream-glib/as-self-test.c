@@ -1825,6 +1825,16 @@ as_test_store_func (void)
 		"</application>"
 		"</applications>");
 	g_string_free (xml, TRUE);
+
+	/* empty the store */
+	as_store_remove_all (store);
+	g_assert_cmpint (as_store_get_size (store), ==, 0);
+	g_assert (as_store_get_app_by_id (store, "aaa.desktop") == NULL);
+	g_assert (as_store_get_app_by_id (store, "gnome-software.desktop") == NULL);
+	xml = as_store_to_xml (store, 0);
+	g_assert_cmpstr (xml->str, ==,
+		"<applications version=\"0.4\"/>");
+	g_string_free (xml, TRUE);
 }
 
 static void

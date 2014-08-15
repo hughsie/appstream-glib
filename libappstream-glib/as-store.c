@@ -198,6 +198,24 @@ as_store_get_apps (AsStore *store)
 }
 
 /**
+ * as_store_remove_all:
+ * @store: a #AsStore instance.
+ *
+ * Removes all applications from the store.
+ *
+ * Since: 0.2.5
+ **/
+void
+as_store_remove_all (AsStore *store)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_if_fail (AS_IS_STORE (store));
+	g_ptr_array_set_size (priv->array, 0);
+	g_hash_table_remove_all (priv->hash_id);
+	g_hash_table_remove_all (priv->hash_pkgname);
+}
+
+/**
  * as_store_get_apps_by_metadata:
  * @store: a #AsStore instance.
  * @key: metadata key
