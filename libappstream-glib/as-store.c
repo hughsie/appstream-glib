@@ -56,6 +56,7 @@ struct _AsStorePrivate
 {
 	gchar			*destdir;
 	gchar			*origin;
+	gchar			*builder_id;
 	gdouble			 api_version;
 	GPtrArray		*array;		/* of AsApp */
 	GHashTable		*hash_id;	/* of AsApp{id_full} */
@@ -103,6 +104,7 @@ as_store_finalize (GObject *object)
 
 	g_free (priv->destdir);
 	g_free (priv->origin);
+	g_free (priv->builder_id);
 	g_ptr_array_unref (priv->array);
 	g_ptr_array_unref (priv->file_monitors);
 	g_hash_table_unref (priv->hash_id);
@@ -483,6 +485,11 @@ as_store_from_root (AsStore *store,
 	if (tmp != NULL)
 		as_store_set_origin (store, tmp);
 
+	/* set in the XML file */
+	tmp = as_node_get_attribute (apps, "builder_id");
+	if (tmp != NULL)
+		as_store_set_builder_id (store, tmp);
+
 	/* if we have an origin either from the XML or _set_origin() */
 	if (priv->origin != NULL) {
 		if (icon_root == NULL)
@@ -650,6 +657,10 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 	if (priv->origin != NULL)
 		as_node_add_attribute (node_apps, "origin", priv->origin, -1);
 
+	/* set origin attribute */
+	if (priv->builder_id != NULL)
+		as_node_add_attribute (node_apps, "builder_id", priv->builder_id, -1);
+
 	/* set version attribute */
 	if (priv->api_version > 0.1f) {
 		g_ascii_formatd (version, sizeof (version),
@@ -772,6 +783,42 @@ as_store_set_origin (AsStore *store, const gchar *origin)
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_free (priv->origin);
 	priv->origin = g_strdup (origin);
+}
+
+/**
+ * as_store_get_builder_id:
+ * @store: a #AsStore instance.
+ *
+ * Gets the metadata builder identifier, which is used to work out if old
+ * metadata is compatible with this builder.
+ *
+ * Returns: the builder_id string, or %NULL if unset
+ *
+ * Since: 0.2.5
+ **/
+const gchar *
+as_store_get_builder_id (AsStore *store)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	return priv->builder_id;
+}
+
+/**
+ * as_store_set_builder_id:
+ * @store: a #AsStore instance.
+ * @builder_id: the builder_id, e.g. "appstream-glib:1"
+ *
+ * Sets the metadata builder identifier, which is used to work out if old
+ * metadata can be used.
+ *
+ * Since: 0.2.5
+ **/
+void
+as_store_set_builder_id (AsStore *store, const gchar *builder_id)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_free (priv->builder_id);
+	priv->builder_id = g_strdup (builder_id);
 }
 
 /**
