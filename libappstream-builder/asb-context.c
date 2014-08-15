@@ -682,16 +682,20 @@ asb_context_setup (AsbContext *ctx, GError **error)
 					  priv->old_metadata,
 					  priv->basename);
 		file_old = g_file_new_for_path (fn_old);
-		if (!as_store_from_file (priv->store_old, file_old,
-					 NULL, NULL, error))
-			return FALSE;
+		if (g_file_query_exists (file_old, NULL)) {
+			if (!as_store_from_file (priv->store_old, file_old,
+						 NULL, NULL, error))
+				return FALSE;
+		}
 		fn_ignore = g_strdup_printf ("%s/%s-ignore.xml.gz",
 					     priv->old_metadata,
 					     priv->basename);
 		file_ignore = g_file_new_for_path (fn_ignore);
-		if (!as_store_from_file (priv->store_ignore, file_ignore,
-					 NULL, NULL, error))
-			return FALSE;
+		if (g_file_query_exists (file_ignore, NULL)) {
+			if (!as_store_from_file (priv->store_ignore, file_ignore,
+						 NULL, NULL, error))
+				return FALSE;
+		}
 
 		/* check builder-id matches */
 		builder_id = asb_utils_get_builder_id ();
