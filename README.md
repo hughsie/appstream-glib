@@ -104,15 +104,17 @@ patiently if you have a lot of packages to process. After this is complete
 you should finally see:
 
     Writing ./repodata/megarpms-21.xml.gz
+    Writing ./repodata/megarpms-21-failed.xml.gz
+    Writing ./repodata/megarpms-21-ignore.xml.gz
     Writing ./repodata/megarpms-21-icons.tar
     Done!
 
 You now have two choices what to do with these files. You can either upload
 them with the rest of the metadata you ship (e.g. in the same directory as
-`repomd.xml` and `primary.sqlite.bz2`) which will work with Fedora 21.
+`repomd.xml` and `primary.sqlite.bz2`) which will work with Fedora 22 and later.
 
-For Fedora 20, you have to actually install these files, so you can do something
-like this in the megarpms-release.spec file:
+For Fedora 20 and 21, you have to actually install these files, so you can do
+something like this in the megarpms-release.spec file:
 
     Source1:   http://www.megarpms.org/temp/megarpms-20.xml.gz
     Source2:   http://www.megarpms.org/temp/megarpms-20-icons.tar.gz

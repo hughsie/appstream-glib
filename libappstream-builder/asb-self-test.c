@@ -220,8 +220,10 @@ asb_test_context_test_func (gboolean with_cache)
 	_cleanup_free_ gchar *filename4 = NULL;
 	_cleanup_object_unref_ AsbContext *ctx = NULL;
 	_cleanup_object_unref_ AsStore *store_failed = NULL;
+	_cleanup_object_unref_ AsStore *store_ignore = NULL;
 	_cleanup_object_unref_ AsStore *store = NULL;
 	_cleanup_object_unref_ GFile *file_failed = NULL;
+	_cleanup_object_unref_ GFile *file_ignore = NULL;
 	_cleanup_object_unref_ GFile *file = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
 
@@ -288,6 +290,7 @@ asb_test_context_test_func (gboolean with_cache)
 	/* check files created */
 	g_assert (g_file_test ("/tmp/asbuilder-output/asb-self-test.xml.gz", G_FILE_TEST_EXISTS));
 	g_assert (g_file_test ("/tmp/asbuilder-output/asb-self-test-failed.xml.gz", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder-output/asb-self-test-ignore.xml.gz", G_FILE_TEST_EXISTS));
 	g_assert (g_file_test ("/tmp/asbuilder-output/asb-self-test-icons.tar.gz", G_FILE_TEST_EXISTS));
 
 	/* load AppStream metadata */
@@ -296,7 +299,7 @@ asb_test_context_test_func (gboolean with_cache)
 	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store), ==, 4);
+	g_assert_cmpint (as_store_get_size (store), ==, 2);
 	app = as_store_get_app_by_pkgname (store, "app");
 	g_assert (app != NULL);
 	app = as_store_get_app_by_id (store, "app.desktop");
@@ -344,13 +347,6 @@ asb_test_context_test_func (gboolean with_cache)
 		"<value key=\"X-CacheID\">app-1-1.fc21.x86_64.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
-		"<component>\n"
-		"<id>app-console</id>\n"
-		"<pkgname>app-console</pkgname>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-console-1-1.fc21.noarch.rpm</value>\n"
-		"</metadata>\n"
-		"</component>\n"
 		"<component type=\"addon\">\n"
 		"<id>app-extra</id>\n"
 		"<pkgname>app-extra</pkgname>\n"
@@ -369,13 +365,6 @@ asb_test_context_test_func (gboolean with_cache)
 		"</languages>\n"
 		"<metadata>\n"
 		"<value key=\"X-CacheID\">app-extra-1-1.fc21.noarch.rpm</value>\n"
-		"</metadata>\n"
-		"</component>\n"
-		"<component>\n"
-		"<id>test</id>\n"
-		"<pkgname>test</pkgname>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">test-0.1-1.fc21.noarch.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
 		"</components>\n";
@@ -398,6 +387,14 @@ asb_test_context_test_func (gboolean with_cache)
 		app = as_store_get_app_by_id (store_failed, "console2.desktop");
 		g_assert (app != NULL);
 	}
+
+	/* load ignored metadata */
+	file_ignore = g_file_new_for_path ("/tmp/asbuilder-output/asb-self-test-ignore.xml.gz");
+	store_ignore = as_store_new ();
+	ret = as_store_from_file (store_ignore, file_ignore, NULL, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_store_get_size (store_ignore), ==, 2);
 }
 #endif
 
@@ -405,6 +402,11 @@ static void
 asb_test_context_nocache_func (void)
 {
 #ifdef HAVE_RPM
+	GError *error = NULL;
+	gboolean ret;
+	ret = asb_utils_rmtree ("/tmp/asbuilder-output", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	asb_test_context_test_func (FALSE);
 #endif
 }
