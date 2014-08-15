@@ -752,6 +752,8 @@ asb_context_write_xml (AsbContext *ctx,
 	g_print ("Writing %s...\n", filename);
 	as_store_set_origin (store, basename);
 	as_store_set_api_version (store, priv->api_version);
+	if (priv->add_cache_id)
+		as_store_set_builder_id (store, asb_utils_get_builder_id ());
 	return as_store_to_file (store,
 				 file,
 				 AS_NODE_TO_XML_FLAG_ADD_HEADER |
@@ -1053,12 +1055,21 @@ asb_context_find_in_cache (AsbContext *ctx, const gchar *filename)
 	AsApp *app;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	guint i;
-	_cleanup_free_ gchar *cache_id;
-	_cleanup_ptrarray_unref_ GPtrArray *apps;
+	_cleanup_free_ gchar *cache_id = NULL;
+	_cleanup_free_ gchar *builder_id = NULL;
+	_cleanup_ptrarray_unref_ GPtrArray *apps = NULL;
 
+	/* check builder-id matches */
+	builder_id = asb_utils_get_builder_id ();
+	if (g_strcmp0 (as_store_get_builder_id (priv->old_md_cache), builder_id) != 0) {
+		g_debug ("builder ID does not match: %s", builder_id);
+		return FALSE;
+	}
+
+	/* find by cache-id */
 	cache_id = asb_utils_get_cache_id_for_filename (filename);
 	apps = as_store_get_apps_by_metadata (priv->old_md_cache,
-					      "X-CreaterepoAsCacheID",
+					      "X-CacheID",
 					      cache_id);
 	if (apps->len == 0)
 		return FALSE;

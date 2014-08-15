@@ -289,7 +289,7 @@ asb_test_context_test_func (gboolean with_cache)
 	/* check it matches what we expect */
 	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
-		"<components version=\"0.8\" origin=\"asb-self-test\">\n"
+		"<components version=\"0.8\" builder_id=\"appstream-glib:1\" origin=\"asb-self-test\">\n"
 		"<component type=\"desktop\">\n"
 		"<id>app.desktop</id>\n"
 		"<pkgname>app</pkgname>\n"
@@ -325,7 +325,7 @@ asb_test_context_test_func (gboolean with_cache)
 		"<lang percentage=\"33\">ru</lang>\n"
 		"</languages>\n"
 		"<metadata>\n"
-		"<value key=\"X-CreaterepoAsCacheID\">app-1-1.fc21.x86_64.rpm:1</value>\n"
+		"<value key=\"X-CacheID\">app-1-1.fc21.x86_64.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
 		"<component type=\"addon\">\n"
@@ -345,13 +345,13 @@ asb_test_context_test_func (gboolean with_cache)
 		"<lang percentage=\"33\">ru</lang>\n"
 		"</languages>\n"
 		"<metadata>\n"
-		"<value key=\"X-CreaterepoAsCacheID\">app-extra-1-1.fc21.noarch.rpm:1</value>\n"
+		"<value key=\"X-CacheID\">app-extra-1-1.fc21.noarch.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
 		"<component>\n"
 		"<id>test</id>\n"
 		"<metadata>\n"
-		"<value key=\"X-CreaterepoAsCacheID\">test-0.1-1.fc21.noarch.rpm:1</value>\n"
+		"<value key=\"X-CacheID\">test-0.1-1.fc21.noarch.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
 		"</components>\n";

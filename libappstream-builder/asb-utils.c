@@ -40,6 +40,23 @@
 #define ASB_METADATA_CACHE_VERSION	1
 
 /**
+ * asb_utils_get_builder_id:
+ *
+ * Gets the builder-id used at this time. This is unstable, and may be affected
+ * by the time or by the whim of upstream.
+ *
+ * Returns: utf8 string
+ *
+ * Since: 0.2.5
+ **/
+gchar *
+asb_utils_get_builder_id (void)
+{
+	return g_strdup_printf ("appstream-glib:%i",
+				ASB_METADATA_CACHE_VERSION);
+}
+
+/**
  * asb_utils_get_cache_id_for_filename:
  * @filename: utf8 filename
  *
@@ -52,13 +69,7 @@
 gchar *
 asb_utils_get_cache_id_for_filename (const gchar *filename)
 {
-	_cleanup_free_ gchar *basename;
-
-	/* only use the basename and the cache version */
-	basename = g_path_get_basename (filename);
-	return g_strdup_printf ("%s:%i",
-				basename,
-				ASB_METADATA_CACHE_VERSION);
+	return g_path_get_basename (filename);
 }
 
 /**

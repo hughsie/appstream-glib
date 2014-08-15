@@ -208,7 +208,7 @@ asb_context_add_dummy_pkg (AsbTask *task)
 	app = as_app_new ();
 	as_app_set_id_full (app, asb_package_get_name (priv->pkg), -1);
 	cache_id = asb_utils_get_cache_id_for_filename (priv->filename);
-	as_app_add_metadata (app, "X-CreaterepoAsCacheID", cache_id, -1);
+	as_app_add_metadata (app, "X-CacheID", cache_id, -1);
 	asb_context_add_app (priv->ctx, (AsbApp *) app);
 }
 
@@ -412,7 +412,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		if (asb_context_get_add_cache_id (priv->ctx)) {
 			cache_id = asb_utils_get_cache_id_for_filename (priv->filename);
 			as_app_add_metadata (AS_APP (app),
-					     "X-CreaterepoAsCacheID",
+					     "X-CacheID",
 					     cache_id, -1);
 			g_free (cache_id);
 		}

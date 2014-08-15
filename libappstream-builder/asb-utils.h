@@ -44,6 +44,8 @@ gboolean	 asb_utils_explode			(const gchar	*filename,
 							 GError		**error);
 gchar		*asb_utils_get_cache_id_for_filename	(const gchar	*filename);
 
+gchar		*asb_utils_get_builder_id		(void);
+
 AsbGlobValue	*asb_glob_value_new			(const gchar	*glob,
 							 const gchar	*value);
 void		 asb_glob_value_free			(AsbGlobValue	*kv);
