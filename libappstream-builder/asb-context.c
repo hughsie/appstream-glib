@@ -1081,7 +1081,7 @@ asb_context_process (AsbContext *ctx, GError **error)
 
 	/* merge */
 	g_print ("Merging applications...\n");
-	asb_plugin_loader_merge (priv->plugin_loader, &priv->apps);
+	asb_plugin_loader_merge (priv->plugin_loader, priv->apps);
 
 	/* print any warnings */
 	ret = asb_context_detect_missing_parents (ctx, error);

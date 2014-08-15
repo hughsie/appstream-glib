@@ -87,23 +87,22 @@ asb_plugin_merge_prepare_deps (GList *list)
  * asb_plugin_merge:
  */
 void
-asb_plugin_merge (AsbPlugin *plugin, GList **list)
+asb_plugin_merge (AsbPlugin *plugin, GList *list)
 {
 	AsApp *app;
 	AsApp *found;
 	GList *l;
-	GList *list_new = NULL;
 	const gchar *tmp;
 	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
 
 	/* add X-Merge-With-Parent on any metainfo files that are in a package
 	 * required by a desktop package */
-	asb_plugin_merge_prepare_deps (*list);
+	asb_plugin_merge_prepare_deps (list);
 
 	/* add all packages to the hash */
 	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
 				      g_free, (GDestroyNotify) g_object_unref);
-	for (l = *list; l != NULL; l = l->next) {
+	for (l = list; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
 		g_hash_table_insert (hash,
 				     g_strdup (as_app_get_id_full (app)),
@@ -111,32 +110,25 @@ asb_plugin_merge (AsbPlugin *plugin, GList **list)
 	}
 
 	/* absorb some apps into their parent */
-	for (l = *list; l != NULL; l = l->next) {
+	for (l = list; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
 
 		/* no absorb metadata */
 		tmp = as_app_get_metadata_item (app, "X-Merge-With-Parent");
-		if (tmp == NULL) {
-			asb_plugin_add_app (&list_new, app);
+		if (tmp == NULL)
 			continue;
-		}
 
 		/* find the parent app */
 		found = g_hash_table_lookup (hash, tmp);
 		if (found == NULL) {
-			g_warning ("Cannot find referenced '%s' from '%s'",
-				   tmp, as_app_get_id_full (app));
+			as_app_add_veto (app, "No referenced '%s'", tmp);
 			continue;
 		}
 
 		/* partially absorb */
-		g_debug ("partially absorbing %s into %s",
-			 as_app_get_id_full (app),
-			 as_app_get_id_full (found));
+		as_app_add_veto (app, "partially absorbing %s into %s",
+				 as_app_get_id_full (app),
+				 as_app_get_id_full (found));
 		as_app_subsume_full (found, app, AS_APP_SUBSUME_FLAG_PARTIAL);
 	}
-
-	/* success */
-	g_list_free_full (*list, (GDestroyNotify) g_object_unref);
-	*list = list_new;
 }

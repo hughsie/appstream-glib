@@ -139,18 +139,17 @@ asb_plugin_process (AsbPlugin *plugin,
  * asb_plugin_merge:
  */
 void
-asb_plugin_merge (AsbPlugin *plugin, GList **list)
+asb_plugin_merge (AsbPlugin *plugin, GList *list)
 {
 	AsApp *app;
 	AsApp *found;
 	GList *l;
-	GList *list_new = NULL;
 	_cleanup_hashtable_unref_ GHashTable *hash;
 
 	/* make a hash table of ID->AsApp */
 	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
 				      g_free, (GDestroyNotify) g_object_unref);
-	for (l = *list; l != NULL; l = l->next) {
+	for (l = list; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
 		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
 			continue;
@@ -161,33 +160,23 @@ asb_plugin_merge (AsbPlugin *plugin, GList **list)
 
 	/* add addons where the pkgname is different from the
 	 * main package */
-	for (l = *list; l != NULL; l = l->next) {
-		if (!ASB_IS_APP (l->data)) {
-			asb_plugin_add_app (&list_new, l->data);
+	for (l = list; l != NULL; l = l->next) {
+		if (!ASB_IS_APP (l->data))
 			continue;
-		}
 		app = AS_APP (l->data);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_ADDON) {
-			asb_plugin_add_app (&list_new, l->data);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_ADDON)
 			continue;
-		}
 		found = g_hash_table_lookup (hash, as_app_get_id_full (app));
-		if (found == NULL) {
-			asb_plugin_add_app (&list_new, l->data);
+		if (found == NULL)
 			continue;
-		}
 		if (g_strcmp0 (as_app_get_pkgname_default (app),
-			       as_app_get_pkgname_default (found)) == 0) {
-			g_debug ("absorbing addon %s shipped in main package %s",
+			       as_app_get_pkgname_default (found)) != 0)
+			continue;
+		as_app_add_veto (app,
+				 "absorbing addon %s shipped in "
+				 "main package %s",
 				 as_app_get_id_full (app),
 				 as_app_get_pkgname_default (app));
-			as_app_subsume_full (found, app, AS_APP_SUBSUME_FLAG_PARTIAL);
-			continue;
-		}
-		asb_plugin_add_app (&list_new, app);
+		as_app_subsume_full (found, app, AS_APP_SUBSUME_FLAG_PARTIAL);
 	}
-
-	/* success */
-	g_list_free_full (*list, (GDestroyNotify) g_object_unref);
-	*list = list_new;
 }

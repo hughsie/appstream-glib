@@ -248,10 +248,10 @@ asb_plugin_loader_get_globs (AsbPluginLoader *plugin_loader)
  *
  * Merge the list of applications using the plugins.
  *
- * Since: 0.2.1
+ * Since: 0.2.5
  **/
 void
-asb_plugin_loader_merge (AsbPluginLoader *plugin_loader, GList **apps)
+asb_plugin_loader_merge (AsbPluginLoader *plugin_loader, GList *apps)
 {
 	AsbApp *app;
 	AsbApp *found;
@@ -277,7 +277,7 @@ asb_plugin_loader_merge (AsbPluginLoader *plugin_loader, GList **apps)
 	}
 
 	/* FIXME: move to font plugin */
-	for (l = *apps; l != NULL; l = l->next) {
+	for (l = apps; l != NULL; l = l->next) {
 		if (!ASB_IS_APP (l->data))
 			continue;
 		app = ASB_APP (l->data);
@@ -292,7 +292,7 @@ asb_plugin_loader_merge (AsbPluginLoader *plugin_loader, GList **apps)
 
 	/* deduplicate */
 	hash = g_hash_table_new (g_str_hash, g_str_equal);
-	for (l = *apps; l != NULL; l = l->next) {
+	for (l = apps; l != NULL; l = l->next) {
 		if (!ASB_IS_APP (l->data))
 			continue;
 		app = ASB_APP (l->data);

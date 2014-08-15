@@ -63,7 +63,7 @@ typedef void		 (*AsbPluginFunc)		(AsbPlugin	*plugin);
 typedef void		 (*AsbPluginGetGlobsFunc)	(AsbPlugin	*plugin,
 							 GPtrArray	*array);
 typedef void		 (*AsbPluginMergeFunc)		(AsbPlugin	*plugin,
-							 GList		**apps);
+							 GList		*apps);
 typedef gboolean	 (*AsbPluginCheckFilenameFunc)	(AsbPlugin	*plugin,
 							 const gchar	*filename);
 typedef GList		*(*AsbPluginProcessFunc)	(AsbPlugin	*plugin,
@@ -88,7 +88,7 @@ GList		*asb_plugin_process			(AsbPlugin	*plugin,
 void		 asb_plugin_add_globs			(AsbPlugin	*plugin,
 							 GPtrArray	*globs);
 void		 asb_plugin_merge			(AsbPlugin	*plugin,
-							 GList		**list);
+							 GList		*list);
 gboolean	 asb_plugin_process_app			(AsbPlugin	*plugin,
 							 AsbPackage	*pkg,
 							 AsbApp		*app,

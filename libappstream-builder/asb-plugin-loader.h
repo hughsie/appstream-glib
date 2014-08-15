@@ -65,7 +65,7 @@ gboolean	 asb_plugin_loader_setup	(AsbPluginLoader	*plugin_loader,
 GPtrArray	*asb_plugin_loader_get_globs	(AsbPluginLoader	*plugin_loader);
 GPtrArray	*asb_plugin_loader_get_plugins	(AsbPluginLoader	*plugin_loader);
 void		 asb_plugin_loader_merge	(AsbPluginLoader	*plugin_loader,
-						 GList			**apps);
+						 GList			*apps);
 gboolean	 asb_plugin_loader_process_app	(AsbPluginLoader	*plugin_loader,
 						 AsbPackage		*pkg,
 						 AsbApp			*app,

@@ -736,31 +736,25 @@ asb_font_get_app_sortable_idx (AsbApp *app)
  * asb_font_merge_family:
  */
 static void
-asb_font_merge_family (GList **list, const gchar *md_key)
+asb_font_merge_family (GList *list, const gchar *md_key)
 {
 	AsbApp *app;
 	AsbApp *found;
-	GList *hash_values = NULL;
 	GList *l;
-	GList *list_new = NULL;
 	const gchar *tmp;
 	_cleanup_hashtable_unref_ GHashTable *hash;
 
 	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
 				      g_free, (GDestroyNotify) g_object_unref);
-	for (l = *list; l != NULL; l = l->next) {
-		if (!ASB_IS_APP (l->data)) {
-			asb_plugin_add_app (&list_new, l->data);
+	for (l = list; l != NULL; l = l->next) {
+		if (!ASB_IS_APP (l->data))
 			continue;
-		}
 		app = ASB_APP (l->data);
 
 		/* no family, or not a font */
 		tmp = as_app_get_metadata_item (AS_APP (app), md_key);
-		if (tmp == NULL) {
-			asb_plugin_add_app (&list_new, AS_APP (app));
+		if (tmp == NULL)
 			continue;
-		}
 
 		/* find the font family */
 		found = g_hash_table_lookup (hash, tmp);
@@ -782,24 +776,28 @@ asb_font_merge_family (GList **list, const gchar *md_key)
 		}
 	}
 
-	/* add all the best fonts to the list */
-	hash_values = g_hash_table_get_values (hash);
-	for (l = hash_values; l != NULL; l = l->next) {
+	/* veto the ones we've absorbed */
+	for (l = list; l != NULL; l = l->next) {
+		if (!ASB_IS_APP (l->data))
+			continue;
 		app = ASB_APP (l->data);
-		asb_plugin_add_app (&list_new, AS_APP (app));
+		tmp = as_app_get_metadata_item (AS_APP (app), md_key);
+		if (tmp == NULL)
+			continue;
+		found = g_hash_table_lookup (hash, tmp);
+		if (found != NULL)
+			continue;
+		as_app_add_veto (AS_APP (app),
+				 "%s was subsumed out of existance",
+				 as_app_get_id_full (AS_APP (app)));
 	}
-	g_list_free (hash_values);
-
-	/* success */
-	g_list_free_full (*list, (GDestroyNotify) g_object_unref);
-	*list = list_new;
 }
 
 /**
  * asb_plugin_merge:
  */
 void
-asb_plugin_merge (AsbPlugin *plugin, GList **list)
+asb_plugin_merge (AsbPlugin *plugin, GList *list)
 {
 	asb_font_merge_family (list, "FontFamily");
 	asb_font_merge_family (list, "FontParent");
