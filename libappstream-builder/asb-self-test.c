@@ -206,12 +206,11 @@ asb_test_plugin_loader_func (void)
 	g_assert_cmpstr (plugin->name, ==, "desktop");
 }
 
-static void
-asb_test_context_func (void)
-{
 #ifdef HAVE_RPM
+static void
+asb_test_context_test_func (gboolean with_cache)
+{
 	AsApp *app;
-	AsbPackage *pkg;
 	GError *error = NULL;
 	const gchar *expected_xml;
 	gboolean ret;
@@ -219,10 +218,10 @@ asb_test_context_func (void)
 	_cleanup_free_ gchar *filename2 = NULL;
 	_cleanup_free_ gchar *filename3 = NULL;
 	_cleanup_object_unref_ AsbContext *ctx = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
 	_cleanup_object_unref_ AsStore *store_failed = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
 	_cleanup_object_unref_ GFile *file_failed = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
 
 	/* set up the context */
@@ -233,10 +232,13 @@ asb_test_context_func (void)
 	asb_context_set_add_cache_id (ctx, TRUE);
 	asb_context_set_no_net (ctx, TRUE);
 	asb_context_set_basename (ctx, "asb-self-test");
-	asb_context_set_output_dir (ctx, "/tmp/asbuilder");
-	asb_context_set_temp_dir (ctx, "/tmp/asbuilder");
+	asb_context_set_cache_dir (ctx, "/tmp/asbuilder-cache");
+	asb_context_set_output_dir (ctx, "/tmp/asbuilder-output");
+	asb_context_set_temp_dir (ctx, "/tmp/asbuilder-temp");
+	if (with_cache)
+		asb_context_set_old_metadata (ctx, "/tmp/asbuilder-output");
 	g_assert (asb_context_get_add_cache_id (ctx));
-	g_assert_cmpstr (asb_context_get_temp_dir (ctx), ==, "/tmp/asbuilder");
+	g_assert_cmpstr (asb_context_get_temp_dir (ctx), ==, "/tmp/asbuilder-temp");
 	ret = asb_context_setup (ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -247,11 +249,6 @@ asb_test_context_func (void)
 	ret = asb_context_add_filename (ctx, filename1, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-
-	/* check we can find it */
-	pkg = asb_context_find_by_pkgname (ctx, "test");
-	g_assert (pkg != NULL);
-	g_assert_cmpstr (asb_package_get_nevr (pkg), ==, "test-0.1-1.fc21");
 
 	/* add another GUI application */
 	filename2 = asb_test_get_filename ("app-1-1.fc21.x86_64.rpm");
@@ -273,23 +270,17 @@ asb_test_context_func (void)
 	g_assert (ret);
 
 	/* check files created */
-	g_assert (g_file_test ("/tmp/asbuilder/asb-self-test.xml.gz", G_FILE_TEST_EXISTS));
-	g_assert (g_file_test ("/tmp/asbuilder/asb-self-test-failed.xml.gz", G_FILE_TEST_EXISTS));
-	g_assert (g_file_test ("/tmp/asbuilder/asb-self-test-icons.tar.gz", G_FILE_TEST_EXISTS));
-
-	/* try to find console package */
-	g_assert (!asb_context_find_in_cache (ctx, "test-0.1-1.fc21.noarch.rpm"));
-
-	/* try to find GUI package */
-	g_assert (!asb_context_find_in_cache (ctx, "app-1-1.fc21.x86_64.rpm"));
+	g_assert (g_file_test ("/tmp/asbuilder-output/asb-self-test.xml.gz", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder-output/asb-self-test-failed.xml.gz", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder-output/asb-self-test-icons.tar.gz", G_FILE_TEST_EXISTS));
 
 	/* load AppStream metadata */
-	file = g_file_new_for_path ("/tmp/asbuilder/asb-self-test.xml.gz");
+	file = g_file_new_for_path ("/tmp/asbuilder-output/asb-self-test.xml.gz");
 	store = as_store_new ();
 	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store), ==, 2);
+	g_assert_cmpint (as_store_get_size (store), ==, 3);
 	app = as_store_get_app_by_pkgname (store, "app");
 	g_assert (app != NULL);
 	app = as_store_get_app_by_id (store, "app.desktop");
@@ -357,21 +348,47 @@ asb_test_context_func (void)
 		"<value key=\"X-CreaterepoAsCacheID\">app-extra-1-1.fc21.noarch.rpm:1</value>\n"
 		"</metadata>\n"
 		"</component>\n"
+		"<component>\n"
+		"<id>test</id>\n"
+		"<metadata>\n"
+		"<value key=\"X-CreaterepoAsCacheID\">test-0.1-1.fc21.noarch.rpm:1</value>\n"
+		"</metadata>\n"
+		"</component>\n"
 		"</components>\n";
 	if (g_strcmp0 (xml->str, expected_xml) != 0)
 		g_warning ("Expected:\n%s\nGot:\n%s", expected_xml, xml->str);
 	g_assert_cmpstr (xml->str, ==, expected_xml);
 
 	/* load failed metadata */
-	file_failed = g_file_new_for_path ("/tmp/asbuilder/asb-self-test-failed.xml.gz");
+	file_failed = g_file_new_for_path ("/tmp/asbuilder-output/asb-self-test-failed.xml.gz");
 	store_failed = as_store_new ();
 	ret = as_store_from_file (store_failed, file_failed, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_assert_cmpint (as_store_get_size (store_failed), ==, 0);
+}
+#endif
+
+static void
+asb_test_context_func (void)
+{
+#ifdef HAVE_RPM
+	GError *error = NULL;
+	gboolean ret;
+
+	/* test it */
+	asb_test_context_test_func (FALSE);
+
+	/* remove icons */
+	ret = asb_utils_rmtree ("/tmp/asbuilder-temp/icons", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* run again, this time using the old metadata as a cache */
+	asb_test_context_test_func (TRUE);
 
 	/* remove temp space */
-	ret = asb_utils_rmtree ("/tmp/asbuilder", &error);
+	ret = asb_utils_rmtree ("/tmp/asbuilder-temp", &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 #endif
