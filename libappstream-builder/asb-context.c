@@ -737,6 +737,17 @@ asb_context_write_xml (AsbContext *ctx,
 	_cleanup_object_unref_ AsStore *store;
 	_cleanup_object_unref_ GFile *file;
 
+	/* convert any vetod applications into dummy components */
+	for (l = priv->apps; l != NULL; l = l->next) {
+		app = AS_APP (l->data);
+		if (!ASB_IS_APP (app))
+			continue;
+		if (as_app_get_vetos(app)->len == 0)
+			continue;
+		asb_context_add_app_dummy (ctx, asb_app_get_package (ASB_APP (app)));
+	}
+
+	/* add any non-vetoed applications */
 	store = as_store_new ();
 	for (l = priv->apps; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
@@ -1122,6 +1133,39 @@ asb_context_add_app (AsbContext *ctx, AsbApp *app)
 	g_mutex_lock (&priv->apps_mutex);
 	asb_plugin_add_app (&priv->apps, AS_APP (app));
 	g_mutex_unlock (&priv->apps_mutex);
+}
+
+/**
+ * asb_context_add_app_dummy:
+ **/
+void
+asb_context_add_app_dummy (AsbContext *ctx, AsbPackage *pkg)
+{
+	AsApp *app_tmp;
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	GList *l;
+	_cleanup_object_unref_ AsbApp *app = NULL;
+
+	/* only do this when we are using a cache-id */
+	if (!priv->add_cache_id)
+		return;
+
+	/* check not already added a dummy application for this package */
+	for (l = priv->apps; l != NULL; l = l->next) {
+		app_tmp = AS_APP (l->data);
+		if (as_app_get_id_kind (app_tmp) != AS_ID_KIND_UNKNOWN)
+			continue;
+		if (g_strcmp0 (as_app_get_metadata_item (app_tmp, "X-CacheID"),
+			       asb_package_get_basename (pkg)) == 0) {
+			g_debug ("already found CacheID of %s",
+				 asb_package_get_basename (pkg));
+			return;
+		}
+	}
+	app = asb_app_new (pkg, asb_package_get_name (pkg));
+	as_app_add_metadata (AS_APP (app), "X-CacheID",
+			     asb_package_get_basename (pkg), -1);
+	asb_context_add_app (ctx, app);
 }
 
 /**

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Console2
+Comment=A console2 test application
+Icon=app
+Exec=app --console1
+Type=Application
+Categories=ConsoleOnly;

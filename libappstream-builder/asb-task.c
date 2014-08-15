@@ -196,23 +196,6 @@ asb_task_explode_extra_packages (AsbTask *task)
 }
 
 /**
- * asb_context_add_dummy_pkg:
- **/
-static void
-asb_context_add_dummy_pkg (AsbTask *task)
-{
-	AsbTaskPrivate *priv = GET_PRIVATE (task);
-	_cleanup_free_ gchar *cache_id = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
-
-	app = as_app_new ();
-	as_app_set_id_full (app, asb_package_get_name (priv->pkg), -1);
-	cache_id = asb_utils_get_cache_id_for_filename (priv->filename);
-	as_app_add_metadata (app, "X-CacheID", cache_id, -1);
-	asb_context_add_app (priv->ctx, (AsbApp *) app);
-}
-
-/**
  * asb_task_process:
  * @task: A #AsbTask
  * @error_not_used: A #GError or %NULL
@@ -256,7 +239,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			 basename);
 	asb_task_add_suitable_plugins (task);
 	if (priv->plugins_to_run->len == 0) {
-		asb_context_add_dummy_pkg (task);
+		asb_context_add_app_dummy (priv->ctx, priv->pkg);
 		goto out;
 	}
 
@@ -430,7 +413,7 @@ skip:
 	/* add a dummy element to the AppStream metadata so that we don't keep
 	 * parsing this every time */
 	if (asb_context_get_add_cache_id (priv->ctx) && nr_added == 0)
-		asb_context_add_dummy_pkg (task);
+		asb_context_add_app_dummy (priv->ctx, priv->pkg);
 
 	/* delete tree */
 	asb_panel_set_status (priv->panel, "Deleting temp files");

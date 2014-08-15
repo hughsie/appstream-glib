@@ -56,6 +56,8 @@ AsbPackage	*asb_context_find_by_pkgname	(AsbContext	*ctx,
 						 const gchar 	*pkgname);
 void		 asb_context_add_app		(AsbContext	*ctx,
 						 AsbApp		*app);
+void		 asb_context_add_app_dummy	(AsbContext	*ctx,
+						 AsbPackage	*pkg);
 void		 asb_context_set_no_net		(AsbContext	*ctx,
 						 gboolean	 no_net);
 void		 asb_context_set_api_version	(AsbContext	*ctx,

@@ -5,6 +5,7 @@ test_files =						\
 	alpha-internal2.png				\
 	alpha-vert.png					\
 	app-1-1.fc21.x86_64.rpm				\
+	app-console-1-1.fc21.noarch.rpm			\
 	app-extra-1-1.fc21.noarch.rpm			\
 	broken.appdata.xml				\
 	broken.metainfo.xml				\

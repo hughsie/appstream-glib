@@ -19,6 +19,8 @@ Source11:	en_GB.mo
 Source12:	ru.mo
 Source13:	app.notifyrc
 Source14:	app.bin
+Source15:	console1.desktop
+Source16:	console2.desktop
 
 %description
 This is a test application.
@@ -30,6 +32,14 @@ BuildArch:	noarch
 
 %description extra
 Extra plugins to provide new functionality for app.
+
+%package console
+Summary:	Console application
+Requires:	%{name}%{?_isa} = %{version}-%{release}
+BuildArch:	noarch
+
+%description console
+Sub package with console "application".
 
 %install
 install -Dp %{SOURCE0} $RPM_BUILD_ROOT/%{_datadir}/%{name}-%{version}/README
@@ -47,6 +57,8 @@ install -Dp %{SOURCE11} $RPM_BUILD_ROOT/%{_datadir}/locale/en_GB/LC_MESSAGES/app
 install -Dp %{SOURCE12} $RPM_BUILD_ROOT/%{_datadir}/locale/ru/LC_MESSAGES/app.mo
 install -Dp %{SOURCE13} $RPM_BUILD_ROOT/%{_datadir}/kde4/apps/app/app.notifyrc
 install -Dp %{SOURCE14} $RPM_BUILD_ROOT/%{_bindir}/app.bin
+install -Dp %{SOURCE15} $RPM_BUILD_ROOT/%{_datadir}/applications/console1.desktop
+install -Dp %{SOURCE16} $RPM_BUILD_ROOT/%{_datadir}/applications/console2.desktop
 
 %files
 %defattr(-,root,root)
@@ -65,6 +77,10 @@ install -Dp %{SOURCE14} $RPM_BUILD_ROOT/%{_bindir}/app.bin
 
 %files extra
 %{_datadir}/appdata/app-extra.metainfo.xml
+
+%files console
+%{_datadir}/applications/console1.desktop
+%{_datadir}/applications/console2.desktop
 
 %changelog
 * Tue Aug 12 2014 Richard Hughes <richard@hughsie.com> - 1-1
