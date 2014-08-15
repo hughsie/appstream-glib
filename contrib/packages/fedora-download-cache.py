@@ -214,7 +214,7 @@ def update():
     print("INFO: Downloading packages...")
     matched_packages.sort()
     for pkg in matched_packages:
-        print("INFO: Checking for %s..." % pkg.name)
+        #print("INFO: Checking for %s..." % pkg.name)
         ensure_pkg_exists(yb, existing, pkg)
         for require in pkg.strong_requires_names:
             # remove helpful package suffixes
@@ -228,7 +228,7 @@ def update():
                 continue
             if dep.base_package_name != pkg.base_package_name and not require.startswith(pkg.name):
                 continue
-            print ("INFO: " + pkg.name + " also needs " + require)
+            #print ("INFO: " + pkg.name + " also needs " + require)
             if require in extra_packages:
                 print("WARNING: Remove %s from whitelist" % require)
             ensure_pkg_exists(yb, existing, dep)
