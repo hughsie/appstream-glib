@@ -236,14 +236,6 @@ main (int argc, char **argv)
 
 		filename = g_ptr_array_index (packages, i);
 
-		/* anything in the cache */
-		if (asb_context_find_in_cache (ctx, filename)) {
-			/* TRANSLATORS: debug message */
-			g_debug (_("Skipping %s as found in old md cache"),
-				 filename);
-			continue;
-		}
-
 		/* add to list */
 		if (!asb_context_add_filename (ctx, filename, &error_local)) {
 			g_print ("Failed to add %s: %s\n",
