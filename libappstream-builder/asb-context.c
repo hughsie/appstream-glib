@@ -294,7 +294,7 @@ void
 asb_context_set_cache_dir (AsbContext *ctx, const gchar *cache_dir)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->cache_dir = asb_context_realpath (cache_dir);
+	priv->cache_dir = g_strdup (cache_dir);
 }
 
 /**
@@ -310,7 +310,7 @@ void
 asb_context_set_temp_dir (AsbContext *ctx, const gchar *temp_dir)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->temp_dir = asb_context_realpath (temp_dir);
+	priv->temp_dir = g_strdup (temp_dir);
 }
 
 /**
@@ -326,7 +326,7 @@ void
 asb_context_set_output_dir (AsbContext *ctx, const gchar *output_dir)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->output_dir = asb_context_realpath (output_dir);
+	priv->output_dir = g_strdup (output_dir);
 }
 
 /**
@@ -570,6 +570,13 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	AsApp *app;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	GList *l;
+	guint i;
+	const gchar *ss_sizes[] = { "112x63",
+				    "624x351",
+				    "752x423",
+				    "source",
+				    NULL };
+	_cleanup_free_ gchar *icons_dir = NULL;
 
 	/* required stuff set */
 	if (priv->basename == NULL) {
@@ -585,6 +592,54 @@ asb_context_setup (AsbContext *ctx, GError **error)
 				     ASB_PLUGIN_ERROR_FAILED,
 				     "output_dir not set!");
 		return FALSE;
+	}
+	if (priv->temp_dir == NULL) {
+		g_set_error_literal (error,
+				     ASB_PLUGIN_ERROR,
+				     ASB_PLUGIN_ERROR_FAILED,
+				     "temp_dir not set!");
+		return FALSE;
+	}
+	if (priv->cache_dir == NULL) {
+		g_set_error_literal (error,
+				     ASB_PLUGIN_ERROR,
+				     ASB_PLUGIN_ERROR_FAILED,
+				     "cache_dir not set!");
+		return FALSE;
+	}
+
+	/* create temp space */
+	if (!asb_utils_ensure_exists_and_empty (priv->temp_dir, error))
+		return FALSE;
+	if (!asb_utils_ensure_exists (priv->output_dir, error))
+		return FALSE;
+	if (!asb_utils_ensure_exists (priv->cache_dir, error))
+		return FALSE;
+
+	/* icons is nuked; we can re-decompress from the -icons.tar.gz */
+	icons_dir = g_build_filename (priv->temp_dir, "icons", NULL);
+	if (!asb_utils_ensure_exists (icons_dir, error))
+		return FALSE;
+
+	/* create all the screenshot sizes */
+	if (priv->screenshot_dir != NULL) {
+		for (i = 0; ss_sizes[i] != NULL; i++) {
+			_cleanup_free_ gchar *ss_dir = NULL;
+			ss_dir = g_build_filename (priv->screenshot_dir,
+						   ss_sizes[i], NULL);
+			if (!asb_utils_ensure_exists (ss_dir, error))
+				return FALSE;
+		}
+	}
+
+	/* decompress the icons */
+	if (priv->old_metadata != NULL) {
+		_cleanup_free_ gchar *icons_fn = NULL;
+		icons_fn = g_strdup_printf ("%s/%s-icons.tar.gz",
+					    priv->old_metadata,
+					    priv->basename);
+		if (!asb_utils_explode (icons_fn, icons_dir, NULL, error))
+			return FALSE;
 	}
 
 	/* load plugins */
@@ -611,8 +666,12 @@ asb_context_setup (AsbContext *ctx, GError **error)
 
 	/* add old metadata */
 	if (priv->old_metadata != NULL) {
+		_cleanup_free_ gchar *xml_fn = NULL;
 		_cleanup_object_unref_ GFile *file = NULL;
-		file = g_file_new_for_path (priv->old_metadata);
+		xml_fn = g_strdup_printf ("%s/%s.xml.gz",
+					  priv->old_metadata,
+					  priv->basename);
+		file = g_file_new_for_path (xml_fn);
 		if (!as_store_from_file (priv->old_md_cache, file,
 					 NULL, NULL, error))
 			return FALSE;

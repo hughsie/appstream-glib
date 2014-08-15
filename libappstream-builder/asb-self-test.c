@@ -225,14 +225,6 @@ asb_test_context_func (void)
 	_cleanup_object_unref_ GFile *file_failed = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
 
-	/* create temp space */
-	ret = asb_utils_ensure_exists_and_empty ("/tmp/asbuilder", &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-	ret = asb_utils_ensure_exists_and_empty ("/tmp/asbuilder/icons", &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
 	/* set up the context */
 	ctx = asb_context_new ();
 	g_assert (!asb_context_get_add_cache_id (ctx));

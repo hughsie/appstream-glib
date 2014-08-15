@@ -68,10 +68,8 @@ main (int argc, char **argv)
 	gboolean no_net = FALSE;
 	gboolean ret;
 	gboolean verbose = FALSE;
-	gchar *tmp;
 	gdouble api_version = 0.0f;
 	gint max_threads = 4;
-	gint rc;
 	guint i;
 	_cleanup_dir_close_ GDir *dir = NULL;
 	_cleanup_error_free_ GError *error = NULL;
@@ -194,82 +192,6 @@ main (int argc, char **argv)
 	if (extra_screenshots == NULL)
 		extra_screenshots = g_strdup ("./screenshots-extra");
 	setlocale (LC_ALL, "");
-
-	/* set up state */
-	ret = asb_utils_ensure_exists_and_empty (temp_dir, &error);
-	if (!ret) {
-		/* TRANSLATORS: error message */
-		g_warning (_("failed to create temp dir: %s"), error->message);
-		goto out;
-	}
-	tmp = g_build_filename (temp_dir, "icons", NULL);
-	if (old_metadata != NULL) {
-		add_cache_id = TRUE;
-		ret = g_file_test (tmp, G_FILE_TEST_EXISTS);
-		if (!ret) {
-			/* TRANSLATORS: error message */
-			g_warning (_("%s has to exist to use old metadata"), tmp);
-			goto out;
-		}
-	} else {
-		ret = asb_utils_ensure_exists_and_empty (tmp, &error);
-		if (!ret) {
-			/* TRANSLATORS: error message */
-			g_warning (_("failed to create icons dir: %s"), error->message);
-			goto out;
-		}
-	}
-	g_free (tmp);
-	rc = g_mkdir_with_parents (log_dir, 0700);
-	if (rc != 0) {
-		/* TRANSLATORS: error message */
-		g_warning (_("failed to create log dir"));
-		goto out;
-	}
-	rc = g_mkdir_with_parents (output_dir, 0700);
-	if (rc != 0) {
-		/* TRANSLATORS: error message */
-		g_warning (_("failed to create log dir"));
-		goto out;
-	}
-	tmp = g_build_filename (screenshot_dir, "112x63", NULL);
-	rc = g_mkdir_with_parents (tmp, 0700);
-	g_free (tmp);
-	if (rc != 0) {
-		/* TRANSLATORS: error message */
-		g_warning (_("failed to create screenshot cache dir"));
-		goto out;
-	}
-	tmp = g_build_filename (screenshot_dir, "624x351", NULL);
-	rc = g_mkdir_with_parents (tmp, 0700);
-	g_free (tmp);
-	if (rc != 0) {
-		/* TRANSLATORS: error message */
-		g_warning (_("failed to create screenshot cache dir"));
-		goto out;
-	}
-	tmp = g_build_filename (screenshot_dir, "752x423", NULL);
-	rc = g_mkdir_with_parents (tmp, 0700);
-	g_free (tmp);
-	if (rc != 0) {
-		/* TRANSLATORS: error message */
-		g_warning (_("failed to create screenshot cache dir"));
-		goto out;
-	}
-	tmp = g_build_filename (screenshot_dir, "source", NULL);
-	rc = g_mkdir_with_parents (tmp, 0700);
-	g_free (tmp);
-	if (rc != 0) {
-		/* TRANSLATORS: error message */
-		g_warning (_("failed to create screenshot cache dir"));
-		goto out;
-	}
-	rc = g_mkdir_with_parents (cache_dir, 0700);
-	if (rc != 0) {
-		/* TRANSLATORS: error message */
-		g_warning (_("failed to create cache dir"));
-		goto out;
-	}
 
 	ctx = asb_context_new ();
 	asb_context_set_no_net (ctx, no_net);
