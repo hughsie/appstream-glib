@@ -402,18 +402,11 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store_failed, file_failed, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	switch (mode) {
-	case ASB_TEST_CONTEXT_MODE_WITH_CACHE:
-		g_assert_cmpint (as_store_get_size (store_failed), ==, 0);
-		break;
-	default:
-		g_assert_cmpint (as_store_get_size (store_failed), ==, 2);
-		app = as_store_get_app_by_id (store_failed, "console1.desktop");
-		g_assert (app != NULL);
-		app = as_store_get_app_by_id (store_failed, "console2.desktop");
-		g_assert (app != NULL);
-		break;
-	}
+	g_assert_cmpint (as_store_get_size (store_failed), ==, 2);
+	app = as_store_get_app_by_id (store_failed, "console1.desktop");
+	g_assert (app != NULL);
+	app = as_store_get_app_by_id (store_failed, "console2.desktop");
+	g_assert (app != NULL);
 
 	/* load ignored metadata */
 	file_ignore = g_file_new_for_path ("/tmp/asbuilder/output/asb-self-test-ignore.xml.gz");

@@ -51,8 +51,9 @@
 typedef struct _AsbContextPrivate	AsbContextPrivate;
 struct _AsbContextPrivate
 {
-	AsStore			*store_old;
+	AsStore			*store_failed;
 	AsStore			*store_ignore;
+	AsStore			*store_old;
 	GList			*apps;			/* of AsbApp */
 	GMutex			 apps_mutex;		/* for ->apps */
 	GPtrArray		*file_globs;		/* of AsbPackage */
@@ -679,8 +680,10 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	/* add old metadata */
 	if (priv->old_metadata != NULL) {
 		_cleanup_free_ gchar *builder_id = NULL;
+		_cleanup_free_ gchar *fn_failed = NULL;
 		_cleanup_free_ gchar *fn_ignore = NULL;
 		_cleanup_free_ gchar *fn_old = NULL;
+		_cleanup_object_unref_ GFile *file_failed = NULL;
 		_cleanup_object_unref_ GFile *file_ignore = NULL;
 		_cleanup_object_unref_ GFile *file_old = NULL;
 
@@ -717,6 +720,23 @@ asb_context_setup (AsbContext *ctx, GError **error)
 					 as_store_get_builder_id (priv->store_ignore),
 					 builder_id);
 				as_store_remove_all (priv->store_ignore);
+			}
+		}
+		fn_failed = g_strdup_printf ("%s/%s-failed.xml.gz",
+					     priv->old_metadata,
+					     priv->basename);
+		file_failed = g_file_new_for_path (fn_failed);
+		if (g_file_query_exists (file_failed, NULL)) {
+			if (!as_store_from_file (priv->store_failed, file_failed,
+						 NULL, NULL, error))
+				return FALSE;
+			/* check builder-id matches */
+			if (g_strcmp0 (as_store_get_builder_id (priv->store_failed),
+				       builder_id) != 0) {
+				g_debug ("builder ID does not match: %s:%s",
+					 as_store_get_builder_id (priv->store_failed),
+					 builder_id);
+				as_store_remove_all (priv->store_failed);
 			}
 		}
 	}
@@ -794,6 +814,7 @@ asb_context_write_xml (AsbContext *ctx,
 				continue;
 		}
 		as_store_add_app (store, app);
+		as_store_remove_app (priv->store_failed, app);
 	}
 	filename = g_strdup_printf ("%s/%s.xml.gz", output_dir, basename);
 	file = g_file_new_for_path (filename);
@@ -914,10 +935,8 @@ asb_context_write_xml_fail (AsbContext *ctx,
 	GList *l;
 	_cleanup_free_ gchar *basename_failed = NULL;
 	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsStore *store;
 	_cleanup_object_unref_ GFile *file;
 
-	store = as_store_new ();
 	for (l = priv->apps; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
 		if (!ASB_IS_APP (app))
@@ -926,16 +945,23 @@ asb_context_write_xml_fail (AsbContext *ctx,
 			continue;
 		if (as_app_get_metadata_item (app, "NoDisplay") != NULL)
 			continue;
-		as_store_add_app (store, app);
+		if (as_store_get_app_by_id (priv->store_failed,
+					    as_app_get_id (app)) != NULL)
+			continue;
+		as_store_add_app (priv->store_failed, app);
 	}
 	filename = g_strdup_printf ("%s/%s-failed.xml.gz", output_dir, basename);
 	file = g_file_new_for_path (filename);
 
 	g_print ("Writing %s...\n", filename);
 	basename_failed = g_strdup_printf ("%s-failed", basename);
-	as_store_set_origin (store, basename_failed);
-	as_store_set_api_version (store, priv->api_version);
-	return as_store_to_file (store,
+	as_store_set_origin (priv->store_failed, basename_failed);
+	as_store_set_api_version (priv->store_failed, priv->api_version);
+	if (priv->add_cache_id) {
+		_cleanup_free_ gchar *builder_id = asb_utils_get_builder_id ();
+		as_store_set_builder_id (priv->store_failed, builder_id);
+	}
+	return as_store_to_file (priv->store_failed,
 				 file,
 				 AS_NODE_TO_XML_FLAG_ADD_HEADER |
 				 AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
@@ -1263,6 +1289,7 @@ asb_context_finalize (GObject *object)
 	AsbContext *ctx = ASB_CONTEXT (object);
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 
+	g_object_unref (priv->store_failed);
 	g_object_unref (priv->store_ignore);
 	g_object_unref (priv->store_old);
 	g_object_unref (priv->plugin_loader);
@@ -1300,6 +1327,7 @@ asb_context_init (AsbContext *ctx)
 	priv->panel = asb_panel_new ();
 	priv->packages = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	g_mutex_init (&priv->apps_mutex);
+	priv->store_failed = as_store_new ();
 	priv->store_ignore = as_store_new ();
 	priv->store_old = as_store_new ();
 	priv->max_threads = 1;
