@@ -207,8 +207,16 @@ asb_test_plugin_loader_func (void)
 }
 
 #ifdef HAVE_RPM
+
+typedef enum {
+	ASB_TEST_CONTEXT_MODE_NO_CACHE,
+	ASB_TEST_CONTEXT_MODE_WITH_CACHE,
+	ASB_TEST_CONTEXT_MODE_WITH_OLD_CACHE,
+	ASB_TEST_CONTEXT_MODE_LAST
+} AsbTestContextMode;
+
 static void
-asb_test_context_test_func (gboolean with_cache)
+asb_test_context_test_func (AsbTestContextMode mode)
 {
 	AsApp *app;
 	GError *error = NULL;
@@ -235,13 +243,25 @@ asb_test_context_test_func (gboolean with_cache)
 	asb_context_set_add_cache_id (ctx, TRUE);
 	asb_context_set_no_net (ctx, TRUE);
 	asb_context_set_basename (ctx, "asb-self-test");
-	asb_context_set_cache_dir (ctx, "/tmp/asbuilder-cache");
-	asb_context_set_output_dir (ctx, "/tmp/asbuilder-output");
-	asb_context_set_temp_dir (ctx, "/tmp/asbuilder-temp");
-	if (with_cache)
-		asb_context_set_old_metadata (ctx, "/tmp/asbuilder-output");
+	asb_context_set_cache_dir (ctx, "/tmp/asbuilder/cache");
+	asb_context_set_output_dir (ctx, "/tmp/asbuilder/output");
+	asb_context_set_temp_dir (ctx, "/tmp/asbuilder/temp");
+	switch (mode) {
+	case ASB_TEST_CONTEXT_MODE_WITH_CACHE:
+		asb_context_set_old_metadata (ctx, "/tmp/asbuilder/output");
+		break;
+	case ASB_TEST_CONTEXT_MODE_WITH_OLD_CACHE:
+		{
+			_cleanup_free_ gchar *old_cache_dir = NULL;
+			old_cache_dir = asb_test_get_filename (".");
+			asb_context_set_old_metadata (ctx, old_cache_dir);
+		}
+		break;
+	default:
+		break;
+	}
 	g_assert (asb_context_get_add_cache_id (ctx));
-	g_assert_cmpstr (asb_context_get_temp_dir (ctx), ==, "/tmp/asbuilder-temp");
+	g_assert_cmpstr (asb_context_get_temp_dir (ctx), ==, "/tmp/asbuilder/temp");
 	ret = asb_context_setup (ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -275,11 +295,15 @@ asb_test_context_test_func (gboolean with_cache)
 	g_assert (ret);
 
 	/* verify queue size */
-	if (!with_cache) {
+	switch (mode) {
+	case ASB_TEST_CONTEXT_MODE_NO_CACHE:
+	case ASB_TEST_CONTEXT_MODE_WITH_OLD_CACHE:
 		g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 4);
-	} else {
+		break;
+	default:
 		/* no packages should need extracting */
 		g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 0);
+		break;
 	}
 
 	/* run the plugins */
@@ -288,13 +312,13 @@ asb_test_context_test_func (gboolean with_cache)
 	g_assert (ret);
 
 	/* check files created */
-	g_assert (g_file_test ("/tmp/asbuilder-output/asb-self-test.xml.gz", G_FILE_TEST_EXISTS));
-	g_assert (g_file_test ("/tmp/asbuilder-output/asb-self-test-failed.xml.gz", G_FILE_TEST_EXISTS));
-	g_assert (g_file_test ("/tmp/asbuilder-output/asb-self-test-ignore.xml.gz", G_FILE_TEST_EXISTS));
-	g_assert (g_file_test ("/tmp/asbuilder-output/asb-self-test-icons.tar.gz", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder/output/asb-self-test.xml.gz", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder/output/asb-self-test-failed.xml.gz", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder/output/asb-self-test-ignore.xml.gz", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder/output/asb-self-test-icons.tar.gz", G_FILE_TEST_EXISTS));
 
 	/* load AppStream metadata */
-	file = g_file_new_for_path ("/tmp/asbuilder-output/asb-self-test.xml.gz");
+	file = g_file_new_for_path ("/tmp/asbuilder/output/asb-self-test.xml.gz");
 	store = as_store_new ();
 	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);
@@ -373,23 +397,26 @@ asb_test_context_test_func (gboolean with_cache)
 	g_assert_cmpstr (xml->str, ==, expected_xml);
 
 	/* load failed metadata */
-	file_failed = g_file_new_for_path ("/tmp/asbuilder-output/asb-self-test-failed.xml.gz");
+	file_failed = g_file_new_for_path ("/tmp/asbuilder/output/asb-self-test-failed.xml.gz");
 	store_failed = as_store_new ();
 	ret = as_store_from_file (store_failed, file_failed, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	if (with_cache) {
+	switch (mode) {
+	case ASB_TEST_CONTEXT_MODE_WITH_CACHE:
 		g_assert_cmpint (as_store_get_size (store_failed), ==, 0);
-	} else {
+		break;
+	default:
 		g_assert_cmpint (as_store_get_size (store_failed), ==, 2);
 		app = as_store_get_app_by_id (store_failed, "console1.desktop");
 		g_assert (app != NULL);
 		app = as_store_get_app_by_id (store_failed, "console2.desktop");
 		g_assert (app != NULL);
+		break;
 	}
 
 	/* load ignored metadata */
-	file_ignore = g_file_new_for_path ("/tmp/asbuilder-output/asb-self-test-ignore.xml.gz");
+	file_ignore = g_file_new_for_path ("/tmp/asbuilder/output/asb-self-test-ignore.xml.gz");
 	store_ignore = as_store_new ();
 	ret = as_store_from_file (store_ignore, file_ignore, NULL, NULL, &error);
 	g_assert_no_error (error);
@@ -404,10 +431,10 @@ asb_test_context_nocache_func (void)
 #ifdef HAVE_RPM
 	GError *error = NULL;
 	gboolean ret;
-	ret = asb_utils_rmtree ("/tmp/asbuilder-output", &error);
+	ret = asb_utils_rmtree ("/tmp/asbuilder/output", &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	asb_test_context_test_func (FALSE);
+	asb_test_context_test_func (ASB_TEST_CONTEXT_MODE_NO_CACHE);
 #endif
 }
 
@@ -419,21 +446,32 @@ asb_test_context_cache_func (void)
 	gboolean ret;
 
 	/* remove icons */
-	ret = asb_utils_rmtree ("/tmp/asbuilder-temp/icons", &error);
+	ret = asb_utils_rmtree ("/tmp/asbuilder/temp/icons", &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
 	/* run again, this time using the old metadata as a cache */
-	asb_test_context_test_func (TRUE);
+	asb_test_context_test_func (ASB_TEST_CONTEXT_MODE_WITH_CACHE);
 
 	/* remove temp space */
-	ret = asb_utils_rmtree ("/tmp/asbuilder-temp", &error);
+	ret = asb_utils_rmtree ("/tmp/asbuilder", &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	ret = asb_utils_rmtree ("/tmp/asbuilder-cache", &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-	ret = asb_utils_rmtree ("/tmp/asbuilder-output", &error);
+#endif
+}
+
+static void
+asb_test_context_oldcache_func (void)
+{
+#ifdef HAVE_RPM
+	GError *error = NULL;
+	gboolean ret;
+
+	/* run again, this time using the old metadata as a cache */
+	asb_test_context_test_func (ASB_TEST_CONTEXT_MODE_WITH_OLD_CACHE);
+
+	/* remove temp space */
+	ret = asb_utils_rmtree ("/tmp/asbuilder", &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 #endif
@@ -454,6 +492,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStreamBuilder/plugin-loader", asb_test_plugin_loader_func);
 	g_test_add_func ("/AppStreamBuilder/context{no-cache}", asb_test_context_nocache_func);
 	g_test_add_func ("/AppStreamBuilder/context{cache}", asb_test_context_cache_func);
+	g_test_add_func ("/AppStreamBuilder/context{old-cache}", asb_test_context_oldcache_func);
 #ifdef HAVE_RPM
 	g_test_add_func ("/AppStreamBuilder/package{rpm}", asb_test_package_rpm_func);
 #endif

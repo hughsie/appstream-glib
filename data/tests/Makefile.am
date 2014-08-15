@@ -7,6 +7,7 @@ test_files =						\
 	app-1-1.fc21.x86_64.rpm				\
 	app-console-1-1.fc21.noarch.rpm			\
 	app-extra-1-1.fc21.noarch.rpm			\
+	asb-self-test.xml.gz				\
 	broken.appdata.xml				\
 	broken.metainfo.xml				\
 	example.appdata.xml				\

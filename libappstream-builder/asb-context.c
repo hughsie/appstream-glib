@@ -645,8 +645,13 @@ asb_context_setup (AsbContext *ctx, GError **error)
 		icons_fn = g_strdup_printf ("%s/%s-icons.tar.gz",
 					    priv->old_metadata,
 					    priv->basename);
-		if (!asb_utils_explode (icons_fn, icons_dir, NULL, error))
-			return FALSE;
+		if (g_file_test (icons_fn, G_FILE_TEST_EXISTS)) {
+			if (!asb_utils_explode (icons_fn,
+						icons_dir,
+						NULL,
+						error))
+				return FALSE;
+		}
 	}
 
 	/* load plugins */
@@ -678,6 +683,8 @@ asb_context_setup (AsbContext *ctx, GError **error)
 		_cleanup_free_ gchar *fn_old = NULL;
 		_cleanup_object_unref_ GFile *file_ignore = NULL;
 		_cleanup_object_unref_ GFile *file_old = NULL;
+
+		builder_id = asb_utils_get_builder_id ();
 		fn_old = g_strdup_printf ("%s/%s.xml.gz",
 					  priv->old_metadata,
 					  priv->basename);
@@ -686,6 +693,14 @@ asb_context_setup (AsbContext *ctx, GError **error)
 			if (!as_store_from_file (priv->store_old, file_old,
 						 NULL, NULL, error))
 				return FALSE;
+			/* check builder-id matches */
+			if (g_strcmp0 (as_store_get_builder_id (priv->store_old),
+				       builder_id) != 0) {
+				g_debug ("builder ID does not match: %s:%s",
+					 as_store_get_builder_id (priv->store_old),
+					 builder_id);
+				as_store_remove_all (priv->store_old);
+			}
 		}
 		fn_ignore = g_strdup_printf ("%s/%s-ignore.xml.gz",
 					     priv->old_metadata,
@@ -695,17 +710,14 @@ asb_context_setup (AsbContext *ctx, GError **error)
 			if (!as_store_from_file (priv->store_ignore, file_ignore,
 						 NULL, NULL, error))
 				return FALSE;
-		}
-
-		/* check builder-id matches */
-		builder_id = asb_utils_get_builder_id ();
-		if (g_strcmp0 (as_store_get_builder_id (priv->store_old), builder_id) != 0 ||
-		    g_strcmp0 (as_store_get_builder_id (priv->store_ignore), builder_id) != 0) {
-			g_set_error (error,
-				     ASB_PLUGIN_ERROR,
-				     ASB_PLUGIN_ERROR_FAILED,
-				     "builder ID does not match: %s", builder_id);
-			return FALSE;
+			/* check builder-id matches */
+			if (g_strcmp0 (as_store_get_builder_id (priv->store_ignore),
+				       builder_id) != 0) {
+				g_debug ("builder ID does not match: %s:%s",
+					 as_store_get_builder_id (priv->store_ignore),
+					 builder_id);
+				as_store_remove_all (priv->store_ignore);
+			}
 		}
 	}
 
