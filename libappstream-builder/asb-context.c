@@ -465,6 +465,12 @@ asb_context_add_filename (AsbContext *ctx, const gchar *filename, GError **error
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	_cleanup_object_unref_ AsbPackage *pkg = NULL;
 
+	/* can find in existing metadata */
+	if (asb_context_find_in_cache (ctx, filename)) {
+		g_debug ("Found %s in old metadata", filename);
+		return TRUE;
+	}
+
 	/* open */
 #if HAVE_RPM
 	if (g_str_has_suffix (filename, ".rpm"))

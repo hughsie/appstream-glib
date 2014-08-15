@@ -74,6 +74,8 @@ asb_plugin_merge_prepare_deps (GList *list)
 		app = AS_APP (l->data);
 		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
 			continue;
+		if (!ASB_IS_APP (app))
+			continue;
 		pkg = asb_app_get_package (ASB_APP (app));
 		deps = asb_package_get_deps (pkg);
 		for (i = 0; deps[i] != NULL; i++)
