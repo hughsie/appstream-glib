@@ -56,6 +56,15 @@ struct _AsbPackageClass
 						 GError		**error);
 	gint			 (*compare)	(AsbPackage	*pkg1,
 						 AsbPackage	*pkg2);
+	/*< private >*/
+	void (*_asb_reserved1)	(void);
+	void (*_asb_reserved2)	(void);
+	void (*_asb_reserved3)	(void);
+	void (*_asb_reserved4)	(void);
+	void (*_asb_reserved5)	(void);
+	void (*_asb_reserved6)	(void);
+	void (*_asb_reserved7)	(void);
+	void (*_asb_reserved8)	(void);
 };
 
 typedef enum {

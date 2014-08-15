@@ -44,6 +44,15 @@ struct _AsbPanel
 struct _AsbPanelClass
 {
 	GObjectClass			 parent_class;
+	/*< private >*/
+	void (*_asb_reserved1)	(void);
+	void (*_asb_reserved2)	(void);
+	void (*_asb_reserved3)	(void);
+	void (*_asb_reserved4)	(void);
+	void (*_asb_reserved5)	(void);
+	void (*_asb_reserved6)	(void);
+	void (*_asb_reserved7)	(void);
+	void (*_asb_reserved8)	(void);
 };
 
 GType		 asb_panel_get_type		(void);
