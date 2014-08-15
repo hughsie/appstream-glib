@@ -163,6 +163,9 @@ gboolean	 as_store_to_file		(AsStore	*store,
 const gchar	*as_store_get_origin		(AsStore	*store);
 void		 as_store_set_origin		(AsStore	*store,
 						 const gchar	*origin);
+const gchar	*as_store_get_builder_id	(AsStore	*store);
+void		 as_store_set_builder_id	(AsStore	*store,
+						 const gchar	*builder_id);
 const gchar	*as_store_get_destdir		(AsStore	*store);
 void		 as_store_set_destdir		(AsStore	*store,
 						 const gchar	*destdir);
