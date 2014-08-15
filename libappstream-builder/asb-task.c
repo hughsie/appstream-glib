@@ -115,7 +115,7 @@ asb_task_explode_extra_package (AsbTask *task,
 	asb_panel_set_status (priv->panel, "Decompressing extra pkg %s",
 			      asb_package_get_name (pkg_extra));
 	asb_package_log (priv->pkg,
-			 ASB_PACKAGE_LOG_LEVEL_INFO,
+			 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 			 "Adding extra package %s for %s",
 			 asb_package_get_name (pkg_extra),
 			 asb_package_get_name (priv->pkg));
