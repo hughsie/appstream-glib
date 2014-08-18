@@ -3556,6 +3556,7 @@ as_app_parse_file_key (AsApp *app,
 {
 	gchar *dot = NULL;
 	guint i;
+	guint j;
 	_cleanup_free_ gchar *locale = NULL;
 	_cleanup_free_ gchar *tmp = NULL;
 	_cleanup_strv_free_ gchar **list = NULL;
@@ -3637,8 +3638,14 @@ as_app_parse_file_key (AsApp *app,
 						   G_KEY_FILE_DESKTOP_GROUP,
 						   key,
 						   NULL, NULL);
-		for (i = 0; list[i] != NULL; i++)
-			as_app_add_keyword (app, "C", list[i], -1);
+		for (i = 0; list[i] != NULL; i++) {
+			_cleanup_strv_free_ gchar **kw_split = NULL;
+			kw_split = g_strsplit (list[i], ",", -1);
+			for (j = 0; kw_split[j] != NULL; j++) {
+				as_app_add_keyword (app, "C",
+						    kw_split[j], -1);
+			}
+		}
 
 	} else if (g_str_has_prefix (key, "Keywords")) {
 		locale = as_app_desktop_key_get_locale (key);
@@ -3647,8 +3654,14 @@ as_app_parse_file_key (AsApp *app,
 							  key,
 							  locale,
 							  NULL, NULL);
-		for (i = 0; list[i] != NULL; i++)
-			as_app_add_keyword (app, locale, list[i], -1);
+		for (i = 0; list[i] != NULL; i++) {
+			_cleanup_strv_free_ gchar **kw_split = NULL;
+			kw_split = g_strsplit (list[i], ",", -1);
+			for (j = 0; kw_split[j] != NULL; j++) {
+				as_app_add_keyword (app, locale,
+						    kw_split[j], -1);
+			}
+		}
 
 	} else if (g_strcmp0 (key, "MimeType") == 0) {
 		list = g_key_file_get_string_list (kf,
