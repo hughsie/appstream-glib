@@ -809,10 +809,8 @@ asb_context_write_xml (AsbContext *ctx,
 	store = as_store_new ();
 	for (l = priv->apps; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
-		if (ASB_IS_APP (app)) {
-			if (as_app_get_vetos(app)->len > 0)
-				continue;
-		}
+		if (as_app_get_vetos(app)->len > 0)
+			continue;
 		as_store_add_app (store, app);
 		as_store_remove_app (priv->store_failed, app);
 	}
