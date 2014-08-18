@@ -3353,6 +3353,7 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 	const gchar * const *locales;
 	const gchar *tmp;
 	guint i;
+	guint j;
 
 	/* add all the data we have */
 	if (priv->id != NULL)
@@ -3370,8 +3371,8 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 			as_app_add_tokens (app, tmp, locales[i], 20);
 		array = as_app_get_keywords (app, locales[i]);
 		if (array != NULL) {
-			for (i = 0; i < array->len; i++) {
-				tmp = g_ptr_array_index (array, i);
+			for (j = 0; j < array->len; j++) {
+				tmp = g_ptr_array_index (array, j);
 				as_app_add_tokens (app, tmp, locales[i], 40);
 			}
 		}
