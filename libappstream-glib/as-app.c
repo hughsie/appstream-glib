@@ -2587,6 +2587,21 @@ as_app_node_insert_keywords (AsApp *app, GNode *parent, gdouble api_version)
 	const gchar *lang;
 	const gchar *tmp;
 	guint i;
+	_cleanup_hashtable_unref_ GHashTable *already_in_c = NULL;
+
+	/* don't add localized keywords that already exist in C, e.g.
+	 * there's no point adding "c++" in 14 different languages */
+	already_in_c = g_hash_table_new_full (g_str_hash, g_str_equal,
+					      g_free, NULL);
+	keywords = g_hash_table_lookup (priv->keywords, "C");
+	if (keywords != NULL) {
+		for (i = 0; i < keywords->len; i++) {
+			tmp = g_ptr_array_index (keywords, i);
+			g_hash_table_insert (already_in_c,
+					     g_strdup (tmp),
+					     GINT_TO_POINTER (1));
+		}
+	}
 
 	keys = g_hash_table_get_keys (priv->keywords);
 	keys = g_list_sort (keys, as_app_list_sort_cb);
@@ -2596,6 +2611,9 @@ as_app_node_insert_keywords (AsApp *app, GNode *parent, gdouble api_version)
 		g_ptr_array_sort (keywords, as_app_ptr_array_sort_cb);
 		for (i = 0; i < keywords->len; i++) {
 			tmp = g_ptr_array_index (keywords, i);
+			if (g_strcmp0 (lang, "C") != 0 &&
+			    g_hash_table_lookup (already_in_c, tmp) != NULL)
+				continue;
 			node_tmp = as_node_insert (parent,
 						   "keyword", tmp,
 						   0, NULL);
