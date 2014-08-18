@@ -9,6 +9,7 @@ Terminal=false
 Type=Application
 Categories=GNOME;GTK;System;
 Keywords=Color; ;Viewer;
+Keywords[pl]=Colorski; ;;
 StartupNotify=true
 NoDisplay=true
 X-GNOME-Bugzilla-Bugzilla=GNOME

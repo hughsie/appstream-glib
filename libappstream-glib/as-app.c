@@ -2322,6 +2322,41 @@ as_app_subsume_dict (GHashTable *dest, GHashTable *src, gboolean overwrite)
 }
 
 /**
+ * as_app_subsume_keywords:
+ **/
+static void
+as_app_subsume_keywords (AsApp *app, AsApp *donor, gboolean overwrite)
+{
+	AsAppPrivate *priv = GET_PRIVATE (donor);
+	GList *l;
+	GPtrArray *array;
+	const gchar *key;
+	const gchar *tmp;
+	guint i;
+	_cleanup_list_free_ GList *keys = NULL;
+
+	/* get all locales in the keywords dict */
+	keys = g_hash_table_get_keys (priv->keywords);
+	for (l = keys; l != NULL; l = l->next) {
+		key = l->data;
+		if (!overwrite) {
+			array = as_app_get_keywords (app, key);
+			if (array != NULL)
+				continue;
+		}
+
+		/* get the array of keywords for the specific locale */
+		array = g_hash_table_lookup (priv->keywords, key);
+		if (array == NULL)
+			continue;
+		for (i = 0; i < array->len; i++) {
+			tmp = g_ptr_array_index (array, i);
+			as_app_add_keyword (app, key, tmp, -1);
+		}
+	}
+}
+
+/**
  * as_app_subsume_private:
  **/
 static void
@@ -2413,11 +2448,11 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	/* dictionaries */
 	as_app_subsume_dict (papp->names, priv->names, overwrite);
 	as_app_subsume_dict (papp->comments, priv->comments, overwrite);
-	as_app_subsume_dict (papp->keywords, priv->keywords, overwrite);
 	as_app_subsume_dict (papp->developer_names, priv->developer_names, overwrite);
 	as_app_subsume_dict (papp->descriptions, priv->descriptions, overwrite);
 	as_app_subsume_dict (papp->metadata, priv->metadata, overwrite);
 	as_app_subsume_dict (papp->urls, priv->urls, overwrite);
+	as_app_subsume_keywords (app, donor, overwrite);
 
 	/* icon */
 	if (priv->icon != NULL)

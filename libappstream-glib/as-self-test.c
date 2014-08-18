@@ -1109,6 +1109,7 @@ as_test_app_parse_file_func (void)
 	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
 	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);
 	g_assert_cmpint (as_app_get_keywords(app, NULL)->len, ==, 2);
+	g_assert_cmpint (as_app_get_keywords(app, "pl")->len, ==, 1);
 	g_assert (as_app_has_category (app, "System"));
 	g_assert (!as_app_has_category (app, "NotGoingToExist"));
 
@@ -1548,6 +1549,8 @@ as_test_app_subsume_func (void)
 	as_app_add_language (donor, -1, "en_GB", -1);
 	as_app_add_metadata (donor, "donor", "true", -1);
 	as_app_add_metadata (donor, "overwrite", "1111", -1);
+	as_app_add_keyword (donor, "C", "klass", -1);
+	as_app_add_keyword (donor, "pl", "klaski", -1);
 	ss = as_screenshot_new ();
 	as_app_add_screenshot (donor, ss);
 
@@ -1564,6 +1567,8 @@ as_test_app_subsume_func (void)
 	g_assert_cmpstr (as_app_get_metadata_item (donor, "recipient"), ==, NULL);
 	g_assert_cmpint (as_app_get_pkgnames(app)->len, ==, 1);
 	g_assert_cmpint (as_app_get_state (app), ==, AS_APP_STATE_INSTALLED);
+	g_assert_cmpint (as_app_get_keywords(app, "C")->len, ==, 1);
+	g_assert_cmpint (as_app_get_keywords(app, "pl")->len, ==, 1);
 	list = as_app_get_languages (app);
 	g_assert_cmpint (g_list_length (list), ==, 1);
 	g_list_free (list);
