@@ -3250,6 +3250,8 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 		as_app_add_tokens (app, priv->id, "C", 100);
 	locales = g_get_language_names ();
 	for (i = 0; locales[i] != NULL; i++) {
+		if (g_str_has_suffix (locales[i], ".UTF-8"))
+			continue;
 		tmp = as_app_get_name (app, locales[i]);
 		if (tmp != NULL)
 			as_app_add_tokens (app, tmp, locales[i], 80);
