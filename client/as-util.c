@@ -1335,6 +1335,16 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 		g_free (tmp);
 	}
 
+	/* vetos */
+	if (as_app_get_id_kind (app) == AS_ID_KIND_DESKTOP) {
+		tmp = as_util_status_html_join (as_app_get_vetos (app));
+		if (tmp != NULL) {
+			g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
+						"Vetos", tmp);
+		}
+		g_free (tmp);
+	}
+
 	g_string_append (html, "</table>\n");
 	g_string_append (html, "<br/>\n");
 	g_string_append (html, "</div>\n");

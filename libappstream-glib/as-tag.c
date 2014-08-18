@@ -174,6 +174,8 @@ as_tag_to_string (AsTag tag)
 		"kudos",
 		"kudo",
 		"source_pkgname",
+		"vetos",
+		"veto",
 		NULL };
 	if (tag > AS_TAG_LAST)
 		tag = AS_TAG_LAST;

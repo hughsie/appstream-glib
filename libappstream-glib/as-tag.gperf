@@ -47,3 +47,5 @@ developer_name, AS_TAG_DEVELOPER_NAME
 kudos, AS_TAG_KUDOS
 kudo, AS_TAG_KUDO
 source_pkgname, AS_TAG_SOURCE_PKGNAME
+vetos, AS_TAG_VETOS
+veto, AS_TAG_VETO

@@ -234,6 +234,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	_cleanup_object_unref_ GFile *file_ignore = NULL;
 	_cleanup_object_unref_ GFile *file = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
+	_cleanup_string_free_ GString *xml_failed = NULL;
 
 	/* set up the context */
 	ctx = asb_context_new ();
@@ -332,7 +333,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	/* check it matches what we expect */
 	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
-		"<components version=\"0.8\" builder_id=\"appstream-glib:1\" origin=\"asb-self-test\">\n"
+		"<components version=\"0.8\" builder_id=\"appstream-glib:3\" origin=\"asb-self-test\">\n"
 		"<component type=\"desktop\">\n"
 		"<id>app.desktop</id>\n"
 		"<pkgname>app</pkgname>\n"
@@ -407,6 +408,67 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	g_assert (app != NULL);
 	app = as_store_get_app_by_id (store_failed, "console2.desktop");
 	g_assert (app != NULL);
+
+	/* check output */
+	xml_failed = as_store_to_xml (store_failed, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	expected_xml =
+		"<components version=\"0.8\" builder_id=\"appstream-glib:3\" origin=\"asb-self-test-failed\">\n"
+		"<component type=\"desktop\">\n"
+		"<id>console1.desktop</id>\n"
+		"<pkgname>app-console</pkgname>\n"
+		"<source_pkgname>app</source_pkgname>\n"
+		"<name>Console1</name>\n"
+		"<summary>A console1 test application</summary>\n"
+		"<icon type=\"cached\">console1.png</icon>\n"
+		"<categories>\n"
+		"<category>ConsoleOnly</category>\n"
+		"</categories>\n"
+		"<vetos>\n"
+		"<veto>Required AppData: ConsoleOnly</veto>\n"
+		"</vetos>\n"
+		"<project_license>GPL-2.0+</project_license>\n"
+		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
+		"<releases>\n"
+		"<release version=\"1\" timestamp=\"1407844800\"/>\n"
+		"</releases>\n"
+		"<languages>\n"
+		"<lang percentage=\"100\">en_GB</lang>\n"
+		"<lang percentage=\"33\">ru</lang>\n"
+		"</languages>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">app-console-1-1.fc21.noarch.rpm</value>\n"
+		"</metadata>\n"
+		"</component>\n"
+		"<component type=\"desktop\">\n"
+		"<id>console2.desktop</id>\n"
+		"<pkgname>app-console</pkgname>\n"
+		"<source_pkgname>app</source_pkgname>\n"
+		"<name>Console2</name>\n"
+		"<summary>A console2 test application</summary>\n"
+		"<icon type=\"cached\">console2.png</icon>\n"
+		"<categories>\n"
+		"<category>ConsoleOnly</category>\n"
+		"</categories>\n"
+		"<vetos>\n"
+		"<veto>Required AppData: ConsoleOnly</veto>\n"
+		"</vetos>\n"
+		"<project_license>GPL-2.0+</project_license>\n"
+		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
+		"<releases>\n"
+		"<release version=\"1\" timestamp=\"1407844800\"/>\n"
+		"</releases>\n"
+		"<languages>\n"
+		"<lang percentage=\"100\">en_GB</lang>\n"
+		"<lang percentage=\"33\">ru</lang>\n"
+		"</languages>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">app-console-1-1.fc21.noarch.rpm</value>\n"
+		"</metadata>\n"
+		"</component>\n"
+		"</components>\n";
+	if (g_strcmp0 (xml_failed->str, expected_xml) != 0)
+		g_warning ("Expected:\n%s\nGot:\n%s", expected_xml, xml_failed->str);
+	g_assert_cmpstr (xml_failed->str, ==, expected_xml);
 
 	/* load ignored metadata */
 	file_ignore = g_file_new_for_path ("/tmp/asbuilder/output/asb-self-test-ignore.xml.gz");

@@ -74,7 +74,6 @@ void		 asb_app_set_requires_appdata	(AsbApp		*app,
 						 gboolean	 requires_appdata);
 void		 asb_app_set_pixbuf		(AsbApp		*app,
 						 GdkPixbuf	*pixbuf);
-void		 asb_app_set_veto_description	(AsbApp		*app);
 gboolean	 asb_app_add_screenshot_source	(AsbApp		*app,
 						 const gchar	*filename,
 						 GError		**error);

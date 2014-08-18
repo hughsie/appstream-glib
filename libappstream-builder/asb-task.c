@@ -375,9 +375,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			as_app_add_veto (AS_APP (app), "Required AppData: %s", tmp);
 		}
 
-		/* list all the reasons we're ignoring the app */
-		asb_app_set_veto_description (app);
-
 		/* save icon and screenshots */
 		if (array->len == 0) {
 			ret = asb_app_save_resources (app, &error);

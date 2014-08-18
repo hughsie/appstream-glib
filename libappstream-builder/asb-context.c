@@ -916,7 +916,6 @@ asb_context_detect_missing_parents (AsbContext *ctx, GError **error)
 				  as_app_get_id_full (app), tmp);
 		g_print ("WARNING: %s has no parent of '%s'\n",
 			 as_app_get_id_full (app), tmp);
-		asb_app_set_veto_description (ASB_APP (app));
 	}
 	return TRUE;
 }

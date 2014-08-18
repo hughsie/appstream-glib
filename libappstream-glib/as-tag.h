@@ -70,6 +70,8 @@
  * @AS_TAG_KUDOS:			`kudos`
  * @AS_TAG_KUDO:			`kudo`
  * @AS_TAG_SOURCE_PKGNAME:		`source_pkgname`
+ * @AS_TAG_VETOS:			`vetos`
+ * @AS_TAG_VETO:			`veto`
  *
  * The tag type.
  **/
@@ -114,6 +116,8 @@ typedef enum {
 	AS_TAG_KUDOS,			/* Since: 0.2.1 */
 	AS_TAG_KUDO,			/* Since: 0.2.1 */
 	AS_TAG_SOURCE_PKGNAME,		/* Since: 0.2.4 */
+	AS_TAG_VETOS,			/* Since: 0.3.0 */
+	AS_TAG_VETO,			/* Since: 0.3.0 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;

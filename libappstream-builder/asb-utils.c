@@ -37,7 +37,7 @@
 #include "asb-utils.h"
 #include "asb-plugin.h"
 
-#define ASB_METADATA_CACHE_VERSION	2
+#define ASB_METADATA_CACHE_VERSION	3
 
 /**
  * asb_utils_get_builder_id:

@@ -2833,6 +2833,16 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 		}
 	}
 
+	/* <vetos> */
+	if (priv->vetos->len > 0 && api_version >= 0.8) {
+		g_ptr_array_sort (priv->vetos, as_app_ptr_array_sort_cb);
+		node_tmp = as_node_insert (node_app, "vetos", NULL, 0, NULL);
+		for (i = 0; i < priv->vetos->len; i++) {
+			tmp = g_ptr_array_index (priv->vetos, i);
+			as_node_insert (node_tmp, "veto", tmp, 0, NULL);
+		}
+	}
+
 	/* <mimetypes> */
 	if (priv->mimetypes->len > 0 && api_version >= 0.4) {
 		g_ptr_array_sort (priv->mimetypes, as_app_ptr_array_sort_cb);
@@ -3110,6 +3120,20 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 			if (taken == NULL)
 				continue;
 			g_ptr_array_add (priv->kudos, taken);
+		}
+		break;
+
+	/* <vetos> */
+	case AS_TAG_VETOS:
+		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
+			g_ptr_array_set_size (priv->vetos, 0);
+		for (c = n->children; c != NULL; c = c->next) {
+			if (as_node_get_tag (c) != AS_TAG_VETO)
+				continue;
+			taken = as_node_take_data (c);
+			if (taken == NULL)
+				continue;
+			g_ptr_array_add (priv->vetos, taken);
 		}
 		break;
 
