@@ -1,3 +1,37 @@
+Version 0.2.5
+~~~~~~~~~~~~~
+Released: 2014-08-18
+
+Notes:
+ - Git master has branched for 0.3.x, and the 0_2_X branch will be used for
+   0.2.x releases like this one. 0.3.0 will be a small API break, so stick to
+   the branched releases on stable distros unless you've got compelling reasons
+   otherwise.
+
+New Features:
+ - Add an installed test for the destdir-check (Richard Hughes)
+ - Add as_app_add_veto() (Richard Hughes)
+ - Add AS_APP_PARSE_FLAG_ALLOW_VETO (Richard Hughes)
+ - Add AS_STORE_LOAD_FLAG_ALLOW_VETO (Richard Hughes)
+ - Add as_store_remove_all() (Richard Hughes)
+ - Add as_store_set_builder_id() (Richard Hughes)
+ - Add as_utils_find_icon_filename() (Richard Hughes)
+ - Add as_utils_is_spdx_license() (Richard Hughes)
+ - Add as_utils_spdx_license_detokenize() (Richard Hughes)
+ - Add check-root to appstream-util (Richard Hughes)
+ - Add some validation rules for metainfo files (Richard Hughes)
+
+Bugfixes:
+ - Allow desktop->addon demotion with an AppData file (Richard Hughes)
+ - Allow different source roots to define addons (Richard Hughes)
+ - Do not require sentence case when validating with relaxed settings (Richard Hughes)
+ - Fix up legacy license IDs when tokenizing (Richard Hughes)
+ - Ignore localized keywords (Richard Hughes)
+ - Ignore localized screenshots (Richard Hughes)
+ - Link client/appstream-util against gdk-pixbuf (William Hua)
+ - Metadata licenses like 'CC0 and CC-BY-3.0' are valid content licenses (Richard Hughes)
+ - Never add duplicate <extends> tags (Richard Hughes)
+
 Version 0.2.4
 ~~~~~~~~~~~~~
 Released: 2014-08-05
