@@ -112,7 +112,7 @@ asb_utils_rmtree (const gchar *directory, GError **error)
  *
  * Returns: %TRUE for success, %FALSE otherwise
  *
- * Since: 0.2.5
+ * Since: 0.3.0
  **/
 gboolean
 asb_utils_ensure_exists (const gchar *directory, GError **error)
