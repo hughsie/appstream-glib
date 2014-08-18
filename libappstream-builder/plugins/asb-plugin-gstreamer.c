@@ -175,7 +175,7 @@ asb_plugin_process (AsbPlugin *plugin,
 
 	/* no codecs we care about */
 	keywords = as_app_get_keywords (AS_APP (app), NULL);
-	if (keywords->len == 0) {
+	if (keywords == NULL) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
 			     ASB_PLUGIN_ERROR_FAILED,

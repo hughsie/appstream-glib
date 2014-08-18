@@ -1179,7 +1179,7 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 		g_string_append (classes, "screenshots ");
 	if (as_app_get_description(app, NULL) != NULL)
 		g_string_append (classes, "description ");
-	if (as_app_get_keywords(app, NULL)->len > 0)
+	if (as_app_get_keywords(app, NULL) != NULL)
 		g_string_append (classes, "keywords ");
 	if (g_strcmp0 (as_app_get_project_group (app), "GNOME") == 0)
 		g_string_append (classes, "gnome ");
@@ -1286,12 +1286,14 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 	g_free (tmp);
 
 	/* keywords */
-	tmp = as_util_status_html_join (as_app_get_keywords (app, NULL));
-	if (tmp != NULL) {
-		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
-					"Keywords", tmp);
+	if (as_app_get_keywords (app, NULL) != NULL) {
+		tmp = as_util_status_html_join (as_app_get_keywords (app, NULL));
+		if (tmp != NULL) {
+			g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
+						"Keywords", tmp);
+		}
+		g_free (tmp);
 	}
-	g_free (tmp);
 
 	/* homepage */
 	pkgname = as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE);
@@ -1392,7 +1394,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 		app = g_ptr_array_index (apps, i);
 		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
 			continue;
-		if (as_app_get_keywords(app, NULL)->len > 0)
+		if (as_app_get_keywords(app, NULL) != NULL)
 			cnt++;
 	}
 	perc = 100.f * (gdouble) cnt / (gdouble) total;
