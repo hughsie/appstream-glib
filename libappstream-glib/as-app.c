@@ -1631,6 +1631,25 @@ as_app_set_icon_kind (AsApp *app, AsIconKind icon_kind)
 }
 
 /**
+ * as_app_parse_locale:
+ **/
+static gchar *
+as_app_parse_locale (const gchar *locale)
+{
+	gchar *tmp;
+
+	if (locale == NULL)
+		return g_strdup ("C");
+	if (g_strcmp0 (locale, "xx") == 0)
+		return NULL;
+	if (g_strcmp0 (locale, "x-test") == 0)
+		return NULL;
+	tmp = g_strdup (locale);
+	g_strdelimit (tmp, "-", '_');
+	return tmp;
+}
+
+/**
  * as_app_set_name:
  * @app: a #AsApp instance.
  * @locale: the locale, or %NULL. e.g. "en_GB"
@@ -1648,6 +1667,7 @@ as_app_set_name (AsApp *app,
 		 gssize name_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	gchar *tmp_locale;
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
@@ -1656,10 +1676,12 @@ as_app_set_name (AsApp *app,
 		return;
 	}
 
-	if (locale == NULL)
-		locale = "C";
+	/* get fixed locale */
+	tmp_locale = as_app_parse_locale (locale);
+	if (tmp_locale == NULL)
+		return;
 	g_hash_table_insert (priv->names,
-			     g_strdup (locale),
+			     tmp_locale,
 			     as_strndup (name, name_len));
 }
 
@@ -1681,6 +1703,8 @@ as_app_set_comment (AsApp *app,
 		    gssize comment_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	gchar *tmp_locale;
+
 	g_return_if_fail (comment != NULL);
 
 	/* handle untrusted */
@@ -1690,10 +1714,12 @@ as_app_set_comment (AsApp *app,
 		return;
 	}
 
-	if (locale == NULL)
-		locale = "C";
+	/* get fixed locale */
+	tmp_locale = as_app_parse_locale (locale);
+	if (tmp_locale == NULL)
+		return;
 	g_hash_table_insert (priv->comments,
-			     g_strdup (locale),
+			     tmp_locale,
 			     as_strndup (comment, comment_len));
 }
 
@@ -1715,6 +1741,8 @@ as_app_set_developer_name (AsApp *app,
 			   gssize developer_name_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	gchar *tmp_locale;
+
 	g_return_if_fail (developer_name != NULL);
 
 	/* handle untrusted */
@@ -1724,10 +1752,12 @@ as_app_set_developer_name (AsApp *app,
 		return;
 	}
 
-	if (locale == NULL)
-		locale = "C";
+	/* get fixed locale */
+	tmp_locale = as_app_parse_locale (locale);
+	if (tmp_locale == NULL)
+		return;
 	g_hash_table_insert (priv->developer_names,
-			     g_strdup (locale),
+			     tmp_locale,
 			     as_strndup (developer_name, developer_name_len));
 }
 
@@ -1749,6 +1779,8 @@ as_app_set_description (AsApp *app,
 			gssize description_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	gchar *tmp_locale;
+
 	g_return_if_fail (description != NULL);
 
 	/* handle untrusted */
@@ -1758,10 +1790,12 @@ as_app_set_description (AsApp *app,
 		return;
 	}
 
-	if (locale == NULL)
-		locale = "C";
+	/* get fixed locale */
+	tmp_locale = as_app_parse_locale (locale);
+	if (tmp_locale == NULL)
+		return;
 	g_hash_table_insert (priv->descriptions,
-			     g_strdup (locale),
+			     tmp_locale,
 			     as_strndup (description, description_len));
 }
 
@@ -1887,6 +1921,7 @@ as_app_add_keyword (AsApp *app,
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	GPtrArray *tmp;
+	_cleanup_free_ gchar *tmp_locale = NULL;
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
@@ -1894,11 +1929,16 @@ as_app_add_keyword (AsApp *app,
 		return;
 	}
 
+	/* get fixed locale */
+	tmp_locale = as_app_parse_locale (locale);
+	if (tmp_locale == NULL)
+		return;
+
 	/* create an array if required */
-	tmp = g_hash_table_lookup (priv->keywords, locale);
+	tmp = g_hash_table_lookup (priv->keywords, tmp_locale);
 	if (tmp == NULL) {
 		tmp = g_ptr_array_new_with_free_func (g_free);
-		g_hash_table_insert (priv->keywords, g_strdup (locale), tmp);
+		g_hash_table_insert (priv->keywords, g_strdup (tmp_locale), tmp);
 	} else if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
 		if (as_app_array_find_string (tmp, keyword, keyword_len))
 			return;
@@ -2881,9 +2921,9 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 
 	/* <name> */
 	case AS_TAG_NAME:
-		taken = as_node_take_attribute (n, "xml:lang");
+		taken = as_app_parse_locale (as_node_get_attribute (n, "xml:lang"));
 		if (taken == NULL)
-			taken = g_strdup ("C");
+			break;
 		g_hash_table_insert (priv->names,
 				     taken,
 				     as_node_take_data (n));
@@ -2891,9 +2931,9 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 
 	/* <summary> */
 	case AS_TAG_SUMMARY:
-		taken = as_node_take_attribute (n, "xml:lang");
+		taken = as_app_parse_locale (as_node_get_attribute (n, "xml:lang"));
 		if (taken == NULL)
-			taken = g_strdup ("C");
+			break;
 		g_hash_table_insert (priv->comments,
 				     taken,
 				     as_node_take_data (n));
@@ -2901,9 +2941,9 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 
 	/* <developer_name> */
 	case AS_TAG_DEVELOPER_NAME:
-		taken = as_node_take_attribute (n, "xml:lang");
+		taken = as_app_parse_locale (as_node_get_attribute (n, "xml:lang"));
 		if (taken == NULL)
-			taken = g_strdup ("C");
+			break;
 		g_hash_table_insert (priv->developer_names,
 				     taken,
 				     as_node_take_data (n));
@@ -2997,10 +3037,12 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_KEYWORD)
 				continue;
-			tmp = as_node_get_attribute (n, "xml:lang");
-			if (tmp == NULL)
-				tmp = g_strdup ("C");
-			as_app_add_keyword (app, tmp, as_node_get_data (c), -1);
+			taken = as_app_parse_locale (as_node_get_attribute (c, "xml:lang"));
+			if (taken == NULL)
+				continue;
+			as_app_add_keyword (app, taken,
+					    as_node_get_data (c), -1);
+			g_free (taken);
 		}
 		break;
 
