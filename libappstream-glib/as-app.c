@@ -2947,6 +2947,9 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_KEYWORD)
 				continue;
+			/* we don't yet support localised keywords */
+			if (as_node_get_attribute (c, "xml:lang") != NULL)
+				continue;
 			taken = as_node_take_data (c);
 			if (taken == NULL)
 				continue;
