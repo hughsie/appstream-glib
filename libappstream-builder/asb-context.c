@@ -943,7 +943,7 @@ asb_context_write_xml_fail (AsbContext *ctx,
 		if (as_app_get_metadata_item (app, "NoDisplay") != NULL)
 			continue;
 		if (as_store_get_app_by_id (priv->store_failed,
-					    as_app_get_id (app)) != NULL)
+					    as_app_get_id_full (app)) != NULL)
 			continue;
 		as_store_add_app (priv->store_failed, app);
 	}
