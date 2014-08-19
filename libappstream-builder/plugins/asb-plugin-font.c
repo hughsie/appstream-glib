@@ -698,7 +698,7 @@ asb_plugin_process (AsbPlugin *plugin,
 static guint
 asb_font_get_app_sortable_idx (AsbApp *app)
 {
-	const gchar *font_str = as_app_get_id (AS_APP (app));
+	const gchar *font_str = as_app_get_id_full (AS_APP (app));
 	guint idx = 0;
 
 	if (g_strstr_len (font_str, -1, "It") != NULL)

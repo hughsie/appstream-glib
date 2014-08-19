@@ -537,7 +537,7 @@ asb_context_load_extra_screenshots (AsbContext *ctx, AsApp *app, GError **error)
 
 	/* create a virtual package */
 	pkg = asb_package_new ();
-	asb_package_set_name (pkg, as_app_get_id (app));
+	asb_package_set_name (pkg, as_app_get_id_full (app));
 	asb_package_set_config (pkg, "MirrorURI", priv->screenshot_uri);
 	asb_package_set_config (pkg, "ScreenshotDir", priv->screenshot_dir);
 

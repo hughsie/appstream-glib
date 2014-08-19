@@ -1191,9 +1191,9 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 		g_string_truncate (classes, classes->len - 1);
 
 	g_string_append_printf (html, "<div id=\"app-%s\" class=\"%s\">\n",
-				as_app_get_id (app), classes->str);
+				as_app_get_id_full (app), classes->str);
 	g_string_append_printf (html, "<a name=\"%s\"/><h2>%s</h2>\n",
-				as_app_get_id (app), as_app_get_id (app));
+				as_app_get_id_full (app), as_app_get_id_full (app));
 
 	/* print the screenshot thumbnails */
 	screenshots = as_app_get_screenshots (app);
@@ -1752,7 +1752,7 @@ as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 			continue;
 		if (as_app_get_id_kind (app) == AS_ID_KIND_SOURCE)
 			continue;
-		g_string_append_printf (data, "%s,", as_app_get_id (app));
+		g_string_append_printf (data, "%s,", as_app_get_id_full (app));
 		g_string_append_printf (data, "%s,", as_app_get_pkgname_default (app));
 		g_string_append_printf (data, "\"%s\",", as_app_get_name (app, "C"));
 		g_string_append_printf (data, "\"%s\",", as_app_get_comment (app, "C"));
@@ -1811,7 +1811,7 @@ as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
 		if (as_app_get_pkgnames(app)->len > 0)
 			continue;
 		g_string_append_printf (yaml, "- id: %s\n",
-					as_app_get_id (app));
+					as_app_get_id_full (app));
 		g_string_append_printf (yaml, "  name: %s\n",
 					as_app_get_name (app, "C"));
 		g_string_append_printf (yaml, "  summary: %s\n",

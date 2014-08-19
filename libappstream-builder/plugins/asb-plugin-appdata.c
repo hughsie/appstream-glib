@@ -539,7 +539,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		asb_package_log (pkg,
 				 ASB_PACKAGE_LOG_LEVEL_WARNING,
 				 "desktop application %s has no AppData",
-				 as_app_get_id (AS_APP (app)));
+				 as_app_get_id_full (AS_APP (app)));
 	}
 	return TRUE;
 }

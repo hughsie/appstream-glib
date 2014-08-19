@@ -346,7 +346,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			asb_package_log (priv->pkg,
 					 ASB_PACKAGE_LOG_LEVEL_WARNING,
 					 "Failed to run process on %s: %s",
-					 as_app_get_id (AS_APP (app)),
+					 as_app_get_id_full (AS_APP (app)),
 					 error->message);
 			g_clear_error (&error);
 			goto skip;
