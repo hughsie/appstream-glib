@@ -112,7 +112,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			GError **error)
 {
 	const gchar *tmp;
-	if (as_utils_is_blacklisted_id (as_app_get_id (AS_APP (app))))
+	if (as_utils_is_blacklisted_id (as_app_get_id_full (AS_APP (app))))
 		as_app_add_veto (AS_APP (app), "Not an application");
 	tmp = asb_glob_value_search (plugin->priv->vetos,
 				     as_app_get_id (AS_APP (app)));
