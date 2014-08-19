@@ -23,6 +23,7 @@ glade3.desktop
 gnome-glade-2.desktop
 gnome-system-monitor-kde.desktop
 gnome-wacom-panel.desktop
+itweb-settings.desktop
 java-*-openjdk
 libsvm-svm-toy-gtk
 libsvm-svm-toy-qt
@@ -36,6 +37,7 @@ midori-private.desktop
 nm-connection-editor.desktop
 open-raw.desktop
 pioneers-editor.desktop
+policyeditor.desktop
 qterminal_*.desktop
 razor-config*.desktop
 redhat-userinfo.desktop
