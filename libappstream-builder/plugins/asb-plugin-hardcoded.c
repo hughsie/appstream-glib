@@ -157,30 +157,30 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	guint days;
 
 	/* add extra categories */
-	tmp = as_app_get_id (AS_APP (app));
-	if (g_strcmp0 (tmp, "0install") == 0)
+	tmp = as_app_get_id_full (AS_APP (app));
+	if (g_strcmp0 (tmp, "0install.desktop") == 0)
 		as_app_add_category (AS_APP (app), "System", -1);
-	if (g_strcmp0 (tmp, "alacarte") == 0)
+	if (g_strcmp0 (tmp, "alacarte.desktop") == 0)
 		as_app_add_category (AS_APP (app), "System", -1);
-	if (g_strcmp0 (tmp, "deja-dup") == 0)
+	if (g_strcmp0 (tmp, "deja-dup.desktop") == 0)
 		as_app_add_category (AS_APP (app), "Utility", -1);
-	if (g_strcmp0 (tmp, "gddccontrol") == 0)
+	if (g_strcmp0 (tmp, "gddccontrol.desktop") == 0)
 		as_app_add_category (AS_APP (app), "System", -1);
-	if (g_strcmp0 (tmp, "nautilus") == 0)
+	if (g_strcmp0 (tmp, "nautilus.desktop") == 0)
 		as_app_add_category (AS_APP (app), "System", -1);
-	if (g_strcmp0 (tmp, "pessulus") == 0)
+	if (g_strcmp0 (tmp, "pessulus.desktop") == 0)
 		as_app_add_category (AS_APP (app), "System", -1);
-	if (g_strcmp0 (tmp, "pmdefaults") == 0)
+	if (g_strcmp0 (tmp, "pmdefaults.desktop") == 0)
 		as_app_add_category (AS_APP (app), "System", -1);
-	if (g_strcmp0 (tmp, "fwfstab") == 0)
+	if (g_strcmp0 (tmp, "fwfstab.desktop") == 0)
 		as_app_add_category (AS_APP (app), "System", -1);
-	if (g_strcmp0 (tmp, "bmpanel2cfg") == 0)
+	if (g_strcmp0 (tmp, "bmpanel2cfg.desktop") == 0)
 		as_app_add_category (AS_APP (app), "System", -1);
 
 	/* add extra project groups */
-	if (g_strcmp0 (tmp, "nemo") == 0)
+	if (g_strcmp0 (tmp, "nemo.desktop") == 0)
 		as_app_set_project_group (AS_APP (app), "Cinnamon", -1);
-	if (g_strcmp0 (tmp, "xfdashboard") == 0)
+	if (g_strcmp0 (tmp, "xfdashboard.desktop") == 0)
 		as_app_set_project_group (AS_APP (app), "XFCE", -1);
 
 	/* use the URL to guess the project group */
