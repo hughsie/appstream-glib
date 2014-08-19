@@ -3100,11 +3100,13 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_KEYWORD)
 				continue;
+			tmp = as_node_get_data (c);
+			if (tmp == NULL)
+				continue;
 			taken = as_app_parse_locale (as_node_get_attribute (c, "xml:lang"));
 			if (taken == NULL)
 				continue;
-			as_app_add_keyword (app, taken,
-					    as_node_get_data (c), -1);
+			as_app_add_keyword (app, taken, tmp, -1);
 			g_free (taken);
 		}
 		break;
@@ -3704,6 +3706,8 @@ as_app_parse_file_key (AsApp *app,
 			_cleanup_strv_free_ gchar **kw_split = NULL;
 			kw_split = g_strsplit (list[i], ",", -1);
 			for (j = 0; kw_split[j] != NULL; j++) {
+				if (kw_split[j][0] == '\0')
+					continue;
 				as_app_add_keyword (app, "C",
 						    kw_split[j], -1);
 			}
@@ -3720,6 +3724,8 @@ as_app_parse_file_key (AsApp *app,
 			_cleanup_strv_free_ gchar **kw_split = NULL;
 			kw_split = g_strsplit (list[i], ",", -1);
 			for (j = 0; kw_split[j] != NULL; j++) {
+				if (kw_split[j][0] == '\0')
+					continue;
 				as_app_add_keyword (app, locale,
 						    kw_split[j], -1);
 			}
