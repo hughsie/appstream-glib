@@ -1947,15 +1947,15 @@ as_test_store_addons_func (void)
 	gboolean ret;
 	const gchar *xml =
 		"<components version=\"0.7\">"
-		"<component type=\"desktop\">"
-		"<id>eclipse.desktop</id>"
-		"</component>"
 		"<component type=\"addon\">"
 		"<id>eclipse-php.jar</id>"
 		"<mimetypes>"
 		"<mimetype>xtest</mimetype>"
 		"</mimetypes>"
 		"<extends>eclipse.desktop</extends>"
+		"</component>"
+		"<component type=\"desktop\">"
+		"<id>eclipse.desktop</id>"
 		"</component>"
 		"</components>";
 	_cleanup_object_unref_ AsStore *store;
@@ -1986,6 +1986,8 @@ as_test_store_addons_func (void)
 
 	/* check it marshals back to the same XML */
 	str = as_store_to_xml (store, 0);
+	if (g_strcmp0 (str->str, xml) != 0)
+		g_warning ("Expected:\n%s\nGot:\n%s", xml, str->str);
 	g_assert_cmpstr (str->str, ==, xml);
 }
 

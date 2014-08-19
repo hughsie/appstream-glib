@@ -637,8 +637,8 @@ as_store_from_xml (AsStore *store,
 static gint
 as_store_apps_sort_cb (gconstpointer a, gconstpointer b)
 {
-	return g_strcmp0 (as_app_get_id (AS_APP (*(AsApp **) a)),
-			  as_app_get_id (AS_APP (*(AsApp **) b)));
+	return g_strcmp0 (as_app_get_id_full (AS_APP (*(AsApp **) a)),
+			  as_app_get_id_full (AS_APP (*(AsApp **) b)));
 }
 
 /**
