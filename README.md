@@ -181,6 +181,8 @@ The current rules of inclusion are thus:
  * Screenshots **SHOULD** be in 16:9 aspect ratio
  * Application icons **SHOULD** have an alpha channel
  * Applications **SHOULD** ship a 64x64 PNG format icon or SVG
+ * Applications **SHOULD** ship a matching High Contrast icon
+ * Applications **SHOULD** not depend on other applications
  * AppData files **SHOULD** include translations
  * Desktop files **SHOULD** include translations
 
