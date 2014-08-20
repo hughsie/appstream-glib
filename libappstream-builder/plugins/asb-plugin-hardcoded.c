@@ -217,6 +217,16 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		}
 	}
 
+	/* look for a high contrast icon */
+	for (i = 0; filelist[i] != NULL; i++) {
+		if (g_str_has_prefix (filelist[i],
+				      "/usr/share/icons/HighContrast/")) {
+			as_app_add_kudo_kind (AS_APP (app),
+					      AS_KUDO_KIND_HIGH_CONTRAST);
+			break;
+		}
+	}
+
 	/* look for a modern toolkit */
 	deps = asb_package_get_deps (pkg);
 	for (i = 0; deps != NULL && deps[i] != NULL; i++) {

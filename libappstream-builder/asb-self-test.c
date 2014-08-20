@@ -333,7 +333,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	/* check it matches what we expect */
 	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
-		"<components version=\"0.8\" builder_id=\"appstream-glib:3\" origin=\"asb-self-test\">\n"
+		"<components version=\"0.8\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test\">\n"
 		"<component type=\"addon\">\n"
 		"<id>app-extra</id>\n"
 		"<pkgname>app-extra</pkgname>\n"
@@ -412,7 +412,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	/* check output */
 	xml_failed = as_store_to_xml (store_failed, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
-		"<components version=\"0.8\" builder_id=\"appstream-glib:3\" origin=\"asb-self-test-failed\">\n"
+		"<components version=\"0.8\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test-failed\">\n"
 		"<component type=\"desktop\">\n"
 		"<id>console1.desktop</id>\n"
 		"<pkgname>app-console</pkgname>\n"

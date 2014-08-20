@@ -106,6 +106,7 @@ typedef enum {
  * @AS_KUDO_KIND_APP_MENU:		Uses the GNOME application menu
  * @AS_KUDO_KIND_MODERN_TOOLKIT:	Uses a modern toolkit like GTK3 or QT5
  * @AS_KUDO_KIND_NOTIFICATIONS:		Registers notifications with KDE or GNOME
+ * @AS_KUDO_KIND_HIGH_CONTRAST:		Installs a high contrast icon
  *
  * The kudo type.
  **/
@@ -116,6 +117,7 @@ typedef enum {
 	AS_KUDO_KIND_APP_MENU,		/* Since: 0.2.2 */
 	AS_KUDO_KIND_MODERN_TOOLKIT,	/* Since: 0.2.2 */
 	AS_KUDO_KIND_NOTIFICATIONS,	/* Since: 0.2.2 */
+	AS_KUDO_KIND_HIGH_CONTRAST,	/* Since: 0.3.0 */
 	/*< private >*/
 	AS_KUDO_KIND_LAST
 } AsKudoKind;

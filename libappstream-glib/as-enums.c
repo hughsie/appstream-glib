@@ -211,6 +211,8 @@ as_kudo_kind_to_string (AsKudoKind kudo_kind)
 		return "ModernToolkit";
 	if (kudo_kind == AS_KUDO_KIND_NOTIFICATIONS)
 		return "Notifications";
+	if (kudo_kind == AS_KUDO_KIND_HIGH_CONTRAST)
+		return "HighContrast";
 	return NULL;
 }
 
@@ -237,5 +239,7 @@ as_kudo_kind_from_string (const gchar *kudo_kind)
 		return AS_KUDO_KIND_MODERN_TOOLKIT;
 	if (g_strcmp0 (kudo_kind, "Notifications") == 0)
 		return AS_KUDO_KIND_NOTIFICATIONS;
+	if (g_strcmp0 (kudo_kind, "HighContrast") == 0)
+		return AS_KUDO_KIND_HIGH_CONTRAST;
 	return AS_KUDO_KIND_UNKNOWN;
 }
