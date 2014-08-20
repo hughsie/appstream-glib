@@ -1615,7 +1615,8 @@ as_test_store_demote_func (void)
 	AsApp *app;
 	GError *error = NULL;
 	gboolean ret;
-	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_free_ gchar *filename1 = NULL;
+	_cleanup_free_ gchar *filename2 = NULL;
 	_cleanup_object_unref_ AsApp *app_appdata = NULL;
 	_cleanup_object_unref_ AsApp *app_desktop = NULL;
 	_cleanup_object_unref_ AsStore *store = NULL;
@@ -1623,8 +1624,8 @@ as_test_store_demote_func (void)
 
 	/* load example desktop file */
 	app_desktop = as_app_new ();
-	filename = as_test_get_filename ("example.desktop");
-	ret = as_app_parse_file (app_desktop, filename,
+	filename1 = as_test_get_filename ("example.desktop");
+	ret = as_app_parse_file (app_desktop, filename1,
 				 AS_APP_PARSE_FLAG_ALLOW_VETO, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -1632,8 +1633,8 @@ as_test_store_demote_func (void)
 
 	/* load example appdata file */
 	app_appdata = as_app_new ();
-	filename = as_test_get_filename ("example.appdata.xml");
-	ret = as_app_parse_file (app_appdata, filename,
+	filename2 = as_test_get_filename ("example.appdata.xml");
+	ret = as_app_parse_file (app_appdata, filename2,
 				 AS_APP_PARSE_FLAG_ALLOW_VETO, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
