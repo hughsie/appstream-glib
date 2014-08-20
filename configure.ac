@@ -177,7 +177,7 @@ if test x$enable_dep11 = xyes; then
   AC_CHECK_HEADER(yaml.h, [], [AC_MSG_ERROR([No yaml.h])])
   YAML_LIBS="-lyaml"
   AC_SUBST(YAML_LIBS)
-  AC_DEFINE(PK_BUILD_DEP11,1,[Build DEP-11 code])
+  AC_DEFINE(AS_BUILD_DEP11,1,[Build DEP-11 code])
 fi
 
 AC_CONFIG_FILES([

@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#ifdef PK_BUILD_DEP11
+#ifdef AS_BUILD_DEP11
 #include <yaml.h>
 #endif
 
@@ -195,7 +195,7 @@ as_yaml_to_string (GNode *node)
 	return str;
 }
 
-#if PK_BUILD_DEP11
+#if AS_BUILD_DEP11
 /**
  * as_yaml_node_new:
  **/
@@ -284,7 +284,7 @@ GNode *
 as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 {
 	GNode *node = NULL;
-#if PK_BUILD_DEP11
+#if AS_BUILD_DEP11
 	yaml_parser_t parser;
 
 	/* parse */
@@ -304,7 +304,7 @@ as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 	return node;
 }
 
-#if PK_BUILD_DEP11
+#if AS_BUILD_DEP11
 /**
  * as_yaml_read_handler_cb:
  **/
@@ -327,7 +327,7 @@ GNode *
 as_yaml_from_file (GFile *file, GCancellable *cancellable, GError **error)
 {
 	GNode *node = NULL;
-#if PK_BUILD_DEP11
+#if AS_BUILD_DEP11
 	const gchar *content_type = NULL;
 	yaml_parser_t parser;
 	_cleanup_free_ gchar *data = NULL;
