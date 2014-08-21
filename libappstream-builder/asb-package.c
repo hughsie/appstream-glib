@@ -50,6 +50,7 @@ struct _AsbPackagePrivate
 	gchar		*arch;
 	gchar		*url;
 	gchar		*nevr;
+	gchar		*nevra;
 	gchar		*evr;
 	gchar		*license;
 	gchar		*source_nevra;
@@ -85,6 +86,7 @@ asb_package_finalize (GObject *object)
 	g_free (priv->arch);
 	g_free (priv->url);
 	g_free (priv->nevr);
+	g_free (priv->nevra);
 	g_free (priv->evr);
 	g_free (priv->license);
 	g_free (priv->source_nevra);
@@ -292,6 +294,23 @@ asb_package_get_name (AsbPackage *pkg)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 	return priv->name;
+}
+
+/**
+ * asb_package_get_arch:
+ * @pkg: A #AsbPackage
+ *
+ * Gets the package architecture
+ *
+ * Returns: utf8 string
+ *
+ * Since: 0.3.0
+ **/
+const gchar *
+asb_package_get_arch (AsbPackage *pkg)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	return priv->arch;
 }
 
 /**
@@ -613,6 +632,39 @@ asb_package_get_nevr (AsbPackage *pkg)
 		}
 	}
 	return priv->nevr;
+}
+
+/**
+ * asb_package_get_nevra:
+ * @pkg: A #AsbPackage
+ *
+ * Gets the package NEVRA.
+ *
+ * Returns: utf8 string
+ *
+ * Since: 0.3.0
+ **/
+const gchar *
+asb_package_get_nevra (AsbPackage *pkg)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	if (priv->nevra == NULL) {
+		if (priv->epoch == 0) {
+			priv->nevra = g_strdup_printf ("%s-%s-%s.%s",
+						       priv->name,
+						       priv->version,
+						       priv->release,
+						       priv->arch);
+		} else {
+			priv->nevra = g_strdup_printf ("%s-%i:%s-%s.%s",
+						       priv->name,
+						       priv->epoch,
+						       priv->version,
+						       priv->release,
+						       priv->arch);
+		}
+	}
+	return priv->nevra;
 }
 
 /**

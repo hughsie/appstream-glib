@@ -1252,6 +1252,7 @@ asb_context_add_app_dummy (AsbContext *ctx, AsbPackage *pkg)
 {
 	AsApp *app_tmp;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	_cleanup_free_ gchar *name_arch = NULL;
 	_cleanup_object_unref_ AsbApp *app = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *apps = NULL;
 
@@ -1270,8 +1271,10 @@ asb_context_add_app_dummy (AsbContext *ctx, AsbPackage *pkg)
 	}
 
 	/* package name already exists, but with a different CacheID */
-	app_tmp = as_store_get_app_by_id (priv->store_ignore,
-					  asb_package_get_name (pkg));
+	name_arch = g_strdup_printf ("%s.%s",
+				     asb_package_get_name (pkg),
+				     asb_package_get_arch (pkg));
+	app_tmp = as_store_get_app_by_id (priv->store_ignore, name_arch);
 	if (app_tmp != NULL) {
 		as_app_add_metadata (AS_APP (app_tmp), "X-CacheID",
 				     asb_package_get_basename (pkg), -1);
@@ -1279,7 +1282,7 @@ asb_context_add_app_dummy (AsbContext *ctx, AsbPackage *pkg)
 	}
 
 	/* never encountered before, so add */
-	app = asb_app_new (pkg, asb_package_get_name (pkg));
+	app = asb_app_new (pkg, name_arch);
 	as_app_add_metadata (AS_APP (app), "X-CacheID",
 			     asb_package_get_basename (pkg), -1);
 	as_store_add_app (priv->store_ignore, AS_APP (app));
