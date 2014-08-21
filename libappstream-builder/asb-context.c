@@ -802,7 +802,7 @@ asb_context_write_xml (AsbContext *ctx,
 			continue;
 		if (as_app_get_vetos(app)->len == 0)
 			continue;
-		asb_context_add_app_dummy (ctx, asb_app_get_package (ASB_APP (app)));
+		asb_context_add_app_ignore (ctx, asb_app_get_package (ASB_APP (app)));
 	}
 
 	/* add any non-vetoed applications */
@@ -1245,10 +1245,10 @@ asb_context_add_app (AsbContext *ctx, AsbApp *app)
 }
 
 /**
- * asb_context_add_app_dummy:
+ * asb_context_add_app_ignore:
  **/
 void
-asb_context_add_app_dummy (AsbContext *ctx, AsbPackage *pkg)
+asb_context_add_app_ignore (AsbContext *ctx, AsbPackage *pkg)
 {
 	AsApp *app_tmp;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);

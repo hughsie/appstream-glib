@@ -239,7 +239,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			 basename);
 	asb_task_add_suitable_plugins (task);
 	if (priv->plugins_to_run->len == 0) {
-		asb_context_add_app_dummy (priv->ctx, priv->pkg);
+		asb_context_add_app_ignore (priv->ctx, priv->pkg);
 		goto out;
 	}
 
@@ -410,7 +410,7 @@ skip:
 	/* add a dummy element to the AppStream metadata so that we don't keep
 	 * parsing this every time */
 	if (asb_context_get_add_cache_id (priv->ctx) && nr_added == 0)
-		asb_context_add_app_dummy (priv->ctx, priv->pkg);
+		asb_context_add_app_ignore (priv->ctx, priv->pkg);
 
 	/* delete tree */
 	asb_panel_set_status (priv->panel, "Deleting temp files");
