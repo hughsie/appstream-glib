@@ -154,6 +154,8 @@ void		 as_store_add_app		(AsStore	*store,
 						 AsApp		*app);
 void		 as_store_remove_app		(AsStore	*store,
 						 AsApp		*app);
+void		 as_store_remove_app_by_id	(AsStore	*store,
+						 const gchar	*id);
 GString		*as_store_to_xml		(AsStore	*store,
 						 AsNodeToXmlFlags flags);
 gboolean	 as_store_to_file		(AsStore	*store,

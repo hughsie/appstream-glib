@@ -307,6 +307,32 @@ as_store_remove_app (AsStore *store, AsApp *app)
 }
 
 /**
+ * as_store_remove_app_by_id:
+ * @store: a #AsStore instance.
+ * @id: an application id
+ *
+ * Removes an application from the store if it exists.
+ *
+ * Since: 0.3.0
+ **/
+void
+as_store_remove_app_by_id (AsStore *store, const gchar *id)
+{
+	AsApp *app;
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	guint i;
+
+	if (!g_hash_table_remove (priv->hash_id, id))
+		return;
+	for (i = 0; i < priv->array->len; i++) {
+		app = g_ptr_array_index (priv->array, i);
+		if (g_strcmp0 (id, as_app_get_id_full (app)) != 0)
+			continue;
+		g_ptr_array_remove (priv->array, app);
+	}
+}
+
+/**
  * as_store_add_app:
  * @store: a #AsStore instance.
  * @app: a #AsApp instance.
