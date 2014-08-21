@@ -425,6 +425,10 @@ asb_package_rpm_ensure_filelists (AsbPackage *pkg, GError **error)
 	_cleanup_free_ gint32 *dirindex = NULL;
 	_cleanup_strv_free_ gchar **filelist = NULL;
 
+	/* is a virtual package with no files */
+	if (!headerIsEntry (priv->h, RPMTAG_DIRINDEXES))
+		return TRUE;
+
 	/* read out the file list */
 	for (i = 0; i < 3; i++)
 		td[i] = rpmtdNew ();
