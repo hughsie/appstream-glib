@@ -148,6 +148,11 @@ void
 asb_context_set_add_cache_id (AsbContext *ctx, gboolean add_cache_id)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	if (add_cache_id) {
+		as_store_add_metadata_index (priv->store_failed, "X-CacheID");
+		as_store_add_metadata_index (priv->store_ignore, "X-CacheID");
+		as_store_add_metadata_index (priv->store_old, "X-CacheID");
+	}
 	priv->add_cache_id = add_cache_id;
 }
 

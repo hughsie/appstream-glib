@@ -181,6 +181,8 @@ void		 as_store_set_add_flags		(AsStore	*store,
 GPtrArray	*as_store_validate		(AsStore	*store,
 						 AsAppValidateFlags flags,
 						 GError		**error);
+void		 as_store_add_metadata_index	(AsStore	*store,
+						 const gchar	*key);
 
 G_END_DECLS
 

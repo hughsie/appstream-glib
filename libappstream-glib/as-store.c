@@ -63,6 +63,7 @@ struct _AsStorePrivate
 	GHashTable		*hash_id;	/* of AsApp{id_full} */
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
 	GPtrArray		*file_monitors;	/* of GFileMonitor */
+	GHashTable		*metadata_indexes;	/* GHashTable{key} */
 	AsStoreAddFlags		 add_flags;
 	AsStoreProblems		 problems;
 };
@@ -110,6 +111,7 @@ as_store_finalize (GObject *object)
 	g_ptr_array_unref (priv->file_monitors);
 	g_hash_table_unref (priv->hash_id);
 	g_hash_table_unref (priv->hash_pkgname);
+	g_hash_table_unref (priv->metadata_indexes);
 
 	G_OBJECT_CLASS (as_store_parent_class)->finalize (object);
 }
@@ -132,6 +134,10 @@ as_store_init (AsStore *store)
 						    g_free,
 						    (GDestroyNotify) g_object_unref);
 	priv->file_monitors = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	priv->metadata_indexes = g_hash_table_new_full (g_str_hash,
+							  g_str_equal,
+							  g_free,
+							  (GDestroyNotify) g_hash_table_unref);
 }
 
 /**
@@ -217,6 +223,46 @@ as_store_remove_all (AsStore *store)
 }
 
 /**
+ * as_store_regen_metadata_index_key:
+ **/
+static void
+as_store_regen_metadata_index_key (AsStore *store, const gchar *key)
+{
+	AsApp *app;
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	GHashTable *md;
+	GPtrArray *apps;
+	const gchar *tmp;
+	guint i;
+
+	/* regenerate cache */
+	md = g_hash_table_new_full (g_str_hash, g_str_equal,
+				    g_free, (GDestroyNotify) g_ptr_array_unref);
+	for (i = 0; i < priv->array->len; i++) {
+		app = g_ptr_array_index (priv->array, i);
+
+		/* no data */
+		tmp = as_app_get_metadata_item (app, key);
+		if (tmp == NULL)
+			continue;
+
+		/* seen before */
+		apps = g_hash_table_lookup (md, tmp);
+		if (apps != NULL) {
+			g_ptr_array_add (apps, g_object_ref (app));
+			continue;
+		}
+
+		/* never seen before */
+		apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+		g_ptr_array_add (apps, g_object_ref (app));
+		g_hash_table_insert (md, g_strdup (tmp), apps);
+
+	}
+	g_hash_table_insert (priv->metadata_indexes, g_strdup (key), md);
+}
+
+/**
  * as_store_get_apps_by_metadata:
  * @store: a #AsStore instance.
  * @key: metadata key
@@ -235,10 +281,24 @@ as_store_get_apps_by_metadata (AsStore *store,
 {
 	AsApp *app;
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	GHashTable *index;
 	GPtrArray *apps;
 	guint i;
 
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+
+	/* do we have this indexed? */
+	index = g_hash_table_lookup (priv->metadata_indexes, key);
+	if (index != NULL) {
+		if (g_hash_table_size (index) == 0) {
+			as_store_regen_metadata_index_key (store, key);
+			index = g_hash_table_lookup (priv->metadata_indexes, key);
+		}
+		apps = g_hash_table_lookup (index, value);
+		if (apps != NULL)
+			return g_ptr_array_ref (apps);
+		return g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	}
 
 	/* find all the apps with this specific metadata key */
 	apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -249,6 +309,26 @@ as_store_get_apps_by_metadata (AsStore *store,
 		g_ptr_array_add (apps, g_object_ref (app));
 	}
 	return apps;
+}
+
+/**
+ * as_store_add_metadata_index:
+ * @store: a #AsStore instance.
+ * @key: the metadata key.
+ *
+ * Adds a metadata index key.
+ *
+ * NOTE: if applications are removed *all* the indexes will be invalid and
+ * will have to be re-added.
+ *
+ * Returns: (transfer none): a #AsApp or %NULL
+ *
+ * Since: 0.3.0
+ **/
+void
+as_store_add_metadata_index (AsStore *store, const gchar *key)
+{
+	as_store_regen_metadata_index_key (store, key);
 }
 
 /**
@@ -304,6 +384,7 @@ as_store_remove_app (AsStore *store, AsApp *app)
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_hash_table_remove (priv->hash_id, as_app_get_id_full (app));
 	g_ptr_array_remove (priv->array, app);
+	g_hash_table_remove_all (priv->metadata_indexes);
 }
 
 /**
@@ -330,6 +411,7 @@ as_store_remove_app_by_id (AsStore *store, const gchar *id)
 			continue;
 		g_ptr_array_remove (priv->array, app);
 	}
+	g_hash_table_remove_all (priv->metadata_indexes);
 }
 
 /**

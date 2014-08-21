@@ -2402,6 +2402,41 @@ as_test_store_metadata_func (void)
 }
 
 static void
+as_test_store_metadata_index_func (void)
+{
+	GPtrArray *apps;
+	const guint repeats = 10000;
+	guint i;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_timer_destroy_ GTimer *timer = NULL;
+
+	/* create lots of applications in the store */
+	store = as_store_new ();
+	as_store_add_metadata_index (store, "X-CacheID");
+	for (i = 0; i < repeats; i++) {
+		_cleanup_free_ gchar *id = g_strdup_printf ("app-%05i", i);
+		_cleanup_object_unref_ AsApp *app = as_app_new ();
+		as_app_set_id_full (app, id, -1);
+		as_app_add_metadata (app, "X-CacheID", "dave.i386", -1);
+		as_app_add_metadata (app, "baz", "dave", -1);
+		as_store_add_app (store, app);
+	}
+
+	/* find out how long this takes with an index */
+	timer = g_timer_new ();
+	for (i = 0; i < repeats; i++) {
+		apps = as_store_get_apps_by_metadata (store, "X-CacheID", "dave.i386");
+		g_assert_cmpint (apps->len, ==, repeats);
+		g_ptr_array_unref (apps);
+		apps = as_store_get_apps_by_metadata (store, "X-CacheID", "notgoingtoexist");
+		g_assert_cmpint (apps->len, ==, 0);
+		g_ptr_array_unref (apps);
+	}
+	g_assert_cmpfloat (g_timer_elapsed (timer, NULL), <, 0.5);
+	g_print ("%.0fms: ", g_timer_elapsed (timer, NULL) * 1000);
+}
+
+static void
 as_test_yaml_func (void)
 {
 	GNode *node;
@@ -2659,6 +2694,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{app-install}", as_test_store_app_install_func);
 	g_test_add_func ("/AppStream/store{yaml}", as_test_store_yaml_func);
 	g_test_add_func ("/AppStream/store{metadata}", as_test_store_metadata_func);
+	g_test_add_func ("/AppStream/store{metadata-index}", as_test_store_metadata_index_func);
 	g_test_add_func ("/AppStream/store{validate}", as_test_store_validate_func);
 	g_test_add_func ("/AppStream/store{local-app-install}", as_test_store_local_app_install_func);
 	g_test_add_func ("/AppStream/store{local-appdata}", as_test_store_local_appdata_func);
