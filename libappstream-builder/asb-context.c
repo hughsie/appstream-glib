@@ -1046,6 +1046,7 @@ asb_context_process (AsbContext *ctx, GError **error)
 					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 					 "%s is not enabled",
 					 asb_package_get_nevr (pkg));
+			asb_context_add_app_ignore (ctx, pkg);
 			asb_package_log_flush (pkg, NULL);
 			continue;
 		}
@@ -1144,7 +1145,7 @@ asb_context_disable_older_pkgs (AsbContext *ctx)
 			continue;
 		found = g_hash_table_lookup (newest, key);
 		if (found != NULL) {
-			if (asb_package_compare (pkg, found) < 0) {
+			if (asb_package_compare (pkg, found) <= 0) {
 				asb_package_set_enabled (pkg, FALSE);
 				continue;
 			}
