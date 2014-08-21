@@ -109,7 +109,6 @@ gboolean	 asb_context_process		(AsbContext	*ctx,
 gboolean	 asb_context_add_filename	(AsbContext	*ctx,
 						 const gchar	*filename,
 						 GError		**error);
-void		 asb_context_disable_older_pkgs	(AsbContext	*ctx);
 gboolean	 asb_context_find_in_cache	(AsbContext	*ctx,
 						 const gchar	*filename);
 

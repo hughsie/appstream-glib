@@ -1005,6 +1005,38 @@ asb_context_write_xml_ignore (AsbContext *ctx,
 }
 
 /**
+ * asb_context_disable_older_pkgs:
+ **/
+static void
+asb_context_disable_older_pkgs (AsbContext *ctx)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	AsbPackage *found;
+	AsbPackage *pkg;
+	const gchar *key;
+	guint i;
+	_cleanup_hashtable_unref_ GHashTable *newest;
+
+	newest = g_hash_table_new_full (g_str_hash, g_str_equal,
+					g_free, (GDestroyNotify) g_object_unref);
+	for (i = 0; i < priv->packages->len; i++) {
+		pkg = ASB_PACKAGE (g_ptr_array_index (priv->packages, i));
+		key = asb_package_get_name (pkg);
+		if (key == NULL)
+			continue;
+		found = g_hash_table_lookup (newest, key);
+		if (found != NULL) {
+			if (asb_package_compare (pkg, found) <= 0) {
+				asb_package_set_enabled (pkg, FALSE);
+				continue;
+			}
+			asb_package_set_enabled (found, FALSE);
+		}
+		g_hash_table_insert (newest, g_strdup (key), g_object_ref (pkg));
+	}
+}
+
+/**
  * asb_context_process:
  * @ctx: A #AsbContext
  * @error: A #GError or %NULL
@@ -1025,6 +1057,9 @@ asb_context_process (AsbContext *ctx, GError **error)
 	gboolean ret = FALSE;
 	guint i;
 	_cleanup_ptrarray_unref_ GPtrArray *tasks = NULL;
+
+	/* only process the newest packages */
+	asb_context_disable_older_pkgs (ctx);
 
 	/* create thread pool */
 	pool = g_thread_pool_new (asb_task_process_func,
@@ -1116,43 +1151,6 @@ asb_context_process (AsbContext *ctx, GError **error)
 		goto out;
 out:
 	return ret;
-}
-
-/**
- * asb_context_disable_older_pkgs:
- * @ctx: A #AsbContext
- *
- * Disable older packages that have been added to the context.
- *
- * Since: 0.1.0
- **/
-void
-asb_context_disable_older_pkgs (AsbContext *ctx)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	AsbPackage *found;
-	AsbPackage *pkg;
-	const gchar *key;
-	guint i;
-	_cleanup_hashtable_unref_ GHashTable *newest;
-
-	newest = g_hash_table_new_full (g_str_hash, g_str_equal,
-					g_free, (GDestroyNotify) g_object_unref);
-	for (i = 0; i < priv->packages->len; i++) {
-		pkg = ASB_PACKAGE (g_ptr_array_index (priv->packages, i));
-		key = asb_package_get_name (pkg);
-		if (key == NULL)
-			continue;
-		found = g_hash_table_lookup (newest, key);
-		if (found != NULL) {
-			if (asb_package_compare (pkg, found) <= 0) {
-				asb_package_set_enabled (pkg, FALSE);
-				continue;
-			}
-			asb_package_set_enabled (found, FALSE);
-		}
-		g_hash_table_insert (newest, g_strdup (key), g_object_ref (pkg));
-	}
 }
 
 /**

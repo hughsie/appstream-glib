@@ -250,9 +250,6 @@ main (int argc, char **argv)
 		}
 	}
 
-	/* disable anything not newest */
-	asb_context_disable_older_pkgs (ctx);
-
 	/* process all packages in the pool */
 	ret = asb_context_process (ctx, &error);
 	if (!ret) {
