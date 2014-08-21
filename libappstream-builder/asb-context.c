@@ -813,6 +813,17 @@ asb_context_write_xml (AsbContext *ctx,
 			continue;
 		as_store_add_app (store, app);
 		as_store_remove_app (priv->store_failed, app);
+
+		/* remove from the ignore list if the application was useful */
+		if (ASB_IS_APP (app)) {
+			AsbPackage *pkg = asb_app_get_package (ASB_APP (app));
+			_cleanup_free_ gchar *name_arch = NULL;
+			name_arch = g_strdup_printf ("%s.%s",
+						     asb_package_get_name (pkg),
+						     asb_package_get_arch (pkg));
+			as_store_remove_app_by_id (priv->store_ignore, name_arch);
+		}
+
 	}
 	filename = g_strdup_printf ("%s/%s.xml.gz", output_dir, basename);
 	file = g_file_new_for_path (filename);

@@ -64,8 +64,10 @@ install -Dp %{SOURCE16} $RPM_BUILD_ROOT/%{_datadir}/applications/console2.deskto
 %defattr(-,root,root)
 %doc %{_datadir}/%{name}-%{version}/README
 %{_bindir}/app.bin
-%{_datadir}/appdata/app.*.xml
-%{_datadir}/applications/*.desktop
+%{_datadir}/appdata/app.appdata.xml
+%{_datadir}/appdata/app.metainfo.xml
+%{_datadir}/applications/app-demo.desktop
+%{_datadir}/applications/app.desktop
 %{_datadir}/dbus-1/services/app.service
 %{_datadir}/gir-1.0/app.gir
 %{_datadir}/gnome-shell/search-providers/search-provider.ini

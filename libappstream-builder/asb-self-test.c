@@ -226,6 +226,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	_cleanup_free_ gchar *filename2 = NULL;
 	_cleanup_free_ gchar *filename3 = NULL;
 	_cleanup_free_ gchar *filename4 = NULL;
+	_cleanup_free_ gchar *filename5 = NULL;
 	_cleanup_object_unref_ AsbContext *ctx = NULL;
 	_cleanup_object_unref_ AsStore *store_failed = NULL;
 	_cleanup_object_unref_ AsStore *store_ignore = NULL;
@@ -235,6 +236,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	_cleanup_object_unref_ GFile *file = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
 	_cleanup_string_free_ GString *xml_failed = NULL;
+	_cleanup_string_free_ GString *xml_ignore = NULL;
 
 	/* set up the context */
 	ctx = asb_context_new ();
@@ -295,11 +297,18 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	g_assert_no_error (error);
 	g_assert (ret);
 
+	/* the same GUI application in the different architecture */
+	filename5 = asb_test_get_filename ("app-1-1.fc21.i686.rpm");
+	g_assert (filename5 != NULL);
+	ret = asb_context_add_filename (ctx, filename5, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
 	/* verify queue size */
 	switch (mode) {
 	case ASB_TEST_CONTEXT_MODE_NO_CACHE:
 	case ASB_TEST_CONTEXT_MODE_WITH_OLD_CACHE:
-		g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 4);
+		g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 5);
 		break;
 	default:
 		/* no packages should need extracting */
@@ -476,7 +485,37 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store_ignore, file_ignore, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store_ignore), ==, 2);
+
+	/* check output */
+	xml_ignore = as_store_to_xml (store_ignore, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	expected_xml =
+		"<components version=\"0.8\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test-ignore\">\n"
+		"<component>\n"
+		"<id>app-console.noarch</id>\n"
+		"<pkgname>app-console</pkgname>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">app-console-1-1.fc21.noarch.rpm</value>\n"
+		"</metadata>\n"
+		"</component>\n"
+		"<component>\n"
+		"<id>app.i686</id>\n"
+		"<pkgname>app</pkgname>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">app-1-1.fc21.i686.rpm</value>\n"
+		"</metadata>\n"
+		"</component>\n"
+		"<component>\n"
+		"<id>test.noarch</id>\n"
+		"<pkgname>test</pkgname>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">test-0.1-1.fc21.noarch.rpm</value>\n"
+		"</metadata>\n"
+		"</component>\n"
+		"</components>\n";
+	if (g_strcmp0 (xml_ignore->str, expected_xml) != 0)
+		g_warning ("Expected:\n%s\nGot:\n%s", expected_xml, xml_ignore->str);
+	g_assert_cmpstr (xml_ignore->str, ==, expected_xml);
+
 }
 #endif
 
