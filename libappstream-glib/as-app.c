@@ -3262,7 +3262,7 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 	}
 	for (i = 0; i < priv->keywords->len; i++) {
 		tmp = g_ptr_array_index (priv->keywords, i);
-		as_app_add_tokens (app, tmp, "C", 40);
+		as_app_add_tokens (app, tmp, "C", 90);
 	}
 	for (i = 0; i < priv->mimetypes->len; i++) {
 		tmp = g_ptr_array_index (priv->mimetypes, i);
