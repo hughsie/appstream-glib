@@ -36,6 +36,7 @@ megaglest_*.desktop
 midori-private.desktop
 nm-connection-editor.desktop
 open-raw.desktop
+orca.desktop
 pioneers-editor.desktop
 policyeditor.desktop
 qterminal_*.desktop
@@ -44,7 +45,9 @@ redhat-userinfo.desktop
 redhat-usermount.desktop
 redhat-userpasswd.desktop
 *-release-notes.desktop
+remote-viewer.desktop
 Rodent-*.desktop
+rygel-preferences.desktop
 *-server.desktop
 *-session-manager.desktop
 *-shareware.desktop
