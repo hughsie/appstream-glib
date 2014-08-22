@@ -66,9 +66,16 @@ libappstream_builder_la_SOURCES +=				\
 	asb-package-rpm.h
 endif
 
+if HAVE_ALPM
+libappstream_builder_la_SOURCES +=				\
+	asb-package-alpm.c					\
+	asb-package-alpm.h
+endif
+
 libappstream_builder_la_LIBADD =				\
 	$(AS_GLIB_LIBS)						\
 	$(RPM_LIBS)						\
+	$(ALPM_LIBS)					\
 	$(GLIB_LIBS)						\
 	$(LIBARCHIVE_LIBS)
 

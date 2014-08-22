@@ -145,6 +145,23 @@ else
 fi
 AM_CONDITIONAL(HAVE_RPM, test x$HAVE_RPM = xyes)
 
+# alpm (default disabled)
+AC_ARG_ENABLE(alpm, AS_HELP_STRING([--enable-alpm],[Enable alpm support]), enable_alpm=yes, enable_alpm=no)
+if test x$enable_alpm != xno; then
+	PKG_CHECK_MODULES(ALPM, libalpm, HAVE_ALPM="yes", HAVE_ALPM="no")
+	if test "x$HAVE_ALPM" = "xyes"; then
+		AC_DEFINE(HAVE_ALPM, 1, [define if ALPM is installed])
+	else
+		if text x$enable_alpm = xyes; then
+			AC_MSG_ERROR([alpm enabled but not found])
+		fi
+	fi
+else
+	HAVE_ALPM=no
+fi
+AM_CONDITIONAL(HAVE_ALPM, test x$HAVE_ALPM = xyes)
+
+
 # man files
 AC_ARG_ENABLE(man,
               [AS_HELP_STRING([--disable-man],

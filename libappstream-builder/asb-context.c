@@ -45,6 +45,9 @@
 #ifdef HAVE_RPM
 #include "asb-package-rpm.h"
 #endif
+#ifdef HAVE_ALPM
+#include "asb-package-alpm.h"
+#endif
 
 #include "asb-package-deb.h"
 
@@ -482,6 +485,10 @@ asb_context_add_filename (AsbContext *ctx, const gchar *filename, GError **error
 #if HAVE_RPM
 	if (g_str_has_suffix (filename, ".rpm"))
 		pkg = asb_package_rpm_new ();
+#endif
+#if HAVE_ALPM
+	if (g_str_has_suffix (filename, ".pkg.tar.xz"))
+		pkg = asb_package_alpm_new ();
 #endif
 	if (g_str_has_suffix (filename, ".deb"))
 		pkg = asb_package_deb_new ();
