@@ -73,6 +73,16 @@ asb_test_package_rpm_func (void)
 	ret = asb_package_open (pkg, filename, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
+	ret = asb_package_ensure (pkg,
+				  ASB_PACKAGE_ENSURE_DEPS |
+				  ASB_PACKAGE_ENSURE_FILES |
+				  ASB_PACKAGE_ENSURE_LICENSE |
+				  ASB_PACKAGE_ENSURE_RELEASES |
+				  ASB_PACKAGE_ENSURE_SOURCE |
+				  ASB_PACKAGE_ENSURE_URL,
+				  &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 
 	/* check attributes */
 	g_assert (asb_package_get_enabled (pkg));

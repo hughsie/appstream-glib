@@ -94,17 +94,22 @@ asb_task_add_suitable_plugins (AsbTask *task)
 static gboolean
 asb_task_explode_extra_package (AsbTask *task,
 				const gchar *pkg_name,
-				gboolean require_same_srpm)
+				gboolean require_same_srpm,
+				GError **error)
 {
 	AsbTaskPrivate *priv = GET_PRIVATE (task);
 	AsbPackage *pkg_extra;
 	gboolean ret = TRUE;
-	_cleanup_error_free_ GError *error = NULL;
 
 	/* if not found, that's fine */
 	pkg_extra = asb_context_find_by_pkgname (priv->ctx, pkg_name);
 	if (pkg_extra == NULL)
 		return TRUE;
+	if (!asb_package_ensure (pkg_extra,
+				 ASB_PACKAGE_ENSURE_FILES |
+				 ASB_PACKAGE_ENSURE_SOURCE,
+				 error))
+		return FALSE;
 
 	/* check it's from the same source package */
 	if (require_same_srpm &&
@@ -121,13 +126,7 @@ asb_task_explode_extra_package (AsbTask *task,
 			 asb_package_get_name (priv->pkg));
 	ret = asb_package_explode (pkg_extra, priv->tmpdir,
 				   asb_context_get_file_globs (priv->ctx),
-				   &error);
-	if (!ret) {
-		asb_package_log (priv->pkg,
-				 ASB_PACKAGE_LOG_LEVEL_WARNING,
-				 "Failed to explode extra file: %s",
-				 error->message);
-	}
+				   error);
 	return ret;
 }
 
@@ -135,7 +134,7 @@ asb_task_explode_extra_package (AsbTask *task,
  * asb_task_explode_extra_packages:
  **/
 static gboolean
-asb_task_explode_extra_packages (AsbTask *task)
+asb_task_explode_extra_packages (AsbTask *task, GError **error)
 {
 	AsbTaskPrivate *priv = GET_PRIVATE (task);
 	const gchar *ignore[] = { "rtld", NULL };
@@ -182,14 +181,14 @@ asb_task_explode_extra_packages (AsbTask *task)
 	/* explode any potential packages */
 	for (i = 0; i < array->len; i++) {
 		tmp = g_ptr_array_index (array, i);
-		if (!asb_task_explode_extra_package (task, tmp, TRUE))
+		if (!asb_task_explode_extra_package (task, tmp, TRUE, error))
 			return FALSE;
 	}
 
 	/* explode any icon themes */
 	for (i = 0; i < icon_themes->len; i++) {
 		tmp = g_ptr_array_index (icon_themes, i);
-		if (!asb_task_explode_extra_package (task, tmp, FALSE))
+		if (!asb_task_explode_extra_package (task, tmp, FALSE, error))
 			return FALSE;
 	}
 	return TRUE;
@@ -227,9 +226,21 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	/* reset the profile timer */
 	asb_package_log_start (priv->pkg);
 
+	/* ensure nevra read */
+	if (!asb_package_ensure (priv->pkg,
+				 ASB_PACKAGE_ENSURE_NEVRA,
+				 error_not_used))
+		return FALSE;
+
 	asb_panel_set_job_number (priv->panel, priv->id + 1);
 	asb_panel_set_title (priv->panel, asb_package_get_name (priv->pkg));
 	asb_panel_set_status (priv->panel, "Starting");
+
+	/* ensure file list read */
+	if (!asb_package_ensure (priv->pkg,
+				 ASB_PACKAGE_ENSURE_FILES,
+				 error_not_used))
+		return FALSE;
 
 	/* did we get a file match on any plugin */
 	basename = g_path_get_basename (priv->filename);
@@ -271,9 +282,19 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	}
 
 	/* add extra packages */
-	ret = asb_task_explode_extra_packages (task);
-	if (!ret)
+	if (!asb_package_ensure (priv->pkg,
+				 ASB_PACKAGE_ENSURE_DEPS |
+				 ASB_PACKAGE_ENSURE_SOURCE,
+				 error_not_used))
+		return FALSE;
+	ret = asb_task_explode_extra_packages (task, &error);
+	if (!ret) {
+		asb_package_log (priv->pkg,
+				 ASB_PACKAGE_LOG_LEVEL_WARNING,
+				 "Failed to explode extra file: %s",
+				 error->message);
 		goto skip;
+	}
 
 	/* run plugins */
 	asb_panel_set_status (priv->panel, "Examining");
@@ -311,15 +332,22 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		}
 
 		/* copy data from pkg into app */
+		if (!asb_package_ensure (priv->pkg,
+					 ASB_PACKAGE_ENSURE_LICENSE |
+					 ASB_PACKAGE_ENSURE_RELEASES |
+					 ASB_PACKAGE_ENSURE_URL,
+					 error_not_used))
+			return FALSE;
 		if (asb_package_get_url (priv->pkg) != NULL) {
 			as_app_add_url (AS_APP (app),
 					AS_URL_KIND_HOMEPAGE,
 					asb_package_get_url (priv->pkg), -1);
 		}
-		if (asb_package_get_license (priv->pkg) != NULL)
+		if (asb_package_get_license (priv->pkg) != NULL) {
 			as_app_set_project_license (AS_APP (app),
 						    asb_package_get_license (priv->pkg),
 						    -1);
+		}
 
 		/* add the source name so we can suggest these together */
 		if (g_strcmp0 (asb_package_get_source_pkgname (priv->pkg),

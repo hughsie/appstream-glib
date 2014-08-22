@@ -713,6 +713,8 @@ asb_package_class_init (AsbPackageClass *klass)
  * @error: A #GError or %NULL
  *
  * Opens a package and parses the contents.
+ * As little i/o should be done at this point, and implementations
+ * should rely on asb_package_ensure() to set data.
  *
  * Returns: %TRUE for success, %FALSE otherwise
  *
@@ -731,6 +733,48 @@ asb_package_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	/* call distro-specific method */
 	if (klass->open != NULL)
 		return klass->open (pkg, filename, error);
+	return TRUE;
+}
+
+/**
+ * asb_package_ensure:
+ * @pkg: A #AsbPackage
+ * @flags: #AsbPackageEnsureFlags
+ * @error: A #GError or %NULL
+ *
+ * Ensures data exists.
+ *
+ * Returns: %TRUE for success, %FALSE otherwise
+ *
+ * Since: 0.3.0
+ **/
+gboolean
+asb_package_ensure (AsbPackage *pkg,
+		    AsbPackageEnsureFlags flags,
+		    GError **error)
+{
+	AsbPackageClass *klass = ASB_PACKAGE_GET_CLASS (pkg);
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+
+	/* clear flags */
+	if (priv->name != NULL)
+		flags &= ~ASB_PACKAGE_ENSURE_NEVRA;
+	if (priv->license != NULL)
+		flags &= ~ASB_PACKAGE_ENSURE_LICENSE;
+	if (priv->url != NULL)
+		flags &= ~ASB_PACKAGE_ENSURE_URL;
+	if (priv->source_pkgname != NULL)
+		flags &= ~ASB_PACKAGE_ENSURE_SOURCE;
+	if (priv->filelist != NULL)
+		flags &= ~ASB_PACKAGE_ENSURE_FILES;
+	if (priv->deps != NULL)
+		flags &= ~ASB_PACKAGE_ENSURE_DEPS;
+	if (priv->releases->len > 0)
+		flags &= ~ASB_PACKAGE_ENSURE_RELEASES;
+
+	/* call distro-specific method */
+	if (klass->ensure != NULL)
+		return klass->ensure (pkg, flags, error);
 	return TRUE;
 }
 

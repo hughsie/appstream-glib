@@ -44,11 +44,26 @@ struct _AsbPackage
 	GObject			parent;
 };
 
+typedef enum {
+	ASB_PACKAGE_ENSURE_NONE		= 0,
+	ASB_PACKAGE_ENSURE_NEVRA	= 1,
+	ASB_PACKAGE_ENSURE_FILES	= 2,
+	ASB_PACKAGE_ENSURE_RELEASES	= 4,
+	ASB_PACKAGE_ENSURE_DEPS		= 8,
+	ASB_PACKAGE_ENSURE_LICENSE	= 16,
+	ASB_PACKAGE_ENSURE_URL		= 32,
+	ASB_PACKAGE_ENSURE_SOURCE	= 64,
+	ASB_PACKAGE_ENSURE_LAST
+} AsbPackageEnsureFlags;
+
 struct _AsbPackageClass
 {
 	GObjectClass		parent_class;
 	gboolean		 (*open)	(AsbPackage	*pkg,
 						 const gchar	*filename,
+						 GError		**error);
+	gboolean		 (*ensure)	(AsbPackage	*pkg,
+						 AsbPackageEnsureFlags flags,
 						 GError		**error);
 	gboolean		 (*explode)	(AsbPackage	*pkg,
 						 const gchar	*dir,
@@ -87,6 +102,9 @@ gboolean	 asb_package_log_flush		(AsbPackage	*pkg,
 						 GError		**error);
 gboolean	 asb_package_open		(AsbPackage	*pkg,
 						 const gchar	*filename,
+						 GError		**error);
+gboolean	 asb_package_ensure		(AsbPackage	*pkg,
+						 AsbPackageEnsureFlags flags,
 						 GError		**error);
 gboolean	 asb_package_explode		(AsbPackage	*pkg,
 						 const gchar	*dir,

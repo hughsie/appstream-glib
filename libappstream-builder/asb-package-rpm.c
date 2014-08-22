@@ -237,17 +237,15 @@ asb_package_rpm_set_source (AsbPackage *pkg, const gchar *source)
 }
 
 /**
- * asb_package_rpm_ensure_simple:
+ * asb_package_rpm_ensure_nevra:
  **/
 static gboolean
-asb_package_rpm_ensure_simple (AsbPackage *pkg, GError **error)
+asb_package_rpm_ensure_nevra (AsbPackage *pkg, GError **error)
 {
 	AsbPackageRpm *pkg_rpm = ASB_PACKAGE_RPM (pkg);
 	AsbPackageRpmPrivate *priv = GET_PRIVATE (pkg_rpm);
-	gboolean ret = TRUE;
 	rpmtd td;
 
-	/* get the simple stuff */
 	td = rpmtdNew ();
 	headerGet (priv->h, RPMTAG_NAME, td, HEADERGET_MINMEM);
 	asb_package_set_name (pkg, rpmtdGetString (td));
@@ -259,14 +257,59 @@ asb_package_rpm_ensure_simple (AsbPackage *pkg, GError **error)
 	asb_package_set_arch (pkg, rpmtdGetString (td));
 	headerGet (priv->h, RPMTAG_EPOCH, td, HEADERGET_MINMEM);
 	asb_package_set_epoch (pkg, rpmtdGetNumber (td));
-	headerGet (priv->h, RPMTAG_URL, td, HEADERGET_MINMEM);
-	asb_package_set_url (pkg, rpmtdGetString (td));
-	headerGet (priv->h, RPMTAG_LICENSE, td, HEADERGET_MINMEM);
-	asb_package_rpm_set_license (pkg, rpmtdGetString (td));
+	rpmtdFree (td);
+	return TRUE;
+}
+
+/**
+ * asb_package_rpm_ensure_source:
+ **/
+static gboolean
+asb_package_rpm_ensure_source (AsbPackage *pkg, GError **error)
+{
+	AsbPackageRpm *pkg_rpm = ASB_PACKAGE_RPM (pkg);
+	AsbPackageRpmPrivate *priv = GET_PRIVATE (pkg_rpm);
+	rpmtd td;
+
+	td = rpmtdNew ();
 	headerGet (priv->h, RPMTAG_SOURCERPM, td, HEADERGET_MINMEM);
 	asb_package_rpm_set_source (pkg, rpmtdGetString (td));
 	rpmtdFree (td);
-	return ret;
+	return TRUE;
+}
+
+/**
+ * asb_package_rpm_ensure_url:
+ **/
+static gboolean
+asb_package_rpm_ensure_url (AsbPackage *pkg, GError **error)
+{
+	AsbPackageRpm *pkg_rpm = ASB_PACKAGE_RPM (pkg);
+	AsbPackageRpmPrivate *priv = GET_PRIVATE (pkg_rpm);
+	rpmtd td;
+
+	td = rpmtdNew ();
+	headerGet (priv->h, RPMTAG_URL, td, HEADERGET_MINMEM);
+	asb_package_set_url (pkg, rpmtdGetString (td));
+	rpmtdFree (td);
+	return TRUE;
+}
+
+/**
+ * asb_package_rpm_ensure_license:
+ **/
+static gboolean
+asb_package_rpm_ensure_license (AsbPackage *pkg, GError **error)
+{
+	AsbPackageRpm *pkg_rpm = ASB_PACKAGE_RPM (pkg);
+	AsbPackageRpmPrivate *priv = GET_PRIVATE (pkg_rpm);
+	rpmtd td;
+
+	td = rpmtdNew ();
+	headerGet (priv->h, RPMTAG_LICENSE, td, HEADERGET_MINMEM);
+	asb_package_rpm_set_license (pkg, rpmtdGetString (td));
+	rpmtdFree (td);
+	return TRUE;
 }
 
 /**
@@ -537,22 +580,52 @@ asb_package_rpm_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	}
 
 	/* read package stuff */
-	ret = asb_package_rpm_ensure_simple (pkg, error);
-	if (!ret)
-		goto out;
-	ret = asb_package_rpm_ensure_releases (pkg, error);
-	if (!ret)
-		goto out;
-	ret = asb_package_rpm_ensure_deps (pkg, error);
-	if (!ret)
-		goto out;
-	ret = asb_package_rpm_ensure_filelists (pkg, error);
+	ret = asb_package_rpm_ensure_nevra (pkg, error);
 	if (!ret)
 		goto out;
 out:
 	rpmtsFree (ts);
 	Fclose (fd);
 	return ret;
+}
+
+/**
+ * asb_package_rpm_ensure:
+ **/
+static gboolean
+asb_package_rpm_ensure (AsbPackage *pkg,
+			AsbPackageEnsureFlags flags,
+			GError **error)
+{
+	if ((flags & ASB_PACKAGE_ENSURE_NEVRA) > 0) {
+		if (!asb_package_rpm_ensure_nevra (pkg, error))
+			return FALSE;
+	}
+	if ((flags & ASB_PACKAGE_ENSURE_DEPS) > 0) {
+		if (!asb_package_rpm_ensure_deps (pkg, error))
+			return FALSE;
+	}
+	if ((flags & ASB_PACKAGE_ENSURE_RELEASES) > 0) {
+		if (!asb_package_rpm_ensure_releases (pkg, error))
+			return FALSE;
+	}
+	if ((flags & ASB_PACKAGE_ENSURE_FILES) > 0) {
+		if (!asb_package_rpm_ensure_filelists (pkg, error))
+			return FALSE;
+	}
+	if ((flags & ASB_PACKAGE_ENSURE_LICENSE) > 0) {
+		if (!asb_package_rpm_ensure_license (pkg, error))
+			return FALSE;
+	}
+	if ((flags & ASB_PACKAGE_ENSURE_URL) > 0) {
+		if (!asb_package_rpm_ensure_url (pkg, error))
+			return FALSE;
+	}
+	if ((flags & ASB_PACKAGE_ENSURE_SOURCE) > 0) {
+		if (!asb_package_rpm_ensure_source (pkg, error))
+			return FALSE;
+	}
+	return TRUE;
 }
 
 /**
@@ -576,6 +649,7 @@ asb_package_rpm_class_init (AsbPackageRpmClass *klass)
 
 	object_class->finalize = asb_package_rpm_finalize;
 	package_class->open = asb_package_rpm_open;
+	package_class->ensure = asb_package_rpm_ensure;
 	package_class->compare = asb_package_rpm_compare;
 }
 
