@@ -453,7 +453,7 @@ asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **erro
 /**
  * asb_app_new:
  * @pkg: A #AsbPackage
- * @id_full: The ID for the package
+ * @id: The ID for the package
  *
  * Creates a new application object.
  *
@@ -462,7 +462,7 @@ asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **erro
  * Since: 0.1.0
  **/
 AsbApp *
-asb_app_new (AsbPackage *pkg, const gchar *id_full)
+asb_app_new (AsbPackage *pkg, const gchar *id)
 {
 	AsbApp *app;
 	AsbAppPrivate *priv;
@@ -474,7 +474,7 @@ asb_app_new (AsbPackage *pkg, const gchar *id_full)
 		as_app_add_pkgname (AS_APP (app),
 				    asb_package_get_name (pkg), -1);
 	}
-	if (id_full != NULL)
-		as_app_set_id_full (AS_APP (app), id_full, -1);
+	if (id != NULL)
+		as_app_set_id (AS_APP (app), id, -1);
 	return ASB_APP (app);
 }

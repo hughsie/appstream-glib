@@ -296,7 +296,7 @@ asb_plugin_loader_merge (AsbPluginLoader *plugin_loader, GList *apps)
 		if (!ASB_IS_APP (l->data))
 			continue;
 		app = ASB_APP (l->data);
-		key = as_app_get_id_full (AS_APP (app));
+		key = as_app_get_id (AS_APP (app));
 		found = g_hash_table_lookup (hash, key);
 		if (found == NULL) {
 			g_hash_table_insert (hash,

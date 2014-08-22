@@ -590,7 +590,7 @@ as_test_app_func (void)
 	g_assert (ret);
 
 	/* verify */
-	g_assert_cmpstr (as_app_get_id_full (app), ==, "org.gnome.Software.desktop");
+	g_assert_cmpstr (as_app_get_id (app), ==, "org.gnome.Software.desktop");
 	g_assert_cmpstr (as_app_get_id_filename (app), ==, "org.gnome.Software");
 	g_assert_cmpstr (as_app_get_name (app, "pl"), ==, "Oprogramowanie");
 	g_assert_cmpstr (as_app_get_comment (app, NULL), ==, "Application manager");
@@ -677,7 +677,7 @@ as_test_app_validate_appdata_good_func (void)
 
 	/* check success */
 	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_DESKTOP);
-	g_assert_cmpstr (as_app_get_id_full (app), ==, "gnome-power-statistics.desktop");
+	g_assert_cmpstr (as_app_get_id (app), ==, "gnome-power-statistics.desktop");
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "0 A.D.");
 	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "Observe power management");
 	g_assert_cmpstr (as_app_get_metadata_license (app), ==, "CC0-1.0 and CC-BY-3.0");
@@ -731,7 +731,7 @@ as_test_app_validate_metainfo_good_func (void)
 
 	/* check success */
 	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_ADDON);
-	g_assert_cmpstr (as_app_get_id_full (app), ==, "gedit-code-assistance");
+	g_assert_cmpstr (as_app_get_id (app), ==, "gedit-code-assistance");
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "Code assistance");
 	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "Code assistance for C, C++ and Objective-C");
 	g_assert_cmpstr (as_app_get_metadata_license (app), ==, "CC0-1.0");
@@ -773,7 +773,7 @@ as_test_app_validate_intltool_func (void)
 
 	/* check success */
 	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_DESKTOP);
-	g_assert_cmpstr (as_app_get_id_full (app), ==, "gnome-power-statistics.desktop");
+	g_assert_cmpstr (as_app_get_id (app), ==, "gnome-power-statistics.desktop");
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "0 A.D.");
 	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "Observe power management");
 	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NO_NETWORK, &error);
@@ -1043,7 +1043,7 @@ as_test_app_validate_style_func (void)
 
 	app = as_app_new ();
 	as_app_add_url (app, AS_URL_KIND_UNKNOWN, "dave.com", -1);
-	as_app_set_id_full (app, "dave.exe", -1);
+	as_app_set_id (app, "dave.exe", -1);
 	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
 	as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPDATA);
 	as_app_set_metadata_license (app, "BSD", -1);
@@ -1169,7 +1169,7 @@ as_test_app_no_markup_func (void)
 	g_assert (ret);
 
 	/* verify */
-	g_assert_cmpstr (as_app_get_id_full (app), ==, "org.gnome.Software.desktop");
+	g_assert_cmpstr (as_app_get_id (app), ==, "org.gnome.Software.desktop");
 	g_assert_cmpstr (as_app_get_description (app, "C"), ==,
 		"Software is awesome:\n\n * Bada\n * Boom!");
 	as_node_unref (root);
@@ -1679,7 +1679,7 @@ as_test_store_merges_func (void)
 	store_desktop_appdata = as_store_new ();
 
 	app_desktop = as_app_new ();
-	as_app_set_id_full (app_desktop, "gimp.desktop", -1);
+	as_app_set_id (app_desktop, "gimp.desktop", -1);
 	as_app_set_source_kind (app_desktop, AS_APP_SOURCE_KIND_DESKTOP);
 	as_app_set_name (app_desktop, NULL, "GIMP", -1);
 	as_app_set_comment (app_desktop, NULL, "GNU Bla Bla", -1);
@@ -1687,7 +1687,7 @@ as_test_store_merges_func (void)
 	as_app_set_state (app_desktop, AS_APP_STATE_INSTALLED);
 
 	app_appdata = as_app_new ();
-	as_app_set_id_full (app_appdata, "gimp.desktop", -1);
+	as_app_set_id (app_appdata, "gimp.desktop", -1);
 	as_app_set_source_kind (app_appdata, AS_APP_SOURCE_KIND_APPDATA);
 	as_app_set_description (app_appdata, NULL, "<p>Gimp is awesome</p>", -1);
 	as_app_add_pkgname (app_appdata, "gimp", -1);
@@ -1710,7 +1710,7 @@ as_test_store_merges_func (void)
 	store_all = as_store_new ();
 
 	app_appinfo = as_app_new ();
-	as_app_set_id_full (app_appinfo, "gimp.desktop", -1);
+	as_app_set_id (app_appinfo, "gimp.desktop", -1);
 	as_app_set_source_kind (app_appinfo, AS_APP_SOURCE_KIND_APPSTREAM);
 	as_app_set_name (app_appinfo, NULL, "GIMP", -1);
 	as_app_set_comment (app_appinfo, NULL, "GNU Bla Bla", -1);
@@ -1747,7 +1747,7 @@ as_test_store_merges_local_func (void)
 	as_store_set_add_flags (store, AS_STORE_ADD_FLAG_PREFER_LOCAL);
 
 	app_desktop = as_app_new ();
-	as_app_set_id_full (app_desktop, "gimp.desktop", -1);
+	as_app_set_id (app_desktop, "gimp.desktop", -1);
 	as_app_set_source_kind (app_desktop, AS_APP_SOURCE_KIND_DESKTOP);
 	as_app_set_name (app_desktop, NULL, "GIMP", -1);
 	as_app_set_comment (app_desktop, NULL, "GNU Bla Bla", -1);
@@ -1755,7 +1755,7 @@ as_test_store_merges_local_func (void)
 	as_app_set_state (app_desktop, AS_APP_STATE_INSTALLED);
 
 	app_appdata = as_app_new ();
-	as_app_set_id_full (app_appdata, "gimp.desktop", -1);
+	as_app_set_id (app_appdata, "gimp.desktop", -1);
 	as_app_set_source_kind (app_appdata, AS_APP_SOURCE_KIND_APPDATA);
 	as_app_set_description (app_appdata, NULL, "<p>Gimp is awesome</p>", -1);
 	as_app_add_pkgname (app_appdata, "gimp", -1);
@@ -1763,7 +1763,7 @@ as_test_store_merges_local_func (void)
 	as_app_set_state (app_appdata, AS_APP_STATE_INSTALLED);
 
 	app_appinfo = as_app_new ();
-	as_app_set_id_full (app_appinfo, "gimp.desktop", -1);
+	as_app_set_id (app_appinfo, "gimp.desktop", -1);
 	as_app_set_source_kind (app_appinfo, AS_APP_SOURCE_KIND_APPSTREAM);
 	as_app_set_name (app_appinfo, NULL, "GIMP", -1);
 	as_app_set_comment (app_appinfo, NULL, "Fedora GNU Bla Bla", -1);
@@ -1799,7 +1799,7 @@ as_test_store_func (void)
 	g_assert_cmpfloat (as_store_get_api_version (store), <, 1.f);
 	g_assert_cmpfloat (as_store_get_api_version (store), >, 0.f);
 	app = as_app_new ();
-	as_app_set_id_full (app, "gnome-software.desktop", -1);
+	as_app_set_id (app, "gnome-software.desktop", -1);
 	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
 	as_store_add_app (store, app);
 	g_object_unref (app);
@@ -1807,7 +1807,7 @@ as_test_store_func (void)
 
 	/* add and then remove another app */
 	app = as_app_new ();
-	as_app_set_id_full (app, "junk.desktop", -1);
+	as_app_set_id (app, "junk.desktop", -1);
 	as_app_set_id_kind (app, AS_ID_KIND_FONT);
 	as_store_add_app (store, app);
 	g_object_unref (app);
@@ -1826,7 +1826,7 @@ as_test_store_func (void)
 
 	/* add another app and ensure it's sorted */
 	app = as_app_new ();
-	as_app_set_id_full (app, "aaa.desktop", -1);
+	as_app_set_id (app, "aaa.desktop", -1);
 	as_app_set_id_kind (app, AS_ID_KIND_FONT);
 	as_store_add_app (store, app);
 	g_object_unref (app);
@@ -1985,7 +1985,7 @@ as_test_store_addons_func (void)
 	data = as_app_get_addons (app);
 	g_assert_cmpint (data->len, ==, 1);
 	app = g_ptr_array_index (data, 0);
-	g_assert_cmpstr (as_app_get_id_full (app), ==, "eclipse-php.jar");
+	g_assert_cmpstr (as_app_get_id (app), ==, "eclipse-php.jar");
 
 	/* check we can search for token from the addon */
 	g_assert_cmpint (as_app_search_matches (app, "xtest"), >, 0);
@@ -2420,7 +2420,7 @@ as_test_store_metadata_index_func (void)
 	for (i = 0; i < repeats; i++) {
 		_cleanup_free_ gchar *id = g_strdup_printf ("app-%05i", i);
 		_cleanup_object_unref_ AsApp *app = as_app_new ();
-		as_app_set_id_full (app, id, -1);
+		as_app_set_id (app, id, -1);
 		as_app_add_metadata (app, "X-CacheID", "dave.i386", -1);
 		as_app_add_metadata (app, "baz", "dave", -1);
 		as_store_add_app (store, app);

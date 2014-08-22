@@ -698,7 +698,7 @@ asb_plugin_process (AsbPlugin *plugin,
 static guint
 asb_font_get_app_sortable_idx (AsbApp *app)
 {
-	const gchar *font_str = as_app_get_id_full (AS_APP (app));
+	const gchar *font_str = as_app_get_id (AS_APP (app));
 	guint idx = 0;
 
 	if (g_strstr_len (font_str, -1, "It") != NULL)
@@ -789,7 +789,7 @@ asb_font_merge_family (GList *list, const gchar *md_key)
 			continue;
 		as_app_add_veto (AS_APP (app),
 				 "%s was subsumed out of existance",
-				 as_app_get_id_full (AS_APP (app)));
+				 as_app_get_id (AS_APP (app)));
 	}
 }
 

@@ -49,12 +49,12 @@ asb_plugin_absorb_parent_for_pkgname (GList *list, AsApp *parent, const gchar *p
 		if (g_strcmp0 (as_app_get_pkgname_default (app), pkgname) != 0)
 			continue;
 		g_debug ("Adding X-Merge-With-Parent on %s as %s depends on %s",
-			 as_app_get_id_full (app),
+			 as_app_get_id (app),
 			 as_app_get_pkgname_default (parent),
 			 as_app_get_pkgname_default (app));
 		as_app_add_metadata (app,
 				     "X-Merge-With-Parent",
-				     as_app_get_id_full (parent), -1);
+				     as_app_get_id (parent), -1);
 	}
 }
 
@@ -105,7 +105,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 	for (l = list; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
 		g_hash_table_insert (hash,
-				     g_strdup (as_app_get_id_full (app)),
+				     g_strdup (as_app_get_id (app)),
 				     g_object_ref (app));
 	}
 
@@ -127,8 +127,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 
 		/* partially absorb */
 		as_app_add_veto (app, "partially absorbing %s into %s",
-				 as_app_get_id_full (app),
-				 as_app_get_id_full (found));
+				 as_app_get_id (app), as_app_get_id (found));
 		as_app_subsume_full (found, app, AS_APP_SUBSUME_FLAG_PARTIAL);
 	}
 }

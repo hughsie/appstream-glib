@@ -240,7 +240,7 @@ GPtrArray	*as_app_get_vetos		(AsApp		*app);
 const gchar	*as_app_get_icon		(AsApp		*app);
 const gchar	*as_app_get_icon_path		(AsApp		*app);
 const gchar	*as_app_get_id_filename		(AsApp		*app);
-const gchar	*as_app_get_id_full		(AsApp		*app);
+const gchar	*as_app_get_id		(AsApp		*app);
 const gchar	*as_app_get_pkgname_default	(AsApp		*app);
 const gchar	*as_app_get_source_pkgname	(AsApp		*app);
 const gchar	*as_app_get_project_group	(AsApp		*app);
@@ -271,9 +271,9 @@ gboolean	 as_app_has_kudo_kind		(AsApp		*app,
 						 AsKudoKind	 kudo);
 
 /* setters */
-void		 as_app_set_id_full		(AsApp		*app,
-						 const gchar	*id_full,
-						 gssize		 id_full_len);
+void		 as_app_set_id			(AsApp		*app,
+						 const gchar	*id,
+						 gssize		 id_len);
 void		 as_app_set_id_kind		(AsApp		*app,
 						 AsIdKind	 id_kind);
 void		 as_app_set_source_kind		(AsApp		*app,

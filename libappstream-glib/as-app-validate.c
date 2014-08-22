@@ -914,7 +914,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	GList *l;
 	GPtrArray *probs = NULL;
 	const gchar *description;
-	const gchar *id_full;
+	const gchar *id;
 	const gchar *key;
 	const gchar *license;
 	const gchar *name;
@@ -979,26 +979,26 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 
 	/* id */
 	ret = FALSE;
-	id_full = as_app_get_id_full (app);
+	id = as_app_get_id (app);
 	switch (as_app_get_id_kind (app)) {
 	case AS_ID_KIND_DESKTOP:
-		if (g_str_has_suffix (id_full, ".desktop"))
+		if (g_str_has_suffix (id, ".desktop"))
 			ret = TRUE;
 		break;
 	case AS_ID_KIND_FONT:
-		if (g_str_has_suffix (id_full, ".ttf"))
+		if (g_str_has_suffix (id, ".ttf"))
 			ret = TRUE;
-		else if (g_str_has_suffix (id_full, ".otf"))
+		else if (g_str_has_suffix (id, ".otf"))
 			ret = TRUE;
 		break;
 	case AS_ID_KIND_INPUT_METHOD:
-		if (g_str_has_suffix (id_full, ".xml"))
+		if (g_str_has_suffix (id, ".xml"))
 			ret = TRUE;
-		else if (g_str_has_suffix (id_full, ".db"))
+		else if (g_str_has_suffix (id, ".db"))
 			ret = TRUE;
 		break;
 	case AS_ID_KIND_CODEC:
-		if (g_str_has_prefix (id_full, "gstreamer"))
+		if (g_str_has_prefix (id, "gstreamer"))
 			ret = TRUE;
 		break;
 	case AS_ID_KIND_UNKNOWN:
@@ -1138,7 +1138,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	}
 
 	/* check for things that have to exist */
-	if (as_app_get_id_full (app) == NULL) {
+	if (as_app_get_id (app) == NULL) {
 		ai_app_validate_add (probs,
 				     AS_PROBLEM_KIND_TAG_MISSING,
 				     "<id> is not present");

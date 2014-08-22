@@ -60,7 +60,7 @@ struct _AsStorePrivate
 	gchar			*builder_id;
 	gdouble			 api_version;
 	GPtrArray		*array;		/* of AsApp */
-	GHashTable		*hash_id;	/* of AsApp{id_full} */
+	GHashTable		*hash_id;	/* of AsApp{id} */
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
 	GPtrArray		*file_monitors;	/* of GFileMonitor */
 	GHashTable		*metadata_indexes;	/* GHashTable{key} */
@@ -382,7 +382,7 @@ void
 as_store_remove_app (AsStore *store, AsApp *app)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	g_hash_table_remove (priv->hash_id, as_app_get_id_full (app));
+	g_hash_table_remove (priv->hash_id, as_app_get_id (app));
 	g_ptr_array_remove (priv->array, app);
 	g_hash_table_remove_all (priv->metadata_indexes);
 }
@@ -407,7 +407,7 @@ as_store_remove_app_by_id (AsStore *store, const gchar *id)
 		return;
 	for (i = 0; i < priv->array->len; i++) {
 		app = g_ptr_array_index (priv->array, i);
-		if (g_strcmp0 (id, as_app_get_id_full (app)) != 0)
+		if (g_strcmp0 (id, as_app_get_id (app)) != 0)
 			continue;
 		g_ptr_array_remove (priv->array, app);
 	}
@@ -437,7 +437,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 	guint i;
 
 	/* have we recorded this before? */
-	id = as_app_get_id_full (app);
+	id = as_app_get_id (app);
 	if (id == NULL) {
 		g_warning ("application has no ID set");
 		return;
@@ -527,7 +527,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 	/* success, add to array */
 	g_ptr_array_add (priv->array, g_object_ref (app));
 	g_hash_table_insert (priv->hash_id,
-			     (gpointer) as_app_get_id_full (app),
+			     (gpointer) as_app_get_id (app),
 			     app);
 	pkgnames = as_app_get_pkgnames (app);
 	for (i = 0; i < pkgnames->len; i++) {
@@ -559,7 +559,7 @@ as_store_match_addons (AsStore *store)
 		plugin_ids = as_app_get_extends (app);
 		if (plugin_ids->len == 0) {
 			g_warning ("%s was of type addon but had no extends",
-				   as_app_get_id_full (app));
+				   as_app_get_id (app));
 			continue;
 		}
 		for (j = 0; j < plugin_ids->len; j++) {
@@ -692,7 +692,7 @@ as_store_load_yaml_file (AsStore *store,
 		app = as_app_new ();
 		if (!as_app_node_parse_dep11 (app, app_n, error))
 			return FALSE;
-		if (as_app_get_id_full (app) != NULL)
+		if (as_app_get_id (app) != NULL)
 			as_store_add_app (store, app);
 	}
 	return TRUE;
@@ -801,8 +801,8 @@ as_store_from_xml (AsStore *store,
 static gint
 as_store_apps_sort_cb (gconstpointer a, gconstpointer b)
 {
-	return g_strcmp0 (as_app_get_id_full (AS_APP (*(AsApp **) a)),
-			  as_app_get_id_full (AS_APP (*(AsApp **) b)));
+	return g_strcmp0 (as_app_get_id (AS_APP (*(AsApp **) a)),
+			  as_app_get_id (AS_APP (*(AsApp **) b)));
 }
 
 /**

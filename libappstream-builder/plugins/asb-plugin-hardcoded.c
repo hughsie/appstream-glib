@@ -157,7 +157,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	guint days;
 
 	/* add extra categories */
-	tmp = as_app_get_id_full (AS_APP (app));
+	tmp = as_app_get_id (AS_APP (app));
 	if (g_strcmp0 (tmp, "0install.desktop") == 0)
 		as_app_add_category (AS_APP (app), "System", -1);
 	if (g_strcmp0 (tmp, "alacarte.desktop") == 0)

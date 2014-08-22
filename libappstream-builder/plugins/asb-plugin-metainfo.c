@@ -84,7 +84,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 			     ASB_PLUGIN_ERROR,
 			     ASB_PLUGIN_ERROR_FAILED,
 			     "%s is not an addon",
-			     as_app_get_id_full (AS_APP (app)));
+			     as_app_get_id (AS_APP (app)));
 		return FALSE;
 	}
 	asb_app_set_requires_appdata (app, FALSE);
@@ -154,7 +154,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
 			continue;
 		g_hash_table_insert (hash,
-				     g_strdup (as_app_get_id_full (app)),
+				     g_strdup (as_app_get_id (app)),
 				     g_object_ref (app));
 	}
 
@@ -166,7 +166,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 		app = AS_APP (l->data);
 		if (as_app_get_id_kind (app) != AS_ID_KIND_ADDON)
 			continue;
-		found = g_hash_table_lookup (hash, as_app_get_id_full (app));
+		found = g_hash_table_lookup (hash, as_app_get_id (app));
 		if (found == NULL)
 			continue;
 		if (g_strcmp0 (as_app_get_pkgname_default (app),
@@ -175,7 +175,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 		as_app_add_veto (app,
 				 "absorbing addon %s shipped in "
 				 "main package %s",
-				 as_app_get_id_full (app),
+				 as_app_get_id (app),
 				 as_app_get_pkgname_default (app));
 		as_app_subsume_full (found, app, AS_APP_SUBSUME_FLAG_PARTIAL);
 	}

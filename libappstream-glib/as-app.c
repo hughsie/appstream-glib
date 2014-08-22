@@ -80,7 +80,7 @@ struct _AsAppPrivate
 	gchar		*icon;
 	gchar		*icon_path;
 	gchar		*id_filename;
-	gchar		*id_full;
+	gchar		*id;
 	gchar		*project_group;
 	gchar		*project_license;
 	gchar		*metadata_license;
@@ -244,7 +244,7 @@ as_app_finalize (GObject *object)
 	g_free (priv->icon);
 	g_free (priv->icon_path);
 	g_free (priv->id_filename);
-	g_free (priv->id_full);
+	g_free (priv->id);
 	g_free (priv->project_group);
 	g_free (priv->project_license);
 	g_free (priv->metadata_license);
@@ -332,7 +332,7 @@ as_app_class_init (AsAppClass *klass)
 /******************************************************************************/
 
 /**
- * as_app_get_id_full:
+ * as_app_get_id:
  * @app: a #AsApp instance.
  *
  * Gets the full ID value.
@@ -342,10 +342,10 @@ as_app_class_init (AsAppClass *klass)
  * Since: 0.1.0
  **/
 const gchar *
-as_app_get_id_full (AsApp *app)
+as_app_get_id (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	return priv->id_full;
+	return priv->id;
 }
 
 /**
@@ -1273,33 +1273,33 @@ as_app_validate_utf8 (const gchar *text, gssize text_len)
 /******************************************************************************/
 
 /**
- * as_app_set_id_full:
+ * as_app_set_id:
  * @app: a #AsApp instance.
- * @id_full: the new _full_ application ID, e.g. "org.gnome.Software.desktop".
- * @id_full_len: the size of @id_full, or -1 if %NULL-terminated.
+ * @id: the new _full_ application ID, e.g. "org.gnome.Software.desktop".
+ * @id_len: the size of @id, or -1 if %NULL-terminated.
  *
  * Sets a new application ID. Any invalid characters will be automatically replaced.
  *
  * Since: 0.1.0
  **/
 void
-as_app_set_id_full (AsApp *app, const gchar *id_full, gssize id_full_len)
+as_app_set_id (AsApp *app, const gchar *id, gssize id_len)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	gchar *tmp;
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (id_full, id_full_len)) {
+	    !as_app_validate_utf8 (id, id_len)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
-	g_free (priv->id_full);
+	g_free (priv->id);
 	g_free (priv->id_filename);
 
-	priv->id_full = as_strndup (id_full, id_full_len);
-	priv->id_filename = g_strdup (priv->id_full);
+	priv->id = as_strndup (id, id_len);
+	priv->id_filename = g_strdup (priv->id);
 	g_strdelimit (priv->id_filename, "&<>", '-');
 	tmp = g_strrstr_len (priv->id_filename, -1, ".");
 	if (tmp != NULL)
@@ -2695,7 +2695,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	/* no addons allowed here */
 	if (api_version < 0.7 && priv->id_kind == AS_ID_KIND_ADDON) {
 		g_warning ("Not writing addon '%s' as API version %.1f < 0.7",
-			   priv->id_full, api_version);
+			   priv->id, api_version);
 		return NULL;
 	}
 
@@ -2713,7 +2713,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	}
 
 	/* <id> */
-	node_tmp = as_node_insert (node_app, "id", priv->id_full, 0, NULL);
+	node_tmp = as_node_insert (node_app, "id", priv->id, 0, NULL);
 	if (api_version < 0.6 && priv->id_kind != AS_ID_KIND_UNKNOWN) {
 		as_node_add_attribute (node_tmp,
 				       "type",
@@ -2974,7 +2974,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		tmp = as_node_get_attribute (n, "type");
 		if (tmp != NULL)
 			as_app_set_id_kind (app, as_id_kind_from_string (tmp));
-		as_app_set_id_full (app, as_node_get_data (n), -1);
+		as_app_set_id (app, as_node_get_data (n), -1);
 		break;
 
 	/* <priority> */
@@ -3377,7 +3377,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
 	for (n = node->children; n != NULL; n = n->next) {
 		tmp = as_yaml_node_get_key (n);
 		if (g_strcmp0 (tmp, "ID") == 0) {
-			as_app_set_id_full (app, as_yaml_node_get_value (n), -1);
+			as_app_set_id (app, as_yaml_node_get_value (n), -1);
 			continue;
 		}
 		if (g_strcmp0 (tmp, "Type") == 0) {
@@ -3527,7 +3527,7 @@ as_app_add_tokens (AsApp *app,
 	/* sanity check */
 	if (value == NULL) {
 		g_critical ("trying to add NULL search token to %s",
-			    as_app_get_id_full (app));
+			    as_app_get_id (app));
 		return;
 	}
 
@@ -3557,8 +3557,8 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 	guint j;
 
 	/* add all the data we have */
-	if (priv->id_full != NULL)
-		as_app_add_tokens (app, priv->id_full, "C", 100);
+	if (priv->id != NULL)
+		as_app_add_tokens (app, priv->id, "C", 100);
 	locales = g_get_language_names ();
 	for (i = 0; locales[i] != NULL; i++) {
 		if (g_str_has_suffix (locales[i], ".UTF-8"))
@@ -3995,9 +3995,9 @@ as_app_parse_desktop_file (AsApp *app,
 	/* Ubuntu helpfully put the package name in the desktop file name */
 	tmp = g_strstr_len (app_id, -1, ":");
 	if (tmp != NULL)
-		as_app_set_id_full (app, tmp + 1, -1);
+		as_app_set_id (app, tmp + 1, -1);
 	else
-		as_app_set_id_full (app, app_id, -1);
+		as_app_set_id (app, app_id, -1);
 
 	/* look at all the keys */
 	keys = g_key_file_get_keys (kf, G_KEY_FILE_DESKTOP_GROUP, NULL, error);

@@ -542,12 +542,12 @@ asb_context_load_extra_screenshots (AsbContext *ctx, AsApp *app, GError **error)
 
 	/* create a virtual package */
 	pkg = asb_package_new ();
-	asb_package_set_name (pkg, as_app_get_id_full (app));
+	asb_package_set_name (pkg, as_app_get_id (app));
 	asb_package_set_config (pkg, "MirrorURI", priv->screenshot_uri);
 	asb_package_set_config (pkg, "ScreenshotDir", priv->screenshot_dir);
 
 	/* create a new AsbApp and add all the extra screenshots */
-	app_build = asb_app_new (pkg, as_app_get_id_full (app));
+	app_build = asb_app_new (pkg, as_app_get_id (app));
 	as_app_subsume_full (AS_APP (app_build), app,
 			     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
 	dir = g_dir_open (path, 0, error);
@@ -872,8 +872,8 @@ asb_context_detect_pkgname_dups (AsbContext *ctx, GError **error)
 		found = g_hash_table_lookup (hash, pkgname);
 		if (found != NULL) {
 			g_print ("WARNING: %s and %s share the package '%s'\n",
-				 as_app_get_id_full (app),
-				 as_app_get_id_full (found), pkgname);
+				 as_app_get_id (app),
+				 as_app_get_id (found), pkgname);
 			continue;
 		}
 		g_hash_table_insert (hash, (gpointer) pkgname, app);
@@ -905,7 +905,7 @@ asb_context_detect_missing_parents (AsbContext *ctx, GError **error)
 		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
 			continue;
 		g_hash_table_insert (hash,
-				     (gpointer) as_app_get_id_full (app),
+				     (gpointer) as_app_get_id (app),
 				     app);
 	}
 
@@ -927,9 +927,9 @@ asb_context_detect_missing_parents (AsbContext *ctx, GError **error)
 
 		/* do not add the addon */
 		as_app_add_veto (app, "%s has no parent of '%s'\n",
-				  as_app_get_id_full (app), tmp);
+				  as_app_get_id (app), tmp);
 		g_print ("WARNING: %s has no parent of '%s'\n",
-			 as_app_get_id_full (app), tmp);
+			 as_app_get_id (app), tmp);
 	}
 	return TRUE;
 }
@@ -959,7 +959,7 @@ asb_context_write_xml_fail (AsbContext *ctx,
 		if (as_app_get_metadata_item (app, "NoDisplay") != NULL)
 			continue;
 		if (as_store_get_app_by_id (priv->store_failed,
-					    as_app_get_id_full (app)) != NULL)
+					    as_app_get_id (app)) != NULL)
 			continue;
 		as_store_add_app (priv->store_failed, app);
 	}
@@ -1298,7 +1298,7 @@ asb_context_add_app_ignore (AsbContext *ctx, AsbPackage *pkg)
 
 	/* never encountered before, so add */
 	app = as_app_new ();
-	as_app_set_id_full (app, name_arch, -1);
+	as_app_set_id (app, name_arch, -1);
 	as_app_add_metadata (app, "X-CacheID",
 			     asb_package_get_basename (pkg), -1);
 	as_store_add_app (priv->store_ignore, app);

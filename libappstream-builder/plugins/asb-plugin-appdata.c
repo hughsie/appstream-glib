@@ -295,7 +295,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	}
 
 	/* check app id */
-	tmp = as_app_get_id_full (appdata);
+	tmp = as_app_get_id (appdata);
 	if (tmp == NULL) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
@@ -304,14 +304,14 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 			     filename);
 		return FALSE;
 	}
-	if (g_strcmp0 (tmp, as_app_get_id_full (AS_APP (app))) != 0) {
+	if (g_strcmp0 (tmp, as_app_get_id (AS_APP (app))) != 0) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
 			     ASB_PLUGIN_ERROR_FAILED,
 			     "AppData %s does not match '%s':'%s'",
 			     filename,
 			     tmp,
-			     as_app_get_id_full (AS_APP (app)));
+			     as_app_get_id (AS_APP (app)));
 		return FALSE;
 	}
 
@@ -539,7 +539,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		asb_package_log (pkg,
 				 ASB_PACKAGE_LOG_LEVEL_WARNING,
 				 "desktop application %s has no AppData",
-				 as_app_get_id_full (AS_APP (app)));
+				 as_app_get_id (AS_APP (app)));
 	}
 	return TRUE;
 }

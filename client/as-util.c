@@ -625,11 +625,11 @@ as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **erro
 	as_app_set_project_group (app, "XXX: Values valid are none, GNOME, KDE or XFCE", -1);
 
 	/* fix the ID */
-	id_new = g_strdup (as_app_get_id_full (app));
+	id_new = g_strdup (as_app_get_id (app));
 	instr = g_strstr_len (id_new, -1, ".desktop.in");
 	if (instr != NULL) {
 		instr[8] = '\0';
-		as_app_set_id_full (app, id_new, -1);
+		as_app_set_id (app, id_new, -1);
 	}
 
 	/* set things that don't belong in the AppData file */
@@ -1196,9 +1196,9 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 		g_string_truncate (classes, classes->len - 1);
 
 	g_string_append_printf (html, "<div id=\"app-%s\" class=\"%s\">\n",
-				as_app_get_id_full (app), classes->str);
+				as_app_get_id (app), classes->str);
 	g_string_append_printf (html, "<a name=\"%s\"/><h2>%s</h2>\n",
-				as_app_get_id_full (app), as_app_get_id_full (app));
+				as_app_get_id (app), as_app_get_id (app));
 
 	/* print the screenshot thumbnails */
 	screenshots = as_app_get_screenshots (app);
@@ -1757,7 +1757,7 @@ as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 			continue;
 		if (as_app_get_id_kind (app) == AS_ID_KIND_SOURCE)
 			continue;
-		g_string_append_printf (data, "%s,", as_app_get_id_full (app));
+		g_string_append_printf (data, "%s,", as_app_get_id (app));
 		g_string_append_printf (data, "%s,", as_app_get_pkgname_default (app));
 		g_string_append_printf (data, "\"%s\",", as_app_get_name (app, "C"));
 		g_string_append_printf (data, "\"%s\",", as_app_get_comment (app, "C"));
@@ -1816,7 +1816,7 @@ as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
 		if (as_app_get_pkgnames(app)->len > 0)
 			continue;
 		g_string_append_printf (yaml, "- id: %s\n",
-					as_app_get_id_full (app));
+					as_app_get_id (app));
 		g_string_append_printf (yaml, "  name: %s\n",
 					as_app_get_name (app, "C"));
 		g_string_append_printf (yaml, "  summary: %s\n",
@@ -2053,7 +2053,7 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 			     AS_ERROR,
 			     AS_ERROR_FAILED,
 			     "%s has no Icon",
-			     as_app_get_id_full (app));
+			     as_app_get_id (app));
 		return FALSE;
 	}
 
@@ -2068,7 +2068,7 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 	if (icon == NULL) {
 		g_prefix_error (error,
 				"%s missing icon %s: ",
-				as_app_get_id_full (app),
+				as_app_get_id (app),
 				as_app_get_icon (app));
 		return FALSE;
 	}
@@ -2078,7 +2078,7 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 	if (pb == NULL) {
 		g_prefix_error (error,
 				"%s invalid icon %s: ",
-				as_app_get_id_full (app),
+				as_app_get_id (app),
 				as_app_get_icon (app));
 		return FALSE;
 	}
@@ -2090,7 +2090,7 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 			     AS_ERROR,
 			     AS_ERROR_FAILED,
 			     "%s has undersized icon (%ix%i)",
-			     as_app_get_id_full (app),
+			     as_app_get_id (app),
 			     gdk_pixbuf_get_width (pb),
 			     gdk_pixbuf_get_height (pb));
 		return FALSE;
@@ -2120,7 +2120,7 @@ as_util_check_root_app (AsApp *app, GPtrArray *problems)
 	if (as_app_get_comment (app, NULL) == NULL) {
 		g_ptr_array_add (problems,
 				 g_strdup_printf ("%s has no Comment",
-						  as_app_get_id_full (app)));
+						  as_app_get_id (app)));
 	}
 
 	/* check icon exists and is large enough */
