@@ -3575,7 +3575,7 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 		if (array != NULL) {
 			for (j = 0; j < array->len; j++) {
 				tmp = g_ptr_array_index (array, j);
-				as_app_add_tokens (app, tmp, locales[i], 40);
+				as_app_add_tokens (app, tmp, locales[i], 90);
 			}
 		}
 	}
