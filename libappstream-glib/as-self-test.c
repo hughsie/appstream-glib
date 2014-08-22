@@ -1095,7 +1095,10 @@ as_test_app_parse_file_func (void)
 	/* create an AsApp from a desktop file */
 	app = as_app_new ();
 	filename = as_test_get_filename ("example.desktop");
-	ret = as_app_parse_file (app, filename, 0, &error);
+	ret = as_app_parse_file (app,
+				 filename,
+				 AS_APP_PARSE_FLAG_ALLOW_VETO,
+				 &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -1108,7 +1111,7 @@ as_test_app_parse_file_func (void)
 		"Badanie i porównywanie zainstalowanych profilów kolorów");
 	g_assert_cmpstr (as_app_get_icon (app), ==, "audio-input-microphone");
 	g_assert_cmpint (as_app_get_icon_kind (app), ==, AS_ICON_KIND_STOCK);
-	g_assert_cmpstr (as_app_get_metadata_item (app, "NoDisplay"), ==, "");
+	g_assert_cmpint (as_app_get_vetos(app)->len, ==, 1);
 	g_assert_cmpstr (as_app_get_project_group (app), ==, NULL);
 	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
 	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);
@@ -1120,6 +1123,7 @@ as_test_app_parse_file_func (void)
 	/* reparse with heuristics */
 	ret = as_app_parse_file (app,
 				 filename,
+				 AS_APP_PARSE_FLAG_ALLOW_VETO |
 				 AS_APP_PARSE_FLAG_USE_HEURISTICS,
 				 &error);
 	g_assert_no_error (error);

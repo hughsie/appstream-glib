@@ -1434,7 +1434,7 @@ as_store_load_installed (AsStore *store,
 			return FALSE;
 		}
 
-		/* do not load applications with NoDisplay=true */
+		/* do not load applications with vetos */
 		if ((flags & AS_STORE_LOAD_FLAG_ALLOW_VETO) == 0 &&
 		    as_app_get_vetos(app)->len > 0)
 			continue;
