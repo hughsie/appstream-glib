@@ -1268,7 +1268,7 @@ asb_context_add_app_ignore (AsbContext *ctx, AsbPackage *pkg)
 	AsApp *app_tmp;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	_cleanup_free_ gchar *name_arch = NULL;
-	_cleanup_object_unref_ AsbApp *app = NULL;
+	_cleanup_object_unref_ AsApp *app = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *apps = NULL;
 
 	/* only do this when we are using a cache-id */
@@ -1297,10 +1297,11 @@ asb_context_add_app_ignore (AsbContext *ctx, AsbPackage *pkg)
 	}
 
 	/* never encountered before, so add */
-	app = asb_app_new (pkg, name_arch);
-	as_app_add_metadata (AS_APP (app), "X-CacheID",
+	app = as_app_new ();
+	as_app_set_id_full (app, name_arch, -1);
+	as_app_add_metadata (app, "X-CacheID",
 			     asb_package_get_basename (pkg), -1);
-	as_store_add_app (priv->store_ignore, AS_APP (app));
+	as_store_add_app (priv->store_ignore, app);
 }
 
 /**
