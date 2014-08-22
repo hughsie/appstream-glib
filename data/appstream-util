@@ -51,13 +51,13 @@ _appstream-util()
 
         case $command in
             validate|validate-relax|validate-strict)
-                ext='@(@(appdata|metainfo).xml?(.in)|xml.gz)'
+                ext='@(@(appdata|metainfo).@(@(x|y)ml?(.in)|@(x|y)ml.gz))'
                 ;;
             install|install-origin|uninstall)
-                ext='@(@(appdata|metainfo).xml|xml.gz)'
+                ext='@(@(appdata|metainfo).@(@(x|y)ml|@(x|y)ml.gz))'
                 ;;
             dump)
-                ext='@(desktop|@(appdata|metainfo).xml?(.in))'
+                ext='@(desktop|@(appdata|metainfo).@(x|y)ml?(.in))'
                 ;;
             upgrade)
                 ext='@(appdata.xml?(.in))'
@@ -80,7 +80,7 @@ _appstream-util()
             convert)
                 case $nth in
                     1)
-                        ext='@(xml.gz|appdata.xml?(.in))'
+                        ext='@(@(x|y)ml.gz|appdata.@(x|y)ml?(.in))'
                         ;;
                     *)
                         ext=''
