@@ -1607,7 +1607,7 @@ as_test_app_search_func (void)
 	g_assert_cmpint (as_app_search_matches (app, "software"), ==, 80);
 	g_assert_cmpint (as_app_search_matches (app, "soft"), ==, 80);
 	g_assert_cmpint (as_app_search_matches (app, "install"), ==, 60);
-	g_assert_cmpint (as_app_search_matches (app, "awesome"), ==, 40);
+	g_assert_cmpint (as_app_search_matches (app, "awesome"), ==, 90);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) all), ==, 220);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) none), ==, 0);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) mime), ==, 5);
