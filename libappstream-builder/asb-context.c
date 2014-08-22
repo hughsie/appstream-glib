@@ -536,7 +536,7 @@ asb_context_load_extra_screenshots (AsbContext *ctx, AsApp *app, GError **error)
 	    priv->screenshot_uri == NULL ||
 	    priv->screenshot_dir == NULL)
 		return TRUE;
-	path = g_build_filename (priv->extra_screenshots, as_app_get_id (app), NULL);
+	path = g_build_filename (priv->extra_screenshots, as_app_get_id_filename (app), NULL);
 	if (!g_file_test (path, G_FILE_TEST_EXISTS))
 		return TRUE;
 

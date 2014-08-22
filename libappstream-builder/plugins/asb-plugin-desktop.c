@@ -274,7 +274,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 			} else {
 				/* save in target directory */
 				icon_filename = g_strdup_printf ("%s.png",
-								 as_app_get_id (AS_APP (app)));
+								 as_app_get_id_filename (AS_APP (app)));
 				as_app_set_icon (AS_APP (app), icon_filename, -1);
 				as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_CACHED);
 				asb_app_set_pixbuf (app, pixbuf);

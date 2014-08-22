@@ -304,7 +304,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	tmp = asb_package_get_config (pkg, "ScreenshotsExtra");
 	if (tmp != NULL) {
 		_cleanup_free_ gchar *dirname = NULL;
-		dirname = g_build_filename (tmp, as_app_get_id (AS_APP (app)), NULL);
+		dirname = g_build_filename (tmp, as_app_get_id_filename (AS_APP (app)), NULL);
 		if (g_file_test (dirname, G_FILE_TEST_EXISTS)) {
 			if (!asb_plugin_hardcoded_add_screenshots (app, dirname, error))
 				return FALSE;

@@ -158,8 +158,6 @@ as_app_validate_has_first_word_capital (AsAppValidateHelper *helper, const gchar
 	}
 
 	/* is the first word the project name */
-	if (g_strcmp0 (first_word, as_app_get_id (helper->app)) == 0)
-		return TRUE;
 	if (g_strcmp0 (first_word, as_app_get_name (helper->app, NULL)) == 0)
 		return TRUE;
 

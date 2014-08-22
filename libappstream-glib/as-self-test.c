@@ -591,7 +591,7 @@ as_test_app_func (void)
 
 	/* verify */
 	g_assert_cmpstr (as_app_get_id_full (app), ==, "org.gnome.Software.desktop");
-	g_assert_cmpstr (as_app_get_id (app), ==, "org.gnome.Software");
+	g_assert_cmpstr (as_app_get_id_filename (app), ==, "org.gnome.Software");
 	g_assert_cmpstr (as_app_get_name (app, "pl"), ==, "Oprogramowanie");
 	g_assert_cmpstr (as_app_get_comment (app, NULL), ==, "Application manager");
 	g_assert_cmpstr (as_app_get_developer_name (app, NULL), ==, "GNOME Foundation");

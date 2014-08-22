@@ -408,7 +408,7 @@ asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **erro
 
 	/* include the app-id in the basename */
 	basename = g_strdup_printf ("%s-%s.png",
-				    as_app_get_id (AS_APP (app)),
+				    as_app_get_id_filename (AS_APP (app)),
 				    as_image_get_md5 (im_src));
 	as_image_set_basename (im_src, basename);
 

@@ -409,7 +409,7 @@ asb_font_add_screenshot (AsbApp *app, FT_Face ft_face, GError **error)
 	cache_dir = asb_package_get_config (asb_app_get_package (app), "CacheDir");
 	cache_fn = g_strdup_printf ("%s/%s.png",
 				    cache_dir,
-				    as_app_get_id (AS_APP (app)));
+				    as_app_get_id_filename (AS_APP (app)));
 	if (g_file_test (cache_fn, G_FILE_TEST_EXISTS)) {
 		pixbuf = gdk_pixbuf_new_from_file (cache_fn, error);
 		if (pixbuf == NULL)
@@ -435,7 +435,7 @@ asb_font_add_screenshot (AsbApp *app, FT_Face ft_face, GError **error)
 	as_image_set_pixbuf (im, pixbuf);
 	as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
 	basename = g_strdup_printf ("%s-%s.png",
-				    as_app_get_id (AS_APP (app)),
+				    as_app_get_id_filename (AS_APP (app)),
 				    as_image_get_md5 (im));
 	as_image_set_basename (im, basename);
 	url_tmp = g_build_filename (mirror_uri,
@@ -611,7 +611,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	/* generate icon */
 	tmp = as_app_get_metadata_item (AS_APP (app), "FontIconText");
 	if (tmp != NULL) {
-		icon_filename = g_strdup_printf ("%s.png", as_app_get_id (AS_APP (app)));
+		icon_filename = g_strdup_printf ("%s.png", as_app_get_id_filename (AS_APP (app)));
 		as_app_set_icon (AS_APP (app), icon_filename, -1);
 		pixbuf = asb_font_get_pixbuf (ft_face,
 					      AS_APP_ICON_DEFAULT_WIDTH,

@@ -196,7 +196,7 @@ asb_plugin_appdata_load_url (AsbPlugin *plugin,
 	cache_dir = asb_package_get_config (asb_app_get_package (app), "CacheDir");
 	cache_filename = g_strdup_printf ("%s/%s-%s",
 					  cache_dir,
-					  as_app_get_id (AS_APP (app)),
+					  as_app_get_id_filename (AS_APP (app)),
 					  basename);
 	if (!g_file_test (cache_filename, G_FILE_TEST_EXISTS)) {
 		if (asb_context_get_no_net (plugin->ctx)) {
@@ -493,7 +493,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 	/* get possible sources */
 	appdata_filename = g_strdup_printf ("%s/usr/share/appdata/%s.appdata.xml",
-					    tmpdir, as_app_get_id (AS_APP (app)));
+					    tmpdir, as_app_get_id_filename (AS_APP (app)));
 	tmp = asb_package_get_config (pkg, "AppDataExtra");
 	if (tmp != NULL && g_file_test (tmp, G_FILE_TEST_EXISTS)) {
 		if (!asb_plugin_appdata_add_files (plugin, tmp, error))
@@ -502,7 +502,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		appdata_filename_extra = g_strdup_printf ("%s/%s/%s.appdata.xml",
 							  tmp,
 							  kind_str,
-							  as_app_get_id (AS_APP (app)));
+							  as_app_get_id_filename (AS_APP (app)));
 		if (g_file_test (appdata_filename, G_FILE_TEST_EXISTS) &&
 		    g_file_test (appdata_filename_extra, G_FILE_TEST_EXISTS)) {
 			asb_package_log (pkg,

@@ -79,7 +79,7 @@ struct _AsAppPrivate
 	AsAppTrustFlags	 trust_flags;
 	gchar		*icon;
 	gchar		*icon_path;
-	gchar		*id;
+	gchar		*id_filename;
 	gchar		*id_full;
 	gchar		*project_group;
 	gchar		*project_license;
@@ -243,7 +243,7 @@ as_app_finalize (GObject *object)
 
 	g_free (priv->icon);
 	g_free (priv->icon_path);
-	g_free (priv->id);
+	g_free (priv->id_filename);
 	g_free (priv->id_full);
 	g_free (priv->project_group);
 	g_free (priv->project_license);
@@ -349,20 +349,21 @@ as_app_get_id_full (AsApp *app)
 }
 
 /**
- * as_app_get_id:
+ * as_app_get_id_filename:
  * @app: a #AsApp instance.
  *
- * Returns the short version of the ID.
+ * Returns a filename which represents the applications ID, e.g. "gimp.desktop"
+ * becomes "gimp" and is used for cache directories.
  *
- * Returns: the short ID, e.g. "org.gnome.Software"
+ * Returns: A utf8 filename
  *
- * Since: 0.1.0
+ * Since: 0.3.0
  **/
 const gchar *
-as_app_get_id (AsApp *app)
+as_app_get_id_filename (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	return priv->id;
+	return priv->id_filename;
 }
 
 /**
@@ -1295,12 +1296,12 @@ as_app_set_id_full (AsApp *app, const gchar *id_full, gssize id_full_len)
 	}
 
 	g_free (priv->id_full);
-	g_free (priv->id);
+	g_free (priv->id_filename);
 
 	priv->id_full = as_strndup (id_full, id_full_len);
-	g_strdelimit (priv->id_full, "&<>", '-');
-	priv->id = g_strdup (priv->id_full);
-	tmp = g_strrstr_len (priv->id, -1, ".");
+	priv->id_filename = g_strdup (priv->id_full);
+	g_strdelimit (priv->id_filename, "&<>", '-');
+	tmp = g_strrstr_len (priv->id_filename, -1, ".");
 	if (tmp != NULL)
 		*tmp = '\0';
 }
@@ -3556,8 +3557,8 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 	guint j;
 
 	/* add all the data we have */
-	if (priv->id != NULL)
-		as_app_add_tokens (app, priv->id, "C", 100);
+	if (priv->id_full != NULL)
+		as_app_add_tokens (app, priv->id_full, "C", 100);
 	locales = g_get_language_names ();
 	for (i = 0; locales[i] != NULL; i++) {
 		if (g_str_has_suffix (locales[i], ".UTF-8"))
