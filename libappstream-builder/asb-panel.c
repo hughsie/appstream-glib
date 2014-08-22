@@ -49,6 +49,7 @@ struct _AsbPanelPrivate
 	guint			 line_width_max;
 	guint			 number_cleared;
 	guint			 title_width;
+	guint			 title_width_max;
 	guint			 time_secs_min;
 	gboolean		 enabled;
 };
@@ -185,6 +186,8 @@ asb_panel_refresh (AsbPanel *panel)
 		_cleanup_string_free_ GString *str = NULL;
 		item = g_ptr_array_index (priv->items, i);
 		str = g_string_new (item->title);
+		if (str->len > priv->title_width_max)
+			g_string_truncate (str, priv->title_width_max);
 		for (j = str->len; j < priv->title_width; j++)
 			g_string_append (str, " ");
 		if (priv->title_width < str->len)
@@ -379,6 +382,7 @@ asb_panel_init (AsbPanel *panel)
 	AsbPanelPrivate *priv = GET_PRIVATE (panel);
 	priv->items = g_ptr_array_new_with_free_func ((GDestroyNotify) asb_panel_item_free);
 	priv->title_width = 20;
+	priv->title_width_max = 60;
 	priv->timer = g_timer_new ();
 	priv->time_secs_min = G_MAXUINT;
 	g_mutex_init (&priv->mutex);
