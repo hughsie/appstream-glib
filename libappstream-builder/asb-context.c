@@ -1079,7 +1079,8 @@ asb_context_disable_multiarch_pkgs (AsbContext *ctx)
 	/* disable any alternate-arch packages */
 	for (i = 0; i < priv->packages->len; i++) {
 		pkg = ASB_PACKAGE (g_ptr_array_index (priv->packages, i));
-		if (g_strcmp0 (asb_package_get_arch (pkg), "x86_64") != 0)
+		if (g_strcmp0 (asb_package_get_arch (pkg), "x86_64") != 0 &&
+		    g_strcmp0 (asb_package_get_arch (pkg), "noarch") != 0)
 			asb_package_set_enabled (pkg, FALSE);
 	}
 }
