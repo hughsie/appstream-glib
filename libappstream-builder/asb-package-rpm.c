@@ -153,6 +153,7 @@ asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 		{ "SPL",			"SPL-1.0" },
 		{ "zlib",			"Zlib" },
 		{ "ZPLv2.0",			"ZPL-2.0" },
+		{ "Unlicense",			"CC0-1.0" },
 		{ NULL, NULL } };
 
 	/* this isn't supposed to happen */
