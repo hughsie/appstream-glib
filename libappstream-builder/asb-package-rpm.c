@@ -78,11 +78,10 @@ asb_package_rpm_init (AsbPackageRpm *pkg)
 static void
 asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 {
-	const gchar *tmp;
 	guint i;
 	guint j;
-	_cleanup_strv_free_ gchar **split = NULL;
-	_cleanup_string_free_ GString *new = NULL;
+	_cleanup_free_ gchar *new = NULL;
+	_cleanup_strv_free_ gchar **tokens = NULL;
 	struct {
 		const gchar	*fedora;
 		const gchar	*spdx;
@@ -165,15 +164,22 @@ asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 
 	/* tokenize the license string and try to convert the Fedora license
 	 * string to a SPDX license the best we can */
-	new = g_string_sized_new (strlen (license) * 2);
-	split = as_utils_spdx_license_tokenize (license);
-	for (i = 0; split[i] != NULL; i++) {
+	tokens = as_utils_spdx_license_tokenize (license);
+	for (i = 0; tokens[i] != NULL; i++) {
+
+		/* ignore */
+		if (tokens[i][0] == '(' || tokens[i][0] == ')')
+			continue;
+
+		/* already SPDX */
+		if (tokens[i][0] == '@')
+			continue;
 
 		/* convert */
-		tmp = split[i];
 		for (j = 0; convert[j].fedora != NULL; j++) {
-			if (g_strcmp0 (split[i], convert[j].fedora) == 0) {
-				tmp = convert[j].spdx;
+			if (g_strcmp0 (tokens[i], convert[j].fedora) == 0) {
+				g_free (tokens[i]);
+				tokens[i] = g_strdup_printf ("@%s", convert[j].spdx);
 				asb_package_log (pkg,
 						 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 						 "Converting Fedora license "
@@ -183,29 +189,17 @@ asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 				break;
 			}
 		}
-
-		/* any operation */
-		if (g_str_has_prefix (split[i], "#")) {
-			g_string_append (new, split[i] + 1);
+		if (convert[j].fedora != NULL)
 			continue;
-		}
 
 		/* no matching SPDX entry */
-		if (tmp == NULL) {
-			asb_package_log (pkg,
-					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "Unable to currently map Fedora "
-					 "license '%s' to SPDX", split[i]);
-			tmp = split[i];
-		} else if (!as_utils_is_spdx_license_id (tmp)) {
-			asb_package_log (pkg,
-					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "License '%s' is not an SPDX ID", tmp);
-		}
-		g_string_append (new, tmp);
+		asb_package_log (pkg,
+				 ASB_PACKAGE_LOG_LEVEL_WARNING,
+				 "Unable to currently map Fedora "
+				 "license '%s' to SPDX", tokens[i]);
 	}
-
-	asb_package_set_license (pkg, new->str);
+	new = as_utils_spdx_license_detokenize (tokens);
+	asb_package_set_license (pkg, new);
 }
 
 /**

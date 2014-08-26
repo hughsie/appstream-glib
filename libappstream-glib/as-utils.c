@@ -324,13 +324,24 @@ as_utils_is_category_id (const gchar *category_id)
 	return g_strstr_len (g_bytes_get_data (data, NULL), -1, key) != NULL;
 }
 
-/**
- * as_utils_spdx_convert:
- **/
-static gchar *
-as_utils_spdx_convert (const gchar *id)
+typedef struct {
+	gboolean	 last_token_literal;
+	GPtrArray	*array;
+	GString		*collect;
+} AsUtilsSpdxHelper;
+
+static gpointer
+_g_ptr_array_last (GPtrArray *array)
 {
+	return g_ptr_array_index (array, array->len - 1);
+}
+
+static void
+as_utils_spdx_license_tokenize_drop (AsUtilsSpdxHelper *helper)
+{
+	const gchar *tmp = helper->collect->str;
 	guint i;
+	_cleanup_free_ gchar *last_literal = NULL;
 	struct {
 		const gchar	*old;
 		const gchar	*new;
@@ -342,11 +353,57 @@ as_utils_spdx_convert (const gchar *id)
 		{ "GPL-2",	"GPL-2.0" },
 		{ "GPL-3",	"GPL-3.0" },
 		{ NULL, NULL } };
-	for (i = 0; licenses[i].old != NULL; i++) {
-		if (g_strcmp0 (id, licenses[i].old) == 0)
-			return g_strdup (licenses[i].new);
+
+	/* nothing from last time */
+	if (helper->collect->len == 0)
+		return;
+
+	/* is license enum */
+	if (as_utils_is_spdx_license_id (tmp)) {
+		g_ptr_array_add (helper->array, g_strdup_printf ("@%s", tmp));
+		helper->last_token_literal = FALSE;
+		g_string_truncate (helper->collect, 0);
+		return;
 	}
-	return g_strdup (id);
+
+	/* is old license enum */
+	for (i = 0; licenses[i].old != NULL; i++) {
+		if (g_strcmp0 (tmp, licenses[i].old) != 0)
+			continue;
+		g_ptr_array_add (helper->array,
+				 g_strdup_printf ("@%s", licenses[i].new));
+		helper->last_token_literal = FALSE;
+		g_string_truncate (helper->collect, 0);
+		return;
+	}
+
+	/* is conjunctive */
+	if (g_strcmp0 (tmp, "and") == 0 || g_strcmp0 (tmp, "AND") == 0) {
+		g_ptr_array_add (helper->array, g_strdup ("&"));
+		helper->last_token_literal = FALSE;
+		g_string_truncate (helper->collect, 0);
+		return;
+	}
+
+	/* is disjunctive */
+	if (g_strcmp0 (tmp, "or") == 0 || g_strcmp0 (tmp, "OR") == 0) {
+		g_ptr_array_add (helper->array, g_strdup ("|"));
+		helper->last_token_literal = FALSE;
+		g_string_truncate (helper->collect, 0);
+		return;
+	}
+
+	/* is literal */
+	if (helper->last_token_literal) {
+		last_literal = g_strdup (_g_ptr_array_last (helper->array));
+		g_ptr_array_remove_index (helper->array, helper->array->len - 1);
+		g_ptr_array_add (helper->array,
+				 g_strdup_printf ("%s %s", last_literal, tmp));
+	} else {
+		g_ptr_array_add (helper->array, g_strdup (tmp));
+		helper->last_token_literal = TRUE;
+	}
+	g_string_truncate (helper->collect, 0);
 }
 
 /**
@@ -354,8 +411,10 @@ as_utils_spdx_convert (const gchar *id)
  * @license: a license string, e.g. "LGPLv2+ and (QPL or GPLv2) and MIT"
  *
  * Tokenizes the SPDX license string (or any simarly formatted string)
- * into parts. Any non-licence parts of the string e.g. " and " are prefexed
- * with "#".
+ * into parts. Any licence parts of the string e.g. "LGPL-2.0+" are prefexed
+ * with "@", the conjunctive replaced with "&" and the disjunctive replaced
+ * with "|". Brackets are added as indervidual tokens and other strings are
+ * appended into single tokens where possible.
  *
  * Returns: (transfer full): array of strings
  *
@@ -364,82 +423,37 @@ as_utils_spdx_convert (const gchar *id)
 gchar **
 as_utils_spdx_license_tokenize (const gchar *license)
 {
-	GPtrArray *array;
-	gchar buf[1024];
 	guint i;
-	guint old = 0;
-	guint matchlen = 0;
-	_cleanup_free_ gchar *strdata = g_strdup (license);
+	AsUtilsSpdxHelper helper;
 
-	array = g_ptr_array_new_with_free_func (g_free);
-	for (i = 0; strdata[i] != '\0'; i++) {
+	helper.last_token_literal = FALSE;
+	helper.collect = g_string_new ("");
+	helper.array = g_ptr_array_new_with_free_func (g_free);
+	for (i = 0; license[i] != '\0'; i++) {
 
-		/* leading bracket */
-		if (i == 0 && strdata[i] == '(') {
-			matchlen = 1;
-			g_snprintf (buf, matchlen + 2, "#%s", &strdata[i]);
-			g_ptr_array_add (array, g_strdup (buf));
-			old = i + matchlen;
+		/* handle brackets */
+		if (license[i] == '(' || license[i] == ')') {
+			as_utils_spdx_license_tokenize_drop (&helper);
+			g_ptr_array_add (helper.array, g_strdup_printf ("%c", license[i]));
+			helper.last_token_literal = FALSE;
 			continue;
 		}
 
-		/* suppport AND and OR's in the license text */
-		matchlen = 0;
-		if (strncmp (&strdata[i], " AND ", 5) == 0) {
-			matchlen = 5;
-		} if (strncmp (&strdata[i], " OR ", 5) == 0) {
-			matchlen = 4;
-		} if (strncmp (&strdata[i], " and ", 5) == 0) {
-			matchlen = 5;
-			strdata[i+1] = 'A';
-			strdata[i+2] = 'N';
-			strdata[i+3] = 'D';
-		} else if (strncmp (&strdata[i], " or ", 4) == 0) {
-			matchlen = 4;
-			strdata[i+1] = 'O';
-			strdata[i+2] = 'R';
-		}
-		if (matchlen == 0)
+		/* space, so dump queue */
+		if (license[i] == ' ') {
+			as_utils_spdx_license_tokenize_drop (&helper);
 			continue;
-
-		/* brackets */
-		if (strdata[i - 1] == ')') {
-			i--;
-			matchlen++;
 		}
-
-		/* get previous token */
-		g_snprintf (buf, i - old + 1, "%s", &strdata[old]);
-		g_ptr_array_add (array, as_utils_spdx_convert (buf));
-
-		/* brackets */
-		if (strdata[i + matchlen] == '(')
-			matchlen++;
-
-		/* get operation */
-		g_snprintf (buf, matchlen + 2, "#%s", &strdata[i]);
-		g_ptr_array_add (array, g_strdup (buf));
-
-		old = i + matchlen;
-		i += matchlen - 1;
+		g_string_append_c (helper.collect, license[i]);
 	}
 
-	/* trailing bracket */
-	if (i > 0 && strdata[i - 1] == ')') {
-		/* token */
-		g_snprintf (buf, i - old, "%s", &strdata[old]);
-		g_ptr_array_add (array, as_utils_spdx_convert (buf));
+	/* dump anything remaining */
+	as_utils_spdx_license_tokenize_drop (&helper);
 
-		/* brackets */
-		g_snprintf (buf, i - 1, "#%s", &strdata[i - 1]);
-		g_ptr_array_add (array, g_strdup (buf));
-	} else {
-		/* token */
-		g_ptr_array_add (array, as_utils_spdx_convert (&strdata[old]));
-	}
-	g_ptr_array_add (array, NULL);
-
-	return (gchar **) g_ptr_array_free (array, FALSE);
+	/* return GStrv */
+	g_ptr_array_add (helper.array, NULL);
+	g_string_free (helper.collect, TRUE);
+	return (gchar **) g_ptr_array_free (helper.array, FALSE);
 }
 
 /**
@@ -460,7 +474,15 @@ as_utils_spdx_license_detokenize (gchar **license_tokens)
 
 	tmp = g_string_new ("");
 	for (i = 0; license_tokens[i] != NULL; i++) {
-		if (license_tokens[i][0] != '#') {
+		if (g_strcmp0 (license_tokens[i], "&") == 0) {
+			g_string_append (tmp, " AND ");
+			continue;
+		}
+		if (g_strcmp0 (license_tokens[i], "|") == 0) {
+			g_string_append (tmp, " OR ");
+			continue;
+		}
+		if (license_tokens[i][0] != '@') {
 			g_string_append (tmp, license_tokens[i]);
 			continue;
 		}
@@ -488,15 +510,15 @@ as_utils_is_spdx_license (const gchar *license)
 
 	tokens = as_utils_spdx_license_tokenize (license);
 	for (i = 0; tokens[i] != NULL; i++) {
+		if (tokens[i][0] == '@') {
+			if (as_utils_is_spdx_license_id (tokens[i] + 1))
+				continue;
+		}
 		if (as_utils_is_spdx_license_id (tokens[i]))
 			continue;
-		if (g_strcmp0 (tokens[i], "# and ") == 0)
+		if (g_strcmp0 (tokens[i], "&") == 0)
 			continue;
-		if (g_strcmp0 (tokens[i], "# or ") == 0)
-			continue;
-		if (g_strcmp0 (tokens[i], "# AND ") == 0)
-			continue;
-		if (g_strcmp0 (tokens[i], "# OR ") == 0)
+		if (g_strcmp0 (tokens[i], "|") == 0)
 			continue;
 		return FALSE;
 	}

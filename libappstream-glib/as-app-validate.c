@@ -853,9 +853,13 @@ as_app_validate_license (const gchar *license_text, GError **error)
 
 	licenses = as_utils_spdx_license_tokenize (license_text);
 	for (i = 0; licenses[i] != NULL; i++) {
-		if (g_str_has_prefix (licenses[i], "#"))
+		if (g_strcmp0 (licenses[i], "&") == 0 ||
+		    g_strcmp0 (licenses[i], "|") == 0 ||
+		    g_strcmp0 (licenses[i], "(") == 0 ||
+		    g_strcmp0 (licenses[i], ")") == 0)
 			continue;
-		if (!as_utils_is_spdx_license_id (licenses[i])) {
+		if (licenses[i][0] != '@' ||
+		    !as_utils_is_spdx_license_id (licenses[i] + 1)) {
 			g_set_error (error,
 				     AS_APP_ERROR,
 				     AS_APP_ERROR_FAILED,
@@ -877,15 +881,15 @@ as_app_validate_is_content_license (const gchar *license)
 	_cleanup_strv_free_ gchar **tokens = NULL;
 	tokens = as_utils_spdx_license_tokenize (license);
 	for (i = 0; tokens[i] != NULL; i++) {
-		if (g_strcmp0 (tokens[i], "CC0-1.0") == 0)
+		if (g_strcmp0 (tokens[i], "@CC0-1.0") == 0)
 			continue;
-		if (g_strcmp0 (tokens[i], "CC-BY-3.0") == 0)
+		if (g_strcmp0 (tokens[i], "@CC-BY-3.0") == 0)
 			continue;
-		if (g_strcmp0 (tokens[i], "CC-BY-SA-3.0") == 0)
+		if (g_strcmp0 (tokens[i], "@CC-BY-SA-3.0") == 0)
 			continue;
-		if (g_strcmp0 (tokens[i], "GFDL-1.3") == 0)
+		if (g_strcmp0 (tokens[i], "@GFDL-1.3") == 0)
 			continue;
-		if (g_strcmp0 (tokens[i], "# AND ") == 0)
+		if (g_strcmp0 (tokens[i], "&") == 0)
 			continue;
 		return FALSE;
 	}
