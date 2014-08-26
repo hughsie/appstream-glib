@@ -680,7 +680,7 @@ as_test_app_validate_appdata_good_func (void)
 	g_assert_cmpstr (as_app_get_id (app), ==, "gnome-power-statistics.desktop");
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "0 A.D.");
 	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "Observe power management");
-	g_assert_cmpstr (as_app_get_metadata_license (app), ==, "CC0-1.0 and CC-BY-3.0");
+	g_assert_cmpstr (as_app_get_metadata_license (app), ==, "CC0-1.0 AND CC-BY-3.0");
 	g_assert_cmpstr (as_app_get_update_contact (app), ==, "richard@hughsie.com");
 	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
 	g_assert_cmpstr (as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE), ==,
@@ -692,7 +692,7 @@ as_test_app_validate_appdata_good_func (void)
 	g_assert (probs != NULL);
 	for (i = 0; i < probs->len; i++) {
 		problem = g_ptr_array_index (probs, i);
-		g_warning ("%s", as_problem_get_message (problem));
+		g_print ("%s\n", as_problem_get_message (problem));
 	}
 	g_assert_cmpint (probs->len, ==, 0);
 	g_ptr_array_unref (probs);
@@ -2222,57 +2222,58 @@ as_test_utils_spdx_token_func (void)
 	g_free (tmp);
 
 	/* multiple licences */
-	tok = as_utils_spdx_license_tokenize ("GPL and MPL and CDL");
+	tok = as_utils_spdx_license_tokenize ("GPL AND MPL AND CDL");
 	tmp = g_strjoinv ("|", tok);
-	g_assert_cmpstr (tmp, ==, "GPL|# and |MPL|# and |CDL");
+	g_assert_cmpstr (tmp, ==, "GPL|# AND |MPL|# AND |CDL");
 	g_strfreev (tok);
 	g_free (tmp);
 
-	/* multiple licences */
+	/* multiple licences, deprectated 'and' & 'or' */
 	tok = as_utils_spdx_license_tokenize ("GPL and MPL or BSD and MPL");
 	tmp = g_strjoinv ("|", tok);
-	g_assert_cmpstr (tmp, ==, "GPL|# and |MPL|# or |BSD|# and |MPL");
+	g_assert_cmpstr (tmp, ==, "GPL|# AND |MPL|# OR |BSD|# AND |MPL");
 	g_strfreev (tok);
 	g_free (tmp);
 
 	/* brackets */
 	tok = as_utils_spdx_license_tokenize ("LGPLv2+ and (QPL or GPLv2) and MIT");
 	tmp = g_strjoinv ("|", tok);
-	g_assert_cmpstr (tmp, ==, "LGPLv2+|# and (|QPL|# or |GPLv2|#) and |MIT");
+	g_assert_cmpstr (tmp, ==, "LGPLv2+|# AND (|QPL|# OR |GPLv2|#) AND |MIT");
 	g_strfreev (tok);
 	g_free (tmp);
 
 	/* detokenisation */
 	tok = as_utils_spdx_license_tokenize ("LGPLv2+ and (QPL or GPLv2) and MIT");
 	tmp = as_utils_spdx_license_detokenize (tok);
-	g_assert_cmpstr (tmp, ==, "LGPLv2+ and (QPL or GPLv2) and MIT");
+	g_assert_cmpstr (tmp, ==, "LGPLv2+ AND (QPL OR GPLv2) AND MIT");
 	g_strfreev (tok);
 	g_free (tmp);
 
 	/* leading brackets */
 	tok = as_utils_spdx_license_tokenize ("(MPLv1.1 or LGPLv3+) and LGPLv3");
 	tmp = g_strjoinv ("|", tok);
-	g_assert_cmpstr (tmp, ==, "#(|MPLv1.1|# or |LGPLv3+|#) and |LGPLv3");
+	g_assert_cmpstr (tmp, ==, "#(|MPLv1.1|# OR |LGPLv3+|#) AND |LGPLv3");
 	g_strfreev (tok);
 	g_free (tmp);
 
 	/*  trailing brackets */
 	tok = as_utils_spdx_license_tokenize ("MPLv1.1 and (LGPLv3 or GPLv3)");
 	tmp = g_strjoinv ("|", tok);
-	g_assert_cmpstr (tmp, ==, "MPLv1.1|# and (|LGPLv3|# or |GPLv3|#)");
+	g_assert_cmpstr (tmp, ==, "MPLv1.1|# AND (|LGPLv3|# OR |GPLv3|#)");
 	g_strfreev (tok);
 	g_free (tmp);
 
 	/*  deprecated names */
 	tok = as_utils_spdx_license_tokenize ("CC0 and (CC0 or CC0)");
 	tmp = g_strjoinv ("|", tok);
-	g_assert_cmpstr (tmp, ==, "CC0-1.0|# and (|CC0-1.0|# or |CC0-1.0|#)");
+	g_assert_cmpstr (tmp, ==, "CC0-1.0|# AND (|CC0-1.0|# OR |CC0-1.0|#)");
 	g_strfreev (tok);
 	g_free (tmp);
 
 	/* SPDX strings */
 	g_assert (as_utils_is_spdx_license ("CC0"));
 	g_assert (as_utils_is_spdx_license ("CC0 and GFDL-1.3"));
+	g_assert (as_utils_is_spdx_license ("CC0 AND GFDL-1.3"));
 	g_assert (!as_utils_is_spdx_license ("CC0 dave"));
 }
 

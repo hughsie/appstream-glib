@@ -885,7 +885,7 @@ as_app_validate_is_content_license (const gchar *license)
 			continue;
 		if (g_strcmp0 (tokens[i], "GFDL-1.3") == 0)
 			continue;
-		if (g_strcmp0 (tokens[i], "# and ") == 0)
+		if (g_strcmp0 (tokens[i], "# AND ") == 0)
 			continue;
 		return FALSE;
 	}
