@@ -1037,6 +1037,8 @@ asb_context_disable_older_pkgs (AsbContext *ctx)
 					g_free, (GDestroyNotify) g_object_unref);
 	for (i = 0; i < priv->packages->len; i++) {
 		pkg = ASB_PACKAGE (g_ptr_array_index (priv->packages, i));
+		if (!asb_package_get_enabled (pkg))
+			continue;
 		key = asb_package_get_name (pkg);
 		if (key == NULL)
 			continue;
@@ -1049,6 +1051,36 @@ asb_context_disable_older_pkgs (AsbContext *ctx)
 			asb_package_set_enabled (found, FALSE);
 		}
 		g_hash_table_insert (newest, g_strdup (key), g_object_ref (pkg));
+	}
+}
+
+/**
+ * asb_context_disable_multiarch_pkgs:
+ **/
+static void
+asb_context_disable_multiarch_pkgs (AsbContext *ctx)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	AsbPackage *pkg;
+	gboolean found_arch = FALSE;
+	guint i;
+
+	/* are there any 64-bit packages in the repo? */
+	for (i = 0; i < priv->packages->len; i++) {
+		pkg = ASB_PACKAGE (g_ptr_array_index (priv->packages, i));
+		if (g_strcmp0 (asb_package_get_arch (pkg), "x86_64") == 0) {
+			found_arch = TRUE;
+			break;
+		}
+	}
+	if (!found_arch)
+		return;
+
+	/* disable any alternate-arch packages */
+	for (i = 0; i < priv->packages->len; i++) {
+		pkg = ASB_PACKAGE (g_ptr_array_index (priv->packages, i));
+		if (g_strcmp0 (asb_package_get_arch (pkg), "x86_64") != 0)
+			asb_package_set_enabled (pkg, FALSE);
 	}
 }
 
@@ -1075,6 +1107,7 @@ asb_context_process (AsbContext *ctx, GError **error)
 	_cleanup_ptrarray_unref_ GPtrArray *tasks = NULL;
 
 	/* only process the newest packages */
+	asb_context_disable_multiarch_pkgs (ctx);
 	asb_context_disable_older_pkgs (ctx);
 
 	/* create thread pool */
