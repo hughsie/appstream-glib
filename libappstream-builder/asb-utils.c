@@ -418,6 +418,7 @@ asb_utils_add_apps_from_file (GList **apps, const gchar *filename, GError **erro
 	array = as_store_get_apps (store);
 	for (i = 0; i < array->len; i++) {
 		app = g_ptr_array_index (array, i);
+		as_app_set_source_file (app, filename);
 		asb_plugin_add_app (apps, app);
 	}
 	return TRUE;
