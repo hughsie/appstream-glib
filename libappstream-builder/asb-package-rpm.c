@@ -168,7 +168,10 @@ asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 	for (i = 0; tokens[i] != NULL; i++) {
 
 		/* ignore */
-		if (tokens[i][0] == '(' || tokens[i][0] == ')')
+		if (tokens[i][0] == '(' ||
+		    tokens[i][0] == ')' ||
+		    tokens[i][0] == '&' ||
+		    tokens[i][0] == '|')
 			continue;
 
 		/* already SPDX */
