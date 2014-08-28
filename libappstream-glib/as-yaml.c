@@ -45,21 +45,6 @@ typedef struct {
 } AsYamlNode;
 
 /**
- * as_yaml_node_get_kind:
- **/
-static AsYamlNodeKind
-as_yaml_node_get_kind (GNode *node)
-{
-	AsYamlNode *ym;
-	if (node == NULL)
-		return AS_YAML_NODE_KIND_UNKNOWN;
-	ym = node->data;
-	if (ym == NULL)
-		return AS_YAML_NODE_KIND_UNKNOWN;
-	return ym->kind;
-}
-
-/**
  * as_yaml_node_get_key:
  **/
 const gchar *
@@ -196,6 +181,21 @@ as_yaml_to_string (GNode *node)
 }
 
 #if AS_BUILD_DEP11
+/**
+ * as_yaml_node_get_kind:
+ **/
+static AsYamlNodeKind
+as_yaml_node_get_kind (GNode *node)
+{
+	AsYamlNode *ym;
+	if (node == NULL)
+		return AS_YAML_NODE_KIND_UNKNOWN;
+	ym = node->data;
+	if (ym == NULL)
+		return AS_YAML_NODE_KIND_UNKNOWN;
+	return ym->kind;
+}
+
 /**
  * as_yaml_node_new:
  **/
