@@ -449,10 +449,10 @@ as_util_convert_appdata (GFile *file_input,
 			      NULL, error))
 		return FALSE;
 
-	/* TRANSLATORS: any manual changes required? */
 	if (action_required) {
-		g_print (_("Please review the file and fix any '%s' items"), "FIXME");
-		g_print ("\n");
+		/* TRANSLATORS: any manual changes required?
+		 * also note: FIXME is a hardcoded string */
+		g_print ("%s\n", _("Please review the file and fix any 'FIXME' items"));
 	}
 
 	return TRUE;
@@ -483,7 +483,7 @@ as_util_convert_appstream (GFile *file_input,
 				NULL, error))
 		return FALSE;
 	/* TRANSLATORS: information message */
-	g_print (_("New API version: %.2f\n"), as_store_get_api_version (store));
+	g_print ("%s: %.2f\n", _("New API version"), as_store_get_api_version (store));
 	return TRUE;
 }
 

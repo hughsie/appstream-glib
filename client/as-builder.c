@@ -99,46 +99,46 @@ main (int argc, char **argv)
 			_("Add a cache ID to each component"), NULL },
 		{ "log-dir", '\0', 0, G_OPTION_ARG_FILENAME, &log_dir,
 			/* TRANSLATORS: command line option */
-			_("Set the logging directory [default: ./logs]"), "DIR" },
+			_("Set the logging directory"), "DIR" },
 		{ "screenshot-dir", '\0', 0, G_OPTION_ARG_FILENAME, &screenshot_dir,
 			/* TRANSLATORS: command line option */
-			_("Set the screenshots directory [default: ./screenshots]"), "DIR" },
+			_("Set the screenshots directory"), "DIR" },
 		{ "packages-dir", '\0', 0, G_OPTION_ARG_FILENAME, &packages_dir,
 			/* TRANSLATORS: command line option */
-			_("Set the packages directory [default: ./packages]"), "DIR" },
+			_("Set the packages directory"), "DIR" },
 		{ "temp-dir", '\0', 0, G_OPTION_ARG_FILENAME, &temp_dir,
 			/* TRANSLATORS: command line option */
-			_("Set the temporary directory [default: ./tmp]"), "DIR" },
+			_("Set the temporary directory"), "DIR" },
 		{ "extra-appstream-dir", '\0', 0, G_OPTION_ARG_FILENAME, &extra_appstream,
 			/* TRANSLATORS: command line option */
-			_("Use extra appstream data [default: ./appstream-extra]"), "DIR" },
+			_("Use extra appstream data"), "DIR" },
 		{ "extra-appdata-dir", '\0', 0, G_OPTION_ARG_FILENAME, &extra_appdata,
 			/* TRANSLATORS: command line option */
-			_("Use extra appdata data [default: ./appdata-extra]"), "DIR" },
+			_("Use extra appdata data"), "DIR" },
 		{ "extra-screenshots-dir", '\0', 0, G_OPTION_ARG_FILENAME, &extra_screenshots,
 			/* TRANSLATORS: command line option */
-			_("Use extra screenshots data [default: ./screenshots-extra]"), "DIR" },
+			_("Use extra screenshots data"), "DIR" },
 		{ "output-dir", '\0', 0, G_OPTION_ARG_FILENAME, &output_dir,
 			/* TRANSLATORS: command line option */
-			_("Set the output directory [default: .]"), "DIR" },
+			_("Set the output directory"), "DIR" },
 		{ "cache-dir", '\0', 0, G_OPTION_ARG_FILENAME, &output_dir,
 			/* TRANSLATORS: command line option */
-			_("Set the cache directory [default: ./cache]"), "DIR" },
+			_("Set the cache directory"), "DIR" },
 		{ "basename", '\0', 0, G_OPTION_ARG_STRING, &basename,
 			/* TRANSLATORS: command line option */
-			_("Set the origin name [default: fedora-21]"), "NAME" },
+			_("Set the origin name"), "NAME" },
 		{ "max-threads", '\0', 0, G_OPTION_ARG_INT, &max_threads,
 			/* TRANSLATORS: command line option */
-			_("Set the number of threads [default: 4]"), "THREAD_COUNT" },
+			_("Set the number of threads"), "THREAD_COUNT" },
 		{ "api-version", '\0', 0, G_OPTION_ARG_DOUBLE, &api_version,
 			/* TRANSLATORS: command line option */
-			_("Set the AppStream version [default: 0.4]"), "API_VERSION" },
+			_("Set the AppStream version"), "API_VERSION" },
 		{ "screenshot-uri", '\0', 0, G_OPTION_ARG_STRING, &screenshot_uri,
 			/* TRANSLATORS: command line option */
-			_("Set the screenshot base URL [default: none]"), "URI" },
+			_("Set the screenshot base URL"), "URI" },
 		{ "old-metadata", '\0', 0, G_OPTION_ARG_FILENAME, &old_metadata,
 			/* TRANSLATORS: command line option */
-			_("Set the old metadata location [default: none]"), "DIR" },
+			_("Set the old metadata location"), "DIR" },
 		{ NULL}
 	};
 
@@ -152,7 +152,7 @@ main (int argc, char **argv)
 	ret = g_option_context_parse (option_context, &argc, &argv, &error);
 	if (!ret) {
 		/* TRANSLATORS: error message */
-		g_print (_("Failed to parse arguments: %s\n"), error->message);
+		g_print ("%s: %s\n", _("Failed to parse arguments"), error->message);
 		goto out;
 	}
 
@@ -212,7 +212,7 @@ main (int argc, char **argv)
 	ret = asb_context_setup (ctx, &error);
 	if (!ret) {
 		/* TRANSLATORS: error message */
-		g_warning (_("failed to set up context: %s"), error->message);
+		g_warning ("%s: %s", _("Failed to set up builder"), error->message);
 		goto out;
 	}
 
@@ -221,7 +221,7 @@ main (int argc, char **argv)
 	if (argc == 1) {
 		if (!as_builder_search_path (packages, packages_dir, &error)) {
 			/* TRANSLATORS: error message */
-			g_warning (_("failed to open packages: %s"), error->message);
+			g_warning ("%s: %s", _("Failed to open packages"), error->message);
 			goto out;
 		}
 	} else {
@@ -229,7 +229,7 @@ main (int argc, char **argv)
 			g_ptr_array_add (packages, g_strdup (argv[i]));
 	}
 	/* TRANSLATORS: information message */
-	g_print (_("Scanning packages...\n"));
+	g_print ("%s\n", _("Scanning packages..."));
 	timer = g_timer_new ();
 	for (i = 0; i < packages->len; i++) {
 		_cleanup_error_free_ GError *error_local = NULL;
@@ -238,14 +238,15 @@ main (int argc, char **argv)
 
 		/* add to list */
 		if (!asb_context_add_filename (ctx, filename, &error_local)) {
-			g_print ("Failed to add %s: %s\n",
+			/* TRANSLATORS: error message */
+			g_print ("%s %s: %s\n", _("Failed to add package")
 				 filename, error_local->message);
 			continue;
 		}
 		if (g_timer_elapsed (timer, NULL) > 3.f) {
 			/* TRANSLATORS: information message */
-			g_print (_("Parsed %i/%i files...\n"),
-				 i, packages->len);
+			g_print (_("Parsed %i/%i files..."), i, packages->len);
+			g_print ("\n"),
 			g_timer_reset (timer);
 		}
 	}
@@ -254,13 +255,13 @@ main (int argc, char **argv)
 	ret = asb_context_process (ctx, &error);
 	if (!ret) {
 		/* TRANSLATORS: error message */
-		g_warning (_("failed to process context: %s"), error->message);
+		g_warning ("%s: %s", _("Failed to generate metadata"), error->message);
 		goto out;
 	}
 
 	/* success */
 	/* TRANSLATORS: information message */
-	g_print (_("Done!\n"));
+	g_print ("%s\n", _("Done!"));
 out:
 	g_option_context_free (option_context);
 	if (ctx != NULL)
