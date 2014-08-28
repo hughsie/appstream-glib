@@ -2256,6 +2256,13 @@ as_test_utils_spdx_token_func (void)
 	g_strfreev (tok);
 	g_free (tmp);
 
+	/* detokenisation literals */
+	tok = as_utils_spdx_license_tokenize ("Public Domain");
+	tmp = as_utils_spdx_license_detokenize (tok);
+	g_assert_cmpstr (tmp, ==, "Public Domain");
+	g_strfreev (tok);
+	g_free (tmp);
+
 	/* leading brackets */
 	tok = as_utils_spdx_license_tokenize ("(MPLv1.1 or LGPLv3+) and LGPLv3");
 	tmp = g_strjoinv ("  ", tok);
