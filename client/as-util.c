@@ -1721,6 +1721,7 @@ static gboolean
 as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	AsApp *app;
+	AsIdKind id_kind = AS_ID_KIND_DESKTOP;
 	GPtrArray *apps = NULL;
 	guint i;
 	_cleanup_object_unref_ AsStore *store = NULL;
@@ -1728,13 +1729,26 @@ as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 	_cleanup_string_free_ GString *data = NULL;
 
 	/* check args */
-	if (g_strv_length (values) != 2) {
+	if (g_strv_length (values) < 2) {
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     "Not enough arguments, "
 				     "expected filename.xml.gz status.csv");
 		return FALSE;
+	}
+
+	/* process filters */
+	for (i = 2; values[i] != NULL; i++) {
+		_cleanup_strv_free_ gchar **split = NULL;
+		split = g_strsplit (values[i], "=", 2);
+		if (g_strv_length (split) != 2)
+			continue;
+		if (g_strcmp0 (split[0], "id-kind") == 0) {
+			id_kind = as_id_kind_from_string (split[1]);
+			continue;
+		}
+		g_warning ("Unknown filter option %s:%s", split[0], split[1]);
 	}
 
 	/* load file */
@@ -1749,13 +1763,7 @@ as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 	for (i = 0; i < apps->len; i++) {
 		_cleanup_free_ gchar *description = NULL;
 		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) == AS_ID_KIND_FONT)
-			continue;
-		if (as_app_get_id_kind (app) == AS_ID_KIND_INPUT_METHOD)
-			continue;
-		if (as_app_get_id_kind (app) == AS_ID_KIND_CODEC)
-			continue;
-		if (as_app_get_id_kind (app) == AS_ID_KIND_SOURCE)
+		if (as_app_get_id_kind (app) != id_kind)
 			continue;
 		g_string_append_printf (data, "%s,", as_app_get_id (app));
 		g_string_append_printf (data, "%s,", as_app_get_pkgname_default (app));
