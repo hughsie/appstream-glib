@@ -477,6 +477,22 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 }
 
 /**
+ * asb_plugin_appdata_get_fn_for_app:
+ */
+static gchar *
+asb_plugin_appdata_get_fn_for_app (AsApp *app)
+{
+	gchar *fn = g_strdup (as_app_get_id (app));
+	gchar *tmp;
+
+	/* just cut off the last section without munging the name */
+	tmp = g_strrstr (fn, ".");
+	if (tmp != NULL)
+		*tmp = '\0';
+	return fn;
+}
+
+/**
  * asb_plugin_process_app:
  */
 gboolean
@@ -488,12 +504,14 @@ asb_plugin_process_app (AsbPlugin *plugin,
 {
 	const gchar *kind_str;
 	const gchar *tmp;
+	_cleanup_free_ gchar *appdata_basename;
 	_cleanup_free_ gchar *appdata_filename;
 	_cleanup_free_ gchar *appdata_filename_extra = NULL;
 
 	/* get possible sources */
+	appdata_basename = asb_plugin_appdata_get_fn_for_app (AS_APP (app));
 	appdata_filename = g_strdup_printf ("%s/usr/share/appdata/%s.appdata.xml",
-					    tmpdir, as_app_get_id_filename (AS_APP (app)));
+					    tmpdir, appdata_basename);
 	tmp = asb_package_get_config (pkg, "AppDataExtra");
 	if (tmp != NULL && g_file_test (tmp, G_FILE_TEST_EXISTS)) {
 		if (!asb_plugin_appdata_add_files (plugin, tmp, error))
@@ -502,7 +520,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		appdata_filename_extra = g_strdup_printf ("%s/%s/%s.appdata.xml",
 							  tmp,
 							  kind_str,
-							  as_app_get_id_filename (AS_APP (app)));
+							  appdata_basename);
 		if (g_file_test (appdata_filename, G_FILE_TEST_EXISTS) &&
 		    g_file_test (appdata_filename_extra, G_FILE_TEST_EXISTS)) {
 			asb_package_log (pkg,
