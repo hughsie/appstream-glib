@@ -178,7 +178,7 @@ as_app_validate_description_li (const gchar *text, AsAppValidateHelper *helper)
 	/* relax the requirements a bit */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
 		length_li_max = 1000;
-		length_li_min = 4;
+		length_li_min = 3;
 		require_sentence_case = FALSE;
 	}
 
