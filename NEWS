@@ -1,3 +1,59 @@
+Version 0.3.0
+~~~~~~~~~~~~~
+Released: 2014-09-01
+
+Notes:
+ - This release breaks API and bumps the soname. See docs/PORTING.txt for more
+   details about what was changed.
+
+New Features:
+ - Add a new kudo for high contrast icons (Richard Hughes)
+ - Add as_app_add_veto() (Richard Hughes)
+ - Add AS_APP_PARSE_FLAG_ALLOW_VETO (Richard Hughes)
+ - Add asb_utils_ensure_exists() (Richard Hughes)
+ - Add a self test framework for libappstream-builder (Richard Hughes)
+ - Add as_store_add_metadata_index() (Richard Hughes)
+ - Add AS_STORE_LOAD_FLAG_ALLOW_VETO (Richard Hughes)
+ - Add as_store_remove_all() (Richard Hughes)
+ - Add as_store_remove_app_by_id() (Richard Hughes)
+ - Add as_store_set_builder_id() (Richard Hughes)
+ - Add as_utils_find_icon_filename() (Richard Hughes)
+ - Add as_utils_is_spdx_license() (Richard Hughes)
+ - Add as_utils_spdx_license_detokenize() (Richard Hughes)
+ - Add check-root to appstream-util (Richard Hughes)
+ - Add some validation rules for metainfo files (Richard Hughes)
+ - Allow desktop->addon demotion with an AppData file (Richard Hughes)
+ - Allow filtering other kinds of components in status-csv (Richard Hughes)
+ - Allow translated keywords (Richard Hughes)
+ - Rename as_app_get_id_full() to as_app_get_id() (Richard Hughes)
+ - Rename as_app_get_id() to as_app_get_id_filename() (Richard Hughes)
+
+Bugfixes:
+ - Add a veto if a .desktop file has NoDisplay=true (Richard Hughes)
+ - Add dummy failed applications (Richard Hughes)
+ - Add more things to the blacklist that are not applications (Richard Hughes)
+ - A keyword search match is better than the project name (Richard Hughes)
+ - Allow different source roots to define addons (Richard Hughes)
+ - Check the locale more carefully (Richard Hughes)
+ - Conform to the actual SPDX 2.0 license expression syntax (Richard Hughes)
+ - Do not require sentence case when validating with relaxed settings (Richard Hughes)
+ - Do not try to download screenshots when run with --nonet (Richard Hughes)
+ - Do not write <pkgname> into the ignore metadata (Richard Hughes)
+ - Don't add localized keywords that already exist in C (Richard Hughes)
+ - Ignore AppData screenshots with xml:lang attributes (Richard Hughes)
+ - Link client/appstream-util against gdk-pixbuf (William Hua)
+ - Make validate,install,dump and convert to accept a *.yml (Igor Gnatenko)
+ - Metadata licenses like 'CC0 and CC-BY-3.0' are content licenses (Richard Hughes)
+ - Never add duplicate <extends> tags (Richard Hughes)
+ - Never add empty keywords (Richard Hughes)
+ - Only get the package data when required (Richard Hughes)
+ - Rework as_utils_spdx_license_tokenize() to be more efficient (Richard Hughes)
+ - Store vetos in the XML itself (Richard Hughes)
+ - Support keywords separated by comma (Richard Hughes)
+ - Turn of sig checking for rpm packages (Richard Hughes)
+ - Update the SPDX license list to v1.20 (Richard Hughes)
+ - Use libyaml to read DEP-11 metadata (Richard Hughes)
+
 Version 0.2.4
 ~~~~~~~~~~~~~
 Released: 2014-08-05
