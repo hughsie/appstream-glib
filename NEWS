@@ -1,3 +1,14 @@
+Version 0.2.6
+~~~~~~~~~~~~~
+Released: 2014-09-01
+
+Bugfixes:
+ - Add a veto if a .desktop file has NoDisplay=true (Richard Hughes)
+ - Add more things to the blacklist that are not applications (Richard Hughes)
+ - A keyword search match is better than the project name (Richard Hughes)
+ - Turn of sig checking for rpm packages (Richard Hughes)
+ - Update the SPDX license list to v1.20 (Richard Hughes)
+
 Version 0.2.5
 ~~~~~~~~~~~~~
 Released: 2014-08-18
