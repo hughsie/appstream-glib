@@ -239,7 +239,7 @@ main (int argc, char **argv)
 		/* add to list */
 		if (!asb_context_add_filename (ctx, filename, &error_local)) {
 			/* TRANSLATORS: error message */
-			g_print ("%s %s: %s\n", _("Failed to add package"),
+			g_debug ("%s %s: %s", _("Failed to add package"),
 				 filename, error_local->message);
 			continue;
 		}
