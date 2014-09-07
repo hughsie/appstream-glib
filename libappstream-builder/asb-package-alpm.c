@@ -40,8 +40,8 @@
 typedef struct _AsbPackageAlpmPrivate	AsbPackageAlpmPrivate;
 struct _AsbPackageAlpmPrivate
 {
-	alpm_handle_t   *handle;
-	alpm_pkg_t      *package;
+	alpm_handle_t	*handle;
+	alpm_pkg_t	*package;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbPackageAlpm, asb_package_alpm, ASB_TYPE_PACKAGE)
@@ -57,7 +57,7 @@ asb_package_alpm_finalize (GObject *object)
 	AsbPackageAlpm *pkg = ASB_PACKAGE_ALPM (object);
 	AsbPackageAlpmPrivate *priv = GET_PRIVATE (pkg);
 
-	/*TODO: handle errors*/
+	/* TODO: handle errors */
 	alpm_pkg_free (priv->package);
 	alpm_release (priv->handle);
 
@@ -92,7 +92,7 @@ asb_package_alpm_list_to_array (alpm_list_t *list)
 /**
  * asb_package_alpm_ensure_license:
  **/
-static void
+static gboolean
 asb_package_alpm_ensure_license (AsbPackage *pkg, GError **error)
 {
 	AsbPackageAlpm *pkg_alpm = ASB_PACKAGE_ALPM (pkg);
@@ -104,12 +104,14 @@ asb_package_alpm_ensure_license (AsbPackage *pkg, GError **error)
 
 	alpm_licenses = alpm_pkg_get_licenses (priv->package);
 	licenses = asb_package_alpm_list_to_array (alpm_licenses);
-	/*TODO: translate licenses to SPDX licenses (makes licenses clickable is GNOME Software)*/
+	/* TODO: translate licenses to SPDX licenses (makes licenses clickable
+	 * is GNOME Software) */
 	license = g_strjoinv (" AND ", (gchar **)(licenses->pdata));
 
 	asb_package_set_license (pkg, license);
 
 	g_ptr_array_free (licenses, TRUE);
+	return TRUE;
 }
 
 /**
@@ -125,31 +127,34 @@ asb_package_alpm_ensure_version (AsbPackage *pkg, GError **error)
 
 	split = g_strsplit (alpm_pkg_get_version (priv->package), ":-", 3);
 
-	/*Epoch:Version:Release*/
+	/* epoch:version:release */
 	if (g_strv_length (split) == 3) {
 		asb_package_set_epoch (pkg, g_ascii_strtoll (split[0], NULL, 0));
 		asb_package_set_version (pkg, split[1]);
 		asb_package_set_release (pkg, split[2]);
-	} else {/*Version:Release*/
+	} else {/* version:release */
 		asb_package_set_version (pkg, split[0]);
 		asb_package_set_release (pkg, split[1]);
 	}
 }
 
+#if 0
 /**
  * asb_package_alpm_ensure_releases:
  **/
-/*static void
+static gboolean
 asb_package_alpm_ensure_releases (AsbPackage *pkg, GError **error)
 {
 	AsbPackageAlpm *pkg_alpm = ASB_PACKAGE_ALPM (pkg);
 	AsbPackageAlpmPrivate *priv = GET_PRIVATE (pkg_alpm);
-}*/
+	return TRUE;
+}
+#endif
 
 /**
  * asb_package_alpm_ensure_depends:
  **/
-static void
+static gboolean
 asb_package_alpm_ensure_depends (AsbPackage *pkg, GError **error)
 {
 	AsbPackageAlpm *pkg_alpm = ASB_PACKAGE_ALPM (pkg);
@@ -162,12 +167,13 @@ asb_package_alpm_ensure_depends (AsbPackage *pkg, GError **error)
 	depends = asb_package_alpm_list_to_array (alpm_depends);
 
 	asb_package_set_deps (pkg, (gchar**)(depends->pdata));
+	return TRUE;
 }
 
 /**
  * asb_package_alpm_ensure_filelists:
  **/
-static void
+static gboolean
 asb_package_alpm_ensure_filelists (AsbPackage *pkg, GError **error)
 {
 	AsbPackageAlpm *pkg_alpm = ASB_PACKAGE_ALPM (pkg);
@@ -186,6 +192,7 @@ asb_package_alpm_ensure_filelists (AsbPackage *pkg, GError **error)
 	asb_package_set_filelist (pkg, (gchar **)(filelist->pdata));
 
 	g_ptr_array_free (filelist, TRUE);
+	return TRUE;
 }
 
 /**
@@ -199,7 +206,7 @@ asb_package_alpm_open (AsbPackage *pkg, const gchar *filename, GError **error)
 
 	alpm_errno_t alpm_error;
 
-	/*Initialize the alpm library*/
+	/* initialize the alpm library */
 	priv->handle = alpm_initialize ("/", "/tmp", &alpm_error);
 	if (priv->handle == NULL) {
 		g_set_error (error,
@@ -212,7 +219,7 @@ asb_package_alpm_open (AsbPackage *pkg, const gchar *filename, GError **error)
 		return FALSE;
 	}
 
-	/*Open the package*/
+	/* open the package */
 	if (alpm_pkg_load (priv->handle, filename, TRUE, 0, &priv->package) == -1) {
 		g_set_error (error,
 		             ASB_PLUGIN_ERROR,
@@ -229,9 +236,6 @@ asb_package_alpm_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	asb_package_set_url (pkg, alpm_pkg_get_url (priv->package));
 	asb_package_set_arch (pkg, alpm_pkg_get_arch (priv->package));
 	asb_package_alpm_ensure_version (pkg, error);
-	asb_package_alpm_ensure_license (pkg, error);
-	asb_package_alpm_ensure_filelists (pkg, error);
-	asb_package_alpm_ensure_depends (pkg, error);
 
 	return TRUE;
 }
@@ -255,6 +259,29 @@ asb_package_alpm_compare (AsbPackage *pkg1, AsbPackage *pkg2)
 }
 
 /**
+ * asb_package_alpm_ensure:
+ **/
+static gboolean
+asb_package_alpm_ensure (AsbPackage *pkg,
+			 AsbPackageEnsureFlags flags,
+			 GError **error)
+{
+	if ((flags & ASB_PACKAGE_ENSURE_DEPS) > 0) {
+		if (!asb_package_alpm_ensure_depends (pkg, error))
+			return FALSE;
+	}
+	if ((flags & ASB_PACKAGE_ENSURE_FILES) > 0) {
+		if (!asb_package_alpm_ensure_filelists (pkg, error))
+			return FALSE;
+	}
+	if ((flags & ASB_PACKAGE_ENSURE_LICENSE) > 0) {
+		if (!asb_package_alpm_ensure_license (pkg, error))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
  * asb_package_alpm_class_init:
  **/
 static void
@@ -265,6 +292,7 @@ asb_package_alpm_class_init (AsbPackageAlpmClass *klass)
 
 	object_class->finalize = asb_package_alpm_finalize;
 	package_class->open = asb_package_alpm_open;
+	package_class->ensure = asb_package_alpm_ensure;
 	package_class->compare = asb_package_alpm_compare;
 }
 
