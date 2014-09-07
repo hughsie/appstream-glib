@@ -152,7 +152,7 @@ if test x$enable_alpm != xno; then
 	if test "x$HAVE_ALPM" = "xyes"; then
 		AC_DEFINE(HAVE_ALPM, 1, [define if ALPM is installed])
 	else
-		if text x$enable_alpm = xyes; then
+		if test x$enable_alpm = xyes; then
 			AC_MSG_ERROR([alpm enabled but not found])
 		fi
 	fi
