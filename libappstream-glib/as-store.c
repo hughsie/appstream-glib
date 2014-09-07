@@ -580,8 +580,8 @@ as_store_from_file (AsStore *store,
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
-			     "Failed to parse file: %s",
-			     error_local->message);
+			     "Failed to parse %s file: %s",
+			     filename, error_local->message);
 		return FALSE;
 	}
 	return as_store_from_root (store, root, icon_root, error);
