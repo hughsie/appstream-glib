@@ -4,11 +4,13 @@ active-alarms.desktop
 active-filebrowser.desktop
 active-imageviewer.desktop
 active-web-browser.desktop
+alc.desktop
 amzdownloader.desktop
 authconfig.desktop
 bf-*-editor.desktop
 bitmap2component.desktop
 bted.desktop
+cairo-dock-cairo.desktop
 caja-home.desktop
 cinnamon-settings.desktop
 *-demo.desktop
@@ -52,6 +54,7 @@ rygel-preferences.desktop
 *-server.desktop
 *-session-manager.desktop
 *-shareware.desktop
+sr-editor.desktop
 system-config-*.desktop
 tracker-preferences.desktop
 transgui.desktop
