@@ -239,6 +239,8 @@ asb_app_save_resources_image (AsbApp *app,
 
 	/* does screenshot already exist */
 	output_dir = asb_package_get_config (asb_app_get_package (app), "ScreenshotDir");
+	if (output_dir == NULL)
+		return TRUE;
 	filename = g_build_filename (output_dir,
 				     size_str,
 				     as_image_get_basename (image),
