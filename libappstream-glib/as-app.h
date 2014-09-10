@@ -240,7 +240,7 @@ GPtrArray	*as_app_get_vetos		(AsApp		*app);
 const gchar	*as_app_get_icon		(AsApp		*app);
 const gchar	*as_app_get_icon_path		(AsApp		*app);
 const gchar	*as_app_get_id_filename		(AsApp		*app);
-const gchar	*as_app_get_id		(AsApp		*app);
+const gchar	*as_app_get_id			(AsApp		*app);
 const gchar	*as_app_get_pkgname_default	(AsApp		*app);
 const gchar	*as_app_get_source_pkgname	(AsApp		*app);
 const gchar	*as_app_get_project_group	(AsApp		*app);

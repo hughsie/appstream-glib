@@ -47,6 +47,8 @@ gboolean	 as_utils_check_url_exists	(const gchar	*url,
 gchar		*as_utils_find_icon_filename	(const gchar	*destdir,
 						 const gchar	*search,
 						 GError		**error);
+gchar		*as_utils_get_string_overlap	(const gchar	*s1,
+						 const gchar	*s2);
 
 G_END_DECLS
 
