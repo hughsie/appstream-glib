@@ -1181,6 +1181,9 @@ asb_context_process (AsbContext *ctx, GError **error)
 	ret = asb_context_detect_missing_parents (ctx, error);
 	if (!ret)
 		goto out;
+	ret = asb_context_detect_pkgname_dups (ctx, error);
+	if (!ret)
+		goto out;
 
 	/* write XML file */
 	ret = asb_context_write_xml (ctx, priv->output_dir, priv->basename, error);
@@ -1203,11 +1206,6 @@ asb_context_process (AsbContext *ctx, GError **error)
 				       priv->output_dir,
 				       priv->basename,
 				       error);
-	if (!ret)
-		goto out;
-
-	/* print any warnings */
-	ret = asb_context_detect_pkgname_dups (ctx, error);
 	if (!ret)
 		goto out;
 out:
