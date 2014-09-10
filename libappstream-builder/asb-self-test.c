@@ -202,7 +202,7 @@ asb_test_plugin_loader_func (void)
 
 	/* get the list of plugins */
 	plugins = asb_plugin_loader_get_plugins (loader);
-	g_assert_cmpint (plugins->len, ==, 17);
+	g_assert_cmpint (plugins->len, ==, 18);
 	plugin = g_ptr_array_index (plugins, 0);
 	g_assert (plugin != NULL);
 	g_assert (plugin->module != NULL);
@@ -232,11 +232,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	GError *error = NULL;
 	const gchar *expected_xml;
 	gboolean ret;
-	_cleanup_free_ gchar *filename1 = NULL;
-	_cleanup_free_ gchar *filename2 = NULL;
-	_cleanup_free_ gchar *filename3 = NULL;
-	_cleanup_free_ gchar *filename4 = NULL;
-	_cleanup_free_ gchar *filename5 = NULL;
+	guint i;
 	_cleanup_object_unref_ AsbContext *ctx = NULL;
 	_cleanup_object_unref_ AsStore *store_failed = NULL;
 	_cleanup_object_unref_ AsStore *store_ignore = NULL;
@@ -247,6 +243,14 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	_cleanup_string_free_ GString *xml = NULL;
 	_cleanup_string_free_ GString *xml_failed = NULL;
 	_cleanup_string_free_ GString *xml_ignore = NULL;
+	const gchar *filenames[] = {
+		"test-0.1-1.fc21.noarch.rpm",		/* a console app */
+		"app-1-1.fc21.x86_64.rpm",		/* a GUI app */
+		"app-extra-1-1.fc21.noarch.rpm",	/* addons for a GUI app */
+		"app-console-1-1.fc21.noarch.rpm",	/* app with no icon */
+		"app-1-1.fc21.i686.rpm",		/* GUI multiarch app */
+		"composite-1-1.fc21.x86_64.rpm",	/* multiple GUI apps */
+		NULL};
 
 	/* set up the context */
 	ctx = asb_context_new ();
@@ -279,46 +283,21 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	g_assert_no_error (error);
 	g_assert (ret);
 
-	/* add a console application */
-	filename1 = asb_test_get_filename ("test-0.1-1.fc21.noarch.rpm");
-	g_assert (filename1 != NULL);
-	ret = asb_context_add_filename (ctx, filename1, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* add another GUI application */
-	filename2 = asb_test_get_filename ("app-1-1.fc21.x86_64.rpm");
-	g_assert (filename2 != NULL);
-	ret = asb_context_add_filename (ctx, filename2, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* add addons for the GUI application */
-	filename3 = asb_test_get_filename ("app-extra-1-1.fc21.noarch.rpm");
-	g_assert (filename3 != NULL);
-	ret = asb_context_add_filename (ctx, filename3, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* add application with no icon */
-	filename4 = asb_test_get_filename ("app-console-1-1.fc21.noarch.rpm");
-	g_assert (filename4 != NULL);
-	ret = asb_context_add_filename (ctx, filename4, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* the same GUI application in the different architecture */
-	filename5 = asb_test_get_filename ("app-1-1.fc21.i686.rpm");
-	g_assert (filename5 != NULL);
-	ret = asb_context_add_filename (ctx, filename5, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
+	/* add packages */
+	for (i = 0; filenames[i] != NULL; i++) {
+		_cleanup_free_ gchar *filename = NULL;
+		filename = asb_test_get_filename (filenames[i]);
+		g_assert (filename != NULL);
+		ret = asb_context_add_filename (ctx, filename, &error);
+		g_assert_no_error (error);
+		g_assert (ret);
+	}
 
 	/* verify queue size */
 	switch (mode) {
 	case ASB_TEST_CONTEXT_MODE_NO_CACHE:
 	case ASB_TEST_CONTEXT_MODE_WITH_OLD_CACHE:
-		g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 5);
+		g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 6);
 		break;
 	default:
 		/* no packages should need extracting */
@@ -343,7 +322,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store), ==, 2);
+	g_assert_cmpint (as_store_get_size (store), ==, 3);
 	app = as_store_get_app_by_pkgname (store, "app");
 	g_assert (app != NULL);
 	app = as_store_get_app_by_id (store, "app.desktop");
@@ -411,6 +390,24 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<value key=\"X-CacheID\">app-1-1.fc21.x86_64.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
+		"<component type=\"desktop\">\n"
+		"<id>valid.desktop</id>\n"
+		"<pkgname>composite</pkgname>\n"
+		"<name>Frobnicator</name>\n"
+		"<summary>Frobnicator</summary>\n"
+		"<icon type=\"stock\">computer</icon>\n"
+		"<categories>\n"
+		"<category>Profiling</category>\n"
+		"</categories>\n"
+		"<project_license>GPL-2.0+</project_license>\n"
+		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
+		"<releases>\n"
+		"<release version=\"1\" timestamp=\"1407844800\"/>\n"
+		"</releases>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">composite-1-1.fc21.x86_64.rpm</value>\n"
+		"</metadata>\n"
+		"</component>\n"
 		"</components>\n";
 	if (g_strcmp0 (xml->str, expected_xml) != 0)
 		g_warning ("Expected:\n%s\nGot:\n%s", expected_xml, xml->str);
@@ -422,10 +419,12 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store_failed, file_failed, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store_failed), ==, 2);
+	g_assert_cmpint (as_store_get_size (store_failed), ==, 3);
 	app = as_store_get_app_by_id (store_failed, "console1.desktop");
 	g_assert (app != NULL);
 	app = as_store_get_app_by_id (store_failed, "console2.desktop");
+	g_assert (app != NULL);
+	app = as_store_get_app_by_id (store_failed, "valid2.desktop");
 	g_assert (app != NULL);
 
 	/* check output */
@@ -482,6 +481,27 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"</languages>\n"
 		"<metadata>\n"
 		"<value key=\"X-CacheID\">app-console-1-1.fc21.noarch.rpm</value>\n"
+		"</metadata>\n"
+		"</component>\n"
+		"<component type=\"desktop\">\n"
+		"<id>valid2.desktop</id>\n"
+		"<pkgname>composite</pkgname>\n"
+		"<name>Frobnicator Example</name>\n"
+		"<summary>Frobnicator Example Program</summary>\n"
+		"<icon type=\"stock\">computer</icon>\n"
+		"<categories>\n"
+		"<category>Profiling</category>\n"
+		"</categories>\n"
+		"<vetos>\n"
+		"<veto>absorbed into valid.desktop</veto>\n"
+		"</vetos>\n"
+		"<project_license>GPL-2.0+</project_license>\n"
+		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
+		"<releases>\n"
+		"<release version=\"1\" timestamp=\"1407844800\"/>\n"
+		"</releases>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">composite-1-1.fc21.x86_64.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
 		"</components>\n";

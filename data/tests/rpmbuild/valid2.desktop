@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Frobnicator Example
+Comment=Frobnicator Example Program
+Icon=computer
+Exec=app --example
+Terminal=false
+Type=Application
+Categories=Profiling;
