@@ -635,6 +635,10 @@ asb_context_setup (AsbContext *ctx, GError **error)
 		return FALSE;
 	if (!asb_utils_ensure_exists (priv->cache_dir, error))
 		return FALSE;
+	if (priv->log_dir != NULL) {
+		if (!asb_utils_ensure_exists (priv->log_dir, error))
+			return FALSE;
+	}
 
 	/* icons is nuked; we can re-decompress from the -icons.tar.gz */
 	icons_dir = g_build_filename (priv->temp_dir, "icons", NULL);
