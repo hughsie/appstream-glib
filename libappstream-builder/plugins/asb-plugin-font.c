@@ -227,6 +227,8 @@ asb_font_string_is_valid (const gchar *text)
 {
 	guint i;
 
+	if (text == NULL || text[0] == '\0')
+		return FALSE;
 	for (i = 0; text[i] != '\0'; i++) {
 		if (g_ascii_iscntrl (text[i]))
 			return FALSE;
