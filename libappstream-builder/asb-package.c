@@ -55,6 +55,7 @@ struct _AsbPackagePrivate
 	gchar		*license;
 	gchar		*source_nevra;
 	gchar		*source_pkgname;
+	gsize		 log_written_len;
 	GString		*log;
 	GHashTable	*configs;
 	GTimer		*timer;
@@ -234,11 +235,16 @@ asb_package_log_flush (AsbPackage *pkg, GError **error)
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 	_cleanup_free_ gchar *logfile = NULL;
 
+	/* needs no update */
+	if (priv->log_written_len == priv->log->len)
+		return TRUE;
+
 	/* don't write if unset */
 	if (asb_package_get_config (pkg, "LogDir") == NULL)
 		return TRUE;
 
 	/* overwrite old log */
+	priv->log_written_len = priv->log->len;
 	logfile = g_strdup_printf ("%s/%s.log",
 				   asb_package_get_config (pkg, "LogDir"),
 				   asb_package_get_name (pkg));

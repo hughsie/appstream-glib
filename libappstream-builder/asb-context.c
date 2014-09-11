@@ -1114,7 +1114,7 @@ asb_context_process (AsbContext *ctx, GError **error)
 	AsbPackage *pkg;
 	AsbTask *task;
 	GThreadPool *pool;
-	gboolean ret = FALSE;
+	gboolean ret;
 	guint i;
 	_cleanup_ptrarray_unref_ GPtrArray *tasks = NULL;
 
@@ -1129,7 +1129,7 @@ asb_context_process (AsbContext *ctx, GError **error)
 				  TRUE,
 				  error);
 	if (pool == NULL)
-		goto out;
+		return FALSE;
 
 	/* add each package */
 	g_print ("Processing packages...\n");
@@ -1165,9 +1165,8 @@ asb_context_process (AsbContext *ctx, GError **error)
 		g_ptr_array_add (tasks, task);
 
 		/* add task to pool */
-		ret = g_thread_pool_push (pool, task, error);
-		if (!ret)
-			goto out;
+		if (!g_thread_pool_push (pool, task, error))
+			return FALSE;
 	}
 
 	/* wait for them to finish */
@@ -1178,27 +1177,25 @@ asb_context_process (AsbContext *ctx, GError **error)
 	asb_plugin_loader_merge (priv->plugin_loader, priv->apps);
 
 	/* print any warnings */
-	ret = asb_context_detect_missing_parents (ctx, error);
-	if (!ret)
-		goto out;
-	ret = asb_context_detect_pkgname_dups (ctx, error);
-	if (!ret)
-		goto out;
+	if (!asb_context_detect_missing_parents (ctx, error))
+		return FALSE;
+	if (!asb_context_detect_pkgname_dups (ctx, error))
+		return FALSE;
 
 	/* write XML file */
 	ret = asb_context_write_xml (ctx, priv->output_dir, priv->basename, error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* write XML file */
 	ret = asb_context_write_xml_fail (ctx, priv->output_dir, priv->basename, error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* write XML file */
 	ret = asb_context_write_xml_ignore (ctx, priv->output_dir, priv->basename, error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* write icons archive */
 	ret = asb_context_write_icons (ctx,
@@ -1207,9 +1204,15 @@ asb_context_process (AsbContext *ctx, GError **error)
 				       priv->basename,
 				       error);
 	if (!ret)
-		goto out;
-out:
-	return ret;
+		return FALSE;
+
+	/* ensure all packages are flushed */
+	for (i = 0; i < priv->packages->len; i++) {
+		pkg = g_ptr_array_index (priv->packages, i);
+		if (!asb_package_log_flush (pkg, error))
+			return FALSE;
+	}
+	return TRUE;
 }
 
 /**
