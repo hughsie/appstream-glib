@@ -34,10 +34,25 @@ asb_plugin_get_name (void)
 }
 
 /**
- * asb_plugin_composite_app:
+ * _as_app_is_id_valid:
  */
 static gboolean
-asb_plugin_composite_app (AsApp *app, AsApp *donor, GError **error)
+_as_app_is_id_valid (const gchar *id)
+{
+	gchar *tmp;
+	tmp = g_strrstr (id, ".");
+	if (tmp == NULL)
+		return FALSE;
+	if (tmp - id < 4)
+		return FALSE;
+	return TRUE;
+}
+
+/**
+ * _as_app_composite:
+ */
+static gboolean
+_as_app_composite (AsApp *app, AsApp *donor, GError **error)
 {
 	AsApp *tmp;
 	gint rc;
@@ -48,7 +63,7 @@ asb_plugin_composite_app (AsApp *app, AsApp *donor, GError **error)
 		g_set_error (error,
 			     AS_APP_ERROR,
 			     AS_APP_ERROR_INVALID_TYPE,
-			     "Cannot composite apps %s:%s of different id kind",
+			     "Cannot composite %s:%s of different id kind",
 			     as_app_get_id (app),
 			     as_app_get_id (donor));
 		return FALSE;
@@ -68,21 +83,61 @@ asb_plugin_composite_app (AsApp *app, AsApp *donor, GError **error)
 
 	/* set the new composite string */
 	id = as_utils_get_string_overlap (as_app_get_id (app), as_app_get_id (donor));
-	if (id == NULL || strlen (id) < 12) {
+	if (id == NULL || !_as_app_is_id_valid (id)) {
 		g_set_error (error,
 			     AS_APP_ERROR,
 			     AS_APP_ERROR_INVALID_TYPE,
-			     "Cannot composite apps %s:%s as no ID overlap",
+			     "Cannot composite %s:%s as no ID overlap",
 			     as_app_get_id (app),
 			     as_app_get_id (donor));
 		return FALSE;
 	}
+
+
+	/* log */
+	if (ASB_IS_APP (app) && g_strcmp0 (as_app_get_id (app), id) != 0) {
+		asb_package_log (asb_app_get_package (ASB_APP (app)),
+				 ASB_PACKAGE_LOG_LEVEL_INFO,
+				 "Renamed %s into %s so it could be "
+				 "composited with %s",
+				 as_app_get_id (app), id,
+				 as_app_get_id (donor));
+	}
+	if (ASB_IS_APP (donor)) {
+		asb_package_log (asb_app_get_package (ASB_APP (donor)),
+				 ASB_PACKAGE_LOG_LEVEL_INFO,
+				 "Composited %s into %s",
+				 as_app_get_id (donor), id);
+	}
+
+	/* set the new ID (on both apps?) */
 	as_app_set_id (app, id, -1);
 
 	/* add some easily merged properties */
 	as_app_subsume_full (app, donor, AS_APP_SUBSUME_FLAG_PARTIAL);
 	as_app_add_veto (donor, "absorbed into %s", as_app_get_id (app));
 	return TRUE;
+}
+
+/**
+ * asb_plugin_composite_app:
+ */
+static void
+asb_plugin_composite_app (AsApp *app, AsApp *donor)
+{
+	_cleanup_error_free_ GError *error = NULL;
+
+	/* composite the app */
+	if (!_as_app_composite (app, donor, &error)) {
+		if (ASB_IS_APP (app)) {
+			asb_package_log (asb_app_get_package (ASB_APP (app)),
+					 ASB_PACKAGE_LOG_LEVEL_INFO,
+					 "%s", error->message);
+		} else {
+			g_warning ("%s", error->message);
+		}
+		return;
+	}
 }
 
 /**
@@ -109,13 +164,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 			continue;
 		found = g_hash_table_lookup (hash, tmp);
 		if (found != NULL) {
-			_cleanup_error_free_ GError *error = NULL;
-			if (!asb_plugin_composite_app (app, found, &error)) {
-				g_warning ("Failed to composite %s:%s",
-					   as_app_get_id (app),
-					   as_app_get_id (found));
-				continue;
-			}
+			asb_plugin_composite_app (app, found);
 			continue;
 		}
 		g_hash_table_insert (hash,
