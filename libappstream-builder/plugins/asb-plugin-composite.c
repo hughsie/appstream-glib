@@ -94,6 +94,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 	AsApp *app;
 	AsApp *found;
 	GList *l;
+	const gchar *tmp;
 	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
 
 	/* add all packages to the hash */
@@ -103,7 +104,10 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 		app = AS_APP (l->data);
 		if (as_app_get_vetos (app)->len > 0)
 			continue;
-		found = g_hash_table_lookup (hash, as_app_get_pkgname_default (app));
+		tmp = as_app_get_pkgname_default (app);
+		if (tmp == NULL)
+			continue;
+		found = g_hash_table_lookup (hash, tmp);
 		if (found != NULL) {
 			_cleanup_error_free_ GError *error = NULL;
 			if (!asb_plugin_composite_app (app, found, &error)) {
