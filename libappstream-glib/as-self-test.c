@@ -65,6 +65,7 @@ as_test_tag_func (void)
 	g_assert_cmpstr (as_tag_to_string (AS_TAG_UNKNOWN), ==, "unknown");
 	g_assert_cmpint (as_tag_from_string ("url"), ==, AS_TAG_URL);
 	g_assert_cmpint (as_tag_from_string ("xxx"), ==, AS_TAG_UNKNOWN);
+	g_assert_cmpint (as_tag_from_string (NULL), ==, AS_TAG_UNKNOWN);
 
 	/* deprecated names */
 	g_assert_cmpint (as_tag_from_string_full ("appcategories",
