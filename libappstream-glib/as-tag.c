@@ -79,6 +79,10 @@ as_tag_from_string_full (const gchar *tag, AsTagFlags flags)
 #endif
 	AsTag etag = AS_TAG_UNKNOWN;
 
+	/* invalid */
+	if (tag == NULL)
+		return AS_TAG_UNKNOWN;
+
 #ifdef HAVE_GPERF
 	/* use a perfect hash */
 	ky = as_tag_from_gperf (tag, strlen (tag));
