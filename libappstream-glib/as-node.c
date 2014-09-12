@@ -1318,6 +1318,8 @@ as_node_insert (GNode *parent,
 	guint i;
 	va_list args;
 
+	g_return_val_if_fail (name != NULL, NULL);
+
 	data = g_slice_new0 (AsNodeData);
 	as_node_data_set_name (data, name, insert_flags);
 	if (cdata != NULL)
@@ -1372,6 +1374,8 @@ as_node_insert_localized (GNode *parent,
 	const gchar *value;
 	const gchar *value_c;
 	_cleanup_list_free_ GList *list = NULL;
+
+	g_return_if_fail (name != NULL);
 
 	/* add the untranslated value first */
 	value_c = g_hash_table_lookup (localized, "C");
@@ -1438,6 +1442,8 @@ as_node_insert_hash (GNode *parent,
 	const gchar *key;
 	const gchar *value;
 	gboolean swapped = (insert_flags & AS_NODE_INSERT_FLAG_SWAPPED) > 0;
+
+	g_return_if_fail (name != NULL);
 
 	list = g_hash_table_get_keys (hash);
 	list = g_list_sort (list, as_node_list_sort_cb);
