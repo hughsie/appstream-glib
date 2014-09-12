@@ -234,9 +234,11 @@ GNode *
 as_provide_node_insert (AsProvide *provide, GNode *parent, gdouble api_version)
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
-	GNode *n;
+	GNode *n = NULL;
 
 	switch (priv->kind) {
+	case AS_PROVIDE_KIND_UNKNOWN:
+		break;
 	case AS_PROVIDE_KIND_DBUS:
 		n = as_node_insert (parent, "dbus",
 				    priv->value,
