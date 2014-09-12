@@ -215,6 +215,8 @@ as_app_guess_source_kind (const gchar *filename)
 {
 	if (g_str_has_suffix (filename, ".xml.gz"))
 		return AS_APP_SOURCE_KIND_APPSTREAM;
+	if (g_str_has_suffix (filename, ".yml"))
+		return AS_APP_SOURCE_KIND_APPSTREAM;
 	if (g_str_has_suffix (filename, ".yml.gz"))
 		return AS_APP_SOURCE_KIND_APPSTREAM;
 	if (g_str_has_suffix (filename, ".desktop"))
