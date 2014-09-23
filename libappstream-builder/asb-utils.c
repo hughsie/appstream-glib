@@ -181,7 +181,8 @@ asb_utils_ensure_exists_and_empty (const gchar *directory, GError **error)
 static gboolean
 asb_utils_explode_file (struct archive_entry *entry,
 			const gchar *dir,
-			GPtrArray *glob)
+			GPtrArray *glob,
+			GPtrArray *symlink_glob)
 {
 	const gchar *tmp;
 	gchar buf[PATH_MAX];
@@ -212,6 +213,7 @@ asb_utils_explode_file (struct archive_entry *entry,
 	/* update hardlinks */
 	tmp = archive_entry_hardlink (entry);
 	if (tmp != NULL) {
+		g_ptr_array_add (symlink_glob, asb_glob_value_new (tmp, ""));
 		g_snprintf (buf, PATH_MAX, "%s/%s", dir, tmp);
 		archive_entry_update_hardlink_utf8 (entry, buf);
 	}
@@ -219,6 +221,7 @@ asb_utils_explode_file (struct archive_entry *entry,
 	/* update symlinks */
 	tmp = archive_entry_symlink (entry);
 	if (tmp != NULL) {
+		g_ptr_array_add (symlink_glob, asb_glob_value_new (tmp, ""));
 		g_snprintf (buf, PATH_MAX, "%s/%s", dir, tmp);
 		archive_entry_update_symlink_utf8 (entry, buf);
 	}
@@ -251,6 +254,7 @@ asb_utils_explode (const gchar *filename,
 	struct archive *arch = NULL;
 	struct archive_entry *entry;
 	_cleanup_free_ gchar *data = NULL;
+	_cleanup_ptrarray_unref_ GPtrArray *symlink_glob = NULL;
 
 	/* load file at once to avoid seeking */
 	ret = g_file_get_contents (filename, &data, &len, error);
@@ -273,6 +277,7 @@ asb_utils_explode (const gchar *filename,
 	}
 
 	/* decompress each file */
+	symlink_glob = asb_glob_value_array_new ();
 	for (;;) {
 		r = archive_read_next_header (arch, &entry);
 		if (r == ARCHIVE_EOF)
@@ -288,7 +293,7 @@ asb_utils_explode (const gchar *filename,
 		}
 
 		/* only extract if valid */
-		valid = asb_utils_explode_file (entry, dir, glob);
+		valid = asb_utils_explode_file (entry, dir, glob, symlink_glob);
 		if (!valid)
 			continue;
 		r = archive_read_extract (arch, entry, 0);
@@ -301,6 +306,13 @@ asb_utils_explode (const gchar *filename,
 				     archive_error_string (arch));
 			goto out;
 		}
+	}
+
+	/* there are soft or hard links to explode too */
+	if (symlink_glob->len > 0) {
+		ret = asb_utils_explode (filename, dir, symlink_glob, error);
+		if (!ret)
+			goto out;
 	}
 out:
 	if (arch != NULL) {

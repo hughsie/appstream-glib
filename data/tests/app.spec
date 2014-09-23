@@ -44,7 +44,14 @@ Sub package with console "application".
 %install
 install -Dp %{SOURCE0} $RPM_BUILD_ROOT/%{_datadir}/%{name}-%{version}/README
 install -Dp %{SOURCE1} $RPM_BUILD_ROOT/%{_datadir}/applications/app.desktop
-install -Dp %{SOURCE2} $RPM_BUILD_ROOT/%{_datadir}/pixmaps/app.png
+
+# test decompressing a symlink destination
+install -Dp %{SOURCE2} $RPM_BUILD_ROOT/%{_datadir}/app/app.png
+mkdir -p $RPM_BUILD_ROOT/%{_datadir}/pixmaps
+cd $RPM_BUILD_ROOT
+ln -s %{_datadir}/app/app.png usr/share/pixmaps/app.png
+cd -
+
 install -Dp %{SOURCE3} $RPM_BUILD_ROOT/%{_datadir}/appdata/app.appdata.xml
 install -Dp %{SOURCE4} $RPM_BUILD_ROOT/%{_datadir}/gnome-shell/search-providers/search-provider.ini
 install -Dp %{SOURCE5} $RPM_BUILD_ROOT/%{_datadir}/help/C/app/index.page
@@ -75,6 +82,7 @@ install -Dp %{SOURCE16} $RPM_BUILD_ROOT/%{_datadir}/applications/console2.deskto
 %{_datadir}/kde4/apps/app/app.notifyrc
 %{_datadir}/locale/en_GB/LC_MESSAGES/app.mo
 %{_datadir}/locale/ru/LC_MESSAGES/app.mo
+%{_datadir}/app/app.png
 %{_datadir}/pixmaps/app.png
 
 %files extra
