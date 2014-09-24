@@ -1940,6 +1940,7 @@ as_util_validate_file (const gchar *filename,
 		ret = as_store_from_file (store, file, NULL, NULL, error);
 		if (!ret)
 			return FALSE;
+		flags |= AS_APP_VALIDATE_FLAG_ALL_APPS;
 		probs = as_store_validate (store, flags, error);
 		if (probs == NULL)
 			return FALSE;

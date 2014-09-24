@@ -124,6 +124,7 @@ typedef enum {
  * @AS_APP_VALIDATE_FLAG_RELAX:			Relax the checks
  * @AS_APP_VALIDATE_FLAG_STRICT:		Make the checks more strict
  * @AS_APP_VALIDATE_FLAG_NO_NETWORK:		Do not use the network
+ * @AS_APP_VALIDATE_FLAG_ALL_APPS:		Check all applications in a store
  *
  * The flags to use when validating.
  **/
@@ -132,6 +133,7 @@ typedef enum {
 	AS_APP_VALIDATE_FLAG_RELAX		= 1,	/* Since: 0.1.4 */
 	AS_APP_VALIDATE_FLAG_STRICT		= 2,	/* Since: 0.1.4 */
 	AS_APP_VALIDATE_FLAG_NO_NETWORK		= 4,	/* Since: 0.1.4 */
+	AS_APP_VALIDATE_FLAG_ALL_APPS		= 8,	/* Since: 0.2.6 */
 	/*< private >*/
 	AS_APP_VALIDATE_FLAG_LAST
 } AsAppValidateFlags;

@@ -1777,16 +1777,18 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 		}
 
 		/* validate each application */
-		probs_app = as_app_validate (app, flags, error);
-		if (probs_app == NULL)
-			return NULL;
-		for (j = 0; j < probs_app->len; j++) {
-			prob = g_ptr_array_index (probs_app, j);
-			as_store_validate_add (probs,
-					       as_problem_get_kind (prob),
-					       "%s: %s",
-					       as_app_get_id (app),
-					       as_problem_get_message (prob));
+		if (flags & AS_APP_VALIDATE_FLAG_ALL_APPS) {
+			probs_app = as_app_validate (app, flags, error);
+			if (probs_app == NULL)
+				return NULL;
+			for (j = 0; j < probs_app->len; j++) {
+				prob = g_ptr_array_index (probs_app, j);
+				as_store_validate_add (probs,
+						       as_problem_get_kind (prob),
+						       "%s: %s",
+						       as_app_get_id (app),
+						       as_problem_get_message (prob));
+			}
 		}
 	}
 	return probs;
