@@ -176,6 +176,38 @@ asb_utils_ensure_exists_and_empty (const gchar *directory, GError **error)
 }
 
 /**
+ * asb_utils_count_directories_deep:
+ **/
+static const guint
+asb_utils_count_directories_deep (const gchar *path)
+{
+	guint cnt = 0;
+	guint i;
+
+	for (i = 0; path[i] != '\0'; i++) {
+		if (path[i] != '/')
+			continue;
+		cnt++;
+	}
+	return cnt;
+}
+
+/**
+ * asb_utils_get_back_to_root:
+ **/
+static gchar *
+asb_utils_get_back_to_root (guint levels)
+{
+	GString *str;
+	guint i;
+
+	str = g_string_new ("");
+	for (i = 0; i < levels; i++)
+		g_string_append (str, "../");
+	return g_string_free (str, FALSE);
+}
+
+/**
  * asb_utils_explode_file:
  **/
 static gboolean
@@ -186,6 +218,8 @@ asb_utils_explode_file (struct archive_entry *entry,
 {
 	const gchar *tmp;
 	gchar buf[PATH_MAX];
+	guint symlink_depth;
+	_cleanup_free_ gchar *back_up = NULL;
 	_cleanup_free_ gchar *path = NULL;
 
 	/* no output file */
@@ -214,7 +248,11 @@ asb_utils_explode_file (struct archive_entry *entry,
 	tmp = archive_entry_hardlink (entry);
 	if (tmp != NULL) {
 		g_ptr_array_add (symlink_glob, asb_glob_value_new (tmp, ""));
-		g_snprintf (buf, PATH_MAX, "%s/%s", dir, tmp);
+		symlink_depth = asb_utils_count_directories_deep (path) - 1;
+		back_up = asb_utils_get_back_to_root (symlink_depth);
+		if (tmp[0] == '/')
+			tmp++;
+		g_snprintf (buf, PATH_MAX, "%s%s", back_up, tmp);
 		archive_entry_update_hardlink_utf8 (entry, buf);
 	}
 
@@ -222,7 +260,11 @@ asb_utils_explode_file (struct archive_entry *entry,
 	tmp = archive_entry_symlink (entry);
 	if (tmp != NULL) {
 		g_ptr_array_add (symlink_glob, asb_glob_value_new (tmp, ""));
-		g_snprintf (buf, PATH_MAX, "%s/%s", dir, tmp);
+		symlink_depth = asb_utils_count_directories_deep (path) - 1;
+		back_up = asb_utils_get_back_to_root (symlink_depth);
+		if (tmp[0] == '/')
+			tmp++;
+		g_snprintf (buf, PATH_MAX, "%s%s", back_up, tmp);
 		archive_entry_update_symlink_utf8 (entry, buf);
 	}
 	return TRUE;
