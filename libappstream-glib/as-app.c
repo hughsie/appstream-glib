@@ -3721,8 +3721,13 @@ as_app_infer_file_key (AsApp *app,
 		as_app_add_kudo_kind (AS_APP (app),
 				      AS_KUDO_KIND_NOTIFICATIONS);
 
-	} else if (g_strcmp0 (key, "X-GNOME-Bugzilla-Product") == 0) {
-		as_app_set_project_group (app, "GNOME", -1);
+	} else if (g_strcmp0 (key, "X-GNOME-Bugzilla-Bugzilla") == 0) {
+		tmp = g_key_file_get_string (kf,
+					     G_KEY_FILE_DESKTOP_GROUP,
+					     key,
+					     NULL);
+		if (g_strcmp0 (tmp, "GNOME") == 0)
+			as_app_set_project_group (app, "GNOME", -1);
 
 	} else if (g_strcmp0 (key, "X-MATE-Bugzilla-Product") == 0) {
 		as_app_set_project_group (app, "MATE", -1);
