@@ -1288,6 +1288,8 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 		g_string_append (classes, "kde ");
 	if (g_strcmp0 (as_app_get_project_group (app), "XFCE") == 0)
 		g_string_append (classes, "xfce ");
+	if (as_app_get_id_kind (app) == AS_ID_KIND_ADDON)
+		g_string_append (classes, "addon ");
 	if (classes->len > 0)
 		g_string_truncate (classes, classes->len - 1);
 
@@ -1618,7 +1620,7 @@ as_util_status_html_write_javascript (GString *html)
 	"function\n"
 	"statusReset(class_name, val)\n"
 	"{\n"
-	"	var class_names = [ 'description', 'screenshots', 'keywords', 'gnome', 'kde', 'xfce' ];\n"
+	"	var class_names = [ 'description', 'screenshots', 'keywords', 'gnome', 'kde', 'xfce', 'addon' ];\n"
 	"	for (var i = 0; i < class_names.length; i++) {\n"
 	"		document.getElementById('button-' + class_names[i] + '-with').disabled = false;\n"
 	"		document.getElementById('button-' + class_names[i] + '-without').disabled = false;\n"
@@ -1746,6 +1748,12 @@ as_util_status_html_write_filter_section (GString *html)
 	"<td class=\"alt\">Hide XFCE</td>\n"
 	"<td><button id=\"button-xfce-with\" onclick=\"statusHideFilter('xfce', false);\">&#10003;</button></td>\n"
 	"<td><button id=\"button-xfce-without\" onclick=\"statusHideFilter('xfce', true);\">&#x2715;</button></td>\n"
+	"</tr>\n"
+	"<tr>\n"
+	"<tr>\n"
+	"<td class=\"alt\">Hide Addons</td>\n"
+	"<td><button id=\"button-addon-with\" onclick=\"statusHideFilter('addon', false);\">&#10003;</button></td>\n"
+	"<td><button id=\"button-addon-without\" onclick=\"statusHideFilter('addon', true);\">&#x2715;</button></td>\n"
 	"</tr>\n"
 	"<tr>\n"
 	"<td colspan=\"3\"><button id=\"button-reset\" onclick=\"statusReset('description');\">Reset Filters</button></td>\n"
