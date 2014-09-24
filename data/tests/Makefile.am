@@ -11,6 +11,7 @@ test_files =						\
 	asb-self-test.xml.gz				\
 	broken.appdata.xml				\
 	broken.metainfo.xml				\
+	composite-1-1.fc21.x86_64.rpm			\
 	example.appdata.xml				\
 	example.desktop					\
 	example.metainfo.xml				\
