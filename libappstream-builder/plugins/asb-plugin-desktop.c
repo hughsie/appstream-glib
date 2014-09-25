@@ -188,24 +188,68 @@ asb_app_load_icon (AsbPlugin *plugin,
 }
 
 /**
- * asb_app_find_icon:
+ * asb_plugin_desktop_add_icons:
  */
-static GdkPixbuf *
-asb_app_find_icon (AsbPlugin *plugin,
-		   AsbApp *app,
-		   const gchar *tmpdir,
-		   const gchar *something,
-		   GError **error)
+static void
+asb_plugin_desktop_add_icons (AsbPlugin *plugin,
+			      AsbApp *app,
+			      const gchar *tmpdir,
+			      const gchar *something)
 {
+	_cleanup_error_free_ GError *error = NULL;
+	_cleanup_free_ gchar *fn_hidpi = NULL;
 	_cleanup_free_ gchar *fn = NULL;
+	_cleanup_free_ gchar *icon_filename = NULL;
+	_cleanup_object_unref_ GdkPixbuf *pixbuf_hidpi = NULL;
+	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
 
-	/* find file */
-	fn = as_utils_find_icon_filename (tmpdir, something, error);
-	if (fn == NULL)
-		return NULL;
+	/* find 64x64 icon */
+	fn = as_utils_find_icon_filename_full (tmpdir,
+					       something,
+					       AS_UTILS_FIND_ICON_NONE,
+					       &error);
+	if (fn == NULL) {
+		as_app_add_veto (AS_APP (app), "Failed to find icon: %s",
+				 error->message);
+		return;
+	}
 
 	/* load the icon */
-	return asb_app_load_icon (plugin, app, fn, fn + strlen (tmpdir), 64, error);
+	pixbuf = asb_app_load_icon (plugin, app, fn,
+				    fn + strlen (tmpdir),
+				    64, &error);
+	if (pixbuf == NULL) {
+		as_app_add_veto (AS_APP (app), "Failed to load icon: %s",
+				 error->message);
+		return;
+	}
+
+	/* save in target directory */
+	icon_filename = g_strdup_printf ("%s.png",
+					 as_app_get_id_filename (AS_APP (app)));
+	as_app_set_icon (AS_APP (app), icon_filename, -1);
+	as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_CACHED);
+	asb_app_add_pixbuf (app, pixbuf);
+
+	/* try to get a HiDPI icon */
+	fn_hidpi = as_utils_find_icon_filename_full (tmpdir,
+						     something,
+						     AS_UTILS_FIND_ICON_HI_DPI,
+						     NULL);
+	if (fn_hidpi == NULL)
+		return;
+
+	/* if it's the same filename, and not an SVG, don't ship anything */
+	if (g_strcmp0 (fn, fn_hidpi) == 0 && g_strstr_len (fn, -1, ".svg") == NULL)
+		return;
+
+	/* load the HiDPI icon */
+	pixbuf_hidpi = asb_app_load_icon (plugin, app, fn_hidpi,
+					  fn_hidpi + strlen (tmpdir),
+					  128, NULL);
+	if (pixbuf_hidpi == NULL)
+		return;
+	asb_app_add_pixbuf (app, pixbuf_hidpi);
 }
 
 /**
@@ -265,21 +309,8 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				as_app_add_veto (AS_APP (app), "Uses GIF icon: %s", key);
 			else if (g_str_has_suffix (key, ".ico"))
 				as_app_add_veto (AS_APP (app), "Uses ICO icon: %s", key);
-
-			/* find icon */
-			pixbuf = asb_app_find_icon (plugin, app, tmpdir,
-						    key, &error_local);
-			if (pixbuf == NULL) {
-				as_app_add_veto (AS_APP (app), "Failed to find icon: %s",
-						 error_local->message);
-			} else {
-				/* save in target directory */
-				icon_filename = g_strdup_printf ("%s.png",
-								 as_app_get_id_filename (AS_APP (app)));
-				as_app_set_icon (AS_APP (app), icon_filename, -1);
-				as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_CACHED);
-				asb_app_add_pixbuf (app, pixbuf);
-			}
+			else
+				asb_plugin_desktop_add_icons (plugin, app, tmpdir, key);
 		}
 	}
 
