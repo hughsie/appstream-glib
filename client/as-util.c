@@ -555,8 +555,10 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 static gboolean
 as_util_upgrade (AsUtilPrivate *priv, gchar **values, GError **error)
 {
+	guint i;
+
 	/* check args */
-	if (g_strv_length (values) != 1) {
+	if (g_strv_length (values) < 1) {
 		/* TRANSLATORS: error message */
 		g_set_error_literal (error,
 				     AS_ERROR,
@@ -567,18 +569,24 @@ as_util_upgrade (AsUtilPrivate *priv, gchar **values, GError **error)
 	}
 
 	/* AppData */
-	if (as_app_guess_source_kind (values[0]) == AS_APP_SOURCE_KIND_APPDATA) {
+	for (i = 0; values[i] != NULL; i++) {
 		_cleanup_object_unref_ GFile *file = NULL;
-		file = g_file_new_for_path (values[0]);
-		return as_util_convert_appdata (file, file, 1.0, error);
-	}
 
-	/* don't know what to do */
-	g_set_error_literal (error,
-			     AS_ERROR,
-			     AS_ERROR_INVALID_ARGUMENTS,
-			     "Format not recognised");
-	return FALSE;
+		/* don't know what to do */
+		if (as_app_guess_source_kind (values[i]) != AS_APP_SOURCE_KIND_APPDATA) {
+			g_set_error_literal (error,
+					     AS_ERROR,
+					     AS_ERROR_INVALID_ARGUMENTS,
+					     "Format not recognised");
+			return FALSE;
+		}
+
+		/* use convert to do the upgrade */
+		file = g_file_new_for_path (values[i]);
+		if (!as_util_convert_appdata (file, file, 1.0, error))
+			return FALSE;
+	}
+	return TRUE;
 }
 
 /**
