@@ -39,7 +39,7 @@ typedef struct _AsbAppPrivate	AsbAppPrivate;
 struct _AsbAppPrivate
 {
 	GPtrArray	*requires_appdata;
-	GdkPixbuf	*pixbuf;
+	GPtrArray	*pixbufs;		/* of GdkPixbuf */
 	AsbPackage	*pkg;
 	gboolean	 ignore_requires_appdata;
 };
@@ -58,8 +58,7 @@ asb_app_finalize (GObject *object)
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 
 	g_ptr_array_unref (priv->requires_appdata);
-	if (priv->pixbuf != NULL)
-		g_object_unref (priv->pixbuf);
+	g_ptr_array_unref (priv->pixbufs);
 	if (priv->pkg != NULL)
 		g_object_unref (priv->pkg);
 
@@ -74,6 +73,7 @@ asb_app_init (AsbApp *app)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 	priv->requires_appdata = g_ptr_array_new_with_free_func (g_free);
+	priv->pixbufs = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 
 	/* all untrusted */
 	as_app_set_trust_flags (AS_APP (app),
@@ -164,21 +164,19 @@ asb_app_set_requires_appdata (AsbApp *app, gboolean requires_appdata)
 }
 
 /**
- * asb_app_set_pixbuf:
+ * asb_app_add_pixbuf:
  * @app: A #AsbApp
  * @pixbuf: a #GdkPixbuf
  *
- * Sets the icon for the application.
+ * Adds an icon for the application.
  *
- * Since: 0.1.0
+ * Since: 0.3.1
  **/
 void
-asb_app_set_pixbuf (AsbApp *app, GdkPixbuf *pixbuf)
+asb_app_add_pixbuf (AsbApp *app, GdkPixbuf *pixbuf)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
-	if (priv->pixbuf != NULL)
-		g_object_ref (priv->pixbuf);
-	priv->pixbuf = g_object_ref (pixbuf);
+	g_ptr_array_add (priv->pixbufs, g_object_ref (pixbuf));
 }
 
 /**
@@ -310,19 +308,26 @@ asb_app_save_resources (AsbApp *app, GError **error)
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 	AsScreenshot *ss;
 	guint i;
+	GdkPixbuf *pixbuf;
 	GPtrArray *screenshots;
 
 	/* any non-stock icon set */
-	if (priv->pixbuf != NULL) {
+	for (i = 0; i < priv->pixbufs->len; i++) {
 		const gchar *tmpdir;
 		_cleanup_free_ gchar *filename = NULL;
 
+		/* FIXME: only save the 64x64 pixbuf */
+		pixbuf = g_ptr_array_index (priv->pixbufs, i);
+		if (gdk_pixbuf_get_width (pixbuf) != 64)
+			continue;
+
+		/* save to disk */
 		tmpdir = asb_package_get_config (priv->pkg, "TempDir");
 		filename = g_build_filename (tmpdir,
 					     "icons",
 					     as_app_get_icon (AS_APP (app)),
 					     NULL);
-		if (!gdk_pixbuf_save (priv->pixbuf, filename, "png", error, NULL))
+		if (!gdk_pixbuf_save (pixbuf, filename, "png", error, NULL))
 			return FALSE;
 
 		/* set new AppStream compatible icon name */

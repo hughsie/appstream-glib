@@ -637,7 +637,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 			goto out;
 		}
 		as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_CACHED);
-		asb_app_set_pixbuf (app, pixbuf);
+		asb_app_add_pixbuf (app, pixbuf);
 	}
 
 	/* add */

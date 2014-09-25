@@ -72,7 +72,7 @@ void		 asb_app_add_requires_appdata	(AsbApp		*app,
 						 G_GNUC_PRINTF(2,3);
 void		 asb_app_set_requires_appdata	(AsbApp		*app,
 						 gboolean	 requires_appdata);
-void		 asb_app_set_pixbuf		(AsbApp		*app,
+void		 asb_app_add_pixbuf		(AsbApp		*app,
 						 GdkPixbuf	*pixbuf);
 gboolean	 asb_app_add_screenshot_source	(AsbApp		*app,
 						 const gchar	*filename,
