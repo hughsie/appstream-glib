@@ -78,12 +78,14 @@ asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
  * asb_app_load_icon:
  */
 static GdkPixbuf *
-asb_app_load_icon (AsbApp *app,
+asb_app_load_icon (AsbPlugin *plugin,
+		   AsbApp *app,
 		   const gchar *filename,
 		   const gchar *logfn,
 		   GError **error)
 {
 	GdkPixbuf *pixbuf = NULL;
+	guint min_icon_size;
 	guint pixbuf_height;
 	guint pixbuf_width;
 	guint tmp_height;
@@ -104,8 +106,9 @@ asb_app_load_icon (AsbApp *app,
 		return NULL;
 
 	/* check size */
-	if (gdk_pixbuf_get_width (pixbuf_src) < AS_APP_ICON_MIN_WIDTH ||
-	    gdk_pixbuf_get_height (pixbuf_src) < AS_APP_ICON_MIN_HEIGHT) {
+	min_icon_size = asb_context_get_min_icon_size (plugin->ctx);
+	if (gdk_pixbuf_get_width (pixbuf_src) < (gint) min_icon_size &&
+	    gdk_pixbuf_get_height (pixbuf_src) < (gint) min_icon_size) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
 			     ASB_PLUGIN_ERROR_FAILED,
@@ -192,7 +195,8 @@ asb_app_load_icon (AsbApp *app,
  * asb_app_find_icon:
  */
 static GdkPixbuf *
-asb_app_find_icon (AsbApp *app,
+asb_app_find_icon (AsbPlugin *plugin,
+		   AsbApp *app,
 		   const gchar *tmpdir,
 		   const gchar *something,
 		   GError **error)
@@ -205,7 +209,7 @@ asb_app_find_icon (AsbApp *app,
 		return NULL;
 
 	/* load the icon */
-	return asb_app_load_icon (app, fn, fn + strlen (tmpdir), error);
+	return asb_app_load_icon (plugin, app, fn, fn + strlen (tmpdir), error);
 }
 
 /**
@@ -267,7 +271,8 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				as_app_add_veto (AS_APP (app), "Uses ICO icon: %s", key);
 
 			/* find icon */
-			pixbuf = asb_app_find_icon (app, tmpdir, key, &error_local);
+			pixbuf = asb_app_find_icon (plugin, app, tmpdir,
+						    key, &error_local);
 			if (pixbuf == NULL) {
 				as_app_add_veto (AS_APP (app), "Failed to find icon: %s",
 						 error_local->message);

@@ -75,6 +75,8 @@ void		 asb_context_set_add_cache_id	(AsbContext	*ctx,
 						 gboolean	 add_cache_id);
 void		 asb_context_set_max_threads	(AsbContext	*ctx,
 						 guint		 max_threads);
+void		 asb_context_set_min_icon_size	(AsbContext	*ctx,
+						 guint		 min_icon_size);
 void		 asb_context_set_old_metadata	(AsbContext	*ctx,
 						 const gchar	*old_metadata);
 void		 asb_context_set_extra_appstream (AsbContext	*ctx,
@@ -101,6 +103,7 @@ const gchar	*asb_context_get_temp_dir	(AsbContext	*ctx);
 gboolean	 asb_context_get_add_cache_id	(AsbContext	*ctx);
 gboolean	 asb_context_get_no_net		(AsbContext	*ctx);
 gdouble		 asb_context_get_api_version	(AsbContext	*ctx);
+guint		 asb_context_get_min_icon_size	(AsbContext	*ctx);
 
 gboolean	 asb_context_setup		(AsbContext	*ctx,
 						 GError		**error);

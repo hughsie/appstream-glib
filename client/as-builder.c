@@ -70,6 +70,7 @@ main (int argc, char **argv)
 	gboolean verbose = FALSE;
 	gdouble api_version = 0.0f;
 	gint max_threads = 4;
+	gint min_icon_size = 32;
 	guint i;
 	_cleanup_dir_close_ GDir *dir = NULL;
 	_cleanup_error_free_ GError *error = NULL;
@@ -130,6 +131,9 @@ main (int argc, char **argv)
 		{ "max-threads", '\0', 0, G_OPTION_ARG_INT, &max_threads,
 			/* TRANSLATORS: command line option */
 			_("Set the number of threads"), "THREAD_COUNT" },
+		{ "min-icon-size", '\0', 0, G_OPTION_ARG_INT, &min_icon_size,
+			/* TRANSLATORS: command line option */
+			_("Set the minimum icon size in pixels"), "ICON_SIZE" },
 		{ "api-version", '\0', 0, G_OPTION_ARG_DOUBLE, &api_version,
 			/* TRANSLATORS: command line option */
 			_("Set the AppStream version"), "API_VERSION" },
@@ -209,6 +213,7 @@ main (int argc, char **argv)
 	asb_context_set_cache_dir (ctx, cache_dir);
 	asb_context_set_basename (ctx, basename);
 	asb_context_set_max_threads (ctx, max_threads);
+	asb_context_set_min_icon_size (ctx, min_icon_size);
 	ret = asb_context_setup (ctx, &error);
 	if (!ret) {
 		/* TRANSLATORS: error message */

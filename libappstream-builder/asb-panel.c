@@ -50,6 +50,7 @@ struct _AsbPanelPrivate
 	guint			 number_cleared;
 	guint			 title_width;
 	guint			 title_width_max;
+	guint			 status_width_max;
 	guint			 time_secs_min;
 	gboolean		 enabled;
 };
@@ -329,6 +330,7 @@ void
 asb_panel_set_status (AsbPanel *panel, const gchar *fmt, ...)
 {
 	AsbPanelItem *item;
+	AsbPanelPrivate *priv = GET_PRIVATE (panel);
 	va_list args;
 
 	item = asb_panel_ensure_item (panel);
@@ -337,6 +339,10 @@ asb_panel_set_status (AsbPanel *panel, const gchar *fmt, ...)
 	va_start (args, fmt);
 	item->status = g_strdup_vprintf (fmt, args);
 	va_end (args);
+
+	/* truncate */
+	if (strlen (item->status) > priv->status_width_max)
+		item->status[priv->status_width_max] = '\0';
 
 	asb_panel_refresh (panel);
 }
@@ -382,7 +388,8 @@ asb_panel_init (AsbPanel *panel)
 	AsbPanelPrivate *priv = GET_PRIVATE (panel);
 	priv->items = g_ptr_array_new_with_free_func ((GDestroyNotify) asb_panel_item_free);
 	priv->title_width = 20;
-	priv->title_width_max = 60;
+	priv->title_width_max = 50;
+	priv->status_width_max = 40;
 	priv->timer = g_timer_new ();
 	priv->time_secs_min = G_MAXUINT;
 	g_mutex_init (&priv->mutex);

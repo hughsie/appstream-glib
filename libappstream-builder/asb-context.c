@@ -66,6 +66,7 @@ struct _AsbContextPrivate
 	gboolean		 add_cache_id;
 	gboolean		 no_net;
 	guint			 max_threads;
+	guint			 min_icon_size;
 	gdouble			 api_version;
 	gchar			*old_metadata;
 	gchar			*extra_appstream;
@@ -173,6 +174,39 @@ asb_context_set_max_threads (AsbContext *ctx, guint max_threads)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	priv->max_threads = max_threads;
+}
+
+/**
+ * asb_context_set_min_icon_size:
+ * @ctx: A #AsbContext
+ * @min_icon_size: integer
+ *
+ * Sets the smallest icon size in pixels supported.
+ *
+ * Since: 0.3.1
+ **/
+void
+asb_context_set_min_icon_size (AsbContext *ctx, guint min_icon_size)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	priv->min_icon_size = min_icon_size;
+}
+
+/**
+ * asb_context_get_min_icon_size:
+ * @ctx: A #AsbContext
+ *
+ * Gets the minimum icon size in pixels.
+ *
+ * Returns: size
+ *
+ * Since: 0.3.1
+ **/
+guint
+asb_context_get_min_icon_size (AsbContext *ctx)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	return priv->min_icon_size;
 }
 
 /**
@@ -1401,6 +1435,7 @@ asb_context_init (AsbContext *ctx)
 	priv->store_ignore = as_store_new ();
 	priv->store_old = as_store_new ();
 	priv->max_threads = 1;
+	priv->min_icon_size = 32;
 }
 
 /**
