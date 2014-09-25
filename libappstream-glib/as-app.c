@@ -2973,6 +2973,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 
 	/* <id> */
 	case AS_TAG_ID:
+		if (as_node_get_attribute (n, "xml:lang") != NULL) {
+			priv->problems |= AS_APP_PROBLEM_TRANSLATED_ID;
+			break;
+		}
 		tmp = as_node_get_attribute (n, "type");
 		if (tmp != NULL)
 			as_app_set_id_kind (app, as_id_kind_from_string (tmp));
@@ -3163,12 +3167,20 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 
 	/* <project_license> */
 	case AS_TAG_PROJECT_LICENSE:
+		if (as_node_get_attribute (n, "xml:lang") != NULL) {
+			priv->problems |= AS_APP_PROBLEM_TRANSLATED_LICENSE;
+			break;
+		}
 		g_free (priv->project_license);
 		priv->project_license = as_node_take_data (n);
 		break;
 
 	/* <project_license> */
 	case AS_TAG_METADATA_LICENSE:
+		if (as_node_get_attribute (n, "xml:lang") != NULL) {
+			priv->problems |= AS_APP_PROBLEM_TRANSLATED_LICENSE;
+			break;
+		}
 		as_app_set_metadata_license (app, as_node_get_data (n), -1);
 		break;
 
@@ -3192,6 +3204,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 
 	/* <project_group> */
 	case AS_TAG_PROJECT_GROUP:
+		if (as_node_get_attribute (n, "xml:lang") != NULL) {
+			priv->problems |= AS_APP_PROBLEM_TRANSLATED_PROJECT_GROUP;
+			break;
+		}
 		g_free (priv->project_group);
 		priv->project_group = as_node_take_data (n);
 		break;

@@ -1776,6 +1776,23 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 			}
 		}
 
+		/* check for translations where there should be none */
+		if ((as_app_get_problems (app) & AS_APP_PROBLEM_TRANSLATED_ID) != 0) {
+			as_store_validate_add (probs,
+					       AS_PROBLEM_KIND_TAG_INVALID,
+					       "<id> values cannot be translated");
+		}
+		if ((as_app_get_problems (app) & AS_APP_PROBLEM_TRANSLATED_LICENSE) != 0) {
+			as_store_validate_add (probs,
+					       AS_PROBLEM_KIND_TAG_INVALID,
+					       "<license> values cannot be translated");
+		}
+		if ((as_app_get_problems (app) & AS_APP_PROBLEM_TRANSLATED_PROJECT_GROUP) != 0) {
+			as_store_validate_add (probs,
+					       AS_PROBLEM_KIND_TAG_INVALID,
+					       "<project_group> values cannot be translated");
+		}
+
 		/* validate each application */
 		if (flags & AS_APP_VALIDATE_FLAG_ALL_APPS) {
 			probs_app = as_app_validate (app, flags, error);

@@ -44,6 +44,9 @@ G_BEGIN_DECLS
  * @AS_APP_PROBLEM_INTLTOOL_DESCRIPTION:	<_p>, <_li> tag detected
  * @AS_APP_PROBLEM_NOT_VALID_UTF8:		Text with invalid UTF-8
  * @AS_APP_PROBLEM_PREFORMATTED_DESCRIPTION:	Preformatted description found
+ * @AS_APP_PROBLEM_TRANSLATED_ID:		The <id> value was translated
+ * @AS_APP_PROBLEM_TRANSLATED_LICENSE:		The <license> value was translated
+ * @AS_APP_PROBLEM_TRANSLATED_PROJECT_GROUP:	The <project_group> value was translated
  *
  * The application problems detected when loading.
  **/
@@ -58,6 +61,9 @@ typedef enum {
 	AS_APP_PROBLEM_INTLTOOL_DESCRIPTION	= 1 << 6,
 	AS_APP_PROBLEM_NOT_VALID_UTF8		= 1 << 7,
 	AS_APP_PROBLEM_PREFORMATTED_DESCRIPTION	= 1 << 8,
+	AS_APP_PROBLEM_TRANSLATED_ID		= 1 << 9,
+	AS_APP_PROBLEM_TRANSLATED_LICENSE	= 1 << 10,
+	AS_APP_PROBLEM_TRANSLATED_PROJECT_GROUP	= 1 << 11,
 	/*< private >*/
 	AS_APP_PROBLEM_LAST
 } AsAppProblems;
