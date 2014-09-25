@@ -2262,6 +2262,14 @@ as_test_utils_icons_func (void)
 	g_assert_no_error (error);
 	g_free (tmp);
 
+	/* theme name, HiDPI */
+	tmp = as_utils_find_icon_filename_full (destdir, "test3",
+						AS_UTILS_FIND_ICON_HI_DPI,
+						&error);
+	g_assert_cmpstr (tmp, !=, NULL);
+	g_assert_no_error (error);
+	g_free (tmp);
+
 	/* full pixmaps invalid */
 	tmp = as_utils_find_icon_filename (destdir, "/usr/share/pixmaps/not-going-to-exist.png", &error);
 	g_assert_cmpstr (tmp, ==, NULL);

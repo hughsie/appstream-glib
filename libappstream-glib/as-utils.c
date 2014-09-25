@@ -790,21 +790,23 @@ as_pixbuf_sharpen (GdkPixbuf *src, gint radius, gdouble amount)
 }
 
 /**
- * as_utils_find_icon_filename:
+ * as_utils_find_icon_filename_full:
  * @destdir: the destdir.
  * @search: the icon search name, e.g. "microphone.svg"
+ * @flags: A #AsUtilsFindIconFlag bitfield
  * @error: A #GError or %NULL
  *
  * Finds an icon filename from a filesystem root.
  *
  * Returns: (transfer full): a newly allocated %NULL terminated string
  *
- * Since: 0.2.5
+ * Since: 0.3.1
  **/
 gchar *
-as_utils_find_icon_filename (const gchar *destdir,
-			     const gchar *search,
-			     GError **error)
+as_utils_find_icon_filename_full (const gchar *destdir,
+				  const gchar *search,
+				  AsUtilsFindIconFlag flags,
+				  GError **error)
 {
 	guint i;
 	guint j;
@@ -865,6 +867,8 @@ as_utils_find_icon_filename (const gchar *destdir,
 	/* icon theme apps */
 	for (k = 0; theme_dirs[k] != NULL; k++) {
 		for (i = 0; sizes[i] != NULL; i++) {
+			if (i == 0 && (flags & AS_UTILS_FIND_ICON_HI_DPI) > 0)
+				continue;
 			for (m = 0; types[m] != NULL; m++) {
 				for (j = 0; supported_ext[j] != NULL; j++) {
 					_cleanup_free_ gchar *tmp;
@@ -903,6 +907,28 @@ as_utils_find_icon_filename (const gchar *destdir,
 		     AS_APP_ERROR_FAILED,
 		     "Failed to find icon %s", search);
 	return NULL;
+}
+
+/**
+ * as_utils_find_icon_filename:
+ * @destdir: the destdir.
+ * @search: the icon search name, e.g. "microphone.svg"
+ * @error: A #GError or %NULL
+ *
+ * Finds an icon filename from a filesystem root.
+ *
+ * Returns: (transfer full): a newly allocated %NULL terminated string
+ *
+ * Since: 0.2.5
+ **/
+gchar *
+as_utils_find_icon_filename (const gchar *destdir,
+			     const gchar *search,
+			     GError **error)
+{
+	return as_utils_find_icon_filename_full (destdir, search,
+						 AS_UTILS_FIND_ICON_NONE,
+						 error);
 }
 
 /**

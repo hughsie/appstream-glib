@@ -30,6 +30,7 @@ test_files =						\
 	usr/share/app-install/desktop/test.desktop	\
 	usr/share/app-install/icons/test.png		\
 	usr/share/icons/hicolor/64x64/apps/test2.png	\
+	usr/share/icons/hicolor/128x128/apps/test3.png	\
 	usr/share/pixmaps/test.png			\
 	validate.xml.gz
 

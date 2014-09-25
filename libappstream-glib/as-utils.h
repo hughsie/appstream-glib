@@ -30,6 +30,20 @@
 
 G_BEGIN_DECLS
 
+/**
+ * AsUtilsFindIconFlag:
+ * @AS_UTILS_FIND_ICON_NONE:			No flags set
+ * @AS_UTILS_FIND_ICON_HI_DPI:			Prefer a HiDPI icon
+ *
+ * The flags used when finding icons.
+ **/
+typedef enum {
+	AS_UTILS_FIND_ICON_NONE			= 0,
+	AS_UTILS_FIND_ICON_HI_DPI		= 1 << 0,
+	/*< private >*/
+	AS_UTILS_FIND_ICON_LAST
+} AsUtilsFindIconFlag;
+
 gchar		*as_markup_convert_simple	(const gchar	*markup,
 						 gssize		 markup_len,
 						 GError		**error);
@@ -46,6 +60,10 @@ gboolean	 as_utils_check_url_exists	(const gchar	*url,
 						 GError		**error);
 gchar		*as_utils_find_icon_filename	(const gchar	*destdir,
 						 const gchar	*search,
+						 GError		**error);
+gchar		*as_utils_find_icon_filename_full (const gchar	*destdir,
+						 const gchar	*search,
+						 AsUtilsFindIconFlag flags,
 						 GError		**error);
 gchar		*as_utils_get_string_overlap	(const gchar	*s1,
 						 const gchar	*s2);
