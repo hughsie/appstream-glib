@@ -262,8 +262,8 @@ as_util_convert_appdata (GFile *file_input,
 	n2 = as_node_find (n, "metadata_license");
 	if (n2 == NULL) {
 		action_required = TRUE;
-		n2 = as_node_insert (n, "metadata_license", "FIXME: Insert SPDX ID Here",
-				     AS_NODE_INSERT_FLAG_NONE, NULL);
+		n2 = as_node_insert (n, "metadata_license", "<!-- Insert SPDX ID Here -->",
+				     AS_NODE_INSERT_FLAG_PRE_ESCAPED, NULL);
 	} else {
 		tmp = as_node_get_data (n2);
 
@@ -292,8 +292,9 @@ as_util_convert_appdata (GFile *file_input,
 	n2 = as_node_find (n, "project_license");
 	if (n2 == NULL) {
 		action_required = TRUE;
-		n2 = as_node_insert (n, "project_license", "FIXME: Insert SPDX ID Here",
-				     AS_NODE_INSERT_FLAG_NONE, NULL);
+		n2 = as_node_insert (n, "project_license", "<!-- Insert SPDX ID Here -->",
+				     AS_NODE_INSERT_FLAG_PRE_ESCAPED, NULL);
+		as_node_set_comment (n2, "FIXME: Use https://spdx.org/licenses/", -1);
 	} else {
 		/* ensure in SPDX format */
 		if (!as_utils_is_spdx_license_id (as_node_get_data (n2))) {
@@ -315,27 +316,31 @@ as_util_convert_appdata (GFile *file_input,
 		n3 = as_node_find (n, "project_group");
 		if (n3 != NULL) {
 			if (g_strcmp0 (as_node_get_data (n3), "GNOME") == 0) {
-				as_node_insert (n, "developer_name", "The GNOME Project",
-						flags_translate, NULL);
+				n3 = as_node_insert (n, "developer_name", "The GNOME Project",
+						     flags_translate, NULL);
+				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group", -1);
 			} else if (g_strcmp0 (as_node_get_data (n3), "KDE") == 0) {
-				as_node_insert (n, "developer_name", "KDE e.V.",
-						AS_NODE_INSERT_FLAG_NONE, NULL);
+				n3 = as_node_insert (n, "developer_name", "KDE e.V.",
+						     AS_NODE_INSERT_FLAG_NONE, NULL);
+				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group", -1);
 			} else if (g_strcmp0 (as_node_get_data (n3), "XFCE") == 0) {
-				as_node_insert (n, "developer_name", "Xfce Development Team",
-						flags_translate, NULL);
+				n3 = as_node_insert (n, "developer_name", "Xfce Development Team",
+						     flags_translate, NULL);
+				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group", -1);
 			} else if (g_strcmp0 (as_node_get_data (n3), "MATE") == 0) {
-				as_node_insert (n, "developer_name", "The MATE Project",
-						flags_translate, NULL);
+				n3 = as_node_insert (n, "developer_name", "The MATE Project",
+						     flags_translate, NULL);
+				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group", -1);
 			} else {
 				action_required = TRUE;
-				n3 = as_node_insert (n, "developer_name", "FIXME: Company Name",
-						     AS_NODE_INSERT_FLAG_NONE, NULL);
+				n3 = as_node_insert (n, "developer_name", "<!-- Company Name -->",
+						     AS_NODE_INSERT_FLAG_PRE_ESCAPED, NULL);
 				as_node_set_comment (n3, "FIXME: compulsory_for_desktop was not recognised", -1);
 			}
 		} else {
 			action_required = TRUE;
-			n3 = as_node_insert (n, "developer_name", "FIXME: Company Name",
-					     AS_NODE_INSERT_FLAG_NONE, NULL);
+			n3 = as_node_insert (n, "developer_name", "<!-- Company Name -->",
+					     AS_NODE_INSERT_FLAG_PRE_ESCAPED, NULL);
 			as_node_set_comment (n3, "FIXME: You can use a project or "
 					     "developer name if there's no company", -1);
 		}
@@ -348,36 +353,36 @@ as_util_convert_appdata (GFile *file_input,
 	/* ensure each URL type exists */
 	if (as_node_find_with_attribute (n, "url", "type", "homepage") == NULL) {
 		if (g_strcmp0 (project_group, "GNOME") == 0) {
-			n3 = as_node_insert (n, "url", "FIXME: https://wiki.gnome.org/Apps/FIXME",
-					     AS_NODE_INSERT_FLAG_NONE,
+			n3 = as_node_insert (n, "url", "<!-- https://wiki.gnome.org/Apps/FIXME -->",
+					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "homepage", NULL);
 		} else {
-			n3 = as_node_insert (n, "url", "FIXME: http://www.homepage.com/",
-					     AS_NODE_INSERT_FLAG_NONE,
+			n3 = as_node_insert (n, "url", "<!-- http://www.homepage.com/ -->",
+					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "homepage", NULL);
 			as_node_set_comment (n3, "FIXME: homepage for the application", -1);
 		}
 	}
 	if (as_node_find_with_attribute (n, "url", "type", "bugtracker") == NULL) {
 		if (g_strcmp0 (project_group, "GNOME") == 0) {
-			n3 = as_node_insert (n, "url", "FIXME: https://bugzilla.gnome.org/enter_bug.cgi?product=FIXME",
-					     AS_NODE_INSERT_FLAG_NONE,
+			n3 = as_node_insert (n, "url", "<!-- https://bugzilla.gnome.org/enter_bug.cgi?product=FIXME -->",
+					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "bugtracker", NULL);
 		} else if (g_strcmp0 (project_group, "KDE") == 0) {
-			n3 = as_node_insert (n, "url", "FIXME: https://bugs.kde.org/enter_bug.cgi?format=guided",
-					     AS_NODE_INSERT_FLAG_NONE,
+			n3 = as_node_insert (n, "url", "<!-- https://bugs.kde.org/enter_bug.cgi?format=guided -->",
+					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "bugtracker", NULL);
 		} else if (g_strcmp0 (project_group, "XFCE") == 0) {
-			n3 = as_node_insert (n, "url", "FIXME: https://bugzilla.xfce.org/enter_bug.cgi",
-					     AS_NODE_INSERT_FLAG_NONE,
+			n3 = as_node_insert (n, "url", "<!-- https://bugzilla.xfce.org/enter_bug.cgi -->",
+					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "bugtracker", NULL);
 		} else {
-			n3 = as_node_insert (n, "url", "FIXME: http://www.homepage.com/where-to-report_bug.html",
-					     AS_NODE_INSERT_FLAG_NONE,
+			n3 = as_node_insert (n, "url", "<!-- http://www.homepage.com/where-to-report_bug.html -->",
+					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "bugtracker", NULL);
-			as_node_set_comment (n3, "FIXME: where to report bugs for "
-					     "the application, or empty for none", -1);
 		}
+		as_node_set_comment (n3, "FIXME: where to report bugs for "
+				     "the application", -1);
 	}
 	if (as_node_find_with_attribute (n, "url", "type", "donation") == NULL) {
 		if (g_strcmp0 (project_group, "GNOME") == 0) {
@@ -386,25 +391,25 @@ as_util_convert_appdata (GFile *file_input,
 					     "type", "donation", NULL);
 			as_node_set_comment (n3, "GNOME Projects usually have no per-app donation page", -1);
 		} else {
-			n3 = as_node_insert (n, "url", "FIXME: http://www.homepage.com/donation.html",
-					     AS_NODE_INSERT_FLAG_NONE,
+			n3 = as_node_insert (n, "url", "<!-- http://www.homepage.com/donation.html -->",
+					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "donation", NULL);
 			as_node_set_comment (n3, "FIXME: where to donate to the application", -1);
 		}
 	}
 	if (as_node_find_with_attribute (n, "url", "type", "help") == NULL) {
 		if (g_strcmp0 (project_group, "GNOME") == 0) {
-			n3 = as_node_insert (n, "url", "FIXME: https://help.gnome.org/users/FIXME/stable/",
-					     AS_NODE_INSERT_FLAG_NONE,
+			n3 = as_node_insert (n, "url", "<!-- https://help.gnome.org/users/FIXME/stable/ -->",
+					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "help", NULL);
 			as_node_set_comment (n3, "FIXME: where on the internet users "
-					     "can find help or empty for none", -1);
+					     "can find help", -1);
 		} else {
-			n3 = as_node_insert (n, "url", "FIXME: http://www.homepage.com/docs/",
-					     AS_NODE_INSERT_FLAG_NONE,
+			n3 = as_node_insert (n, "url", "<!-- http://www.homepage.com/docs/ -->",
+					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "help", NULL);
 			as_node_set_comment (n3, "FIXME: where to report bugs for "
-					     "the application, or empty for none", -1);
+					     "the application", -1);
 		}
 	}
 
@@ -412,8 +417,8 @@ as_util_convert_appdata (GFile *file_input,
 	n2 = as_node_find (n, "updatecontact");
 	if (n2 == NULL) {
 		action_required = TRUE;
-		n3 = as_node_insert (n, "updatecontact", "FIXME: upstream_contact_at_email.com",
-				     AS_NODE_INSERT_FLAG_NONE, NULL);
+		n3 = as_node_insert (n, "updatecontact", "<!-- upstream-contact_at_email.com -->",
+				     AS_NODE_INSERT_FLAG_PRE_ESCAPED, NULL);
 		as_node_set_comment (n3, "FIXME: this is optional, but recommended", -1);
 	}
 
@@ -435,9 +440,10 @@ as_util_convert_appdata (GFile *file_input,
 			as_node_set_data (n3, tmp, -1, AS_NODE_INSERT_FLAG_NONE);
 			as_node_set_data (n2, NULL, -1, AS_NODE_INSERT_FLAG_NONE);
 			action_required = TRUE;
-			as_node_insert (n2, "caption", "FIXME: Describe this "
-					"screenshot in less than ~10 words",
-					flags_translate, NULL);
+			as_node_insert (n2, "caption", "<!-- Describe this "
+					"screenshot in less than ~10 words -->",
+					flags_translate | AS_NODE_INSERT_FLAG_PRE_ESCAPED,
+					NULL);
 		}
 	}
 
