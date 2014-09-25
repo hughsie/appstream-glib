@@ -1282,7 +1282,13 @@ as_test_node_func (void)
 static void
 as_test_node_xml_func (void)
 {
-	const gchar *valid = "<!-- this documents foo --><foo><!-- this documents bar --><bar key=\"value\">baz</bar></foo>";
+	const gchar *valid = "<!--\n"
+			     "  this documents foo\n"
+			     "-->"
+			     "<foo>"
+			     "<!-- this documents bar -->"
+			     "<bar key=\"value\">baz</bar>"
+			     "</foo>";
 	GError *error = NULL;
 	GNode *n2;
 	GNode *root;
@@ -1357,6 +1363,21 @@ as_test_node_xml_func (void)
 	n2 = as_node_find (root, "foo");
 	g_assert (n2 != NULL);
 	g_assert_cmpstr (as_node_get_comment (n2), ==, "this documents foo");
+	as_node_unref (root);
+
+	/* keep comment formatting */
+	root = as_node_from_xml (valid, -1,
+				 AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS |
+				 AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
+				 &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n2 = as_node_find (root, "foo/bar");
+	g_assert (n2 != NULL);
+	g_assert_cmpstr (as_node_get_comment (n2), ==, " this documents bar ");
+	n2 = as_node_find (root, "foo");
+	g_assert (n2 != NULL);
+	g_assert_cmpstr (as_node_get_comment (n2), ==, "\n  this documents foo\n");
 
 	/* check comments were preserved */
 	xml = as_node_to_xml (root, AS_NODE_TO_XML_FLAG_NONE);

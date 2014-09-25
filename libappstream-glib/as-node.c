@@ -370,7 +370,7 @@ as_node_to_xml_string (GString *xml,
 			g_string_append (xml, "\n");
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_INDENT) > 0)
 			as_node_add_padding (xml, depth - depth_offset);
-		g_string_append_printf (xml, "<!-- %s -->", comment);
+		g_string_append_printf (xml, "<!--%s-->", comment);
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE) > 0)
 			g_string_append (xml, "\n");
 	}
@@ -636,7 +636,9 @@ as_node_passthrough_cb (GMarkupParseContext *context,
 	found = g_strrstr (text, "-->");
 	if (found != NULL)
 		*found = '\0';
-	tmp = g_strstrip (text + 4);
+	tmp = text + 4;
+	if ((helper->flags & AS_NODE_FROM_XML_FLAG_LITERAL_TEXT) == 0)
+		tmp = g_strstrip ((gchar *) tmp);
 	if (tmp == NULL || tmp[0] == '\0')
 		return;
 	as_node_add_attribute (helper->current, "@comment-tmp", tmp, -1);
