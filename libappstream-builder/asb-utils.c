@@ -248,11 +248,7 @@ asb_utils_explode_file (struct archive_entry *entry,
 	tmp = archive_entry_hardlink (entry);
 	if (tmp != NULL) {
 		g_ptr_array_add (symlink_glob, asb_glob_value_new (tmp, ""));
-		symlink_depth = asb_utils_count_directories_deep (path) - 1;
-		back_up = asb_utils_get_back_to_root (symlink_depth);
-		if (tmp[0] == '/')
-			tmp++;
-		g_snprintf (buf, PATH_MAX, "%s%s", back_up, tmp);
+		g_snprintf (buf, PATH_MAX, "%s/%s", dir, tmp);
 		archive_entry_update_hardlink_utf8 (entry, buf);
 	}
 
