@@ -615,10 +615,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	if (tmp != NULL) {
 		icon_filename = g_strdup_printf ("%s.png", as_app_get_id_filename (AS_APP (app)));
 		as_app_set_icon (AS_APP (app), icon_filename, -1);
-		pixbuf = asb_font_get_pixbuf (ft_face,
-					      AS_APP_ICON_DEFAULT_WIDTH,
-					      AS_APP_ICON_DEFAULT_HEIGHT,
-					      tmp, error);
+		pixbuf = asb_font_get_pixbuf (ft_face, 64, 64, tmp, error);
 		if (pixbuf == NULL) {
 			ret = FALSE;
 			goto out;
@@ -631,9 +628,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				     ASB_PLUGIN_ERROR,
 				     ASB_PLUGIN_ERROR_FAILED,
 				     "Could not generate %ix%i font icon with '%s'",
-				     AS_APP_ICON_DEFAULT_WIDTH,
-				     AS_APP_ICON_DEFAULT_HEIGHT,
-				     tmp);
+				     64, 64, tmp);
 			goto out;
 		}
 		as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_CACHED);
