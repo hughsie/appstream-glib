@@ -364,15 +364,23 @@ as_node_to_xml_string (GString *xml,
 	/* comment */
 	comment = as_node_get_comment (n);
 	if (comment != NULL) {
+		guint i;
+		_cleanup_strv_free_ gchar **split = NULL;
+
 		/* do not put additional spacing for the root node */
 		if (depth_offset < g_node_depth ((GNode *) n) &&
 		    (flags & AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE) > 0)
 			g_string_append (xml, "\n");
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_INDENT) > 0)
 			as_node_add_padding (xml, depth - depth_offset);
-		g_string_append_printf (xml, "<!--%s-->", comment);
-		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE) > 0)
-			g_string_append (xml, "\n");
+
+		/* add each comment section */
+		split = g_strsplit (comment, "<&>", -1);
+		for (i = 0; split[i] != NULL; i++) {
+			g_string_append_printf (xml, "<!--%s-->", split[i]);
+			if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE) > 0)
+				g_string_append (xml, "\n");
+		}
 	}
 
 	/* root node */
@@ -615,6 +623,7 @@ as_node_passthrough_cb (GMarkupParseContext *context,
 			GError             **error)
 {
 	AsNodeToXmlHelper *helper = (AsNodeToXmlHelper *) user_data;
+	const gchar *existing;
 	const gchar *tmp;
 	gchar *found;
 	_cleanup_free_ gchar *text = NULL;
@@ -641,7 +650,16 @@ as_node_passthrough_cb (GMarkupParseContext *context,
 		tmp = g_strstrip ((gchar *) tmp);
 	if (tmp == NULL || tmp[0] == '\0')
 		return;
-	as_node_add_attribute (helper->current, "@comment-tmp", tmp, -1);
+
+	/* append together comments */
+	existing = as_node_get_attribute (helper->current, "@comment-tmp");
+	if (existing == NULL) {
+		as_node_add_attribute (helper->current, "@comment-tmp", tmp, -1);
+	} else {
+		_cleanup_free_ gchar *join = NULL;
+		join = g_strdup_printf ("%s<&>%s", existing, tmp);
+		as_node_add_attribute (helper->current, "@comment-tmp", join, -1);
+	}
 }
 
 /**

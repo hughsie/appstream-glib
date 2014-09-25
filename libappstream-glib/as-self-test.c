@@ -1385,6 +1385,24 @@ as_test_node_xml_func (void)
 	g_assert_cmpstr (xml->str, ==, valid);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
+
+	/* check comments are appended together */
+	root = as_node_from_xml ("<!-- 1st -->\n<!-- 2nd -->\n<foo/>\n", -1,
+				 AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS |
+				 AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
+				 &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n2 = as_node_find (root, "foo");
+	g_assert (n2 != NULL);
+	g_assert_cmpstr (as_node_get_comment (n2), ==, " 1st <&> 2nd ");
+
+	/* check comments were output as two blocks */
+	xml = as_node_to_xml (root, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	g_assert (xml != NULL);
+	g_assert_cmpstr (xml->str, ==, "<!-- 1st -->\n<!-- 2nd -->\n<foo/>\n");
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
 }
 
 static void
