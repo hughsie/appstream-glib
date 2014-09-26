@@ -292,6 +292,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	/* create app */
 	app_id = g_path_get_basename (filename);
 	app = asb_app_new (pkg, app_id);
+	asb_app_set_hidpi_enabled (app, asb_context_get_hidpi_enabled (plugin->ctx));
 	full_filename = g_build_filename (tmpdir, filename, NULL);
 	ret = as_app_parse_file (AS_APP (app),
 				 full_filename,

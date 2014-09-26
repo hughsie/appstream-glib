@@ -623,6 +623,7 @@ asb_context_load_extra_screenshots (AsbContext *ctx, AsApp *app, GError **error)
 
 	/* create a new AsbApp and add all the extra screenshots */
 	app_build = asb_app_new (pkg, as_app_get_id (app));
+	asb_app_set_hidpi_enabled (app_build, priv->hidpi_enabled);
 	as_app_subsume_full (AS_APP (app_build), app,
 			     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
 	dir = g_dir_open (path, 0, error);

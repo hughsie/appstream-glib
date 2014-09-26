@@ -160,6 +160,7 @@ asb_plugin_process (AsbPlugin *plugin,
 	as_app_set_name (AS_APP (app), "C", "GStreamer Multimedia Codecs", -1);
 	as_app_set_icon (AS_APP (app), "application-x-executable", -1);
 	asb_app_set_requires_appdata (app, TRUE);
+	asb_app_set_hidpi_enabled (app, asb_context_get_hidpi_enabled (plugin->ctx));
 	as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_STOCK);
 	as_app_add_category (AS_APP (app), "Addons", -1);
 	as_app_add_category (AS_APP (app), "Codecs", -1);

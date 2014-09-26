@@ -598,6 +598,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	as_app_add_category (AS_APP (app), "Addons", -1);
 	as_app_add_category (AS_APP (app), "Fonts", -1);
 	asb_app_set_requires_appdata (app, TRUE);
+	asb_app_set_hidpi_enabled (app, asb_context_get_hidpi_enabled (plugin->ctx));
 	asb_plugin_font_set_name (app, ft_face->family_name);
 	comment = g_strdup_printf ("A %s font from %s",
 				   ft_face->style_name,

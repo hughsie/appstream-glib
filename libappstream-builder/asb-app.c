@@ -42,6 +42,7 @@ struct _AsbAppPrivate
 	GPtrArray	*pixbufs;		/* of GdkPixbuf */
 	AsbPackage	*pkg;
 	gboolean	 ignore_requires_appdata;
+	gboolean	 hidpi_enabled;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbApp, asb_app, AS_TYPE_APP)
@@ -292,6 +293,22 @@ asb_app_save_resources_screenshot (AsbApp *app,
 }
 
 /**
+ * asb_app_set_hidpi_enabled:
+ * @app: A #AsbApp
+ * @hidpi_enabled: if HiDPI mode should be enabled
+ *
+ * Sets the HiDPI mode for the application.
+ *
+ * Since: 0.3.1
+ **/
+void
+asb_app_set_hidpi_enabled (AsbApp *app, gboolean hidpi_enabled)
+{
+	AsbAppPrivate *priv = GET_PRIVATE (app);
+	priv->hidpi_enabled = hidpi_enabled;
+}
+
+/**
  * asb_app_save_resources:
  * @app: A #AsbApp
  * @error: A #GError or %NULL
@@ -307,13 +324,11 @@ asb_app_save_resources (AsbApp *app, GError **error)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 	AsScreenshot *ss;
-	gboolean hidpi_enabled;
 	guint i;
 	GdkPixbuf *pixbuf;
 	GPtrArray *screenshots;
 
 	/* any non-stock icon set */
-	hidpi_enabled = priv->pixbufs->len > 1;
 	for (i = 0; i < priv->pixbufs->len; i++) {
 		const gchar *tmpdir;
 		_cleanup_free_ gchar *filename = NULL;
@@ -322,7 +337,7 @@ asb_app_save_resources (AsbApp *app, GError **error)
 		/* save to disk */
 		pixbuf = g_ptr_array_index (priv->pixbufs, i);
 		tmpdir = asb_package_get_config (priv->pkg, "TempDir");
-		if (hidpi_enabled) {
+		if (priv->hidpi_enabled) {
 			size_str = g_strdup_printf ("%ux%u",
 						    gdk_pixbuf_get_width (pixbuf),
 						    gdk_pixbuf_get_height (pixbuf));

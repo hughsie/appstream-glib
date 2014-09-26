@@ -205,6 +205,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		}
 	}
 	asb_app_set_requires_appdata (app, TRUE);
+	asb_app_set_hidpi_enabled (app, asb_context_get_hidpi_enabled (plugin->ctx));
 	asb_plugin_add_app (apps, AS_APP (app));
 out:
 	if (db != NULL)

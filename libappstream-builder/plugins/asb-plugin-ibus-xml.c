@@ -123,6 +123,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	as_app_set_icon (AS_APP (app), "system-run-symbolic", -1);
 	as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_STOCK);
 	asb_app_set_requires_appdata (app, TRUE);
+	asb_app_set_hidpi_enabled (app, asb_context_get_hidpi_enabled (plugin->ctx));
 
 	/* read the component header which all input methods have */
 	n = as_node_find (root, "component/description");
