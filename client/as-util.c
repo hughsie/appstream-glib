@@ -320,7 +320,7 @@ as_util_convert_appdata (GFile *file_input,
 						     flags_translate, NULL);
 				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group", -1);
 			} else if (g_strcmp0 (as_node_get_data (n3), "KDE") == 0) {
-				n3 = as_node_insert (n, "developer_name", "KDE e.V.",
+				n3 = as_node_insert (n, "developer_name", "The KDE Community",
 						     AS_NODE_INSERT_FLAG_NONE, NULL);
 				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group", -1);
 			} else if (g_strcmp0 (as_node_get_data (n3), "XFCE") == 0) {
