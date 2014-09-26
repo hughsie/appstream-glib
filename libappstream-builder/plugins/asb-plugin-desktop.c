@@ -214,6 +214,20 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 		return;
 	}
 
+	/* is icon in a unsupported format */
+	if (g_str_has_suffix (fn, ".xpm")) {
+		as_app_add_veto (AS_APP (app), "Uses XPM icon: %s", something);
+		return;
+	}
+	if (g_str_has_suffix (fn, ".gif")) {
+		as_app_add_veto (AS_APP (app), "Uses GIF icon: %s", something);
+		return;
+	}
+	if (g_str_has_suffix (fn, ".ico")) {
+		as_app_add_veto (AS_APP (app), "Uses ICO icon: %s", something);
+		return;
+	}
+
 	/* load the icon */
 	pixbuf = asb_app_load_icon (plugin, app, fn,
 				    fn + strlen (tmpdir),
@@ -307,17 +321,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 					 "using stock icon %s", key);
 		} else {
-			_cleanup_error_free_ GError *error_local = NULL;
-
-			/* is icon XPM or GIF */
-			if (g_str_has_suffix (key, ".xpm"))
-				as_app_add_veto (AS_APP (app), "Uses XPM icon: %s", key);
-			else if (g_str_has_suffix (key, ".gif"))
-				as_app_add_veto (AS_APP (app), "Uses GIF icon: %s", key);
-			else if (g_str_has_suffix (key, ".ico"))
-				as_app_add_veto (AS_APP (app), "Uses ICO icon: %s", key);
-			else
-				asb_plugin_desktop_add_icons (plugin, app, tmpdir, key);
+			asb_plugin_desktop_add_icons (plugin, app, tmpdir, key);
 		}
 	}
 
