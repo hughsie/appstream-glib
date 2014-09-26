@@ -812,6 +812,7 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 	guint j;
 	guint k;
 	guint m;
+	const gchar **sizes;
 	const gchar *pixmap_dirs[] = { "pixmaps", "icons", NULL };
 	const gchar *theme_dirs[] = { "hicolor", "oxygen", NULL };
 	const gchar *supported_ext[] = { ".png",
@@ -820,16 +821,20 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 					 ".xpm",
 					 "",
 					 NULL };
-	const gchar *sizes[] = { "64x64",
-				 "128x128",
-				 "96x96",
-				 "256x256",
-				 "scalable",
-				 "48x48",
-				 "32x32",
-				 "24x24",
-				 "16x16",
-				 NULL };
+	const gchar *sizes_lo_dpi[] = { "64x64",
+					"128x128",
+					"96x96",
+					"256x256",
+					"scalable",
+					"48x48",
+					"32x32",
+					"24x24",
+					"16x16",
+					NULL };
+	const gchar *sizes_hi_dpi[] = { "128x128",
+					"256x256",
+					"scalable",
+					NULL };
 	const gchar *types[] = { "actions",
 				 "animations",
 				 "apps",
@@ -865,10 +870,9 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 	}
 
 	/* icon theme apps */
+	sizes = flags & AS_UTILS_FIND_ICON_HI_DPI ? sizes_hi_dpi : sizes_lo_dpi;
 	for (k = 0; theme_dirs[k] != NULL; k++) {
 		for (i = 0; sizes[i] != NULL; i++) {
-			if (i == 0 && (flags & AS_UTILS_FIND_ICON_HI_DPI) > 0)
-				continue;
 			for (m = 0; types[m] != NULL; m++) {
 				for (j = 0; supported_ext[j] != NULL; j++) {
 					_cleanup_free_ gchar *tmp;
