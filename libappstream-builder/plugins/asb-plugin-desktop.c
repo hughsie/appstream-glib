@@ -78,15 +78,14 @@ asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
  * asb_app_load_icon:
  */
 static GdkPixbuf *
-asb_app_load_icon (AsbPlugin *plugin,
-		   AsbApp *app,
+asb_app_load_icon (AsbApp *app,
 		   const gchar *filename,
 		   const gchar *logfn,
 		   guint icon_size,
+		   guint min_icon_size,
 		   GError **error)
 {
 	GdkPixbuf *pixbuf = NULL;
-	guint min_icon_size;
 	guint pixbuf_height;
 	guint pixbuf_width;
 	guint tmp_height;
@@ -107,7 +106,6 @@ asb_app_load_icon (AsbPlugin *plugin,
 		return NULL;
 
 	/* check size */
-	min_icon_size = asb_context_get_min_icon_size (plugin->ctx);
 	if (gdk_pixbuf_get_width (pixbuf_src) < (gint) min_icon_size &&
 	    gdk_pixbuf_get_height (pixbuf_src) < (gint) min_icon_size) {
 		g_set_error (error,
@@ -194,8 +192,9 @@ static void
 asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 			      AsbApp *app,
 			      const gchar *tmpdir,
-			      const gchar *something)
+			      const gchar *key)
 {
+	guint min_icon_size;
 	_cleanup_error_free_ GError *error = NULL;
 	_cleanup_free_ gchar *fn_hidpi = NULL;
 	_cleanup_free_ gchar *fn = NULL;
@@ -204,8 +203,7 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
 
 	/* find 64x64 icon */
-	fn = as_utils_find_icon_filename_full (tmpdir,
-					       something,
+	fn = as_utils_find_icon_filename_full (tmpdir, key,
 					       AS_UTILS_FIND_ICON_NONE,
 					       &error);
 	if (fn == NULL) {
@@ -216,22 +214,22 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 
 	/* is icon in a unsupported format */
 	if (g_str_has_suffix (fn, ".xpm")) {
-		as_app_add_veto (AS_APP (app), "Uses XPM icon: %s", something);
+		as_app_add_veto (AS_APP (app), "Uses XPM icon: %s", key);
 		return;
 	}
 	if (g_str_has_suffix (fn, ".gif")) {
-		as_app_add_veto (AS_APP (app), "Uses GIF icon: %s", something);
+		as_app_add_veto (AS_APP (app), "Uses GIF icon: %s", key);
 		return;
 	}
 	if (g_str_has_suffix (fn, ".ico")) {
-		as_app_add_veto (AS_APP (app), "Uses ICO icon: %s", something);
+		as_app_add_veto (AS_APP (app), "Uses ICO icon: %s", key);
 		return;
 	}
 
 	/* load the icon */
-	pixbuf = asb_app_load_icon (plugin, app, fn,
-				    fn + strlen (tmpdir),
-				    64, &error);
+	min_icon_size = asb_context_get_min_icon_size (plugin->ctx);
+	pixbuf = asb_app_load_icon (app, fn, fn + strlen (tmpdir),
+				    64, min_icon_size, &error);
 	if (pixbuf == NULL) {
 		as_app_add_veto (AS_APP (app), "Failed to load icon: %s",
 				 error->message);
@@ -250,8 +248,7 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 		return;
 
 	/* try to get a HiDPI icon */
-	fn_hidpi = as_utils_find_icon_filename_full (tmpdir,
-						     something,
+	fn_hidpi = as_utils_find_icon_filename_full (tmpdir, key,
 						     AS_UTILS_FIND_ICON_HI_DPI,
 						     NULL);
 	if (fn_hidpi == NULL)
@@ -262,9 +259,9 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 		return;
 
 	/* load the HiDPI icon */
-	pixbuf_hidpi = asb_app_load_icon (plugin, app, fn_hidpi,
+	pixbuf_hidpi = asb_app_load_icon (app, fn_hidpi,
 					  fn_hidpi + strlen (tmpdir),
-					  128, NULL);
+					  128, 128, NULL);
 	if (pixbuf_hidpi == NULL)
 		return;
 	if (gdk_pixbuf_get_width (pixbuf_hidpi) <= gdk_pixbuf_get_width (pixbuf) ||
