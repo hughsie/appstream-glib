@@ -365,6 +365,7 @@ out:
  **/
 static gboolean
 asb_utils_write_archive (const gchar *filename,
+			 const gchar *path_orig,
 			 GPtrArray *files,
 			 GError **error)
 {
@@ -381,18 +382,19 @@ asb_utils_write_archive (const gchar *filename,
 	archive_write_set_format_pax_restricted (a);
 	archive_write_open_filename (a, filename);
 	for (i = 0; i < files->len; i++) {
-		_cleanup_free_ gchar *basename;
 		_cleanup_free_ gchar *data = NULL;
+		_cleanup_free_ gchar *filename_full = NULL;
+
 		tmp = g_ptr_array_index (files, i);
-		stat (tmp, &st);
+		filename_full = g_build_filename (path_orig, tmp, NULL);
+		stat (filename_full, &st);
 		entry = archive_entry_new ();
-		basename = g_path_get_basename (tmp);
-		archive_entry_set_pathname (entry, basename);
+		archive_entry_set_pathname (entry, tmp);
 		archive_entry_set_size (entry, st.st_size);
 		archive_entry_set_filetype (entry, AE_IFREG);
 		archive_entry_set_perm (entry, 0644);
 		archive_write_header (a, entry);
-		ret = g_file_get_contents (tmp, &data, &len, error);
+		ret = g_file_get_contents (filename_full, &data, &len, error);
 		if (!ret)
 			goto out;
 		archive_write_data (a, data, len);
@@ -402,6 +404,38 @@ out:
 	archive_write_close (a);
 	archive_write_free (a);
 	return ret;
+}
+
+/**
+ * asb_utils_add_files_recursive:
+ **/
+static gboolean
+asb_utils_add_files_recursive (GPtrArray *files,
+			       const gchar *path_orig,
+			       const gchar *path,
+			       GError **error)
+{
+	const gchar *path_trailing;
+	const gchar *tmp;
+	guint path_orig_len;
+	_cleanup_dir_close_ GDir *dir = NULL;
+
+	dir = g_dir_open (path, 0, error);
+	if (dir == NULL)
+		return FALSE;
+	path_orig_len = strlen (path_orig);
+	while ((tmp = g_dir_read_name (dir)) != NULL) {
+		_cleanup_free_ gchar *path_new = NULL;
+		path_new = g_build_filename (path, tmp, NULL);
+		if (g_file_test (path_new, G_FILE_TEST_IS_DIR)) {
+			if (!asb_utils_add_files_recursive (files, path_orig, path_new, error))
+				return FALSE;
+		} else {
+			path_trailing = path_new + path_orig_len + 1;
+			g_ptr_array_add (files, g_strdup (path_trailing));
+		}
+	}
+	return TRUE;
 }
 
 /**
@@ -421,20 +455,15 @@ asb_utils_write_archive_dir (const gchar *filename,
 			     const gchar *directory,
 			     GError **error)
 {
-	const gchar *tmp;
-	_cleanup_dir_close_ GDir *dir = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *files = NULL;
 
 	/* add all files in the directory to the archive */
-	dir = g_dir_open (directory, 0, error);
-	if (dir == NULL)
-		return FALSE;
 	files = g_ptr_array_new_with_free_func (g_free);
-	while ((tmp = g_dir_read_name (dir)) != NULL)
-		g_ptr_array_add (files, g_build_filename (directory, tmp, NULL));
+	if (!asb_utils_add_files_recursive (files, directory, directory, error))
+		return FALSE;
 
 	/* write tar file */
-	return asb_utils_write_archive (filename, files, error);
+	return asb_utils_write_archive (filename, directory, files, error);
 }
 
 /**
