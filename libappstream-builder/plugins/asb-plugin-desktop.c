@@ -249,6 +249,9 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 					  128, NULL);
 	if (pixbuf_hidpi == NULL)
 		return;
+	if (gdk_pixbuf_get_width (pixbuf_hidpi) <= gdk_pixbuf_get_width (pixbuf) ||
+	    gdk_pixbuf_get_height (pixbuf_hidpi) <= gdk_pixbuf_get_height (pixbuf))
+		return;
 	asb_app_add_pixbuf (app, pixbuf_hidpi);
 }
 
