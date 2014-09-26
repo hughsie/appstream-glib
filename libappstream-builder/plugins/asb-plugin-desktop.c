@@ -231,6 +231,10 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_CACHED);
 	asb_app_add_pixbuf (app, pixbuf);
 
+	/* is HiDPI disabled */
+	if (!asb_context_get_hidpi_enabled (plugin->ctx))
+		return;
+
 	/* try to get a HiDPI icon */
 	fn_hidpi = as_utils_find_icon_filename_full (tmpdir,
 						     something,

@@ -307,26 +307,36 @@ asb_app_save_resources (AsbApp *app, GError **error)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 	AsScreenshot *ss;
+	gboolean hidpi_enabled;
 	guint i;
 	GdkPixbuf *pixbuf;
 	GPtrArray *screenshots;
 
 	/* any non-stock icon set */
+	hidpi_enabled = priv->pixbufs->len > 1;
 	for (i = 0; i < priv->pixbufs->len; i++) {
 		const gchar *tmpdir;
 		_cleanup_free_ gchar *filename = NULL;
-
-		/* FIXME: only save the 64x64 pixbuf */
-		pixbuf = g_ptr_array_index (priv->pixbufs, i);
-		if (gdk_pixbuf_get_width (pixbuf) != 64)
-			continue;
+		_cleanup_free_ gchar *size_str = NULL;
 
 		/* save to disk */
+		pixbuf = g_ptr_array_index (priv->pixbufs, i);
 		tmpdir = asb_package_get_config (priv->pkg, "TempDir");
-		filename = g_build_filename (tmpdir,
-					     "icons",
-					     as_app_get_icon (AS_APP (app)),
-					     NULL);
+		if (hidpi_enabled) {
+			size_str = g_strdup_printf ("%ux%u",
+						    gdk_pixbuf_get_width (pixbuf),
+						    gdk_pixbuf_get_height (pixbuf));
+			filename = g_build_filename (tmpdir,
+						     "icons",
+						     size_str,
+						     as_app_get_icon (AS_APP (app)),
+						     NULL);
+		} else {
+			filename = g_build_filename (tmpdir,
+						     "icons",
+						     as_app_get_icon (AS_APP (app)),
+						     NULL);
+		}
 		if (!gdk_pixbuf_save (pixbuf, filename, "png", error, NULL))
 			return FALSE;
 

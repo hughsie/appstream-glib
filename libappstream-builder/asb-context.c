@@ -64,6 +64,7 @@ struct _AsbContextPrivate
 	AsbPanel		*panel;
 	AsbPluginLoader		*plugin_loader;
 	gboolean		 add_cache_id;
+	gboolean		 hidpi_enabled;
 	gboolean		 no_net;
 	guint			 max_threads;
 	guint			 min_icon_size;
@@ -158,6 +159,22 @@ asb_context_set_add_cache_id (AsbContext *ctx, gboolean add_cache_id)
 		as_store_add_metadata_index (priv->store_old, "X-CacheID");
 	}
 	priv->add_cache_id = add_cache_id;
+}
+
+/**
+ * asb_context_set_hidpi_enabled:
+ * @ctx: A #AsbContext
+ * @hidpi_enabled: boolean
+ *
+ * Sets if the high DPI icons should be included in the metadata.
+ *
+ * Since: 0.3.1
+ **/
+void
+asb_context_set_hidpi_enabled (AsbContext *ctx, gboolean hidpi_enabled)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	priv->hidpi_enabled = hidpi_enabled;
 }
 
 /**
@@ -407,6 +424,23 @@ asb_context_get_add_cache_id (AsbContext *ctx)
 }
 
 /**
+ * asb_context_get_hidpi_enabled:
+ * @ctx: A #AsbContext
+ *
+ * Gets if the HiDPI support should be used.
+ *
+ * Returns: boolean
+ *
+ * Since: 0.3.1
+ **/
+gboolean
+asb_context_get_hidpi_enabled (AsbContext *ctx)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	return priv->hidpi_enabled;
+}
+
+/**
  * asb_context_get_no_net:
  * @ctx: A #AsbContext
  *
@@ -631,6 +665,7 @@ asb_context_setup (AsbContext *ctx, GError **error)
 				    "source",
 				    NULL };
 	_cleanup_free_ gchar *icons_dir = NULL;
+	_cleanup_free_ gchar *icons_dir_hidpi = NULL;
 
 	/* required stuff set */
 	if (priv->basename == NULL) {
@@ -675,9 +710,18 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	}
 
 	/* icons is nuked; we can re-decompress from the -icons.tar.gz */
-	icons_dir = g_build_filename (priv->temp_dir, "icons", NULL);
-	if (!asb_utils_ensure_exists (icons_dir, error))
-		return FALSE;
+	if (priv->hidpi_enabled) {
+		icons_dir = g_build_filename (priv->temp_dir, "icons", "64x64", NULL);
+		if (!asb_utils_ensure_exists (icons_dir, error))
+			return FALSE;
+		icons_dir_hidpi = g_build_filename (priv->temp_dir, "icons", "128x128", NULL);
+		if (!asb_utils_ensure_exists (icons_dir_hidpi, error))
+			return FALSE;
+	} else {
+		icons_dir = g_build_filename (priv->temp_dir, "icons", NULL);
+		if (!asb_utils_ensure_exists (icons_dir, error))
+			return FALSE;
+	}
 
 	/* create all the screenshot sizes */
 	if (priv->screenshot_dir != NULL) {

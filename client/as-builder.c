@@ -65,6 +65,7 @@ main (int argc, char **argv)
 	GOptionContext *option_context;
 	const gchar *filename;
 	gboolean add_cache_id = FALSE;
+	gboolean hidpi_enabled = FALSE;
 	gboolean no_net = FALSE;
 	gboolean ret;
 	gboolean verbose = FALSE;
@@ -98,6 +99,9 @@ main (int argc, char **argv)
 		{ "add-cache-id", '\0', 0, G_OPTION_ARG_NONE, &add_cache_id,
 			/* TRANSLATORS: command line option */
 			_("Add a cache ID to each component"), NULL },
+		{ "enable-hidpi", '\0', 0, G_OPTION_ARG_NONE, &hidpi_enabled,
+			/* TRANSLATORS: command line option */
+			_("Add HiDPI icons to the tarball"), NULL },
 		{ "log-dir", '\0', 0, G_OPTION_ARG_FILENAME, &log_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the logging directory"), "DIR" },
@@ -201,6 +205,7 @@ main (int argc, char **argv)
 	asb_context_set_no_net (ctx, no_net);
 	asb_context_set_api_version (ctx, api_version);
 	asb_context_set_add_cache_id (ctx, add_cache_id);
+	asb_context_set_hidpi_enabled (ctx, hidpi_enabled);
 	asb_context_set_old_metadata (ctx, old_metadata);
 	asb_context_set_extra_appstream (ctx, extra_appstream);
 	asb_context_set_extra_appdata (ctx, extra_appdata);
