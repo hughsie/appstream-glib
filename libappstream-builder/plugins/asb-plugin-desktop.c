@@ -134,13 +134,16 @@ asb_app_load_icon (AsbApp *app,
 
 	/* never scale up, just pad */
 	if (pixbuf_width < icon_size && pixbuf_height < icon_size) {
+		_cleanup_free_ gchar *size_str = NULL;
+		size_str = g_strdup_printf ("%ix%i",
+					    pixbuf_width,
+					    pixbuf_height);
+		as_app_add_metadata (AS_APP (app), "PaddedIcon",
+				     size_str, -1);
 		asb_package_log (asb_app_get_package (app),
 				 ASB_PACKAGE_LOG_LEVEL_INFO,
-				 "icon %s padded to %ix%i as size %ix%i",
-				 logfn,
-				 icon_size,
-				 icon_size,
-				 pixbuf_width, pixbuf_height);
+				 "icon %s padded to %ix%i as size %s",
+				 logfn, icon_size, icon_size, size_str);
 		pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8,
 					 icon_size, icon_size);
 		gdk_pixbuf_fill (pixbuf, 0x00000000);
