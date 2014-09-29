@@ -1732,14 +1732,46 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
+ * as_util_status_csv_filter_func:
+ **/
+static gboolean
+as_util_status_csv_filter_func (AsApp *app, gchar **filters)
+{
+	const gchar *tmp;
+	guint i;
+	AsIdKind id_kind = AS_ID_KIND_DESKTOP;
+
+	for (i = 0; filters[i] != NULL; i++) {
+		_cleanup_strv_free_ gchar **split = NULL;
+		split = g_strsplit (filters[i], "=", 2);
+		if (g_strv_length (split) != 2)
+			continue;
+		if (g_strcmp0 (split[0], "id-kind") == 0) {
+			id_kind = as_id_kind_from_string (split[1]);
+			if (as_app_get_id_kind (app) != id_kind)
+				return FALSE;
+			continue;
+		}
+		if (g_strcmp0 (split[0], "metadata") == 0) {
+			tmp = as_app_get_metadata_item (app, split[1]);
+			if (tmp == NULL)
+				return FALSE;
+			continue;
+		}
+		g_warning ("Unknown filter option %s:%s", split[0], split[1]);
+	}
+	return TRUE;
+}
+
+/**
  * as_util_status_csv:
  **/
 static gboolean
 as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	AsApp *app;
-	AsIdKind id_kind = AS_ID_KIND_DESKTOP;
 	GPtrArray *apps = NULL;
+	const gchar *tmp;
 	guint i;
 	_cleanup_object_unref_ AsStore *store = NULL;
 	_cleanup_object_unref_ GFile *file = NULL;
@@ -1755,19 +1787,6 @@ as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 		return FALSE;
 	}
 
-	/* process filters */
-	for (i = 2; values[i] != NULL; i++) {
-		_cleanup_strv_free_ gchar **split = NULL;
-		split = g_strsplit (values[i], "=", 2);
-		if (g_strv_length (split) != 2)
-			continue;
-		if (g_strcmp0 (split[0], "id-kind") == 0) {
-			id_kind = as_id_kind_from_string (split[1]);
-			continue;
-		}
-		g_warning ("Unknown filter option %s:%s", split[0], split[1]);
-	}
-
 	/* load file */
 	store = as_store_new ();
 	file = g_file_new_for_path (values[0]);
@@ -1780,7 +1799,9 @@ as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 	for (i = 0; i < apps->len; i++) {
 		_cleanup_free_ gchar *description = NULL;
 		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) != id_kind)
+
+		/* process filters */
+		if (!as_util_status_csv_filter_func (app, values + 2))
 			continue;
 		g_string_append_printf (data, "%s,", as_app_get_id (app));
 		g_string_append_printf (data, "%s,", as_app_get_pkgname_default (app));
@@ -1791,8 +1812,9 @@ as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 			g_strdelimit (description, "\n", '|');
 			g_strdelimit (description, "\"", '\'');
 		}
-		g_string_append_printf (data, "\"%s\",", description);
-		g_string_append_printf (data, "\"%s\",", as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE));
+		g_string_append_printf (data, "\"%s\",", description ? description : "");
+		tmp = as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE);
+		g_string_append_printf (data, "\"%s\",", tmp ? tmp : "");
 		g_string_truncate (data, data->len - 1);
 		g_string_append (data, "\n");
 	}
