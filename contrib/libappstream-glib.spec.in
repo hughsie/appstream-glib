@@ -23,7 +23,6 @@ BuildRequires: intltool
 # for the builder component
 BuildRequires: fontconfig-devel
 BuildRequires: freetype-devel
-BuildRequires: gtk3-devel
 BuildRequires: pango-devel
 BuildRequires: rpm-devel
 BuildRequires: sqlite-devel
