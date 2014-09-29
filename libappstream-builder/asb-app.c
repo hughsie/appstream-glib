@@ -372,6 +372,46 @@ asb_app_save_resources (AsbApp *app, GError **error)
 }
 
 /**
+ * asb_app_save_thumbnail:
+ **/
+static gboolean
+asb_app_save_thumbnail (AsScreenshot *ss, AsImage *im_src,
+			guint width, guint height, guint scale,
+			const gchar *mirror_uri,
+			GError **error)
+{
+	_cleanup_free_ gchar *size_str = NULL;
+	_cleanup_free_ gchar *url_tmp = NULL;
+	_cleanup_object_unref_ AsImage *im_tmp = NULL;
+	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+
+	/* only save the HiDPI screenshot if it's not padded */
+	if (scale > 1) {
+		if (width * scale > as_image_get_width (im_src) ||
+		    height * scale > as_image_get_height (im_src))
+			return TRUE;
+	}
+	size_str = g_strdup_printf ("%ix%i", width, height);
+	url_tmp = g_build_filename (mirror_uri,
+				    size_str,
+				    as_image_get_basename (im_src),
+				    NULL);
+	pixbuf = as_image_save_pixbuf (im_src,
+				       width * scale,
+				       height * scale,
+				       AS_IMAGE_SAVE_FLAG_PAD_16_9);
+	im_tmp = as_image_new ();
+	as_image_set_width (im_tmp, width * scale);
+	as_image_set_height (im_tmp, height * scale);
+	as_image_set_url (im_tmp, url_tmp, -1);
+	as_image_set_pixbuf (im_tmp, pixbuf);
+	as_image_set_kind (im_tmp, AS_IMAGE_KIND_THUMBNAIL);
+	as_image_set_basename (im_tmp, as_image_get_basename (im_src));
+	as_screenshot_add_image (ss, im_tmp);
+	return TRUE;
+}
+
+/**
  * asb_app_add_screenshot_source:
  * @app: A #AsbApp
  * @filename: filename to the source image
@@ -386,6 +426,7 @@ asb_app_save_resources (AsbApp *app, GError **error)
 gboolean
 asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **error)
 {
+	AsbAppPrivate *priv = GET_PRIVATE (app);
 	AsImageAlphaFlags alpha_flags;
 	gboolean is_default;
 	const gchar *mirror_uri;
@@ -452,30 +493,22 @@ asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **erro
 	as_screenshot_add_image (ss, im_src);
 	if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_FONT) {
 		for (i = 0; sizes[i] != 0; i += 2) {
-			_cleanup_free_ gchar *size_str;
-			_cleanup_free_ gchar *url_tmp;
-			_cleanup_object_unref_ AsImage *im_tmp;
-			_cleanup_object_unref_ GdkPixbuf *pixbuf;
 
-			size_str = g_strdup_printf ("%ix%i",
-						    sizes[i],
-						    sizes[i+1]);
-			url_tmp = g_build_filename (mirror_uri,
-						    size_str,
-						    basename,
-						    NULL);
-			pixbuf = as_image_save_pixbuf (im_src,
-						       sizes[i],
-						       sizes[i+1],
-						       AS_IMAGE_SAVE_FLAG_PAD_16_9);
-			im_tmp = as_image_new ();
-			as_image_set_width (im_tmp, sizes[i]);
-			as_image_set_height (im_tmp, sizes[i+1]);
-			as_image_set_url (im_tmp, url_tmp, -1);
-			as_image_set_pixbuf (im_tmp, pixbuf);
-			as_image_set_kind (im_tmp, AS_IMAGE_KIND_THUMBNAIL);
-			as_image_set_basename (im_tmp, basename);
-			as_screenshot_add_image (ss, im_tmp);
+			/* save LoDPI */
+			if (!asb_app_save_thumbnail (ss, im_src,
+						     sizes[i], sizes[i+1],
+						     1, mirror_uri, error))
+				return FALSE;
+
+			/* save HiDPI version */
+			if (priv->hidpi_enabled) {
+				if (!asb_app_save_thumbnail (ss, im_src,
+							     sizes[i],
+							     sizes[i+1],
+							     2, mirror_uri,
+							     error))
+					return FALSE;
+			}
 		}
 	}
 	as_app_add_screenshot (AS_APP (app), ss);

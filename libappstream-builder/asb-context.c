@@ -339,7 +339,7 @@ void
 asb_context_set_screenshot_dir (AsbContext *ctx, const gchar *screenshot_dir)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->screenshot_dir = asb_context_realpath (screenshot_dir);
+	priv->screenshot_dir = g_strdup (screenshot_dir);
 }
 
 /**
@@ -660,11 +660,10 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	GList *l;
 	guint i;
-	const gchar *ss_sizes[] = { "112x63",
-				    "624x351",
-				    "752x423",
-				    "source",
-				    NULL };
+	guint sizes[] = { AS_IMAGE_NORMAL_WIDTH,    AS_IMAGE_NORMAL_HEIGHT,
+			  AS_IMAGE_THUMBNAIL_WIDTH, AS_IMAGE_THUMBNAIL_HEIGHT,
+			  AS_IMAGE_LARGE_WIDTH,     AS_IMAGE_LARGE_HEIGHT,
+			  0 };
 	_cleanup_free_ gchar *icons_dir = NULL;
 
 	/* required stuff set */
@@ -726,10 +725,30 @@ asb_context_setup (AsbContext *ctx, GError **error)
 
 	/* create all the screenshot sizes */
 	if (priv->screenshot_dir != NULL) {
-		for (i = 0; ss_sizes[i] != NULL; i++) {
+		_cleanup_free_ gchar *ss_src = NULL;
+		ss_src = g_build_filename (priv->screenshot_dir,
+					   "source", NULL);
+		if (!asb_utils_ensure_exists (ss_src, error))
+			return FALSE;
+		for (i = 0; sizes[i] != 0; i += 2) {
+			_cleanup_free_ gchar *size_str;
 			_cleanup_free_ gchar *ss_dir = NULL;
+			size_str = g_strdup_printf ("%ix%i",
+						    sizes[i],
+						    sizes[i+1]);
 			ss_dir = g_build_filename (priv->screenshot_dir,
-						   ss_sizes[i], NULL);
+						   size_str, NULL);
+			if (!asb_utils_ensure_exists (ss_dir, error))
+				return FALSE;
+		}
+		for (i = 0; sizes[i] != 0 && priv->hidpi_enabled; i += 2) {
+			_cleanup_free_ gchar *size_str;
+			_cleanup_free_ gchar *ss_dir = NULL;
+			size_str = g_strdup_printf ("%ix%i",
+						    sizes[i] * 2,
+						    sizes[i+1] * 2);
+			ss_dir = g_build_filename (priv->screenshot_dir,
+						   size_str, NULL);
 			if (!asb_utils_ensure_exists (ss_dir, error))
 				return FALSE;
 		}
