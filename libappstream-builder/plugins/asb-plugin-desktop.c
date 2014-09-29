@@ -261,6 +261,7 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	if (gdk_pixbuf_get_width (pixbuf_hidpi) <= gdk_pixbuf_get_width (pixbuf) ||
 	    gdk_pixbuf_get_height (pixbuf_hidpi) <= gdk_pixbuf_get_height (pixbuf))
 		return;
+	as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_HI_DPI_ICON);
 	asb_app_add_pixbuf (app, pixbuf_hidpi);
 }
 

@@ -213,6 +213,8 @@ as_kudo_kind_to_string (AsKudoKind kudo_kind)
 		return "Notifications";
 	if (kudo_kind == AS_KUDO_KIND_HIGH_CONTRAST)
 		return "HighContrast";
+	if (kudo_kind == AS_KUDO_KIND_HI_DPI_ICON)
+		return "HiDpiIcon";
 	return NULL;
 }
 
@@ -241,5 +243,7 @@ as_kudo_kind_from_string (const gchar *kudo_kind)
 		return AS_KUDO_KIND_NOTIFICATIONS;
 	if (g_strcmp0 (kudo_kind, "HighContrast") == 0)
 		return AS_KUDO_KIND_HIGH_CONTRAST;
+	if (g_strcmp0 (kudo_kind, "HiDpiIcon") == 0)
+		return AS_KUDO_KIND_HI_DPI_ICON;
 	return AS_KUDO_KIND_UNKNOWN;
 }

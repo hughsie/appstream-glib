@@ -118,6 +118,7 @@ typedef enum {
 	AS_KUDO_KIND_MODERN_TOOLKIT,	/* Since: 0.2.2 */
 	AS_KUDO_KIND_NOTIFICATIONS,	/* Since: 0.2.2 */
 	AS_KUDO_KIND_HIGH_CONTRAST,	/* Since: 0.3.0 */
+	AS_KUDO_KIND_HI_DPI_ICON,	/* Since: 0.3.1 */
 	/*< private >*/
 	AS_KUDO_KIND_LAST
 } AsKudoKind;
