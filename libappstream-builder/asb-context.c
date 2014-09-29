@@ -666,7 +666,6 @@ asb_context_setup (AsbContext *ctx, GError **error)
 				    "source",
 				    NULL };
 	_cleanup_free_ gchar *icons_dir = NULL;
-	_cleanup_free_ gchar *icons_dir_hidpi = NULL;
 
 	/* required stuff set */
 	if (priv->basename == NULL) {
@@ -711,16 +710,17 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	}
 
 	/* icons is nuked; we can re-decompress from the -icons.tar.gz */
+	icons_dir = g_build_filename (priv->temp_dir, "icons", NULL);
+	if (!asb_utils_ensure_exists (icons_dir, error))
+		return FALSE;
 	if (priv->hidpi_enabled) {
-		icons_dir = g_build_filename (priv->temp_dir, "icons", "64x64", NULL);
-		if (!asb_utils_ensure_exists (icons_dir, error))
+		_cleanup_free_ gchar *icons_dir_hidpi = NULL;
+		_cleanup_free_ gchar *icons_dir_lodpi = NULL;
+		icons_dir_lodpi = g_build_filename (icons_dir, "64x64", NULL);
+		if (!asb_utils_ensure_exists (icons_dir_lodpi, error))
 			return FALSE;
-		icons_dir_hidpi = g_build_filename (priv->temp_dir, "icons", "128x128", NULL);
+		icons_dir_hidpi = g_build_filename (icons_dir, "128x128", NULL);
 		if (!asb_utils_ensure_exists (icons_dir_hidpi, error))
-			return FALSE;
-	} else {
-		icons_dir = g_build_filename (priv->temp_dir, "icons", NULL);
-		if (!asb_utils_ensure_exists (icons_dir, error))
 			return FALSE;
 	}
 

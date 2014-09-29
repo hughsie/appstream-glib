@@ -259,6 +259,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	asb_context_set_api_version (ctx, 0.8);
 	asb_context_set_add_cache_id (ctx, TRUE);
 	asb_context_set_no_net (ctx, TRUE);
+	asb_context_set_hidpi_enabled (ctx, TRUE);
 	asb_context_set_basename (ctx, "asb-self-test");
 	asb_context_set_cache_dir (ctx, "/tmp/asbuilder/cache");
 	asb_context_set_output_dir (ctx, "/tmp/asbuilder/output");
@@ -543,15 +544,25 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		g_warning ("Expected:\n%s\nGot:\n%s", expected_xml, xml_ignore->str);
 	g_assert_cmpstr (xml_ignore->str, ==, expected_xml);
 
+	/* check icon dir */
+	g_assert (g_file_test ("/tmp/asbuilder/temp/icons/64x64/app.png", G_FILE_TEST_EXISTS));
+	g_assert (!g_file_test ("/tmp/asbuilder/temp/icons/app.png", G_FILE_TEST_EXISTS));
+	g_assert (!g_file_test ("/tmp/asbuilder/temp/icons/128x128/app.png", G_FILE_TEST_EXISTS));
 }
 #endif
 
 static void
 asb_test_context_nocache_func (void)
 {
-#ifdef HAVE_RPM
 	GError *error = NULL;
 	gboolean ret;
+
+	/* remove icons */
+	ret = asb_utils_rmtree ("/tmp/asbuilder/temp/icons", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+#ifdef HAVE_RPM
 	ret = asb_utils_rmtree ("/tmp/asbuilder/output", &error);
 	g_assert_no_error (error);
 	g_assert (ret);
