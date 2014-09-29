@@ -191,14 +191,14 @@ asb_app_load_icon (AsbApp *app,
 /**
  * asb_plugin_desktop_add_icons:
  */
-static void
+static gboolean
 asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 			      AsbApp *app,
 			      const gchar *tmpdir,
-			      const gchar *key)
+			      const gchar *key,
+			      GError **error)
 {
 	guint min_icon_size;
-	_cleanup_error_free_ GError *error = NULL;
 	_cleanup_free_ gchar *fn_hidpi = NULL;
 	_cleanup_free_ gchar *fn = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf_hidpi = NULL;
@@ -207,35 +207,42 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	/* find 64x64 icon */
 	fn = as_utils_find_icon_filename_full (tmpdir, key,
 					       AS_UTILS_FIND_ICON_NONE,
-					       &error);
+					       error);
 	if (fn == NULL) {
-		as_app_add_veto (AS_APP (app), "Failed to find icon: %s",
-				 error->message);
-		return;
+		g_prefix_error (error, "Failed to find icon: ");
+		return FALSE;
 	}
 
 	/* is icon in a unsupported format */
 	if (g_str_has_suffix (fn, ".xpm")) {
-		as_app_add_veto (AS_APP (app), "Uses XPM icon: %s", key);
-		return;
+		g_set_error (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
+			     "Uses XPM icon: %s", key);
+		return FALSE;
 	}
 	if (g_str_has_suffix (fn, ".gif")) {
-		as_app_add_veto (AS_APP (app), "Uses GIF icon: %s", key);
-		return;
+		g_set_error (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
+			     "Uses GIF icon: %s", key);
+		return FALSE;
 	}
 	if (g_str_has_suffix (fn, ".ico")) {
-		as_app_add_veto (AS_APP (app), "Uses ICO icon: %s", key);
-		return;
+		g_set_error (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
+			     "Uses ICO icon: %s", key);
+		return FALSE;
 	}
 
 	/* load the icon */
 	min_icon_size = asb_context_get_min_icon_size (plugin->ctx);
 	pixbuf = asb_app_load_icon (app, fn, fn + strlen (tmpdir),
-				    64, min_icon_size, &error);
+				    64, min_icon_size, error);
 	if (pixbuf == NULL) {
-		as_app_add_veto (AS_APP (app), "Failed to load icon: %s",
-				 error->message);
-		return;
+		g_prefix_error (error, "Failed to load icon: ");
+		return FALSE;
 	}
 
 	/* save in target directory */
@@ -243,26 +250,27 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 
 	/* is HiDPI disabled */
 	if (!asb_context_get_hidpi_enabled (plugin->ctx))
-		return;
+		return TRUE;
 
 	/* try to get a HiDPI icon */
 	fn_hidpi = as_utils_find_icon_filename_full (tmpdir, key,
 						     AS_UTILS_FIND_ICON_HI_DPI,
 						     NULL);
 	if (fn_hidpi == NULL)
-		return;
+		return TRUE;
 
 	/* load the HiDPI icon */
 	pixbuf_hidpi = asb_app_load_icon (app, fn_hidpi,
 					  fn_hidpi + strlen (tmpdir),
 					  128, 128, NULL);
 	if (pixbuf_hidpi == NULL)
-		return;
+		return TRUE;
 	if (gdk_pixbuf_get_width (pixbuf_hidpi) <= gdk_pixbuf_get_width (pixbuf) ||
 	    gdk_pixbuf_get_height (pixbuf_hidpi) <= gdk_pixbuf_get_height (pixbuf))
-		return;
+		return TRUE;
 	as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_HI_DPI_ICON);
 	asb_app_add_pixbuf (app, pixbuf_hidpi);
+	return TRUE;
 }
 
 /**
@@ -313,12 +321,23 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 					 "using stock icon %s", key);
 		} else {
-			_cleanup_free_ gchar *icon_filename = NULL;
-			asb_plugin_desktop_add_icons (plugin, app, tmpdir, key);
-			icon_filename = g_strdup_printf ("%s.png",
-							 as_app_get_id_filename (AS_APP (app)));
-			as_app_set_icon (AS_APP (app), icon_filename, -1);
-			as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_CACHED);
+			_cleanup_error_free_ GError *error_local = NULL;
+			ret = asb_plugin_desktop_add_icons (plugin,
+							    app,
+							    tmpdir,
+							    key,
+							    &error_local);
+			if (ret) {
+				_cleanup_free_ gchar *fn = NULL;
+				fn = g_strdup_printf ("%s.png",
+						      as_app_get_id_filename (AS_APP (app)));
+				as_app_set_icon (AS_APP (app), fn, -1);
+				as_app_set_icon_kind (AS_APP (app),
+						      AS_ICON_KIND_CACHED);
+			} else {
+				as_app_add_veto (AS_APP (app), "%s",
+						 error_local->message);
+			}
 		}
 	}
 
