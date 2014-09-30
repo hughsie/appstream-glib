@@ -190,9 +190,9 @@ main (int argc, char **argv)
 	if (cache_dir == NULL)
 		cache_dir = g_strdup ("./cache");
 	if (basename == NULL)
-		basename = g_strdup ("fedora-21");
+		basename = g_strdup ("example");
 	if (screenshot_uri == NULL)
-		screenshot_uri = g_strdup ("http://alt.fedoraproject.org/pub/alt/screenshots/f21/");
+		screenshot_uri = g_strdup ("http://www.example.com/screenshots/");
 	if (extra_appstream == NULL)
 		extra_appstream = g_strdup ("./appstream-extra");
 	if (extra_appdata == NULL)
