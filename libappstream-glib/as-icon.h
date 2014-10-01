@@ -128,6 +128,9 @@ void		 as_icon_set_pixbuf		(AsIcon		*icon,
 gboolean	 as_icon_load			(AsIcon		*icon,
 						 AsIconLoadFlags flags,
 						 GError		**error);
+gboolean	 as_icon_convert_to_kind	(AsIcon		*icon,
+						 AsIconKind	 kind,
+						 GError		**error);
 
 G_END_DECLS
 

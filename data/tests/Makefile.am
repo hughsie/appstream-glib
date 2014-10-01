@@ -20,6 +20,7 @@ test_files =						\
 	example.yml					\
 	intltool.appdata.xml.in				\
 	origin.xml					\
+	rpmbuild/app.png				\
 	settings-panel.desktop				\
 	screenshot.png					\
 	ss-small.png					\

@@ -601,6 +601,89 @@ as_icon_load (AsIcon *icon, AsIconLoadFlags flags, GError **error)
 }
 
 /**
+ * as_icon_convert_to_kind:
+ * @icon: a #AsIcon instance.
+ * @kind: a %AsIconKind, e.g. #AS_ICON_KIND_EMBEDDED
+ * @error: A #GError or %NULL.
+ *
+ * Converts the icon from one kind to another.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.3.1
+ **/
+gboolean
+as_icon_convert_to_kind (AsIcon *icon, AsIconKind kind, GError **error)
+{
+	AsIconPrivate *priv = GET_PRIVATE (icon);
+
+	/* these can't be converted */
+	if (priv->kind == AS_ICON_KIND_STOCK ||
+	    priv->kind == AS_ICON_KIND_REMOTE)
+		return TRUE;
+
+	/* no change */
+	if (priv->kind == kind)
+		return TRUE;
+
+	/* cached -> embedded */
+	if (priv->kind == AS_ICON_KIND_CACHED && kind == AS_ICON_KIND_EMBEDDED) {
+		gsize data_size;
+		_cleanup_bytes_unref_ GBytes *tmp = NULL;
+		_cleanup_free_ gchar *data = NULL;
+
+		/* load the pixbuf and save it to a PNG buffer */
+		if (priv->pixbuf == NULL) {
+			if (!as_icon_load (icon, AS_ICON_LOAD_FLAG_SEARCH_SIZE, error))
+				return FALSE;
+		}
+		if (!gdk_pixbuf_save_to_buffer (priv->pixbuf, &data, &data_size,
+						"png", error, NULL))
+			return FALSE;
+
+		/* set the PNG buffer to a blob of data */
+		tmp = g_bytes_new (data, data_size);
+		as_icon_set_data (icon, tmp);
+		as_icon_set_kind (icon, kind);
+		return TRUE;
+	}
+
+	/* cached -> embedded */
+	if (priv->kind == AS_ICON_KIND_EMBEDDED && kind == AS_ICON_KIND_CACHED) {
+		_cleanup_free_ gchar *size_str = NULL;
+		_cleanup_free_ gchar *path = NULL;
+		_cleanup_free_ gchar *fn = NULL;
+
+		/* ensure the parent path exists */
+		size_str = g_strdup_printf ("%ix%i", priv->width, priv->height);
+		path = g_build_filename (priv->prefix, size_str, NULL);
+		if (g_mkdir_with_parents (path, 0700) != 0) {
+			g_set_error (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_FAILED,
+				     "Failed to create: %s", path);
+			return FALSE;
+		}
+
+		/* save the pixbuf */
+		fn = g_build_filename (path, priv->name, NULL);
+		if (!gdk_pixbuf_save (priv->pixbuf, fn, "png", error, NULL))
+			return FALSE;
+		as_icon_set_kind (icon, kind);
+		return TRUE;
+	}
+
+	/* not supported */
+	g_set_error (error,
+		     AS_NODE_ERROR,
+		     AS_NODE_ERROR_FAILED,
+		     "converting %s to %s is not supported",
+		     as_icon_kind_to_string (priv->kind),
+		     as_icon_kind_to_string (kind));
+	return FALSE;
+}
+
+/**
  * as_icon_new:
  *
  * Creates a new #AsIcon.

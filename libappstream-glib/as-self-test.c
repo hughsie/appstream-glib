@@ -426,6 +426,17 @@ as_test_icon_func (void)
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
+
+	/* convert to embeddded icon */
+	prefix = as_test_get_filename ("rpmbuild");
+	g_assert (prefix != NULL);
+	as_icon_set_prefix (icon, prefix);
+	ret = as_icon_convert_to_kind (icon, AS_ICON_KIND_EMBEDDED, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_icon_get_kind (icon), ==, AS_ICON_KIND_EMBEDDED);
+	g_assert (as_icon_get_pixbuf (icon) != NULL);
+	g_assert (as_icon_get_data (icon) != NULL);
 }
 
 static void
@@ -513,6 +524,16 @@ as_test_icon_embedded_func (void)
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
+
+	/* convert to cached icon */
+	as_icon_set_prefix (icon, "/tmp");
+	ret = as_icon_convert_to_kind (icon, AS_ICON_KIND_CACHED, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_icon_get_kind (icon), ==, AS_ICON_KIND_CACHED);
+	g_assert (as_icon_get_pixbuf (icon) != NULL);
+	g_assert (as_icon_get_data (icon) != NULL);
+	g_assert (g_file_test ("/tmp/32x32/app.png", G_FILE_TEST_EXISTS));
 }
 
 static void
