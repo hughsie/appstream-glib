@@ -1243,6 +1243,23 @@ as_node_add_attribute (GNode *node,
 }
 
 /**
+ * as_node_add_attribute_as_int: (skip)
+ * @node: a #GNode
+ * @key: the attribute key
+ * @value: new data
+ *
+ * Adds a new attribute to a node.
+ *
+ * Since: 0.3.1
+ **/
+void
+as_node_add_attribute_as_int (GNode *node, const gchar *key, gint value)
+{
+	_cleanup_free_ gchar *tmp = g_strdup_printf ("%i", value);
+	as_node_add_attribute (node, key, tmp, -1);
+}
+
+/**
  * as_node_find: (skip)
  * @root: a root node, or %NULL
  * @path: a path in the DOM, e.g. "html/body"
