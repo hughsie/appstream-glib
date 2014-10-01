@@ -40,6 +40,7 @@
 #include "as-app-private.h"
 #include "as-cleanup.h"
 #include "as-enums.h"
+#include "as-icon-private.h"
 #include "as-node-private.h"
 #include "as-provide-private.h"
 #include "as-release-private.h"
@@ -73,11 +74,11 @@ struct _AsAppPrivate
 	GPtrArray	*releases;			/* of AsRelease */
 	GPtrArray	*provides;			/* of AsProvide */
 	GPtrArray	*screenshots;			/* of AsScreenshot */
+	GPtrArray	*icons;				/* of AsIcon */
 	GPtrArray	*vetos;				/* of string */
 	AsAppSourceKind	 source_kind;
 	AsAppState	 state;
 	AsAppTrustFlags	 trust_flags;
-	gchar		*icon;
 	gchar		*icon_path;
 	gchar		*id_filename;
 	gchar		*id;
@@ -243,7 +244,6 @@ as_app_finalize (GObject *object)
 	AsApp *app = AS_APP (object);
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
-	g_free (priv->icon);
 	g_free (priv->icon_path);
 	g_free (priv->id_filename);
 	g_free (priv->id);
@@ -272,6 +272,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->releases);
 	g_ptr_array_unref (priv->provides);
 	g_ptr_array_unref (priv->screenshots);
+	g_ptr_array_unref (priv->icons);
 	g_ptr_array_unref (priv->token_cache);
 	g_ptr_array_unref (priv->vetos);
 
@@ -309,6 +310,7 @@ as_app_init (AsApp *app)
 	priv->releases = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->provides = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->screenshots = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	priv->icons = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->token_cache = g_ptr_array_new_with_free_func ((GDestroyNotify) as_app_token_item_free);
 	priv->vetos = g_ptr_array_new_with_free_func (g_free);
 
@@ -583,6 +585,23 @@ as_app_get_screenshots (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->screenshots;
+}
+
+/**
+ * as_app_get_icons:
+ * @app: a #AsApp instance.
+ *
+ * Gets any icons the application has defined.
+ *
+ * Returns: (element-type AsIcon) (transfer none): an array
+ *
+ * Since: 0.3.1
+ **/
+GPtrArray *
+as_app_get_icons (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->icons;
 }
 
 /**
@@ -890,41 +909,6 @@ as_app_get_problems (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->problems;
-}
-
-/**
- * as_app_get_icon_kind:
- * @app: a #AsApp instance.
- *
- * Gets the icon kind.
- *
- * Returns: enumerated value
- *
- * Since: 0.1.0
- **/
-AsIconKind
-as_app_get_icon_kind (AsApp *app)
-{
-	AsAppPrivate *priv = GET_PRIVATE (app);
-	return priv->icon_kind;
-}
-
-/**
- * as_app_get_icon:
- * @app: a #AsApp instance.
- *
- * Gets the application icon. Use as_app_get_icon_path() if you need the create
- * a full filename.
- *
- * Returns: string, or %NULL if unset
- *
- * Since: 0.1.0
- **/
-const gchar *
-as_app_get_icon (AsApp *app)
-{
-	AsAppPrivate *priv = GET_PRIVATE (app);
-	return priv->icon;
 }
 
 /**
@@ -1569,32 +1553,6 @@ as_app_set_update_contact (AsApp *app,
 }
 
 /**
- * as_app_set_icon:
- * @app: a #AsApp instance.
- * @icon: the icon filename or URL.
- * @icon_len: the size of @icon, or -1 if %NULL-terminated.
- *
- * Set the application icon.
- *
- * Since: 0.1.0
- **/
-void
-as_app_set_icon (AsApp *app, const gchar *icon, gssize icon_len)
-{
-	AsAppPrivate *priv = GET_PRIVATE (app);
-
-	/* handle untrusted */
-	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (icon, icon_len)) {
-		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
-		return;
-	}
-
-	g_free (priv->icon);
-	priv->icon = as_strndup (icon, icon_len);
-}
-
-/**
  * as_app_set_icon_path:
  * @app: a #AsApp instance.
  * @icon_path: the local path.
@@ -1618,22 +1576,6 @@ as_app_set_icon_path (AsApp *app, const gchar *icon_path, gssize icon_path_len)
 
 	g_free (priv->icon_path);
 	priv->icon_path = as_strndup (icon_path, icon_path_len);
-}
-
-/**
- * as_app_set_icon_kind:
- * @app: a #AsApp instance.
- * @icon_kind: the #AsIconKind.
- *
- * Sets the icon kind.
- *
- * Since: 0.1.0
- **/
-void
-as_app_set_icon_kind (AsApp *app, AsIconKind icon_kind)
-{
-	AsAppPrivate *priv = GET_PRIVATE (app);
-	priv->icon_kind = icon_kind;
 }
 
 /**
@@ -2084,6 +2026,36 @@ as_app_add_screenshot (AsApp *app, AsScreenshot *screenshot)
 }
 
 /**
+ * as_app_add_icon:
+ * @app: a #AsApp instance.
+ * @icon: a #AsIcon instance.
+ *
+ * Adds a icon to an application.
+ *
+ * Since: 0.3.1
+ **/
+void
+as_app_add_icon (AsApp *app, AsIcon *icon)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
+		AsIcon *ic_tmp;
+		guint i;
+		for (i = 0; i < priv->icons->len; i++) {
+			ic_tmp = g_ptr_array_index (priv->icons, i);
+			if (as_icon_get_pixbuf (ic_tmp) != NULL)
+				continue;
+			if (g_strcmp0 (as_icon_get_name (ic_tmp),
+				       as_icon_get_name (icon)) == 0)
+				return;
+		}
+	}
+	g_ptr_array_add (priv->icons, g_object_ref (icon));
+}
+
+/**
  * as_app_add_pkgname:
  * @app: a #AsApp instance.
  * @pkgname: the package name.
@@ -2428,6 +2400,12 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		as_app_add_screenshot (app, ss);
 	}
 
+	/* icons */
+	for (i = 0; i < priv->icons->len; i++) {
+		AsIcon *ic = g_ptr_array_index (priv->icons, i);
+		as_app_add_icon (app, ic);
+	}
+
 	/* mimetypes */
 	for (i = 0; i < priv->mimetypes->len; i++) {
 		tmp = g_ptr_array_index (priv->mimetypes, i);
@@ -2459,12 +2437,6 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	as_app_subsume_dict (papp->metadata, priv->metadata, overwrite);
 	as_app_subsume_dict (papp->urls, priv->urls, overwrite);
 	as_app_subsume_keywords (app, donor, overwrite);
-
-	/* icon */
-	if (priv->icon != NULL)
-		as_app_set_icon (app, priv->icon, -1);
-	if (priv->icon_kind != AS_ICON_KIND_UNKNOWN)
-		as_app_set_icon_kind (app, priv->icon_kind);
 
 	/* source */
 	if (priv->source_file != NULL)
@@ -2788,10 +2760,9 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	}
 
 	/* <icon> */
-	if (priv->icon != NULL) {
-		as_node_insert (node_app, "icon", priv->icon, 0,
-				"type", as_icon_kind_to_string (priv->icon_kind),
-				NULL);
+	for (i = 0; i < priv->icons->len; i++) {
+		AsIcon *ic = g_ptr_array_index (priv->icons, i);
+		as_icon_node_insert (ic, node_app, api_version);
 	}
 
 	/* <categories> */
@@ -3071,11 +3042,15 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 
 	/* <icon> */
 	case AS_TAG_ICON:
-		tmp = as_node_get_attribute (n, "type");
-		as_app_set_icon_kind (app, as_icon_kind_from_string (tmp));
-		g_free (priv->icon);
-		priv->icon = as_node_take_data (n);
+	{
+		_cleanup_object_unref_ AsIcon *ic = NULL;
+		ic = as_icon_new ();
+		as_icon_set_prefix (ic, priv->icon_path);
+		if (!as_icon_node_parse (ic, n, error))
+			return FALSE;
+		as_app_add_icon (app, ic);
 		break;
+	}
 
 	/* <categories> */
 	case AS_TAG_CATEGORIES:
@@ -3345,6 +3320,7 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags, GError *
 		g_ptr_array_set_size (priv->pkgnames, 0);
 		g_ptr_array_set_size (priv->architectures, 0);
 		g_ptr_array_set_size (priv->extends, 0);
+		g_ptr_array_set_size (priv->icons, 0);
 		g_hash_table_remove_all (priv->keywords);
 	}
 	for (n = node->children; n != NULL; n = n->next) {
@@ -3453,11 +3429,11 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
 		}
 		if (g_strcmp0 (tmp, "Icon") == 0) {
 			for (c = n->children; c != NULL; c = c->next) {
-				if (g_strcmp0 (as_yaml_node_get_key (c), "cached") == 0) {
-					as_app_set_icon (app, as_yaml_node_get_value (c), -1);
-					as_app_set_icon_kind (app, AS_ICON_KIND_CACHED);
-					continue;
-				}
+				_cleanup_object_unref_ AsIcon *ic = NULL;
+				ic = as_icon_new ();
+				if (!as_icon_node_parse_dep11 (ic, c, error))
+					return FALSE;
+				as_app_add_icon (app, ic);
 			}
 			continue;
 		}
@@ -3813,14 +3789,20 @@ as_app_parse_file_key (AsApp *app,
 					     key,
 					     NULL);
 		if (tmp != NULL && tmp[0] != '\0') {
-			as_app_set_icon (app, tmp, -1);
+			AsIcon *icon;
+			dot = g_strstr_len (tmp, -1, ".");
+			if (dot != NULL)
+				*dot = '\0';
+			icon = as_icon_new ();
+			as_icon_set_name (icon, tmp, -1);
 			dot = g_strstr_len (tmp, -1, ".");
 			if (dot != NULL)
 				*dot = '\0';
 			if (as_utils_is_stock_icon_name (tmp)) {
-				as_app_set_icon (app, tmp, -1);
-				as_app_set_icon_kind (app, AS_ICON_KIND_STOCK);
+				as_icon_set_name (icon, tmp, -1);
+				as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
 			}
+			as_app_add_icon (app, icon);
 		}
 
 	/* Categories */
@@ -4036,7 +4018,7 @@ as_app_parse_desktop_file (AsApp *app,
 	}
 
 	/* all applications require icons */
-	if (as_app_get_icon (app) == NULL)
+	if (as_app_get_icons(app)->len == 0)
 		as_app_add_veto (app, "%s has no icon", app_id);
 
 	return TRUE;
@@ -4315,6 +4297,55 @@ as_app_get_vetos (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->vetos;
+}
+
+/**
+ * as_app_get_icon_default:
+ * @app: A #AsApp
+ *
+ * Finds the default icon.
+ *
+ * Returns: (transfer none): a #AsIcon, or %NULL
+ *
+ * Since: 0.3.1
+ **/
+AsIcon *
+as_app_get_icon_default (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsIcon *icon;
+
+	if (priv->icons->len == 0)
+		return NULL;
+	icon = g_ptr_array_index (priv->icons, 0);
+	return icon;
+}
+
+/**
+ * as_app_get_icon_for_size:
+ * @app: A #AsApp
+ * @width: Size in pixels
+ * @height: Size in pixels
+ *
+ * Finds an icon of a specific size.
+ *
+ * Returns: (transfer none): a #AsIcon, or %NULL
+ *
+ * Since: 0.3.1
+ **/
+AsIcon *
+as_app_get_icon_for_size (AsApp *app, guint width, guint height)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	guint i;
+
+	for (i = 0; i < priv->icons->len; i++) {
+		AsIcon *ic = g_ptr_array_index (priv->icons, i);
+		if (as_icon_get_width (ic) == width &&
+		    as_icon_get_height (ic) == height)
+			return ic;
+	}
+	return NULL;
 }
 
 /**

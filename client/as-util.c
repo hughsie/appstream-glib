@@ -647,10 +647,10 @@ as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **erro
 	}
 
 	/* set things that don't belong in the AppData file */
-	as_app_set_icon (app, NULL, -1);
 	g_ptr_array_set_size (as_app_get_keywords (app, NULL), 0);
 	g_ptr_array_set_size (as_app_get_categories (app), 0);
 	g_ptr_array_set_size (as_app_get_mimetypes (app), 0);
+	g_ptr_array_set_size (as_app_get_icons (app), 0);
 
 	/* add urls */
 	as_app_add_url (app, AS_URL_KIND_HOMEPAGE,
@@ -2092,11 +2092,13 @@ as_util_validate_strict (AsUtilPrivate *priv, gchar **values, GError **error)
 static gboolean
 as_util_check_root_app_icon (AsApp *app, GError **error)
 {
+	AsIcon *icon_default;
 	_cleanup_free_ gchar *icon = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pb = NULL;
 
 	/* nothing found */
-	if (as_app_get_icon (app) == NULL) {
+	icon_default = as_app_get_icon_default (app);
+	if (icon_default == NULL) {
 		g_set_error (error,
 			     AS_ERROR,
 			     AS_ERROR_FAILED,
@@ -2106,18 +2108,18 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 	}
 
 	/* is stock icon */
-	if (as_utils_is_stock_icon_name (as_app_get_icon (app)))
+	if (as_utils_is_stock_icon_name (as_icon_get_name (icon_default)))
 		return TRUE;
 
 	/* can we find it */
 	icon = as_utils_find_icon_filename (g_getenv ("DESTDIR"),
-					    as_app_get_icon (app),
+					    as_icon_get_name (icon_default),
 					    error);
 	if (icon == NULL) {
 		g_prefix_error (error,
 				"%s missing icon %s: ",
 				as_app_get_id (app),
-				as_app_get_icon (app));
+				as_icon_get_name (icon_default));
 		return FALSE;
 	}
 
@@ -2127,7 +2129,7 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 		g_prefix_error (error,
 				"%s invalid icon %s: ",
 				as_app_get_id (app),
-				as_app_get_icon (app));
+				as_icon_get_name (icon_default));
 		return FALSE;
 	}
 

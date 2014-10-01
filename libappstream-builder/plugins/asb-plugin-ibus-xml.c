@@ -86,6 +86,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	_cleanup_free_ gchar *data = NULL;
 	_cleanup_free_ gchar *filename_tmp;
 	_cleanup_object_unref_ AsbApp *app = NULL;
+	_cleanup_object_unref_ AsIcon *icon = NULL;
 	_cleanup_strv_free_ gchar **languages = NULL;
 	_cleanup_strv_free_ gchar **lines = NULL;
 
@@ -120,10 +121,14 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	as_app_set_id_kind (AS_APP (app), AS_ID_KIND_INPUT_METHOD);
 	as_app_add_category (AS_APP (app), "Addons", -1);
 	as_app_add_category (AS_APP (app), "InputSources", -1);
-	as_app_set_icon (AS_APP (app), "system-run-symbolic", -1);
-	as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_STOCK);
 	asb_app_set_requires_appdata (app, TRUE);
 	asb_app_set_hidpi_enabled (app, asb_context_get_hidpi_enabled (plugin->ctx));
+
+	/* add icon */
+	icon = as_icon_new ();
+	as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+	as_icon_set_name (icon, "system-run-symbolic", -1);
+	as_app_add_icon (AS_APP (app), icon);
 
 	/* read the component header which all input methods have */
 	n = as_node_find (root, "component/description");

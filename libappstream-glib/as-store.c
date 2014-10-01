@@ -1298,10 +1298,14 @@ as_store_load_app_install_file (AsStore *store,
 				const gchar *path_icons,
 				GError **error)
 {
+	AsIcon *icon;
+	GPtrArray *icons;
+	guint i;
 	_cleanup_error_free_ GError *error_local = NULL;
 	_cleanup_object_unref_ AsApp *app;
 
 	app = as_app_new ();
+	as_app_set_icon_path (app, path_icons, -1);
 	if (!as_app_parse_file (app,
 				filename,
 				AS_APP_PARSE_FLAG_USE_HEURISTICS,
@@ -1320,9 +1324,14 @@ as_store_load_app_install_file (AsStore *store,
 			     error_local->message);
 		return FALSE;
 	}
-	if (as_app_get_icon_kind (app) == AS_ICON_KIND_UNKNOWN)
-		as_app_set_icon_kind (app, AS_ICON_KIND_CACHED);
-	as_app_set_icon_path (app, path_icons, -1);
+
+	/* convert all the icons */
+	icons = as_app_get_icons (app);
+	for (i = 0; i < icons->len; i++) {
+		icon = g_ptr_array_index (icons, i);
+		if (as_icon_get_kind (icon) == AS_ICON_KIND_UNKNOWN)
+			as_icon_set_kind (icon, AS_ICON_KIND_CACHED);
+	}
 	as_store_add_app_install_screenshot (app);
 	as_store_add_app (store, app);
 
@@ -1439,7 +1448,6 @@ as_store_load_installed (AsStore *store,
 
 		/* set lower priority than AppStream entries */
 		as_app_set_priority (app, -1);
-		as_app_set_icon_kind (app, AS_ICON_KIND_STOCK);
 		as_app_set_state (app, AS_APP_STATE_INSTALLED);
 		as_store_add_app (store, app);
 	}

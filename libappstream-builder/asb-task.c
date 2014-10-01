@@ -388,7 +388,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 
 		/* don't include apps that have no icon */
 		if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_ADDON) {
-			if (as_app_get_icon (AS_APP (app)) == NULL)
+			if (as_app_get_icon_default (AS_APP (app)) == NULL)
 				as_app_add_veto (AS_APP (app), "Has no Icon");
 		}
 

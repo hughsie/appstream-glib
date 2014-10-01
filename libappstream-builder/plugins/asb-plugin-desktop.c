@@ -201,6 +201,9 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	guint min_icon_size;
 	_cleanup_free_ gchar *fn_hidpi = NULL;
 	_cleanup_free_ gchar *fn = NULL;
+	_cleanup_free_ gchar *name = NULL;
+	_cleanup_object_unref_ AsIcon *icon_hidpi = NULL;
+	_cleanup_object_unref_ AsIcon *icon = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf_hidpi = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
 
@@ -246,7 +249,13 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	}
 
 	/* save in target directory */
-	asb_app_add_pixbuf (app, pixbuf);
+	name = g_strdup_printf ("%s.png", as_app_get_id_filename (AS_APP (app)));
+	icon = as_icon_new ();
+	as_icon_set_pixbuf (icon, pixbuf);
+	as_icon_set_name (icon, name, -1);
+	as_icon_set_kind (icon, AS_ICON_KIND_CACHED);
+	as_icon_set_prefix (icon, as_app_get_icon_path (AS_APP (app)));
+	as_app_add_icon (AS_APP (app), icon);
 
 	/* is HiDPI disabled */
 	if (!asb_context_get_hidpi_enabled (plugin->ctx))
@@ -269,7 +278,14 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	    gdk_pixbuf_get_height (pixbuf_hidpi) <= gdk_pixbuf_get_height (pixbuf))
 		return TRUE;
 	as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_HI_DPI_ICON);
-	asb_app_add_pixbuf (app, pixbuf_hidpi);
+
+	/* save icon */
+	icon_hidpi = as_icon_new ();
+	as_icon_set_pixbuf (icon_hidpi, pixbuf_hidpi);
+	as_icon_set_name (icon_hidpi, name, -1);
+	as_icon_set_kind (icon_hidpi, AS_ICON_KIND_CACHED);
+	as_icon_set_prefix (icon_hidpi, as_app_get_icon_path (AS_APP (app)));
+	as_app_add_icon (AS_APP (app), icon_hidpi);
 	return TRUE;
 }
 
@@ -284,7 +300,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 			     const gchar *tmpdir,
 			     GError **error)
 {
-	const gchar *key;
+	AsIcon *icon;
 	gboolean ret;
 	_cleanup_free_ gchar *app_id = NULL;
 	_cleanup_free_ gchar *full_filename = NULL;
@@ -314,27 +330,23 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		asb_app_add_requires_appdata (app, "Category=DesktopSettings");
 
 	/* is the icon a stock-icon-name? */
-	key = as_app_get_icon (AS_APP (app));
-	if (key != NULL) {
-		if (as_app_get_icon_kind (AS_APP (app)) == AS_ICON_KIND_STOCK) {
+	icon = as_app_get_icon_default (AS_APP (app));
+	if (icon != NULL) {
+		_cleanup_free_ gchar *key;
+		key = g_strdup (as_icon_get_name (icon));
+		if (as_icon_get_kind (icon) == AS_ICON_KIND_STOCK) {
 			asb_package_log (pkg,
 					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 					 "using stock icon %s", key);
 		} else {
 			_cleanup_error_free_ GError *error_local = NULL;
+			g_ptr_array_set_size (as_app_get_icons (AS_APP (app)), 0);
 			ret = asb_plugin_desktop_add_icons (plugin,
 							    app,
 							    tmpdir,
 							    key,
 							    &error_local);
-			if (ret) {
-				_cleanup_free_ gchar *fn = NULL;
-				fn = g_strdup_printf ("%s.png",
-						      as_app_get_id_filename (AS_APP (app)));
-				as_app_set_icon (AS_APP (app), fn, -1);
-				as_app_set_icon_kind (AS_APP (app),
-						      AS_ICON_KIND_CACHED);
-			} else {
+			if (!ret) {
 				as_app_add_veto (AS_APP (app), "%s",
 						 error_local->message);
 			}

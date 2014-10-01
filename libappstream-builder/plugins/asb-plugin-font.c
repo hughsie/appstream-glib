@@ -614,8 +614,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	/* generate icon */
 	tmp = as_app_get_metadata_item (AS_APP (app), "FontIconText");
 	if (tmp != NULL) {
-		icon_filename = g_strdup_printf ("%s.png", as_app_get_id_filename (AS_APP (app)));
-		as_app_set_icon (AS_APP (app), icon_filename, -1);
+		_cleanup_object_unref_ AsIcon *icon = NULL;
 		pixbuf = asb_font_get_pixbuf (ft_face, 64, 64, tmp, error);
 		if (pixbuf == NULL) {
 			ret = FALSE;
@@ -632,8 +631,14 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				     64, 64, tmp);
 			goto out;
 		}
-		as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_CACHED);
-		asb_app_add_pixbuf (app, pixbuf);
+
+		/* add icon */
+		icon_filename = g_strdup_printf ("%s.png", as_app_get_id_filename (AS_APP (app)));
+		icon = as_icon_new ();
+		as_icon_set_kind (icon, AS_ICON_KIND_CACHED);
+		as_icon_set_name (icon, icon_filename, -1);
+		as_icon_set_pixbuf (icon, pixbuf);
+		as_app_add_icon (AS_APP (app), icon);
 	}
 
 	/* add */

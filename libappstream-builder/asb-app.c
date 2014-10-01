@@ -39,7 +39,6 @@ typedef struct _AsbAppPrivate	AsbAppPrivate;
 struct _AsbAppPrivate
 {
 	GPtrArray	*requires_appdata;
-	GPtrArray	*pixbufs;		/* of GdkPixbuf */
 	AsbPackage	*pkg;
 	gboolean	 ignore_requires_appdata;
 	gboolean	 hidpi_enabled;
@@ -59,7 +58,6 @@ asb_app_finalize (GObject *object)
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 
 	g_ptr_array_unref (priv->requires_appdata);
-	g_ptr_array_unref (priv->pixbufs);
 	if (priv->pkg != NULL)
 		g_object_unref (priv->pkg);
 
@@ -74,7 +72,6 @@ asb_app_init (AsbApp *app)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 	priv->requires_appdata = g_ptr_array_new_with_free_func (g_free);
-	priv->pixbufs = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 
 	/* all untrusted */
 	as_app_set_trust_flags (AS_APP (app),
@@ -162,22 +159,6 @@ asb_app_set_requires_appdata (AsbApp *app, gboolean requires_appdata)
 		g_ptr_array_set_size (priv->requires_appdata, 0);
 		priv->ignore_requires_appdata = TRUE;
 	}
-}
-
-/**
- * asb_app_add_pixbuf:
- * @app: A #AsbApp
- * @pixbuf: a #GdkPixbuf
- *
- * Adds an icon for the application.
- *
- * Since: 0.3.1
- **/
-void
-asb_app_add_pixbuf (AsbApp *app, GdkPixbuf *pixbuf)
-{
-	AsbAppPrivate *priv = GET_PRIVATE (app);
-	g_ptr_array_add (priv->pixbufs, g_object_ref (pixbuf));
 }
 
 /**
@@ -323,34 +304,50 @@ gboolean
 asb_app_save_resources (AsbApp *app, GError **error)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
+	AsIcon *icon;
 	AsScreenshot *ss;
-	guint i;
 	GdkPixbuf *pixbuf;
+	GPtrArray *icons;
 	GPtrArray *screenshots;
+	guint i;
 
 	/* any non-stock icon set */
-	for (i = 0; i < priv->pixbufs->len; i++) {
+	icons = as_app_get_icons (AS_APP (app));
+	for (i = 0; i < icons->len; i++) {
 		const gchar *tmpdir;
 		_cleanup_free_ gchar *filename = NULL;
 		_cleanup_free_ gchar *size_str = NULL;
 
+		/* don't save stock icons */
+		icon = g_ptr_array_index (icons, i);
+		if (as_icon_get_kind (icon) == AS_ICON_KIND_STOCK)
+			continue;
+
 		/* save to disk */
-		pixbuf = g_ptr_array_index (priv->pixbufs, i);
 		tmpdir = asb_package_get_config (priv->pkg, "TempDir");
 		if (priv->hidpi_enabled) {
 			size_str = g_strdup_printf ("%ux%u",
-						    gdk_pixbuf_get_width (pixbuf),
-						    gdk_pixbuf_get_height (pixbuf));
+						    as_icon_get_width (icon),
+						    as_icon_get_height (icon));
 			filename = g_build_filename (tmpdir,
 						     "icons",
 						     size_str,
-						     as_app_get_icon (AS_APP (app)),
+						     as_icon_get_name (icon),
 						     NULL);
 		} else {
 			filename = g_build_filename (tmpdir,
 						     "icons",
-						     as_app_get_icon (AS_APP (app)),
+						     as_icon_get_name (icon),
 						     NULL);
+		}
+		pixbuf = as_icon_get_pixbuf (icon);
+		if (pixbuf == NULL) {
+			g_set_error (error,
+				     AS_APP_ERROR,
+				     AS_APP_ERROR_FAILED,
+				     "No pixbuf for %s",
+				     as_icon_get_name (icon));
+			return FALSE;
 		}
 		if (!gdk_pixbuf_save (pixbuf, filename, "png", error, NULL))
 			return FALSE;

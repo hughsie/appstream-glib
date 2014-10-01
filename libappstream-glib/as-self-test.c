@@ -665,9 +665,11 @@ as_test_screenshot_func (void)
 static void
 as_test_app_func (void)
 {
+	AsIcon *ic;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
+	GPtrArray *icons;
 	GString *xml;
 	gboolean ret;
 	const gchar *src =
@@ -748,9 +750,7 @@ as_test_app_func (void)
 	g_assert_cmpstr (as_app_get_name (app, "pl"), ==, "Oprogramowanie");
 	g_assert_cmpstr (as_app_get_comment (app, NULL), ==, "Application manager");
 	g_assert_cmpstr (as_app_get_developer_name (app, NULL), ==, "GNOME Foundation");
-	g_assert_cmpstr (as_app_get_icon (app), ==, "org.gnome.Software.png");
 	g_assert_cmpstr (as_app_get_source_pkgname (app), ==, "gnome-software-src");
-	g_assert_cmpint (as_app_get_icon_kind (app), ==, AS_ICON_KIND_CACHED);
 	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_APP_SOURCE_KIND_UNKNOWN);
 	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
 	g_assert_cmpstr (as_app_get_project_license (app), ==, "GPLv2+");
@@ -769,6 +769,19 @@ as_test_app_func (void)
 	g_assert (!as_app_has_kudo (app, "MagicValue"));
 	g_assert (!as_app_has_kudo_kind (app, AS_KUDO_KIND_USER_DOCS));
 	as_node_unref (root);
+
+	/* check icons */
+	icons = as_app_get_icons (app);
+	g_assert (icons != NULL);
+	g_assert_cmpint (icons->len, ==, 1);
+
+	/* check we can get a specific icon */
+	ic = as_app_get_icon_for_size (app, 999, 999);
+	g_assert (ic == NULL);
+	ic = as_app_get_icon_for_size (app, 64, 64);
+	g_assert (ic != NULL);
+	g_assert_cmpstr (as_icon_get_name (ic), ==, "org.gnome.Software.png");
+	g_assert_cmpint (as_icon_get_kind (ic), ==, AS_ICON_KIND_CACHED);
 
 	/* back to node */
 	root = as_node_new ();
@@ -1088,6 +1101,7 @@ static void
 as_test_store_local_app_install_func (void)
 {
 	AsApp *app;
+	AsIcon *ic;
 	GError *error = NULL;
 	gboolean ret;
 	_cleanup_free_ gchar *filename = NULL;
@@ -1108,9 +1122,16 @@ as_test_store_local_app_install_func (void)
 	g_assert (app != NULL);
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "Test");
 	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "A test program");
-	g_assert_cmpstr (as_app_get_icon (app), ==, "test");
-	g_assert_cmpint (as_app_get_icon_kind (app), ==, AS_ICON_KIND_CACHED);
 	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_APP_SOURCE_KIND_APPSTREAM);
+
+	/* check icons */
+	g_assert_cmpint (as_app_get_icons(app)->len, ==, 1);
+	ic = as_app_get_icon_default (app);
+	g_assert (ic != NULL);
+	g_assert_cmpstr (as_icon_get_name (ic), ==, "test");
+	g_assert_cmpint (as_icon_get_kind (ic), ==, AS_ICON_KIND_CACHED);
+	g_assert_cmpint (as_icon_get_width (ic), ==, 0);
+	g_assert_cmpint (as_icon_get_height (ic), ==, 0);
 
 	/* ensure we reference the correct file */
 	source_file = g_build_filename (filename, "/usr", "share", "app-install",
@@ -1240,6 +1261,7 @@ as_test_app_validate_style_func (void)
 static void
 as_test_app_parse_file_func (void)
 {
+	AsIcon *ic;
 	GError *error = NULL;
 	gboolean ret;
 	_cleanup_free_ gchar *filename = NULL;
@@ -1262,8 +1284,6 @@ as_test_app_parse_file_func (void)
 		"Inspect and compare installed color profiles");
 	g_assert_cmpstr (as_app_get_comment (app, "pl"), ==,
 		"Badanie i porównywanie zainstalowanych profilów kolorów");
-	g_assert_cmpstr (as_app_get_icon (app), ==, "audio-input-microphone");
-	g_assert_cmpint (as_app_get_icon_kind (app), ==, AS_ICON_KIND_STOCK);
 	g_assert_cmpint (as_app_get_vetos(app)->len, ==, 1);
 	g_assert_cmpstr (as_app_get_project_group (app), ==, NULL);
 	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
@@ -1272,6 +1292,15 @@ as_test_app_parse_file_func (void)
 	g_assert_cmpint (as_app_get_keywords(app, "pl")->len, ==, 1);
 	g_assert (as_app_has_category (app, "System"));
 	g_assert (!as_app_has_category (app, "NotGoingToExist"));
+
+	/* check icons */
+	g_assert_cmpint (as_app_get_icons(app)->len, ==, 1);
+	ic = as_app_get_icon_default (app);
+	g_assert (ic != NULL);
+	g_assert_cmpstr (as_icon_get_name (ic), ==, "audio-input-microphone");
+	g_assert_cmpint (as_icon_get_kind (ic), ==, AS_ICON_KIND_STOCK);
+	g_assert_cmpint (as_icon_get_width (ic), ==, 0);
+	g_assert_cmpint (as_icon_get_height (ic), ==, 0);
 
 	/* reparse with heuristics */
 	ret = as_app_parse_file (app,
@@ -1737,14 +1766,18 @@ as_test_node_localized_wrap2_func (void)
 static void
 as_test_app_subsume_func (void)
 {
+	AsIcon *ic;
 	GList *list;
 	_cleanup_object_unref_ AsApp *app = NULL;
 	_cleanup_object_unref_ AsApp *donor = NULL;
+	_cleanup_object_unref_ AsIcon *icon = NULL;
 	_cleanup_object_unref_ AsScreenshot *ss = NULL;
 
 	donor = as_app_new ();
+	icon = as_icon_new ();
+	as_icon_set_name (icon, "gtk-find", -1);
+	as_app_add_icon (donor, icon);
 	as_app_set_state (donor, AS_APP_STATE_INSTALLED);
-	as_app_set_icon (donor, "gtk-find", -1);
 	as_app_add_pkgname (donor, "hal", -1);
 	as_app_add_language (donor, -1, "en_GB", -1);
 	as_app_add_metadata (donor, "donor", "true", -1);
@@ -1761,7 +1794,6 @@ as_test_app_subsume_func (void)
 	as_app_subsume_full (app, donor, AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
 	as_app_add_screenshot (app, ss);
 
-	g_assert_cmpstr (as_app_get_icon (app), ==, "gtk-find");
 	g_assert_cmpstr (as_app_get_metadata_item (app, "donor"), ==, "true");
 	g_assert_cmpstr (as_app_get_metadata_item (app, "overwrite"), ==, "2222");
 	g_assert_cmpstr (as_app_get_metadata_item (donor, "recipient"), ==, NULL);
@@ -1772,6 +1804,15 @@ as_test_app_subsume_func (void)
 	list = as_app_get_languages (app);
 	g_assert_cmpint (g_list_length (list), ==, 1);
 	g_list_free (list);
+
+	/* check icon */
+	g_assert_cmpint (as_app_get_icons(app)->len, ==, 1);
+	ic = as_app_get_icon_default (app);
+	g_assert (ic != NULL);
+	g_assert_cmpstr (as_icon_get_name (ic), ==, "gtk-find");
+	g_assert_cmpint (as_icon_get_kind (ic), ==, AS_ICON_KIND_UNKNOWN);
+	g_assert_cmpint (as_icon_get_width (ic), ==, 0);
+	g_assert_cmpint (as_icon_get_height (ic), ==, 0);
 
 	/* test both ways */
 	as_app_subsume_full (app, donor, AS_APP_SUBSUME_FLAG_BOTH_WAYS);
@@ -2963,4 +3004,3 @@ main (int argc, char **argv)
 
 	return g_test_run ();
 }
-

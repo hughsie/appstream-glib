@@ -29,6 +29,7 @@
 #include <glib-object.h>
 
 #include "as-enums.h"
+#include "as-icon.h"
 #include "as-provide.h"
 #include "as-release.h"
 #include "as-screenshot.h"
@@ -213,7 +214,6 @@ const gchar	*as_app_source_kind_to_string	(AsAppSourceKind source_kind);
 const gchar	*as_app_state_to_string		(AsAppState	 state);
 
 /* getters */
-AsIconKind	 as_app_get_icon_kind		(AsApp		*app);
 AsIdKind	 as_app_get_id_kind		(AsApp		*app);
 AsAppSourceKind	 as_app_get_source_kind		(AsApp		*app);
 AsAppState	 as_app_get_state		(AsApp		*app);
@@ -232,6 +232,7 @@ GPtrArray	*as_app_get_architectures	(AsApp		*app);
 GPtrArray	*as_app_get_releases		(AsApp		*app);
 GPtrArray	*as_app_get_provides		(AsApp		*app);
 GPtrArray	*as_app_get_screenshots		(AsApp		*app);
+GPtrArray	*as_app_get_icons		(AsApp		*app);
 GHashTable	*as_app_get_names		(AsApp		*app);
 GHashTable	*as_app_get_comments		(AsApp		*app);
 GHashTable	*as_app_get_developer_names	(AsApp		*app);
@@ -239,7 +240,6 @@ GHashTable	*as_app_get_metadata		(AsApp		*app);
 GHashTable	*as_app_get_descriptions	(AsApp		*app);
 GHashTable	*as_app_get_urls		(AsApp		*app);
 GPtrArray	*as_app_get_vetos		(AsApp		*app);
-const gchar	*as_app_get_icon		(AsApp		*app);
 const gchar	*as_app_get_icon_path		(AsApp		*app);
 const gchar	*as_app_get_id_filename		(AsApp		*app);
 const gchar	*as_app_get_id			(AsApp		*app);
@@ -299,14 +299,9 @@ void		 as_app_set_source_pkgname	(AsApp		*app,
 void		 as_app_set_update_contact	(AsApp		*app,
 						 const gchar	*update_contact,
 						 gssize		 update_contact_len);
-void		 as_app_set_icon		(AsApp		*app,
-						 const gchar	*icon,
-						 gssize		 icon_len);
 void		 as_app_set_icon_path		(AsApp		*app,
 						 const gchar	*icon_path,
 						 gssize		 icon_path_len);
-void		 as_app_set_icon_kind		(AsApp		*app,
-						 AsIconKind	 icon_kind);
 void		 as_app_set_name		(AsApp		*app,
 						 const gchar	*locale,
 						 const gchar	*name,
@@ -354,6 +349,8 @@ void		 as_app_add_provide		(AsApp		*app,
 						 AsProvide	*provide);
 void		 as_app_add_screenshot		(AsApp		*app,
 						 AsScreenshot	*screenshot);
+void		 as_app_add_icon		(AsApp		*app,
+						 AsIcon		*icon);
 void		 as_app_add_language		(AsApp		*app,
 						 gint		 percentage,
 						 const gchar	*locale,
@@ -402,6 +399,10 @@ gboolean	 as_app_to_file			(AsApp		*app,
 						 GFile		*file,
 						 GCancellable	*cancellable,
 						 GError		**error);
+AsIcon		*as_app_get_icon_default	(AsApp		*app);
+AsIcon		*as_app_get_icon_for_size	(AsApp		*app,
+						 guint		 width,
+						 guint		 height);
 
 G_END_DECLS
 

@@ -142,6 +142,7 @@ asb_plugin_process (AsbPlugin *plugin,
 	guint j;
 	_cleanup_free_ gchar *app_id = NULL;
 	_cleanup_object_unref_ AsbApp *app = NULL;
+	_cleanup_object_unref_ AsIcon *icon = NULL;
 	_cleanup_string_free_ GString *str = NULL;
 
 	/* use the pkgname suffix as the app-id */
@@ -158,12 +159,16 @@ asb_plugin_process (AsbPlugin *plugin,
 	app = asb_app_new (pkg, app_id);
 	as_app_set_id_kind (AS_APP (app), AS_ID_KIND_CODEC);
 	as_app_set_name (AS_APP (app), "C", "GStreamer Multimedia Codecs", -1);
-	as_app_set_icon (AS_APP (app), "application-x-executable", -1);
 	asb_app_set_requires_appdata (app, TRUE);
 	asb_app_set_hidpi_enabled (app, asb_context_get_hidpi_enabled (plugin->ctx));
-	as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_STOCK);
 	as_app_add_category (AS_APP (app), "Addons", -1);
 	as_app_add_category (AS_APP (app), "Codecs", -1);
+
+	/* add icon */
+	icon = as_icon_new ();
+	as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+	as_icon_set_name (icon, "application-x-executable", -1);
+	as_app_add_icon (AS_APP (app), icon);
 
 	for (i = 0; data[i].path != NULL; i++) {
 		if (!asb_utils_is_file_in_tmpdir (tmpdir, data[i].path))

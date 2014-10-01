@@ -97,6 +97,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	_cleanup_free_ gchar *name = NULL;
 	_cleanup_free_ gchar *symbol = NULL;
 	_cleanup_object_unref_ AsbApp *app = NULL;
+	_cleanup_object_unref_ AsIcon *icon = NULL;
 	_cleanup_strv_free_ gchar **languages = NULL;
 
 	/* open IME database */
@@ -189,8 +190,6 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	as_app_set_id_kind (AS_APP (app), AS_ID_KIND_INPUT_METHOD);
 	as_app_add_category (AS_APP (app), "Addons", -1);
 	as_app_add_category (AS_APP (app), "InputSources", -1);
-	as_app_set_icon (AS_APP (app), "system-run-symbolic", -1);
-	as_app_set_icon_kind (AS_APP (app), AS_ICON_KIND_STOCK);
 	as_app_set_name (AS_APP (app), "C", name, -1);
 	as_app_set_comment (AS_APP (app), "C", description, -1);
 	if (symbol != NULL && symbol[0] != '\0')
@@ -206,6 +205,13 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	}
 	asb_app_set_requires_appdata (app, TRUE);
 	asb_app_set_hidpi_enabled (app, asb_context_get_hidpi_enabled (plugin->ctx));
+
+	/* add icon */
+	icon = as_icon_new ();
+	as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+	as_icon_set_name (icon, "system-run-symbolic", -1);
+	as_app_add_icon (AS_APP (app), icon);
+
 	asb_plugin_add_app (apps, AS_APP (app));
 out:
 	if (db != NULL)
