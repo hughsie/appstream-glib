@@ -61,6 +61,18 @@ struct _AsIconClass
 };
 
 /**
+ * AsIconError:
+ * @AS_ICON_ERROR_FAILED:			Generic failure
+ *
+ * The error type.
+ **/
+typedef enum {
+	AS_ICON_ERROR_FAILED,
+	/*< private >*/
+	AS_ICON_ERROR_LAST
+} AsIconError;
+
+/**
  * AsIconKind:
  * @AS_ICON_KIND_UNKNOWN:		Type invalid or not known
  * @AS_ICON_KIND_STOCK:			Stock icon or present in the generic icon theme
@@ -94,8 +106,11 @@ typedef enum {
 	AS_ICON_LOAD_FLAG_LAST
 } AsIconLoadFlags;
 
+#define	AS_ICON_ERROR				as_icon_error_quark ()
+
 GType		 as_icon_get_type		(void);
 AsIcon		*as_icon_new			(void);
+GQuark		 as_icon_error_quark		(void);
 
 /* helpers */
 const gchar	*as_icon_kind_to_string		(AsIconKind	 icon_kind);

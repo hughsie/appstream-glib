@@ -57,6 +57,22 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsIcon, as_icon, G_TYPE_OBJECT)
 #define GET_PRIVATE(o) (as_icon_get_instance_private (o))
 
 /**
+ * as_icon_error_quark:
+ *
+ * Return value: An error quark.
+ *
+ * Since: 0.3.1
+ **/
+GQuark
+as_icon_error_quark (void)
+{
+	static GQuark quark = 0;
+	if (!quark)
+		quark = g_quark_from_static_string ("AsIconError");
+	return quark;
+}
+
+/**
  * as_icon_finalize:
  **/
 static void
@@ -456,8 +472,8 @@ as_icon_node_parse_embedded (AsIcon *icon, GNode *n, GError **error)
 	c = as_node_find (n, "name");
 	if (c == NULL) {
 		g_set_error_literal (error,
-				     AS_NODE_ERROR,
-				     AS_NODE_ERROR_FAILED,
+				     AS_ICON_ERROR,
+				     AS_ICON_ERROR_FAILED,
 				     "embedded icons needs <name>");
 		return FALSE;
 	}
@@ -468,8 +484,8 @@ as_icon_node_parse_embedded (AsIcon *icon, GNode *n, GError **error)
 	c = as_node_find (n, "filecontent");
 	if (c == NULL) {
 		g_set_error_literal (error,
-				     AS_NODE_ERROR,
-				     AS_NODE_ERROR_FAILED,
+				     AS_ICON_ERROR,
+				     AS_ICON_ERROR_FAILED,
 				     "embedded icons needs <filecontent>");
 		return FALSE;
 	}
@@ -477,8 +493,8 @@ as_icon_node_parse_embedded (AsIcon *icon, GNode *n, GError **error)
 	stream = g_memory_input_stream_new_from_data (data, (gssize) size, NULL);
 	if (stream == NULL) {
 		g_set_error_literal (error,
-				     AS_NODE_ERROR,
-				     AS_NODE_ERROR_FAILED,
+				     AS_ICON_ERROR,
+				     AS_ICON_ERROR_FAILED,
 				     "failed to load embedded data");
 		return FALSE;
 	}
@@ -590,8 +606,8 @@ as_icon_load (AsIcon *icon, AsIconLoadFlags flags, GError **error)
 	/* not set */
 	if (priv->prefix == NULL) {
 		g_set_error (error,
-			     AS_NODE_ERROR,
-			     AS_NODE_ERROR_FAILED,
+			     AS_ICON_ERROR,
+			     AS_ICON_ERROR_FAILED,
 			     "unable to load '%s' as no prefix set",
 			     priv->name);
 		return FALSE;
@@ -678,8 +694,8 @@ as_icon_convert_to_kind (AsIcon *icon, AsIconKind kind, GError **error)
 		path = g_build_filename (priv->prefix, size_str, NULL);
 		if (g_mkdir_with_parents (path, 0700) != 0) {
 			g_set_error (error,
-				     AS_NODE_ERROR,
-				     AS_NODE_ERROR_FAILED,
+				     AS_ICON_ERROR,
+				     AS_ICON_ERROR_FAILED,
 				     "Failed to create: %s", path);
 			return FALSE;
 		}
@@ -694,8 +710,8 @@ as_icon_convert_to_kind (AsIcon *icon, AsIconKind kind, GError **error)
 
 	/* not supported */
 	g_set_error (error,
-		     AS_NODE_ERROR,
-		     AS_NODE_ERROR_FAILED,
+		     AS_ICON_ERROR,
+		     AS_ICON_ERROR_FAILED,
 		     "converting %s to %s is not supported",
 		     as_icon_kind_to_string (priv->kind),
 		     as_icon_kind_to_string (kind));
