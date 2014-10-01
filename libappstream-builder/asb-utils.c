@@ -461,6 +461,8 @@ asb_utils_write_archive_dir (const gchar *filename,
 	files = g_ptr_array_new_with_free_func (g_free);
 	if (!asb_utils_add_files_recursive (files, directory, directory, error))
 		return FALSE;
+	if (files->len == 0)
+		return TRUE;
 
 	/* write tar file */
 	return asb_utils_write_archive (filename, directory, files, error);
