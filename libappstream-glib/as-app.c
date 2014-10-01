@@ -3294,6 +3294,35 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 }
 
 /**
+ * as_app_check_for_hidpi_icons:
+ **/
+static void
+as_app_check_for_hidpi_icons (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsIcon *icon_tmp;
+	_cleanup_free_ gchar *fn_size = NULL;
+	_cleanup_object_unref_ AsIcon *icon_hidpi = NULL;
+
+	/* does the file exist */
+	icon_tmp = as_app_get_icon_default (app);
+	fn_size = g_build_filename (priv->icon_path,
+				    "128x128",
+				    as_icon_get_name (icon_tmp),
+				    NULL);
+	if (!g_file_test (fn_size, G_FILE_TEST_EXISTS))
+		return;
+
+	/* create the HiDPI version */
+	icon_hidpi = as_icon_new ();
+	as_icon_set_prefix (icon_hidpi, priv->icon_path);
+	as_icon_set_name (icon_hidpi, as_icon_get_name (icon_tmp), -1);
+	as_icon_set_width (icon_hidpi, 128);
+	as_icon_set_height (icon_hidpi, 128);
+	as_app_add_icon (app, icon_hidpi);
+}
+
+/**
  * as_app_node_parse_full:
  **/
 static gboolean
@@ -3327,6 +3356,11 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags, GError *
 		if (!as_app_node_parse_child (app, n, flags, error))
 			return FALSE;
 	}
+
+	/* if only one icon is listed, look for HiDPI versions too */
+	if (as_app_get_icons(app)->len == 1)
+		as_app_check_for_hidpi_icons (app);
+
 	return TRUE;
 }
 
