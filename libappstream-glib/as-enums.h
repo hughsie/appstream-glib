@@ -107,6 +107,7 @@ typedef enum {
  * @AS_KUDO_KIND_MODERN_TOOLKIT:	Uses a modern toolkit like GTK3 or QT5
  * @AS_KUDO_KIND_NOTIFICATIONS:		Registers notifications with KDE or GNOME
  * @AS_KUDO_KIND_HIGH_CONTRAST:		Installs a high contrast icon
+ * @AS_KUDO_KIND_HI_DPI_ICON:		Installs a high DPI icon
  *
  * The kudo type.
  **/
