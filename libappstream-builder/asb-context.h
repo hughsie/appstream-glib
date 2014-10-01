@@ -75,6 +75,8 @@ void		 asb_context_set_add_cache_id	(AsbContext	*ctx,
 						 gboolean	 add_cache_id);
 void		 asb_context_set_hidpi_enabled	(AsbContext	*ctx,
 						 gboolean	 hidpi_enabled);
+void		 asb_context_set_embedded_icons	(AsbContext	*ctx,
+						 gboolean	 embedded_icons);
 void		 asb_context_set_max_threads	(AsbContext	*ctx,
 						 guint		 max_threads);
 void		 asb_context_set_min_icon_size	(AsbContext	*ctx,
@@ -104,6 +106,7 @@ void		 asb_context_set_basename	(AsbContext	*ctx,
 const gchar	*asb_context_get_temp_dir	(AsbContext	*ctx);
 gboolean	 asb_context_get_add_cache_id	(AsbContext	*ctx);
 gboolean	 asb_context_get_hidpi_enabled	(AsbContext	*ctx);
+gboolean	 asb_context_get_embedded_icons	(AsbContext	*ctx);
 gboolean	 asb_context_get_no_net		(AsbContext	*ctx);
 gdouble		 asb_context_get_api_version	(AsbContext	*ctx);
 guint		 asb_context_get_min_icon_size	(AsbContext	*ctx);

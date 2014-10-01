@@ -322,6 +322,8 @@ asb_app_save_resources (AsbApp *app, GError **error)
 		icon = g_ptr_array_index (icons, i);
 		if (as_icon_get_kind (icon) == AS_ICON_KIND_STOCK)
 			continue;
+		if (as_icon_get_kind (icon) == AS_ICON_KIND_EMBEDDED)
+			continue;
 
 		/* save to disk */
 		tmpdir = asb_package_get_config (priv->pkg, "TempDir");

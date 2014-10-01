@@ -65,6 +65,7 @@ struct _AsbContextPrivate
 	AsbPluginLoader		*plugin_loader;
 	gboolean		 add_cache_id;
 	gboolean		 hidpi_enabled;
+	gboolean		 embedded_icons;
 	gboolean		 no_net;
 	guint			 max_threads;
 	guint			 min_icon_size;
@@ -175,6 +176,22 @@ asb_context_set_hidpi_enabled (AsbContext *ctx, gboolean hidpi_enabled)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	priv->hidpi_enabled = hidpi_enabled;
+}
+
+/**
+ * asb_context_set_embedded_icons:
+ * @ctx: A #AsbContext
+ * @embedded_icons: boolean
+ *
+ * Sets if the icons should be Base64 embedded in the metadata.
+ *
+ * Since: 0.3.1
+ **/
+void
+asb_context_set_embedded_icons (AsbContext *ctx, gboolean embedded_icons)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	priv->embedded_icons = embedded_icons;
 }
 
 /**
@@ -438,6 +455,23 @@ asb_context_get_hidpi_enabled (AsbContext *ctx)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	return priv->hidpi_enabled;
+}
+
+/**
+ * asb_context_get_embedded_icons:
+ * @ctx: A #AsbContext
+ *
+ * Gets if the icons should be embedded in the XML.
+ *
+ * Returns: boolean
+ *
+ * Since: 0.3.1
+ **/
+gboolean
+asb_context_get_embedded_icons (AsbContext *ctx)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	return priv->embedded_icons;
 }
 
 /**

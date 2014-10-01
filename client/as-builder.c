@@ -65,6 +65,7 @@ main (int argc, char **argv)
 	GOptionContext *option_context;
 	const gchar *filename;
 	gboolean add_cache_id = FALSE;
+	gboolean embedded_icons = FALSE;
 	gboolean hidpi_enabled = FALSE;
 	gboolean no_net = FALSE;
 	gboolean ret;
@@ -102,6 +103,9 @@ main (int argc, char **argv)
 		{ "enable-hidpi", '\0', 0, G_OPTION_ARG_NONE, &hidpi_enabled,
 			/* TRANSLATORS: command line option */
 			_("Add HiDPI icons to the tarball"), NULL },
+		{ "enable-embed", '\0', 0, G_OPTION_ARG_NONE, &embedded_icons,
+			/* TRANSLATORS: command line option */
+			_("Add encoded icons to the XML"), NULL },
 		{ "log-dir", '\0', 0, G_OPTION_ARG_FILENAME, &log_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the logging directory"), "DIR" },
@@ -206,6 +210,7 @@ main (int argc, char **argv)
 	asb_context_set_api_version (ctx, api_version);
 	asb_context_set_add_cache_id (ctx, add_cache_id);
 	asb_context_set_hidpi_enabled (ctx, hidpi_enabled);
+	asb_context_set_embedded_icons (ctx, embedded_icons);
 	asb_context_set_old_metadata (ctx, old_metadata);
 	asb_context_set_extra_appstream (ctx, extra_appstream);
 	asb_context_set_extra_appdata (ctx, extra_appdata);

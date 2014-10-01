@@ -403,6 +403,14 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			as_app_add_veto (AS_APP (app), "Required AppData: %s", tmp);
 		}
 
+		/* embedding the icons in the XML */
+		if (asb_context_get_embedded_icons (priv->ctx)) {
+			if (!as_app_convert_icons (AS_APP (app),
+						   AS_ICON_KIND_EMBEDDED,
+						   error_not_used))
+				return FALSE;
+		}
+
 		/* save icon and screenshots */
 		if (array->len == 0) {
 			ret = asb_app_save_resources (app, &error);
