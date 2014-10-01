@@ -321,8 +321,6 @@ as_store_get_apps_by_metadata (AsStore *store,
  * NOTE: if applications are removed *all* the indexes will be invalid and
  * will have to be re-added.
  *
- * Returns: (transfer none): a #AsApp or %NULL
- *
  * Since: 0.3.0
  **/
 void
