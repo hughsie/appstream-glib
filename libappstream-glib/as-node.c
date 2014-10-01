@@ -1312,6 +1312,29 @@ as_node_find_with_attribute (GNode *root, const gchar *path,
 }
 
 /**
+ * as_node_insert_line_breaks:
+ **/
+static gchar *
+as_node_insert_line_breaks (const gchar *text, guint break_len)
+{
+	GString *str;
+	guint i;
+	guint new_len;
+
+	/* allocate long enough for the string, plus the extra newlines */
+	new_len = strlen (text) * (break_len + 1) / break_len;
+	str = g_string_new_len (NULL, new_len + 2);
+	g_string_append (str, "\n");
+	g_string_append (str, text);
+
+	/* insert a newline every break length */
+	for (i = break_len + 1; i < str->len; i += break_len + 1)
+		g_string_insert (str, i, "\n");
+	g_string_append (str, "\n");
+	return g_string_free (str, FALSE);
+}
+
+/**
  * as_node_insert: (skip)
  * @parent: a parent #GNode.
  * @name: the tag name, e.g. "id".
@@ -1342,8 +1365,12 @@ as_node_insert (GNode *parent,
 
 	data = g_slice_new0 (AsNodeData);
 	as_node_data_set_name (data, name, insert_flags);
-	if (cdata != NULL)
-		data->cdata = g_strdup (cdata);
+	if (cdata != NULL) {
+		if (insert_flags & AS_NODE_INSERT_FLAG_BASE64_ENCODED)
+			data->cdata = as_node_insert_line_breaks (cdata, 76);
+		else
+			data->cdata = g_strdup (cdata);
+	}
 	data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 
 	/* process the attrs valist */

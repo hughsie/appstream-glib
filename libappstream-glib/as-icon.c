@@ -426,7 +426,8 @@ as_icon_node_insert (AsIcon *icon, GNode *parent, gdouble api_version)
 	as_node_insert (n, "name", priv->name, 0, NULL);
 	data = g_base64_encode (g_bytes_get_data (priv->data, NULL),
 				g_bytes_get_size (priv->data));
-	as_node_insert (n, "filecontent", data, 0, NULL);
+	as_node_insert (n, "filecontent", data,
+			AS_NODE_INSERT_FLAG_BASE64_ENCODED, NULL);
 	return n;
 }
 
