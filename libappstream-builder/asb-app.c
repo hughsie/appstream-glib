@@ -324,6 +324,8 @@ asb_app_save_resources (AsbApp *app, GError **error)
 			continue;
 		if (as_icon_get_kind (icon) == AS_ICON_KIND_EMBEDDED)
 			continue;
+		if (as_icon_get_kind (icon) == AS_ICON_KIND_REMOTE)
+			continue;
 
 		/* save to disk */
 		tmpdir = asb_package_get_config (priv->pkg, "TempDir");
