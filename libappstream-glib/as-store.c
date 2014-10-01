@@ -862,6 +862,34 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 }
 
 /**
+ * as_store_convert_icons:
+ * @store: a #AsStore instance.
+ * @kind: the AsIconKind, e.g. %AS_ICON_KIND_EMBEDDED.
+ * @error: A #GError or %NULL
+ *
+ * Converts all the icons in the store to a specific kind.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.3.1
+ **/
+gboolean
+as_store_convert_icons (AsStore *store, AsIconKind kind, GError **error)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	AsApp *app;
+	guint i;
+
+	/* convert application icons */
+	for (i = 0; i < priv->array->len; i++) {
+		app = g_ptr_array_index (priv->array, i);
+		if (!as_app_convert_icons (app, kind, error))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
  * as_store_to_file:
  * @store: a #AsStore instance.
  * @file: file

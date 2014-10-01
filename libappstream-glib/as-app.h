@@ -403,6 +403,9 @@ AsIcon		*as_app_get_icon_default	(AsApp		*app);
 AsIcon		*as_app_get_icon_for_size	(AsApp		*app,
 						 guint		 width,
 						 guint		 height);
+gboolean	 as_app_convert_icons		(AsApp		*app,
+						 AsIconKind	 kind,
+						 GError		**error);
 
 G_END_DECLS
 

@@ -163,6 +163,9 @@ gboolean	 as_store_to_file		(AsStore	*store,
 						 AsNodeToXmlFlags flags,
 						 GCancellable	*cancellable,
 						 GError		**error);
+gboolean	 as_store_convert_icons		(AsStore	*store,
+						 AsIconKind	 kind,
+						 GError		**error);
 const gchar	*as_store_get_origin		(AsStore	*store);
 void		 as_store_set_origin		(AsStore	*store,
 						 const gchar	*origin);

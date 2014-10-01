@@ -4383,6 +4383,34 @@ as_app_get_icon_for_size (AsApp *app, guint width, guint height)
 }
 
 /**
+ * as_app_convert_icons:
+ * @app: A #AsApp.
+ * @kind: the AsIconKind, e.g. %AS_ICON_KIND_EMBEDDED.
+ * @error: A #GError or %NULL
+ *
+ * Converts all the icons in the application to a specific kind.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.3.1
+ **/
+gboolean
+as_app_convert_icons (AsApp *app, AsIconKind kind, GError **error)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsIcon *icon;
+	guint i;
+
+	/* convert icons */
+	for (i = 0; i < priv->icons->len; i++) {
+		icon = g_ptr_array_index (priv->icons, i);
+		if (!as_icon_convert_to_kind (icon, kind, error))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
  * as_app_add_veto:
  * @app: A #AsApp
  * @fmt: format string

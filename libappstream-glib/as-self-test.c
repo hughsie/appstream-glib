@@ -1846,6 +1846,102 @@ as_test_app_search_func (void)
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) mime), ==, 5);
 }
 
+/* load and save embedded icons */
+static void
+as_test_store_embedded_func (void)
+{
+	AsApp *app;
+	AsIcon *icon;
+	gboolean ret;
+	_cleanup_error_free_ GError *error = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_string_free_ GString *xml = NULL;
+	const gchar *xml_src =
+"<components version=\"0.6\" origin=\"origin\">"
+"<component type=\"desktop\">"
+"<id>eog.desktop</id>"
+"<pkgname>eog</pkgname>"
+"<name>Image Viewer</name>"
+"<icon type=\"embedded\">"
+"<name>eog.png</name>"
+"<filecontent>"
+"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"
+"</filecontent>"
+"</icon>"
+"</component>"
+"</components>";
+
+	/* load AppStream file with embedded icon */
+	store = as_store_new ();
+	as_store_set_origin (store, "origin");
+	ret = as_store_from_xml (store, xml_src, -1, "/tmp", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* check the icon was parsed */
+	g_assert_cmpint (as_store_get_size (store), ==, 1);
+	app = as_store_get_app_by_id (store, "eog.desktop");
+	g_assert (app != NULL);
+	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_DESKTOP);
+	icon = as_app_get_icon_default (app);
+	g_assert (icon != NULL);
+	g_assert_cmpint (as_icon_get_kind (icon), ==, AS_ICON_KIND_EMBEDDED);
+	g_assert_cmpstr (as_icon_get_name (icon), ==, "eog.png");
+	g_assert_cmpstr (as_icon_get_prefix (icon), ==, "/tmp/origin");
+
+	/* convert back to a file */
+	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert_cmpstr (xml->str, ==, xml_src);
+
+	/* strip out the embedded icons */
+	ret = as_store_convert_icons (store, AS_ICON_KIND_CACHED, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* check exists */
+	g_assert (g_file_test ("/tmp/origin/32x32/eog.png", G_FILE_TEST_EXISTS));
+}
+
 /* demote the .desktop "application" to an addon */
 static void
 as_test_store_demote_func (void)
@@ -2995,6 +3091,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{metadata}", as_test_store_metadata_func);
 	g_test_add_func ("/AppStream/store{metadata-index}", as_test_store_metadata_index_func);
 	g_test_add_func ("/AppStream/store{validate}", as_test_store_validate_func);
+	g_test_add_func ("/AppStream/store{embedded}", as_test_store_embedded_func);
 	g_test_add_func ("/AppStream/store{local-app-install}", as_test_store_local_app_install_func);
 	g_test_add_func ("/AppStream/store{local-appdata}", as_test_store_local_appdata_func);
 	g_test_add_func ("/AppStream/store{speed-appstream}", as_test_store_speed_appstream_func);
