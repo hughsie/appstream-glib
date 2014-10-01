@@ -683,7 +683,7 @@ as_test_app_func (void)
 		"<developer_name>GNOME Foundation</developer_name>"
 		"<description><p>Software allows you to find stuff</p></description>"
 		"<description xml:lang=\"pt_BR\"><p>O aplicativo Software.</p></description>"
-		"<icon type=\"cached\">org.gnome.Software.png</icon>"
+		"<icon height=\"64\" width=\"64\" type=\"cached\">org.gnome.Software.png</icon>"
 		"<categories>"
 		"<category>System</category>"
 		"</categories>"

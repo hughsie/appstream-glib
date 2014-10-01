@@ -416,6 +416,10 @@ as_icon_node_insert (AsIcon *icon, GNode *parent, gdouble api_version)
 		n = as_node_insert (parent, "icon", priv->name, 0,
 				    "type", as_icon_kind_to_string (priv->kind),
 				    NULL);
+		if (priv->kind == AS_ICON_KIND_CACHED && api_version >= 0.8) {
+			as_node_add_attribute_as_int (n, "width", priv->width);
+			as_node_add_attribute_as_int (n, "height", priv->height);
+		}
 		return n;
 	}
 
@@ -423,6 +427,10 @@ as_icon_node_insert (AsIcon *icon, GNode *parent, gdouble api_version)
 	n = as_node_insert (parent, "icon", NULL, 0,
 			    "type", as_icon_kind_to_string (priv->kind),
 			    NULL);
+	if (api_version >= 0.8) {
+		as_node_add_attribute_as_int (n, "width", priv->width);
+		as_node_add_attribute_as_int (n, "height", priv->height);
+	}
 	as_node_insert (n, "name", priv->name, 0, NULL);
 	data = g_base64_encode (g_bytes_get_data (priv->data, NULL),
 				g_bytes_get_size (priv->data));
@@ -506,6 +514,7 @@ as_icon_node_parse (AsIcon *icon, GNode *node, GError **error)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	const gchar *tmp;
+	gint size;
 
 	tmp = as_node_get_attribute (node, "type");
 	as_icon_set_kind (icon, as_icon_kind_from_string (tmp));
@@ -517,9 +526,18 @@ as_icon_node_parse (AsIcon *icon, GNode *node, GError **error)
 	default:
 		g_free (priv->name);
 		priv->name = as_node_take_data (node);
-		/* FIXME: we assume this */
-		priv->width = 64;
-		priv->height = 64;
+
+		/* width is optional, assume 64px if missing */
+		size = as_node_get_attribute_as_int (node, "width");
+		if (size == G_MAXINT)
+			size = 64;
+		priv->width = size;
+
+		/* height is optional, assume 64px if missing */
+		size = as_node_get_attribute_as_int (node, "height");
+		if (size == G_MAXINT)
+			size = 64;
+		priv->height = size;
 		break;
 	}
 
