@@ -27,6 +27,7 @@
 #include "as-app-private.h"
 #include "as-cleanup.h"
 #include "as-enums.h"
+#include "as-icon-private.h"
 #include "as-image-private.h"
 #include "as-node-private.h"
 #include "as-problem.h"
@@ -382,6 +383,136 @@ as_test_image_resize_func (void)
 			as_test_image_resize_filename (i, path, new_path);
 		}
 	}
+}
+
+static void
+as_test_icon_func (void)
+{
+	GError *error = NULL;
+	GNode *n;
+	GNode *root;
+	GString *xml;
+	const gchar *src = "<icon type=\"cached\">app.png</icon>";
+	gboolean ret;
+	_cleanup_free_ gchar *prefix = NULL;
+	_cleanup_object_unref_ AsIcon *icon = NULL;
+	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+
+	icon = as_icon_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, -1, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "icon");
+	g_assert (n != NULL);
+	ret = as_icon_node_parse (icon, n, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_icon_get_kind (icon), ==, AS_ICON_KIND_CACHED);
+	g_assert_cmpstr (as_icon_get_name (icon), ==, "app.png");
+	g_assert_cmpint (as_icon_get_height (icon), ==, 64);
+	g_assert_cmpint (as_icon_get_width (icon), ==, 64);
+	g_assert (as_icon_get_pixbuf (icon) == NULL);
+	g_assert (as_icon_get_data (icon) == NULL);
+
+	/* back to node */
+	root = as_node_new ();
+	n = as_icon_node_insert (icon, root, 0.4);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert_cmpstr (xml->str, ==, src);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+}
+
+static void
+as_test_icon_embedded_func (void)
+{
+	GError *error = NULL;
+	GNode *n;
+	GNode *root;
+	GString *xml;
+	const gchar *src =
+"<icon type=\"embedded\"><name>app.png</name>"
+"<filecontent>"
+"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"
+"</filecontent>"
+"</icon>";
+	gboolean ret;
+	_cleanup_object_unref_ AsIcon *icon = NULL;
+	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+
+	icon = as_icon_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, -1, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "icon");
+	g_assert (n != NULL);
+	ret = as_icon_node_parse (icon, n, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_icon_get_kind (icon), ==, AS_ICON_KIND_EMBEDDED);
+	g_assert_cmpstr (as_icon_get_name (icon), ==, "app.png");
+	g_assert_cmpint (as_icon_get_height (icon), ==, 32);
+	g_assert_cmpint (as_icon_get_width (icon), ==, 32);
+	g_assert (as_icon_get_data (icon) != NULL);
+	g_assert (as_icon_get_pixbuf (icon) != NULL);
+
+	/* back to node */
+	root = as_node_new ();
+	n = as_icon_node_insert (icon, root, 0.4);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert_cmpstr (xml->str, ==, src);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
 }
 
 static void
@@ -2757,6 +2888,8 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/provide", as_test_provide_func);
 	g_test_add_func ("/AppStream/release", as_test_release_func);
 	g_test_add_func ("/AppStream/release{description}", as_test_release_desc_func);
+	g_test_add_func ("/AppStream/icon", as_test_icon_func);
+	g_test_add_func ("/AppStream/icon{embedded}", as_test_icon_embedded_func);
 	g_test_add_func ("/AppStream/image", as_test_image_func);
 	g_test_add_func ("/AppStream/image{resize}", as_test_image_resize_func);
 	g_test_add_func ("/AppStream/image{alpha}", as_test_image_alpha_func);

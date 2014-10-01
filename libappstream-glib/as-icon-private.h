@@ -19,26 +19,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef __APPSTREAM_GLIB_H
-#define __APPSTREAM_GLIB_H
+#if !defined (__APPSTREAM_GLIB_PRIVATE_H) && !defined (AS_COMPILATION)
+#error "Only <appstream-glib.h> can be included directly."
+#endif
 
-#define __APPSTREAM_GLIB_H_INSIDE__
+#ifndef __AS_ICON_PRIVATE_H
+#define __AS_ICON_PRIVATE_H
 
-#include <as-app.h>
-#include <as-enums.h>
-#include <as-icon.h>
-#include <as-image.h>
-#include <as-node.h>
-#include <as-problem.h>
-#include <as-provide.h>
-#include <as-release.h>
-#include <as-screenshot.h>
-#include <as-store.h>
-#include <as-tag.h>
-#include <as-version.h>
-#include <as-utils.h>
+#include "as-icon.h"
 
-#undef __APPSTREAM_GLIB_H_INSIDE__
+G_BEGIN_DECLS
 
-#endif /* __APPSTREAM_GLIB_H */
+GBytes		*as_icon_get_data		(AsIcon		*icon);
+void		 as_icon_set_data		(AsIcon		*icon,
+						 GBytes		*data);
 
+GNode		*as_icon_node_insert		(AsIcon		*icon,
+						 GNode		*parent,
+						 gdouble	 api_version);
+gboolean	 as_icon_node_parse		(AsIcon		*icon,
+						 GNode		*node,
+						 GError		**error);
+gboolean	 as_icon_node_parse_dep11	(AsIcon		*icon,
+						 GNode		*node,
+						 GError		**error);
+
+G_END_DECLS
+
+#endif /* __AS_ICON_PRIVATE_H */

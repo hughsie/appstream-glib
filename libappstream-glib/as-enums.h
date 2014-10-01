@@ -57,26 +57,6 @@ typedef enum {
 } AsIdKind;
 
 /**
- * AsIconKind:
- * @AS_ICON_KIND_UNKNOWN:		Type invalid or not known
- * @AS_ICON_KIND_STOCK:			Stock icon or present in the generic icon theme
- * @AS_ICON_KIND_CACHED:		An icon shipped with the AppStream metadata
- * @AS_ICON_KIND_REMOTE:		An icon referenced by a remote URL
- * @AS_ICON_KIND_EMBEDDED:		An embedded Base64 icon
- *
- * The icon type.
- **/
-typedef enum {
-	AS_ICON_KIND_UNKNOWN,		/* Since: 0.1.0 */
-	AS_ICON_KIND_STOCK,		/* Since: 0.1.0 */
-	AS_ICON_KIND_CACHED,		/* Since: 0.1.0 */
-	AS_ICON_KIND_REMOTE,		/* Since: 0.1.0 */
-	AS_ICON_KIND_EMBEDDED,		/* Since: 0.3.1 */
-	/*< private >*/
-	AS_ICON_KIND_LAST
-} AsIconKind;
-
-/**
  * AsUrlKind:
  * @AS_URL_KIND_UNKNOWN:		Type invalid or not known
  * @AS_URL_KIND_HOMEPAGE:		Application project homepage
@@ -128,9 +108,6 @@ typedef enum {
 
 const gchar	*as_id_kind_to_string		(AsIdKind	 id_kind);
 AsIdKind	 as_id_kind_from_string		(const gchar	*id_kind);
-
-const gchar	*as_icon_kind_to_string		(AsIconKind	 icon_kind);
-AsIconKind	 as_icon_kind_from_string	(const gchar	*icon_kind);
 
 const gchar	*as_url_kind_to_string		(AsUrlKind	 url_kind);
 AsUrlKind	 as_url_kind_from_string	(const gchar	*url_kind);

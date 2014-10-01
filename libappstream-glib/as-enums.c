@@ -93,54 +93,6 @@ as_id_kind_from_string (const gchar *id_kind)
 }
 
 /**
- * as_icon_kind_to_string:
- * @icon_kind: the @AsIconKind.
- *
- * Converts the enumerated value to an text representation.
- *
- * Returns: string version of @icon_kind
- *
- * Since: 0.1.0
- **/
-const gchar *
-as_icon_kind_to_string (AsIconKind icon_kind)
-{
-	if (icon_kind == AS_ICON_KIND_CACHED)
-		return "cached";
-	if (icon_kind == AS_ICON_KIND_STOCK)
-		return "stock";
-	if (icon_kind == AS_ICON_KIND_REMOTE)
-		return "remote";
-	if (icon_kind == AS_ICON_KIND_EMBEDDED)
-		return "embedded";
-	return "unknown";
-}
-
-/**
- * as_icon_kind_from_string:
- * @icon_kind: the string.
- *
- * Converts the text representation to an enumerated value.
- *
- * Returns: a #AsIconKind or %AS_ICON_KIND_UNKNOWN for unknown
- *
- * Since: 0.1.0
- **/
-AsIconKind
-as_icon_kind_from_string (const gchar *icon_kind)
-{
-	if (g_strcmp0 (icon_kind, "cached") == 0)
-		return AS_ICON_KIND_CACHED;
-	if (g_strcmp0 (icon_kind, "stock") == 0)
-		return AS_ICON_KIND_STOCK;
-	if (g_strcmp0 (icon_kind, "remote") == 0)
-		return AS_ICON_KIND_REMOTE;
-	if (g_strcmp0 (icon_kind, "embedded") == 0)
-		return AS_ICON_KIND_EMBEDDED;
-	return AS_ICON_KIND_UNKNOWN;
-}
-
-/**
  * as_url_kind_to_string:
  * @url_kind: the @AsUrlKind.
  *
