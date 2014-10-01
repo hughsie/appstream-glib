@@ -201,6 +201,7 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	guint min_icon_size;
 	_cleanup_free_ gchar *fn_hidpi = NULL;
 	_cleanup_free_ gchar *fn = NULL;
+	_cleanup_free_ gchar *name_hidpi = NULL;
 	_cleanup_free_ gchar *name = NULL;
 	_cleanup_object_unref_ AsIcon *icon_hidpi = NULL;
 	_cleanup_object_unref_ AsIcon *icon = NULL;
@@ -249,7 +250,14 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	}
 
 	/* save in target directory */
-	name = g_strdup_printf ("%s.png", as_app_get_id_filename (AS_APP (app)));
+	if (asb_context_get_hidpi_enabled (plugin->ctx)) {
+		name = g_strdup_printf ("%ix%i/%s.png",
+					64, 64,
+					as_app_get_id_filename (AS_APP (app)));
+	} else {
+		name = g_strdup_printf ("%s.png",
+					as_app_get_id_filename (AS_APP (app)));
+	}
 	icon = as_icon_new ();
 	as_icon_set_pixbuf (icon, pixbuf);
 	as_icon_set_name (icon, name, -1);
@@ -280,9 +288,12 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_HI_DPI_ICON);
 
 	/* save icon */
+	name_hidpi = g_strdup_printf ("%ix%i/%s.png",
+				      128, 128,
+				      as_app_get_id_filename (AS_APP (app)));
 	icon_hidpi = as_icon_new ();
 	as_icon_set_pixbuf (icon_hidpi, pixbuf_hidpi);
-	as_icon_set_name (icon_hidpi, name, -1);
+	as_icon_set_name (icon_hidpi, name_hidpi, -1);
 	as_icon_set_kind (icon_hidpi, AS_ICON_KIND_CACHED);
 	as_icon_set_prefix (icon_hidpi, as_app_get_icon_path (AS_APP (app)));
 	as_app_add_icon (AS_APP (app), icon_hidpi);

@@ -329,21 +329,10 @@ asb_app_save_resources (AsbApp *app, GError **error)
 
 		/* save to disk */
 		tmpdir = asb_package_get_config (priv->pkg, "TempDir");
-		if (priv->hidpi_enabled) {
-			size_str = g_strdup_printf ("%ux%u",
-						    as_icon_get_width (icon),
-						    as_icon_get_height (icon));
-			filename = g_build_filename (tmpdir,
-						     "icons",
-						     size_str,
-						     as_icon_get_name (icon),
-						     NULL);
-		} else {
-			filename = g_build_filename (tmpdir,
-						     "icons",
-						     as_icon_get_name (icon),
-						     NULL);
-		}
+		filename = g_build_filename (tmpdir,
+					     "icons",
+					     as_icon_get_name (icon),
+					     NULL);
 		pixbuf = as_icon_get_pixbuf (icon);
 		if (pixbuf == NULL) {
 			g_set_error (error,

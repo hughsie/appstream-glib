@@ -633,7 +633,13 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		}
 
 		/* add icon */
-		icon_filename = g_strdup_printf ("%s.png", as_app_get_id_filename (AS_APP (app)));
+		if (asb_context_get_hidpi_enabled (plugin->ctx)) {
+			icon_filename = g_strdup_printf ("64x64/%s.png",
+							 as_app_get_id_filename (AS_APP (app)));
+		} else {
+			icon_filename = g_strdup_printf ("%s.png",
+							 as_app_get_id_filename (AS_APP (app)));
+		}
 		icon = as_icon_new ();
 		as_icon_set_kind (icon, AS_ICON_KIND_CACHED);
 		as_icon_set_name (icon, icon_filename, -1);
