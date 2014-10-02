@@ -2026,6 +2026,22 @@ as_app_add_screenshot (AsApp *app, AsScreenshot *screenshot)
 }
 
 /**
+ * as_app_check_icon_duplicate:
+ **/
+static gboolean
+as_app_check_icon_duplicate (AsIcon *icon1, AsIcon *icon2)
+{
+	if (as_icon_get_width (icon1) != as_icon_get_width (icon2))
+		return FALSE;
+	if (as_icon_get_height (icon1) != as_icon_get_height (icon2))
+		return FALSE;
+	if (g_strcmp0 (as_icon_get_name (icon1),
+		       as_icon_get_name (icon2)) != 0)
+		return FALSE;
+	return TRUE;
+}
+
+/**
  * as_app_add_icon:
  * @app: a #AsApp instance.
  * @icon: a #AsIcon instance.
@@ -2045,10 +2061,7 @@ as_app_add_icon (AsApp *app, AsIcon *icon)
 		guint i;
 		for (i = 0; i < priv->icons->len; i++) {
 			ic_tmp = g_ptr_array_index (priv->icons, i);
-			if (as_icon_get_pixbuf (ic_tmp) != NULL)
-				continue;
-			if (g_strcmp0 (as_icon_get_name (ic_tmp),
-				       as_icon_get_name (icon)) == 0)
+			if (as_app_check_icon_duplicate (icon, ic_tmp))
 				return;
 		}
 	}
