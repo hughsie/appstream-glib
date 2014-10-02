@@ -3824,9 +3824,6 @@ as_app_parse_file_key (AsApp *app,
 					     NULL);
 		if (tmp != NULL && tmp[0] != '\0') {
 			AsIcon *icon;
-			dot = g_strstr_len (tmp, -1, ".");
-			if (dot != NULL)
-				*dot = '\0';
 			icon = as_icon_new ();
 			as_icon_set_name (icon, tmp, -1);
 			dot = g_strstr_len (tmp, -1, ".");
