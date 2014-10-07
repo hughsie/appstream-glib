@@ -765,6 +765,10 @@ asb_font_merge_family (GList *list, const gchar *md_key)
 		if (tmp == NULL)
 			continue;
 
+		/* already vetoed */
+		if (as_app_get_vetos (AS_APP (app))->len > 0)
+			continue;
+
 		/* find the font family */
 		found = g_hash_table_lookup (hash, tmp);
 		if (found == NULL) {
