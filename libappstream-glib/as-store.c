@@ -1254,10 +1254,6 @@ as_store_load_app_info (AsStore *store,
 	_cleanup_free_ gchar *icon_root = NULL;
 	_cleanup_free_ gchar *path_md = NULL;
 
-	/* watch the directory for changes */
-	if (!as_store_monitor_directory (store, path, cancellable, error))
-		return FALSE;
-
 	/* search all files */
 	path_md = g_build_filename (path, format, NULL);
 	if (!g_file_test (path_md, G_FILE_TEST_EXISTS))
@@ -1282,6 +1278,13 @@ as_store_load_app_info (AsStore *store,
 						  error))
 			return FALSE;
 	}
+
+	/* watch the directories for changes */
+	if (!as_store_monitor_directory (store, path_md, cancellable, error))
+		return FALSE;
+	if (!as_store_monitor_directory (store, icon_root, cancellable, error))
+		return FALSE;
+
 	return TRUE;
 }
 
