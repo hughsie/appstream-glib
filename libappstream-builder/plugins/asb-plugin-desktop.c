@@ -332,7 +332,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 
 	/* NoDisplay apps are never included */
 	if (as_app_get_metadata_item (AS_APP (app), "NoDisplay") != NULL)
-		as_app_add_veto (AS_APP (app), "NoDisplay=true");
+		asb_app_add_requires_appdata (app, "NoDisplay=true");
 
 	/* Settings or DesktopSettings requires AppData */
 	if (as_app_has_category (AS_APP (app), "Settings"))
