@@ -1457,6 +1457,8 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 			if (g_strcmp0 (as_app_get_project_group (app),
 				       project_groups[j]) != 0)
 				continue;
+			if (as_app_get_id_kind (app) == AS_ID_KIND_ADDON)
+				continue;
 			total += 1;
 			if (as_app_get_screenshots(app)->len > 0 ||
 			    as_app_get_description (app, "C") != NULL)
