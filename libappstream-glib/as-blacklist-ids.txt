@@ -21,6 +21,7 @@ exo-terminal-emulator.desktop
 exo-web-browser
 freedink-dfarc.desktop
 freedinkedit.desktop
+fedora-release-notes*.desktop
 gcompris-edit.desktop
 glade3.desktop
 gnome-glade-2.desktop
