@@ -234,6 +234,7 @@ asb_package_log_flush (AsbPackage *pkg, GError **error)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 	_cleanup_free_ gchar *logfile = NULL;
+	_cleanup_free_ gchar *logdir_char = NULL;
 
 	/* needs no update */
 	if (priv->log_written_len == priv->log->len)
@@ -244,10 +245,13 @@ asb_package_log_flush (AsbPackage *pkg, GError **error)
 		return TRUE;
 
 	/* overwrite old log */
+	logdir_char = g_strdup_printf ("%s/%c",
+				       asb_package_get_config (pkg, "LogDir"),
+				       priv->name[0]);
+	if (!asb_utils_ensure_exists (logdir_char, error))
+		return FALSE;
 	priv->log_written_len = priv->log->len;
-	logfile = g_strdup_printf ("%s/%s.log",
-				   asb_package_get_config (pkg, "LogDir"),
-				   asb_package_get_name (pkg));
+	logfile = g_strdup_printf ("%s/%s.log", logdir_char, priv->name);
 	return g_file_set_contents (logfile, priv->log->str, -1, error);
 }
 
