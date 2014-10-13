@@ -247,7 +247,7 @@ asb_package_log_flush (AsbPackage *pkg, GError **error)
 	/* overwrite old log */
 	logdir_char = g_strdup_printf ("%s/%c",
 				       asb_package_get_config (pkg, "LogDir"),
-				       priv->name[0]);
+				       g_ascii_tolower (priv->name[0]));
 	if (!asb_utils_ensure_exists (logdir_char, error))
 		return FALSE;
 	priv->log_written_len = priv->log->len;
