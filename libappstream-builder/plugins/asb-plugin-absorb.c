@@ -48,6 +48,8 @@ asb_plugin_absorb_parent_for_pkgname (GList *list, AsApp *parent, const gchar *p
 			continue;
 		if (g_strcmp0 (as_app_get_pkgname_default (app), pkgname) != 0)
 			continue;
+		if (as_app_get_vetos(app)->len > 0)
+			continue;
 		g_debug ("Adding X-Merge-With-Parent on %s as %s depends on %s",
 			 as_app_get_id (app),
 			 as_app_get_pkgname_default (parent),
@@ -76,7 +78,10 @@ asb_plugin_merge_prepare_deps (GList *list)
 			continue;
 		if (!ASB_IS_APP (app))
 			continue;
+		if (as_app_get_vetos(app)->len > 0)
+			continue;
 		pkg = asb_app_get_package (ASB_APP (app));
+		asb_plugin_absorb_parent_for_pkgname (list, app, asb_package_get_name (pkg));
 		deps = asb_package_get_deps (pkg);
 		for (i = 0; deps[i] != NULL; i++)
 			asb_plugin_absorb_parent_for_pkgname (list, app, deps[i]);
