@@ -23,6 +23,7 @@
 
 #include <glib.h>
 #include <stdlib.h>
+#include <locale.h>
 
 #include "as-cleanup.h"
 
@@ -615,6 +616,7 @@ asb_test_context_oldcache_func (void)
 int
 main (int argc, char **argv)
 {
+	setlocale (LC_ALL, "");
 	g_test_init (&argc, &argv, NULL);
 
 	/* only critical and error are fatal */
