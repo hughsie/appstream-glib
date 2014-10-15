@@ -79,11 +79,12 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				AS_APP_PARSE_FLAG_APPEND_DATA,
 				error))
 		return FALSE;
-	if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_ADDON) {
+	if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_ADDON &&
+	    as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_FONT) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
 			     ASB_PLUGIN_ERROR_FAILED,
-			     "%s is not an addon",
+			     "%s is not an addon or font",
 			     as_app_get_id (AS_APP (app)));
 		return FALSE;
 	}
