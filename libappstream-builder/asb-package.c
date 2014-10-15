@@ -62,6 +62,7 @@ struct _AsbPackagePrivate
 	gdouble		 last_log;
 	GPtrArray	*releases;
 	GHashTable	*releases_hash;
+	GMutex		 mutex_log;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbPackage, asb_package, G_TYPE_OBJECT)
@@ -77,6 +78,7 @@ asb_package_finalize (GObject *object)
 	AsbPackage *pkg = ASB_PACKAGE (object);
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 
+	g_mutex_clear (&priv->mutex_log);
 	g_strfreev (priv->filelist);
 	g_strfreev (priv->deps);
 	g_free (priv->filename);
@@ -116,6 +118,7 @@ asb_package_init (AsbPackage *pkg)
 	priv->releases = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->releases_hash = g_hash_table_new_full (g_str_hash, g_str_equal,
 						     g_free, (GDestroyNotify) g_object_unref);
+	g_mutex_init (&priv->mutex_log);
 }
 
 /**
@@ -187,6 +190,8 @@ asb_package_log (AsbPackage *pkg,
 	gdouble now;
 	_cleanup_free_ gchar *tmp;
 
+	g_mutex_lock (&priv->mutex_log);
+
 	va_start (args, fmt);
 	tmp = g_strdup_vprintf (fmt, args);
 	va_end (args);
@@ -216,6 +221,7 @@ asb_package_log (AsbPackage *pkg,
 		g_string_append_printf (priv->log, "%s\n", tmp);
 		break;
 	}
+	g_mutex_unlock (&priv->mutex_log);
 }
 
 /**
