@@ -992,6 +992,55 @@ asb_context_write_xml (AsbContext *ctx,
 }
 
 /**
+ * asb_context_convert_icons:
+ **/
+static gboolean
+asb_context_convert_icons (AsbContext *ctx, GError **error)
+{
+	AsApp *app;
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	GList *l;
+
+	/* not enabled */
+	if (!asb_context_get_embedded_icons (ctx))
+		return TRUE;
+
+	/* convert each one before saving resources */
+	for (l = priv->apps; l != NULL; l = l->next) {
+		app = AS_APP (l->data);
+		if (as_app_get_vetos(app)->len > 0)
+			continue;
+		if (!as_app_convert_icons (app, AS_ICON_KIND_EMBEDDED, error))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
+ * asb_context_save_resources:
+ **/
+static gboolean
+asb_context_save_resources (AsbContext *ctx, GError **error)
+{
+	AsApp *app;
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	GList *l;
+
+	for (l = priv->apps; l != NULL; l = l->next) {
+		app = AS_APP (l->data);
+
+		/* save icon and screenshots */
+		if (as_app_get_vetos(app)->len > 0)
+			continue;
+		if (!ASB_IS_APP (app))
+			continue;
+		if (!asb_app_save_resources (ASB_APP (app), error))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
  * asb_context_detect_pkgname_dups:
  **/
 static gboolean
@@ -1339,6 +1388,10 @@ asb_context_process (AsbContext *ctx, GError **error)
 	if (!asb_context_detect_missing_parents (ctx, error))
 		return FALSE;
 	if (!asb_context_detect_pkgname_dups (ctx, error))
+		return FALSE;
+	if (!asb_context_convert_icons (ctx, error))
+		return FALSE;
+	if (!asb_context_save_resources (ctx, error))
 		return FALSE;
 
 	/* write XML file */

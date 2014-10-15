@@ -391,27 +391,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			as_app_add_veto (AS_APP (app), "Required AppData: %s", tmp);
 		}
 
-		/* embedding the icons in the XML */
-		if (asb_context_get_embedded_icons (priv->ctx)) {
-			if (!as_app_convert_icons (AS_APP (app),
-						   AS_ICON_KIND_EMBEDDED,
-						   error_not_used))
-				return FALSE;
-		}
-
-		/* save icon and screenshots */
-		if (array->len == 0) {
-			ret = asb_app_save_resources (app, &error);
-			if (!ret) {
-				asb_package_log (priv->pkg,
-						 ASB_PACKAGE_LOG_LEVEL_WARNING,
-						 "Failed to save resources: %s",
-						 error->message);
-				g_clear_error (&error);
-				goto skip;
-			}
-		}
-
 		/* set cache-id in case we want to use the metadata directly */
 		if (asb_context_get_add_cache_id (priv->ctx)) {
 			cache_id = asb_utils_get_cache_id_for_filename (priv->filename);
