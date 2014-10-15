@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2014 Richard Hughes <richard@hughsie.com> -->
+<component type="font">
+  <id>Liberation</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <name>Liberation</name>
+  <summary>Open source versions of several commecial fonts</summary>
+  <description>
+    <p>
+      The Liberation Fonts are intended to be replacements for Times New Roman,
+      Arial, and Courier New.
+    </p>
+  </description>
+  <updatecontact>richard_at_hughsie_dot_com</updatecontact>
+  <url type="homepage">http://fedorahosted.org/liberation-fonts/</url>
+</component>

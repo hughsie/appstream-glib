@@ -475,8 +475,10 @@ asb_font_add_languages (AsbApp *app, const FcPattern *pattern)
 	FcValue fc_value;
 	guint i;
 	gboolean any_added = FALSE;
+	gboolean skip_langs;
 
-	for (i = 0; fc_rc == FcResultMatch; i++) {
+	skip_langs = g_getenv ("ASB_IS_SELF_TEST") != NULL;
+	for (i = 0; fc_rc == FcResultMatch && !skip_langs; i++) {
 		fc_rc = FcPatternGet (pattern, FC_LANG, i, &fc_value);
 		if (fc_rc == FcResultMatch) {
 			langs = FcLangSetGetLangs (fc_value.u.l);
@@ -533,15 +535,11 @@ asb_plugin_font_set_name (AsbApp *app, const gchar *name)
 }
 
 /**
- * asb_plugin_process_filename:
+ * asb_plugin_font_app:
  */
 static gboolean
-asb_plugin_process_filename (AsbPlugin *plugin,
-			     AsbPackage *pkg,
-			     const gchar *filename,
-			     GList **apps,
-			     const gchar *tmpdir,
-			     GError **error)
+asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
+		     const gchar *filename, GError **error)
 {
 	FcConfig *config;
 	FcFontSet *fonts;
@@ -553,15 +551,12 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	const FcPattern *pattern;
 	_cleanup_free_ gchar *app_id = NULL;
 	_cleanup_free_ gchar *comment = NULL;
-	_cleanup_free_ gchar *filename_full;
 	_cleanup_free_ gchar *icon_filename = NULL;
-	_cleanup_object_unref_ AsbApp *app = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
 
 	/* load font */
-	filename_full = g_build_filename (tmpdir, filename, NULL);
 	config = FcConfigCreate ();
-	ret = FcConfigAppFontAddFile (config, (FcChar8 *) filename_full);
+	ret = FcConfigAppFontAddFile (config, (FcChar8 *) filename);
 	if (!ret) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
@@ -580,7 +575,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	}
 	pattern = fonts->fonts[0];
 	FT_Init_FreeType (&library);
-	rc = FT_New_Face (library, filename_full, 0, &ft_face);
+	rc = FT_New_Face (library, filename, 0, &ft_face);
 	if (rc != 0) {
 		ret = FALSE;
 		g_set_error (error,
@@ -593,17 +588,16 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 
 	/* create app that might get merged later */
 	app_id = g_path_get_basename (filename);
-	app = asb_app_new (pkg, app_id);
-	as_app_set_id_kind (AS_APP (app), AS_ID_KIND_FONT);
 	as_app_add_category (AS_APP (app), "Addons", -1);
 	as_app_add_category (AS_APP (app), "Fonts", -1);
-	asb_app_set_requires_appdata (app, TRUE);
-	asb_app_set_hidpi_enabled (app, asb_context_get_hidpi_enabled (plugin->ctx));
-	asb_plugin_font_set_name (app, ft_face->family_name);
-	comment = g_strdup_printf ("A %s font from %s",
-				   ft_face->style_name,
-				   ft_face->family_name);
-	as_app_set_comment (AS_APP (app), "C", comment, -1);
+	if (as_app_get_name (AS_APP (app), NULL) == NULL)
+		asb_plugin_font_set_name (app, ft_face->family_name);
+	if (as_app_get_comment (AS_APP (app), NULL) == NULL) {
+		comment = g_strdup_printf ("A %s font from %s",
+					   ft_face->style_name,
+					   ft_face->family_name);
+		as_app_set_comment (AS_APP (app), "C", comment, -1);
+	}
 	asb_font_add_languages (app, pattern);
 	asb_font_add_metadata (app, ft_face);
 	asb_font_fix_metadata (app);
@@ -646,9 +640,6 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		as_icon_set_pixbuf (icon, pixbuf);
 		as_app_add_icon (AS_APP (app), icon);
 	}
-
-	/* add */
-	asb_plugin_add_app (apps, AS_APP (app));
 out:
 	FcConfigAppFontClear (config);
 	FcConfigDestroy (config);
@@ -660,150 +651,36 @@ out:
 }
 
 /**
- * asb_plugin_process:
+ * asb_plugin_process_app:
  */
-GList *
-asb_plugin_process (AsbPlugin *plugin,
-		    AsbPackage *pkg,
-		    const gchar *tmpdir,
-		    GError **error)
+gboolean
+asb_plugin_process_app (AsbPlugin *plugin,
+			AsbPackage *pkg,
+			AsbApp *app,
+			const gchar *tmpdir,
+			GError **error)
 {
-	gboolean ret;
-	GList *apps = NULL;
-	guint i;
 	gchar **filelist;
+	guint i;
 
 	filelist = asb_package_get_filelist (pkg);
 	for (i = 0; filelist[i] != NULL; i++) {
+		GError *error_local = NULL;
+		_cleanup_free_ gchar *filename = NULL;
+
 		if (!_asb_plugin_check_filename (filelist[i]))
 			continue;
-		ret = asb_plugin_process_filename (plugin,
-						   pkg,
-						   filelist[i],
-						   &apps,
-						   tmpdir,
-						   error);
-		if (!ret) {
-			g_list_free_full (apps, (GDestroyNotify) g_object_unref);
-			return NULL;
+		filename = g_build_filename (tmpdir, filelist[i], NULL);
+		if (!asb_plugin_font_app (plugin, app, filename, &error_local)) {
+			asb_package_log (pkg,
+					 ASB_PACKAGE_LOG_LEVEL_WARNING,
+					 "Failed to get font from %s: %s",
+					 filename,
+					 error_local->message);
+			g_clear_error (&error_local);
 		}
 	}
-
-	/* no fonts files we care about */
-	if (apps == NULL) {
-		g_set_error (error,
-			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_FAILED,
-			     "nothing interesting in %s",
-			     asb_package_get_basename (pkg));
-		return NULL;
-	}
-	return apps;
-}
-
-/**
- * asb_font_get_app_sortable_idx:
- */
-static guint
-asb_font_get_app_sortable_idx (AsbApp *app)
-{
-	const gchar *font_str = as_app_get_id (AS_APP (app));
-	guint idx = 0;
-
-	if (g_strstr_len (font_str, -1, "It") != NULL)
-		idx += 1;
-	if (g_strstr_len (font_str, -1, "Bold") != NULL)
-		idx += 1;
-	if (g_strstr_len (font_str, -1, "Semibold") != NULL)
-		idx += 1;
-	if (g_strstr_len (font_str, -1, "ExtraLight") != NULL)
-		idx += 1;
-	if (g_strstr_len (font_str, -1, "Lig") != NULL)
-		idx += 1;
-	if (g_strstr_len (font_str, -1, "Medium") != NULL)
-		idx += 1;
-	if (g_strstr_len (font_str, -1, "Bla") != NULL)
-		idx += 1;
-	if (g_strstr_len (font_str, -1, "Hai") != NULL)
-		idx += 1;
-	if (g_strstr_len (font_str, -1, "Keyboard") != NULL)
-		idx += 1;
-	if (g_strstr_len (font_str, -1, "Kufi") != NULL)
-		idx += 1;
-	if (g_strstr_len (font_str, -1, "Tamil") != NULL)
-		idx += 1;
-	if (g_strstr_len (font_str, -1, "Hebrew") != NULL)
-		idx += 1;
-	if (g_strstr_len (font_str, -1, "Arabic") != NULL)
-		idx += 1;
-	if (g_strstr_len (font_str, -1, "Fallback") != NULL)
-		idx += 1;
-	return idx;
-}
-
-/**
- * asb_font_merge_family:
- */
-static void
-asb_font_merge_family (GList *list, const gchar *md_key)
-{
-	AsbApp *app;
-	AsbApp *found;
-	GList *l;
-	const gchar *tmp;
-	_cleanup_hashtable_unref_ GHashTable *hash;
-
-	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
-				      g_free, (GDestroyNotify) g_object_unref);
-	for (l = list; l != NULL; l = l->next) {
-		if (!ASB_IS_APP (l->data))
-			continue;
-		app = ASB_APP (l->data);
-
-		/* no family, or not a font */
-		tmp = as_app_get_metadata_item (AS_APP (app), md_key);
-		if (tmp == NULL)
-			continue;
-
-		/* already vetoed */
-		if (as_app_get_vetos (AS_APP (app))->len > 0)
-			continue;
-
-		/* find the font family */
-		found = g_hash_table_lookup (hash, tmp);
-		if (found == NULL) {
-			g_hash_table_insert (hash,
-					     g_strdup (tmp),
-					     g_object_ref (app));
-		} else {
-			/* app is better than found */
-			if (asb_font_get_app_sortable_idx (app) <
-			    asb_font_get_app_sortable_idx (found)) {
-				g_hash_table_insert (hash,
-						     g_strdup (tmp),
-						     g_object_ref (app));
-				as_app_subsume (AS_APP (app), AS_APP (found));
-			} else {
-				as_app_subsume (AS_APP (found), AS_APP (app));
-			}
-		}
-	}
-
-	/* veto the ones we've absorbed */
-	for (l = list; l != NULL; l = l->next) {
-		if (!ASB_IS_APP (l->data))
-			continue;
-		app = ASB_APP (l->data);
-		tmp = as_app_get_metadata_item (AS_APP (app), md_key);
-		if (tmp == NULL)
-			continue;
-		found = g_hash_table_lookup (hash, tmp);
-		if (found != NULL)
-			continue;
-		as_app_add_veto (AS_APP (app),
-				 "%s was subsumed out of existance",
-				 as_app_get_id (AS_APP (app)));
-	}
+	return TRUE;
 }
 
 /**
@@ -812,6 +689,48 @@ asb_font_merge_family (GList *list, const gchar *md_key)
 void
 asb_plugin_merge (AsbPlugin *plugin, GList *list)
 {
-	asb_font_merge_family (list, "FontFamily");
-	asb_font_merge_family (list, "FontParent");
+	AsApp *app;
+	AsApp *found;
+	GList *l;
+	GPtrArray *extends_tmp;
+	const gchar *tmp;
+	_cleanup_hashtable_unref_ GHashTable *hash;
+
+	/* add all the fonts to a hash */
+	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
+				      g_free, (GDestroyNotify) g_object_unref);
+	for (l = list; l != NULL; l = l->next) {
+		if (!ASB_IS_APP (l->data))
+			continue;
+		app = AS_APP (l->data);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_FONT)
+			continue;
+		g_hash_table_insert (hash,
+				     g_strdup (as_app_get_id (app)),
+				     g_object_ref (app));
+	}
+
+	/* merge all the extended fonts */
+	for (l = list; l != NULL; l = l->next) {
+		if (!ASB_IS_APP (l->data))
+			continue;
+		app = AS_APP (l->data);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_FONT)
+			continue;
+		extends_tmp = as_app_get_extends (app);
+		if (extends_tmp->len == 0)
+			continue;
+		tmp = g_ptr_array_index (extends_tmp, 0);
+		found = g_hash_table_lookup (hash, tmp);
+		if (found == NULL) {
+			g_warning ("not found: %s", tmp);
+			continue;
+		}
+		as_app_subsume_full (found, app,
+				     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
+		as_app_add_veto (app,
+				 "%s was merged into %s",
+				 as_app_get_id (app),
+				 as_app_get_id (found));
+	}
 }

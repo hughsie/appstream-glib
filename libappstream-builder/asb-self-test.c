@@ -277,6 +277,8 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"app-console-1-1.fc21.noarch.rpm",	/* app with no icon */
 		"app-1-1.fc21.i686.rpm",		/* GUI multiarch app */
 		"composite-1-1.fc21.x86_64.rpm",	/* multiple GUI apps */
+		"font-1-1.fc21.noarch.rpm",		/* font */
+		"font-serif-1-1.fc21.noarch.rpm",	/* font that extends */
 		NULL};
 
 	/* set up the context */
@@ -325,7 +327,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	switch (mode) {
 	case ASB_TEST_CONTEXT_MODE_NO_CACHE:
 	case ASB_TEST_CONTEXT_MODE_WITH_OLD_CACHE:
-		g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 6);
+		g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 8);
 		break;
 	default:
 		/* no packages should need extracting */
@@ -350,7 +352,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store), ==, 3);
+	g_assert_cmpint (as_store_get_size (store), ==, 4);
 	app = as_store_get_app_by_pkgname (store, "app");
 	g_assert (app != NULL);
 	app = as_store_get_app_by_id (store, "app.desktop");
@@ -360,6 +362,36 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
 		"<components version=\"0.8\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test\">\n"
+		"<component type=\"font\">\n"
+		"<id>Liberation</id>\n"
+		"<pkgname>font</pkgname>\n"
+		"<pkgname>font-serif</pkgname>\n"
+		"<name>Liberation</name>\n"
+		"<summary>Open source versions of several commecial fonts</summary>\n"
+		"<description><p>The Liberation Fonts are intended to be replacements for Times New Roman, Arial, and Courier New.</p></description>\n"
+		"<icon height=\"64\" width=\"64\" type=\"cached\">64x64/LiberationSerif.png</icon>\n"
+		"<project_license>GPL-2.0+</project_license>\n"
+		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
+		"<screenshots>\n"
+		"<screenshot type=\"default\">\n"
+		"<caption>Liberation Serif – Bold</caption>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\"/>\n"
+		"</screenshot>\n"
+		"<screenshot type=\"default\">\n"
+		"<caption>Liberation Serif – Regular</caption>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\"/>\n"
+		"</screenshot>\n"
+		"</screenshots>\n"
+		"<releases>\n"
+		"<release version=\"1\" timestamp=\"1407844800\"/>\n"
+		"</releases>\n"
+		"<languages>\n"
+		"<lang>en</lang>\n"
+		"</languages>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">font-1-1.fc21.noarch.rpm</value>\n"
+		"</metadata>\n"
+		"</component>\n"
 		"<component type=\"addon\">\n"
 		"<id>app-extra</id>\n"
 		"<pkgname>app-extra</pkgname>\n"
@@ -448,7 +480,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store_failed, file_failed, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store_failed), ==, 4);
+	g_assert_cmpint (as_store_get_size (store_failed), ==, 5);
 	app = as_store_get_app_by_id (store_failed, "console1.desktop");
 	g_assert (app != NULL);
 	app = as_store_get_app_by_id (store_failed, "console2.desktop");
@@ -460,6 +492,43 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	xml_failed = as_store_to_xml (store_failed, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
 		"<components version=\"0.8\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test-failed\">\n"
+		"<component type=\"font\">\n"
+		"<id>LiberationSerif</id>\n"
+		"<pkgname>font-serif</pkgname>\n"
+		"<source_pkgname>font</source_pkgname>\n"
+		"<name>Liberation Serif</name>\n"
+		"<summary>A Bold font from Liberation Serif</summary>\n"
+		"<icon height=\"64\" width=\"64\" type=\"cached\">64x64/LiberationSerif.png</icon>\n"
+		"<categories>\n"
+		"<category>Addons</category>\n"
+		"<category>Fonts</category>\n"
+		"</categories>\n"
+		"<vetos>\n"
+		"<veto>LiberationSerif was merged into Liberation</veto>\n"
+		"</vetos>\n"
+		"<project_license>GPL-2.0+</project_license>\n"
+		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
+		"<extends>Liberation</extends>\n"
+		"<screenshots>\n"
+		"<screenshot type=\"default\">\n"
+		"<caption>Liberation Serif – Bold</caption>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\"/>\n"
+		"</screenshot>\n"
+		"<screenshot type=\"default\">\n"
+		"<caption>Liberation Serif – Regular</caption>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\"/>\n"
+		"</screenshot>\n"
+		"</screenshots>\n"
+		"<releases>\n"
+		"<release version=\"1\" timestamp=\"1407844800\"/>\n"
+		"</releases>\n"
+		"<languages>\n"
+		"<lang>en</lang>\n"
+		"</languages>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">font-serif-1-1.fc21.noarch.rpm</value>\n"
+		"</metadata>\n"
+		"</component>\n"
 		"<component type=\"addon\">\n"
 		"<id>app-core</id>\n"
 		"<pkgname>app</pkgname>\n"
@@ -594,6 +663,12 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<id>app.i686</id>\n"
 		"<metadata>\n"
 		"<value key=\"X-CacheID\">app-1-1.fc21.i686.rpm</value>\n"
+		"</metadata>\n"
+		"</component>\n"
+		"<component>\n"
+		"<id>font-serif.noarch</id>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">font-serif-1-1.fc21.noarch.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
 		"<component>\n"

@@ -186,6 +186,14 @@ The current rules of inclusion are thus:
  * AppData files **SHOULD** include translations
  * Desktop files **SHOULD** include translations
 
+Guidelines for fonts
+-----------
+ * Fonts **MUST** have a valid MetaInfo file installed to /usr/share/appdata
+ * Fonts packaged in multiple packages **SHOULD** have multiple MetaInfo files
+ * Fonts families **SHOULD** only have one description section
+ * Fonts of different styles or weights of the same family **SHOULD** use `<extends>`
+ * MetaInfo files **SHOULD** include translations where possible
+
 License
 ----
 
