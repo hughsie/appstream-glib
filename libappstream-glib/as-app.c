@@ -2265,6 +2265,10 @@ as_app_add_extends (AsApp *app, const gchar *extends, gssize extends_len)
 		return;
 	}
 
+	/* we can never extend ourself */
+	if (g_strcmp0 (priv->id, extends) == 0)
+		return;
+
 	g_ptr_array_add (priv->extends, as_strndup (extends, extends_len));
 }
 

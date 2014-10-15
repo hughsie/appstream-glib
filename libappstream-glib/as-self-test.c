@@ -783,6 +783,10 @@ as_test_app_func (void)
 	g_assert_cmpstr (as_icon_get_name (ic), ==, "org.gnome.Software.png");
 	g_assert_cmpint (as_icon_get_kind (ic), ==, AS_ICON_KIND_CACHED);
 
+	/* we can't extend ourself */
+	as_app_add_extends (app, "org.gnome.Software.desktop", -1);
+	g_assert_cmpint (as_app_get_extends(app)->len, ==, 0);
+
 	/* back to node */
 	root = as_node_new ();
 	n = as_app_node_insert (app, root, 0.8);
