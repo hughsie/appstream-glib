@@ -54,6 +54,32 @@ asb_test_get_filename (const gchar *filename)
 	return g_strdup (full_tmp);
 }
 
+/**
+ * asb_test_compare_lines:
+ **/
+static gboolean
+asb_test_compare_lines (const gchar *txt1, const gchar *txt2, GError **error)
+{
+	_cleanup_free_ gchar *output = NULL;
+
+	/* exactly the same */
+	if (g_strcmp0 (txt1, txt2) == 0)
+		return TRUE;
+
+	/* save temp files and diff them */
+	if (!g_file_set_contents ("/tmp/a", txt1, -1, error))
+		return FALSE;
+	if (!g_file_set_contents ("/tmp/b", txt2, -1, error))
+		return FALSE;
+	if (!g_spawn_command_line_sync ("diff -urNp /tmp/b /tmp/a",
+					&output, NULL, NULL, error))
+		return FALSE;
+
+	/* just output the diff */
+	g_set_error_literal (error, 1, 0, output);
+	return FALSE;
+}
+
 #ifdef HAVE_RPM
 static void
 asb_test_package_rpm_func (void)
@@ -412,9 +438,9 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"</metadata>\n"
 		"</component>\n"
 		"</components>\n";
-	if (g_strcmp0 (xml->str, expected_xml) != 0)
-		g_warning ("Expected:\n%s\nGot:\n%s", expected_xml, xml->str);
-	g_assert_cmpstr (xml->str, ==, expected_xml);
+	ret = asb_test_compare_lines (xml->str, expected_xml, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 
 	/* load failed metadata */
 	file_failed = g_file_new_for_path ("/tmp/asbuilder/output/asb-self-test-failed.xml.gz");
@@ -543,9 +569,9 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"</metadata>\n"
 		"</component>\n"
 		"</components>\n";
-	if (g_strcmp0 (xml_failed->str, expected_xml) != 0)
-		g_warning ("Expected:\n%s\nGot:\n%s", expected_xml, xml_failed->str);
-	g_assert_cmpstr (xml_failed->str, ==, expected_xml);
+	ret = asb_test_compare_lines (xml_failed->str, expected_xml, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 
 	/* load ignored metadata */
 	file_ignore = g_file_new_for_path ("/tmp/asbuilder/output/asb-self-test-ignore.xml.gz");
@@ -577,9 +603,9 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"</metadata>\n"
 		"</component>\n"
 		"</components>\n";
-	if (g_strcmp0 (xml_ignore->str, expected_xml) != 0)
-		g_warning ("Expected:\n%s\nGot:\n%s", expected_xml, xml_ignore->str);
-	g_assert_cmpstr (xml_ignore->str, ==, expected_xml);
+	ret = asb_test_compare_lines (xml_ignore->str, expected_xml, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 
 	/* check icon dir */
 	g_assert (g_file_test ("/tmp/asbuilder/temp/icons/64x64/app.png", G_FILE_TEST_EXISTS));
