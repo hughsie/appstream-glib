@@ -933,6 +933,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	gboolean require_translations = FALSE;
 	gboolean require_url = TRUE;
 	gboolean require_content_license = TRUE;
+	gboolean require_name = TRUE;
 	gboolean validate_license = TRUE;
 	gboolean ret;
 	guint length_name_max = 30;
@@ -955,6 +956,8 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		number_para_max = 10;
 		number_para_min = 1;
 		require_sentence_case = FALSE;
+		if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO)
+			require_name = FALSE;
 	}
 
 	/* make the requirements more strict */
@@ -989,12 +992,6 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		if (g_str_has_suffix (id, ".desktop"))
 			ret = TRUE;
 		break;
-	case AS_ID_KIND_FONT:
-		if (g_str_has_suffix (id, ".ttf"))
-			ret = TRUE;
-		else if (g_str_has_suffix (id, ".otf"))
-			ret = TRUE;
-		break;
 	case AS_ID_KIND_INPUT_METHOD:
 		if (g_str_has_suffix (id, ".xml"))
 			ret = TRUE;
@@ -1011,6 +1008,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 				     "<id> has invalid type attribute");
 
 		break;
+	case AS_ID_KIND_FONT:
 	case AS_ID_KIND_ADDON:
 		/* anything goes */
 		ret = TRUE;
@@ -1092,6 +1090,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 
 	/* extends */
 	if (as_app_get_extends(app)->len == 0 &&
+	    as_app_get_id_kind (app) == AS_ID_KIND_ADDON &&
 	    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO) {
 		ai_app_validate_add (probs,
 				     AS_PROBLEM_KIND_TAG_MISSING,
@@ -1207,7 +1206,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
 					     "<name> requires sentence case");
 		}
-	} else if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO) {
+	} else if (require_name) {
 		ai_app_validate_add (probs,
 				     AS_PROBLEM_KIND_TAG_MISSING,
 				     "<name> is not present");
@@ -1243,7 +1242,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
 					     "<summary> requires sentence case");
 		}
-	} else if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO) {
+	} else if (require_name) {
 		ai_app_validate_add (probs,
 				     AS_PROBLEM_KIND_TAG_MISSING,
 				     "<summary> is not present");
