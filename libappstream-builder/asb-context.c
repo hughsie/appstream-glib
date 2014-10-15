@@ -1025,6 +1025,31 @@ asb_context_detect_pkgname_dups (AsbContext *ctx, GError **error)
 }
 
 /**
+ * asb_context_detect_missing_data:
+ **/
+static gboolean
+asb_context_detect_missing_data (AsbContext *ctx, GError **error)
+{
+	AsApp *app;
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	GList *l;
+
+	/* look for the thing that an addon extends */
+	for (l = priv->apps; l != NULL; l = l->next) {
+		app = AS_APP (l->data);
+		if (as_app_get_name (AS_APP (app), "C") == NULL)
+			as_app_add_veto (AS_APP (app), "No 'Name' in desktop or <name> in AppData");
+		if (as_app_get_comment (AS_APP (app), "C") == NULL)
+			as_app_add_veto (AS_APP (app), "No 'Comment' in desktop or <summary> in AppData");
+		if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_ADDON) {
+			if (as_app_get_icon_default (AS_APP (app)) == NULL)
+				as_app_add_veto (AS_APP (app), "Has no Icon");
+		}
+	}
+	return TRUE;
+}
+
+/**
  * asb_context_detect_missing_parents:
  **/
 static gboolean
@@ -1309,6 +1334,8 @@ asb_context_process (AsbContext *ctx, GError **error)
 	asb_plugin_loader_merge (priv->plugin_loader, priv->apps);
 
 	/* print any warnings */
+	if (!asb_context_detect_missing_data (ctx, error))
+		return FALSE;
 	if (!asb_context_detect_missing_parents (ctx, error))
 		return FALSE;
 	if (!asb_context_detect_pkgname_dups (ctx, error))
