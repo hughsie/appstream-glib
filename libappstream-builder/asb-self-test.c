@@ -422,7 +422,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store_failed, file_failed, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store_failed), ==, 3);
+	g_assert_cmpint (as_store_get_size (store_failed), ==, 4);
 	app = as_store_get_app_by_id (store_failed, "console1.desktop");
 	g_assert (app != NULL);
 	app = as_store_get_app_by_id (store_failed, "console2.desktop");
@@ -434,6 +434,39 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	xml_failed = as_store_to_xml (store_failed, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
 		"<components version=\"0.8\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test-failed\">\n"
+		"<component type=\"addon\">\n"
+		"<id>app-core</id>\n"
+		"<pkgname>app</pkgname>\n"
+		"<name>Core</name>\n"
+		"<summary>Addons for core functionality</summary>\n"
+		"<kudos>\n"
+		"<kudo>AppMenu</kudo>\n"
+		"<kudo>ModernToolkit</kudo>\n"
+		"<kudo>Notifications</kudo>\n"
+		"<kudo>SearchProvider</kudo>\n"
+		"<kudo>UserDocs</kudo>\n"
+		"</kudos>\n"
+		"<vetos>\n"
+		"<veto>partially absorbing app-core into app.desktop</veto>\n"
+		"</vetos>\n"
+		"<project_license>GPL-2.0+</project_license>\n"
+		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
+		"<extends>app.desktop</extends>\n"
+		"<releases>\n"
+		"<release version=\"1\" timestamp=\"1407844800\"/>\n"
+		"</releases>\n"
+		"<provides>\n"
+		"<dbus type=\"session\">org.freedesktop.AppStream</dbus>\n"
+		"</provides>\n"
+		"<languages>\n"
+		"<lang percentage=\"100\">en_GB</lang>\n"
+		"<lang percentage=\"33\">ru</lang>\n"
+		"</languages>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">app-1-1.fc21.x86_64.rpm</value>\n"
+		"<value key=\"X-Merge-With-Parent\">app.desktop</value>\n"
+		"</metadata>\n"
+		"</component>\n"
 		"<component type=\"desktop\">\n"
 		"<id>console1.desktop</id>\n"
 		"<pkgname>app-console</pkgname>\n"

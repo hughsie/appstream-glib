@@ -299,20 +299,26 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	/* run plugins */
 	asb_panel_set_status (priv->panel, "Examining");
 	for (i = 0; i < priv->plugins_to_run->len; i++) {
+		GList *apps_tmp = NULL;
 		plugin = g_ptr_array_index (priv->plugins_to_run, i);
 		asb_package_log (priv->pkg,
 				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 				 "Processing %s with %s",
 				 basename,
 				 plugin->name);
-		apps = asb_plugin_process (plugin, priv->pkg, priv->tmpdir, &error);
-		if (apps == NULL) {
+		apps_tmp = asb_plugin_process (plugin, priv->pkg, priv->tmpdir, &error);
+		if (apps_tmp == NULL) {
 			asb_package_log (priv->pkg,
 					 ASB_PACKAGE_LOG_LEVEL_WARNING,
 					 "Failed to run process '%s': %s",
 					 plugin->name, error->message);
 			g_clear_error (&error);
 		}
+		for (l = apps_tmp; l != NULL; l = l->next) {
+			app = ASB_APP (l->data);
+			asb_plugin_add_app (&apps, AS_APP (app));
+		}
+		g_list_free_full (apps_tmp, g_object_unref);
 	}
 	if (apps == NULL)
 		goto skip;
