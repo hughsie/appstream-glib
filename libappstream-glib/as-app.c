@@ -3840,7 +3840,7 @@ as_app_parse_file_key (AsApp *app,
 					     key,
 					     NULL);
 		if (tmp != NULL && tmp[0] != '\0') {
-			AsIcon *icon;
+			_cleanup_object_unref_ AsIcon *icon = NULL;
 			icon = as_icon_new ();
 			as_icon_set_name (icon, tmp, -1);
 			dot = g_strstr_len (tmp, -1, ".");
