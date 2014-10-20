@@ -956,8 +956,14 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		number_para_max = 10;
 		number_para_min = 1;
 		require_sentence_case = FALSE;
-		if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO)
+		switch (as_app_get_source_kind (app)) {
+		case AS_APP_SOURCE_KIND_METAINFO:
+		case AS_APP_SOURCE_KIND_APPDATA:
 			require_name = FALSE;
+			break;
+		default:
+			break;
+		}
 	}
 
 	/* make the requirements more strict */
