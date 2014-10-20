@@ -71,15 +71,6 @@ _asb_plugin_check_filename (const gchar *filename)
 }
 
 /**
- * asb_plugin_check_filename:
- */
-gboolean
-asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
-{
-	return _asb_plugin_check_filename (filename);
-}
-
-/**
  * asb_font_fix_metadata:
  */
 static void
