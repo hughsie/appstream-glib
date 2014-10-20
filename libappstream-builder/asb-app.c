@@ -90,31 +90,6 @@ asb_app_class_init (AsbAppClass *klass)
 }
 
 /**
- * asb_app_to_xml:
- * @app: A #AsbApp
- *
- * Converts the application to it's XML representation.
- *
- * Returns: allocated string
- *
- * Since: 0.1.0
- **/
-gchar *
-asb_app_to_xml (AsbApp *app)
-{
-	GString *str;
-	_cleanup_object_unref_ AsStore *store;
-
-	store = as_store_new ();
-	as_store_set_api_version (store, 1.0f);
-	as_store_add_app (store, AS_APP (app));
-	str = as_store_to_xml (store,
-			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
-			       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
-	return g_string_free (str, FALSE);
-}
-
-/**
  * asb_app_add_requires_appdata:
  * @app: A #AsbApp
  * @fmt: format string

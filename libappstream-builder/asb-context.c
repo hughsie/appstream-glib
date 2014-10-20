@@ -1074,6 +1074,38 @@ asb_context_detect_pkgname_dups (AsbContext *ctx, GError **error)
 }
 
 /**
+ * asb_context_write_app_xml:
+ **/
+static void
+asb_context_write_app_xml (AsbContext *ctx)
+{
+	AsbApp *app;
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	GList *l;
+
+	/* log the XML in the log file */
+	for (l = priv->apps; l != NULL; l = l->next) {
+		_cleanup_string_free_ GString *xml = NULL;
+		_cleanup_object_unref_ AsStore *store = NULL;
+
+		/* we have an open log file? */
+		if (!ASB_IS_APP (l->data))
+			continue;
+
+		/* just log raw XML */
+		app = ASB_APP (l->data);
+		store = as_store_new ();
+		as_store_set_api_version (store, 1.0f);
+		as_store_add_app (store, AS_APP (app));
+		xml = as_store_to_xml (store,
+				       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+				       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+		asb_package_log (asb_app_get_package (app),
+				 ASB_PACKAGE_LOG_LEVEL_NONE, "%s", xml->str);
+	}
+}
+
+/**
  * asb_context_detect_missing_data:
  **/
 static gboolean
@@ -1393,6 +1425,9 @@ asb_context_process (AsbContext *ctx, GError **error)
 		return FALSE;
 	if (!asb_context_save_resources (ctx, error))
 		return FALSE;
+
+	/* write the application XML to the log file */
+	asb_context_write_app_xml (ctx);
 
 	/* write XML file */
 	ret = asb_context_write_xml (ctx, priv->output_dir, priv->basename, error);

@@ -409,11 +409,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		/* all okay */
 		asb_context_add_app (priv->ctx, app);
 		nr_added++;
-
-		/* log the XML in the log file */
-		tmp = asb_app_to_xml (app);
-		asb_package_log (priv->pkg, ASB_PACKAGE_LOG_LEVEL_NONE, "%s", tmp);
-		g_free (tmp);
 	}
 skip:
 	/* add a dummy element to the AppStream metadata so that we don't keep
