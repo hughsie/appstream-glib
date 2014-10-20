@@ -615,7 +615,7 @@ as_test_screenshot_func (void)
 	GNode *root;
 	GString *xml;
 	const gchar *src =
-		"<screenshot>"
+		"<screenshot priority=\"-64\">"
 		"<caption>Hello</caption>"
 		"<image type=\"source\" height=\"800\" width=\"600\">http://1.png</image>"
 		"<image type=\"thumbnail\" height=\"100\" width=\"100\">http://2.png</image>"
@@ -637,6 +637,7 @@ as_test_screenshot_func (void)
 
 	/* verify */
 	g_assert_cmpint (as_screenshot_get_kind (screenshot), ==, AS_SCREENSHOT_KIND_NORMAL);
+	g_assert_cmpint (as_screenshot_get_priority (screenshot), ==, -64);
 	g_assert_cmpstr (as_screenshot_get_caption (screenshot, "C"), ==, "Hello");
 	images = as_screenshot_get_images (screenshot);
 	g_assert_cmpint (images->len, ==, 2);
@@ -655,7 +656,7 @@ as_test_screenshot_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_screenshot_node_insert (screenshot, root, 0.6);
+	n = as_screenshot_node_insert (screenshot, root, 0.8);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	g_assert_cmpstr (xml->str, ==, src);
 	g_string_free (xml, TRUE);

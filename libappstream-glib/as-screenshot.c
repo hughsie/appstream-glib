@@ -374,6 +374,8 @@ as_screenshot_node_insert (AsScreenshot *screenshot,
 					  priv->captions,
 					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 	}
+	if (api_version >= 0.8 && priv->priority != 0)
+		as_node_add_attribute_as_int (n, "priority", priv->priority);
 	for (i = 0; i < priv->images->len; i++) {
 		image = g_ptr_array_index (priv->images, i);
 		as_image_node_insert (image, n, api_version);
@@ -401,6 +403,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 	GNode *c;
 	const gchar *tmp;
 	guint size;
+	gint priority;
 	_cleanup_hashtable_unref_ GHashTable *captions = NULL;
 
 	tmp = as_node_get_attribute (node, "type");
@@ -408,6 +411,9 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 		as_screenshot_set_kind (screenshot,
 					as_screenshot_kind_from_string (tmp));
 	}
+	priority = as_node_get_attribute_as_int (node, "priority");
+	if (priority != G_MAXINT)
+		as_screenshot_set_priority (screenshot, priority);
 
 	/* add captions */
 	captions = as_node_get_localized (node, "caption");

@@ -450,10 +450,6 @@ asb_font_add_screenshot (AsbApp *app, FT_Face ft_face, GError **error)
 	if (tmp != NULL) {
 		gint priority = 0;
 
-		/* positive */
-		if (g_strstr_len (tmp, -1, "Regular") != NULL)
-			priority += 1;
-
 		/* negative */
 		if (g_strstr_len (tmp, -1, "Italic") != NULL)
 			priority -= 2;
