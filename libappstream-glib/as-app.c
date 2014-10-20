@@ -2010,11 +2010,11 @@ void
 as_app_add_screenshot (AsApp *app, AsScreenshot *screenshot)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsScreenshot *ss;
+	guint i;
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
-		AsScreenshot *ss;
-		guint i;
 		for (i = 0; i < priv->screenshots->len; i++) {
 			ss = g_ptr_array_index (priv->screenshots, i);
 			if (ss == screenshot)
@@ -2023,6 +2023,13 @@ as_app_add_screenshot (AsApp *app, AsScreenshot *screenshot)
 	}
 
 	g_ptr_array_add (priv->screenshots, g_object_ref (screenshot));
+
+	/* make only the first screenshot default */
+	for (i = 0; i < priv->screenshots->len; i++) {
+		ss = g_ptr_array_index (priv->screenshots, i);
+		as_screenshot_set_kind (ss, i == 0 ? AS_SCREENSHOT_KIND_DEFAULT :
+						     AS_SCREENSHOT_KIND_NORMAL);
+	}
 }
 
 /**
