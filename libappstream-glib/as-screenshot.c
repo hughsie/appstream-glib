@@ -47,6 +47,7 @@ struct _AsScreenshotPrivate
 	AsScreenshotKind	 kind;
 	GHashTable		*captions;
 	GPtrArray		*images;
+	gint			 priority;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsScreenshot, as_screenshot, G_TYPE_OBJECT)
@@ -149,6 +150,23 @@ as_screenshot_get_kind (AsScreenshot *screenshot)
 }
 
 /**
+ * as_screenshot_get_priority:
+ * @screenshot: a #AsScreenshot instance.
+ *
+ * Gets the screenshot priority.
+ *
+ * Returns: a priority value
+ *
+ * Since: 0.3.1
+ **/
+gint
+as_screenshot_get_priority (AsScreenshot *screenshot)
+{
+	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	return priv->priority;
+}
+
+/**
  * as_screenshot_get_images:
  * @screenshot: a #AsScreenshot instance.
  *
@@ -244,6 +262,22 @@ as_screenshot_get_caption (AsScreenshot *screenshot, const gchar *locale)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	return as_hash_lookup_by_locale (priv->captions, locale);
+}
+
+/**
+ * as_screenshot_set_priority:
+ * @screenshot: a #AsScreenshot instance.
+ * @priority: the priority value.
+ *
+ * Sets the screenshot priority. Higher numbers are better.
+ *
+ * Since: 0.3.1
+ **/
+void
+as_screenshot_set_priority (AsScreenshot *screenshot, gint priority)
+{
+	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	priv->priority = priority;
 }
 
 /**

@@ -86,6 +86,7 @@ const gchar	*as_screenshot_kind_to_string	(AsScreenshotKind kind);
 
 /* getters */
 AsScreenshotKind as_screenshot_get_kind		(AsScreenshot	*screenshot);
+gint		 as_screenshot_get_priority	(AsScreenshot	*screenshot);
 const gchar	*as_screenshot_get_caption	(AsScreenshot	*screenshot,
 						 const gchar	*locale);
 GPtrArray	*as_screenshot_get_images	(AsScreenshot	*screenshot);
@@ -97,6 +98,8 @@ AsImage		*as_screenshot_get_source	(AsScreenshot	*screenshot);
 /* setters */
 void		 as_screenshot_set_kind		(AsScreenshot	*screenshot,
 						 AsScreenshotKind kind);
+void		 as_screenshot_set_priority	(AsScreenshot	*screenshot,
+						 gint		 priority);
 void		 as_screenshot_set_caption	(AsScreenshot	*screenshot,
 						 const gchar	*locale,
 						 const gchar	*caption,
