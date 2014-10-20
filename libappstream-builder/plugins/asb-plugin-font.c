@@ -454,6 +454,35 @@ asb_font_add_screenshot (AsbApp *app, FT_Face ft_face, GError **error)
 		as_screenshot_set_caption (ss, NULL, caption, -1);
 	as_app_add_screenshot (AS_APP (app), ss);
 
+	/* find screenshot priority */
+	tmp = as_app_get_metadata_item (AS_APP (app), "FontSubFamily");
+	if (tmp != NULL) {
+		gint priority = 0;
+
+		/* positive */
+		if (g_strstr_len (tmp, -1, "Regular") != NULL)
+			priority += 1;
+
+		/* negative */
+		if (g_strstr_len (tmp, -1, "Italic") != NULL)
+			priority -= 2;
+		if (g_strstr_len (tmp, -1, "Light") != NULL)
+			priority -= 4;
+		if (g_strstr_len (tmp, -1, "ExtraLight") != NULL)
+			priority -= 8;
+		if (g_strstr_len (tmp, -1, "Semibold") != NULL)
+			priority -= 16;
+		if (g_strstr_len (tmp, -1, "Bold") != NULL)
+			priority -= 32;
+		if (g_strstr_len (tmp, -1, "Medium") != NULL)
+			priority -= 64;
+		if (g_strstr_len (tmp, -1, "Fallback") != NULL)
+			priority -= 128;
+		if (priority != 0)
+			as_screenshot_set_priority (ss, priority);
+	}
+
+
 	/* save to cache */
 	if (!g_file_test (cache_fn, G_FILE_TEST_EXISTS)) {
 		if (!gdk_pixbuf_save (pixbuf, cache_fn, "png", error, NULL))

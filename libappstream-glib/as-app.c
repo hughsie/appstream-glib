@@ -1998,6 +1998,22 @@ as_app_add_provide (AsApp *app, AsProvide *provide)
 }
 
 /**
+ * as_app_sort_screenshots:
+ **/
+static gint
+as_app_sort_screenshots (gconstpointer a, gconstpointer b)
+{
+	AsScreenshot *ss1 = *((AsScreenshot **) a);
+	AsScreenshot *ss2 = *((AsScreenshot **) b);
+	g_print ("%i:%i\n", as_screenshot_get_priority (ss1), as_screenshot_get_priority (ss2));
+	if (as_screenshot_get_priority (ss1) < as_screenshot_get_priority (ss2))
+		return 1;
+	if (as_screenshot_get_priority (ss1) > as_screenshot_get_priority (ss2))
+		return -1;
+	return 0;
+}
+
+/**
  * as_app_add_screenshot:
  * @app: a #AsApp instance.
  * @screenshot: a #AsScreenshot instance.
@@ -2022,7 +2038,9 @@ as_app_add_screenshot (AsApp *app, AsScreenshot *screenshot)
 		}
 	}
 
+	/* add then resort */
 	g_ptr_array_add (priv->screenshots, g_object_ref (screenshot));
+	g_ptr_array_sort (priv->screenshots, as_app_sort_screenshots);
 
 	/* make only the first screenshot default */
 	for (i = 0; i < priv->screenshots->len; i++) {
