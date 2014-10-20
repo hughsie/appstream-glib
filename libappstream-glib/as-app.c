@@ -2005,7 +2005,6 @@ as_app_sort_screenshots (gconstpointer a, gconstpointer b)
 {
 	AsScreenshot *ss1 = *((AsScreenshot **) a);
 	AsScreenshot *ss2 = *((AsScreenshot **) b);
-	g_print ("%i:%i\n", as_screenshot_get_priority (ss1), as_screenshot_get_priority (ss2));
 	if (as_screenshot_get_priority (ss1) < as_screenshot_get_priority (ss2))
 		return 1;
 	if (as_screenshot_get_priority (ss1) > as_screenshot_get_priority (ss2))
