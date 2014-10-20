@@ -2009,7 +2009,8 @@ as_app_sort_screenshots (gconstpointer a, gconstpointer b)
 		return 1;
 	if (as_screenshot_get_priority (ss1) > as_screenshot_get_priority (ss2))
 		return -1;
-	return 0;
+	return g_strcmp0 (as_screenshot_get_caption (ss1, NULL),
+			  as_screenshot_get_caption (ss2, NULL));
 }
 
 /**
