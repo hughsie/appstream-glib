@@ -942,7 +942,15 @@ as_app_validate_is_content_license (const gchar *license)
 			continue;
 		if (g_strcmp0 (tokens[i], "@CC-BY-3.0") == 0)
 			continue;
+		if (g_strcmp0 (tokens[i], "@CC-BY-4.0") == 0)
+			continue;
 		if (g_strcmp0 (tokens[i], "@CC-BY-SA-3.0") == 0)
+			continue;
+		if (g_strcmp0 (tokens[i], "@CC-BY-SA-4.0") == 0)
+			continue;
+		if (g_strcmp0 (tokens[i], "@GFDL-1.1") == 0)
+			continue;
+		if (g_strcmp0 (tokens[i], "@GFDL-1.2") == 0)
 			continue;
 		if (g_strcmp0 (tokens[i], "@GFDL-1.3") == 0)
 			continue;
