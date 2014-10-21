@@ -115,6 +115,8 @@ as_url_kind_to_string (AsUrlKind url_kind)
 		return "donation";
 	if (url_kind == AS_URL_KIND_HELP)
 		return "help";
+	if (url_kind == AS_URL_KIND_MISSING)
+		return "missing";
 	return "unknown";
 }
 
@@ -141,6 +143,8 @@ as_url_kind_from_string (const gchar *url_kind)
 		return AS_URL_KIND_DONATION;
 	if (g_strcmp0 (url_kind, "help") == 0)
 		return AS_URL_KIND_HELP;
+	if (g_strcmp0 (url_kind, "missing") == 0)
+		return AS_URL_KIND_MISSING;
 	return AS_URL_KIND_UNKNOWN;
 }
 
