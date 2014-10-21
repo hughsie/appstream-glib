@@ -111,6 +111,8 @@ as_icon_kind_to_string (AsIconKind icon_kind)
 		return "stock";
 	if (icon_kind == AS_ICON_KIND_REMOTE)
 		return "remote";
+	if (icon_kind == AS_ICON_KIND_LOCAL)
+		return "local";
 	return "unknown";
 }
 
@@ -133,6 +135,8 @@ as_icon_kind_from_string (const gchar *icon_kind)
 		return AS_ICON_KIND_STOCK;
 	if (g_strcmp0 (icon_kind, "remote") == 0)
 		return AS_ICON_KIND_REMOTE;
+	if (g_strcmp0 (icon_kind, "local") == 0)
+		return AS_ICON_KIND_LOCAL;
 	return AS_ICON_KIND_UNKNOWN;
 }
 
