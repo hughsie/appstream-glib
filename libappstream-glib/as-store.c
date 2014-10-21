@@ -897,7 +897,7 @@ as_store_convert_icons (AsStore *store, AsIconKind kind, GError **error)
  * @cancellable: A #GCancellable, or %NULL
  * @error: A #GError or %NULL
  *
- * Outputs a compressed XML file of all the applications in the store.
+ * Outputs an optionally compressed XML file of all the applications in the store.
  *
  * Returns: A #GString
  *
@@ -915,6 +915,28 @@ as_store_to_file (AsStore *store,
 	_cleanup_object_unref_ GOutputStream *out = NULL;
 	_cleanup_object_unref_ GZlibCompressor *compressor = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
+	_cleanup_free_ gchar *basename = NULL;
+
+	/* check if compressed */
+	basename = g_file_get_basename (file);
+	if (g_strstr_len (basename, -1, ".gz") == NULL) {
+		xml = as_store_to_xml (store, flags);
+		if (!g_file_replace_contents (file, xml->str, xml->len,
+					      NULL,
+					      FALSE,
+					      G_FILE_CREATE_NONE,
+					      NULL,
+					      cancellable,
+					      &error_local)) {
+			g_set_error (error,
+				     AS_STORE_ERROR,
+				     AS_STORE_ERROR_FAILED,
+				     "Failed to write file: %s",
+				     error_local->message);
+			return FALSE;
+		}
+		return TRUE;
+	}
 
 	/* compress as a gzip file */
 	compressor = g_zlib_compressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP, -1);
