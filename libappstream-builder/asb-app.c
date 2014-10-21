@@ -293,13 +293,12 @@ asb_app_save_resources (AsbApp *app, GError **error)
 		_cleanup_free_ gchar *filename = NULL;
 		_cleanup_free_ gchar *size_str = NULL;
 
-		/* don't save stock icons */
+		/* don't save some types of icons */
 		icon = g_ptr_array_index (icons, i);
-		if (as_icon_get_kind (icon) == AS_ICON_KIND_STOCK)
-			continue;
-		if (as_icon_get_kind (icon) == AS_ICON_KIND_EMBEDDED)
-			continue;
-		if (as_icon_get_kind (icon) == AS_ICON_KIND_REMOTE)
+		if (as_icon_get_kind (icon) == AS_ICON_KIND_STOCK ||
+		    as_icon_get_kind (icon) == AS_ICON_KIND_EMBEDDED ||
+		    as_icon_get_kind (icon) == AS_ICON_KIND_LOCAL ||
+		    as_icon_get_kind (icon) == AS_ICON_KIND_REMOTE)
 			continue;
 
 		/* save to disk */
