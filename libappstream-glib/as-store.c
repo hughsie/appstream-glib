@@ -1668,7 +1668,7 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 		if ((priv->problems & AS_STORE_PROBLEM_LEGACY_ROOT) == 0) {
 			as_store_validate_add (probs,
 					       AS_PROBLEM_KIND_TAG_INVALID,
-					       "metdata version is v%.1f and "
+					       "metadata version is v%.1f and "
 					       "XML root is not <applications>",
 					       priv->api_version);
 		}
@@ -1676,14 +1676,14 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 		if ((priv->problems & AS_STORE_PROBLEM_LEGACY_ROOT) != 0) {
 			as_store_validate_add (probs,
 					       AS_PROBLEM_KIND_TAG_INVALID,
-					       "metdata version is v%.1f and "
+					       "metadata version is v%.1f and "
 					       "XML root is not <components>",
 					       priv->api_version);
 		}
 		if (priv->origin == NULL) {
 			as_store_validate_add (probs,
 					       AS_PROBLEM_KIND_TAG_MISSING,
-					       "metdata version is v%.1f and "
+					       "metadata version is v%.1f and "
 					       "origin attribute is missing",
 					       priv->api_version);
 		}
@@ -1700,14 +1700,14 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 			if (as_app_get_source_pkgname (app) != NULL) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<source_pkgname> only introduced in v0.3",
 						       priv->api_version);
 			}
 			if (as_app_get_priority (app) != 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<priority> only introduced in v0.3",
 						       priv->api_version);
 			}
@@ -1716,35 +1716,35 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 			if (as_app_get_project_group (app) != NULL) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<project_group> only introduced in v0.4",
 						       priv->api_version);
 			}
 			if (as_app_get_mimetypes(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<mimetypes> only introduced in v0.4",
 						       priv->api_version);
 			}
 			if (as_app_get_screenshots(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<screenshots> only introduced in v0.4",
 						       priv->api_version);
 			}
 			if (as_app_get_compulsory_for_desktops(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<compulsory_for_desktop> only introduced in v0.4",
 						       priv->api_version);
 			}
 			if (g_list_length (as_app_get_languages(app)) > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<languages> only introduced in v0.4",
 						       priv->api_version);
 			}
@@ -1753,7 +1753,7 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 			if ((as_app_get_problems (app) & AS_APP_PROBLEM_PREFORMATTED_DESCRIPTION) == 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<description> markup "
 						       "was introduced in v0.6",
 						       priv->api_version);
@@ -1761,21 +1761,21 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 			if (as_app_get_architectures(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<architectures> only introduced in v0.6",
 						       priv->api_version);
 			}
 			if (as_app_get_releases(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<releases> only introduced in v0.6",
 						       priv->api_version);
 			}
 			if (as_app_get_provides(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<provides> only introduced in v0.6",
 						       priv->api_version);
 			}
@@ -1783,7 +1783,7 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 			if ((as_app_get_problems (app) & AS_APP_PROBLEM_PREFORMATTED_DESCRIPTION) != 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<description> requiring markup "
 						       "was introduced in v0.6",
 						       priv->api_version);
@@ -1793,21 +1793,21 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 			if (as_app_get_id_kind (app) == AS_ID_KIND_ADDON) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "addon kinds only introduced in v0.7",
 						       priv->api_version);
 			}
 			if (as_app_get_developer_name (app, NULL) != NULL) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<developer_name> only introduced in v0.7",
 						       priv->api_version);
 			}
 			if (as_app_get_extends(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metdata version is v%.1f and "
+						       "metadata version is v%.1f and "
 						       "<extends> only introduced in v0.7",
 						       priv->api_version);
 			}

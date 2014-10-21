@@ -1198,16 +1198,16 @@ as_test_store_validate_func (void)
 	g_assert (probs != NULL);
 	g_assert_cmpint (probs->len, ==, 4);
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
-				    "metdata version is v0.1 and "
+				    "metadata version is v0.1 and "
 				    "<screenshots> only introduced in v0.4");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
-				    "metdata version is v0.1 and "
+				    "metadata version is v0.1 and "
 				    "<compulsory_for_desktop> only introduced in v0.4");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
-				    "metdata version is v0.1 and "
+				    "metadata version is v0.1 and "
 				    "<project_group> only introduced in v0.4");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
-				    "metdata version is v0.1 and "
+				    "metadata version is v0.1 and "
 				    "<description> markup was introduced in v0.6");
 }
 
