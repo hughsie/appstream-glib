@@ -995,6 +995,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	id = as_app_get_id (app);
 	switch (as_app_get_id_kind (app)) {
 	case AS_ID_KIND_DESKTOP:
+	case AS_ID_KIND_WEB_APP:
 		if (g_str_has_suffix (id, ".desktop"))
 			ret = TRUE;
 		break;
@@ -1016,6 +1017,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		break;
 	case AS_ID_KIND_FONT:
 	case AS_ID_KIND_ADDON:
+	case AS_ID_KIND_SOURCE:
 		/* anything goes */
 		ret = TRUE;
 	default:
