@@ -232,6 +232,8 @@ as_app_guess_source_kind (const gchar *filename)
 		return AS_APP_SOURCE_KIND_METAINFO;
 	if (g_str_has_suffix (filename, ".metainfo.xml.in"))
 		return AS_APP_SOURCE_KIND_METAINFO;
+	if (g_str_has_suffix (filename, ".xml"))
+		return AS_APP_SOURCE_KIND_APPSTREAM;
 	return AS_APP_SOURCE_KIND_UNKNOWN;
 }
 
