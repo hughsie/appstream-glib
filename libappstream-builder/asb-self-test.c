@@ -317,6 +317,8 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	for (i = 0; filenames[i] != NULL; i++) {
 		_cleanup_free_ gchar *filename = NULL;
 		filename = asb_test_get_filename (filenames[i]);
+		if (filename == NULL)
+			g_warning ("%s not found", filenames[i]);
 		g_assert (filename != NULL);
 		ret = asb_context_add_filename (ctx, filename, &error);
 		g_assert_no_error (error);

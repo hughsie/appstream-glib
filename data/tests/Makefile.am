@@ -18,6 +18,8 @@ test_files =						\
 	example-v04.xml.gz				\
 	example-v06.yml.gz				\
 	example.yml					\
+	font-1-1.fc21.noarch.rpm			\
+	font-serif-1-1.fc21.noarch.rpm			\
 	intltool.appdata.xml.in				\
 	origin.xml					\
 	rpmbuild/app.png				\

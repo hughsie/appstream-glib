@@ -1,3 +1,60 @@
+Version 0.3.1
+~~~~~~~~~~~~~
+Released: 2014-10-21
+
+Notes:
+ - This branch is still unstable and should not be used in stable distributions.
+ - This release allows appstream-builer to parse Alpm packages for Arch Linux.
+ - HiDPI support is now working well for icons and screenshots.
+
+New Features:
+ - Add a kudo for a HiDPI icon (Richard Hughes)
+ - Add an --enable-hidpi argument to appstream-builder (Richard Hughes)
+ - Add AS_APP_VALIDATE_FLAG_ALL_APPS (Richard Hughes)
+ - Add asb_app_set_hidpi_enabled() (Richard Hughes)
+ - Add asb_context_get_min_icon_size() (Richard Hughes)
+ - Add asb_context_set_embedded_icons() (Richard Hughes)
+ - Add AsIcon as a new abstract icon object (Richard Hughes)
+ - Add as_icon_convert_to_kind() (Richard Hughes)
+ - Add AS_ICON_KIND_EMBEDDED and AS_ICON_KIND_LOCAL (Richard Hughes)
+ - Add as_node_add_attribute_as_int() (Richard Hughes)
+ - Add as_screenshot_set_priority() (Richard Hughes)
+ - Add as_store_convert_icons() (Richard Hughes)
+ - Add as_utils_find_icon_filename_full() for HiDPI support (Richard Hughes)
+ - Add as_utils_get_string_overlap() (Richard Hughes)
+ - Alpm backend for appstream-builder (Fabien Bourigault)
+ - Support filtering by metadata in status-csv (Richard Hughes)
+
+Bugfixes:
+ - Add more applications to the blacklist (Richard Hughes)
+ - Allow application with NoDisplay=true and an AppData file (Richard Hughes)
+ - Allow AppStream files to be upgraded using appstream-util (Richard Hughes)
+ - Correctly write symlinks when extracting packages (Richard Hughes)
+ - Do not allow applications to extend themselves (Richard Hughes)
+ - Do not crash when doing as_tag_from_string(NULL) (Richard Hughes)
+ - Do not leak applications when building if more than one plugin returns results (Richard Hughes)
+ - Do not subsume vetoed fonts into the parent component (Richard Hughes)
+ - Do not write provides with an unknown kind (Richard Hughes)
+ - Flush the package log again after the metadata write (Richard Hughes)
+ - Ignore translation for non-translatable tags (Richard Hughes)
+ - Include the width and height in the <icon> tag (Richard Hughes)
+ - Install AppStream files with correct permissions (Richard Hughes)
+ - Log when applications are automatically composited (Richard Hughes)
+ - Manually search for HiDPI icons if the application only has one listed icon (Richard Hughes)
+ - Monitor the XML and icons path for changes (Richard Hughes)
+ - Never allow more than one default screenshot (Richard Hughes)
+ - Never return a smaller HiDPI icon than a LoDPI icon (Richard Hughes)
+ - Only detect missing data after the application have been merged (Richard Hughes)
+ - Only guess a project as GNOME if it uses the GNOME bugzilla (Richard Hughes)
+ - Only process fonts with valid metainfo files (Richard Hughes)
+ - Relax validation requirements for font metainfo files (Richard Hughes)
+ - Respect AS_NODE_FROM_XML_FLAG_LITERAL_TEXT when dealing with comments (Richard Hughes)
+ - Sort the screenshots with a priority value (Richard Hughes)
+ - Support multiple XML comments per tag (Richard Hughes)
+ - Support upgrading more than one AppData file at a time (Richard Hughes)
+ - When validating AppStream files also validate the application objects (Richard Hughes)
+ - Write the application XML after all the vetos have been added (Richard Hughes)
+
 Version 0.3.0
 ~~~~~~~~~~~~~
 Released: 2014-09-01
