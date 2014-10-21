@@ -674,6 +674,63 @@ as_app_validate_screenshot (AsScreenshot *ss, AsAppValidateHelper *helper)
 }
 
 /**
+ * as_app_validate_icons:
+ **/
+static void
+as_app_validate_icons (AsApp *app, AsAppValidateHelper *helper)
+{
+	AsIcon *icon;
+	AsIconKind icon_kind;
+	const gchar *icon_name;
+
+	/* just check the default icon */
+	icon = as_app_get_icon_default (app);
+	if (icon == NULL)
+		return;
+
+	/* check the content is correct */
+	icon_kind = as_icon_get_kind (icon);
+	icon_name = as_icon_get_name (icon);
+	switch (icon_kind) {
+	case AS_ICON_KIND_STOCK:
+		if (!as_utils_is_stock_icon_name (icon_name)) {
+			ai_app_validate_add (helper->probs,
+					     AS_PROBLEM_KIND_TAG_INVALID,
+					     "stock icon '%s' is not valid",
+					     icon_name);
+		}
+		break;
+	case AS_ICON_KIND_LOCAL:
+		if (!g_str_has_prefix (icon_name, "/")) {
+			ai_app_validate_add (helper->probs,
+					     AS_PROBLEM_KIND_TAG_INVALID,
+					     "local icon '%s' is not a filename",
+					     icon_name);
+		}
+		break;
+	case AS_ICON_KIND_CACHED:
+		if (g_str_has_prefix (icon_name, "/")) {
+			ai_app_validate_add (helper->probs,
+					     AS_PROBLEM_KIND_TAG_INVALID,
+					     "cached icon '%s' is a filename",
+					     icon_name);
+		}
+		break;
+	case AS_ICON_KIND_REMOTE:
+		if (!g_str_has_prefix (icon_name, "http://") &&
+		    !g_str_has_prefix (icon_name, "https://")) {
+			ai_app_validate_add (helper->probs,
+					     AS_PROBLEM_KIND_TAG_INVALID,
+					     "remote icon '%s' is not a url",
+					     icon_name);
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+/**
  * as_app_validate_screenshots:
  **/
 static void
@@ -1178,6 +1235,9 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 
 	/* screenshots */
 	as_app_validate_screenshots (app, &helper);
+
+	/* icons */
+	as_app_validate_icons (app, &helper);
 
 	/* releases */
 	ret = as_app_validate_releases (app, &helper, error);

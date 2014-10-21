@@ -79,6 +79,7 @@ typedef enum {
  * @AS_ICON_KIND_CACHED:		An icon shipped with the AppStream metadata
  * @AS_ICON_KIND_REMOTE:		An icon referenced by a remote URL
  * @AS_ICON_KIND_EMBEDDED:		An embedded Base64 icon
+ * @AS_ICON_KIND_LOCAL:			An icon with absolute path and filename
  *
  * The icon type.
  **/
@@ -88,6 +89,7 @@ typedef enum {
 	AS_ICON_KIND_CACHED,		/* Since: 0.1.0 */
 	AS_ICON_KIND_REMOTE,		/* Since: 0.1.0 */
 	AS_ICON_KIND_EMBEDDED,		/* Since: 0.3.1 */
+	AS_ICON_KIND_LOCAL,		/* Since: 0.3.1 */
 	/*< private >*/
 	AS_ICON_KIND_LAST
 } AsIconKind;

@@ -131,6 +131,8 @@ as_icon_kind_to_string (AsIconKind icon_kind)
 		return "remote";
 	if (icon_kind == AS_ICON_KIND_EMBEDDED)
 		return "embedded";
+	if (icon_kind == AS_ICON_KIND_LOCAL)
+		return "local";
 	return "unknown";
 }
 
@@ -155,6 +157,8 @@ as_icon_kind_from_string (const gchar *icon_kind)
 		return AS_ICON_KIND_REMOTE;
 	if (g_strcmp0 (icon_kind, "embedded") == 0)
 		return AS_ICON_KIND_EMBEDDED;
+	if (g_strcmp0 (icon_kind, "local") == 0)
+		return AS_ICON_KIND_LOCAL;
 	return AS_ICON_KIND_UNKNOWN;
 }
 
@@ -602,6 +606,15 @@ as_icon_load (AsIcon *icon, AsIconLoadFlags flags, GError **error)
 	_cleanup_free_ gchar *fn_size = NULL;
 	_cleanup_free_ gchar *size_str = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+
+	/* absolute filename */
+	if (priv->kind == AS_ICON_KIND_LOCAL) {
+		pixbuf = gdk_pixbuf_new_from_file (priv->name, error);
+		if (pixbuf == NULL)
+			return FALSE;
+		as_icon_set_pixbuf (icon, pixbuf);
+		return TRUE;
+	}
 
 	/* not set */
 	if (priv->prefix == NULL) {
