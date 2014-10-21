@@ -485,6 +485,7 @@ as_util_convert_appstream (GFile *file_input,
 	as_store_set_api_version (store, new_version);
 	if (!as_store_to_file (store, file_output,
 				AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE |
+				AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
 				AS_NODE_TO_XML_FLAG_ADD_HEADER,
 				NULL, error))
 		return FALSE;
@@ -542,10 +543,12 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 	}
 
 	/* don't know what to do */
-	g_set_error_literal (error,
-			     AS_ERROR,
-			     AS_ERROR_INVALID_ARGUMENTS,
-			     "Format not recognised");
+	g_set_error (error,
+		     AS_ERROR,
+		     AS_ERROR_INVALID_ARGUMENTS,
+		     "Conversion %s->%s not implemented",
+		     as_app_source_kind_to_string (input_kind),
+		     as_app_source_kind_to_string (output_kind));
 	return FALSE;
 }
 
@@ -568,23 +571,30 @@ as_util_upgrade (AsUtilPrivate *priv, gchar **values, GError **error)
 		return FALSE;
 	}
 
-	/* AppData */
+	/* process each file */
 	for (i = 0; values[i] != NULL; i++) {
 		_cleanup_object_unref_ GFile *file = NULL;
-
-		/* don't know what to do */
-		if (as_app_guess_source_kind (values[i]) != AS_APP_SOURCE_KIND_APPDATA) {
-			g_set_error_literal (error,
-					     AS_ERROR,
-					     AS_ERROR_INVALID_ARGUMENTS,
-					     "Format not recognised");
+		AsAppSourceKind source_kind;
+		source_kind = as_app_guess_source_kind (values[i]);
+		switch (source_kind) {
+		case AS_APP_SOURCE_KIND_APPDATA:
+			file = g_file_new_for_path (values[i]);
+			if (!as_util_convert_appdata (file, file, 0.8, error))
+				return FALSE;
+			break;
+		case AS_APP_SOURCE_KIND_APPSTREAM:
+			file = g_file_new_for_path (values[i]);
+			if (!as_util_convert_appstream (file, file, 0.8, error))
+				return FALSE;
+			break;
+		default:
+			g_set_error (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "File format '%s' cannot be upgraded",
+				     as_app_source_kind_to_string (source_kind));
 			return FALSE;
 		}
-
-		/* use convert to do the upgrade */
-		file = g_file_new_for_path (values[i]);
-		if (!as_util_convert_appdata (file, file, 1.0, error))
-			return FALSE;
 	}
 	return TRUE;
 }
