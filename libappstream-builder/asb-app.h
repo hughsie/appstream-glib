@@ -60,6 +60,22 @@ struct _AsbAppClass
 	void (*_asb_reserved8)	(void);
 };
 
+/**
+ * AsbAppSaveFlags:
+ * @ASB_APP_SAVE_FLAG_NONE:		Nothing to do
+ * @ASB_APP_SAVE_FLAG_ICONS:		Save icons to disk
+ * @ASB_APP_SAVE_FLAG_SCREENSHOTS:	Save screenshots to disk
+ *
+ * The flags to use when saving resources.
+ **/
+typedef enum {
+	ASB_APP_SAVE_FLAG_NONE,
+	ASB_APP_SAVE_FLAG_ICONS		= 1,	/* Since: 0.3.2 */
+	ASB_APP_SAVE_FLAG_SCREENSHOTS	= 2,	/* Since: 0.3.2 */
+	/*< private >*/
+	ASB_APP_SAVE_FLAG_LAST,
+} AsbAppSaveFlags;
+
 GType		 asb_app_get_type		(void);
 
 
@@ -83,6 +99,7 @@ GPtrArray	*asb_app_get_requires_appdata	(AsbApp		*app);
 AsbPackage	*asb_app_get_package		(AsbApp		*app);
 
 gboolean	 asb_app_save_resources		(AsbApp		*app,
+						 AsbAppSaveFlags save_flags,
 						 GError		**error);
 
 

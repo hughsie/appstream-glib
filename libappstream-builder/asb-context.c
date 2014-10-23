@@ -673,7 +673,7 @@ asb_context_load_extra_screenshots (AsbContext *ctx, AsApp *app, GError **error)
 			     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
 
 	/* save all the screenshots to disk */
-	return asb_app_save_resources (app_build, error);
+	return asb_app_save_resources (app_build, ASB_APP_SAVE_FLAG_SCREENSHOTS, error);
 }
 
 /**
@@ -1029,12 +1029,14 @@ asb_context_save_resources (AsbContext *ctx, GError **error)
 	for (l = priv->apps; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
 
-		/* save icon and screenshots */
+		/* save icon */
 		if (as_app_get_vetos(app)->len > 0)
 			continue;
 		if (!ASB_IS_APP (app))
 			continue;
-		if (!asb_app_save_resources (ASB_APP (app), error))
+		if (!asb_app_save_resources (ASB_APP (app),
+					     ASB_APP_SAVE_FLAG_ICONS,
+					     error))
 			return FALSE;
 	}
 	return TRUE;

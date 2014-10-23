@@ -406,6 +406,14 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			g_free (cache_id);
 		}
 
+		/* save any screenshots early */
+		if (array->len == 0) {
+			if (!asb_app_save_resources (ASB_APP (app),
+						     ASB_APP_SAVE_FLAG_SCREENSHOTS,
+						     error_not_used))
+				return FALSE;
+		}
+
 		/* all okay */
 		asb_context_add_app (priv->ctx, app);
 		nr_added++;

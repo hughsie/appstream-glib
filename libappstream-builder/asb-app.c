@@ -267,6 +267,7 @@ asb_app_set_hidpi_enabled (AsbApp *app, gboolean hidpi_enabled)
 /**
  * asb_app_save_resources:
  * @app: A #AsbApp
+ * @save_flags: #AsbAppSaveFlags, e.g. %ASB_APP_SAVE_FLAG_SCREENSHOTS
  * @error: A #GError or %NULL
  *
  * Saves to disk any resources set for the application.
@@ -276,19 +277,20 @@ asb_app_set_hidpi_enabled (AsbApp *app, gboolean hidpi_enabled)
  * Since: 0.1.0
  **/
 gboolean
-asb_app_save_resources (AsbApp *app, GError **error)
+asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 	AsIcon *icon;
 	AsScreenshot *ss;
 	GdkPixbuf *pixbuf;
-	GPtrArray *icons;
-	GPtrArray *screenshots;
+	GPtrArray *icons = NULL;
+	GPtrArray *screenshots = NULL;
 	guint i;
 
 	/* any non-stock icon set */
-	icons = as_app_get_icons (AS_APP (app));
-	for (i = 0; i < icons->len; i++) {
+	if (save_flags & ASB_APP_SAVE_FLAG_ICONS)
+		icons = as_app_get_icons (AS_APP (app));
+	for (i = 0; icons != NULL && i < icons->len; i++) {
 		const gchar *tmpdir;
 		_cleanup_free_ gchar *filename = NULL;
 		_cleanup_free_ gchar *size_str = NULL;
@@ -326,8 +328,9 @@ asb_app_save_resources (AsbApp *app, GError **error)
 	}
 
 	/* save any screenshots */
-	screenshots = as_app_get_screenshots (AS_APP (app));
-	for (i = 0; i < screenshots->len; i++) {
+	if (save_flags & ASB_APP_SAVE_FLAG_SCREENSHOTS)
+		screenshots = as_app_get_screenshots (AS_APP (app));
+	for (i = 0; screenshots != NULL && i < screenshots->len; i++) {
 		ss = g_ptr_array_index (screenshots, i);
 		if (!asb_app_save_resources_screenshot (app, ss, error))
 			return FALSE;
