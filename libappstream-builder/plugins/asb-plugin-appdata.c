@@ -51,7 +51,7 @@ asb_plugin_initialize (AsbPlugin *plugin)
 	plugin->priv->filenames = g_ptr_array_new_with_free_func (g_free);
 	g_mutex_init (&plugin->priv->filenames_mutex);
 	plugin->priv->session = soup_session_new_with_options (SOUP_SESSION_USER_AGENT, "createrepo_as",
-							       SOUP_SESSION_TIMEOUT, 5000,
+							       SOUP_SESSION_TIMEOUT, 10,
 							       NULL);
 	soup_session_add_feature_by_type (plugin->priv->session,
 					  SOUP_TYPE_PROXY_RESOLVER_DEFAULT);
