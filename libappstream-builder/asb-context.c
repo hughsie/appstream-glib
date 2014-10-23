@@ -1337,6 +1337,7 @@ asb_context_disable_multiarch_pkgs (AsbContext *ctx)
 /**
  * asb_context_process:
  * @ctx: A #AsbContext
+ * @flags: Some #AsbContextProcessFlags, e.g. %AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_PARENTS
  * @error: A #GError or %NULL
  *
  * Processes all the packages that have been added to the context.
@@ -1346,7 +1347,7 @@ asb_context_disable_multiarch_pkgs (AsbContext *ctx)
  * Since: 0.1.0
  **/
 gboolean
-asb_context_process (AsbContext *ctx, GError **error)
+asb_context_process (AsbContext *ctx, AsbContextProcessFlags flags, GError **error)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	AsbPackage *pkg;
@@ -1415,10 +1416,14 @@ asb_context_process (AsbContext *ctx, GError **error)
 	asb_plugin_loader_merge (priv->plugin_loader, priv->apps);
 
 	/* print any warnings */
-	if (!asb_context_detect_missing_data (ctx, error))
-		return FALSE;
-	if (!asb_context_detect_missing_parents (ctx, error))
-		return FALSE;
+	if ((flags & AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_INFO) == 0) {
+		if (!asb_context_detect_missing_data (ctx, error))
+			return FALSE;
+	}
+	if ((flags & AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_PARENTS) == 0) {
+		if (!asb_context_detect_missing_parents (ctx, error))
+			return FALSE;
+	}
 	if (!asb_context_detect_pkgname_dups (ctx, error))
 		return FALSE;
 	if (!asb_context_convert_icons (ctx, error))

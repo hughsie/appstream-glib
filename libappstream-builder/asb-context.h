@@ -58,6 +58,22 @@ struct _AsbContextClass
 	void (*_asb_reserved8)	(void);
 };
 
+/**
+ * AsbContextProcessFlags:
+ * @AS_CONTEXT_PARSE_FLAG_NONE:				No special actions to use
+ * @AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_INFO:		Ignore missing information
+ * @AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_PARENTS:	Ignore missing parents
+ *
+ * The flags to use when processing the context.
+ **/
+typedef enum {
+	AS_CONTEXT_PARSE_FLAG_NONE,
+	AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_INFO	= 1,	/* Since: 0.3.2 */
+	AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_PARENTS	= 2,	/* Since: 0.3.2 */
+	/*< private >*/
+	AS_CONTEXT_PARSE_FLAG_LAST,
+} AsbContextProcessFlags;
+
 GType		 asb_context_get_type		(void);
 
 AsbContext	*asb_context_new		(void);
@@ -114,6 +130,7 @@ guint		 asb_context_get_min_icon_size	(AsbContext	*ctx);
 gboolean	 asb_context_setup		(AsbContext	*ctx,
 						 GError		**error);
 gboolean	 asb_context_process		(AsbContext	*ctx,
+						 AsbContextProcessFlags flags,
 						 GError		**error);
 gboolean	 asb_context_add_filename	(AsbContext	*ctx,
 						 const gchar	*filename,

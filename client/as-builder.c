@@ -62,6 +62,7 @@ int
 main (int argc, char **argv)
 {
 	AsbContext *ctx = NULL;
+	AsbContextProcessFlags flags = AS_CONTEXT_PARSE_FLAG_NONE;
 	GOptionContext *option_context;
 	const gchar *filename;
 	gboolean add_cache_id = FALSE;
@@ -88,6 +89,7 @@ main (int argc, char **argv)
 	_cleanup_free_ gchar *screenshot_dir = NULL;
 	_cleanup_free_ gchar *screenshot_uri = NULL;
 	_cleanup_free_ gchar *temp_dir = NULL;
+	_cleanup_free_ gchar **veto_ignore = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *packages = NULL;
 	_cleanup_timer_destroy_ GTimer *timer = NULL;
 	const GOptionEntry options[] = {
@@ -151,6 +153,9 @@ main (int argc, char **argv)
 		{ "old-metadata", '\0', 0, G_OPTION_ARG_FILENAME, &old_metadata,
 			/* TRANSLATORS: command line option */
 			_("Set the old metadata location"), "DIR" },
+		{ "veto-ignore", '\0', 0, G_OPTION_ARG_STRING_ARRAY, &veto_ignore,
+			/* TRANSLATORS: command line option */
+			_("Ignore certain types of veto"), "NAME" },
 		{ NULL}
 	};
 
@@ -266,8 +271,25 @@ main (int argc, char **argv)
 		}
 	}
 
+	/* parse the context flags */
+	if (veto_ignore != NULL) {
+		for (i = 0; veto_ignore[i] != NULL; i++) {
+			if (g_strcmp0 (veto_ignore[i], "missing-info") == 0) {
+				flags |= AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_INFO;
+				continue;
+			}
+			if (g_strcmp0 (veto_ignore[i], "missing-parents") == 0) {
+				flags |= AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_PARENTS;
+				continue;
+			}
+			g_warning ("Unknown flag name: %s, "
+				   "expected 'missing-info' or 'missing-parents'",
+				   veto_ignore[i]);
+		}
+	}
+
 	/* process all packages in the pool */
-	ret = asb_context_process (ctx, &error);
+	ret = asb_context_process (ctx, flags, &error);
 	if (!ret) {
 		/* TRANSLATORS: error message */
 		g_warning ("%s: %s", _("Failed to generate metadata"), error->message);

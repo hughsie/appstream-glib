@@ -338,7 +338,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	}
 
 	/* run the plugins */
-	ret = asb_context_process (ctx, &error);
+	ret = asb_context_process (ctx, AS_CONTEXT_PARSE_FLAG_NONE, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
