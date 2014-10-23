@@ -545,6 +545,10 @@ as_image_save_pixbuf (AsImage *image,
 	guint pixbuf_width;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf_tmp = NULL;
 
+	/* never set */
+	if (priv->pixbuf == NULL)
+		return NULL;
+
 	/* 0 means 'default' */
 	if (width == 0)
 		width = gdk_pixbuf_get_width (priv->pixbuf);
