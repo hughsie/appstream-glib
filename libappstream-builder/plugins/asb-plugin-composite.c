@@ -164,6 +164,11 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 			continue;
 		found = g_hash_table_lookup (hash, tmp);
 		if (found != NULL) {
+			/* ignore duplicates */
+			if (g_strcmp0 (as_app_get_id (app),
+				       as_app_get_id (found)) == 0) {
+				continue;
+			}
 			asb_plugin_composite_app (app, found);
 			continue;
 		}
