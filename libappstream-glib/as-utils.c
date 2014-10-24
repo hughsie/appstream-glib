@@ -595,10 +595,10 @@ as_utils_check_url_exists (const gchar *url, guint timeout, GError **error)
 }
 
 /**
- * as_pixbuf_box_blur_private:
+ * as_pixbuf_blur_private:
  **/
 static void
-as_pixbuf_box_blur_private (GdkPixbuf *src, GdkPixbuf *dest, gint radius, guchar *div_kernel_size)
+as_pixbuf_blur_private (GdkPixbuf *src, GdkPixbuf *dest, gint radius, guchar *div_kernel_size)
 {
 	gint width, height, src_rowstride, dest_rowstride, n_channels;
 	guchar *p_src, *p_dest, *c1, *c2;
@@ -708,10 +708,17 @@ as_pixbuf_box_blur_private (GdkPixbuf *src, GdkPixbuf *dest, gint radius, guchar
 }
 
 /**
- * as_pixbuf_box_blur:
+ * as_pixbuf_blur:
+ * @src: the GdkPixbuf.
+ * @radius: the pixel radius for the gaussian blur, typical values are 1..3
+ * @iterations: Amount to blur the image, typical values are 1..5
+ *
+ * Blurs an image. Warning, this method is s..l..o..w... for large images.
+ *
+ * Since: 0.3.2
  **/
-static void
-as_pixbuf_box_blur (GdkPixbuf *src, gint radius, gint iterations)
+void
+as_pixbuf_blur (GdkPixbuf *src, gint radius, gint iterations)
 {
 	gint kernel_size;
 	gint i;
@@ -729,7 +736,7 @@ as_pixbuf_box_blur (GdkPixbuf *src, gint radius, gint iterations)
 		div_kernel_size[i] = (guchar) (i / kernel_size);
 
 	while (iterations-- > 0)
-		as_pixbuf_box_blur_private (src, tmp, radius, div_kernel_size);
+		as_pixbuf_blur_private (src, tmp, radius, div_kernel_size);
 }
 
 #define interpolate_value(original, reference, distance)		\
@@ -758,7 +765,7 @@ as_pixbuf_sharpen (GdkPixbuf *src, gint radius, gdouble amount)
 	_cleanup_object_unref_ GdkPixbuf *blurred = NULL;
 
 	blurred = gdk_pixbuf_copy (src);
-	as_pixbuf_box_blur (blurred, radius, 3);
+	as_pixbuf_blur (blurred, radius, 3);
 
 	width = gdk_pixbuf_get_width (src);
 	height = gdk_pixbuf_get_height (src);

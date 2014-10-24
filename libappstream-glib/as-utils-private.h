@@ -39,6 +39,9 @@ const gchar	*as_hash_lookup_by_locale	(GHashTable	*hash,
 void		 as_pixbuf_sharpen		(GdkPixbuf	*src,
 						 gint		 radius,
 						 gdouble	 amount);
+void		 as_pixbuf_blur			(GdkPixbuf	*src,
+						 gint		 radius,
+						 gint		 iterations);
 
 G_END_DECLS
 
