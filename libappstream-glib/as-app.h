@@ -245,6 +245,7 @@ const gchar	*as_app_get_id_filename		(AsApp		*app);
 const gchar	*as_app_get_id			(AsApp		*app);
 const gchar	*as_app_get_pkgname_default	(AsApp		*app);
 const gchar	*as_app_get_source_pkgname	(AsApp		*app);
+const gchar	*as_app_get_origin		(AsApp		*app);
 const gchar	*as_app_get_project_group	(AsApp		*app);
 const gchar	*as_app_get_project_license	(AsApp		*app);
 const gchar	*as_app_get_metadata_license	(AsApp		*app);
@@ -284,6 +285,8 @@ void		 as_app_set_state		(AsApp		*app,
 						 AsAppState	 state);
 void		 as_app_set_trust_flags		(AsApp		*app,
 						 AsAppTrustFlags trust_flags);
+void		 as_app_set_origin		(AsApp		*app,
+						 const gchar	*origin);
 void		 as_app_set_project_group	(AsApp		*app,
 						 const gchar	*project_group,
 						 gssize		 project_group_len);

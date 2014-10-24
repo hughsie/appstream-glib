@@ -82,6 +82,7 @@ struct _AsAppPrivate
 	gchar		*icon_path;
 	gchar		*id_filename;
 	gchar		*id;
+	gchar		*origin;
 	gchar		*project_group;
 	gchar		*project_license;
 	gchar		*metadata_license;
@@ -252,6 +253,7 @@ as_app_finalize (GObject *object)
 	g_free (priv->project_group);
 	g_free (priv->project_license);
 	g_free (priv->metadata_license);
+	g_free (priv->origin);
 	g_free (priv->source_pkgname);
 	g_free (priv->update_contact);
 	g_free (priv->source_file);
@@ -1207,6 +1209,23 @@ as_app_get_update_contact (AsApp *app)
 }
 
 /**
+ * as_app_get_origin:
+ * @app: a #AsApp instance.
+ *
+ * Gets the application origin.
+ *
+ * Returns: the origin string, or %NULL if unset
+ *
+ * Since: 0.3.2
+ **/
+const gchar *
+as_app_get_origin (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->origin;
+}
+
+/**
  * as_app_get_source_file:
  * @app: a #AsApp instance.
  *
@@ -1552,6 +1571,23 @@ as_app_set_update_contact (AsApp *app,
 			}
 		}
 	}
+}
+
+/**
+ * as_app_set_origin:
+ * @app: a #AsApp instance.
+ * @origin: the origin, e.g. "fedora-21"
+ *
+ * Sets the application origin.
+ *
+ * Since: 0.3.2
+ **/
+void
+as_app_set_origin (AsApp *app, const gchar *origin)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_free (priv->origin);
+	priv->origin = g_strdup (origin);
 }
 
 /**
@@ -2485,6 +2521,10 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	/* source */
 	if (priv->source_file != NULL)
 		as_app_set_source_file (app, priv->source_file);
+
+	/* origin */
+	if (priv->origin != NULL)
+		as_app_set_origin (app, priv->origin);
 
 	/* project_group */
 	if (priv->project_group != NULL)

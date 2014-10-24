@@ -640,6 +640,7 @@ as_store_from_root (AsStore *store,
 				     error_local->message);
 			return FALSE;
 		}
+		as_app_set_origin (app, priv->origin);
 		as_store_add_app (store, app);
 	}
 
@@ -658,6 +659,7 @@ as_store_load_yaml_file (AsStore *store,
 			 GCancellable *cancellable,
 			 GError **error)
 {
+	AsStorePrivate *priv = GET_PRIVATE (store);
 	GNode *app_n;
 	GNode *n;
 	const gchar *tmp;
@@ -690,6 +692,7 @@ as_store_load_yaml_file (AsStore *store,
 		app = as_app_new ();
 		if (!as_app_node_parse_dep11 (app, app_n, error))
 			return FALSE;
+		as_app_set_origin (app, priv->origin);
 		if (as_app_get_id (app) != NULL)
 			as_store_add_app (store, app);
 	}

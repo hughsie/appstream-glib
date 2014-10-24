@@ -2404,6 +2404,7 @@ as_test_store_origin_func (void)
 	g_assert (app != NULL);
 	g_assert_cmpstr (as_app_get_icon_path (app), ==,
 		"/usr/share/app-info/icons/fedora-21");
+	g_assert_cmpstr (as_app_get_origin (app), ==, "fedora-21");
 }
 
 static void
@@ -3003,6 +3004,7 @@ as_test_store_yaml_func (void)
 	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_DESKTOP);
 	g_assert_cmpstr (as_app_get_pkgname_default (app), ==, "iceweasel");
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "Iceweasel");
+	g_assert_cmpstr (as_app_get_origin (app), ==, "aequorea");
 }
 
 static void
