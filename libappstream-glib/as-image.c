@@ -562,7 +562,8 @@ as_image_save_pixbuf (AsImage *image,
 		return g_object_ref (priv->pixbuf);
 
 	/* never scale up, just pad */
-	if (pixbuf_width < width && pixbuf_height < height) {
+	if (pixbuf_width < width && pixbuf_height < height &&
+	    (flags & AS_IMAGE_SAVE_FLAG_BLUR) == 0) {
 		pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
 					 TRUE, 8, width, height);
 		gdk_pixbuf_fill (pixbuf, 0x00000000);
@@ -581,7 +582,10 @@ as_image_save_pixbuf (AsImage *image,
 		pixbuf = gdk_pixbuf_scale_simple (priv->pixbuf,
 						  width, height,
 						  GDK_INTERP_HYPER);
-		as_pixbuf_sharpen (pixbuf, 1, -0.5);
+		if ((flags & AS_IMAGE_SAVE_FLAG_SHARPEN) > 0)
+			as_pixbuf_sharpen (pixbuf, 1, -0.5);
+		if ((flags & AS_IMAGE_SAVE_FLAG_BLUR) > 0)
+			as_pixbuf_blur (pixbuf, 5, 3);
 		return pixbuf;
 	}
 
@@ -601,7 +605,10 @@ as_image_save_pixbuf (AsImage *image,
 	pixbuf_tmp = gdk_pixbuf_scale_simple (priv->pixbuf,
 					      tmp_width, tmp_height,
 					      GDK_INTERP_HYPER);
-	as_pixbuf_sharpen (pixbuf_tmp, 1, -0.5);
+	if ((flags & AS_IMAGE_SAVE_FLAG_SHARPEN) > 0)
+		as_pixbuf_sharpen (pixbuf_tmp, 1, -0.5);
+	if ((flags & AS_IMAGE_SAVE_FLAG_BLUR) > 0)
+		as_pixbuf_blur (pixbuf_tmp, 5, 3);
 	gdk_pixbuf_copy_area (pixbuf_tmp,
 			      0, 0, /* of src */
 			      tmp_width, tmp_height,

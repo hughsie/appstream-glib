@@ -86,6 +86,8 @@ typedef enum {
 typedef enum {
 	AS_IMAGE_SAVE_FLAG_NONE		= 0,	/* Since: 0.1.6 */
 	AS_IMAGE_SAVE_FLAG_PAD_16_9	= 1,	/* Since: 0.1.6 */
+	AS_IMAGE_SAVE_FLAG_SHARPEN	= 2,	/* Since: 0.3.2 */
+	AS_IMAGE_SAVE_FLAG_BLUR		= 4,	/* Since: 0.3.2 */
 	/*< private >*/
 	AS_IMAGE_SAVE_FLAG_LAST
 } AsImageSaveFlags;

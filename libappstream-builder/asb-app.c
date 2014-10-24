@@ -366,7 +366,8 @@ asb_app_save_thumbnail (AsScreenshot *ss, AsImage *im_src,
 	pixbuf = as_image_save_pixbuf (im_src,
 				       width * scale,
 				       height * scale,
-				       AS_IMAGE_SAVE_FLAG_PAD_16_9);
+				       AS_IMAGE_SAVE_FLAG_PAD_16_9 |
+				       AS_IMAGE_SAVE_FLAG_SHARPEN);
 	im_tmp = as_image_new ();
 	as_image_set_width (im_tmp, width * scale);
 	as_image_set_height (im_tmp, height * scale);
