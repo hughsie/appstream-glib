@@ -437,8 +437,10 @@ as_icon_node_insert (AsIcon *icon, GNode *parent, gdouble api_version)
 				    "type", as_icon_kind_to_string (priv->kind),
 				    NULL);
 		if (priv->kind == AS_ICON_KIND_CACHED && api_version >= 0.8) {
-			as_node_add_attribute_as_int (n, "width", priv->width);
-			as_node_add_attribute_as_int (n, "height", priv->height);
+			if (priv->width > 0)
+				as_node_add_attribute_as_int (n, "width", priv->width);
+			if (priv->height > 0)
+				as_node_add_attribute_as_int (n, "height", priv->height);
 		}
 		return n;
 	}
