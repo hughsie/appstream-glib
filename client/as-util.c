@@ -1484,6 +1484,32 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 					total, perc);
 	}
 
+	/* specific kudos */
+	total = 0;
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+			continue;
+		total++;
+	}
+	for (j = 1; j < AS_KUDO_KIND_LAST; j++) {
+		cnt = 0;
+		for (i = 0; i < apps->len; i++) {
+			app = g_ptr_array_index (apps, i);
+			if (!as_app_has_kudo_kind (app, j))
+				continue;
+			cnt += 1;
+		}
+		perc = 0;
+		if (total > 0)
+			perc = 100.f * (gdouble) cnt / (gdouble) total;
+		g_string_append_printf (html, "<tr><td class=\"alt\">"
+					"<i>%s</i></td><td>%i</td>"
+					"<td class=\"thin\">%.1f%%</td></tr>\n",
+					as_kudo_kind_to_string (j),
+					cnt, perc);
+	}
+
 	/* addons with MetaInfo */
 	cnt = 0;
 	for (i = 0; i < apps->len; i++) {
