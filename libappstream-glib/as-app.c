@@ -3467,6 +3467,51 @@ as_app_node_parse (AsApp *app, GNode *node, GError **error)
 }
 
 /**
+ * as_app_node_parse_dep11_icons:
+ **/
+static gboolean
+as_app_node_parse_dep11_icons (AsApp *app, GNode *node, GError **error)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	const gchar *sizes[] = { "128x128", "64x64", "", NULL };
+	guint i;
+	guint size;
+	_cleanup_object_unref_ AsIcon *ic_tmp = NULL;
+
+	/* YAML files only specify one icon for various sizes */
+	ic_tmp = as_icon_new ();
+	if (!as_icon_node_parse_dep11 (ic_tmp, node, error))
+		return FALSE;
+
+	/* find each size */
+	for (i = 0; sizes[i] != NULL; i++) {
+		_cleanup_free_ gchar *path = NULL;
+		_cleanup_free_ gchar *size_name = NULL;
+		_cleanup_object_unref_ AsIcon *ic = NULL;
+
+		size_name = g_build_filename (sizes[i],
+					      as_icon_get_name (ic_tmp),
+					      NULL);
+		path = g_build_filename (priv->icon_path,
+					 size_name,
+					 NULL);
+		if (!g_file_test (path, G_FILE_TEST_EXISTS))
+			continue;
+
+		/* only the first try is a HiDPI icon, assume 64px otherwise */
+		size = (i == 0) ? 128 : 64;
+		ic = as_icon_new ();
+		as_icon_set_kind (ic, AS_ICON_KIND_CACHED);
+		as_icon_set_prefix (ic, priv->icon_path);
+		as_icon_set_name (ic, size_name, -1);
+		as_icon_set_width (ic, size);
+		as_icon_set_height (ic, size);
+		as_app_add_icon (app, ic);
+	}
+	return TRUE;
+}
+
+/**
  * as_app_node_parse_dep11:
  * @app: a #AsApp instance.
  * @node: a #GNode.
@@ -3481,7 +3526,6 @@ as_app_node_parse (AsApp *app, GNode *node, GError **error)
 gboolean
 as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
 {
-	AsAppPrivate *priv = GET_PRIVATE (app);
 	GNode *c;
 	GNode *c2;
 	GNode *n;
@@ -3548,12 +3592,8 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
 		}
 		if (g_strcmp0 (tmp, "Icon") == 0) {
 			for (c = n->children; c != NULL; c = c->next) {
-				_cleanup_object_unref_ AsIcon *ic = NULL;
-				ic = as_icon_new ();
-				as_icon_set_prefix (ic, priv->icon_path);
-				if (!as_icon_node_parse_dep11 (ic, c, error))
+				if (!as_app_node_parse_dep11_icons (app, c, error))
 					return FALSE;
-				as_app_add_icon (app, ic);
 			}
 			continue;
 		}

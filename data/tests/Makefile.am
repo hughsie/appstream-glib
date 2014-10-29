@@ -31,6 +31,7 @@ test_files =						\
 	translated.appdata.xml				\
 	usr/share/appdata/broken.appdata.xml		\
 	usr/share/app-install/desktop/test.desktop	\
+	usr/share/app-install/icons/aequorea/iceweasel.png \
 	usr/share/app-install/icons/test.png		\
 	usr/share/icons/hicolor/64x64/apps/test2.png	\
 	usr/share/icons/hicolor/128x128/apps/test3.png	\

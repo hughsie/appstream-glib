@@ -2951,6 +2951,7 @@ as_test_store_yaml_func (void)
 	GError *error = NULL;
 	gboolean ret;
 	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_free_ gchar *icon_root = NULL;
 	_cleanup_object_unref_ AsStore *store = NULL;
 	_cleanup_object_unref_ GFile *file = NULL;
 	_cleanup_string_free_ GString *str = NULL;
@@ -2980,8 +2981,9 @@ as_test_store_yaml_func (void)
 	/* load store */
 	store = as_store_new ();
 	filename = as_test_get_filename ("example.yml");
+	icon_root = as_test_get_filename ("usr/share/app-install/icons");
 	file = g_file_new_for_path (filename);
-	ret = as_store_from_file (store, file, NULL, NULL, &error);
+	ret = as_store_from_file (store, file, icon_root, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
