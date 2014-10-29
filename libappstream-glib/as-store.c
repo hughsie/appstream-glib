@@ -656,6 +656,7 @@ as_store_from_root (AsStore *store,
 static gboolean
 as_store_load_yaml_file (AsStore *store,
 			 GFile *file,
+			 const gchar *icon_root,
 			 GCancellable *cancellable,
 			 GError **error)
 {
@@ -663,6 +664,7 @@ as_store_load_yaml_file (AsStore *store,
 	GNode *app_n;
 	GNode *n;
 	const gchar *tmp;
+	_cleanup_free_ gchar *icon_path = NULL;
 	_cleanup_yaml_unref_ GNode *root = NULL;
 
 	/* load file */
@@ -684,12 +686,23 @@ as_store_load_yaml_file (AsStore *store,
 		}
 	}
 
+	/* if we have an origin either from the YAML or _set_origin() */
+	if (priv->origin != NULL) {
+		if (icon_root == NULL)
+			icon_root = "/usr/share/app-info/icons/";
+		icon_path = g_build_filename (icon_root,
+					      priv->origin,
+					      NULL);
+	}
+
 	/* parse applications */
 	for (app_n = root->children->next; app_n != NULL; app_n = app_n->next) {
 		_cleanup_object_unref_ AsApp *app = NULL;
 		if (app_n->children == NULL)
 			continue;
 		app = as_app_new ();
+		if (icon_path != NULL)
+			as_app_set_icon_path (app, icon_path, -1);
 		if (!as_app_node_parse_dep11 (app, app_n, error))
 			return FALSE;
 		as_app_set_origin (app, priv->origin);
@@ -734,7 +747,8 @@ as_store_from_file (AsStore *store,
 	/* a DEP-11 file */
 	filename = g_file_get_path (file);
 	if (g_strstr_len (filename, -1, ".yml") != NULL)
-		return as_store_load_yaml_file (store, file, cancellable, error);
+		return as_store_load_yaml_file (store, file, icon_root,
+						cancellable, error);
 
 	/* an AppStream XML file */
 	root = as_node_from_file (file,
