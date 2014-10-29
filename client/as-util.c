@@ -785,6 +785,40 @@ as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
+ * as_util_search:
+ **/
+static gboolean
+as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	GPtrArray *apps;
+	guint i;
+	_cleanup_object_unref_ AsStore *store = NULL;
+
+	/* check args */
+	if (g_strv_length (values) < 1) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected search terms");
+		return FALSE;
+	}
+
+	/* load system database */
+	store = as_store_new ();
+	if (!as_store_load (store, AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM, NULL, error))
+		return FALSE;
+	apps = as_store_get_apps (store);
+	for (i = 0; i < apps->len; i++) {
+		AsApp *app;
+		app = g_ptr_array_index (apps, i);
+		if (as_app_search_matches_all (app, values))
+			g_print ("%s\n", as_app_get_id (app));
+	}
+	return TRUE;
+}
+
+/**
  * as_util_install_icons:
  **/
 static gboolean
@@ -2364,6 +2398,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Dumps the applications in the AppStream metadata"),
 		     as_util_dump);
+	as_util_add (priv->cmd_array,
+		     "search",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Search for AppStream applications"),
+		     as_util_search);
 	as_util_add (priv->cmd_array,
 		     "install",
 		     NULL,
