@@ -2415,6 +2415,35 @@ as_app_subsume_keywords (AsApp *app, AsApp *donor, gboolean overwrite)
 }
 
 /**
+ * as_app_subsume_icon:
+ **/
+static void
+as_app_subsume_icon (AsApp *app, AsIcon *icon)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsIcon *ic_tmp;
+	guint i;
+
+	/* don't add a rubbish icon */
+	if (as_icon_get_kind (icon) == AS_ICON_KIND_UNKNOWN)
+		return;
+
+	/* does application already have this icon in this size */
+	for (i = 0; i < priv->icons->len; i++) {
+		ic_tmp = AS_ICON (g_ptr_array_index (priv->icons, i));
+		if (as_icon_get_height (ic_tmp) != as_icon_get_height (icon))
+			continue;
+		if (as_icon_get_width (ic_tmp) != as_icon_get_width (icon))
+			continue;
+		if (g_strcmp0 (as_icon_get_name (ic_tmp), as_icon_get_name (icon)) != 0)
+			continue;
+		return;
+	}
+
+	as_app_add_icon (app, icon);
+}
+
+/**
  * as_app_subsume_private:
  **/
 static void
@@ -2483,7 +2512,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	/* icons */
 	for (i = 0; i < priv->icons->len; i++) {
 		AsIcon *ic = g_ptr_array_index (priv->icons, i);
-		as_app_add_icon (app, ic);
+		as_app_subsume_icon (app, ic);
 	}
 
 	/* mimetypes */
@@ -3958,6 +3987,8 @@ as_app_parse_file_key (AsApp *app,
 			if (as_utils_is_stock_icon_name (tmp)) {
 				as_icon_set_name (icon, tmp, -1);
 				as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+			} else {
+				as_icon_set_kind (icon, AS_ICON_KIND_LOCAL);
 			}
 			as_app_add_icon (app, icon);
 		}

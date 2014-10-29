@@ -1134,7 +1134,7 @@ as_test_store_local_app_install_func (void)
 	ic = as_app_get_icon_default (app);
 	g_assert (ic != NULL);
 	g_assert_cmpstr (as_icon_get_name (ic), ==, "test");
-	g_assert_cmpint (as_icon_get_kind (ic), ==, AS_ICON_KIND_CACHED);
+	g_assert_cmpint (as_icon_get_kind (ic), ==, AS_ICON_KIND_LOCAL);
 	g_assert_cmpint (as_icon_get_width (ic), ==, 0);
 	g_assert_cmpint (as_icon_get_height (ic), ==, 0);
 
@@ -1781,6 +1781,7 @@ as_test_app_subsume_func (void)
 	donor = as_app_new ();
 	icon = as_icon_new ();
 	as_icon_set_name (icon, "gtk-find", -1);
+	as_icon_set_kind (icon, AS_ICON_KIND_LOCAL);
 	as_app_add_icon (donor, icon);
 	as_app_set_state (donor, AS_APP_STATE_INSTALLED);
 	as_app_add_pkgname (donor, "hal", -1);
@@ -1815,7 +1816,7 @@ as_test_app_subsume_func (void)
 	ic = as_app_get_icon_default (app);
 	g_assert (ic != NULL);
 	g_assert_cmpstr (as_icon_get_name (ic), ==, "gtk-find");
-	g_assert_cmpint (as_icon_get_kind (ic), ==, AS_ICON_KIND_UNKNOWN);
+	g_assert_cmpint (as_icon_get_kind (ic), ==, AS_ICON_KIND_LOCAL);
 	g_assert_cmpint (as_icon_get_width (ic), ==, 0);
 	g_assert_cmpint (as_icon_get_height (ic), ==, 0);
 
