@@ -46,6 +46,7 @@ struct _AsIconPrivate
 	AsIconKind		 kind;
 	gchar			*name;
 	gchar			*prefix;
+	gchar			*prefix_private;
 	guint			 width;
 	guint			 height;
 	GdkPixbuf		*pixbuf;
@@ -87,6 +88,7 @@ as_icon_finalize (GObject *object)
 		g_bytes_unref (priv->data);
 	g_free (priv->name);
 	g_free (priv->prefix);
+	g_free (priv->prefix_private);
 
 	G_OBJECT_CLASS (as_icon_parent_class)->finalize (object);
 }
@@ -183,7 +185,7 @@ as_icon_get_name (AsIcon *icon)
  * as_icon_get_prefix:
  * @icon: a #AsIcon instance.
  *
- * Gets the suggested prefix the icon, including file extension.
+ * Gets the suggested prefix of the icon.
  *
  * Returns: filename
  *
@@ -193,6 +195,8 @@ const gchar *
 as_icon_get_prefix (AsIcon *icon)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	if (priv->prefix_private != NULL)
+		return priv->prefix_private;
 	return priv->prefix;
 }
 
@@ -537,6 +541,7 @@ as_icon_node_parse (AsIcon *icon, GNode *node, GError **error)
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	const gchar *tmp;
 	gint size;
+	gboolean prepend_size = TRUE;
 
 	tmp = as_node_get_attribute (node, "type");
 	as_icon_set_kind (icon, as_icon_kind_from_string (tmp));
@@ -546,20 +551,41 @@ as_icon_node_parse (AsIcon *icon, GNode *node, GError **error)
 			return FALSE;
 		break;
 	default:
-		g_free (priv->name);
-		priv->name = as_node_take_data (node);
+
+		/* store the name without any prefix */
+		tmp = as_node_get_data (node);
+		if (g_strstr_len (tmp, -1, "/") == NULL) {
+			as_icon_set_name (icon, tmp, -1);
+		} else {
+			_cleanup_free_ gchar *basename = NULL;
+			basename = g_path_get_basename (tmp);
+			as_icon_set_name (icon, basename, -1);
+		}
 
 		/* width is optional, assume 64px if missing */
 		size = as_node_get_attribute_as_int (node, "width");
-		if (size == G_MAXINT)
+		if (size == G_MAXINT) {
 			size = 64;
+			prepend_size = FALSE;
+		}
 		priv->width = size;
 
 		/* height is optional, assume 64px if missing */
 		size = as_node_get_attribute_as_int (node, "height");
-		if (size == G_MAXINT)
+		if (size == G_MAXINT) {
 			size = 64;
+			prepend_size = FALSE;
+		}
 		priv->height = size;
+
+		/* only use the size if the metadata has width and height */
+		if (prepend_size) {
+			g_free (priv->prefix_private);
+			priv->prefix_private = g_strdup_printf ("%s/%ix%i",
+								priv->prefix,
+								priv->width,
+								priv->height);
+		}
 		break;
 	}
 
