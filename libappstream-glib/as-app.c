@@ -3481,6 +3481,7 @@ as_app_node_parse (AsApp *app, GNode *node, GError **error)
 gboolean
 as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
 {
+	AsAppPrivate *priv = GET_PRIVATE (app);
 	GNode *c;
 	GNode *c2;
 	GNode *n;
@@ -3549,6 +3550,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
 			for (c = n->children; c != NULL; c = c->next) {
 				_cleanup_object_unref_ AsIcon *ic = NULL;
 				ic = as_icon_new ();
+				as_icon_set_prefix (ic, priv->icon_path);
 				if (!as_icon_node_parse_dep11 (ic, c, error))
 					return FALSE;
 				as_app_add_icon (app, ic);
