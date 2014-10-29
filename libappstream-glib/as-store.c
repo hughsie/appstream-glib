@@ -703,6 +703,7 @@ as_store_load_yaml_file (AsStore *store,
 		app = as_app_new ();
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path, -1);
+		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
 		if (!as_app_node_parse_dep11 (app, app_n, error))
 			return FALSE;
 		as_app_set_origin (app, priv->origin);
