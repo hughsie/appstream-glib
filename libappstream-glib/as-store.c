@@ -1173,12 +1173,14 @@ as_store_guess_origin_fallback (AsStore *store,
 	 * the icons manually if they are installed in /var/cache */
 	origin_fallback = g_path_get_basename (filename);
 	tmp = g_strstr_len (origin_fallback, -1, ".xml");
+	if (tmp == NULL)
+		tmp = g_strstr_len (origin_fallback, -1, ".yml");
 	if (tmp == NULL) {
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
 			     "AppStream metadata name %s not valid, "
-			     "expected .xml[.*]",
+			     "expected .xml[.*] or .yml[.*]",
 			     filename);
 		return FALSE;
 	}
