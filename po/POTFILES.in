@@ -3,3 +3,4 @@
 # Please keep this file sorted alphabetically.
 client/as-builder.c
 client/as-util.c
+client/as-validate.c

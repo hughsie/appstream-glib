@@ -31,6 +31,9 @@ BuildRequires: sqlite-devel
 BuildRequires: libxslt
 BuildRequires: docbook-style-xsl
 
+# no longer required
+Obsoletes: appdata-tools < 0.1.9
+
 %description
 This library provides GObjects and helper methods to make it easy to read and
 write AppStream metadata. It also provides a simple DOM implementation that
@@ -103,7 +106,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_includedir}/libappstream-glib/*.h
 %{_datadir}/gtk-doc/html/appstream-glib
 %{_datadir}/gir-1.0/AppStreamGlib-1.0.gir
-%{_datadir}/aclocal/appstream-xml.m4
+%{_datadir}/aclocal/*.m4
 %{_datadir}/installed-tests/appstream-glib/*.test
 
 %files builder
