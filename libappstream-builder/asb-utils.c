@@ -231,10 +231,7 @@ asb_utils_sanitise_path (const gchar *path)
  * asb_utils_explode_file:
  **/
 static gboolean
-asb_utils_explode_file (struct archive_entry *entry,
-			const gchar *dir,
-			GPtrArray *glob,
-			GPtrArray *symlink_glob)
+asb_utils_explode_file (struct archive_entry *entry, const gchar *dir)
 {
 	const gchar *tmp;
 	gchar buf[PATH_MAX];
@@ -246,23 +243,18 @@ asb_utils_explode_file (struct archive_entry *entry,
 	if (archive_entry_pathname (entry) == NULL)
 		return FALSE;
 
-	/* do we have to decompress this file */
-	tmp = archive_entry_pathname (entry);
-	if (glob != NULL) {
-		path = asb_utils_sanitise_path (tmp);
-		if (asb_glob_value_search (glob, path) == NULL)
-			return FALSE;
-	}
-
 	/* update output path */
-	g_snprintf (buf, PATH_MAX, "%s/%s", dir, tmp);
+	tmp = archive_entry_pathname (entry);
+	path = asb_utils_sanitise_path (tmp);
+	g_snprintf (buf, PATH_MAX, "%s%s", dir, path);
 	archive_entry_update_pathname_utf8 (entry, buf);
 
 	/* update hardlinks */
 	tmp = archive_entry_hardlink (entry);
 	if (tmp != NULL) {
-		g_ptr_array_add (symlink_glob, asb_glob_value_new (tmp, ""));
-		g_snprintf (buf, PATH_MAX, "%s/%s", dir, tmp);
+		_cleanup_free_ gchar *path_link = NULL;
+		path_link = asb_utils_sanitise_path (tmp);
+		g_snprintf (buf, PATH_MAX, "%s%s", dir, path_link);
 		if (!g_file_test (buf, G_FILE_TEST_EXISTS)) {
 			g_warning ("%s does not exist, cannot hardlink", tmp);
 			return FALSE;
@@ -273,7 +265,8 @@ asb_utils_explode_file (struct archive_entry *entry,
 	/* update symlinks */
 	tmp = archive_entry_symlink (entry);
 	if (tmp != NULL) {
-		g_ptr_array_add (symlink_glob, asb_glob_value_new (tmp, ""));
+		_cleanup_free_ gchar *path_link = NULL;
+		path_link = asb_utils_sanitise_path (tmp);
 		symlink_depth = asb_utils_count_directories_deep (path) - 1;
 		back_up = asb_utils_get_back_to_root (symlink_depth);
 		if (tmp[0] == '/')
@@ -303,21 +296,82 @@ asb_utils_explode (const gchar *filename,
 		   GPtrArray *glob,
 		   GError **error)
 {
+	const gchar *tmp;
 	gboolean ret = TRUE;
 	gboolean valid;
 	gsize len;
 	int r;
 	struct archive *arch = NULL;
+	struct archive *arch_preview = NULL;
 	struct archive_entry *entry;
 	_cleanup_free_ gchar *data = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *symlink_glob = NULL;
+	_cleanup_hashtable_unref_ GHashTable *matches = NULL;
 
 	/* load file at once to avoid seeking */
 	ret = g_file_get_contents (filename, &data, &len, error);
 	if (!ret)
 		goto out;
 
-	/* read anything */
+	/* populate a hash with all the files, symlinks and hardlinks that
+	 * actually need decompressing */
+	arch_preview = archive_read_new ();
+	archive_read_support_format_all (arch_preview);
+	archive_read_support_filter_all (arch_preview);
+	r = archive_read_open_memory (arch_preview, data, len);
+	if (r) {
+		ret = FALSE;
+		g_set_error (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_FAILED,
+			     "Cannot open: %s",
+			     archive_error_string (arch_preview));
+		goto out;
+	}
+	matches = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+	for (;;) {
+		_cleanup_free_ gchar *path = NULL;
+		r = archive_read_next_header (arch_preview, &entry);
+		if (r == ARCHIVE_EOF)
+			break;
+		if (r != ARCHIVE_OK) {
+			ret = FALSE;
+			g_set_error (error,
+				     ASB_PLUGIN_ERROR,
+				     ASB_PLUGIN_ERROR_FAILED,
+				     "Cannot read header: %s",
+				     archive_error_string (arch_preview));
+			goto out;
+		}
+
+		/* get the destination filename */
+		tmp = archive_entry_pathname (entry);
+		if (tmp == NULL)
+			continue;
+		path = asb_utils_sanitise_path (tmp);
+		if (glob != NULL) {
+			if (asb_glob_value_search (glob, path) == NULL)
+				continue;
+		}
+		g_hash_table_insert (matches, g_strdup (path), GINT_TO_POINTER (1));
+
+		/* add hardlink */
+		tmp = archive_entry_hardlink (entry);
+		if (tmp != NULL) {
+			g_hash_table_insert (matches,
+					     asb_utils_sanitise_path (tmp),
+					     GINT_TO_POINTER (1));
+		}
+
+		/* add symlink */
+		tmp = archive_entry_symlink (entry);
+		if (tmp != NULL) {
+			g_hash_table_insert (matches,
+					     asb_utils_sanitise_path (tmp),
+					     GINT_TO_POINTER (1));
+		}
+	}
+
+	/* decompress anything matching either glob */
 	arch = archive_read_new ();
 	archive_read_support_format_all (arch);
 	archive_read_support_filter_all (arch);
@@ -331,10 +385,8 @@ asb_utils_explode (const gchar *filename,
 			     archive_error_string (arch));
 		goto out;
 	}
-
-	/* decompress each file */
-	symlink_glob = asb_glob_value_array_new ();
 	for (;;) {
+		_cleanup_free_ gchar *path = NULL;
 		r = archive_read_next_header (arch, &entry);
 		if (r == ARCHIVE_EOF)
 			break;
@@ -349,7 +401,11 @@ asb_utils_explode (const gchar *filename,
 		}
 
 		/* only extract if valid */
-		valid = asb_utils_explode_file (entry, dir, glob, symlink_glob);
+		tmp = archive_entry_pathname (entry);
+		path = asb_utils_sanitise_path (tmp);
+		if (g_hash_table_lookup (matches, path) == NULL)
+			continue;
+		valid = asb_utils_explode_file (entry, dir);
 		if (!valid)
 			continue;
 		r = archive_read_extract (arch, entry, 0);
@@ -363,14 +419,11 @@ asb_utils_explode (const gchar *filename,
 			goto out;
 		}
 	}
-
-	/* there are soft or hard links to explode too */
-	if (symlink_glob->len > 0) {
-		ret = asb_utils_explode (filename, dir, symlink_glob, error);
-		if (!ret)
-			goto out;
-	}
 out:
+	if (arch_preview != NULL) {
+		archive_read_close (arch_preview);
+		archive_read_free (arch_preview);
+	}
 	if (arch != NULL) {
 		archive_read_close (arch);
 		archive_read_free (arch);
