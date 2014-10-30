@@ -249,6 +249,10 @@ asb_utils_explode_file (struct archive_entry *entry,
 	if (tmp != NULL) {
 		g_ptr_array_add (symlink_glob, asb_glob_value_new (tmp, ""));
 		g_snprintf (buf, PATH_MAX, "%s/%s", dir, tmp);
+		if (!g_file_test (buf, G_FILE_TEST_EXISTS)) {
+			g_warning ("%s does not exist, cannot hardlink", tmp);
+			return FALSE;
+		}
 		archive_entry_update_hardlink_utf8 (entry, buf);
 	}
 
