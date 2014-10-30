@@ -208,6 +208,26 @@ asb_utils_get_back_to_root (guint levels)
 }
 
 /**
+ * asb_utils_sanitise_path:
+ *
+ * Converts various formats into an absolute path.
+ **/
+static gchar *
+asb_utils_sanitise_path (const gchar *path)
+{
+	/* /usr/share/README -> /usr/share/README */
+	if (path[0] == '/')
+		return g_strdup (path);
+
+	/* ./usr/share/README -> /usr/share/README */
+	if (path[0] == '.')
+		return g_strdup (path + 1);
+
+	/* usr/share/README -> /usr/share/README */
+	return g_strconcat ("/", path, NULL);
+}
+
+/**
  * asb_utils_explode_file:
  **/
 static gboolean
@@ -229,13 +249,7 @@ asb_utils_explode_file (struct archive_entry *entry,
 	/* do we have to decompress this file */
 	tmp = archive_entry_pathname (entry);
 	if (glob != NULL) {
-		if (tmp[0] == '/') {
-			path = g_strdup (tmp);
-		} else if (tmp[0] == '.') {
-			path = g_strdup (tmp + 1);
-		} else {
-			path = g_strconcat ("/", tmp, NULL);
-		}
+		path = asb_utils_sanitise_path (tmp);
 		if (asb_glob_value_search (glob, path) == NULL)
 			return FALSE;
 	}
