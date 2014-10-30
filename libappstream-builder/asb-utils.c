@@ -644,6 +644,9 @@ asb_glob_value_search (GPtrArray *array, const gchar *search)
 	const AsbGlobValue *tmp;
 	guint i;
 
+	g_return_val_if_fail (array != NULL, NULL);
+	g_return_val_if_fail (search != NULL, NULL);
+
 	/* invalid */
 	if (search == NULL)
 		return NULL;
