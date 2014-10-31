@@ -2469,12 +2469,15 @@ as_test_store_speed_desktop_func (void)
 	gboolean ret;
 	guint i;
 	guint loops = 10;
+	_cleanup_free_ gchar *filename = NULL;
 	_cleanup_timer_destroy_ GTimer *timer = NULL;
 
+	filename = as_test_get_filename (".");
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
 		_cleanup_object_unref_ AsStore *store;
 		store = as_store_new ();
+		as_store_set_destdir (store, filename);
 		ret = as_store_load (store, AS_STORE_LOAD_FLAG_DESKTOP, NULL, &error);
 		g_assert_no_error (error);
 		g_assert (ret);

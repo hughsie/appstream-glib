@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Color Profile Viewer
+Comment=Inspect and compare installed color profiles
+Icon=audio-input-microphone.svg
+Exec=gcm-viewer
+Terminal=false
+Type=Application
+Categories=System;
+StartupNotify=true
