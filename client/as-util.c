@@ -825,15 +825,15 @@ static gboolean
 as_util_install_icons (const gchar *filename, const gchar *origin, GError **error)
 {
 	const gchar *destdir;
-	const gchar *tmp;
+	const gchar *tmp, *pathname;
 	gboolean ret = TRUE;
-	gchar buf[PATH_MAX];
 	gsize len;
 	int r;
 	struct archive *arch = NULL;
 	struct archive_entry *entry;
 	_cleanup_free_ gchar *data = NULL;
 	_cleanup_free_ gchar *dir = NULL;
+	_cleanup_free_ gchar *buf = NULL;
 
 	destdir = g_getenv ("DESTDIR");
 	dir = g_strdup_printf ("%s/usr/share/app-info/icons/%s",
@@ -875,25 +875,25 @@ as_util_install_icons (const gchar *filename, const gchar *origin, GError **erro
 		}
 
 		/* no output file */
-		if (archive_entry_pathname (entry) == NULL)
+		pathname = archive_entry_pathname (entry);
+		if (pathname == NULL)
 			continue;
 
 		/* update output path */
-		g_snprintf (buf, PATH_MAX, "%s/%s",
-			    dir, archive_entry_pathname (entry));
+		buf = g_build_filename (dir, pathname, NULL);
 		archive_entry_update_pathname_utf8 (entry, buf);
 
 		/* update hardlinks */
 		tmp = archive_entry_hardlink (entry);
 		if (tmp != NULL) {
-			g_snprintf (buf, PATH_MAX, "%s/%s", dir, tmp);
+			buf = g_build_filename (dir, tmp, NULL);
 			archive_entry_update_hardlink_utf8 (entry, buf);
 		}
 
 		/* update symlinks */
 		tmp = archive_entry_symlink (entry);
 		if (tmp != NULL) {
-			g_snprintf (buf, PATH_MAX, "%s/%s", dir, tmp);
+			buf = g_build_filename (dir, tmp, NULL);
 			archive_entry_update_symlink_utf8 (entry, buf);
 		}
 
