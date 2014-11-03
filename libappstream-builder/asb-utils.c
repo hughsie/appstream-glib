@@ -234,10 +234,10 @@ static gboolean
 asb_utils_explode_file (struct archive_entry *entry, const gchar *dir)
 {
 	const gchar *tmp;
-	gchar buf[PATH_MAX];
 	guint symlink_depth;
 	_cleanup_free_ gchar *back_up = NULL;
 	_cleanup_free_ gchar *path = NULL;
+	_cleanup_free_ gchar *buf = NULL;
 
 	/* no output file */
 	if (archive_entry_pathname (entry) == NULL)
@@ -246,33 +246,35 @@ asb_utils_explode_file (struct archive_entry *entry, const gchar *dir)
 	/* update output path */
 	tmp = archive_entry_pathname (entry);
 	path = asb_utils_sanitise_path (tmp);
-	g_snprintf (buf, PATH_MAX, "%s%s", dir, path);
+	buf = g_build_filename (dir, path, NULL);
 	archive_entry_update_pathname_utf8 (entry, buf);
 
 	/* update hardlinks */
 	tmp = archive_entry_hardlink (entry);
 	if (tmp != NULL) {
+		_cleanup_free_ gchar *buf_link = NULL;
 		_cleanup_free_ gchar *path_link = NULL;
 		path_link = asb_utils_sanitise_path (tmp);
-		g_snprintf (buf, PATH_MAX, "%s%s", dir, path_link);
-		if (!g_file_test (buf, G_FILE_TEST_EXISTS)) {
+		buf_link = g_build_filename (dir, path_link, NULL);
+		if (!g_file_test (buf_link, G_FILE_TEST_EXISTS)) {
 			g_warning ("%s does not exist, cannot hardlink", tmp);
 			return FALSE;
 		}
-		archive_entry_update_hardlink_utf8 (entry, buf);
+		archive_entry_update_hardlink_utf8 (entry, buf_link);
 	}
 
 	/* update symlinks */
 	tmp = archive_entry_symlink (entry);
 	if (tmp != NULL) {
+		_cleanup_free_ gchar *buf_link = NULL;
 		_cleanup_free_ gchar *path_link = NULL;
 		path_link = asb_utils_sanitise_path (tmp);
 		symlink_depth = asb_utils_count_directories_deep (path) - 1;
 		back_up = asb_utils_get_back_to_root (symlink_depth);
 		if (tmp[0] == '/')
 			tmp++;
-		g_snprintf (buf, PATH_MAX, "%s%s", back_up, tmp);
-		archive_entry_update_symlink_utf8 (entry, buf);
+		buf_link = g_build_filename (back_up, tmp, NULL);
+		archive_entry_update_symlink_utf8 (entry, buf_link);
 	}
 	return TRUE;
 }

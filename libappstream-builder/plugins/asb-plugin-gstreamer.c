@@ -111,8 +111,8 @@ static const AsbGstreamerDescData data[] = {
 static gboolean
 asb_utils_is_file_in_tmpdir (const gchar *tmpdir, const gchar *filename)
 {
-	gchar tmp[PATH_MAX];
-	g_snprintf (tmp, PATH_MAX, "%s/%s", tmpdir, filename);
+	_cleanup_free_ gchar *tmp = NULL;
+	tmp = g_build_filename (tmpdir, filename, NULL);
 	return g_file_test (tmp, G_FILE_TEST_EXISTS);
 }
 

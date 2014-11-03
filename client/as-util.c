@@ -825,9 +825,9 @@ static gboolean
 as_util_install_icons (const gchar *filename, const gchar *origin, GError **error)
 {
 	const gchar *destdir;
+	const gchar *pathname;
 	const gchar *tmp;
 	gboolean ret = TRUE;
-	gchar buf[PATH_MAX];
 	gsize len;
 	int r;
 	struct archive *arch = NULL;
@@ -861,6 +861,8 @@ as_util_install_icons (const gchar *filename, const gchar *origin, GError **erro
 
 	/* decompress each file */
 	for (;;) {
+		_cleanup_free_ gchar *buf = NULL;
+
 		r = archive_read_next_header (arch, &entry);
 		if (r == ARCHIVE_EOF)
 			break;
@@ -875,26 +877,28 @@ as_util_install_icons (const gchar *filename, const gchar *origin, GError **erro
 		}
 
 		/* no output file */
-		if (archive_entry_pathname (entry) == NULL)
+		pathname = archive_entry_pathname (entry);
+		if (pathname == NULL)
 			continue;
 
 		/* update output path */
-		g_snprintf (buf, PATH_MAX, "%s/%s",
-			    dir, archive_entry_pathname (entry));
+		buf = g_build_filename (dir, pathname, NULL);
 		archive_entry_update_pathname_utf8 (entry, buf);
 
 		/* update hardlinks */
 		tmp = archive_entry_hardlink (entry);
 		if (tmp != NULL) {
-			g_snprintf (buf, PATH_MAX, "%s/%s", dir, tmp);
-			archive_entry_update_hardlink_utf8 (entry, buf);
+			_cleanup_free_ gchar *buf_link = NULL;
+			buf_link = g_build_filename (dir, tmp, NULL);
+			archive_entry_update_hardlink_utf8 (entry, buf_link);
 		}
 
 		/* update symlinks */
 		tmp = archive_entry_symlink (entry);
 		if (tmp != NULL) {
-			g_snprintf (buf, PATH_MAX, "%s/%s", dir, tmp);
-			archive_entry_update_symlink_utf8 (entry, buf);
+			_cleanup_free_ gchar *buf_link = NULL;
+			buf_link = g_build_filename (dir, tmp, NULL);
+			archive_entry_update_symlink_utf8 (entry, buf_link);
 		}
 
 		r = archive_read_extract (arch, entry, 0);
