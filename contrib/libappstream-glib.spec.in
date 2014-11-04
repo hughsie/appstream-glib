@@ -17,6 +17,7 @@ BuildRequires: gperf
 BuildRequires: libarchive-devel
 BuildRequires: libsoup-devel
 BuildRequires: gdk-pixbuf2-devel
+BuildRequires: gtk3-devel
 BuildRequires: gettext
 BuildRequires: intltool
 
@@ -33,6 +34,7 @@ BuildRequires: docbook-style-xsl
 
 # no longer required
 Obsoletes: appdata-tools < 0.1.9
+Provides: appdata-tools
 
 %description
 This library provides GObjects and helper methods to make it easy to read and
@@ -95,6 +97,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_libdir}/libappstream-glib.so.7*
 %{_libdir}/girepository-1.0/*.typelib
 %{_bindir}/appstream-util
+%{_bindir}/appdata-validate
 %dir %{_datadir}/bash-completion/completions/
 %{_datadir}/bash-completion/completions/appstream-util
 %{_mandir}/man1/appstream-util.1.gz
