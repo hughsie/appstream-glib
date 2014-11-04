@@ -1,3 +1,26 @@
+Version 0.3.2
+~~~~~~~~~~~~~
+Released: 2014-11-04
+
+New Features:
+ - Add --veto-ignore to appstream-builder (Richard Hughes)
+ - Add BLUR and SHARPEN values for AsImageSaveFlags (Richard Hughes)
+ - Add a simple 'search' command to appstream-util (Richard Hughes)
+ - Add as_app_set_origin() (Richard Hughes)
+
+Bugfixes:
+ - Add some more valid metadata licenses (Richard Hughes)
+ - Do not composite an app with its duplicate (Richard Hughes)
+ - Do not create a hardlink when the target does not exist (Richard Hughes)
+ - Do not generate metadata with an icon prefix (Richard Hughes)
+ - Fix FTBFS on GNU/Hurd (Matthias Klumpp)
+ - Fix extraction of hardlinks (Richard Hughes)
+ - Obsolete the appdata-tools package (Richard Hughes)
+ - Save the screenshots as soon as possible (Richard Hughes)
+ - Show the kudo stats on the status page (Richard Hughes)
+ - Support HiDPI YAML icons (Richard Hughes)
+ - Support getting the origin from .yml files (Richard Hughes)
+
 Version 0.3.1
 ~~~~~~~~~~~~~
 Released: 2014-10-21
