@@ -188,7 +188,7 @@ asb_package_log (AsbPackage *pkg,
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 	va_list args;
 	gdouble now;
-	_cleanup_free_ gchar *tmp;
+	_cleanup_free_ gchar *tmp = NULL;
 
 	g_mutex_lock (&priv->mutex_log);
 

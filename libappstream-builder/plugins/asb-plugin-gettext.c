@@ -150,7 +150,7 @@ asb_gettext_ctx_search_locale (AsbGettextContext *ctx,
 {
 	const gchar *filename;
 	guint i;
-	_cleanup_dir_close_ GDir *dir;
+	_cleanup_dir_close_ GDir *dir = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *mo_paths = NULL;
 
 	dir = g_dir_open (messages_path, 0, error);
@@ -160,7 +160,7 @@ asb_gettext_ctx_search_locale (AsbGettextContext *ctx,
 	/* do a first pass at this, trying to find the prefered .mo */
 	mo_paths = g_ptr_array_new_with_free_func (g_free);
 	while ((filename = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free_ gchar *path;
+		_cleanup_free_ gchar *path = NULL;
 		path = g_build_filename (messages_path, filename, NULL);
 		if (!g_file_test (path, G_FILE_TEST_EXISTS))
 			continue;
@@ -211,7 +211,7 @@ asb_gettext_ctx_search_path (AsbGettextContext *ctx,
 	if (dir == NULL)
 		return FALSE;
 	while ((filename = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free_ gchar *path;
+		_cleanup_free_ gchar *path = NULL;
 		path = g_build_filename (root, filename, "LC_MESSAGES", NULL);
 		if (g_file_test (path, G_FILE_TEST_EXISTS)) {
 			if (!asb_gettext_ctx_search_locale (ctx, filename, path, error))

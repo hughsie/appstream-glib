@@ -146,7 +146,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 	AsApp *app;
 	AsApp *found;
 	GList *l;
-	_cleanup_hashtable_unref_ GHashTable *hash;
+	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
 
 	/* make a hash table of ID->AsApp */
 	hash = g_hash_table_new_full (g_str_hash, g_str_equal,

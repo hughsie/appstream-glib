@@ -196,7 +196,7 @@ as_hash_lookup_by_locale (GHashTable *hash, const gchar *locale)
 gboolean
 as_utils_is_stock_icon_name (const gchar *name)
 {
-	_cleanup_bytes_unref_ GBytes *data;
+	_cleanup_bytes_unref_ GBytes *data = NULL;
 	_cleanup_free_ gchar *key = NULL;
 
 	/* load the readonly data section and look for the icon name */
@@ -223,7 +223,7 @@ as_utils_is_stock_icon_name (const gchar *name)
 gboolean
 as_utils_is_spdx_license_id (const gchar *license_id)
 {
-	_cleanup_bytes_unref_ GBytes *data;
+	_cleanup_bytes_unref_ GBytes *data = NULL;
 	_cleanup_free_ gchar *key = NULL;
 
 	/* load the readonly data section and look for the icon name */
@@ -250,10 +250,10 @@ as_utils_is_spdx_license_id (const gchar *license_id)
 gboolean
 as_utils_is_blacklisted_id (const gchar *desktop_id)
 {
-	_cleanup_bytes_unref_ GBytes *data;
+	guint i;
+	_cleanup_bytes_unref_ GBytes *data = NULL;
 	_cleanup_free_ gchar *key = NULL;
 	_cleanup_strv_free_ gchar **split = NULL;
-	guint i;
 
 	/* load the readonly data section and look for the icon name */
 	data = g_resource_lookup_data (as_get_resource (),
@@ -283,7 +283,7 @@ as_utils_is_blacklisted_id (const gchar *desktop_id)
 gboolean
 as_utils_is_environment_id (const gchar *environment_id)
 {
-	_cleanup_bytes_unref_ GBytes *data;
+	_cleanup_bytes_unref_ GBytes *data = NULL;
 	_cleanup_free_ gchar *key = NULL;
 
 	/* load the readonly data section and look for the icon name */
@@ -310,7 +310,7 @@ as_utils_is_environment_id (const gchar *environment_id)
 gboolean
 as_utils_is_category_id (const gchar *category_id)
 {
-	_cleanup_bytes_unref_ GBytes *data;
+	_cleanup_bytes_unref_ GBytes *data = NULL;
 	_cleanup_free_ gchar *key = NULL;
 
 	/* load the readonly data section and look for the icon name */
@@ -722,7 +722,7 @@ as_pixbuf_blur (GdkPixbuf *src, gint radius, gint iterations)
 {
 	gint kernel_size;
 	gint i;
-	_cleanup_free_ guchar *div_kernel_size;
+	_cleanup_free_ guchar *div_kernel_size = NULL;
 	_cleanup_object_unref_ GdkPixbuf *tmp = NULL;
 
 	tmp = gdk_pixbuf_new (gdk_pixbuf_get_colorspace (src),
@@ -863,7 +863,7 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 
 	/* is this an absolute path */
 	if (search[0] == '/') {
-		_cleanup_free_ gchar *tmp;
+		_cleanup_free_ gchar *tmp = NULL;
 		tmp = g_build_filename (destdir, search, NULL);
 		if (!g_file_test (tmp, G_FILE_TEST_EXISTS)) {
 			g_set_error (error,
@@ -882,7 +882,7 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 		for (i = 0; sizes[i] != NULL; i++) {
 			for (m = 0; types[m] != NULL; m++) {
 				for (j = 0; supported_ext[j] != NULL; j++) {
-					_cleanup_free_ gchar *tmp;
+					_cleanup_free_ gchar *tmp = NULL;
 					tmp = g_strdup_printf ("%s/usr/share/icons/"
 							       "%s/%s/%s/%s%s",
 							       destdir,
@@ -901,7 +901,7 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 	/* pixmap */
 	for (i = 0; pixmap_dirs[i] != NULL; i++) {
 		for (j = 0; supported_ext[j] != NULL; j++) {
-			_cleanup_free_ gchar *tmp;
+			_cleanup_free_ gchar *tmp = NULL;
 			tmp = g_strdup_printf ("%s/usr/share/%s/%s%s",
 					       destdir,
 					       pixmap_dirs[i],

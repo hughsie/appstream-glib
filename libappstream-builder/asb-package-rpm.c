@@ -312,9 +312,9 @@ asb_package_rpm_add_release (AsbPackage *pkg,
 {
 	AsRelease *release;
 	const gchar *version;
-	_cleanup_free_ gchar *name_dup;
 	gchar *tmp;
 	gchar *vr;
+	_cleanup_free_ gchar *name_dup = NULL;
 
 	/* get last string chunk */
 	name_dup = g_strchomp (g_strdup (name));

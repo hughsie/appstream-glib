@@ -343,7 +343,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	/* is the icon a stock-icon-name? */
 	icon = as_app_get_icon_default (AS_APP (app));
 	if (icon != NULL) {
-		_cleanup_free_ gchar *key;
+		_cleanup_free_ gchar *key = NULL;
 		key = g_strdup (as_icon_get_name (icon));
 		if (as_icon_get_kind (icon) == AS_ICON_KIND_STOCK) {
 			asb_package_log (pkg,

@@ -161,7 +161,7 @@ asb_package_alpm_ensure_depends (AsbPackage *pkg, GError **error)
 	AsbPackageAlpmPrivate *priv = GET_PRIVATE (pkg_alpm);
 	
 	alpm_list_t *alpm_depends;
-	GPtrArray _cleanup_ptrarray_unref_ *depends;
+	GPtrArray _cleanup_ptrarray_unref_ *depends = NULL;
 
 	alpm_depends = alpm_pkg_get_depends (priv->package);
 	depends = asb_package_alpm_list_to_array (alpm_depends);

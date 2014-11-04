@@ -101,7 +101,7 @@ asb_plugin_appdata_add_path (AsbPlugin *plugin, const gchar *path, GError **erro
 	if (dir == NULL)
 		return FALSE;
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free_ gchar *filename;
+		_cleanup_free_ gchar *filename = NULL;
 		filename = g_build_filename (path, tmp, NULL);
 		if (g_file_test (filename, G_FILE_TEST_IS_DIR)) {
 			if (!asb_plugin_appdata_add_path (plugin, filename, error))
@@ -187,8 +187,8 @@ asb_plugin_appdata_load_url (AsbPlugin *plugin,
 	gboolean ret = TRUE;
 	SoupStatus status;
 	SoupURI *uri = NULL;
-	_cleanup_free_ gchar *basename;
-	_cleanup_free_ gchar *cache_filename;
+	_cleanup_free_ gchar *basename = NULL;
+	_cleanup_free_ gchar *cache_filename = NULL;
 	_cleanup_object_unref_ SoupMessage *msg = NULL;
 
 	/* download to cache if not already added */
@@ -268,7 +268,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	GList *l;
 	GList *list;
 	guint i;
-	_cleanup_object_unref_ AsApp *appdata;
+	_cleanup_object_unref_ AsApp *appdata = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *problems = NULL;
 
 	/* validate */
@@ -504,8 +504,8 @@ asb_plugin_process_app (AsbPlugin *plugin,
 {
 	const gchar *kind_str;
 	const gchar *tmp;
-	_cleanup_free_ gchar *appdata_basename;
-	_cleanup_free_ gchar *appdata_filename;
+	_cleanup_free_ gchar *appdata_basename = NULL;
+	_cleanup_free_ gchar *appdata_filename = NULL;
 	_cleanup_free_ gchar *appdata_filename_extra = NULL;
 
 	/* get possible sources */

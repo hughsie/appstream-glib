@@ -641,7 +641,7 @@ as_image_save_filename (AsImage *image,
 		        AsImageSaveFlags flags,
 		        GError **error)
 {
-	_cleanup_object_unref_ GdkPixbuf *pixbuf;
+	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
 
 	/* save source file */
 	pixbuf = as_image_save_pixbuf (image, width, height, flags);

@@ -185,7 +185,7 @@ asb_font_fix_metadata (AsbApp *app)
 						      "FontIconText",
 						      "Aa", -1);
 			} else {
-				_cleanup_free_ gchar *icon_tmp;
+				_cleanup_free_ gchar *icon_tmp = NULL;
 				icon_tmp = g_utf8_substring (value, 0, 2);
 				as_app_add_metadata (AS_APP (app),
 						      "FontIconText",
@@ -523,7 +523,6 @@ asb_plugin_font_set_name (AsbApp *app, const gchar *name)
 	const gchar *ptr;
 	guint i;
 	guint len;
-	_cleanup_free_ gchar *tmp;
 	const gchar *prefixes[] = { "GFS ", NULL };
 	const gchar *suffixes[] = { " SIL",
 				    " ADF",
@@ -531,6 +530,7 @@ asb_plugin_font_set_name (AsbApp *app, const gchar *name)
 				    " GPL&GNU",
 				    " SC",
 				    NULL };
+	_cleanup_free_ gchar *tmp = NULL;
 
 	/* remove font foundary suffix */
 	tmp = g_strdup (name);
@@ -710,7 +710,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 	GList *l;
 	GPtrArray *extends_tmp;
 	const gchar *tmp;
-	_cleanup_hashtable_unref_ GHashTable *hash;
+	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
 
 	/* add all the fonts to a hash */
 	hash = g_hash_table_new_full (g_str_hash, g_str_equal,

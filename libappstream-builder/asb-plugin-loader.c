@@ -263,7 +263,7 @@ asb_plugin_loader_merge (AsbPluginLoader *plugin_loader, GList *apps)
 	const gchar *tmp;
 	gboolean ret;
 	guint i;
-	_cleanup_hashtable_unref_ GHashTable *hash;
+	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
 
 	/* run each plugin */
 	for (i = 0; i < priv->plugins->len; i++) {
@@ -386,7 +386,7 @@ asb_plugin_loader_setup (AsbPluginLoader *plugin_loader, GError **error)
 	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
 	const gchar *filename_tmp;
 	const gchar *location = "./plugins/.libs/";
-	_cleanup_dir_close_ GDir *dir;
+	_cleanup_dir_close_ GDir *dir = NULL;
 
 	/* search system-wide if not found locally */
 	if (!g_file_test (location, G_FILE_TEST_EXISTS))

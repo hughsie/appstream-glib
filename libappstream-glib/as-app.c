@@ -2364,7 +2364,7 @@ as_app_subsume_dict (GHashTable *dest, GHashTable *src, gboolean overwrite)
 	const gchar *tmp;
 	const gchar *key;
 	const gchar *value;
-	_cleanup_list_free_ GList *keys;
+	_cleanup_list_free_ GList *keys = NULL;
 
 	keys = g_hash_table_get_keys (src);
 	for (l = keys; l != NULL; l = l->next) {
@@ -2662,7 +2662,7 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
 	const gchar *locale;
 	gchar tmp[4];
 	gint percentage;
-	_cleanup_list_free_ GList *langs;
+	_cleanup_list_free_ GList *langs = NULL;
 
 	node_tmp = as_node_insert (parent, "languages", NULL, 0, NULL);
 	langs = as_app_get_languages (app);
@@ -3114,7 +3114,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		/* unwrap appdata inline */
 		if (priv->source_kind == AS_APP_SOURCE_KIND_APPDATA) {
 			GError *error_local = NULL;
-			_cleanup_hashtable_unref_ GHashTable *unwrapped;
+			_cleanup_hashtable_unref_ GHashTable *unwrapped = NULL;
 			unwrapped = as_node_get_localized_unwrap (n, &error_local);
 			if (unwrapped == NULL) {
 				if (g_error_matches (error_local,
@@ -3144,7 +3144,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 						as_node_get_data (n),
 						-1);
 		} else {
-			_cleanup_string_free_ GString *xml;
+			_cleanup_string_free_ GString *xml = NULL;
 			xml = as_node_to_xml (n->children,
 					      AS_NODE_TO_XML_FLAG_INCLUDE_SIBLINGS);
 			as_app_set_description (app,
@@ -3349,7 +3349,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
 			g_ptr_array_set_size (priv->provides, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			_cleanup_object_unref_ AsProvide *p;
+			_cleanup_object_unref_ AsProvide *p = NULL;
 			p = as_provide_new ();
 			if (!as_provide_node_parse (p, c, error))
 				return FALSE;

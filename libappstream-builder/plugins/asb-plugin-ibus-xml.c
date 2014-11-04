@@ -84,7 +84,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	guint i;
 	_cleanup_free_ gchar *basename = NULL;
 	_cleanup_free_ gchar *data = NULL;
-	_cleanup_free_ gchar *filename_tmp;
+	_cleanup_free_ gchar *filename_tmp = NULL;
 	_cleanup_object_unref_ AsbApp *app = NULL;
 	_cleanup_object_unref_ AsIcon *icon = NULL;
 	_cleanup_strv_free_ gchar **languages = NULL;

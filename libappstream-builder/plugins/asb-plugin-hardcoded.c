@@ -108,7 +108,7 @@ asb_plugin_hardcoded_add_screenshots (AsbApp *app,
 	gboolean ret = TRUE;
 	GList *l;
 	GList *list = NULL;
-	_cleanup_dir_close_ GDir *dir;
+	_cleanup_dir_close_ GDir *dir = NULL;
 
 	/* scan for files */
 	dir = g_dir_open (location, 0, error);

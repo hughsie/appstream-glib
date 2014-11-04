@@ -418,7 +418,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 	/* add captions */
 	captions = as_node_get_localized (node, "caption");
 	if (captions != NULL) {
-		_cleanup_list_free_ GList *keys;
+		_cleanup_list_free_ GList *keys = NULL;
 		keys = g_hash_table_get_keys (captions);
 		for (l = keys; l != NULL; l = l->next) {
 			tmp = l->data;

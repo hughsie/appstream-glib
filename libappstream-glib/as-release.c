@@ -228,7 +228,7 @@ as_release_node_insert (AsRelease *release, GNode *parent, gdouble api_version)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	GNode *n;
-	_cleanup_free_ gchar *timestamp_str;
+	_cleanup_free_ gchar *timestamp_str = NULL;
 
 	timestamp_str = g_strdup_printf ("%" G_GUINT64_FORMAT,
 					 priv->timestamp);

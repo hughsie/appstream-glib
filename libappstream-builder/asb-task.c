@@ -141,9 +141,9 @@ asb_task_explode_extra_packages (AsbTask *task, GError **error)
 	const gchar *tmp;
 	gchar **deps;
 	guint i;
-	_cleanup_hashtable_unref_ GHashTable *hash;
-	_cleanup_ptrarray_unref_ GPtrArray *array;
-	_cleanup_ptrarray_unref_ GPtrArray *icon_themes;
+	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
+	_cleanup_ptrarray_unref_ GPtrArray *array = NULL;
+	_cleanup_ptrarray_unref_ GPtrArray *icon_themes = NULL;
 
 	/* anything the package requires */
 	hash = g_hash_table_new (g_str_hash, g_str_equal);

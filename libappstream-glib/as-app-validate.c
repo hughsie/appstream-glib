@@ -54,7 +54,7 @@ ai_app_validate_add (GPtrArray *problems,
 	AsProblem *problem;
 	guint i;
 	va_list args;
-	_cleanup_free_ gchar *str;
+	_cleanup_free_ gchar *str = NULL;
 
 	va_start (args, fmt);
 	str = g_strdup_vprintf (fmt, args);
@@ -327,7 +327,7 @@ as_app_validate_description (const gchar *xml,
 {
 	GNode *l;
 	GNode *l2;
-	_cleanup_node_unref_ GNode *node;
+	_cleanup_node_unref_ GNode *node = NULL;
 
 	/* parse xml */
 	node = as_node_from_xml (xml, -1,

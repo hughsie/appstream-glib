@@ -181,7 +181,7 @@ asb_app_save_resources_image (AsbApp *app,
 	const gchar *output_dir;
 	gboolean ret = TRUE;
 	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_free_ gchar *size_str;
+	_cleanup_free_ gchar *size_str = NULL;
 
 	/* treat source images differently */
 	if (as_image_get_kind (image) == AS_IMAGE_KIND_SOURCE) {
@@ -402,7 +402,7 @@ asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **erro
 	_cleanup_free_ gchar *basename = NULL;
 	_cleanup_free_ gchar *filename_no_path = NULL;
 	_cleanup_free_ gchar *url_src = NULL;
-	_cleanup_object_unref_ AsImage *im_src;
+	_cleanup_object_unref_ AsImage *im_src = NULL;
 	_cleanup_object_unref_ AsScreenshot *ss = NULL;
 	guint sizes[] = { AS_IMAGE_NORMAL_WIDTH,    AS_IMAGE_NORMAL_HEIGHT,
 			  AS_IMAGE_THUMBNAIL_WIDTH, AS_IMAGE_THUMBNAIL_HEIGHT,

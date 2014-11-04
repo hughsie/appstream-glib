@@ -1181,7 +1181,7 @@ as_store_guess_origin_fallback (AsStore *store,
 				GError **error)
 {
 	gchar *tmp;
-	_cleanup_free_ gchar *origin_fallback;
+	_cleanup_free_ gchar *origin_fallback = NULL;
 
 	/* the first component of the file (e.g. "fedora-20.xml.gz)
 	 * is used for the icon directory as we might want to clean up
@@ -1311,7 +1311,7 @@ as_store_load_app_info (AsStore *store,
 	}
 	icon_root = g_build_filename (path, "icons", NULL);
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free_ gchar *filename_md;
+		_cleanup_free_ gchar *filename_md = NULL;
 		filename_md = g_build_filename (path_md, tmp, NULL);
 		if (!as_store_load_app_info_file (store,
 						  filename_md,
@@ -1375,7 +1375,7 @@ as_store_load_app_install_file (AsStore *store,
 	GPtrArray *icons;
 	guint i;
 	_cleanup_error_free_ GError *error_local = NULL;
-	_cleanup_object_unref_ AsApp *app;
+	_cleanup_object_unref_ AsApp *app = NULL;
 
 	app = as_app_new ();
 	as_app_set_icon_path (app, path_icons, -1);
@@ -1660,7 +1660,7 @@ as_store_validate_add (GPtrArray *problems, AsProblemKind kind, const gchar *fmt
 	AsProblem *problem;
 	guint i;
 	va_list args;
-	_cleanup_free_ gchar *str;
+	_cleanup_free_ gchar *str = NULL;
 
 	va_start (args, fmt);
 	str = g_strdup_vprintf (fmt, args);

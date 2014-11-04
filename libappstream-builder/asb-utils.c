@@ -157,7 +157,7 @@ asb_utils_ensure_exists_and_empty (const gchar *directory, GError **error)
 
 	/* find each */
 	while ((filename = g_dir_read_name (dir))) {
-		_cleanup_free_ gchar *src;
+		_cleanup_free_ gchar *src = NULL;
 		src = g_build_filename (directory, filename, NULL);
 		if (g_file_test (src, G_FILE_TEST_IS_DIR)) {
 			if (!asb_utils_rmtree (src, error))

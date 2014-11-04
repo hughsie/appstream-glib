@@ -2045,8 +2045,8 @@ as_util_validate_file (const gchar *filename,
 	g_print ("%s: ", filename);
 	if (as_app_guess_source_kind (filename) == AS_APP_SOURCE_KIND_APPSTREAM) {
 		gboolean ret;
-		_cleanup_object_unref_ AsStore *store;
-		_cleanup_object_unref_ GFile *file;
+		_cleanup_object_unref_ AsStore *store = NULL;
+		_cleanup_object_unref_ GFile *file = NULL;
 		file = g_file_new_for_path (filename);
 		store = as_store_new ();
 		ret = as_store_from_file (store, file, NULL, NULL, error);

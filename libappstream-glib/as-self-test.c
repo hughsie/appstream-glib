@@ -165,7 +165,7 @@ as_test_release_desc_func (void)
 		"<description><p>This is a new release</p></description>"
 		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>"
 		"</release>";
-	_cleanup_object_unref_ AsRelease *release;
+	_cleanup_object_unref_ AsRelease *release = NULL;
 
 	release = as_release_new ();
 
@@ -291,7 +291,7 @@ as_test_image_alpha_func (void)
 	_cleanup_free_ gchar *fn_internal2 = NULL;
 	_cleanup_free_ gchar *fn_none = NULL;
 	_cleanup_free_ gchar *fn_vert = NULL;
-	_cleanup_object_unref_ AsImage *im;
+	_cleanup_object_unref_ AsImage *im = NULL;
 
 	/* horiz */
 	fn_horiz = as_test_get_filename ("alpha-horiz.png");
@@ -1406,7 +1406,7 @@ as_test_node_sort_func (void)
 {
 	_cleanup_error_free_ GError *error = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
-	_cleanup_string_free_ GString *str;
+	_cleanup_string_free_ GString *str = NULL;
 
 	root = as_node_from_xml ("<d>ddd</d><c>ccc</c><b>bbb</b><a>aaa</a>", -1, 0, &error);
 	g_assert_no_error (error);
@@ -1712,8 +1712,8 @@ static void
 as_test_node_intltool_func (void)
 {
 	GNode *n;
-	_cleanup_node_unref_ GNode *root;
-	_cleanup_string_free_ GString *str;
+	_cleanup_node_unref_ GNode *root = NULL;
+	_cleanup_string_free_ GString *str = NULL;
 
 	root = as_node_new ();
 	n = as_node_insert (root, "description", NULL, AS_NODE_INSERT_FLAG_NONE, NULL);
@@ -2299,8 +2299,8 @@ as_test_store_addons_func (void)
 		"<id>eclipse.desktop</id>"
 		"</component>"
 		"</components>";
-	_cleanup_object_unref_ AsStore *store;
-	_cleanup_string_free_ GString *str;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_string_free_ GString *str = NULL;
 
 	/* load a file to the store */
 	store = as_store_new ();
@@ -2423,7 +2423,7 @@ as_test_store_speed_appstream_func (void)
 	file = g_file_new_for_path (filename);
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
-		_cleanup_object_unref_ AsStore *store;
+		_cleanup_object_unref_ AsStore *store = NULL;
 		store = as_store_new ();
 		ret = as_store_from_file (store, file, NULL, NULL, &error);
 		g_assert_no_error (error);
@@ -2448,7 +2448,7 @@ as_test_store_speed_appdata_func (void)
 	filename = as_test_get_filename (".");
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
-		_cleanup_object_unref_ AsStore *store;
+		_cleanup_object_unref_ AsStore *store = NULL;
 		store = as_store_new ();
 		as_store_set_destdir (store, filename);
 		g_test_expect_message (G_LOG_DOMAIN,
@@ -2475,7 +2475,7 @@ as_test_store_speed_desktop_func (void)
 	filename = as_test_get_filename (".");
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
-		_cleanup_object_unref_ AsStore *store;
+		_cleanup_object_unref_ AsStore *store = NULL;
 		store = as_store_new ();
 		as_store_set_destdir (store, filename);
 		ret = as_store_load (store, AS_STORE_LOAD_FLAG_DESKTOP, NULL, &error);
@@ -3029,7 +3029,7 @@ as_test_store_speed_yaml_func (void)
 	file = g_file_new_for_path (filename);
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
-		_cleanup_object_unref_ AsStore *store;
+		_cleanup_object_unref_ AsStore *store = NULL;
 		store = as_store_new ();
 		ret = as_store_from_file (store, file, NULL, NULL, &error);
 		g_assert_no_error (error);

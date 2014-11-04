@@ -765,7 +765,7 @@ asb_context_setup (AsbContext *ctx, GError **error)
 		if (!asb_utils_ensure_exists (ss_src, error))
 			return FALSE;
 		for (i = 0; sizes[i] != 0; i += 2) {
-			_cleanup_free_ gchar *size_str;
+			_cleanup_free_ gchar *size_str = NULL;
 			_cleanup_free_ gchar *ss_dir = NULL;
 			size_str = g_strdup_printf ("%ix%i",
 						    sizes[i],
@@ -776,7 +776,7 @@ asb_context_setup (AsbContext *ctx, GError **error)
 				return FALSE;
 		}
 		for (i = 0; sizes[i] != 0 && priv->hidpi_enabled; i += 2) {
-			_cleanup_free_ gchar *size_str;
+			_cleanup_free_ gchar *size_str = NULL;
 			_cleanup_free_ gchar *ss_dir = NULL;
 			size_str = g_strdup_printf ("%ix%i",
 						    sizes[i] * 2,
@@ -940,8 +940,8 @@ asb_context_write_xml (AsbContext *ctx,
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	GList *l;
 	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsStore *store;
-	_cleanup_object_unref_ GFile *file;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
 
 	/* convert any vetod applications into dummy components */
 	for (l = priv->apps; l != NULL; l = l->next) {
@@ -1199,7 +1199,7 @@ asb_context_write_xml_fail (AsbContext *ctx,
 	GList *l;
 	_cleanup_free_ gchar *basename_failed = NULL;
 	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ GFile *file;
+	_cleanup_object_unref_ GFile *file = NULL;
 
 	for (l = priv->apps; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
@@ -1282,7 +1282,7 @@ asb_context_disable_older_pkgs (AsbContext *ctx)
 	AsbPackage *pkg;
 	const gchar *key;
 	guint i;
-	_cleanup_hashtable_unref_ GHashTable *newest;
+	_cleanup_hashtable_unref_ GHashTable *newest = NULL;
 
 	newest = g_hash_table_new_full (g_str_hash, g_str_equal,
 					g_free, (GDestroyNotify) g_object_unref);
