@@ -993,32 +993,53 @@ as_util_install_xml (const gchar *filename,
 	return TRUE;
 }
 
+typedef enum {
+	AS_UTIL_INSTALL_TARGET_SHARED,
+	AS_UTIL_INSTALL_TARGET_CACHE,
+	AS_UTIL_INSTALL_TARGET_LAST
+} AsUtilInstallTarget;
+
 /**
  * as_util_install_filename:
  **/
 static gboolean
-as_util_install_filename (const gchar *filename,
+as_util_install_filename (AsUtilInstallTarget install_target,
+			  const gchar *filename,
 			  const gchar *origin,
 			  GError **error)
 {
+	const gchar *target = NULL;
 	gboolean ret = FALSE;
 	gchar *tmp;
 	_cleanup_free_ gchar *basename = NULL;
+	_cleanup_free_ gchar *path = NULL;
+
+	/* use the correct target dir */
+	switch (install_target) {
+	case AS_UTIL_INSTALL_TARGET_SHARED:
+		target = "/usr/share";
+		break;
+	case AS_UTIL_INSTALL_TARGET_CACHE:
+		target = "/var/cache";
+		break;
+	default:
+		break;
+	}
 
 	switch (as_app_guess_source_kind (filename)) {
 	case AS_APP_SOURCE_KIND_APPSTREAM:
 		if (g_strstr_len (filename, -1, ".yml.gz") != NULL) {
-			ret = as_util_install_xml (filename, origin,
-						   "/usr/share/app-info/yaml", error);
+			path = g_build_filename (target, "app-info", "yaml", NULL);
+			ret = as_util_install_xml (filename, origin, path, error);
 		} else {
-			ret = as_util_install_xml (filename, origin,
-						   "/usr/share/app-info/xmls", error);
+			path = g_build_filename (target, "app-info", "xmls", NULL);
+			ret = as_util_install_xml (filename, origin, path, error);
 		}
 		break;
 	case AS_APP_SOURCE_KIND_APPDATA:
 	case AS_APP_SOURCE_KIND_METAINFO:
-		ret = as_util_install_xml (filename, NULL,
-					   "/usr/share/appdata", error);
+		path = g_build_filename (target, "appdata", NULL);
+		ret = as_util_install_xml (filename, NULL, path, error);
 		break;
 	default:
 		/* icons */
@@ -1065,7 +1086,8 @@ as_util_install (AsUtilPrivate *priv, gchar **values, GError **error)
 	/* for each item on the command line, install the xml files and
 	 * explode the icon files */
 	for (i = 0; values[i] != NULL; i++) {
-		if (!as_util_install_filename (values[i], NULL, error))
+		if (!as_util_install_filename (AS_UTIL_INSTALL_TARGET_SHARED,
+					       values[i], NULL, error))
 			return FALSE;
 	}
 	return TRUE;
@@ -1092,7 +1114,8 @@ as_util_install_origin (AsUtilPrivate *priv, gchar **values, GError **error)
 	/* for each item on the command line, install the xml files and
 	 * explode the icon files */
 	for (i = 1; values[i] != NULL; i++) {
-		if (!as_util_install_filename (values[i], values[0], error))
+		if (!as_util_install_filename (AS_UTIL_INSTALL_TARGET_CACHE,
+					       values[i], values[0], error))
 			return FALSE;
 	}
 	return TRUE;
