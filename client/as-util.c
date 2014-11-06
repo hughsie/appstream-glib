@@ -413,11 +413,19 @@ as_util_convert_appdata (GFile *file_input,
 		}
 	}
 
-	/* add <updatecontact> */
+	/* fix old <update_contact> name */
 	n2 = as_node_find (n, "updatecontact");
+	if (n2 != NULL)
+		as_node_set_name (n2, "update_contact");
+
+	/* add <update_contact> */
+	n2 = as_node_find (n, "updatecontact");
+	if (n2 != NULL)
+		as_node_set_name (n2, "update_contact");
+	n2 = as_node_find (n, "update_contact");
 	if (n2 == NULL) {
 		action_required = TRUE;
-		n3 = as_node_insert (n, "updatecontact", "<!-- upstream-contact_at_email.com -->",
+		n3 = as_node_insert (n, "update_contact", "<!-- upstream-contact_at_email.com -->",
 				     AS_NODE_INSERT_FLAG_PRE_ESCAPED, NULL);
 		as_node_set_comment (n3, "FIXME: this is optional, but recommended", -1);
 	}

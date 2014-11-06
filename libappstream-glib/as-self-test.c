@@ -1018,7 +1018,7 @@ as_test_app_validate_file_bad_func (void)
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<project_license> is not valid: SPDX ID 'CC1' unknown");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
-				    "<updatecontact> is not present");
+				    "<update_contact> is not present");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<url> does not start with 'http://'");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
@@ -1093,7 +1093,7 @@ as_test_app_validate_meta_bad_func (void)
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<url> is not present");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
-				    "<updatecontact> is not present");
+				    "<update_contact> is not present");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<extends> is not present");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,

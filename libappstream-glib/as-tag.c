@@ -109,6 +109,8 @@ as_tag_from_string_full (const gchar *tag, AsTagFlags flags)
 			return AS_TAG_APPLICATIONS;
 		if (g_strcmp0 (tag, "application") == 0)
 			return AS_TAG_APPLICATION;
+		if (g_strcmp0 (tag, "updatecontact") == 0)
+			return AS_TAG_UPDATE_CONTACT;
 	}
 
 	/* translated versions */
@@ -158,7 +160,7 @@ as_tag_to_string (AsTag tag)
 		"project_license",
 		"screenshot",
 		"screenshots",
-		"updatecontact",
+		"update_contact",
 		"image",
 		"compulsory_for_desktop",
 		"priority",

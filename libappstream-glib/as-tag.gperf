@@ -27,7 +27,7 @@ project_group, AS_TAG_PROJECT_GROUP
 project_license, AS_TAG_PROJECT_LICENSE
 screenshot, AS_TAG_SCREENSHOT
 screenshots, AS_TAG_SCREENSHOTS
-updatecontact, AS_TAG_UPDATE_CONTACT
+update_contact, AS_TAG_UPDATE_CONTACT
 image, AS_TAG_IMAGE
 compulsory_for_desktop, AS_TAG_COMPULSORY_FOR_DESKTOP
 priority, AS_TAG_PRIORITY

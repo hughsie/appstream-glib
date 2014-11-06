@@ -1170,7 +1170,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 				     "<extends> is not present");
 	}
 
-	/* updatecontact */
+	/* update_contact */
 	update_contact = as_app_get_update_contact (app);
 	if (g_strcmp0 (update_contact,
 		       "someone_who_cares@upstream_project.org") == 0) {
@@ -1189,7 +1189,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		case AS_APP_SOURCE_KIND_METAINFO:
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_TAG_MISSING,
-					     "<updatecontact> is not present");
+					     "<update_contact> is not present");
 			break;
 		default:
 			break;

@@ -3277,7 +3277,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		as_app_set_source_pkgname (app, as_node_get_data (n), -1);
 		break;
 
-	/* <updatecontact> */
+	/* <update_contact> */
 	case AS_TAG_UPDATE_CONTACT:
 		as_app_set_update_contact (app, as_node_get_data (n), -1);
 		break;

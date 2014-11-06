@@ -50,7 +50,7 @@
  * @AS_TAG_PROJECT_LICENSE:		`project_license` (or `licence`)
  * @AS_TAG_SCREENSHOT:			`screenshot`
  * @AS_TAG_SCREENSHOTS:			`screenshots`
- * @AS_TAG_UPDATE_CONTACT:		`updatecontact`
+ * @AS_TAG_UPDATE_CONTACT:		`update_contact`
  * @AS_TAG_IMAGE:			`image`
  * @AS_TAG_COMPULSORY_FOR_DESKTOP:	`compulsory_for_desktop`
  * @AS_TAG_PRIORITY:			`priority`
