@@ -1,3 +1,16 @@
+Version 0.2.7
+~~~~~~~~~~~~~
+Released: 2014-11-10
+
+New Features:
+ - Add AS_ICON_KIND_LOCAL (Richard Hughes)
+
+Bugfixes:
+ - Add four more applications to the blacklist (Richard Hughes)
+ - Do not crash when doing as_tag_from_string(NULL) (Richard Hughes)
+ - Do not write provides with an unknown kind (Richard Hughes)
+ - Install AppStream files with correct permissions (Richard Hughes)
+
 Version 0.2.6
 ~~~~~~~~~~~~~
 Released: 2014-09-01
