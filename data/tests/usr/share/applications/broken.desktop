@@ -1,0 +1,7 @@
+[Desktop Entry]
+Comment=A test broken GKeyFile
+Exec=GKeyFile
+Icon=128x128.png
+Name=Broken GKeyFile
+Path[$e]=
+Type=Application

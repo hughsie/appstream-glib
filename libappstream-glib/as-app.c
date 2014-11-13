@@ -4166,6 +4166,7 @@ as_app_parse_desktop_file (AsApp *app,
 	GKeyFileFlags kf_flags = G_KEY_FILE_KEEP_TRANSLATIONS;
 	gchar *tmp;
 	guint i;
+	_cleanup_error_free_ GError *error_local = NULL;
 	_cleanup_free_ gchar *app_id = NULL;
 	_cleanup_keyfile_unref_ GKeyFile *kf = NULL;
 	_cleanup_strv_free_ gchar **keys = NULL;
@@ -4174,8 +4175,14 @@ as_app_parse_desktop_file (AsApp *app,
 	kf = g_key_file_new ();
 	if (flags & AS_APP_PARSE_FLAG_KEEP_COMMENTS)
 		kf_flags |= G_KEY_FILE_KEEP_COMMENTS;
-	if (!g_key_file_load_from_file (kf, desktop_file, kf_flags, error))
+	if (!g_key_file_load_from_file (kf, desktop_file, kf_flags, &error_local)) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "Failed to parse %s: %s",
+			     desktop_file, error_local->message);
 		return FALSE;
+	}
 
 	/* create app */
 	app_id = g_path_get_basename (desktop_file);
