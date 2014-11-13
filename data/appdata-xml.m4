@@ -1,6 +1,6 @@
 # appdata-xml.m4
 #
-# serial 4
+# serial 5
 
 dnl APPDATA_XML
 dnl Installs and validates AppData XML files.
@@ -15,15 +15,12 @@ dnl doing a distcheck.
 dnl
 dnl Adding files to appdata_XML does not distribute them automatically.
 
-AC_DEFUN([APPDATA_XML],
+AU_DEFUN([APPDATA_XML],
 [
   m4_pattern_allow([AM_V_GEN])
   AC_ARG_ENABLE([appdata-validate],
                 [AS_HELP_STRING([--disable-appdata-validate],
                                 [Disable validating AppData XML files during check phase])])
-
-  # big fat warning
-  AC_MSG_WARN([APPDATA_XML is deprecated, use APPSTREAM_XML instead.])
 
   AS_IF([test "x$enable_appdata_validate" != "xno"],
         [AC_PATH_PROG([APPSTREAM_UTIL], [appstream-util])
@@ -77,7 +74,11 @@ clean-appdata-xml:
 	rm -f $(appdata_XML:.appdata.xml=.appdata.valid)
 '
   _APPDATA_XML_SUBST(APPDATA_XML_RULES)
-])
+],
+[Use the new APPSTREAM_XML macro instead of APPDATA_XML in configure.ac, and
+ replace @APPDATA_XML_RULES@ with @APPSTREAM_XML_RULES@, appdata_XML with
+ appstream_XML and --enable-appdata-validate with --enable-appstream-validate
+ in Makefile.am])
 
 dnl _APPDATA_XML_SUBST(VARIABLE)
 dnl Abstract macro to do either _AM_SUBST_NOTMAKE or AC_SUBST
