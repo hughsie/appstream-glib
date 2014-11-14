@@ -1175,6 +1175,9 @@ asb_context_detect_missing_parents (AsbContext *ctx, GError **error)
 		found = g_hash_table_lookup (hash, tmp);
 		if (found != NULL)
 			continue;
+		found = as_store_get_app_by_id (priv->store_old, tmp);
+		if (found != NULL)
+			continue;
 
 		/* do not add the addon */
 		as_app_add_veto (app, "%s has no parent of '%s'\n",
