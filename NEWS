@@ -1,3 +1,17 @@
+Version 0.3.3
+~~~~~~~~~~~~~
+Released: 2014-11-24
+
+New Features:
+ - Allow filtering addons in the status html pages (Richard Hughes)
+
+Bugfixes:
+ - Detect missing parents in the old metadata (Richard Hughes)
+ - Do not fail to load all the desktop files if one is bad (Richard Hughes)
+ - Improve appdata-xml.m4 deprecation notice (David King)
+ - Use <update_contact> from the AppStream specification (Richard Hughes)
+ - When using install-origin install into /var/cache (Richard Hughes)
+
 Version 0.3.2
 ~~~~~~~~~~~~~
 Released: 2014-11-04
