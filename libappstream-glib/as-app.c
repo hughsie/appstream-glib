@@ -3955,7 +3955,12 @@ as_app_parse_file_key (AsApp *app,
 
 	/* NoDisplay */
 	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_NO_DISPLAY) == 0) {
-		as_app_add_veto (app, "NoDisplay=true");
+		tmp = g_key_file_get_string (kf,
+					     G_KEY_FILE_DESKTOP_GROUP,
+					     key,
+					     NULL);
+		if (tmp != NULL && strcasecmp (tmp, "True") == 0)
+			as_app_add_veto (app, "NoDisplay=true");
 
 	/* Type */
 	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_TYPE) == 0) {
