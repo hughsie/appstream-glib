@@ -955,7 +955,7 @@ as_utils_get_string_overlap_prefix (const gchar *s1, const gchar *s2)
 	}
 	if (i == 0)
 		return NULL;
-	if (s1[i - 1] == '-')
+	if (s1[i - 1] == '-' || s1[i - 1] == '.')
 		i--;
 	return g_strndup (s1, i);
 }

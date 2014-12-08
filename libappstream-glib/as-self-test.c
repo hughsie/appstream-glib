@@ -2520,6 +2520,12 @@ as_test_utils_overlap_func (void)
 	tmp = as_utils_get_string_overlap ("bbbccc.ttf", "aaabbbccc.ttf");
 	g_assert_cmpstr (tmp, ==, "bbbccc.ttf");
 	g_free (tmp);
+
+	/* extra dots */
+	tmp = as_utils_get_string_overlap ("org.gnome.Music.Player.desktop",
+					   "org.gnome.Music.Record.desktop");
+	g_assert_cmpstr (tmp, ==, "org.gnome.Music.desktop");
+	g_free (tmp);
 }
 
 static void
