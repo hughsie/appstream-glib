@@ -45,6 +45,8 @@ struct _AsIconPrivate
 {
 	AsIconKind		 kind;
 	gchar			*name;
+	gchar			*url;
+	gchar			*filename;
 	gchar			*prefix;
 	gchar			*prefix_private;
 	guint			 width;
@@ -87,6 +89,8 @@ as_icon_finalize (GObject *object)
 	if (priv->data != NULL)
 		g_bytes_unref (priv->data);
 	g_free (priv->name);
+	g_free (priv->url);
+	g_free (priv->filename);
 	g_free (priv->prefix);
 	g_free (priv->prefix_private);
 
@@ -168,9 +172,9 @@ as_icon_kind_from_string (const gchar *icon_kind)
  * as_icon_get_name:
  * @icon: a #AsIcon instance.
  *
- * Gets the full qualified URL for the icon, usually pointing at some mirror.
+ * Gets the name of the icon, e.g. "epiphany.png"
  *
- * Returns: URL
+ * Returns: the basename of the icon
  *
  * Since: 0.3.1
  **/
@@ -179,6 +183,42 @@ as_icon_get_name (AsIcon *icon)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	return priv->name;
+}
+
+/**
+ * as_icon_get_url:
+ * @icon: a #AsIcon instance.
+ *
+ * Gets the full qualified URL for the icon, usually pointing at some mirror.
+ * NOTE: This is only set for icons of type %AS_ICON_KIND_REMOTE
+ *
+ * Returns: the fully qualified URL
+ *
+ * Since: 0.3.2
+ **/
+const gchar *
+as_icon_get_url (AsIcon *icon)
+{
+	AsIconPrivate *priv = GET_PRIVATE (icon);
+	return priv->url;
+}
+
+/**
+ * as_icon_get_filename:
+ * @icon: a #AsIcon instance.
+ *
+ * Gets the absolute path on disk of the icon.
+ * NOTE: This is only set for icons of type %AS_ICON_KIND_LOCAL
+ *
+ * Returns: the absolute filename on disk
+ *
+ * Since: 0.3.2
+ **/
+const gchar *
+as_icon_get_filename (AsIcon *icon)
+{
+	AsIconPrivate *priv = GET_PRIVATE (icon);
+	return priv->filename;
 }
 
 /**
@@ -288,10 +328,10 @@ as_icon_get_data (AsIcon *icon)
 /**
  * as_icon_set_name:
  * @icon: a #AsIcon instance.
- * @name: the URL.
+ * @name: the icon name, e.g. "gimp.png"
  * @name_len: the size of @name, or -1 if %NULL-terminated.
  *
- * Sets the fully-qualified mirror URL to use for the icon.
+ * Sets the basename to use for the icon.
  *
  * Since: 0.3.1
  **/
@@ -318,6 +358,40 @@ as_icon_set_prefix (AsIcon *icon, const gchar *prefix)
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	g_free (priv->prefix);
 	priv->prefix = g_strdup (prefix);
+}
+
+/**
+ * as_icon_set_url:
+ * @icon: a #AsIcon instance.
+ * @url: the new icon URL.
+ *
+ * Sets the icon URL.
+ *
+ * Since: 0.3.2
+ **/
+void
+as_icon_set_url (AsIcon *icon, const gchar *url)
+{
+	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_free (priv->url);
+	priv->url = g_strdup (url);
+}
+
+/**
+ * as_icon_set_filename:
+ * @icon: a #AsIcon instance.
+ * @filename: the new icon URL.
+ *
+ * Sets the icon absolute filename.
+ *
+ * Since: 0.3.2
+ **/
+void
+as_icon_set_filename (AsIcon *icon, const gchar *filename)
+{
+	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_free (priv->filename);
+	priv->filename = g_strdup (filename);
 }
 
 /**
@@ -417,6 +491,32 @@ as_icon_set_data (AsIcon *icon, GBytes *data)
 }
 
 /**
+ * as_icon_node_insert_embedded:
+ **/
+static GNode *
+as_icon_node_insert_embedded (AsIcon *icon, GNode *parent, gdouble api_version)
+{
+	AsIconPrivate *priv = GET_PRIVATE (icon);
+	GNode *n;
+	_cleanup_free_ gchar *data = NULL;
+
+	/* embedded icon */
+	n = as_node_insert (parent, "icon", NULL, 0,
+			    "type", as_icon_kind_to_string (priv->kind),
+			    NULL);
+	if (api_version >= 0.8) {
+		as_node_add_attribute_as_int (n, "width", priv->width);
+		as_node_add_attribute_as_int (n, "height", priv->height);
+	}
+	as_node_insert (n, "name", priv->name, 0, NULL);
+	data = g_base64_encode (g_bytes_get_data (priv->data, NULL),
+				g_bytes_get_size (priv->data));
+	as_node_insert (n, "filecontent", data,
+			AS_NODE_INSERT_FLAG_BASE64_ENCODED, NULL);
+	return n;
+}
+
+/**
  * as_icon_node_insert: (skip)
  * @icon: a #AsIcon instance.
  * @parent: the parent #GNode to use..
@@ -433,35 +533,30 @@ as_icon_node_insert (AsIcon *icon, GNode *parent, gdouble api_version)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	GNode *n;
-	_cleanup_free_ gchar *data = NULL;
 
-	/* normal icon */
-	if (priv->kind != AS_ICON_KIND_EMBEDDED) {
+	/* embedded icon */
+	if (priv->kind == AS_ICON_KIND_EMBEDDED)
+		return as_icon_node_insert_embedded (icon, parent, api_version);
+
+	/* other icons */
+	switch (priv->kind) {
+	case AS_ICON_KIND_REMOTE:
+		n = as_node_insert (parent, "icon", priv->url, 0,
+				    "type", as_icon_kind_to_string (priv->kind),
+				    NULL);
+		break;
+	default:
 		n = as_node_insert (parent, "icon", priv->name, 0,
 				    "type", as_icon_kind_to_string (priv->kind),
 				    NULL);
-		if (priv->kind == AS_ICON_KIND_CACHED && api_version >= 0.8) {
-			if (priv->width > 0)
-				as_node_add_attribute_as_int (n, "width", priv->width);
-			if (priv->height > 0)
-				as_node_add_attribute_as_int (n, "height", priv->height);
-		}
-		return n;
+		break;
 	}
-
-	/* embedded icon */
-	n = as_node_insert (parent, "icon", NULL, 0,
-			    "type", as_icon_kind_to_string (priv->kind),
-			    NULL);
-	if (api_version >= 0.8) {
-		as_node_add_attribute_as_int (n, "width", priv->width);
-		as_node_add_attribute_as_int (n, "height", priv->height);
+	if (priv->kind == AS_ICON_KIND_CACHED && api_version >= 0.8) {
+		if (priv->width > 0)
+			as_node_add_attribute_as_int (n, "width", priv->width);
+		if (priv->height > 0)
+			as_node_add_attribute_as_int (n, "height", priv->height);
 	}
-	as_node_insert (n, "name", priv->name, 0, NULL);
-	data = g_base64_encode (g_bytes_get_data (priv->data, NULL),
-				g_bytes_get_size (priv->data));
-	as_node_insert (n, "filecontent", data,
-			AS_NODE_INSERT_FLAG_BASE64_ENCODED, NULL);
 	return n;
 }
 
@@ -552,8 +647,14 @@ as_icon_node_parse (AsIcon *icon, GNode *node, GError **error)
 		break;
 	default:
 
-		/* store the name without any prefix */
+		/* preserve the URL for remote icons */
 		tmp = as_node_get_data (node);
+		if (priv->kind == AS_ICON_KIND_REMOTE)
+			as_icon_set_url (icon, tmp);
+		else if (priv->kind == AS_ICON_KIND_LOCAL)
+			as_icon_set_filename (icon, tmp);
+
+		/* store the name without any prefix */
 		if (g_strstr_len (tmp, -1, "/") == NULL) {
 			as_icon_set_name (icon, tmp, -1);
 		} else {
@@ -637,7 +738,18 @@ as_icon_load (AsIcon *icon, AsIconLoadFlags flags, GError **error)
 
 	/* absolute filename */
 	if (priv->kind == AS_ICON_KIND_LOCAL) {
-		pixbuf = gdk_pixbuf_new_from_file (priv->name, error);
+		if (priv->filename == NULL) {
+			g_set_error (error,
+				     AS_ICON_ERROR,
+				     AS_ICON_ERROR_FAILED,
+				     "unable to load '%s' as no filename set",
+				     priv->name);
+			return FALSE;
+		}
+		pixbuf = gdk_pixbuf_new_from_file_at_size (priv->filename,
+							   priv->width,
+							   priv->height,
+							   error);
 		if (pixbuf == NULL)
 			return FALSE;
 		as_icon_set_pixbuf (icon, pixbuf);

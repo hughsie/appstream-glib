@@ -414,6 +414,8 @@ as_test_icon_func (void)
 	/* verify */
 	g_assert_cmpint (as_icon_get_kind (icon), ==, AS_ICON_KIND_CACHED);
 	g_assert_cmpstr (as_icon_get_name (icon), ==, "app.png");
+	g_assert_cmpstr (as_icon_get_filename (icon), ==, NULL);
+	g_assert_cmpstr (as_icon_get_url (icon), ==, NULL);
 	g_assert_cmpint (as_icon_get_height (icon), ==, 64);
 	g_assert_cmpint (as_icon_get_width (icon), ==, 64);
 	g_assert (as_icon_get_pixbuf (icon) == NULL);
@@ -435,6 +437,8 @@ as_test_icon_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_assert_cmpint (as_icon_get_kind (icon), ==, AS_ICON_KIND_EMBEDDED);
+	g_assert_cmpstr (as_icon_get_filename (icon), ==, NULL);
+	g_assert_cmpstr (as_icon_get_url (icon), ==, NULL);
 	g_assert (as_icon_get_pixbuf (icon) != NULL);
 	g_assert (as_icon_get_data (icon) != NULL);
 }
@@ -512,6 +516,8 @@ as_test_icon_embedded_func (void)
 	/* verify */
 	g_assert_cmpint (as_icon_get_kind (icon), ==, AS_ICON_KIND_EMBEDDED);
 	g_assert_cmpstr (as_icon_get_name (icon), ==, "app.png");
+	g_assert_cmpstr (as_icon_get_filename (icon), ==, NULL);
+	g_assert_cmpstr (as_icon_get_url (icon), ==, NULL);
 	g_assert_cmpint (as_icon_get_height (icon), ==, 32);
 	g_assert_cmpint (as_icon_get_width (icon), ==, 32);
 	g_assert (as_icon_get_data (icon) != NULL);
@@ -531,6 +537,8 @@ as_test_icon_embedded_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_assert_cmpint (as_icon_get_kind (icon), ==, AS_ICON_KIND_CACHED);
+	g_assert_cmpstr (as_icon_get_filename (icon), ==, NULL);
+	g_assert_cmpstr (as_icon_get_url (icon), ==, NULL);
 	g_assert (as_icon_get_pixbuf (icon) != NULL);
 	g_assert (as_icon_get_data (icon) != NULL);
 	g_assert (g_file_test ("/tmp/32x32/app.png", G_FILE_TEST_EXISTS));

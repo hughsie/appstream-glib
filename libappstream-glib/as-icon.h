@@ -120,6 +120,8 @@ AsIconKind	 as_icon_kind_from_string	(const gchar	*icon_kind);
 
 /* getters */
 const gchar	*as_icon_get_name		(AsIcon		*icon);
+const gchar	*as_icon_get_url		(AsIcon		*icon);
+const gchar	*as_icon_get_filename		(AsIcon		*icon);
 const gchar	*as_icon_get_prefix		(AsIcon		*icon);
 guint		 as_icon_get_width		(AsIcon		*icon);
 guint		 as_icon_get_height		(AsIcon		*icon);
@@ -130,6 +132,10 @@ GdkPixbuf	*as_icon_get_pixbuf		(AsIcon		*icon);
 void		 as_icon_set_name		(AsIcon		*icon,
 						 const gchar	*name,
 						 gssize		 name_len);
+void		 as_icon_set_url		(AsIcon		*icon,
+						 const gchar	*url);
+void		 as_icon_set_filename		(AsIcon		*icon,
+						 const gchar	*filename);
 void		 as_icon_set_prefix		(AsIcon		*icon,
 						 const gchar	*prefix);
 void		 as_icon_set_width		(AsIcon		*icon,
