@@ -69,8 +69,6 @@ asb_plugin_merge_prepare_deps (GList *list)
 	AsApp *app;
 	AsbPackage *pkg;
 	GList *l;
-	gchar **deps;
-	guint i;
 
 	for (l = list; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
@@ -82,9 +80,6 @@ asb_plugin_merge_prepare_deps (GList *list)
 			continue;
 		pkg = asb_app_get_package (ASB_APP (app));
 		asb_plugin_absorb_parent_for_pkgname (list, app, asb_package_get_name (pkg));
-		deps = asb_package_get_deps (pkg);
-		for (i = 0; deps[i] != NULL; i++)
-			asb_plugin_absorb_parent_for_pkgname (list, app, deps[i]);
 	}
 }
 
