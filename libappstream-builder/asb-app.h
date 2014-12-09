@@ -80,7 +80,7 @@ GType		 asb_app_get_type		(void);
 
 
 AsbApp		*asb_app_new			(AsbPackage	*pkg,
-						 const gchar	*id_full);
+						 const gchar	*id);
 void		 asb_app_set_hidpi_enabled	(AsbApp		*app,
 						 gboolean	 hidpi_enabled);
 void		 asb_app_add_requires_appdata	(AsbApp		*app,
