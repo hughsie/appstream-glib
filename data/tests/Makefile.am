@@ -19,6 +19,7 @@ test_files =						\
 	example-v06.yml.gz				\
 	example.yml					\
 	extra-appdata/test.xml				\
+	extra-appdata/local.xml				\
 	font-1-1.fc21.noarch.rpm			\
 	font-serif-1-1.fc21.noarch.rpm			\
 	intltool.appdata.xml.in				\

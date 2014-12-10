@@ -793,14 +793,24 @@ asb_test_context_extra_appstream_func (void)
 	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store), ==, 1);
+	g_assert_cmpint (as_store_get_size (store), ==, 2);
 	app = as_store_get_app_by_id (store, "epiphany-test.desktop");
+	g_assert (app != NULL);
+	app = as_store_get_app_by_id (store, "epiphany-local.desktop");
 	g_assert (app != NULL);
 
 	/* check it matches what we expect */
 	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
 		"<components version=\"0.8\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test\">\n"
+		"<component type=\"webapp\">\n"
+		"<id>epiphany-local.desktop</id>\n"
+		"<name>Local</name>\n"
+		"<summary>My local webapp</summary>\n"
+		"<description><p>This is awesome</p></description>\n"
+		"<icon type=\"local\">/usr/share/icons/hicolor/256x256/apps/fedora-logo-icon.png</icon>\n"
+		"<url type=\"homepage\">http://www.hughski.com/</url>\n"
+		"</component>\n"
 		"<component type=\"webapp\">\n"
 		"<id>epiphany-test.desktop</id>\n"
 		"<name>Test</name>\n"
