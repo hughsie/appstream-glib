@@ -4287,12 +4287,19 @@ as_app_parse_appdata_file (AsApp *app,
 	gboolean seen_application = FALSE;
 	gchar *tmp;
 	gsize len;
+	_cleanup_error_free_ GError *error_local = NULL;
 	_cleanup_free_ gchar *data = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
 
 	/* open file */
-	if (!g_file_get_contents (filename, &data, &len, error))
+	if (!g_file_get_contents (filename, &data, &len, &error_local)) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "%s could not be read: %s",
+			     filename, error_local->message);
 		return FALSE;
+	}
 
 	/* validate */
 	tmp = g_strstr_len (data, len, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -4309,13 +4316,13 @@ as_app_parse_appdata_file (AsApp *app,
 	/* parse */
 	if (flags & AS_APP_PARSE_FLAG_KEEP_COMMENTS)
 		from_xml_flags |= AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS;
-	root = as_node_from_xml (data, len,
-				 from_xml_flags,
-				 error);
+	root = as_node_from_xml (data, len, from_xml_flags, &error_local);
 	if (root == NULL) {
-		g_prefix_error (error,
-				"failed to parse '%s': ",
-				filename);
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "failed to parse %s: %s",
+			     filename, error_local->message);
 		return FALSE;
 	}
 
