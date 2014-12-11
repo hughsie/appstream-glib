@@ -1,3 +1,11 @@
+Version 0.2.8
+~~~~~~~~~~~~~
+Released: 2014-12-11
+
+Bugfixes:
+ - Always return errors from the correct domain when parsing broken files (Richard Hughes)
+ - Do not veto applications with NoDisplay=false (Richard Hughes)
+
 Version 0.2.7
 ~~~~~~~~~~~~~
 Released: 2014-11-10
