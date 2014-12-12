@@ -264,6 +264,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			asb_app_add_requires_appdata (app, "Uses obsolete X11 toolkit");
 			break;
 		}
+		if (g_strcmp0 (deps[i], "Xvfb") == 0) {
+			asb_app_add_requires_appdata (app, "Uses obsolete Xvfb");
+			break;
+		}
 		if (g_strcmp0 (deps[i], "wine-core") == 0) {
 			asb_app_add_requires_appdata (app, "Uses wine");
 			break;
