@@ -605,6 +605,15 @@ as_node_text_cb (GMarkupParseContext *context,
 
 	/* split up into lines and add each with spaces stripped */
 	data = helper->current->data;
+	if (data->cdata != NULL) {
+		g_set_error (error,
+			     AS_NODE_ERROR,
+			     AS_NODE_ERROR_INVALID_MARKUP,
+			     "<%s> already set '%s' and tried to replace with '%s'",
+			     as_tag_data_get_name (data),
+			     data->cdata, text);
+		return;
+	}
 	if ((helper->flags & AS_NODE_FROM_XML_FLAG_LITERAL_TEXT) > 0) {
 		data->cdata = g_strndup (text, text_len);
 	} else {
