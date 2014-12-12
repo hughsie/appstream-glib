@@ -44,6 +44,7 @@ nm-connection-editor.desktop
 open-raw.desktop
 orca.desktop
 pioneers-editor.desktop
+plank.desktop
 policyeditor.desktop
 qterminal_*.desktop
 razor-config*.desktop
