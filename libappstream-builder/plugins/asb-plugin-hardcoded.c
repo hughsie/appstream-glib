@@ -176,6 +176,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		as_app_add_category (AS_APP (app), "System", -1);
 	if (g_strcmp0 (tmp, "bmpanel2cfg.desktop") == 0)
 		as_app_add_category (AS_APP (app), "System", -1);
+	if (g_strcmp0 (tmp, "wallpapoz.desktop") == 0)
+		as_app_add_category (AS_APP (app), "System", -1);
+	if (g_strcmp0 (tmp, "superkaramba.desktop") == 0)
+		as_app_add_category (AS_APP (app), "System", -1);
 
 	/* add extra project groups */
 	if (g_strcmp0 (tmp, "nemo.desktop") == 0)
