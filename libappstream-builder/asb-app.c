@@ -423,6 +423,20 @@ asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **erro
 				 filename_no_path);
 	}
 
+	/* check screenshot is reasonable in size */
+	if (as_image_get_width (im_src) * 2 < AS_IMAGE_NORMAL_WIDTH ||
+	    as_image_get_height (im_src) * 2 < AS_IMAGE_NORMAL_HEIGHT) {
+		filename_no_path = g_path_get_basename (filename);
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_FAILED,
+			     "%s is too small to be used: %ix%i",
+			     filename_no_path,
+			     as_image_get_width (im_src),
+			     as_image_get_height (im_src));
+		return FALSE;
+	}
+
 	/* check the image is not padded */
 	alpha_flags = as_image_get_alpha_flags (im_src);
 	if ((alpha_flags & AS_IMAGE_ALPHA_FLAG_TOP) > 0||
