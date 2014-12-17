@@ -87,6 +87,7 @@ asb_plugin_initialize (AsbPlugin *plugin)
 		{ "sigil.desktop",		"Upstream abandoned, see: http://sigildev.blogspot.co.uk/2014/02/sigils-spiritual-successor.html" },
 		{ "spacefm*.desktop",		"Upstream abandoned, see: http://igurublog.wordpress.com/2014/04/28/ignorantgurus-hiatus/" },
 		{ "specto.desktop",		"Upstream abandoned, see: http://jeff.ecchi.ca/blog/2013/03/21/a-programs-obsolescence/" },
+		{ "stardict.desktop",		"Upstream abandoned, see: http://stardict-4.sourceforge.net/" },
 		{ "vkeybd.desktop",		"Upstream abandoned" },
 		{ "xwrits.desktop",		"Upstream abandoned, see: http://www.lcdf.org/xwrits/changes.html" },
 		{ "xsynth-dssi.desktop",	"Upstream abandoned, see: http://sourceforge.net/p/dssi/xsynth-dssi/ci/master/tree/" },
