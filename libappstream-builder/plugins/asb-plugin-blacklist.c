@@ -74,6 +74,7 @@ asb_plugin_initialize (AsbPlugin *plugin)
 		{ "mm3d.desktop",		"Upstream abandoned, see: http://www.misfitcode.com/misfitmodel3d/" },
 		{ "nekobee.desktop",		"Upstream abandoned" },
 		{ "nicotine.desktop",		"Upstream abandoned" },
+		{ "pcmanfm-qt4.desktop",	"Upstream abandoned, see: https://github.com/lxde/pcmanfm-qt/commit/e3b72cf10302d873b6b8b4be893d235e9e1c5199" },
 		{ "postler.desktop",		"Upstream abandoned, see: https://launchpad.net/postler" },
 		{ "qmpdclient.desktop",		"Upstream abandoned, private email" },
 		{ "rasterview.desktop",		"Upstream abandoned" },
