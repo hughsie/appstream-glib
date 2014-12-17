@@ -53,6 +53,7 @@ struct _AsbPackagePrivate
 	gchar		*nevra;
 	gchar		*evr;
 	gchar		*license;
+	gchar		*vcs;
 	gchar		*source_nevra;
 	gchar		*source_pkgname;
 	gsize		 log_written_len;
@@ -92,6 +93,7 @@ asb_package_finalize (GObject *object)
 	g_free (priv->nevra);
 	g_free (priv->evr);
 	g_free (priv->license);
+	g_free (priv->vcs);
 	g_free (priv->source_nevra);
 	g_free (priv->source_pkgname);
 	g_string_free (priv->log, TRUE);
@@ -364,6 +366,23 @@ asb_package_get_license (AsbPackage *pkg)
 }
 
 /**
+ * asb_package_get_vcs:
+ * @pkg: A #AsbPackage
+ *
+ * Gets the package version control system.
+ *
+ * Returns: utf8 string
+ *
+ * Since: 0.3.4
+ **/
+const gchar *
+asb_package_get_vcs (AsbPackage *pkg)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	return priv->vcs;
+}
+
+/**
  * asb_package_get_source:
  * @pkg: A #AsbPackage
  *
@@ -547,6 +566,23 @@ asb_package_set_license (AsbPackage *pkg, const gchar *license)
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 	g_free (priv->license);
 	priv->license = g_strdup (license);
+}
+
+/**
+ * asb_package_set_vcs:
+ * @pkg: A #AsbPackage
+ * @vcs: vcs string
+ *
+ * Sets the package version control system.
+ *
+ * Since: 0.3.4
+ **/
+void
+asb_package_set_vcs (AsbPackage *pkg, const gchar *vcs)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	g_free (priv->vcs);
+	priv->vcs = g_strdup (vcs);
 }
 
 /**
@@ -777,6 +813,8 @@ asb_package_ensure (AsbPackage *pkg,
 		flags &= ~ASB_PACKAGE_ENSURE_NEVRA;
 	if (priv->license != NULL)
 		flags &= ~ASB_PACKAGE_ENSURE_LICENSE;
+	if (priv->vcs != NULL)
+		flags &= ~ASB_PACKAGE_ENSURE_VCS;
 	if (priv->url != NULL)
 		flags &= ~ASB_PACKAGE_ENSURE_URL;
 	if (priv->source_pkgname != NULL)

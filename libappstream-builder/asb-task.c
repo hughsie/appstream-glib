@@ -341,6 +341,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		if (!asb_package_ensure (priv->pkg,
 					 ASB_PACKAGE_ENSURE_LICENSE |
 					 ASB_PACKAGE_ENSURE_RELEASES |
+					 ASB_PACKAGE_ENSURE_VCS |
 					 ASB_PACKAGE_ENSURE_URL,
 					 error_not_used))
 			return FALSE;
@@ -404,6 +405,13 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 					     "X-CacheID",
 					     cache_id, -1);
 			g_free (cache_id);
+		}
+
+		/* set the VCS information into the metadata */
+		if (asb_package_get_vcs (priv->pkg) != NULL) {
+			as_app_add_metadata (AS_APP (app),
+					     "VersionControlSystem",
+					     asb_package_get_vcs (priv->pkg), -1);
 		}
 
 		/* save any screenshots early */

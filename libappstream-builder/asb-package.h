@@ -53,6 +53,7 @@ typedef enum {
 	ASB_PACKAGE_ENSURE_LICENSE	= 16,
 	ASB_PACKAGE_ENSURE_URL		= 32,
 	ASB_PACKAGE_ENSURE_SOURCE	= 64,
+	ASB_PACKAGE_ENSURE_VCS		= 128,
 	ASB_PACKAGE_ENSURE_LAST
 } AsbPackageEnsureFlags;
 
@@ -118,6 +119,7 @@ const gchar	*asb_package_get_nevr		(AsbPackage	*pkg);
 const gchar	*asb_package_get_nevra		(AsbPackage	*pkg);
 const gchar	*asb_package_get_evr		(AsbPackage	*pkg);
 const gchar	*asb_package_get_url		(AsbPackage	*pkg);
+const gchar	*asb_package_get_vcs		(AsbPackage	*pkg);
 const gchar	*asb_package_get_license	(AsbPackage	*pkg);
 const gchar	*asb_package_get_source		(AsbPackage	*pkg);
 const gchar	*asb_package_get_source_pkgname	(AsbPackage	*pkg);
@@ -135,6 +137,8 @@ void		 asb_package_set_url		(AsbPackage	*pkg,
 						 const gchar	*url);
 void		 asb_package_set_license	(AsbPackage	*pkg,
 						 const gchar	*license);
+void		 asb_package_set_vcs		(AsbPackage	*pkg,
+						 const gchar	*vcs);
 void		 asb_package_set_source		(AsbPackage	*pkg,
 						 const gchar	*source);
 void		 asb_package_set_source_pkgname	(AsbPackage	*pkg,
