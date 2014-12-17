@@ -36,10 +36,10 @@ gnome-wacom-panel.desktop
 gtk-decorator.desktop
 importwizard.desktop
 itweb-settings.desktop
-java-*-openjdk
+java-*-openjdk.desktop
 kbd-layout-viewer.desktop
-libsvm-svm-toy-gtk
-libsvm-svm-toy-qt
+libsvm-svm-toy-gtk.desktop
+libsvm-svm-toy-qt.desktop
 luckybackup-*.desktop
 lxde-desktop-preferences.desktop
 lxinput.desktop
