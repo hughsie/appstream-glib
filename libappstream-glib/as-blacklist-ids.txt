@@ -75,3 +75,5 @@ xfce-settings-manager.desktop
 xfce-ui-settings.desktop
 xinput_calibrator.desktop
 xpilot-ng-x11.desktop
+zita-at1.desktop
+zita-rev1.desktop
