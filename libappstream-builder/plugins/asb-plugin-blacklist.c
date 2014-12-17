@@ -90,6 +90,7 @@ asb_plugin_initialize (AsbPlugin *plugin)
 		{ "xsynth-dssi.desktop",	"Upstream abandoned, see: http://sourceforge.net/p/dssi/xsynth-dssi/ci/master/tree/" },
 		{ "xpilot-ng-sdl.desktop",	"Upstream abandoned, see: https://www.openhub.net/p/10676" },
 		{ "xpenguins.desktop",		"Upstream abandoned, see: http://xpenguins.seul.org/" },
+		{ "xnec2c.desktop",		"Upstream abandoned, see: http://www.qsl.net/5b4az/pages/nec2.html" },
 		{ NULL, NULL } };
 
 	plugin->priv = ASB_PLUGIN_GET_PRIVATE (AsbPluginPrivate);
