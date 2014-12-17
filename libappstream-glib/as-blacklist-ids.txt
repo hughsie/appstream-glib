@@ -12,6 +12,7 @@ bitmap2component.desktop
 bted.desktop
 cairo-dock-cairo.desktop
 caja-home.desktop
+calf-dssi.desktop
 cinnamon-settings.desktop
 compiz-mate-emerald.desktop
 compiz-mate-gtk.desktop
