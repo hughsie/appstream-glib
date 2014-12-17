@@ -91,6 +91,7 @@ asb_plugin_initialize (AsbPlugin *plugin)
 		{ "xpilot-ng-sdl.desktop",	"Upstream abandoned, see: https://www.openhub.net/p/10676" },
 		{ "xpenguins.desktop",		"Upstream abandoned, see: http://xpenguins.seul.org/" },
 		{ "xnec2c.desktop",		"Upstream abandoned, see: http://www.qsl.net/5b4az/pages/nec2.html" },
+		{ "themonospot-qt.desktop",	"Upstream abandoned, see: https://code.google.com/p/themonospot/source/list" },
 		{ NULL, NULL } };
 
 	plugin->priv = ASB_PLUGIN_GET_PRIVATE (AsbPluginPrivate);
