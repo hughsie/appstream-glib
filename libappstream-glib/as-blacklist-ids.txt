@@ -61,6 +61,7 @@ redhat-userpasswd.desktop
 *-release-notes.desktop
 remote-viewer.desktop
 Rodent-*.desktop
+rxvt-unicode-*.desktop
 rygel-preferences.desktop
 *-server.desktop
 *-session-manager.desktop
