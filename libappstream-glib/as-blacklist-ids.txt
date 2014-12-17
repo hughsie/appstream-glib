@@ -13,9 +13,12 @@ bted.desktop
 cairo-dock-cairo.desktop
 caja-home.desktop
 cinnamon-settings.desktop
+compiz-mate-emerald.desktop
+compiz-mate-gtk.desktop
 *-demo.desktop
 display-properties.desktop
 docky.desktop
+emerald-decorator.desktop
 exo-file-manager.desktop
 exo-mail-reader.desktop
 exo-terminal-emulator.desktop
@@ -29,6 +32,7 @@ glade3.desktop
 gnome-glade-2.desktop
 gnome-system-monitor-kde.desktop
 gnome-wacom-panel.desktop
+gtk-decorator.desktop
 itweb-settings.desktop
 java-*-openjdk
 libsvm-svm-toy-gtk
