@@ -34,6 +34,7 @@ gnome-glade-2.desktop
 gnome-system-monitor-kde.desktop
 gnome-wacom-panel.desktop
 gtk-decorator.desktop
+importwizard.desktop
 itweb-settings.desktop
 java-*-openjdk
 libsvm-svm-toy-gtk
