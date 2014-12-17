@@ -67,6 +67,7 @@ rygel-preferences.desktop
 *-session-manager.desktop
 *-shareware.desktop
 sr-editor.desktop
+superkaramba.desktop
 system-config-*.desktop
 tracker-preferences.desktop
 transgui.desktop
