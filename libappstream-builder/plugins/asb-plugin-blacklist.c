@@ -76,6 +76,7 @@ asb_plugin_initialize (AsbPlugin *plugin)
 		{ "nicotine.desktop",		"Upstream abandoned" },
 		{ "pcmanfm-qt4.desktop",	"Upstream abandoned, see: https://github.com/lxde/pcmanfm-qt/commit/e3b72cf10302d873b6b8b4be893d235e9e1c5199" },
 		{ "postler.desktop",		"Upstream abandoned, see: https://launchpad.net/postler" },
+		{ "peppy.desktop",		"Upstream abandoned, see: https://www.openhub.net/p/peppy" },
 		{ "qmpdclient.desktop",		"Upstream abandoned, private email" },
 		{ "rasterview.desktop",		"Upstream abandoned" },
 		{ "resapplet.desktop",		"Obsolete, see: https://mail.gnome.org/archives/gnome-bugsquad/2011-June/msg00000.html" },
