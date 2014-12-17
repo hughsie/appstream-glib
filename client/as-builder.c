@@ -132,7 +132,7 @@ main (int argc, char **argv)
 		{ "output-dir", '\0', 0, G_OPTION_ARG_FILENAME, &output_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the output directory"), "DIR" },
-		{ "cache-dir", '\0', 0, G_OPTION_ARG_FILENAME, &output_dir,
+		{ "cache-dir", '\0', 0, G_OPTION_ARG_FILENAME, &cache_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the cache directory"), "DIR" },
 		{ "basename", '\0', 0, G_OPTION_ARG_STRING, &basename,
