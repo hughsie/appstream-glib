@@ -49,6 +49,7 @@ asb_plugin_initialize (AsbPlugin *plugin)
 	} blacklist[] =  {
 		{ "ailurus.desktop",		"Upstream abandoned" },
 		{ "alltray.desktop",		"Upstream abandoned and homepage dead" },
+		{ "ayttm.desktop",		"Upstream abandoned, see: https://www.openhub.net/p/ayttm" },
 		{ "bareftp.desktop",		"Upstream abandoned, see: http://bareftp.eide-itc.no/news/?p=228" },
 		{ "birdie.desktop",		"Upstream abandoned, see: http://birdieapp.github.io/2014/02/26/time-to-say-goodbye.html" },
 		{ "chmsee.desktop",		"Upstream abandoned, see: https://code.google.com/p/chmsee/" },
