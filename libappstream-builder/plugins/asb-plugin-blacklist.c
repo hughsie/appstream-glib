@@ -57,6 +57,7 @@ asb_plugin_initialize (AsbPlugin *plugin)
 		{ "coccinella.desktop",		"Upstream abandoned" },
 		{ "conduit.desktop",		"Upstream abandoned" },
 		{ "coriander.desktop",		"Upstream abandoned, see: https://www.openhub.net/p/dv4linux" },
+		{ "diffpdf.desktop",		"Upstream abandoned, see: http://www.qtrac.eu/diffpdf-foss.html" },
 		{ "dissy.desktop",		"Upstream abandoned, see: https://code.google.com/p/dissy/" },
 		{ "doom-shareware.desktop",	"Upstream abandoned, see: https://www.ohloh.net/p/8278" },
 		{ "emesene.desktop",		"Upstream abandoned, see: https://github.com/emesene/emesene/issues/1588" },
