@@ -886,8 +886,8 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 		tmp = g_build_filename (destdir, search, NULL);
 		if (!g_file_test (tmp, G_FILE_TEST_EXISTS)) {
 			g_set_error (error,
-				     AS_APP_ERROR,
-				     AS_APP_ERROR_FAILED,
+				     AS_UTILS_ERROR,
+				     AS_UTILS_ERROR_FAILED,
 				     "specified icon '%s' does not exist",
 				     search);
 			return NULL;
@@ -933,8 +933,8 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 
 	/* failed */
 	g_set_error (error,
-		     AS_APP_ERROR,
-		     AS_APP_ERROR_FAILED,
+		     AS_UTILS_ERROR,
+		     AS_UTILS_ERROR_FAILED,
 		     "Failed to find icon %s", search);
 	return NULL;
 }

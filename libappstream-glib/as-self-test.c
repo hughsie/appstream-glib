@@ -2586,14 +2586,14 @@ as_test_utils_icons_func (void)
 	/* full pixmaps invalid */
 	tmp = as_utils_find_icon_filename (destdir, "/usr/share/pixmaps/not-going-to-exist.png", &error);
 	g_assert_cmpstr (tmp, ==, NULL);
-	g_assert_error (error, AS_APP_ERROR, AS_APP_ERROR_FAILED);
+	g_assert_error (error, AS_UTILS_ERROR, AS_UTILS_ERROR_FAILED);
 	g_free (tmp);
 	g_clear_error (&error);
 
 	/* all invalid */
 	tmp = as_utils_find_icon_filename (destdir, "not-going-to-exist.png", &error);
 	g_assert_cmpstr (tmp, ==, NULL);
-	g_assert_error (error, AS_APP_ERROR, AS_APP_ERROR_FAILED);
+	g_assert_error (error, AS_UTILS_ERROR, AS_UTILS_ERROR_FAILED);
 	g_free (tmp);
 	g_clear_error (&error);
 }
