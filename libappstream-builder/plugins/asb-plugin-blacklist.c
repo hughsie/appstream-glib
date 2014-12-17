@@ -88,6 +88,7 @@ asb_plugin_initialize (AsbPlugin *plugin)
 		{ "rott-registered.desktop",	"Requires purchase of original game: http://icculus.org/rott/" },
 		{ "xwrits.desktop",		"Upstream abandoned, see: http://www.lcdf.org/xwrits/changes.html" },
 		{ "xsynth-dssi.desktop",	"Upstream abandoned, see: http://sourceforge.net/p/dssi/xsynth-dssi/ci/master/tree/" },
+		{ "xpilot-ng-sdl.desktop",	"Upstream abandoned, see: https://www.openhub.net/p/10676" },
 		{ NULL, NULL } };
 
 	plugin->priv = ASB_PLUGIN_GET_PRIVATE (AsbPluginPrivate);
