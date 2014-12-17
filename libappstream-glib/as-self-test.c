@@ -3060,6 +3060,67 @@ as_test_store_speed_yaml_func (void)
 
 }
 
+static void
+as_test_utils_install_filename_func (void)
+{
+	gboolean ret;
+	GError *error = NULL;
+	_cleanup_free_ gchar *filename1 = NULL;
+	_cleanup_free_ gchar *filename2 = NULL;
+	_cleanup_free_ gchar *filename3 = NULL;
+	_cleanup_free_ gchar *filename4 = NULL;
+
+	/* appdata to shared */
+	filename1 = as_test_get_filename ("broken.appdata.xml");
+	ret = as_utils_install_filename	(AS_UTILS_LOCATION_SHARED,
+					 filename1, NULL,
+					 "/tmp/destdir/",
+					 &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert (g_file_test ("/tmp/destdir/usr/share/appdata/broken.appdata.xml", G_FILE_TEST_EXISTS));
+
+	/* metainfo to cache */
+	filename2 = as_test_get_filename ("example.metainfo.xml");
+	ret = as_utils_install_filename	(AS_UTILS_LOCATION_CACHE,
+					 filename2, NULL,
+					 "/tmp/destdir/",
+					 &error);
+	g_assert_error (error, AS_UTILS_ERROR, AS_UTILS_ERROR_INVALID_TYPE);
+	g_assert (!ret);
+	g_assert (!g_file_test ("/tmp/destdir/var/cache/appdata/example.metainfo.xml", G_FILE_TEST_EXISTS));
+	g_clear_error (&error);
+
+	/* appstream to cache */
+	filename3 = as_test_get_filename ("origin.xml");
+	ret = as_utils_install_filename	(AS_UTILS_LOCATION_CACHE,
+					 filename3, NULL,
+					 "/tmp/destdir/",
+					 &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert (g_file_test ("/tmp/destdir/var/cache/app-info/xmls/origin.xml", G_FILE_TEST_EXISTS));
+
+	/* icons to cache, override origin */
+	filename4 = as_test_get_filename ("origin-icons.tar.gz");
+	ret = as_utils_install_filename	(AS_UTILS_LOCATION_CACHE,
+					 filename4, "neworigin",
+					 "/tmp/destdir/",
+					 &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert (g_file_test ("/tmp/destdir/var/cache/app-info/icons/neworigin/64x64/org.gnome.Software.png", G_FILE_TEST_EXISTS));
+
+	/* icons to shared */
+	ret = as_utils_install_filename	(AS_UTILS_LOCATION_SHARED,
+					 filename4, NULL,
+					 "/tmp/destdir/",
+					 &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert (g_file_test ("/tmp/destdir/usr/share/app-info/icons/origin/64x64/org.gnome.Software.png", G_FILE_TEST_EXISTS));
+}
+
 int
 main (int argc, char **argv)
 {
@@ -3105,6 +3166,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils{overlap}", as_test_utils_overlap_func);
 	g_test_add_func ("/AppStream/utils{icons}", as_test_utils_icons_func);
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
+	g_test_add_func ("/AppStream/utils{install-filename}", as_test_utils_install_filename_func);
 	g_test_add_func ("/AppStream/yaml", as_test_yaml_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
 	g_test_add_func ("/AppStream/store{demote}", as_test_store_demote_func);

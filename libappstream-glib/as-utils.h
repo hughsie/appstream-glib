@@ -31,6 +31,22 @@
 G_BEGIN_DECLS
 
 /**
+ * AsUtilsError:
+ * @AS_UTILS_ERROR_FAILED:			Generic failure
+ * @AS_UTILS_ERROR_INVALID_TYPE:		Invalid type
+ *
+ * The error type.
+ **/
+typedef enum {
+	AS_UTILS_ERROR_FAILED,
+	AS_UTILS_ERROR_INVALID_TYPE,
+	/*< private >*/
+	AS_UTILS_ERROR_LAST
+} AsUtilsError;
+
+#define	AS_UTILS_ERROR				as_utils_error_quark ()
+
+/**
  * AsUtilsFindIconFlag:
  * @AS_UTILS_FIND_ICON_NONE:			No flags set
  * @AS_UTILS_FIND_ICON_HI_DPI:			Prefer a HiDPI icon
@@ -44,9 +60,26 @@ typedef enum {
 	AS_UTILS_FIND_ICON_LAST
 } AsUtilsFindIconFlag;
 
+/**
+ * AsUtilsLocation:
+ * @AS_UTILS_LOCATION_SHARED:			Installed by the vendor, shared
+ * @AS_UTILS_LOCATION_CACHE:			Installed as metadata, shared
+ * @AS_UTILS_LOCATION_USER:			Installed by the user
+ *
+ * The flags used when installing and removing metadata files.
+ **/
+typedef enum {
+	AS_UTILS_LOCATION_SHARED,
+	AS_UTILS_LOCATION_CACHE,
+	AS_UTILS_LOCATION_USER,
+	/*< private >*/
+	AS_UTILS_LOCATION_LAST
+} AsUtilsLocation;
+
 gchar		*as_markup_convert_simple	(const gchar	*markup,
 						 gssize		 markup_len,
 						 GError		**error);
+GQuark		 as_utils_error_quark		(void);
 gboolean	 as_utils_is_stock_icon_name	(const gchar	*name);
 gboolean	 as_utils_is_spdx_license_id	(const gchar	*license_id);
 gboolean	 as_utils_is_spdx_license	(const gchar	*license);
@@ -67,6 +100,11 @@ gchar		*as_utils_find_icon_filename_full (const gchar	*destdir,
 						 GError		**error);
 gchar		*as_utils_get_string_overlap	(const gchar	*s1,
 						 const gchar	*s2);
+gboolean	 as_utils_install_filename	(AsUtilsLocation location,
+						 const gchar	*filename,
+						 const gchar	*origin,
+						 const gchar	*destdir,
+						 GError		**error);
 
 G_END_DECLS
 

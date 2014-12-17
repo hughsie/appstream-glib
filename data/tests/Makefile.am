@@ -23,6 +23,7 @@ test_files =						\
 	font-1-1.fc21.noarch.rpm			\
 	font-serif-1-1.fc21.noarch.rpm			\
 	intltool.appdata.xml.in				\
+	origin-icons.tar.gz				\
 	origin.xml					\
 	rpmbuild/app.png				\
 	settings-panel.desktop				\

@@ -8,6 +8,7 @@ endif
 AM_CPPFLAGS =							\
 	$(GLIB_CFLAGS)						\
 	$(GDKPIXBUF_CFLAGS)					\
+	$(LIBARCHIVE_CFLAGS)					\
 	$(SOUP_CFLAGS)						\
 	$(YAML_CFLAGS)						\
 	-I$(top_srcdir)/libappstream-glib			\
@@ -120,6 +121,7 @@ CLEANFILES = $(BUILT_SOURCES)
 libappstream_glib_la_LIBADD =					\
 	$(GLIB_LIBS)						\
 	$(GDKPIXBUF_LIBS)					\
+	$(LIBARCHIVE_LIBS)					\
 	$(SOUP_LIBS)						\
 	$(YAML_LIBS)
 
@@ -139,6 +141,7 @@ as_self_test_SOURCES =						\
 as_self_test_LDADD =						\
 	$(GLIB_LIBS)						\
 	$(GDKPIXBUF_LIBS)					\
+	$(LIBARCHIVE_LIBS)					\
 	$(SOUP_LIBS)						\
 	$(YAML_LIBS)						\
 	$(lib_LTLIBRARIES)
