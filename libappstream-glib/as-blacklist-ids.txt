@@ -37,6 +37,7 @@ gtk-decorator.desktop
 importwizard.desktop
 itweb-settings.desktop
 java-*-openjdk
+kbd-layout-viewer.desktop
 libsvm-svm-toy-gtk
 libsvm-svm-toy-qt
 luckybackup-*.desktop
