@@ -74,13 +74,13 @@ asb_plugin_initialize (AsbPlugin *plugin)
 		{ "qmpdclient.desktop",		"Upstream abandoned, private email" },
 		{ "rasterview.desktop",		"Upstream abandoned" },
 		{ "resapplet.desktop",		"Obsolete, see: https://mail.gnome.org/archives/gnome-bugsquad/2011-June/msg00000.html" },
+		{ "rott-registered.desktop",	"Requires purchase of original game: http://icculus.org/rott/" },
 		{ "scantailor.desktop",		"Upstream abandoned, see: http://www.diybookscanner.org/forum/viewtopic.php?f=21&t=2979" },
 		{ "schismtracker.desktop",	"Upstream abandoned, see: http://www.nimh.org/" },
 		{ "sigil.desktop",		"Upstream abandoned, see: http://sigildev.blogspot.co.uk/2014/02/sigils-spiritual-successor.html" },
 		{ "spacefm*.desktop",		"Upstream abandoned, see: http://igurublog.wordpress.com/2014/04/28/ignorantgurus-hiatus/" },
 		{ "specto.desktop",		"Upstream abandoned, see: http://jeff.ecchi.ca/blog/2013/03/21/a-programs-obsolescence/" },
 		{ "vkeybd.desktop",		"Upstream abandoned" },
-		{ "rott-registered.desktop",	"Requires purchase of original game: http://icculus.org/rott/" },
 		{ NULL, NULL } };
 
 	plugin->priv = ASB_PLUGIN_GET_PRIVATE (AsbPluginPrivate);
