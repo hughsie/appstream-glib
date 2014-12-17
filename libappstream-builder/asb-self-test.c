@@ -289,7 +289,8 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	asb_context_set_add_cache_id (ctx, TRUE);
 	asb_context_set_no_net (ctx, TRUE);
 	asb_context_set_hidpi_enabled (ctx, TRUE);
-	asb_context_set_basename (ctx, "asb-self-test");
+	asb_context_set_basename (ctx, "appstream");
+	asb_context_set_origin (ctx, "asb-self-test");
 	asb_context_set_cache_dir (ctx, "/tmp/asbuilder/cache");
 	asb_context_set_output_dir (ctx, "/tmp/asbuilder/output");
 	asb_context_set_temp_dir (ctx, "/tmp/asbuilder/temp");
@@ -343,13 +344,13 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	g_assert (ret);
 
 	/* check files created */
-	g_assert (g_file_test ("/tmp/asbuilder/output/asb-self-test.xml.gz", G_FILE_TEST_EXISTS));
-	g_assert (g_file_test ("/tmp/asbuilder/output/asb-self-test-failed.xml.gz", G_FILE_TEST_EXISTS));
-	g_assert (g_file_test ("/tmp/asbuilder/output/asb-self-test-ignore.xml.gz", G_FILE_TEST_EXISTS));
-	g_assert (g_file_test ("/tmp/asbuilder/output/asb-self-test-icons.tar.gz", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder/output/appstream.xml.gz", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder/output/appstream-failed.xml.gz", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder/output/appstream-ignore.xml.gz", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder/output/appstream-icons.tar.gz", G_FILE_TEST_EXISTS));
 
 	/* load AppStream metadata */
-	file = g_file_new_for_path ("/tmp/asbuilder/output/asb-self-test.xml.gz");
+	file = g_file_new_for_path ("/tmp/asbuilder/output/appstream.xml.gz");
 	store = as_store_new ();
 	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);
@@ -477,7 +478,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	g_assert (ret);
 
 	/* load failed metadata */
-	file_failed = g_file_new_for_path ("/tmp/asbuilder/output/asb-self-test-failed.xml.gz");
+	file_failed = g_file_new_for_path ("/tmp/asbuilder/output/appstream-failed.xml.gz");
 	store_failed = as_store_new ();
 	ret = as_store_from_file (store_failed, file_failed, NULL, NULL, &error);
 	g_assert_no_error (error);
@@ -645,7 +646,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	g_assert (ret);
 
 	/* load ignored metadata */
-	file_ignore = g_file_new_for_path ("/tmp/asbuilder/output/asb-self-test-ignore.xml.gz");
+	file_ignore = g_file_new_for_path ("/tmp/asbuilder/output/appstream-ignore.xml.gz");
 	store_ignore = as_store_new ();
 	ret = as_store_from_file (store_ignore, file_ignore, NULL, NULL, &error);
 	g_assert_no_error (error);
@@ -771,7 +772,8 @@ asb_test_context_extra_appstream_func (void)
 	asb_context_set_add_cache_id (ctx, TRUE);
 	asb_context_set_no_net (ctx, TRUE);
 	asb_context_set_hidpi_enabled (ctx, TRUE);
-	asb_context_set_basename (ctx, "asb-self-test");
+	asb_context_set_basename (ctx, "appstream");
+	asb_context_set_origin (ctx, "asb-self-test");
 	asb_context_set_cache_dir (ctx, "/tmp/asbuilder/cache");
 	asb_context_set_output_dir (ctx, "/tmp/asbuilder/output");
 	asb_context_set_temp_dir (ctx, "/tmp/asbuilder/temp");
@@ -785,10 +787,10 @@ asb_test_context_extra_appstream_func (void)
 	g_assert (ret);
 
 	/* check files created */
-	g_assert (g_file_test ("/tmp/asbuilder/output/asb-self-test.xml.gz", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder/output/appstream.xml.gz", G_FILE_TEST_EXISTS));
 
 	/* load AppStream metadata */
-	file = g_file_new_for_path ("/tmp/asbuilder/output/asb-self-test.xml.gz");
+	file = g_file_new_for_path ("/tmp/asbuilder/output/appstream.xml.gz");
 	store = as_store_new ();
 	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);

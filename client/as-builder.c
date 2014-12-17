@@ -84,6 +84,7 @@ main (int argc, char **argv)
 	_cleanup_free_ gchar *extra_screenshots = NULL;
 	_cleanup_free_ gchar *log_dir = NULL;
 	_cleanup_free_ gchar *old_metadata = NULL;
+	_cleanup_free_ gchar *origin = NULL;
 	_cleanup_free_ gchar *output_dir = NULL;
 	_cleanup_free_ gchar *packages_dir = NULL;
 	_cleanup_free_ gchar *screenshot_dir = NULL;
@@ -136,6 +137,9 @@ main (int argc, char **argv)
 			/* TRANSLATORS: command line option */
 			_("Set the cache directory"), "DIR" },
 		{ "basename", '\0', 0, G_OPTION_ARG_STRING, &basename,
+			/* TRANSLATORS: command line option */
+			_("Set the basenames of the output files"), "NAME" },
+		{ "origin", '\0', 0, G_OPTION_ARG_STRING, &origin,
 			/* TRANSLATORS: command line option */
 			_("Set the origin name"), "NAME" },
 		{ "max-threads", '\0', 0, G_OPTION_ARG_INT, &max_threads,
@@ -199,7 +203,9 @@ main (int argc, char **argv)
 	if (cache_dir == NULL)
 		cache_dir = g_strdup ("./cache");
 	if (basename == NULL)
-		basename = g_strdup ("example");
+		basename = g_strdup ("appstream");
+	if (origin == NULL)
+		origin = g_strdup ("example");
 	if (screenshot_uri == NULL)
 		screenshot_uri = g_strdup ("http://www.example.com/screenshots/");
 	if (extra_appstream == NULL)
@@ -227,6 +233,7 @@ main (int argc, char **argv)
 	asb_context_set_output_dir (ctx, output_dir);
 	asb_context_set_cache_dir (ctx, cache_dir);
 	asb_context_set_basename (ctx, basename);
+	asb_context_set_origin (ctx, origin);
 	asb_context_set_max_threads (ctx, max_threads);
 	asb_context_set_min_icon_size (ctx, min_icon_size);
 	ret = asb_context_setup (ctx, &error);

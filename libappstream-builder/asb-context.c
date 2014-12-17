@@ -81,6 +81,7 @@ struct _AsbContextPrivate
 	gchar			*temp_dir;
 	gchar			*output_dir;
 	gchar			*basename;
+	gchar			*origin;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbContext, asb_context, G_TYPE_OBJECT)
@@ -410,7 +411,7 @@ asb_context_set_output_dir (AsbContext *ctx, const gchar *output_dir)
 /**
  * asb_context_set_basename:
  * @ctx: A #AsbContext
- * @basename: AppStream basename, e.g. "fedora-21"
+ * @basename: AppStream file basename, e.g. "appstream"
  *
  * Sets the basename for the two metadata files.
  *
@@ -421,6 +422,22 @@ asb_context_set_basename (AsbContext *ctx, const gchar *basename)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	priv->basename = g_strdup (basename);
+}
+
+/**
+ * asb_context_set_origin:
+ * @ctx: A #AsbContext
+ * @origin: AppStream origin, e.g. "fedora-21"
+ *
+ * Sets the origin for the two metadata files.
+ *
+ * Since: 0.3.4
+ **/
+void
+asb_context_set_origin (AsbContext *ctx, const gchar *origin)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	priv->origin = g_strdup (origin);
 }
 
 /**
@@ -701,11 +718,11 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	_cleanup_free_ gchar *icons_dir = NULL;
 
 	/* required stuff set */
-	if (priv->basename == NULL) {
+	if (priv->origin == NULL) {
 		g_set_error_literal (error,
 				     ASB_PLUGIN_ERROR,
 				     ASB_PLUGIN_ERROR_FAILED,
-				     "basename not set!");
+				     "origin not set!");
 		return FALSE;
 	}
 	if (priv->output_dir == NULL) {
@@ -912,17 +929,17 @@ asb_task_process_func (gpointer data, gpointer user_data)
 static gboolean
 asb_context_write_icons (AsbContext *ctx,
 			 const gchar *temp_dir,
-			 const gchar *output_dir,
-			 const gchar *basename,
 			 GError **error)
 {
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	_cleanup_free_ gchar *filename = NULL;
 	_cleanup_free_ gchar *icons_dir = NULL;
 
 	icons_dir = g_build_filename (temp_dir, "icons", NULL);
 	if (!g_file_test (icons_dir, G_FILE_TEST_EXISTS))
 		return TRUE;
-	filename = g_strdup_printf ("%s/%s-icons.tar.gz", output_dir, basename);
+	filename = g_strdup_printf ("%s/%s-icons.tar.gz",
+				    priv->output_dir, priv->basename);
 	g_print ("Writing %s...\n", filename);
 	return asb_utils_write_archive_dir (filename, icons_dir, error);
 }
@@ -931,10 +948,7 @@ asb_context_write_icons (AsbContext *ctx,
  * asb_context_write_xml:
  **/
 static gboolean
-asb_context_write_xml (AsbContext *ctx,
-		       const gchar *output_dir,
-		       const gchar *basename,
-		       GError **error)
+asb_context_write_xml (AsbContext *ctx, GError **error)
 {
 	AsApp *app;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
@@ -973,11 +987,13 @@ asb_context_write_xml (AsbContext *ctx,
 		}
 
 	}
-	filename = g_strdup_printf ("%s/%s.xml.gz", output_dir, basename);
+	filename = g_strdup_printf ("%s/%s.xml.gz",
+				    priv->output_dir,
+				    priv->basename);
 	file = g_file_new_for_path (filename);
 
 	g_print ("Writing %s...\n", filename);
-	as_store_set_origin (store, basename);
+	as_store_set_origin (store, priv->origin);
 	as_store_set_api_version (store, priv->api_version);
 	if (priv->add_cache_id) {
 		_cleanup_free_ gchar *builder_id = asb_utils_get_builder_id ();
@@ -1192,10 +1208,7 @@ asb_context_detect_missing_parents (AsbContext *ctx, GError **error)
  * asb_context_write_xml_fail:
  **/
 static gboolean
-asb_context_write_xml_fail (AsbContext *ctx,
-			     const gchar *output_dir,
-			     const gchar *basename,
-			     GError **error)
+asb_context_write_xml_fail (AsbContext *ctx, GError **error)
 {
 	AsApp *app;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
@@ -1217,11 +1230,12 @@ asb_context_write_xml_fail (AsbContext *ctx,
 			continue;
 		as_store_add_app (priv->store_failed, app);
 	}
-	filename = g_strdup_printf ("%s/%s-failed.xml.gz", output_dir, basename);
+	filename = g_strdup_printf ("%s/%s-failed.xml.gz",
+				    priv->output_dir, priv->basename);
 	file = g_file_new_for_path (filename);
 
 	g_print ("Writing %s...\n", filename);
-	basename_failed = g_strdup_printf ("%s-failed", basename);
+	basename_failed = g_strdup_printf ("%s-failed", priv->origin);
 	as_store_set_origin (priv->store_failed, basename_failed);
 	as_store_set_api_version (priv->store_failed, priv->api_version);
 	if (priv->add_cache_id) {
@@ -1240,10 +1254,7 @@ asb_context_write_xml_fail (AsbContext *ctx,
  * asb_context_write_xml_ignore:
  **/
 static gboolean
-asb_context_write_xml_ignore (AsbContext *ctx,
-			      const gchar *output_dir,
-			      const gchar *basename,
-			      GError **error)
+asb_context_write_xml_ignore (AsbContext *ctx, GError **error)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	_cleanup_free_ gchar *basename_cache = NULL;
@@ -1255,11 +1266,12 @@ asb_context_write_xml_ignore (AsbContext *ctx,
 		return TRUE;
 
 	/* the store is already populated */
-	filename = g_strdup_printf ("%s/%s-ignore.xml.gz", output_dir, basename);
+	filename = g_strdup_printf ("%s/%s-ignore.xml.gz",
+				    priv->output_dir, priv->basename);
 	file = g_file_new_for_path (filename);
 
 	g_print ("Writing %s...\n", filename);
-	basename_cache = g_strdup_printf ("%s-ignore", basename);
+	basename_cache = g_strdup_printf ("%s-ignore", priv->origin);
 	as_store_set_origin (priv->store_ignore, basename_cache);
 	as_store_set_api_version (priv->store_ignore, priv->api_version);
 	if (priv->add_cache_id) {
@@ -1440,25 +1452,23 @@ asb_context_process (AsbContext *ctx, AsbContextProcessFlags flags, GError **err
 	asb_context_write_app_xml (ctx);
 
 	/* write XML file */
-	ret = asb_context_write_xml (ctx, priv->output_dir, priv->basename, error);
+	ret = asb_context_write_xml (ctx, error);
 	if (!ret)
 		return FALSE;
 
 	/* write XML file */
-	ret = asb_context_write_xml_fail (ctx, priv->output_dir, priv->basename, error);
+	ret = asb_context_write_xml_fail (ctx, error);
 	if (!ret)
 		return FALSE;
 
 	/* write XML file */
-	ret = asb_context_write_xml_ignore (ctx, priv->output_dir, priv->basename, error);
+	ret = asb_context_write_xml_ignore (ctx, error);
 	if (!ret)
 		return FALSE;
 
 	/* write icons archive */
 	ret = asb_context_write_icons (ctx,
 				       priv->temp_dir,
-				       priv->output_dir,
-				       priv->basename,
 				       error);
 	if (!ret)
 		return FALSE;
@@ -1638,6 +1648,7 @@ asb_context_finalize (GObject *object)
 	g_free (priv->temp_dir);
 	g_free (priv->output_dir);
 	g_free (priv->basename);
+	g_free (priv->origin);
 
 	G_OBJECT_CLASS (asb_context_parent_class)->finalize (object);
 }

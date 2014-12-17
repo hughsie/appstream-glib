@@ -119,6 +119,8 @@ void		 asb_context_set_output_dir	(AsbContext	*ctx,
 						 const gchar	*output_dir);
 void		 asb_context_set_basename	(AsbContext	*ctx,
 						 const gchar	*basename);
+void		 asb_context_set_origin		(AsbContext	*ctx,
+						 const gchar	*origin);
 const gchar	*asb_context_get_temp_dir	(AsbContext	*ctx);
 gboolean	 asb_context_get_add_cache_id	(AsbContext	*ctx);
 gboolean	 asb_context_get_hidpi_enabled	(AsbContext	*ctx);
