@@ -1603,6 +1603,277 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
+typedef enum {
+	AS_UTIL_PKG_STATE_OK, /* in order of badness */
+	AS_UTIL_PKG_STATE_INFO,
+	AS_UTIL_PKG_STATE_WARN,
+	AS_UTIL_PKG_STATE_FAIL
+} AsUtilPkgState;
+
+/**
+ * as_util_matrix_html_write_item:
+ */
+static void
+as_util_matrix_html_write_item (AsUtilPkgState *state_app,
+				    AsUtilPkgState state,
+				    GString *html,
+				    const gchar *comment)
+{
+	g_string_append (html, "<td>");
+
+	/* ab-use acronym for the mouse-over explaination */
+	if (comment != NULL)
+		g_string_append_printf (html, "<acronym title=\"%s\">", comment);
+
+	switch (state) {
+	case AS_UTIL_PKG_STATE_OK:
+		g_string_append (html, "OK");
+		break;
+	case AS_UTIL_PKG_STATE_INFO:
+		g_string_append (html, "Info");
+		break;
+	case AS_UTIL_PKG_STATE_WARN:
+		g_string_append (html, "Warning");
+		break;
+	case AS_UTIL_PKG_STATE_FAIL:
+		g_string_append (html, "Failed");
+		break;
+	default:
+		break;
+	}
+	if (comment != NULL)
+		g_string_append (html, "</acronym>");
+
+	g_string_append (html, "</td>\n");
+
+	/* update the global state */
+	if (state_app != NULL) {
+		if (state > *state_app)
+			*state_app = state;
+	}
+}
+
+/**
+ * as_util_matrix_html_write_app:
+ */
+static void
+as_util_matrix_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
+{
+	AsIcon *ic;
+	AsUtilPkgState state_app = AS_UTIL_PKG_STATE_OK;
+	GPtrArray *arr;
+	_cleanup_string_free_ GString *str = NULL;
+
+	str = g_string_new ("");
+	g_string_append_printf (str, "<td>%s</td>\n", as_app_get_id_filename (app));
+
+	/* pkgname */
+	switch (distro) {
+	case AS_UTIL_DISTRO_FEDORA:
+		g_string_append_printf (str, "<td><a href=\"https://apps.fedoraproject.org/packages/%s\">%s</a></td>\n",
+					as_app_get_pkgname_default (app),
+					as_app_get_pkgname_default (app));
+		break;
+	default:
+		g_string_append_printf (str, "<td>%s</td>\n", as_app_get_pkgname_default (app));
+		break;
+	}
+
+	/* summary */
+	if (as_app_get_comment (app, NULL) == NULL) {
+		as_util_matrix_html_write_item (&state_app,
+						AS_UTIL_PKG_STATE_FAIL,
+						str,
+						"No comment in .desktop or summary in AppData file");
+	} else {
+		as_util_matrix_html_write_item (NULL, AS_UTIL_PKG_STATE_OK, str, NULL);
+	}
+
+	/* description */
+	if (as_app_get_description (app, NULL) == NULL) {
+		as_util_matrix_html_write_item (&state_app,
+						AS_UTIL_PKG_STATE_WARN,
+						str,
+						"No long description in AppData file");
+	} else {
+		as_util_matrix_html_write_item (NULL, AS_UTIL_PKG_STATE_OK, str, NULL);
+	}
+
+	/* screenshots */
+	arr = as_app_get_screenshots (app);
+	if (arr ==  NULL || arr->len == 0) {
+		as_util_matrix_html_write_item (&state_app,
+						AS_UTIL_PKG_STATE_WARN,
+						str,
+						"No screenshots in AppData file");
+	} else {
+		as_util_matrix_html_write_item (NULL, AS_UTIL_PKG_STATE_OK, str, NULL);
+	}
+
+	/* icons */
+	ic = as_app_get_icon_default (app);
+	if (ic == NULL) {
+		as_util_matrix_html_write_item (&state_app,
+						AS_UTIL_PKG_STATE_FAIL,
+						str,
+						"No icon");
+	} else {
+		if (!as_app_has_kudo_kind (app, AS_KUDO_KIND_HI_DPI_ICON))
+			as_util_matrix_html_write_item (&state_app,
+							AS_UTIL_PKG_STATE_INFO,
+							str,
+							"No HiDPI icon");
+		else
+			as_util_matrix_html_write_item (NULL, AS_UTIL_PKG_STATE_OK, str, NULL);
+	}
+
+	/* keywords */
+	arr = as_app_get_keywords (app, NULL);
+	if (arr == NULL || arr->len == 0) {
+		as_util_matrix_html_write_item (&state_app,
+						AS_UTIL_PKG_STATE_WARN,
+						str,
+						"No keywords in .desktop file");
+	} else {
+		as_util_matrix_html_write_item (NULL, AS_UTIL_PKG_STATE_OK, str, NULL);
+	}
+
+	/* veto */
+	arr = as_app_get_vetos (app);
+	if (arr == NULL || arr->len == 0) {
+		as_util_matrix_html_write_item (NULL, AS_UTIL_PKG_STATE_OK, str, NULL);
+	} else {
+		_cleanup_free_ gchar *tmp = NULL;
+		tmp = as_util_status_html_join (arr);
+		as_util_matrix_html_write_item (&state_app,
+						AS_UTIL_PKG_STATE_FAIL,
+						str, tmp);
+	}
+
+	/* global state */
+	switch (state_app) {
+	case AS_UTIL_PKG_STATE_OK:
+		g_string_prepend (str, "<tr bgcolor=\"#a7f6a7\">\n");
+		break;
+	case AS_UTIL_PKG_STATE_INFO:
+		g_string_prepend (str, "<tr bgcolor=\"#e0edfb\">\n");
+		break;
+	case AS_UTIL_PKG_STATE_WARN:
+		g_string_prepend (str, "<tr bgcolor=\"#fbfbe0\">\n");
+		break;
+	case AS_UTIL_PKG_STATE_FAIL:
+		g_string_prepend (str, "<tr bgcolor=\"#ffa1a5\">\n");
+		break;
+	default:
+		g_string_prepend (str, "<tr>\n");
+		break;
+	}
+
+	g_string_append (str, "</tr>\n");
+	g_string_append (html, str->str);
+}
+
+/**
+ * as_util_array_sort_by_pkgname_cb:
+ **/
+static gint
+as_util_array_sort_by_pkgname_cb (gconstpointer a, gconstpointer b)
+{
+	AsApp *app1 = *((AsApp **) a);
+	AsApp *app2 = *((AsApp **) b);
+	return g_strcmp0 (as_app_get_pkgname_default (app1),
+			  as_app_get_pkgname_default (app2));
+}
+
+/**
+ * as_util_matrix_html:
+ **/
+static gboolean
+as_util_matrix_html (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsApp *app;
+	AsUtilDistro distro = AS_UTIL_DISTRO_UNKNOWN;
+	GPtrArray *apps = NULL;
+	guint i;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_string_free_ GString *html = NULL;
+
+	/* check args */
+	if (g_strv_length (values) < 2) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected matrix.html filename.xml.gz");
+		return FALSE;
+	}
+
+	/* load file */
+	store = as_store_new ();
+	for (i = 1; values[i] != NULL; i++) {
+		_cleanup_object_unref_ GFile *file = NULL;
+		file = g_file_new_for_path (values[i]);
+		if (!as_store_from_file (store, file, NULL, NULL, error))
+			return FALSE;
+	}
+	apps = as_store_get_apps (store);
+
+	/* order by package name */
+	g_ptr_array_sort (apps, as_util_array_sort_by_pkgname_cb);
+
+	/* detect distro */
+	if (g_strstr_len (values[1], -1, "fedora") != NULL)
+		distro = AS_UTIL_DISTRO_FEDORA;
+
+	/* create header */
+	html = g_string_new ("");
+	g_string_append (html, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 "
+			       "Transitional//EN\" "
+			       "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
+	g_string_append (html, "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n");
+	g_string_append (html, "<head>\n");
+	g_string_append (html, "<meta http-equiv=\"Content-Type\" content=\"text/html; "
+			       "charset=UTF-8\" />\n");
+	g_string_append (html, "<title>Application Data Matrix</title>\n");
+	as_util_status_html_write_css (html);
+	g_string_append (html, "</head>\n");
+	g_string_append (html, "<body>\n");
+
+	/* write applications */
+	g_string_append (html, "<h1>Packages</h1>\n");
+	g_string_append (html, "<div id=\"apps\">\n");
+	g_string_append (html, "<table>\n");
+
+	/* table header */
+	g_string_append (html, "<tr>\n");
+	g_string_append (html, "<th>Application ID</th>\n");
+	g_string_append (html, "<th>Package Name</th>\n");
+	g_string_append (html, "<th>Summary</th>\n");
+	g_string_append (html, "<th>Description</th>\n");
+	g_string_append (html, "<th>Screenshots</th>\n");
+	g_string_append (html, "<th>Icon</th>\n");
+	g_string_append (html, "<th>Keywords</th>\n");
+	g_string_append (html, "<th>Veto</th>\n");
+	g_string_append (html, "</tr>\n");
+
+	/* apps */
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+			continue;
+		as_util_matrix_html_write_app (app, html, distro);
+	}
+
+	/* footer */
+	g_string_append (html, "</table>\n");
+	g_string_append (html, "</div>\n");
+	g_string_append (html, "</body>\n");
+	g_string_append (html, "</html>\n");
+
+	/* save file */
+	return g_file_set_contents (values[0], html->str, -1, error);
+}
+
 /**
  * as_util_status_csv_filter_func:
  **/
@@ -2234,6 +2505,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Create an CSV status document"),
 		     as_util_status_csv);
+	as_util_add (priv->cmd_array,
+		     "matrix-html",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Create an HTML matrix page"),
+		     as_util_matrix_html);
 	as_util_add (priv->cmd_array,
 		     "non-package-yaml",
 		     NULL,
