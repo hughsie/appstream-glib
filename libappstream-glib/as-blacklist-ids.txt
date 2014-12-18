@@ -44,6 +44,7 @@ itweb-settings.desktop
 java-*-openjdk.desktop
 kaddressbook-importer.desktop
 kbd-layout-viewer.desktop
+kcm*.desktop
 ladi-*.desktop
 libsvm-svm-toy-gtk.desktop
 libsvm-svm-toy-qt.desktop
