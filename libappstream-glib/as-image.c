@@ -431,7 +431,9 @@ as_image_node_parse (AsImage *image, GNode *node, GError **error)
 	if (size != G_MAXINT)
 		as_image_set_height (image, size);
 	tmp = as_node_get_attribute (node, "type");
-	if (tmp != NULL)
+	if (tmp == NULL)
+		as_image_set_kind (image, AS_IMAGE_KIND_SOURCE);
+	else
 		as_image_set_kind (image, as_image_kind_from_string (tmp));
 	taken = as_node_take_data (node);
 	if (taken != NULL) {
