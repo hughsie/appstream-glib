@@ -285,6 +285,23 @@ asb_package_rpm_ensure_url (AsbPackage *pkg, GError **error)
 }
 
 /**
+ * asb_package_rpm_ensure_vcs:
+ **/
+static gboolean
+asb_package_rpm_ensure_vcs (AsbPackage *pkg, GError **error)
+{
+	AsbPackageRpm *pkg_rpm = ASB_PACKAGE_RPM (pkg);
+	AsbPackageRpmPrivate *priv = GET_PRIVATE (pkg_rpm);
+	rpmtd td;
+
+	td = rpmtdNew ();
+	headerGet (priv->h, RPMTAG_VCS, td, HEADERGET_MINMEM);
+	asb_package_set_vcs (pkg, rpmtdGetString (td));
+	rpmtdFree (td);
+	return TRUE;
+}
+
+/**
  * asb_package_rpm_ensure_license:
  **/
 static gboolean
@@ -613,6 +630,10 @@ asb_package_rpm_ensure (AsbPackage *pkg,
 	}
 	if ((flags & ASB_PACKAGE_ENSURE_SOURCE) > 0) {
 		if (!asb_package_rpm_ensure_source (pkg, error))
+			return FALSE;
+	}
+	if ((flags & ASB_PACKAGE_ENSURE_VCS) > 0) {
+		if (!asb_package_rpm_ensure_vcs (pkg, error))
 			return FALSE;
 	}
 	return TRUE;
