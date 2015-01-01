@@ -124,15 +124,25 @@ asb_gettext_parse_file (AsbGettextContext *ctx,
 	AsbGettextEntry *entry;
 	AsbGettextHeader *h;
 	_cleanup_free_ gchar *data = NULL;
+	gboolean swapped;
 
 	/* read data, although we only strictly need the header */
 	if (!g_file_get_contents (filename, &data, NULL, error))
 		return FALSE;
 
 	h = (AsbGettextHeader *) data;
+	if (h->magic == 0x950412de)
+		swapped = FALSE;
+	else if (h->magic == 0xde120495)
+		swapped = TRUE;
+	else
+		return FALSE;
 	entry = asb_gettext_entry_new ();
 	entry->locale = g_strdup (locale);
-	entry->nstrings = h->nstrings;
+	if (swapped)
+		entry->nstrings = GUINT32_SWAP_LE_BE (h->nstrings);
+	else
+		entry->nstrings = h->nstrings;
 	if (entry->nstrings > ctx->max_nstrings)
 		ctx->max_nstrings = entry->nstrings;
 	ctx->data = g_list_prepend (ctx->data, entry);
