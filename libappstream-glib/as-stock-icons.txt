@@ -57,6 +57,10 @@ document-save
 document-save-as
 document-send
 drive-harddisk
+drive-harddisk-ieee1394
+drive-harddisk-solidstate
+drive-harddisk-system
+drive-harddisk-usb
 drive-optical
 drive-removable-media
 drive-removable-media
