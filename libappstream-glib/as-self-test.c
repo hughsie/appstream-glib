@@ -1850,11 +1850,15 @@ as_test_app_search_func (void)
 	as_app_set_comment (app, NULL, "Install and remove software", -1);
 	as_app_add_mimetype (app, "application/vnd.oasis.opendocument.text", -1);
 	as_app_add_keyword (app, NULL, "awesome", -1);
+	as_app_add_keyword (app, NULL, "c++", -1);
+	as_app_add_keyword (app, NULL, "d-feet", -1);
 
 	g_assert_cmpint (as_app_search_matches (app, "software"), ==, 80);
 	g_assert_cmpint (as_app_search_matches (app, "soft"), ==, 80);
 	g_assert_cmpint (as_app_search_matches (app, "install"), ==, 60);
 	g_assert_cmpint (as_app_search_matches (app, "awesome"), ==, 90);
+	g_assert_cmpint (as_app_search_matches (app, "c++"), ==, 90);
+	g_assert_cmpint (as_app_search_matches (app, "d-feet"), ==, 90);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) all), ==, 220);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) none), ==, 0);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) mime), ==, 5);

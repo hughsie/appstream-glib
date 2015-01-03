@@ -3675,29 +3675,25 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
 	return TRUE;
 }
 
-#if !GLIB_CHECK_VERSION(2,39,1)
 /**
  * as_app_value_tokenize:
  **/
 static gchar **
 as_app_value_tokenize (const gchar *value)
 {
-	gchar *delim;
-	gchar **tmp;
 	gchar **values;
 	guint i;
+	_cleanup_free_ gchar *delim = NULL;
+	_cleanup_strv_free_ gchar **tmp = NULL;
+
 	delim = g_strdup (value);
 	g_strdelimit (delim, "/,.;:", ' ');
 	tmp = g_strsplit (delim, " ", -1);
 	values = g_new0 (gchar *, g_strv_length (tmp) + 1);
-	for (i = 0; tmp[i] != NULL; i++) {
+	for (i = 0; tmp[i] != NULL; i++)
 		values[i] = g_utf8_strdown (tmp[i], -1);
-	}
-	g_strfreev (tmp);
-	g_free (delim);
 	return values;
 }
-#endif
 
 /**
  * as_app_add_tokens:
@@ -3720,12 +3716,16 @@ as_app_add_tokens (AsApp *app,
 
 	token_item = g_slice_new0 (AsAppTokenItem);
 #if GLIB_CHECK_VERSION(2,39,1)
-	token_item->values_utf8 = g_str_tokenize_and_fold (value,
-							   locale,
-							   &token_item->values_ascii);
-#else
-	token_item->values_utf8 = as_app_value_tokenize (value);
+	if (g_strstr_len (value, -1, "+") == NULL &&
+	    g_strstr_len (value, -1, "-") == NULL) {
+		token_item->values_utf8 = g_str_tokenize_and_fold (value,
+								   locale,
+								   &token_item->values_ascii);
+	}
 #endif
+	if (token_item->values_utf8 == NULL)
+		token_item->values_utf8 = as_app_value_tokenize (value);
+
 	token_item->score = score;
 	g_ptr_array_add (priv->token_cache, token_item);
 }
