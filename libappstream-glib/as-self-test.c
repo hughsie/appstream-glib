@@ -815,14 +815,22 @@ as_test_app_validate_check (GPtrArray *array,
 			    const gchar *message)
 {
 	AsProblem *problem;
+	gchar *tmp;
 	guint i;
 
 	for (i = 0; i < array->len; i++) {
+		_cleanup_free_ gchar *message_no_data = NULL;
 		problem = g_ptr_array_index (array, i);
-		if (as_problem_get_kind (problem) == kind &&
-		    g_strcmp0 (as_problem_get_message (problem), message) == 0)
+		if (as_problem_get_kind (problem) != kind)
+			continue;
+		message_no_data = g_strdup (as_problem_get_message (problem));
+		tmp = g_strrstr (message_no_data, " [");
+		if (tmp != NULL)
+			*tmp = '\0';
+		if (g_strcmp0 (message_no_data, message) == 0)
 			return;
 	}
+	g_print ("\n");
 	for (i = 0; i < array->len; i++) {
 		problem = g_ptr_array_index (array, i);
 		g_print ("%i\t%s\n",
@@ -1015,7 +1023,6 @@ as_test_app_validate_file_bad_func (void)
 		problem = g_ptr_array_index (probs, i);
 		g_debug ("%s", as_problem_get_message (problem));
 	}
-	g_assert_cmpint (probs->len, ==, 26);
 
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				    "<id> has invalid type attribute");
@@ -1024,7 +1031,7 @@ as_test_app_validate_file_bad_func (void)
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<metadata_license> is not valid");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
-				    "<project_license> is not valid: SPDX ID 'CC1' unknown");
+				    "<project_license> is not valid");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<update_contact> is not present");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
@@ -1066,6 +1073,7 @@ as_test_app_validate_file_bad_func (void)
 				    "<p> requires sentence case");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<li> requires sentence case");
+	g_assert_cmpint (probs->len, ==, 28);
 }
 
 static void

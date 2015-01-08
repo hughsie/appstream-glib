@@ -186,28 +186,29 @@ as_app_validate_description_li (const gchar *text, AsAppValidateHelper *helper)
 	if (str_len < length_li_min) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<li> is too short");
+				     "<li> is too short [%s]", text);
 	}
 	if (str_len > length_li_max) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<li> is too long");
+				     "<li> is too long [%s]", text);
 	}
 	if (ai_app_validate_fullstop_ending (text)) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<li> cannot end in '.'");
+				     "<li> cannot end in '.' [%s]", text);
 	}
 	if (as_app_validate_has_hyperlink (text)) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<li> cannot contain a hyperlink");
+				     "<li> cannot contain a hyperlink [%s]",
+				     text);
 	}
 	if (require_sentence_case &&
 	    !as_app_validate_has_first_word_capital (helper, text)) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<li> requires sentence case");
+				     "<li> requires sentence case [%s]", text);
 	}
 }
 
@@ -241,7 +242,7 @@ as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper
 	if (helper->previous_para_was_short) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<p> is too short [p]");
+				     "<p> is too short [%s]", text);
 	}
 	helper->previous_para_was_short = FALSE;
 
@@ -254,7 +255,7 @@ as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper
 	if (str_len > length_para_max) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<p> is too long");
+				     "<p> is too long [%s]", text);
 	}
 	if (g_str_has_prefix (text, "This application")) {
 		ai_app_validate_add (helper->probs,
@@ -264,20 +265,21 @@ as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper
 	if (as_app_validate_has_hyperlink (text)) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<p> cannot contain a hyperlink");
+				     "<p> cannot contain a hyperlink [%s]",
+				     text);
 	}
 	if (require_sentence_case &&
 	    !as_app_validate_has_first_word_capital (helper, text)) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<p> requires sentence case");
+				     "<p> requires sentence case [%s]", text);
 	}
 	if (text[str_len - 1] != '.' &&
 	    text[str_len - 1] != '!' &&
 	    text[str_len - 1] != ':') {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<p> does not end in '.|:|!'");
+				     "<p> does not end in '.|:|!' [%s]", text);
 	}
 	helper->number_paragraphs++;
 	helper->para_chars_before_list += str_len;
@@ -300,7 +302,8 @@ as_app_validate_description_list (const gchar *text, AsAppValidateHelper *helper
 	if (helper->number_paragraphs < 1) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<ul> cannot start a description");
+				     "<ul> cannot start a description [%s]",
+				     text);
 	}
 	if (helper->para_chars_before_list != 0 &&
 	    helper->para_chars_before_list < (guint) length_para_before_list) {
@@ -459,7 +462,7 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	if (base_uri == NULL) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_URL_NOT_FOUND,
-				     "<screenshot> url '%s' not valid", url);
+				     "<screenshot> url not valid [%s]", url);
 		return FALSE;
 	}
 	msg = soup_message_new_from_uri (SOUP_METHOD_GET, base_uri);
@@ -473,7 +476,7 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	if (status_code != SOUP_STATUS_OK) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_URL_NOT_FOUND,
-				     "<screenshot> url '%s' not found", url);
+				     "<screenshot> url not found [%s]", url);
 		return FALSE;
 	}
 
@@ -481,7 +484,8 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	if (msg->response_body->length == 0) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_FILE_INVALID,
-				     "<screenshot> url '%s' is a zero length file", url);
+				     "<screenshot> url is a zero length file [%s]",
+				     url);
 		return FALSE;
 	}
 
@@ -492,7 +496,8 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	if (stream == NULL) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_URL_NOT_FOUND,
-				     "<screenshot> failed to load data from '%s'", url);
+				     "<screenshot> failed to load data [%s]",
+				     url);
 		return FALSE;
 	}
 
@@ -501,7 +506,7 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	if (pixbuf == NULL) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_FILE_INVALID,
-				     "<screenshot> failed to load '%s'",
+				     "<screenshot> failed to load [%s]",
 				     url);
 		return FALSE;
 	}
@@ -513,7 +518,8 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	    as_image_get_width (im) != screenshot_width) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> width did not match specified");
+				     "<screenshot> width did not match specified [%s]",
+				     url);
 	}
 
 	/* check height matches */
@@ -521,29 +527,34 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	    as_image_get_height (im) != screenshot_height) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> height did not match specified");
+				     "<screenshot> height did not match specified [%s]",
+				     url);
 	}
 
 	/* check size is reasonable */
 	if (screenshot_width < ss_size_width_min) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> width was too small");
+				     "<screenshot> width too small [%s]",
+				     url);
 	}
 	if (screenshot_height < ss_size_height_min) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> height was too small");
+				     "<screenshot> height too small [%s]",
+				     url);
 	}
 	if (screenshot_width > ss_size_width_max) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> width was too large");
+				     "<screenshot> width too large [%s]",
+				     url);
 	}
 	if (screenshot_height > ss_size_height_max) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> height was too large");
+				     "<screenshot> height too large [%s]",
+				     url);
 	}
 
 	/* check padding */
@@ -553,13 +564,15 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	    (alpha_flags & AS_IMAGE_ALPHA_FLAG_BOTTOM) > 0) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<image> has vertical alpha padding");
+				     "<image> has vertical padding [%s]",
+				     url);
 	}
 	if ((alpha_flags & AS_IMAGE_ALPHA_FLAG_LEFT) > 0||
 	    (alpha_flags & AS_IMAGE_ALPHA_FLAG_RIGHT) > 0) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<image> has horizontal alpha padding");
+				     "<image> has horizontal padding [%s]",
+				     url);
 	}
 
 	/* check aspect ratio */
@@ -570,7 +583,8 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 				 screenshot_aspect, desired_aspect);
 			ai_app_validate_add (helper->probs,
 					     AS_PROBLEM_KIND_ASPECT_RATIO_INCORRECT,
-					     "<screenshot> aspect ratio was not 16:9");
+					     "<screenshot> aspect ratio not 16:9 [%s]",
+					     url);
 		}
 	}
 	return TRUE;
@@ -647,28 +661,31 @@ as_app_validate_screenshot (AsScreenshot *ss, AsAppValidateHelper *helper)
 		if (str_len < length_caption_min) {
 			ai_app_validate_add (helper->probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<caption> is too short");
+					     "<caption> is too short [%s]", tmp);
 		}
 		if (str_len > length_caption_max) {
 			ai_app_validate_add (helper->probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<caption> is too long");
+					     "<caption> is too long [%s]", tmp);
 		}
 		if (ai_app_validate_fullstop_ending (tmp)) {
 			ai_app_validate_add (helper->probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<caption> cannot end in '.'");
+					     "<caption> cannot end in '.' [%s]",
+					     tmp);
 		}
 		if (as_app_validate_has_hyperlink (tmp)) {
 			ai_app_validate_add (helper->probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<caption> cannot contain a hyperlink");
+					     "<caption> cannot contain a hyperlink [%s]",
+					     tmp);
 		}
 		if (require_sentence_case &&
 		    !as_app_validate_has_first_word_capital (helper, tmp)) {
 			ai_app_validate_add (helper->probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<caption> requires sentence case");
+					     "<caption> requires sentence case [%s]",
+					     tmp);
 		}
 	}
 }
@@ -696,7 +713,7 @@ as_app_validate_icons (AsApp *app, AsAppValidateHelper *helper)
 		if (!as_utils_is_stock_icon_name (icon_name)) {
 			ai_app_validate_add (helper->probs,
 					     AS_PROBLEM_KIND_TAG_INVALID,
-					     "stock icon '%s' is not valid",
+					     "stock icon is not valid [%s]",
 					     icon_name);
 		}
 		break;
@@ -704,7 +721,7 @@ as_app_validate_icons (AsApp *app, AsAppValidateHelper *helper)
 		if (!g_str_has_prefix (icon_name, "/")) {
 			ai_app_validate_add (helper->probs,
 					     AS_PROBLEM_KIND_TAG_INVALID,
-					     "local icon '%s' is not a filename",
+					     "local icon is not a filename [%s]",
 					     icon_name);
 		}
 		break;
@@ -712,7 +729,7 @@ as_app_validate_icons (AsApp *app, AsAppValidateHelper *helper)
 		if (g_str_has_prefix (icon_name, "/")) {
 			ai_app_validate_add (helper->probs,
 					     AS_PROBLEM_KIND_TAG_INVALID,
-					     "cached icon '%s' is a filename",
+					     "cached icon is a filename [%s]",
 					     icon_name);
 		}
 		break;
@@ -721,7 +738,7 @@ as_app_validate_icons (AsApp *app, AsAppValidateHelper *helper)
 		    !g_str_has_prefix (icon_name, "https://")) {
 			ai_app_validate_add (helper->probs,
 					     AS_PROBLEM_KIND_TAG_INVALID,
-					     "remote icon '%s' is not a url",
+					     "remote icon is not a url [%s]",
 					     icon_name);
 		}
 		break;
@@ -819,7 +836,7 @@ as_app_validate_release (AsRelease *release, AsAppValidateHelper *helper, GError
 				     AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
 				     "<release> has no timestamp");
 	}
-	if (timestamp > 20120101 && timestamp < 20151231) {
+	if (timestamp > 20120101 && timestamp < 20251231) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				     "<release> timestamp should be a UNIX time");
@@ -836,7 +853,8 @@ as_app_validate_release (AsRelease *release, AsAppValidateHelper *helper, GError
 			ai_app_validate_add (helper->probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
 					     "<release> description should be "
-					     "prose and not contain hyperlinks");
+					     "prose and not contain hyperlinks [%s]",
+					     tmp);
 		}
 		if (!as_app_validate_description (tmp,
 						  helper,
@@ -1101,12 +1119,14 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		    !as_app_validate_is_content_license (license)) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_TAG_INVALID,
-					     "<metadata_license> is not valid");
+					     "<metadata_license> is not valid [%s]",
+					     license);
 		} else if (validate_license) {
 			ret = as_app_validate_license (license, &error_local);
 			if (!ret) {
 				g_prefix_error (&error_local,
-						"<metadata_license> is not valid: ");
+						"<metadata_license> is not valid [%s]",
+						license);
 				ai_app_validate_add (probs,
 						     AS_PROBLEM_KIND_TAG_INVALID,
 						     "%s", error_local->message);
@@ -1133,7 +1153,8 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		ret = as_app_validate_license (license, &error_local);
 		if (!ret) {
 			g_prefix_error (&error_local,
-					"<project_license> is not valid: ");
+					"<project_license> is not valid [%s]",
+					license);
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_TAG_INVALID,
 					     "%s", error_local->message);
@@ -1181,7 +1202,8 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	if (update_contact != NULL && strlen (update_contact) < 6) {
 		ai_app_validate_add (probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<update_contact> is too short");
+				     "<update_contact> is too short [%s]",
+				     update_contact);
 	}
 	if (require_contactdetails && update_contact == NULL) {
 		switch (as_app_get_source_kind (app)) {
@@ -1228,7 +1250,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		if (g_strcmp0 (key, "unknown") == 0) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_TAG_INVALID,
-					     "<url> type invalid");
+					     "<url> type invalid [%s]", key);
 		}
 		tmp = g_hash_table_lookup (urls, key);
 		if (tmp == NULL || tmp[0] == '\0')
@@ -1237,7 +1259,8 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		    !g_str_has_prefix (tmp, "https://")) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_TAG_INVALID,
-					     "<url> does not start with 'http://'");
+					     "<url> does not start with 'http://' [%s]",
+					     tmp);
 		}
 	}
 
@@ -1259,28 +1282,31 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		if (str_len < length_name_min) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<name> is too short");
+					     "<name> is too short [%s]", name);
 		}
 		if (str_len > length_name_max) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<name> is too long");
+					     "<name> is too long [%s]", name);
 		}
 		if (ai_app_validate_fullstop_ending (name)) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<name> cannot end in '.'");
+					     "<name> cannot end in '.' [%s]",
+					     name);
 		}
 		if (as_app_validate_has_hyperlink (name)) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<name> cannot contain a hyperlink");
+					     "<name> cannot contain a hyperlink [%s]",
+					     name);
 		}
 		if (require_sentence_case &&
 		    !as_app_validate_has_first_word_capital (&helper, name)) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<name> requires sentence case");
+					     "<name> requires sentence case [%s]",
+					     name);
 		}
 	} else if (require_name) {
 		ai_app_validate_add (probs,
@@ -1295,28 +1321,33 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		if (str_len < length_summary_min) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<summary> is too short");
+					     "<summary> is too short [%s]",
+					     summary);
 		}
 		if (str_len > length_summary_max) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<summary> is too long");
+					     "<summary> is too long [%s]",
+					     summary);
 		}
 		if (ai_app_validate_fullstop_ending (summary)) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<summary> cannot end in '.'");
+					     "<summary> cannot end in '.' [%s]",
+					     summary);
 		}
 		if (as_app_validate_has_hyperlink (summary)) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<summary> cannot contain a hyperlink");
+					     "<summary> cannot contain a hyperlink [%s]",
+					     summary);
 		}
 		if (require_sentence_case &&
 		    !as_app_validate_has_first_word_capital (&helper, summary)) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<summary> requires sentence case");
+					     "<summary> requires sentence case [%s]",
+					     summary);
 		}
 	} else if (require_name) {
 		ai_app_validate_add (probs,
@@ -1374,22 +1405,26 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		if (str_len < length_name_min) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<developer_name> is too short");
+					     "<developer_name> is too short [%s]",
+					     name);
 		}
 		if (str_len > length_name_max) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<developer_name> is too long");
+					     "<developer_name> is too long [%s]",
+					     name);
 		}
 		if (as_app_validate_has_hyperlink (name)) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<developer_name> cannot contain a hyperlink");
+					     "<developer_name> cannot contain a hyperlink [%s]",
+					     name);
 		}
 		if (as_app_validate_has_email (name)) {
 			ai_app_validate_add (probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<developer_name> cannot contain an email address");
+					     "<developer_name> cannot contain an email address [%s]",
+					     name);
 		}
 	}
 
