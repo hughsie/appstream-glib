@@ -86,12 +86,12 @@ main (int argc, char **argv)
 	_cleanup_free_ gchar *old_metadata = NULL;
 	_cleanup_free_ gchar *origin = NULL;
 	_cleanup_free_ gchar *output_dir = NULL;
-	_cleanup_free_ gchar *packages_dir = NULL;
 	_cleanup_free_ gchar *screenshot_dir = NULL;
 	_cleanup_free_ gchar *screenshot_uri = NULL;
 	_cleanup_free_ gchar *temp_dir = NULL;
 	_cleanup_free_ gchar **veto_ignore = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *packages = NULL;
+	_cleanup_strv_free_ gchar **packages_dirs = NULL;
 	_cleanup_timer_destroy_ GTimer *timer = NULL;
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
@@ -115,7 +115,7 @@ main (int argc, char **argv)
 		{ "screenshot-dir", '\0', 0, G_OPTION_ARG_FILENAME, &screenshot_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the screenshots directory"), "DIR" },
-		{ "packages-dir", '\0', 0, G_OPTION_ARG_FILENAME, &packages_dir,
+		{ "packages-dir", '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &packages_dirs,
 			/* TRANSLATORS: command line option */
 			_("Set the packages directory"), "DIR" },
 		{ "temp-dir", '\0', 0, G_OPTION_ARG_FILENAME, &temp_dir,
@@ -190,8 +190,8 @@ main (int argc, char **argv)
 	/* set defaults */
 	if (api_version < 0.01)
 		api_version = 0.41;
-	if (packages_dir == NULL)
-		packages_dir = g_strdup ("./packages");
+	if (packages_dirs == NULL)
+		packages_dirs = g_strsplit ("./packages", "@", 1);
 	if (temp_dir == NULL)
 		temp_dir = g_strdup ("./tmp");
 	if (log_dir == NULL)
@@ -246,10 +246,12 @@ main (int argc, char **argv)
 	/* scan each package */
 	packages = g_ptr_array_new_with_free_func (g_free);
 	if (argc == 1) {
-		if (!as_builder_search_path (packages, packages_dir, &error)) {
-			/* TRANSLATORS: error message */
-			g_warning ("%s: %s", _("Failed to open packages"), error->message);
-			goto out;
+		for (i = 0; packages_dirs[i] != NULL; i++) {
+			if (!as_builder_search_path (packages, packages_dirs[i], &error)) {
+				/* TRANSLATORS: error message */
+				g_warning ("%s: %s", _("Failed to open packages"), error->message);
+				goto out;
+			}
 		}
 	} else {
 		for (i = 1; i < (guint) argc; i++)
