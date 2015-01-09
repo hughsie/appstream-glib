@@ -502,6 +502,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			const gchar *tmpdir,
 			GError **error)
 {
+	GError *error_local = NULL;
 	const gchar *kind_str;
 	const gchar *tmp;
 	_cleanup_free_ gchar *appdata_basename = NULL;
@@ -545,10 +546,20 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 	/* any installed appdata file */
 	if (g_file_test (appdata_filename, G_FILE_TEST_EXISTS)) {
-		return asb_plugin_process_filename (plugin,
-						    app,
-						    appdata_filename,
-						    error);
+		/* be understanding if upstream gets the AppData file
+		 * wrong -- just fall back to the desktop file data */
+		if (!asb_plugin_process_filename (plugin,
+						  app,
+						  appdata_filename,
+						  &error_local)) {
+			error_local->code = ASB_PLUGIN_ERROR_IGNORE;
+			g_propagate_error (error, error_local);
+			g_prefix_error (error,
+					"AppData file '%s' invalid: ",
+					appdata_filename);
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 	/* we're going to require this soon */

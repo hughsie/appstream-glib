@@ -169,6 +169,7 @@ asb_plugin_loader_process_app (AsbPluginLoader *plugin_loader,
 	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
 	AsbPlugin *plugin;
 	AsbPluginProcessAppFunc plugin_func = NULL;
+	GError *error_local = NULL;
 	gboolean ret;
 	guint i;
 
@@ -184,8 +185,20 @@ asb_plugin_loader_process_app (AsbPluginLoader *plugin_loader,
 				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 				 "Running asb_plugin_process_app() from %s",
 				 plugin->name);
-		if (!plugin_func (plugin, pkg, app, tmpdir, error))
-			return FALSE;
+		if (!plugin_func (plugin, pkg, app, tmpdir, &error_local)) {
+			if (g_error_matches (error_local,
+					     ASB_PLUGIN_ERROR,
+					     ASB_PLUGIN_ERROR_IGNORE)) {
+				asb_package_log (pkg,
+						 ASB_PACKAGE_LOG_LEVEL_WARNING,
+						 "Ignoring: %s",
+						 error_local->message);
+				g_clear_error (&error_local);
+			} else {
+				g_propagate_error (error, error_local);
+				return FALSE;
+			}
+		}
 	}
 	return TRUE;
 }
