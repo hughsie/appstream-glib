@@ -17,7 +17,6 @@ plugin_LTLIBRARIES =					\
 	libasb_plugin_absorb.la				\
 	libasb_plugin_appdata.la			\
 	libasb_plugin_blacklist.la			\
-	libasb_plugin_composite.la			\
 	libasb_plugin_dbus.la				\
 	libasb_plugin_desktop.la			\
 	libasb_plugin_gir.la				\
@@ -117,10 +116,5 @@ libasb_plugin_font_la_SOURCES = asb-plugin-font.c
 libasb_plugin_font_la_LIBADD = $(GLIB_LIBS) $(FREETYPE_LIBS) $(GDKPIXBUF_LIBS)
 libasb_plugin_font_la_LDFLAGS = -module -avoid-version
 libasb_plugin_font_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
-
-libasb_plugin_composite_la_SOURCES = asb-plugin-composite.c
-libasb_plugin_composite_la_LIBADD = $(GLIB_LIBS) $(FREETYPE_LIBS) $(GDKPIXBUF_LIBS)
-libasb_plugin_composite_la_LDFLAGS = -module -avoid-version
-libasb_plugin_composite_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
 -include $(top_srcdir)/git.mk
