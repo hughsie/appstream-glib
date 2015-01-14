@@ -827,6 +827,76 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
+ * as_util_search_token_sort_cb:
+ **/
+static gint
+as_util_search_token_sort_cb (gconstpointer a, gconstpointer b, gpointer user_data)
+{
+	guint *cnt_a;
+	guint *cnt_b;
+	GHashTable *dict = (GHashTable *) user_data;
+	cnt_a = g_hash_table_lookup (dict, (const gchar *) a);
+	cnt_b = g_hash_table_lookup (dict, (const gchar *) b);
+	if (*cnt_a < *cnt_b)
+		return 1;
+	if (*cnt_a > *cnt_b)
+		return -1;
+	return 0;
+}
+
+/**
+ * as_util_show_search_tokens:
+ **/
+static gboolean
+as_util_show_search_tokens (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	GPtrArray *apps;
+	GList *l;
+	guint i;
+	guint j;
+	const gchar *tmp;
+	guint *cnt;
+	_cleanup_hashtable_unref_ GHashTable *dict = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_list_free_ GList *keys = NULL;
+
+	/* load system database */
+	store = as_store_new ();
+	if (!as_store_load (store, AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM, NULL, error))
+		return FALSE;
+	dict = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+	apps = as_store_get_apps (store);
+	for (i = 0; i < apps->len; i++) {
+		AsApp *app;
+		_cleanup_ptrarray_unref_ GPtrArray *tokens = NULL;
+		app = g_ptr_array_index (apps, i);
+		tokens = as_app_get_search_tokens (app);
+		for (j = 0; j < tokens->len; j++) {
+			tmp = g_ptr_array_index (tokens, j);
+			cnt = g_hash_table_lookup (dict, tmp);
+			if (cnt == NULL) {
+				cnt = g_new0 (guint, 1);
+				g_hash_table_insert (dict,
+						     g_strdup (tmp),
+						     cnt);
+			}
+			(*cnt)++;
+		}
+	}
+
+	/* display the keywords sorted */
+	keys = g_hash_table_get_keys (dict);
+	keys = g_list_sort_with_data (keys, as_util_search_token_sort_cb, dict);
+	for (l = keys; l != NULL; l = l->next) {
+		tmp = l->data;
+		cnt = g_hash_table_lookup (dict, tmp);
+		g_print ("%s [%i]\n", tmp, *cnt);
+	}
+
+	return TRUE;
+}
+
+/**
  * as_util_install:
  **/
 static gboolean
@@ -2475,6 +2545,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Search for AppStream applications"),
 		     as_util_search);
+	as_util_add (priv->cmd_array,
+		     "show-search-tokens",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Display application search tokens"),
+		     as_util_show_search_tokens);
 	as_util_add (priv->cmd_array,
 		     "install",
 		     NULL,
