@@ -3842,6 +3842,46 @@ as_app_search_matches (AsApp *app, const gchar *search)
 }
 
 /**
+ * as_app_get_search_tokens:
+ * @app: a #AsApp instance.
+ *
+ * Returns all the search tokens for the application. These are unsorted.
+ *
+ * Returns: (transfer full): The string search tokens
+ *
+ * Since: 0.3.4
+ */
+GPtrArray *
+as_app_get_search_tokens (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsAppTokenItem *item;
+	GPtrArray *array;
+	guint i, j;
+
+	/* ensure the token cache is created */
+	if (g_once_init_enter (&priv->token_cache_valid)) {
+		as_app_create_token_cache (app);
+		g_once_init_leave (&priv->token_cache_valid, TRUE);
+	}
+
+	/* return all the toek cache */
+	array = g_ptr_array_new_with_free_func (g_free);
+	for (i = 0; i < priv->token_cache->len; i++) {
+		item = g_ptr_array_index (priv->token_cache, i);
+		if (item->values_utf8 != NULL) {
+			for (j = 0; item->values_utf8[j] != NULL; j++)
+				g_ptr_array_add (array, g_strdup (item->values_utf8[j]));
+		}
+		if (item->values_ascii != NULL) {
+			for (j = 0; item->values_ascii[j] != NULL; j++)
+				g_ptr_array_add (array, g_strdup (item->values_ascii[j]));
+		}
+	}
+	return array;
+}
+
+/**
  * as_app_search_matches_all:
  * @app: a #AsApp instance.
  * @search: the search terms.
