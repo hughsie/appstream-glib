@@ -3701,6 +3701,14 @@ as_app_value_tokenize (const gchar *value)
 static gboolean
 as_app_token_is_valid (const gchar *token)
 {
+	guint i;
+	const gchar *blacklist[] = {
+		"and", "the", "desktop", "application", "for", "you", "your",
+		"with", "can", "are", "from", "that", "use", "allows", "also",
+		"this", "other", "all", "using", "has", "some", "like", "them",
+		"well", "not", "using", "not", "but", "set", "its", "into",
+		"such", "was", "they", "where", "want", "only", "about",
+		NULL };
 	if (strlen (token) < 3)
 		return FALSE;
 	if (g_strstr_len (token, -1, "<") != NULL)
@@ -3711,6 +3719,10 @@ as_app_token_is_valid (const gchar *token)
 		return FALSE;
 	if (g_strstr_len (token, -1, ")") != NULL)
 		return FALSE;
+	for (i = 0; blacklist[i] != NULL; i++)  {
+		if (g_strcmp0 (token, blacklist[i]) == 0)
+			return FALSE;
+	}
 	return TRUE;
 }
 

@@ -1850,7 +1850,7 @@ as_test_app_search_func (void)
 {
 	const gchar *all[] = { "gnome", "install", "software", NULL };
 	const gchar *none[] = { "gnome", "xxx", "software", NULL };
-	const gchar *mime[] = { "application", "vnd", "oasis", "opendocument","text", NULL };
+	const gchar *mime[] = { "vnd", "oasis", "opendocument","text", NULL };
 	_cleanup_object_unref_ AsApp *app = NULL;
 
 	app = as_app_new ();
@@ -1869,7 +1869,10 @@ as_test_app_search_func (void)
 	g_assert_cmpint (as_app_search_matches (app, "d-feet"), ==, 90);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) all), ==, 220);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) none), ==, 0);
-	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) mime), ==, 5);
+	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) mime), ==, 4);
+
+	/* do not add short or common keywords */
+	g_assert_cmpint (as_app_search_matches (app, "and"), ==, 0);
 }
 
 /* load and save embedded icons */
