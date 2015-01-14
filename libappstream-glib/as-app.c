@@ -3696,6 +3696,46 @@ as_app_value_tokenize (const gchar *value)
 }
 
 /**
+ * as_app_token_is_valid:
+ **/
+static gboolean
+as_app_token_is_valid (const gchar *token)
+{
+	if (strlen (token) < 3)
+		return FALSE;
+	return TRUE;
+}
+
+/**
+ * as_app_remove_invalid_tokens:
+ **/
+static void
+as_app_remove_invalid_tokens (gchar **tokens)
+{
+	guint i;
+	guint idx = 0;
+	guint len;
+
+	if (tokens == NULL)
+		return;
+
+	/* remove any tokens that are invalid and maintain the order */
+	len = g_strv_length (tokens);
+	for (i = 0; i < len; i++) {
+		if (!as_app_token_is_valid (tokens[i])) {
+			g_free (tokens[i]);
+			tokens[i] = NULL;
+			continue;
+		}
+		tokens[idx++] = tokens[i];
+	}
+
+	/* unused token space */
+	for (i = idx; i < len; i++)
+		tokens[i] = NULL;
+}
+
+/**
  * as_app_add_tokens:
  **/
 static void
@@ -3725,6 +3765,10 @@ as_app_add_tokens (AsApp *app,
 #endif
 	if (token_item->values_utf8 == NULL)
 		token_item->values_utf8 = as_app_value_tokenize (value);
+
+	/* remove any tokens that are invalid */
+	as_app_remove_invalid_tokens (token_item->values_utf8);
+	as_app_remove_invalid_tokens (token_item->values_ascii);
 
 	token_item->score = score;
 	g_ptr_array_add (priv->token_cache, token_item);
