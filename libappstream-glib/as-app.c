@@ -3703,6 +3703,14 @@ as_app_token_is_valid (const gchar *token)
 {
 	if (strlen (token) < 3)
 		return FALSE;
+	if (g_strstr_len (token, -1, "<") != NULL)
+		return FALSE;
+	if (g_strstr_len (token, -1, ">") != NULL)
+		return FALSE;
+	if (g_strstr_len (token, -1, "(") != NULL)
+		return FALSE;
+	if (g_strstr_len (token, -1, ")") != NULL)
+		return FALSE;
 	return TRUE;
 }
 
