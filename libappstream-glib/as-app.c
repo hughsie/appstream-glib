@@ -3696,37 +3696,6 @@ as_app_value_tokenize (const gchar *value)
 }
 
 /**
- * as_app_token_is_valid:
- **/
-static gboolean
-as_app_token_is_valid (const gchar *token)
-{
-	guint i;
-	const gchar *blacklist[] = {
-		"and", "the", "desktop", "application", "for", "you", "your",
-		"with", "can", "are", "from", "that", "use", "allows", "also",
-		"this", "other", "all", "using", "has", "some", "like", "them",
-		"well", "not", "using", "not", "but", "set", "its", "into",
-		"such", "was", "they", "where", "want", "only", "about",
-		NULL };
-	if (strlen (token) < 3)
-		return FALSE;
-	if (g_strstr_len (token, -1, "<") != NULL)
-		return FALSE;
-	if (g_strstr_len (token, -1, ">") != NULL)
-		return FALSE;
-	if (g_strstr_len (token, -1, "(") != NULL)
-		return FALSE;
-	if (g_strstr_len (token, -1, ")") != NULL)
-		return FALSE;
-	for (i = 0; blacklist[i] != NULL; i++)  {
-		if (g_strcmp0 (token, blacklist[i]) == 0)
-			return FALSE;
-	}
-	return TRUE;
-}
-
-/**
  * as_app_remove_invalid_tokens:
  **/
 static void
@@ -3742,7 +3711,7 @@ as_app_remove_invalid_tokens (gchar **tokens)
 	/* remove any tokens that are invalid and maintain the order */
 	len = g_strv_length (tokens);
 	for (i = 0; i < len; i++) {
-		if (!as_app_token_is_valid (tokens[i])) {
+		if (!as_utils_search_token_valid (tokens[i])) {
 			g_free (tokens[i]);
 			tokens[i] = NULL;
 			continue;
@@ -3954,6 +3923,9 @@ as_app_get_search_tokens (AsApp *app)
  *
  * Returns: a match scrore, where 0 is no match and larger numbers are better
  * matches.
+ *
+ * It's probably a good idea to use as_utils_search_tokenize() to populate
+ * search as very short or common keywords will return a lot of matches.
  *
  * Since: 0.1.3
  */

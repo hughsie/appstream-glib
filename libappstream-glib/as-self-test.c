@@ -2708,6 +2708,7 @@ as_test_utils_func (void)
 {
 	gboolean ret;
 	gchar *tmp;
+	gchar **tokens;
 	GError *error = NULL;
 
 	/* as_strndup */
@@ -2781,6 +2782,21 @@ as_test_utils_func (void)
 	//ret = as_utils_check_url_exists ("http://www.bbc.co.uk/", &error);
 	//g_assert (ret);
 	//g_assert_no_error (error);
+
+	/* valid tokens */
+	g_assert (as_utils_search_token_valid ("battery"));
+	g_assert (!as_utils_search_token_valid ("and"));
+	g_assert (!as_utils_search_token_valid ("is"));
+	g_assert (!as_utils_search_token_valid ("<b>"));
+
+	/* check tokenisation */
+	tokens = as_utils_search_tokenize ("a c b");
+	g_assert (tokens == NULL);
+	tokens = as_utils_search_tokenize ("batteries are (really) stupid");
+	g_assert_cmpstr (tokens[0], ==, "batteries");
+	g_assert_cmpstr (tokens[1], ==, "stupid");
+	g_assert_cmpstr (tokens[2], ==, NULL);
+	g_strfreev (tokens);
 }
 
 static void

@@ -1304,3 +1304,77 @@ as_utils_install_filename (AsUtilsLocation location,
 	}
 	return ret;
 }
+
+/**
+ * as_utils_search_token_valid:
+ * @token: the search token
+ *
+ * Checks the search token if it is valid. Valid tokens are at least 3 chars in
+ * length, not common words like "and", and do not contain markup.
+ *
+ * Returns: %TRUE is the search token was valid
+ *
+ * Since: 0.3.4
+ **/
+gboolean
+as_utils_search_token_valid (const gchar *token)
+{
+	guint i;
+	const gchar *blacklist[] = {
+		"and", "the", "desktop", "application", "for", "you", "your",
+		"with", "can", "are", "from", "that", "use", "allows", "also",
+		"this", "other", "all", "using", "has", "some", "like", "them",
+		"well", "not", "using", "not", "but", "set", "its", "into",
+		"such", "was", "they", "where", "want", "only", "about",
+		NULL };
+	if (strlen (token) < 3)
+		return FALSE;
+	if (g_strstr_len (token, -1, "<") != NULL)
+		return FALSE;
+	if (g_strstr_len (token, -1, ">") != NULL)
+		return FALSE;
+	if (g_strstr_len (token, -1, "(") != NULL)
+		return FALSE;
+	if (g_strstr_len (token, -1, ")") != NULL)
+		return FALSE;
+	for (i = 0; blacklist[i] != NULL; i++)  {
+		if (g_strcmp0 (token, blacklist[i]) == 0)
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
+ * as_utils_search_tokenize:
+ * @search: the search string
+ *
+ * Splits up a string into tokens and returns tokens that are suitable for
+ * searching. This includes taking out common words and casefolding the
+ * returned search tokens.
+ *
+ * Returns: (transfer full): Valid tokens to search for, or %NULL for error
+ *
+ * Since: 0.3.4
+ **/
+gchar **
+as_utils_search_tokenize (const gchar *search)
+{
+	gchar **values = NULL;
+	guint i;
+	guint idx = 0;
+	_cleanup_strv_free_ gchar **tmp = NULL;
+
+	/* only add keywords that are long enough */
+	tmp = g_strsplit (search, " ", -1);
+	values = g_new0 (gchar *, g_strv_length (tmp) + 1);
+	for (i = 0; tmp[i] != NULL; i++) {
+		if (!as_utils_search_token_valid (tmp[i]))
+			continue;
+		values[idx++] = g_utf8_casefold (tmp[i], -1);
+	}
+	if (idx == 0) {
+		g_free (values);
+		return NULL;
+	}
+	return values;
+}
