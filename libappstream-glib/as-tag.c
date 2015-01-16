@@ -111,6 +111,9 @@ as_tag_from_string_full (const gchar *tag, AsTagFlags flags)
 			return AS_TAG_APPLICATION;
 		if (g_strcmp0 (tag, "updatecontact") == 0)
 			return AS_TAG_UPDATE_CONTACT;
+		/* fix spelling error */
+		if (g_strcmp0 (tag, "metadata_licence") == 0)
+			return AS_TAG_METADATA_LICENSE;
 	}
 
 	/* translated versions */
