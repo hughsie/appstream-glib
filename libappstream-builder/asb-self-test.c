@@ -222,14 +222,14 @@ asb_test_plugin_loader_func (void)
 	g_assert (ret);
 
 	/* get the list of globs */
-	globs = asb_plugin_loader_get_globs (loader);
+	globs = asb_plugin_loader_get_globs (loader);\
 	g_assert_cmpint (globs->len, ==, 22);
 	g_assert_cmpstr (asb_glob_value_search (globs, "/usr/share/applications/gimp.desktop"), ==, "");
 	g_assert_cmpstr (asb_glob_value_search (globs, "/srv/dave.txt"), ==, NULL);
 
 	/* get the list of plugins */
 	plugins = asb_plugin_loader_get_plugins (loader);
-	g_assert_cmpint (plugins->len, ==, 18);
+	g_assert_cmpint (plugins->len, ==, 17);
 	plugin = g_ptr_array_index (plugins, 0);
 	g_assert (plugin != NULL);
 	g_assert (plugin->module != NULL);
@@ -355,7 +355,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store), ==, 4);
+	g_assert_cmpint (as_store_get_size (store), ==, 5);
 	app = as_store_get_app_by_pkgname (store, "app");
 	g_assert (app != NULL);
 	app = as_store_get_app_by_id (store, "app.desktop");
@@ -455,10 +455,31 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"</metadata>\n"
 		"</component>\n"
 		"<component type=\"desktop\">\n"
-		"<id>valid.desktop</id>\n"
+		"<id>valid1.desktop</id>\n"
 		"<pkgname>composite</pkgname>\n"
 		"<name>Frobnicator</name>\n"
 		"<summary>Frobnicator</summary>\n"
+		"<icon type=\"stock\">computer</icon>\n"
+		"<categories>\n"
+		"<category>Profiling</category>\n"
+		"</categories>\n"
+		"<kudos>\n"
+		"<kudo>HiDpiIcon</kudo>\n"
+		"</kudos>\n"
+		"<project_license>GPL-2.0+</project_license>\n"
+		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
+		"<releases>\n"
+		"<release version=\"1\" timestamp=\"1407844800\"/>\n"
+		"</releases>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">composite-1-1.fc21.x86_64.rpm</value>\n"
+		"</metadata>\n"
+		"</component>\n"
+		"<component type=\"desktop\">\n"
+		"<id>valid2.desktop</id>\n"
+		"<pkgname>composite</pkgname>\n"
+		"<name>Frobnicator Example</name>\n"
+		"<summary>Frobnicator Example Program</summary>\n"
 		"<icon type=\"stock\">computer</icon>\n"
 		"<categories>\n"
 		"<category>Profiling</category>\n"
@@ -486,12 +507,10 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store_failed, file_failed, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store_failed), ==, 5);
+	g_assert_cmpint (as_store_get_size (store_failed), ==, 4);
 	app = as_store_get_app_by_id (store_failed, "console1.desktop");
 	g_assert (app != NULL);
 	app = as_store_get_app_by_id (store_failed, "console2.desktop");
-	g_assert (app != NULL);
-	app = as_store_get_app_by_id (store_failed, "valid2.desktop");
 	g_assert (app != NULL);
 
 	/* check output */
@@ -620,30 +639,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<metadata>\n"
 		"<value key=\"PaddedIcon\">48x48</value>\n"
 		"<value key=\"X-CacheID\">app-console-1-1.fc21.noarch.rpm</value>\n"
-		"</metadata>\n"
-		"</component>\n"
-		"<component type=\"desktop\">\n"
-		"<id>valid2.desktop</id>\n"
-		"<pkgname>composite</pkgname>\n"
-		"<name>Frobnicator Example</name>\n"
-		"<summary>Frobnicator Example Program</summary>\n"
-		"<icon type=\"stock\">computer</icon>\n"
-		"<categories>\n"
-		"<category>Profiling</category>\n"
-		"</categories>\n"
-		"<kudos>\n"
-		"<kudo>HiDpiIcon</kudo>\n"
-		"</kudos>\n"
-		"<vetos>\n"
-		"<veto>absorbed into valid.desktop</veto>\n"
-		"</vetos>\n"
-		"<project_license>GPL-2.0+</project_license>\n"
-		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
-		"<releases>\n"
-		"<release version=\"1\" timestamp=\"1407844800\"/>\n"
-		"</releases>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">composite-1-1.fc21.x86_64.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
 		"</components>\n";
