@@ -1,3 +1,36 @@
+Version 0.3.4
+~~~~~~~~~~~~~
+Released: 2015-01-17
+
+New Features:
+ - Add an --origin option to appstream-builder (Richard Hughes)
+ - Add as_app_get_search_tokens() (Richard Hughes)
+ - Add show-search-tokens subcommand to appstream-util (Richard Hughes)
+ - Add the matrix-html subcommand to appstream-util (Richard Hughes)
+ - Add the VCS information to the AppStream metadata (Richard Hughes)
+
+Bugfixes:
+ - Add more applications to the blacklist (Richard Hughes, Igor Gnatenko)
+ - Allow specifying --packages-dir multiple times (Richard Hughes)
+ - Alow setting the cachedir different from the outputdir (Richard Hughes)
+ - Always return errors from the correct domain when parsing broken AppData files (Richard Hughes)
+ - Assume <image>foo</image> is a source image kind for AppData files (Richard Hughes)
+ - Assume that stock icons are available in HiDPI sizes (Richard Hughes)
+ - Blacklist the 40 most common search tokens (Richard Hughes)
+ - Check if the search entries are valid before searching (Richard Hughes)
+ - Check screenshots are a reasonable size (Richard Hughes)
+ - Do not absorb metainfo files for package deps (Richard Hughes)
+ - Do not blacklist applications with broken AppData files (Richard Hughes)
+ - Do not veto applications with NoDisplay=false (Richard Hughes)
+ - Fall back to the dumb tokenizer for keywords with special chars (Richard Hughes)
+ - Handle other-endian MO files (Andreas Schwab)
+ - Move as_utils_install_filename() into libappstream-glib (Richard Hughes)
+ - Output the full filename for local icons (Richard Hughes)
+ - Preserve the URL for remote icon types and filename for local icons (Richard Hughes)
+ - Require AppData for Xvfb-using applications (Richard Hughes)
+ - Set an error if an XML file contains font markup (Richard Hughes)
+ - Show the offending text when validation fails (Richard Hughes)
+
 Version 0.3.3
 ~~~~~~~~~~~~~
 Released: 2014-11-24
