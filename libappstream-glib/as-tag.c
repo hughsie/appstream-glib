@@ -185,6 +185,7 @@ as_tag_to_string (AsTag tag)
 		"source_pkgname",
 		"vetos",
 		"veto",
+		"bundle",
 		NULL };
 	if (tag > AS_TAG_LAST)
 		tag = AS_TAG_LAST;

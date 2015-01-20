@@ -25,6 +25,7 @@
 #include <stdlib.h>
 
 #include "as-app-private.h"
+#include "as-bundle-private.h"
 #include "as-cleanup.h"
 #include "as-enums.h"
 #include "as-icon-private.h"
@@ -614,6 +615,44 @@ as_test_image_func (void)
 }
 
 static void
+as_test_bundle_func (void)
+{
+	GError *error = NULL;
+	GNode *n;
+	GNode *root;
+	GString *xml;
+	const gchar *src =
+		"<bundle type=\"limba\">gnome-3-16</bundle>";
+	gboolean ret;
+	_cleanup_object_unref_ AsBundle *bundle = NULL;
+
+	bundle = as_bundle_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, -1, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "bundle");
+	g_assert (n != NULL);
+	ret = as_bundle_node_parse (bundle, n, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_bundle_get_kind (bundle), ==, AS_BUNDLE_KIND_LIMBA);
+	g_assert_cmpstr (as_bundle_get_id (bundle), ==, "gnome-3-16");
+
+	/* back to node */
+	root = as_node_new ();
+	n = as_bundle_node_insert (bundle, root, 0.4);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	g_assert_cmpstr (xml->str, ==, src);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+}
+
+static void
 as_test_screenshot_func (void)
 {
 	GPtrArray *images;
@@ -675,6 +714,7 @@ static void
 as_test_app_func (void)
 {
 	AsIcon *ic;
+	AsBundle *bu;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
@@ -686,6 +726,7 @@ as_test_app_func (void)
 		"<id>org.gnome.Software.desktop</id>"
 		"<pkgname>gnome-software</pkgname>"
 		"<source_pkgname>gnome-software-src</source_pkgname>"
+		"<bundle type=\"limba\">gnome-software-gnome-3-16</bundle>"
 		"<name>Software</name>"
 		"<name xml:lang=\"pl\">Oprogramowanie</name>"
 		"<summary>Application manager</summary>"
@@ -783,6 +824,12 @@ as_test_app_func (void)
 	icons = as_app_get_icons (app);
 	g_assert (icons != NULL);
 	g_assert_cmpint (icons->len, ==, 1);
+
+	/* check bundle */
+	bu = as_app_get_bundle_default (app);
+	g_assert (bu != NULL);
+	g_assert_cmpint (as_bundle_get_kind (bu), ==, AS_BUNDLE_KIND_LIMBA);
+	g_assert_cmpstr (as_bundle_get_id (bu), ==, "gnome-software-gnome-3-16");
 
 	/* check we can get a specific icon */
 	ic = as_app_get_icon_for_size (app, 999, 999);
@@ -3167,6 +3214,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/release{description}", as_test_release_desc_func);
 	g_test_add_func ("/AppStream/icon", as_test_icon_func);
 	g_test_add_func ("/AppStream/icon{embedded}", as_test_icon_embedded_func);
+	g_test_add_func ("/AppStream/bundle", as_test_bundle_func);
 	g_test_add_func ("/AppStream/image", as_test_image_func);
 	g_test_add_func ("/AppStream/image{resize}", as_test_image_resize_func);
 	g_test_add_func ("/AppStream/image{alpha}", as_test_image_alpha_func);

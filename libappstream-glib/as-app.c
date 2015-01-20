@@ -38,6 +38,7 @@
 #include <string.h>
 
 #include "as-app-private.h"
+#include "as-bundle-private.h"
 #include "as-cleanup.h"
 #include "as-enums.h"
 #include "as-icon-private.h"
@@ -75,6 +76,7 @@ struct _AsAppPrivate
 	GPtrArray	*provides;			/* of AsProvide */
 	GPtrArray	*screenshots;			/* of AsScreenshot */
 	GPtrArray	*icons;				/* of AsIcon */
+	GPtrArray	*bundles;			/* of AsBundle */
 	GPtrArray	*vetos;				/* of string */
 	AsAppSourceKind	 source_kind;
 	AsAppState	 state;
@@ -277,6 +279,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->provides);
 	g_ptr_array_unref (priv->screenshots);
 	g_ptr_array_unref (priv->icons);
+	g_ptr_array_unref (priv->bundles);
 	g_ptr_array_unref (priv->token_cache);
 	g_ptr_array_unref (priv->vetos);
 
@@ -315,6 +318,7 @@ as_app_init (AsApp *app)
 	priv->provides = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->screenshots = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->icons = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	priv->bundles = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->token_cache = g_ptr_array_new_with_free_func ((GDestroyNotify) as_app_token_item_free);
 	priv->vetos = g_ptr_array_new_with_free_func (g_free);
 
@@ -606,6 +610,23 @@ as_app_get_icons (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->icons;
+}
+
+/**
+ * as_app_get_bundles:
+ * @app: a #AsApp instance.
+ *
+ * Gets any bundles the application has defined.
+ *
+ * Returns: (element-type AsBundle) (transfer none): an array
+ *
+ * Since: 0.3.5
+ **/
+GPtrArray *
+as_app_get_bundles (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->bundles;
 }
 
 /**
@@ -2105,6 +2126,20 @@ as_app_check_icon_duplicate (AsIcon *icon1, AsIcon *icon2)
 }
 
 /**
+ * as_app_check_bundle_duplicate:
+ **/
+static gboolean
+as_app_check_bundle_duplicate (AsBundle *bundle1, AsBundle *bundle2)
+{
+	if (as_bundle_get_kind (bundle1) != as_bundle_get_kind (bundle2))
+		return FALSE;
+	if (g_strcmp0 (as_bundle_get_id (bundle1),
+		       as_bundle_get_id (bundle2)) != 0)
+		return FALSE;
+	return TRUE;
+}
+
+/**
  * as_app_add_icon:
  * @app: a #AsApp instance.
  * @icon: a #AsIcon instance.
@@ -2133,6 +2168,33 @@ as_app_add_icon (AsApp *app, AsIcon *icon)
 	if (as_icon_get_kind (icon) == AS_ICON_KIND_STOCK)
 		as_app_add_kudo_kind (app, AS_KUDO_KIND_HI_DPI_ICON);
 	g_ptr_array_add (priv->icons, g_object_ref (icon));
+}
+
+/**
+ * as_app_add_bundle:
+ * @app: a #AsApp instance.
+ * @bundle: a #AsBundle instance.
+ *
+ * Adds a bundle to an application.
+ *
+ * Since: 0.3.5
+ **/
+void
+as_app_add_bundle (AsApp *app, AsBundle *bundle)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
+		AsBundle *bu_tmp;
+		guint i;
+		for (i = 0; i < priv->bundles->len; i++) {
+			bu_tmp = g_ptr_array_index (priv->bundles, i);
+			if (as_app_check_bundle_duplicate (bundle, bu_tmp))
+				return;
+		}
+	}
+	g_ptr_array_add (priv->bundles, g_object_ref (bundle));
 }
 
 /**
@@ -2455,6 +2517,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 {
 	AsAppPrivate *priv = GET_PRIVATE (donor);
 	AsAppPrivate *papp = GET_PRIVATE (app);
+	AsBundle *bundle;
 	AsScreenshot *ss;
 	const gchar *tmp;
 	const gchar *key;
@@ -2487,6 +2550,12 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	for (i = 0; i < priv->pkgnames->len; i++) {
 		tmp = g_ptr_array_index (priv->pkgnames, i);
 		as_app_add_pkgname (app, tmp, -1);
+	}
+
+	/* bundles */
+	for (i = 0; i < priv->bundles->len; i++) {
+		bundle = g_ptr_array_index (priv->bundles, i);
+		as_app_add_bundle (app, bundle);
 	}
 
 	/* kudos */
@@ -2846,6 +2915,12 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 				priv->source_pkgname, 0, NULL);
 	}
 
+	/* <bundle> */
+	for (i = 0; i < priv->bundles->len; i++) {
+		AsBundle *bu = g_ptr_array_index (priv->bundles, i);
+		as_bundle_node_insert (bu, node_app, api_version);
+	}
+
 	/* <name> */
 	as_node_insert_localized (node_app, "name",
 				  priv->names,
@@ -3081,6 +3156,17 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 	case AS_TAG_PKGNAME:
 		g_ptr_array_add (priv->pkgnames, as_node_take_data (n));
 		break;
+
+	/* <bundle> */
+	case AS_TAG_BUNDLE:
+	{
+		_cleanup_object_unref_ AsBundle *ic = NULL;
+		ic = as_bundle_new ();
+		if (!as_bundle_node_parse (ic, n, error))
+			return FALSE;
+		as_app_add_bundle (app, ic);
+		break;
+	}
 
 	/* <name> */
 	case AS_TAG_NAME:
@@ -3467,6 +3553,7 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags, GError *
 		g_ptr_array_set_size (priv->architectures, 0);
 		g_ptr_array_set_size (priv->extends, 0);
 		g_ptr_array_set_size (priv->icons, 0);
+		g_ptr_array_set_size (priv->bundles, 0);
 		g_hash_table_remove_all (priv->keywords);
 	}
 	for (n = node->children; n != NULL; n = n->next) {
@@ -3627,6 +3714,16 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
 			for (c = n->children; c != NULL; c = c->next) {
 				if (!as_app_node_parse_dep11_icons (app, c, error))
 					return FALSE;
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Bundle") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				_cleanup_object_unref_ AsBundle *bu = NULL;
+				bu = as_bundle_new ();
+				if (!as_bundle_node_parse_dep11 (bu, c, error))
+					return FALSE;
+				as_app_add_bundle (app, bu);
 			}
 			continue;
 		}
@@ -4606,6 +4703,28 @@ as_app_get_icon_default (AsApp *app)
 		return NULL;
 	icon = g_ptr_array_index (priv->icons, 0);
 	return icon;
+}
+
+/**
+ * as_app_get_bundle_default:
+ * @app: A #AsApp
+ *
+ * Finds the default bundle.
+ *
+ * Returns: (transfer none): a #AsBundle, or %NULL
+ *
+ * Since: 0.3.5
+ **/
+AsBundle *
+as_app_get_bundle_default (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsBundle *bundle;
+
+	if (priv->bundles->len == 0)
+		return NULL;
+	bundle = g_ptr_array_index (priv->bundles, 0);
+	return bundle;
 }
 
 /**

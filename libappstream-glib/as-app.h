@@ -28,6 +28,7 @@
 
 #include <glib-object.h>
 
+#include "as-bundle.h"
 #include "as-enums.h"
 #include "as-icon.h"
 #include "as-provide.h"
@@ -233,6 +234,7 @@ GPtrArray	*as_app_get_releases		(AsApp		*app);
 GPtrArray	*as_app_get_provides		(AsApp		*app);
 GPtrArray	*as_app_get_screenshots		(AsApp		*app);
 GPtrArray	*as_app_get_icons		(AsApp		*app);
+GPtrArray	*as_app_get_bundles		(AsApp		*app);
 GHashTable	*as_app_get_names		(AsApp		*app);
 GHashTable	*as_app_get_comments		(AsApp		*app);
 GHashTable	*as_app_get_developer_names	(AsApp		*app);
@@ -354,6 +356,8 @@ void		 as_app_add_screenshot		(AsApp		*app,
 						 AsScreenshot	*screenshot);
 void		 as_app_add_icon		(AsApp		*app,
 						 AsIcon		*icon);
+void		 as_app_add_bundle		(AsApp		*app,
+						 AsBundle	*bundle);
 void		 as_app_add_language		(AsApp		*app,
 						 gint		 percentage,
 						 const gchar	*locale,
@@ -406,6 +410,7 @@ AsIcon		*as_app_get_icon_default	(AsApp		*app);
 AsIcon		*as_app_get_icon_for_size	(AsApp		*app,
 						 guint		 width,
 						 guint		 height);
+AsBundle	*as_app_get_bundle_default	(AsApp		*app);
 gboolean	 as_app_convert_icons		(AsApp		*app,
 						 AsIconKind	 kind,
 						 GError		**error);

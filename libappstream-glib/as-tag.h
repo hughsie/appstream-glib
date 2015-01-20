@@ -72,6 +72,7 @@
  * @AS_TAG_SOURCE_PKGNAME:		`source_pkgname`
  * @AS_TAG_VETOS:			`vetos`
  * @AS_TAG_VETO:			`veto`
+ * @AS_TAG_BUNDLE:			`bundle`
  *
  * The tag type.
  **/
@@ -118,6 +119,7 @@ typedef enum {
 	AS_TAG_SOURCE_PKGNAME,		/* Since: 0.2.4 */
 	AS_TAG_VETOS,			/* Since: 0.3.0 */
 	AS_TAG_VETO,			/* Since: 0.3.0 */
+	AS_TAG_BUNDLE,			/* Since: 0.3.5 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;

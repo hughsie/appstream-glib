@@ -68,6 +68,7 @@ libappstream_glib_includedir = $(includedir)/libappstream-glib
 libappstream_glib_include_HEADERS =				\
 	appstream-glib.h					\
 	as-app.h						\
+	as-bundle.h						\
 	as-enums.h						\
 	as-icon.h						\
 	as-image.h						\
@@ -85,6 +86,8 @@ libappstream_glib_la_SOURCES =					\
 	as-app.c						\
 	as-app-private.h					\
 	as-app-validate.c					\
+	as-bundle.c						\
+	as-bundle-private.h					\
 	as-cleanup.h						\
 	as-enums.c						\
 	as-icon.c						\
@@ -154,6 +157,8 @@ introspection_sources =						\
 	as-app.c						\
 	as-app-validate.c					\
 	as-app.h						\
+	as-bundle.c						\
+	as-bundle.h						\
 	as-enums.c						\
 	as-enums.h						\
 	as-icon.c						\
