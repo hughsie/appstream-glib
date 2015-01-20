@@ -1257,7 +1257,7 @@ as_app_validate_utf8 (const gchar *text, gssize text_len)
 	if (text == NULL)
 		return TRUE;
 	if (text[0] == '\0')
-		return TRUE;
+		return FALSE;
 
 	/* is just whitespace */
 	for (i = 0; text[i] != '\0' && is_whitespace; i++)
