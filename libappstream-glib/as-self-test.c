@@ -190,7 +190,7 @@ as_test_provide_func (void)
 }
 
 static void
-as_test_release_desc_func (void)
+as_test_release_appstream_func (void)
 {
 	GError *error = NULL;
 	GNode *n;
@@ -228,6 +228,7 @@ as_test_release_desc_func (void)
 	/* back to node */
 	root = as_node_new ();
 	as_node_context_set_version (ctx, 1.0);
+	as_node_context_set_source_kind (ctx, AS_APP_SOURCE_KIND_APPSTREAM);
 	n = as_release_node_insert (release, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	ret = as_test_compare_lines (xml->str, src, &error);
@@ -236,6 +237,47 @@ as_test_release_desc_func (void)
 
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
+}
+
+static void
+as_test_release_appdata_func (void)
+{
+	GError *error = NULL;
+	GNode *n;
+	GNode *root;
+	gboolean ret;
+	const gchar *src =
+		"<release version=\"0.1.2\" timestamp=\"123\">\n"
+		"<description>\n"
+		"<p>This is a new release</p>\n"
+		"<p xml:lang=\"pl\">Oprogramowanie</p>\n"
+		"</description>\n"
+		"</release>\n";
+	_cleanup_free_ AsNodeContext *ctx = NULL;
+	_cleanup_object_unref_ AsRelease *release = NULL;
+
+	release = as_release_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, -1, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "release");
+	g_assert (n != NULL);
+	ctx = as_node_context_new ();
+	as_node_context_set_source_kind (ctx, AS_APP_SOURCE_KIND_APPDATA);
+	ret = as_release_node_parse (release, n, ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_release_get_timestamp (release), ==, 123);
+	g_assert_cmpstr (as_release_get_version (release), ==, "0.1.2");
+	g_assert_cmpstr (as_release_get_description (release, NULL), ==,
+				"<p>This is a new release</p>");
+	g_assert_cmpstr (as_release_get_description (release, "pl"), ==,
+				"<p>Oprogramowanie</p>");
 }
 
 typedef enum {
@@ -3293,7 +3335,8 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/tag", as_test_tag_func);
 	g_test_add_func ("/AppStream/provide", as_test_provide_func);
 	g_test_add_func ("/AppStream/release", as_test_release_func);
-	g_test_add_func ("/AppStream/release{description}", as_test_release_desc_func);
+	g_test_add_func ("/AppStream/release{appdata}", as_test_release_appdata_func);
+	g_test_add_func ("/AppStream/release{appstream}", as_test_release_appstream_func);
 	g_test_add_func ("/AppStream/icon", as_test_icon_func);
 	g_test_add_func ("/AppStream/icon{embedded}", as_test_icon_embedded_func);
 	g_test_add_func ("/AppStream/bundle", as_test_bundle_func);

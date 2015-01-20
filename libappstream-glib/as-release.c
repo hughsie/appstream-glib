@@ -276,16 +276,30 @@ as_release_node_parse (AsRelease *release, GNode *node,
 		priv->version = taken;
 	}
 
-	/* descriptions are translated and optional */
-	for (n = node->children; n != NULL; n = n->next) {
-		_cleanup_string_free_ GString *xml = NULL;
-		if (as_node_get_tag (n) != AS_TAG_DESCRIPTION)
-			continue;
-		xml = as_node_to_xml (n->children, AS_NODE_TO_XML_FLAG_NONE);
-		as_release_set_description (release,
-					    as_node_get_attribute (n, "xml:lang"),
-					    xml->str, xml->len);
+	/* AppStream: multiple <description> tags */
+	if (as_node_context_get_source_kind (ctx) == AS_APP_SOURCE_KIND_APPSTREAM) {
+		for (n = node->children; n != NULL; n = n->next) {
+			_cleanup_string_free_ GString *xml = NULL;
+			if (as_node_get_tag (n) != AS_TAG_DESCRIPTION)
+				continue;
+			xml = as_node_to_xml (n->children, AS_NODE_TO_XML_FLAG_NONE);
+			as_release_set_description (release,
+						    as_node_get_attribute (n, "xml:lang"),
+						    xml->str, xml->len);
+		}
+
+	/* AppData: mutliple languages encoded in one <description> tag */
+	} else {
+		n = as_node_find (node, "description");
+		if (n != NULL) {
+			if (priv->descriptions != NULL)
+				g_hash_table_unref (priv->descriptions);
+			priv->descriptions = as_node_get_localized_unwrap (n, error);
+			if (priv->descriptions == NULL)
+				return FALSE;
+		}
 	}
+
 	return TRUE;
 }
 
