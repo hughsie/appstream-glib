@@ -41,7 +41,33 @@
 #include "as-yaml.h"
 
 /**
- * cd_test_get_filename:
+ * as_test_compare_lines:
+ **/
+static gboolean
+as_test_compare_lines (const gchar *txt1, const gchar *txt2, GError **error)
+{
+	_cleanup_free_ gchar *output = NULL;
+
+	/* exactly the same */
+	if (g_strcmp0 (txt1, txt2) == 0)
+		return TRUE;
+
+	/* save temp files and diff them */
+	if (!g_file_set_contents ("/tmp/a", txt1, -1, error))
+		return FALSE;
+	if (!g_file_set_contents ("/tmp/b", txt2, -1, error))
+		return FALSE;
+	if (!g_spawn_command_line_sync ("diff -urNp /tmp/b /tmp/a",
+					&output, NULL, NULL, error))
+		return FALSE;
+
+	/* just output the diff */
+	g_set_error_literal (error, 1, 0, output);
+	return FALSE;
+}
+
+/**
+ * as_test_get_filename:
  **/
 static gchar *
 as_test_get_filename (const gchar *filename)
@@ -111,7 +137,9 @@ as_test_release_func (void)
 	root = as_node_new ();
 	n = as_release_node_insert (release, root, 0.4);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
-	g_assert_cmpstr (xml->str, ==, src);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 }
@@ -148,7 +176,9 @@ as_test_provide_func (void)
 	root = as_node_new ();
 	n = as_provide_node_insert (provide, root, 0.4);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
-	g_assert_cmpstr (xml->str, ==, src);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 }
@@ -162,10 +192,10 @@ as_test_release_desc_func (void)
 	GString *xml;
 	gboolean ret;
 	const gchar *src =
-		"<release version=\"0.1.2\" timestamp=\"123\">"
-		"<description><p>This is a new release</p></description>"
-		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>"
-		"</release>";
+		"<release version=\"0.1.2\" timestamp=\"123\">\n"
+		"<description><p>This is a new release</p></description>\n"
+		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>\n"
+		"</release>\n";
 	_cleanup_object_unref_ AsRelease *release = NULL;
 
 	release = as_release_new ();
@@ -189,9 +219,12 @@ as_test_release_desc_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_release_node_insert (release, root, 0.6);
-	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
-	g_assert_cmpstr (xml->str, ==, src);
+	n = as_release_node_insert (release, root, 1.0);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 }
@@ -426,7 +459,9 @@ as_test_icon_func (void)
 	root = as_node_new ();
 	n = as_icon_node_insert (icon, root, 0.4);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
-	g_assert_cmpstr (xml->str, ==, src);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 
@@ -528,7 +563,9 @@ as_test_icon_embedded_func (void)
 	root = as_node_new ();
 	n = as_icon_node_insert (icon, root, 0.4);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
-	g_assert_cmpstr (xml->str, ==, src);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 
@@ -583,7 +620,9 @@ as_test_image_func (void)
 	root = as_node_new ();
 	n = as_image_node_insert (image, root, 0.4);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
-	g_assert_cmpstr (xml->str, ==, src);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 
@@ -647,7 +686,9 @@ as_test_bundle_func (void)
 	root = as_node_new ();
 	n = as_bundle_node_insert (bundle, root, 0.4);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
-	g_assert_cmpstr (xml->str, ==, src);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 }
@@ -662,11 +703,11 @@ as_test_screenshot_func (void)
 	GNode *root;
 	GString *xml;
 	const gchar *src =
-		"<screenshot priority=\"-64\">"
-		"<caption>Hello</caption>"
-		"<image type=\"source\" height=\"800\" width=\"600\">http://1.png</image>"
-		"<image type=\"thumbnail\" height=\"100\" width=\"100\">http://2.png</image>"
-		"</screenshot>";
+		"<screenshot priority=\"-64\">\n"
+		"<caption>Hello</caption>\n"
+		"<image type=\"source\" height=\"800\" width=\"600\">http://1.png</image>\n"
+		"<image type=\"thumbnail\" height=\"100\" width=\"100\">http://2.png</image>\n"
+		"</screenshot>\n";
 	gboolean ret;
 	_cleanup_object_unref_ AsScreenshot *screenshot = NULL;
 
@@ -704,8 +745,10 @@ as_test_screenshot_func (void)
 	/* back to node */
 	root = as_node_new ();
 	n = as_screenshot_node_insert (screenshot, root, 0.8);
-	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
-	g_assert_cmpstr (xml->str, ==, src);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 }
@@ -722,64 +765,64 @@ as_test_app_func (void)
 	GString *xml;
 	gboolean ret;
 	const gchar *src =
-		"<component priority=\"-4\" type=\"desktop\">"
-		"<id>org.gnome.Software.desktop</id>"
-		"<pkgname>gnome-software</pkgname>"
-		"<source_pkgname>gnome-software-src</source_pkgname>"
-		"<bundle type=\"limba\">gnome-software-gnome-3-16</bundle>"
-		"<name>Software</name>"
-		"<name xml:lang=\"pl\">Oprogramowanie</name>"
-		"<summary>Application manager</summary>"
-		"<developer_name>GNOME Foundation</developer_name>"
-		"<description><p>Software allows you to find stuff</p></description>"
-		"<description xml:lang=\"pt_BR\"><p>O aplicativo Software.</p></description>"
-		"<icon height=\"64\" width=\"64\" type=\"cached\">org.gnome.Software.png</icon>"
-		"<categories>"
-		"<category>System</category>"
-		"</categories>"
-		"<architectures>"
-		"<arch>i386</arch>"
-		"</architectures>"
-		"<keywords>"
-		"<keyword>Installing</keyword>"
-		"</keywords>"
-		"<kudos>"
-		"<kudo>SearchProvider</kudo>"
-		"</kudos>"
-		"<vetos>"
-		"<veto>Required AppData: ConsoleOnly</veto>"
-		"</vetos>"
-		"<mimetypes>"
-		"<mimetype>application/vnd.oasis.opendocument.spreadsheet</mimetype>"
-		"</mimetypes>"
-		"<project_license>GPLv2+</project_license>"
-		"<url type=\"homepage\">https://wiki.gnome.org/Design/Apps/Software</url>"
-		"<project_group>GNOME</project_group>"
-		"<compulsory_for_desktop>GNOME</compulsory_for_desktop>"
-		"<screenshots>"
-		"<screenshot type=\"default\">"
-		"<image type=\"thumbnail\" height=\"351\" width=\"624\">http://a.png</image>"
-		"</screenshot>"
-		"<screenshot>"
-		"<image type=\"thumbnail\">http://b.png</image>"
-		"</screenshot>"
-		"</screenshots>"
-		"<releases>"
-		"<release version=\"3.11.90\" timestamp=\"1392724800\"/>"
-		"</releases>"
-		"<provides>"
-		"<binary>/usr/bin/gnome-shell</binary>"
-		"<dbus type=\"session\">org.gnome.Software</dbus>"
-		"<dbus type=\"system\">org.gnome.Software2</dbus>"
-		"</provides>"
-		"<languages>"
-		"<lang percentage=\"90\">en_GB</lang>"
-		"<lang>pl</lang>"
-		"</languages>"
-		"<metadata>"
-		"<value key=\"SomethingRandom\"/>"
-		"</metadata>"
-		"</component>";
+		"<component priority=\"-4\" type=\"desktop\">\n"
+		"<id>org.gnome.Software.desktop</id>\n"
+		"<pkgname>gnome-software</pkgname>\n"
+		"<source_pkgname>gnome-software-src</source_pkgname>\n"
+		"<bundle type=\"limba\">gnome-software-gnome-3-16</bundle>\n"
+		"<name>Software</name>\n"
+		"<name xml:lang=\"pl\">Oprogramowanie</name>\n"
+		"<summary>Application manager</summary>\n"
+		"<developer_name>GNOME Foundation</developer_name>\n"
+		"<description><p>Software allows you to find stuff</p></description>\n"
+		"<description xml:lang=\"pt_BR\"><p>O aplicativo Software.</p></description>\n"
+		"<icon height=\"64\" width=\"64\" type=\"cached\">org.gnome.Software.png</icon>\n"
+		"<categories>\n"
+		"<category>System</category>\n"
+		"</categories>\n"
+		"<architectures>\n"
+		"<arch>i386</arch>\n"
+		"</architectures>\n"
+		"<keywords>\n"
+		"<keyword>Installing</keyword>\n"
+		"</keywords>\n"
+		"<kudos>\n"
+		"<kudo>SearchProvider</kudo>\n"
+		"</kudos>\n"
+		"<vetos>\n"
+		"<veto>Required AppData: ConsoleOnly</veto>\n"
+		"</vetos>\n"
+		"<mimetypes>\n"
+		"<mimetype>application/vnd.oasis.opendocument.spreadsheet</mimetype>\n"
+		"</mimetypes>\n"
+		"<project_license>GPLv2+</project_license>\n"
+		"<url type=\"homepage\">https://wiki.gnome.org/Design/Apps/Software</url>\n"
+		"<project_group>GNOME</project_group>\n"
+		"<compulsory_for_desktop>GNOME</compulsory_for_desktop>\n"
+		"<screenshots>\n"
+		"<screenshot type=\"default\">\n"
+		"<image type=\"thumbnail\" height=\"351\" width=\"624\">http://a.png</image>\n"
+		"</screenshot>\n"
+		"<screenshot>\n"
+		"<image type=\"thumbnail\">http://b.png</image>\n"
+		"</screenshot>\n"
+		"</screenshots>\n"
+		"<releases>\n"
+		"<release version=\"3.11.90\" timestamp=\"1392724800\"/>\n"
+		"</releases>\n"
+		"<provides>\n"
+		"<binary>/usr/bin/gnome-shell</binary>\n"
+		"<dbus type=\"session\">org.gnome.Software</dbus>\n"
+		"<dbus type=\"system\">org.gnome.Software2</dbus>\n"
+		"</provides>\n"
+		"<languages>\n"
+		"<lang percentage=\"90\">en_GB</lang>\n"
+		"<lang>pl</lang>\n"
+		"</languages>\n"
+		"<metadata>\n"
+		"<value key=\"SomethingRandom\"/>\n"
+		"</metadata>\n"
+		"</component>\n";
 	_cleanup_object_unref_ AsApp *app = NULL;
 
 	app = as_app_new ();
@@ -799,6 +842,8 @@ as_test_app_func (void)
 	g_assert_cmpstr (as_app_get_id_filename (app), ==, "org.gnome.Software");
 	g_assert_cmpstr (as_app_get_name (app, "pl"), ==, "Oprogramowanie");
 	g_assert_cmpstr (as_app_get_comment (app, NULL), ==, "Application manager");
+	g_assert_cmpstr (as_app_get_description (app, NULL), ==, "<p>Software allows you to find stuff</p>");
+	g_assert_cmpstr (as_app_get_description (app, "pt_BR"), ==, "<p>O aplicativo Software.</p>");
 	g_assert_cmpstr (as_app_get_developer_name (app, NULL), ==, "GNOME Foundation");
 	g_assert_cmpstr (as_app_get_source_pkgname (app), ==, "gnome-software-src");
 	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_APP_SOURCE_KIND_UNKNOWN);
@@ -846,8 +891,10 @@ as_test_app_func (void)
 	/* back to node */
 	root = as_node_new ();
 	n = as_app_node_insert (app, root, 0.8);
-	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
-	g_assert_cmpstr (xml->str, ==, src);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 
@@ -1398,10 +1445,10 @@ as_test_app_no_markup_func (void)
 	GString *xml;
 	gboolean ret;
 	const gchar *src =
-		"<application>"
-		"<id type=\"desktop\">org.gnome.Software.desktop</id>"
-		"<description>Software is awesome:\n\n * Bada\n * Boom!</description>"
-		"</application>";
+		"<application>\n"
+		"<id type=\"desktop\">org.gnome.Software.desktop</id>\n"
+		"<description>Software is awesome:\n\n * Bada\n * Boom!</description>\n"
+		"</application>\n";
 	_cleanup_object_unref_ AsApp *app = NULL;
 
 	app = as_app_new ();
@@ -1427,8 +1474,10 @@ as_test_app_no_markup_func (void)
 	/* back to node */
 	root = as_node_new ();
 	n = as_app_node_insert (app, root, 0.4);
-	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
-	g_assert_cmpstr (xml->str, ==, src);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 }
