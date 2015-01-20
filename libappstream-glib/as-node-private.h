@@ -26,9 +26,19 @@
 #ifndef __AS_NODE_PRIVATE_H
 #define __AS_NODE_PRIVATE_H
 
+#include "as-app.h"
 #include "as-node.h"
 
 G_BEGIN_DECLS
+
+typedef struct _AsNodeContext	AsNodeContext;
+AsNodeContext	*as_node_context_new		(void);
+gdouble		 as_node_context_get_version	(AsNodeContext	*ctx);
+void		 as_node_context_set_version	(AsNodeContext	*ctx,
+						 gdouble	 version);
+AsAppSourceKind	 as_node_context_get_source_kind (AsNodeContext	*ctx);
+void		 as_node_context_set_source_kind (AsNodeContext	*ctx,
+						 AsAppSourceKind source_kind);
 
 gchar		*as_node_take_data		(const GNode	*node);
 gchar		*as_node_take_attribute		(const GNode	*node,

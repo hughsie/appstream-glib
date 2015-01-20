@@ -2776,7 +2776,7 @@ as_app_list_sort_cb (gconstpointer a, gconstpointer b)
  * as_app_node_insert_keywords:
  **/
 static void
-as_app_node_insert_keywords (AsApp *app, GNode *parent, gdouble api_version)
+as_app_node_insert_keywords (AsApp *app, GNode *parent, AsNodeContext *ctx)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	GList *keys;
@@ -2832,7 +2832,7 @@ as_app_node_insert_keywords (AsApp *app, GNode *parent, gdouble api_version)
  * as_app_node_insert: (skip)
  * @app: a #AsApp instance.
  * @parent: the parent #GNode to use..
- * @api_version: the AppStream API version
+ * @ctx: the #AsNodeContext
  *
  * Inserts the application into the DOM tree.
  *
@@ -2841,7 +2841,7 @@ as_app_node_insert_keywords (AsApp *app, GNode *parent, gdouble api_version)
  * Since: 0.1.0
  **/
 GNode *
-as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
+as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsRelease *rel;
@@ -2849,6 +2849,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	GNode *node_app;
 	GNode *node_tmp;
 	const gchar *tmp;
+	gdouble api_version = as_node_context_get_version (ctx);
 	guint i;
 	static gint old_prio_value = 0;
 
@@ -2918,7 +2919,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	/* <bundle> */
 	for (i = 0; i < priv->bundles->len; i++) {
 		AsBundle *bu = g_ptr_array_index (priv->bundles, i);
-		as_bundle_node_insert (bu, node_app, api_version);
+		as_bundle_node_insert (bu, node_app, ctx);
 	}
 
 	/* <name> */
@@ -2954,7 +2955,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	/* <icon> */
 	for (i = 0; i < priv->icons->len; i++) {
 		AsIcon *ic = g_ptr_array_index (priv->icons, i);
-		as_icon_node_insert (ic, node_app, api_version);
+		as_icon_node_insert (ic, node_app, ctx);
 	}
 
 	/* <categories> */
@@ -2991,7 +2992,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 	/* <keywords> */
 	if (g_hash_table_size (priv->keywords) > 0) {
 		node_tmp = as_node_insert (node_app, "keywords", NULL, 0, NULL);
-		as_app_node_insert_keywords (app, node_tmp, api_version);
+		as_app_node_insert_keywords (app, node_tmp, ctx);
 	}
 
 	/* <kudos> */
@@ -3069,7 +3070,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 		node_tmp = as_node_insert (node_app, "screenshots", NULL, 0, NULL);
 		for (i = 0; i < priv->screenshots->len; i++) {
 			ss = g_ptr_array_index (priv->screenshots, i);
-			as_screenshot_node_insert (ss, node_tmp, api_version);
+			as_screenshot_node_insert (ss, node_tmp, ctx);
 		}
 	}
 
@@ -3078,7 +3079,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 		node_tmp = as_node_insert (node_app, "releases", NULL, 0, NULL);
 		for (i = 0; i < priv->releases->len && i < 3; i++) {
 			rel = g_ptr_array_index (priv->releases, i);
-			as_release_node_insert (rel, node_tmp, api_version);
+			as_release_node_insert (rel, node_tmp, ctx);
 		}
 	}
 
@@ -3088,7 +3089,7 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
 		node_tmp = as_node_insert (node_app, "provides", NULL, 0, NULL);
 		for (i = 0; i < priv->provides->len; i++) {
 			provide = g_ptr_array_index (priv->provides, i);
-			as_provide_node_insert (provide, node_tmp, api_version);
+			as_provide_node_insert (provide, node_tmp, ctx);
 		}
 	}
 
@@ -3125,7 +3126,8 @@ as_app_node_insert (AsApp *app, GNode *parent, gdouble api_version)
  * as_app_node_parse_child:
  **/
 static gboolean
-as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **error)
+as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
+			 AsNodeContext *ctx, GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	GNode *c;
@@ -3162,7 +3164,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 	{
 		_cleanup_object_unref_ AsBundle *ic = NULL;
 		ic = as_bundle_new ();
-		if (!as_bundle_node_parse (ic, n, error))
+		if (!as_bundle_node_parse (ic, n, ctx, error))
 			return FALSE;
 		as_app_add_bundle (app, ic);
 		break;
@@ -3249,7 +3251,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		_cleanup_object_unref_ AsIcon *ic = NULL;
 		ic = as_icon_new ();
 		as_icon_set_prefix (ic, priv->icon_path);
-		if (!as_icon_node_parse (ic, n, error))
+		if (!as_icon_node_parse (ic, n, ctx, error))
 			return FALSE;
 		as_app_add_icon (app, ic);
 		break;
@@ -3413,7 +3415,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 			if (as_node_get_attribute (c, "xml:lang") != NULL)
 				continue;
 			ss = as_screenshot_new ();
-			if (!as_screenshot_node_parse (ss, c, error))
+			if (!as_screenshot_node_parse (ss, c, ctx, error))
 				return FALSE;
 			as_app_add_screenshot (app, ss);
 		}
@@ -3428,7 +3430,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 			if (as_node_get_tag (c) != AS_TAG_RELEASE)
 				continue;
 			r = as_release_new ();
-			if (!as_release_node_parse (r, c, error))
+			if (!as_release_node_parse (r, c, ctx, error))
 				return FALSE;
 			as_app_add_release (app, r);
 		}
@@ -3441,7 +3443,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags, GError **e
 		for (c = n->children; c != NULL; c = c->next) {
 			_cleanup_object_unref_ AsProvide *p = NULL;
 			p = as_provide_new ();
-			if (!as_provide_node_parse (p, c, error))
+			if (!as_provide_node_parse (p, c, ctx, error))
 				return FALSE;
 			as_app_add_provide (app, p);
 		}
@@ -3529,7 +3531,8 @@ as_app_check_for_hidpi_icons (AsApp *app)
  * as_app_node_parse_full:
  **/
 static gboolean
-as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags, GError **error)
+as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags,
+			AsNodeContext *ctx, GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	GNode *n;
@@ -3557,7 +3560,7 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags, GError *
 		g_hash_table_remove_all (priv->keywords);
 	}
 	for (n = node->children; n != NULL; n = n->next) {
-		if (!as_app_node_parse_child (app, n, flags, error))
+		if (!as_app_node_parse_child (app, n, flags, ctx, error))
 			return FALSE;
 	}
 
@@ -3572,6 +3575,7 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags, GError *
  * as_app_node_parse:
  * @app: a #AsApp instance.
  * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
  * @error: A #GError or %NULL.
  *
  * Populates the object from a DOM node.
@@ -3581,16 +3585,17 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags, GError *
  * Since: 0.1.0
  **/
 gboolean
-as_app_node_parse (AsApp *app, GNode *node, GError **error)
+as_app_node_parse (AsApp *app, GNode *node, AsNodeContext *ctx, GError **error)
 {
-	return as_app_node_parse_full (app, node, AS_APP_PARSE_FLAG_NONE, error);
+	return as_app_node_parse_full (app, node, AS_APP_PARSE_FLAG_NONE, ctx, error);
 }
 
 /**
  * as_app_node_parse_dep11_icons:
  **/
 static gboolean
-as_app_node_parse_dep11_icons (AsApp *app, GNode *node, GError **error)
+as_app_node_parse_dep11_icons (AsApp *app, GNode *node,
+			       AsNodeContext *ctx, GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	const gchar *sizes[] = { "128x128", "64x64", "", NULL };
@@ -3600,7 +3605,7 @@ as_app_node_parse_dep11_icons (AsApp *app, GNode *node, GError **error)
 
 	/* YAML files only specify one icon for various sizes */
 	ic_tmp = as_icon_new ();
-	if (!as_icon_node_parse_dep11 (ic_tmp, node, error))
+	if (!as_icon_node_parse_dep11 (ic_tmp, node, ctx, error))
 		return FALSE;
 
 	/* find each size */
@@ -3635,6 +3640,7 @@ as_app_node_parse_dep11_icons (AsApp *app, GNode *node, GError **error)
  * as_app_node_parse_dep11:
  * @app: a #AsApp instance.
  * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
  * @error: A #GError or %NULL.
  *
  * Populates the object from a DEP-11 node.
@@ -3644,7 +3650,8 @@ as_app_node_parse_dep11_icons (AsApp *app, GNode *node, GError **error)
  * Since: 0.3.0
  **/
 gboolean
-as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
+as_app_node_parse_dep11 (AsApp *app, GNode *node,
+			 AsNodeContext *ctx, GError **error)
 {
 	GNode *c;
 	GNode *c2;
@@ -3712,7 +3719,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
 		}
 		if (g_strcmp0 (tmp, "Icon") == 0) {
 			for (c = n->children; c != NULL; c = c->next) {
-				if (!as_app_node_parse_dep11_icons (app, c, error))
+				if (!as_app_node_parse_dep11_icons (app, c, ctx, error))
 					return FALSE;
 			}
 			continue;
@@ -3721,7 +3728,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
 			for (c = n->children; c != NULL; c = c->next) {
 				_cleanup_object_unref_ AsBundle *bu = NULL;
 				bu = as_bundle_new ();
-				if (!as_bundle_node_parse_dep11 (bu, c, error))
+				if (!as_bundle_node_parse_dep11 (bu, c, ctx, error))
 					return FALSE;
 				as_app_add_bundle (app, bu);
 			}
@@ -3751,7 +3758,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
 				} else {
 					_cleanup_object_unref_ AsProvide *pr = NULL;
 					pr = as_provide_new ();
-					if (!as_provide_node_parse_dep11 (pr, c, error))
+					if (!as_provide_node_parse_dep11 (pr, c, ctx, error))
 						return FALSE;
 					as_app_add_provide (app, pr);
 				}
@@ -3762,7 +3769,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node, GError **error)
 			for (c = n->children; c != NULL; c = c->next) {
 				_cleanup_object_unref_ AsScreenshot *ss = NULL;
 				ss = as_screenshot_new ();
-				if (!as_screenshot_node_parse_dep11 (ss, c, error))
+				if (!as_screenshot_node_parse_dep11 (ss, c, ctx, error))
 					return FALSE;
 				as_app_add_screenshot (app, ss);
 			}
@@ -4465,6 +4472,7 @@ as_app_parse_appdata_file (AsApp *app,
 	gchar *tmp;
 	gsize len;
 	_cleanup_error_free_ GError *error_local = NULL;
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_free_ gchar *data = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
 
@@ -4537,7 +4545,9 @@ as_app_parse_appdata_file (AsApp *app,
 			seen_application = TRUE;
 		}
 	}
-	if (!as_app_node_parse_full (app, node, flags, error))
+	ctx = as_node_context_new ();
+	as_node_context_set_source_kind (ctx, AS_APP_SOURCE_KIND_APPDATA);
+	if (!as_app_node_parse_full (app, node, flags, ctx, error))
 		return FALSE;
 	return TRUE;
 }
@@ -4646,11 +4656,14 @@ as_app_to_file (AsApp *app,
 		GCancellable *cancellable,
 		GError **error)
 {
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
 
 	root = as_node_new ();
-	as_app_node_insert (app, root, 1.0);
+	ctx = as_node_context_new ();
+	as_node_context_set_version (ctx, 1.0);
+	as_app_node_insert (app, root, ctx);
 	xml = as_node_to_xml (root,
 			      AS_NODE_TO_XML_FLAG_ADD_HEADER |
 			      AS_NODE_TO_XML_FLAG_FORMAT_INDENT |

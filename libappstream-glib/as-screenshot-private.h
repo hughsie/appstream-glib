@@ -29,17 +29,20 @@
 #include <glib-object.h>
 
 #include "as-screenshot.h"
+#include "as-node-private.h"
 
 G_BEGIN_DECLS
 
 GNode		*as_screenshot_node_insert	(AsScreenshot	*screenshot,
 						 GNode		*parent,
-						 gdouble	 api_version);
+						 AsNodeContext	*ctx);
 gboolean	 as_screenshot_node_parse	(AsScreenshot	*screenshot,
 						 GNode		*node,
+						 AsNodeContext	*ctx,
 						 GError		**error);
 gboolean	 as_screenshot_node_parse_dep11	(AsScreenshot	*screenshot,
 						 GNode		*node,
+						 AsNodeContext	*ctx,
 						 GError		**error);
 
 G_END_DECLS

@@ -27,17 +27,20 @@
 #define __AS_BUNDLE_PRIVATE_H
 
 #include "as-bundle.h"
+#include "as-node-private.h"
 
 G_BEGIN_DECLS
 
 GNode		*as_bundle_node_insert		(AsBundle	*bundle,
 						 GNode		*parent,
-						 gdouble	 api_version);
+						 AsNodeContext	*ctx);
 gboolean	 as_bundle_node_parse		(AsBundle	*bundle,
 						 GNode		*node,
+						 AsNodeContext	*ctx,
 						 GError		**error);
 gboolean	 as_bundle_node_parse_dep11	(AsBundle	*bundle,
 						 GNode		*node,
+						 AsNodeContext	*ctx,
 						 GError		**error);
 
 G_END_DECLS

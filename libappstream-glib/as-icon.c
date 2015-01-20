@@ -494,7 +494,7 @@ as_icon_set_data (AsIcon *icon, GBytes *data)
  * as_icon_node_insert_embedded:
  **/
 static GNode *
-as_icon_node_insert_embedded (AsIcon *icon, GNode *parent, gdouble api_version)
+as_icon_node_insert_embedded (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	GNode *n;
@@ -504,7 +504,7 @@ as_icon_node_insert_embedded (AsIcon *icon, GNode *parent, gdouble api_version)
 	n = as_node_insert (parent, "icon", NULL, 0,
 			    "type", as_icon_kind_to_string (priv->kind),
 			    NULL);
-	if (api_version >= 0.8) {
+	if (as_node_context_get_version (ctx) >= 0.8) {
 		as_node_add_attribute_as_int (n, "width", priv->width);
 		as_node_add_attribute_as_int (n, "height", priv->height);
 	}
@@ -520,7 +520,7 @@ as_icon_node_insert_embedded (AsIcon *icon, GNode *parent, gdouble api_version)
  * as_icon_node_insert: (skip)
  * @icon: a #AsIcon instance.
  * @parent: the parent #GNode to use..
- * @api_version: the AppStream API version
+ * @ctx: the #AsNodeContext
  *
  * Inserts the icon into the DOM tree.
  *
@@ -529,14 +529,14 @@ as_icon_node_insert_embedded (AsIcon *icon, GNode *parent, gdouble api_version)
  * Since: 0.3.1
  **/
 GNode *
-as_icon_node_insert (AsIcon *icon, GNode *parent, gdouble api_version)
+as_icon_node_insert (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	GNode *n;
 
 	/* embedded icon */
 	if (priv->kind == AS_ICON_KIND_EMBEDDED)
-		return as_icon_node_insert_embedded (icon, parent, api_version);
+		return as_icon_node_insert_embedded (icon, parent, ctx);
 
 	/* other icons */
 	switch (priv->kind) {
@@ -556,7 +556,8 @@ as_icon_node_insert (AsIcon *icon, GNode *parent, gdouble api_version)
 				    NULL);
 		break;
 	}
-	if (priv->kind == AS_ICON_KIND_CACHED && api_version >= 0.8) {
+	if (priv->kind == AS_ICON_KIND_CACHED &&
+	    as_node_context_get_version (ctx) >= 0.8) {
 		if (priv->width > 0)
 			as_node_add_attribute_as_int (n, "width", priv->width);
 		if (priv->height > 0)
@@ -627,6 +628,7 @@ as_icon_node_parse_embedded (AsIcon *icon, GNode *n, GError **error)
  * as_icon_node_parse:
  * @icon: a #AsIcon instance.
  * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
  * @error: A #GError or %NULL.
  *
  * Populates the object from a DOM node.
@@ -636,7 +638,8 @@ as_icon_node_parse_embedded (AsIcon *icon, GNode *n, GError **error)
  * Since: 0.3.1
  **/
 gboolean
-as_icon_node_parse (AsIcon *icon, GNode *node, GError **error)
+as_icon_node_parse (AsIcon *icon, GNode *node,
+		    AsNodeContext *ctx, GError **error)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	const gchar *tmp;
@@ -702,6 +705,7 @@ as_icon_node_parse (AsIcon *icon, GNode *node, GError **error)
  * as_icon_node_parse_dep11:
  * @icon: a #AsIcon instance.
  * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
  * @error: A #GError or %NULL.
  *
  * Populates the object from a DEP-11 node.
@@ -711,7 +715,8 @@ as_icon_node_parse (AsIcon *icon, GNode *node, GError **error)
  * Since: 0.3.1
  **/
 gboolean
-as_icon_node_parse_dep11 (AsIcon *im, GNode *node, GError **error)
+as_icon_node_parse_dep11 (AsIcon *im, GNode *node,
+			  AsNodeContext *ctx, GError **error)
 {
 	if (g_strcmp0 (as_yaml_node_get_key (node), "cached") != 0)
 		return TRUE;

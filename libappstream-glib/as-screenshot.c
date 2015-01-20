@@ -341,7 +341,7 @@ as_screenshot_set_caption (AsScreenshot *screenshot,
  * as_screenshot_node_insert: (skip)
  * @screenshot: a #AsScreenshot instance.
  * @parent: the parent #GNode to use..
- * @api_version: the AppStream API version
+ * @ctx: the #AsNodeContext
  *
  * Inserts the screenshot into the DOM tree.
  *
@@ -352,7 +352,7 @@ as_screenshot_set_caption (AsScreenshot *screenshot,
 GNode *
 as_screenshot_node_insert (AsScreenshot *screenshot,
 			   GNode *parent,
-			   gdouble api_version)
+			   AsNodeContext *ctx)
 {
 	AsImage *image;
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
@@ -368,17 +368,17 @@ as_screenshot_node_insert (AsScreenshot *screenshot,
 				       as_screenshot_kind_to_string (priv->kind),
 				       -1);
 	}
-	if (api_version >= 0.41) {
+	if (as_node_context_get_version (ctx) >= 0.41) {
 		as_node_insert_localized (n,
 					  "caption",
 					  priv->captions,
 					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 	}
-	if (api_version >= 0.8 && priv->priority != 0)
+	if (as_node_context_get_version (ctx) >= 0.8 && priv->priority != 0)
 		as_node_add_attribute_as_int (n, "priority", priv->priority);
 	for (i = 0; i < priv->images->len; i++) {
 		image = g_ptr_array_index (priv->images, i);
-		as_image_node_insert (image, n, api_version);
+		as_image_node_insert (image, n, ctx);
 	}
 	return n;
 }
@@ -387,6 +387,7 @@ as_screenshot_node_insert (AsScreenshot *screenshot,
  * as_screenshot_node_parse:
  * @screenshot: a #AsScreenshot instance.
  * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
  * @error: A #GError or %NULL.
  *
  * Populates the object from a DOM node.
@@ -396,7 +397,8 @@ as_screenshot_node_insert (AsScreenshot *screenshot,
  * Since: 0.1.0
  **/
 gboolean
-as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
+as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node,
+			  AsNodeContext *ctx, GError **error)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	GList *l;
@@ -451,7 +453,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
 		if (as_node_get_tag (c) != AS_TAG_IMAGE)
 			continue;
 		image = as_image_new ();
-		if (!as_image_node_parse (image, c, error))
+		if (!as_image_node_parse (image, c, ctx, error))
 			return FALSE;
 		g_ptr_array_add (priv->images, g_object_ref (image));
 	}
@@ -462,6 +464,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
  * as_screenshot_node_parse_dep11:
  * @screenshot: a #AsScreenshot instance.
  * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
  * @error: A #GError or %NULL.
  *
  * Populates the object from a DEP-11 node.
@@ -471,7 +474,8 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node, GError **error)
  * Since: 0.3.0
  **/
 gboolean
-as_screenshot_node_parse_dep11 (AsScreenshot *ss, GNode *node, GError **error)
+as_screenshot_node_parse_dep11 (AsScreenshot *ss, GNode *node,
+				AsNodeContext *ctx, GError **error)
 {
 	GNode *c;
 	GNode *n;
@@ -489,7 +493,7 @@ as_screenshot_node_parse_dep11 (AsScreenshot *ss, GNode *node, GError **error)
 		if (g_strcmp0 (tmp, "source-image") == 0) {
 			_cleanup_object_unref_ AsImage *im = as_image_new ();
 			as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
-			if (!as_image_node_parse_dep11 (im, n, error))
+			if (!as_image_node_parse_dep11 (im, n, ctx, error))
 				return FALSE;
 			as_screenshot_add_image (ss, im);
 			continue;
@@ -498,7 +502,7 @@ as_screenshot_node_parse_dep11 (AsScreenshot *ss, GNode *node, GError **error)
 			for (c = n->children; c != NULL; c = c->next) {
 				_cleanup_object_unref_ AsImage *im = as_image_new ();
 				as_image_set_kind (im, AS_IMAGE_KIND_THUMBNAIL);
-				if (!as_image_node_parse_dep11 (im, c, error))
+				if (!as_image_node_parse_dep11 (im, c, ctx, error))
 					return FALSE;
 				as_screenshot_add_image (ss, im);
 			}

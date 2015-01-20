@@ -583,6 +583,7 @@ as_store_from_root (AsStore *store,
 	GNode *apps;
 	GNode *n;
 	const gchar *tmp;
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_free_ gchar *icon_path = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
@@ -623,6 +624,7 @@ as_store_from_root (AsStore *store,
 					      priv->origin,
 					      NULL);
 	}
+	ctx = as_node_context_new ();
 	for (n = apps->children; n != NULL; n = n->next) {
 		_cleanup_error_free_ GError *error_local = NULL;
 		_cleanup_object_unref_ AsApp *app = NULL;
@@ -632,7 +634,7 @@ as_store_from_root (AsStore *store,
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path, -1);
 		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
-		if (!as_app_node_parse (app, n, &error_local)) {
+		if (!as_app_node_parse (app, n, ctx, &error_local)) {
 			g_set_error (error,
 				     AS_STORE_ERROR,
 				     AS_STORE_ERROR_FAILED,
@@ -664,6 +666,7 @@ as_store_load_yaml_file (AsStore *store,
 	GNode *app_n;
 	GNode *n;
 	const gchar *tmp;
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_free_ gchar *icon_path = NULL;
 	_cleanup_yaml_unref_ GNode *root = NULL;
 
@@ -696,6 +699,7 @@ as_store_load_yaml_file (AsStore *store,
 	}
 
 	/* parse applications */
+	ctx = as_node_context_new ();
 	for (app_n = root->children->next; app_n != NULL; app_n = app_n->next) {
 		_cleanup_object_unref_ AsApp *app = NULL;
 		if (app_n->children == NULL)
@@ -704,7 +708,7 @@ as_store_load_yaml_file (AsStore *store,
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path, -1);
 		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
-		if (!as_app_node_parse_dep11 (app, app_n, error))
+		if (!as_app_node_parse_dep11 (app, app_n, ctx, error))
 			return FALSE;
 		as_app_set_origin (app, priv->origin);
 		if (as_app_get_id (app) != NULL)
@@ -842,6 +846,7 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 	GString *xml;
 	guint i;
 	gchar version[6];
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 
 	/* get XML text */
 	node_root = as_node_new ();
@@ -870,9 +875,11 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 	g_ptr_array_sort (priv->array, as_store_apps_sort_cb);
 
 	/* add applications */
+	ctx = as_node_context_new ();
+	as_node_context_set_version (ctx, priv->api_version);
 	for (i = 0; i < priv->array->len; i++) {
 		app = g_ptr_array_index (priv->array, i);
-		as_app_node_insert (app, node_apps, priv->api_version);
+		as_app_node_insert (app, node_apps, ctx);
 	}
 	xml = as_node_to_xml (node_root, flags);
 	as_node_unref (node_root);

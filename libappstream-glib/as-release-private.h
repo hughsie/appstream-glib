@@ -27,14 +27,16 @@
 #define __AS_RELEASE_PRIVATE_H
 
 #include "as-release.h"
+#include "as-node-private.h"
 
 G_BEGIN_DECLS
 
 GNode		*as_release_node_insert		(AsRelease	*release,
 						 GNode		*parent,
-						 gdouble	 api_version);
+						 AsNodeContext	*ctx);
 gboolean	 as_release_node_parse		(AsRelease	*release,
 						 GNode		*node,
+						 AsNodeContext	*ctx,
 						 GError		**error);
 
 G_END_DECLS

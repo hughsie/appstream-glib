@@ -371,7 +371,7 @@ as_image_set_pixbuf (AsImage *image, GdkPixbuf *pixbuf)
  * as_image_node_insert: (skip)
  * @image: a #AsImage instance.
  * @parent: the parent #GNode to use..
- * @api_version: the AppStream API version
+ * @ctx: the #AsNodeContext
  *
  * Inserts the image into the DOM tree.
  *
@@ -380,7 +380,7 @@ as_image_set_pixbuf (AsImage *image, GdkPixbuf *pixbuf)
  * Since: 0.1.0
  **/
 GNode *
-as_image_node_insert (AsImage *image, GNode *parent, gdouble api_version)
+as_image_node_insert (AsImage *image, GNode *parent, AsNodeContext *ctx)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	GNode *n;
@@ -409,6 +409,7 @@ as_image_node_insert (AsImage *image, GNode *parent, gdouble api_version)
  * as_image_node_parse:
  * @image: a #AsImage instance.
  * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
  * @error: A #GError or %NULL.
  *
  * Populates the object from a DOM node.
@@ -418,7 +419,8 @@ as_image_node_insert (AsImage *image, GNode *parent, gdouble api_version)
  * Since: 0.1.0
  **/
 gboolean
-as_image_node_parse (AsImage *image, GNode *node, GError **error)
+as_image_node_parse (AsImage *image, GNode *node,
+		     AsNodeContext *ctx, GError **error)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	const gchar *tmp;
@@ -448,6 +450,7 @@ as_image_node_parse (AsImage *image, GNode *node, GError **error)
  * as_image_node_parse_dep11:
  * @image: a #AsImage instance.
  * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
  * @error: A #GError or %NULL.
  *
  * Populates the object from a DEP-11 node.
@@ -457,7 +460,8 @@ as_image_node_parse (AsImage *image, GNode *node, GError **error)
  * Since: 0.3.0
  **/
 gboolean
-as_image_node_parse_dep11 (AsImage *im, GNode *node, GError **error)
+as_image_node_parse_dep11 (AsImage *im, GNode *node,
+			   AsNodeContext *ctx, GError **error)
 {
 	GNode *n;
 	const gchar *tmp;

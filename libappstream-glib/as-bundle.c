@@ -196,7 +196,7 @@ as_bundle_set_kind (AsBundle *bundle, AsBundleKind kind)
  * as_bundle_node_insert: (skip)
  * @bundle: a #AsBundle instance.
  * @parent: the parent #GNode to use..
- * @api_version: the AppStream API version
+ * @ctx: the #AsNodeContext
  *
  * Inserts the bundle into the DOM tree.
  *
@@ -205,7 +205,7 @@ as_bundle_set_kind (AsBundle *bundle, AsBundleKind kind)
  * Since: 0.3.5
  **/
 GNode *
-as_bundle_node_insert (AsBundle *bundle, GNode *parent, gdouble api_version)
+as_bundle_node_insert (AsBundle *bundle, GNode *parent, AsNodeContext *ctx)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
 	GNode *n;
@@ -221,6 +221,7 @@ as_bundle_node_insert (AsBundle *bundle, GNode *parent, gdouble api_version)
  * as_bundle_node_parse:
  * @bundle: a #AsBundle instance.
  * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
  * @error: A #GError or %NULL.
  *
  * Populates the object from a DOM node.
@@ -230,7 +231,8 @@ as_bundle_node_insert (AsBundle *bundle, GNode *parent, gdouble api_version)
  * Since: 0.3.5
  **/
 gboolean
-as_bundle_node_parse (AsBundle *bundle, GNode *node, GError **error)
+as_bundle_node_parse (AsBundle *bundle, GNode *node,
+		      AsNodeContext *ctx, GError **error)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
 	const gchar *tmp;
@@ -250,6 +252,7 @@ as_bundle_node_parse (AsBundle *bundle, GNode *node, GError **error)
  * as_bundle_node_parse_dep11:
  * @bundle: a #AsBundle instance.
  * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
  * @error: A #GError or %NULL.
  *
  * Populates the object from a DEP-11 node.
@@ -259,7 +262,8 @@ as_bundle_node_parse (AsBundle *bundle, GNode *node, GError **error)
  * Since: 0.3.5
  **/
 gboolean
-as_bundle_node_parse_dep11 (AsBundle *im, GNode *node, GError **error)
+as_bundle_node_parse_dep11 (AsBundle *im, GNode *node,
+			    AsNodeContext *ctx, GError **error)
 {
 	GNode *n;
 	const gchar *tmp;

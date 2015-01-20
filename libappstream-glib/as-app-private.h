@@ -29,6 +29,7 @@
 #include <glib-object.h>
 
 #include "as-app.h"
+#include "as-node-private.h"
 
 G_BEGIN_DECLS
 
@@ -80,12 +81,14 @@ GPtrArray	*as_app_get_search_tokens	(AsApp		*app);
 
 GNode		*as_app_node_insert		(AsApp		*app,
 						 GNode		*parent,
-						 gdouble	 api_version);
+						 AsNodeContext	*ctx);
 gboolean	 as_app_node_parse		(AsApp		*app,
 						 GNode		*node,
+						 AsNodeContext	*ctx,
 						 GError		**error);
 gboolean	 as_app_node_parse_dep11	(AsApp		*app,
 						 GNode		*node,
+						 AsNodeContext	*ctx,
 						 GError		**error);
 
 G_END_DECLS

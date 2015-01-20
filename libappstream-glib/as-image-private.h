@@ -27,17 +27,20 @@
 #define __AS_IMAGE_PRIVATE_H
 
 #include "as-image.h"
+#include "as-node-private.h"
 
 G_BEGIN_DECLS
 
 GNode		*as_image_node_insert		(AsImage	*image,
 						 GNode		*parent,
-						 gdouble	 api_version);
+						 AsNodeContext	*ctx);
 gboolean	 as_image_node_parse		(AsImage	*image,
 						 GNode		*node,
+						 AsNodeContext	*ctx,
 						 GError		**error);
 gboolean	 as_image_node_parse_dep11	(AsImage	*image,
 						 GNode		*node,
+						 AsNodeContext	*ctx,
 						 GError		**error);
 
 G_END_DECLS

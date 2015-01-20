@@ -215,7 +215,7 @@ as_release_set_description (AsRelease *release,
  * as_release_node_insert: (skip)
  * @release: a #AsRelease instance.
  * @parent: the parent #GNode to use..
- * @api_version: the AppStream API version
+ * @ctx: the #AsNodeContext
  *
  * Inserts the release into the DOM tree.
  *
@@ -224,7 +224,7 @@ as_release_set_description (AsRelease *release,
  * Since: 0.1.1
  **/
 GNode *
-as_release_node_insert (AsRelease *release, GNode *parent, gdouble api_version)
+as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	GNode *n;
@@ -237,7 +237,7 @@ as_release_node_insert (AsRelease *release, GNode *parent, gdouble api_version)
 			    "timestamp", timestamp_str,
 			    "version", priv->version,
 			    NULL);
-	if (priv->descriptions != NULL && api_version >= 0.6) {
+	if (priv->descriptions != NULL && as_node_context_get_version (ctx) >= 0.6) {
 		as_node_insert_localized (n, "description", priv->descriptions,
 					  AS_NODE_INSERT_FLAG_PRE_ESCAPED |
 					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
@@ -249,6 +249,7 @@ as_release_node_insert (AsRelease *release, GNode *parent, gdouble api_version)
  * as_release_node_parse:
  * @release: a #AsRelease instance.
  * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
  * @error: A #GError or %NULL.
  *
  * Populates the object from a DOM node.
@@ -258,7 +259,8 @@ as_release_node_insert (AsRelease *release, GNode *parent, gdouble api_version)
  * Since: 0.1.0
  **/
 gboolean
-as_release_node_parse (AsRelease *release, GNode *node, GError **error)
+as_release_node_parse (AsRelease *release, GNode *node,
+		       AsNodeContext *ctx, GError **error)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	GNode *n;

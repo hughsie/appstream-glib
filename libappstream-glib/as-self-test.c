@@ -114,6 +114,7 @@ as_test_release_func (void)
 	GString *xml;
 	const gchar *src = "<release version=\"0.1.2\" timestamp=\"123\"/>";
 	gboolean ret;
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_object_unref_ AsRelease *release = NULL;
 
 	release = as_release_new ();
@@ -124,7 +125,8 @@ as_test_release_func (void)
 	g_assert (root != NULL);
 	n = as_node_find (root, "release");
 	g_assert (n != NULL);
-	ret = as_release_node_parse (release, n, &error);
+	ctx = as_node_context_new ();
+	ret = as_release_node_parse (release, n, ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	as_node_unref (root);
@@ -135,7 +137,8 @@ as_test_release_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_release_node_insert (release, root, 0.4);
+	as_node_context_set_version (ctx, 0.4);
+	n = as_release_node_insert (release, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	ret = as_test_compare_lines (xml->str, src, &error);
 	g_assert_no_error (error);
@@ -153,6 +156,7 @@ as_test_provide_func (void)
 	GString *xml;
 	const gchar *src = "<binary>/usr/bin/gnome-shell</binary>";
 	gboolean ret;
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_object_unref_ AsProvide *provide = NULL;
 
 	provide = as_provide_new ();
@@ -163,7 +167,8 @@ as_test_provide_func (void)
 	g_assert (root != NULL);
 	n = as_node_find (root, "binary");
 	g_assert (n != NULL);
-	ret = as_provide_node_parse (provide, n, &error);
+	ctx = as_node_context_new ();
+	ret = as_provide_node_parse (provide, n, ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	as_node_unref (root);
@@ -174,7 +179,8 @@ as_test_provide_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_provide_node_insert (provide, root, 0.4);
+	as_node_context_set_version (ctx, 0.4);
+	n = as_provide_node_insert (provide, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	ret = as_test_compare_lines (xml->str, src, &error);
 	g_assert_no_error (error);
@@ -196,6 +202,7 @@ as_test_release_desc_func (void)
 		"<description><p>This is a new release</p></description>\n"
 		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>\n"
 		"</release>\n";
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_object_unref_ AsRelease *release = NULL;
 
 	release = as_release_new ();
@@ -206,7 +213,8 @@ as_test_release_desc_func (void)
 	g_assert (root != NULL);
 	n = as_node_find (root, "release");
 	g_assert (n != NULL);
-	ret = as_release_node_parse (release, n, &error);
+	ctx = as_node_context_new ();
+	ret = as_release_node_parse (release, n, ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	as_node_unref (root);
@@ -219,7 +227,8 @@ as_test_release_desc_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_release_node_insert (release, root, 1.0);
+	as_node_context_set_version (ctx, 1.0);
+	n = as_release_node_insert (release, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	ret = as_test_compare_lines (xml->str, src, &error);
 	g_assert_no_error (error);
@@ -428,6 +437,7 @@ as_test_icon_func (void)
 	GString *xml;
 	const gchar *src = "<icon type=\"cached\">app.png</icon>";
 	gboolean ret;
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_free_ gchar *prefix = NULL;
 	_cleanup_object_unref_ AsIcon *icon = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
@@ -440,7 +450,8 @@ as_test_icon_func (void)
 	g_assert (root != NULL);
 	n = as_node_find (root, "icon");
 	g_assert (n != NULL);
-	ret = as_icon_node_parse (icon, n, &error);
+	ctx = as_node_context_new ();
+	ret = as_icon_node_parse (icon, n, ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	as_node_unref (root);
@@ -457,7 +468,8 @@ as_test_icon_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_icon_node_insert (icon, root, 0.4);
+	as_node_context_set_version (ctx, 0.4);
+	n = as_icon_node_insert (icon, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	ret = as_test_compare_lines (xml->str, src, &error);
 	g_assert_no_error (error);
@@ -533,6 +545,7 @@ as_test_icon_embedded_func (void)
 "</filecontent>"
 "</icon>";
 	gboolean ret;
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_object_unref_ AsIcon *icon = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
 
@@ -544,7 +557,8 @@ as_test_icon_embedded_func (void)
 	g_assert (root != NULL);
 	n = as_node_find (root, "icon");
 	g_assert (n != NULL);
-	ret = as_icon_node_parse (icon, n, &error);
+	ctx = as_node_context_new ();
+	ret = as_icon_node_parse (icon, n, ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	as_node_unref (root);
@@ -561,7 +575,8 @@ as_test_icon_embedded_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_icon_node_insert (icon, root, 0.4);
+	as_node_context_set_version (ctx, 0.4);
+	n = as_icon_node_insert (icon, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	ret = as_test_compare_lines (xml->str, src, &error);
 	g_assert_no_error (error);
@@ -593,6 +608,7 @@ as_test_image_func (void)
 		"<image type=\"thumbnail\" height=\"12\" width=\"34\">"
 		"http://www.hughsie.com/a.jpg</image>";
 	gboolean ret;
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_free_ gchar *filename = NULL;
 	_cleanup_object_unref_ AsImage *image = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
@@ -605,7 +621,8 @@ as_test_image_func (void)
 	g_assert (root != NULL);
 	n = as_node_find (root, "image");
 	g_assert (n != NULL);
-	ret = as_image_node_parse (image, n, &error);
+	ctx = as_node_context_new ();
+	ret = as_image_node_parse (image, n, ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	as_node_unref (root);
@@ -618,7 +635,8 @@ as_test_image_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_image_node_insert (image, root, 0.4);
+	as_node_context_set_version (ctx, 0.4);
+	n = as_image_node_insert (image, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	ret = as_test_compare_lines (xml->str, src, &error);
 	g_assert_no_error (error);
@@ -663,6 +681,7 @@ as_test_bundle_func (void)
 	const gchar *src =
 		"<bundle type=\"limba\">gnome-3-16</bundle>";
 	gboolean ret;
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_object_unref_ AsBundle *bundle = NULL;
 
 	bundle = as_bundle_new ();
@@ -673,7 +692,8 @@ as_test_bundle_func (void)
 	g_assert (root != NULL);
 	n = as_node_find (root, "bundle");
 	g_assert (n != NULL);
-	ret = as_bundle_node_parse (bundle, n, &error);
+	ctx = as_node_context_new ();
+	ret = as_bundle_node_parse (bundle, n, ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	as_node_unref (root);
@@ -684,7 +704,8 @@ as_test_bundle_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_bundle_node_insert (bundle, root, 0.4);
+	as_node_context_set_version (ctx, 0.4);
+	n = as_bundle_node_insert (bundle, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	ret = as_test_compare_lines (xml->str, src, &error);
 	g_assert_no_error (error);
@@ -709,6 +730,7 @@ as_test_screenshot_func (void)
 		"<image type=\"thumbnail\" height=\"100\" width=\"100\">http://2.png</image>\n"
 		"</screenshot>\n";
 	gboolean ret;
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_object_unref_ AsScreenshot *screenshot = NULL;
 
 	screenshot = as_screenshot_new ();
@@ -719,7 +741,8 @@ as_test_screenshot_func (void)
 	g_assert (root != NULL);
 	n = as_node_find (root, "screenshot");
 	g_assert (n != NULL);
-	ret = as_screenshot_node_parse (screenshot, n, &error);
+	ctx = as_node_context_new ();
+	ret = as_screenshot_node_parse (screenshot, n, ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -744,7 +767,8 @@ as_test_screenshot_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_screenshot_node_insert (screenshot, root, 0.8);
+	as_node_context_set_version (ctx, 0.8);
+	n = as_screenshot_node_insert (screenshot, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	ret = as_test_compare_lines (xml->str, src, &error);
 	g_assert_no_error (error);
@@ -823,6 +847,7 @@ as_test_app_func (void)
 		"<value key=\"SomethingRandom\"/>\n"
 		"</metadata>\n"
 		"</component>\n";
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_object_unref_ AsApp *app = NULL;
 
 	app = as_app_new ();
@@ -833,7 +858,8 @@ as_test_app_func (void)
 	g_assert (root != NULL);
 	n = as_node_find (root, "component");
 	g_assert (n != NULL);
-	ret = as_app_node_parse (app, n, &error);
+	ctx = as_node_context_new ();
+	ret = as_app_node_parse (app, n, ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -890,7 +916,8 @@ as_test_app_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_app_node_insert (app, root, 0.8);
+	as_node_context_set_version (ctx, 0.8);
+	n = as_app_node_insert (app, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	ret = as_test_compare_lines (xml->str, src, &error);
 	g_assert_no_error (error);
@@ -1449,6 +1476,7 @@ as_test_app_no_markup_func (void)
 		"<id type=\"desktop\">org.gnome.Software.desktop</id>\n"
 		"<description>Software is awesome:\n\n * Bada\n * Boom!</description>\n"
 		"</application>\n";
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_object_unref_ AsApp *app = NULL;
 
 	app = as_app_new ();
@@ -1461,7 +1489,8 @@ as_test_app_no_markup_func (void)
 	g_assert (root != NULL);
 	n = as_node_find (root, "application");
 	g_assert (n != NULL);
-	ret = as_app_node_parse (app, n, &error);
+	ctx = as_node_context_new ();
+	ret = as_app_node_parse (app, n, ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -1473,7 +1502,8 @@ as_test_app_no_markup_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_app_node_insert (app, root, 0.4);
+	as_node_context_set_version (ctx, 0.4);
+	n = as_app_node_insert (app, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	ret = as_test_compare_lines (xml->str, src, &error);
 	g_assert_no_error (error);
@@ -2468,6 +2498,7 @@ as_test_node_no_dup_c_func (void)
 		"<name>Krita</name>"
 		"<name xml:lang=\"pl\">Krita</name>"
 		"</application>";
+	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_object_unref_ AsApp *app = NULL;
 
 	/* to object */
@@ -2477,7 +2508,8 @@ as_test_node_no_dup_c_func (void)
 	g_assert (root != NULL);
 	n = as_node_find (root, "application");
 	g_assert (n != NULL);
-	ret = as_app_node_parse (app, n, &error);
+	ctx = as_node_context_new ();
+	ret = as_app_node_parse (app, n, ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -2488,7 +2520,8 @@ as_test_node_no_dup_c_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	n = as_app_node_insert (app, root, 0.4);
+	as_node_context_set_version (ctx, 0.4);
+	n = as_app_node_insert (app, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	g_assert_cmpstr (xml->str, ==,
 		"<application>"

@@ -27,6 +27,7 @@
 #define __AS_ICON_PRIVATE_H
 
 #include "as-icon.h"
+#include "as-node-private.h"
 
 G_BEGIN_DECLS
 
@@ -36,12 +37,14 @@ void		 as_icon_set_data		(AsIcon		*icon,
 
 GNode		*as_icon_node_insert		(AsIcon		*icon,
 						 GNode		*parent,
-						 gdouble	 api_version);
+						 AsNodeContext	*ctx);
 gboolean	 as_icon_node_parse		(AsIcon		*icon,
 						 GNode		*node,
+						 AsNodeContext	*ctx,
 						 GError		**error);
 gboolean	 as_icon_node_parse_dep11	(AsIcon		*icon,
 						 GNode		*node,
+						 AsNodeContext	*ctx,
 						 GError		**error);
 
 G_END_DECLS

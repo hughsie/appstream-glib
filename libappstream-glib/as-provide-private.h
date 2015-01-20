@@ -27,17 +27,20 @@
 #define __AS_PROVIDE_PRIVATE_H
 
 #include "as-provide.h"
+#include "as-node-private.h"
 
 G_BEGIN_DECLS
 
 GNode		*as_provide_node_insert		(AsProvide	*provide,
 						 GNode		*parent,
-						 gdouble	 api_version);
+						 AsNodeContext	*ctx);
 gboolean	 as_provide_node_parse		(AsProvide	*provide,
 						 GNode		*node,
+						 AsNodeContext	*ctx,
 						 GError		**error);
 gboolean	 as_provide_node_parse_dep11	(AsProvide	*provide,
 						 GNode		*node,
+						 AsNodeContext	*ctx,
 						 GError		**error);
 
 G_END_DECLS

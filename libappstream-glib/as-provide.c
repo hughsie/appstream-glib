@@ -222,7 +222,7 @@ as_provide_set_kind (AsProvide *provide, AsProvideKind kind)
  * as_provide_node_insert: (skip)
  * @provide: a #AsProvide instance.
  * @parent: the parent #GNode to use..
- * @api_version: the AppStream API version
+ * @ctx: the #AsNodeContext
  *
  * Inserts the provide into the DOM tree.
  *
@@ -231,7 +231,7 @@ as_provide_set_kind (AsProvide *provide, AsProvideKind kind)
  * Since: 0.1.6
  **/
 GNode *
-as_provide_node_insert (AsProvide *provide, GNode *parent, gdouble api_version)
+as_provide_node_insert (AsProvide *provide, GNode *parent, AsNodeContext *ctx)
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
 	GNode *n = NULL;
@@ -267,6 +267,7 @@ as_provide_node_insert (AsProvide *provide, GNode *parent, gdouble api_version)
  * as_provide_node_parse_dep11:
  * @provide: a #AsProvide instance.
  * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
  * @error: A #GError or %NULL.
  *
  * Populates the object from a DEP-11 node.
@@ -276,7 +277,8 @@ as_provide_node_insert (AsProvide *provide, GNode *parent, gdouble api_version)
  * Since: 0.3.0
  **/
 gboolean
-as_provide_node_parse_dep11 (AsProvide *provide, GNode *node, GError **error)
+as_provide_node_parse_dep11 (AsProvide *provide, GNode *node,
+			     AsNodeContext *ctx, GError **error)
 {
 	return TRUE;
 }
@@ -285,6 +287,7 @@ as_provide_node_parse_dep11 (AsProvide *provide, GNode *node, GError **error)
  * as_provide_node_parse:
  * @provide: a #AsProvide instance.
  * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
  * @error: A #GError or %NULL.
  *
  * Populates the object from a DOM node.
@@ -294,7 +297,8 @@ as_provide_node_parse_dep11 (AsProvide *provide, GNode *node, GError **error)
  * Since: 0.1.6
  **/
 gboolean
-as_provide_node_parse (AsProvide *provide, GNode *node, GError **error)
+as_provide_node_parse (AsProvide *provide, GNode *node,
+		       AsNodeContext *ctx, GError **error)
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
 	priv->kind = as_provide_kind_from_string (as_node_get_name (node));
