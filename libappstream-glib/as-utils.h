@@ -76,8 +76,26 @@ typedef enum {
 	AS_UTILS_LOCATION_LAST
 } AsUtilsLocation;
 
+/**
+ * AsMarkupConvertFormat:
+ * @AS_MARKUP_CONVERT_FORMAT_SIMPLE		UTF-8 text
+ * @AS_MARKUP_CONVERT_FORMAT_MARKDOWN:		Markdown format
+ *
+ * The output format used when converting AppStream descriptions.
+ **/
+typedef enum {
+	AS_MARKUP_CONVERT_FORMAT_SIMPLE,
+	AS_MARKUP_CONVERT_FORMAT_MARKDOWN,
+	/*< private >*/
+	AS_MARKUP_CONVERT_FORMAT_LAST
+} AsMarkupConvertFormat;
+
 gchar		*as_markup_convert_simple	(const gchar	*markup,
 						 gssize		 markup_len,
+						 GError		**error);
+gchar		*as_markup_convert		(const gchar	*markup,
+						 gssize		 markup_len,
+						 AsMarkupConvertFormat format,
 						 GError		**error);
 GQuark		 as_utils_error_quark		(void);
 gboolean	 as_utils_is_stock_icon_name	(const gchar	*name);

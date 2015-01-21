@@ -83,21 +83,117 @@ as_strndup (const gchar *text, gssize text_len)
 }
 
 /**
- * as_markup_convert_simple:
+ * as_markup_text_split_words:
+ **/
+static gchar **
+as_markup_text_split_words (const gchar *text, guint len)
+{
+	GPtrArray *lines;
+	guint i;
+	_cleanup_string_free_ GString *curline = NULL;
+	_cleanup_strv_free_ gchar **tokens = NULL;
+
+	lines = g_ptr_array_new ();
+	curline = g_string_new ("");
+
+	/* tokenize the string */
+	tokens = g_strsplit (text, " ", -1);
+	for (i = 0; tokens[i] != NULL; i++) {
+
+		/* current line plus new token is okay */
+		if (curline->len + strlen (tokens[i]) < len) {
+			g_string_append_printf (curline, "%s ", tokens[i]);
+			continue;
+		}
+
+		/* too long, so remove space, add newline and dump */
+		if (curline->len > 0)
+			g_string_truncate (curline, curline->len - 1);
+		g_string_append (curline, "\n");
+		g_ptr_array_add (lines, g_strdup (curline->str));
+		g_string_truncate (curline, 0);
+		g_string_append_printf (curline, "%s ", tokens[i]);
+
+	}
+
+	/* any incomplete line? */
+	if (curline->len > 0) {
+		g_string_truncate (curline, curline->len - 1);
+		g_string_append (curline, "\n");
+		g_ptr_array_add (lines, g_strdup (curline->str));
+	}
+
+	g_ptr_array_add (lines, NULL);
+	return (gchar **) g_ptr_array_free (lines, FALSE);
+}
+
+/**
+ * as_markup_render_para:
+ **/
+static void
+as_markup_render_para (GString *str, AsMarkupConvertFormat format, const gchar *data)
+{
+	guint i;
+	_cleanup_strv_free_ gchar **spl = NULL;
+
+	if (str->len > 0)
+		g_string_append (str, "\n");
+	switch (format) {
+	case AS_MARKUP_CONVERT_FORMAT_SIMPLE:
+		g_string_append_printf (str, "%s\n", data);
+		break;
+	case AS_MARKUP_CONVERT_FORMAT_MARKDOWN:
+		/* break to 80 chars */
+		spl = as_markup_text_split_words (data, 80);
+		for (i = 0; spl[i] != NULL; i++)
+			g_string_append (str, spl[i]);
+		break;
+	default:
+		break;
+	}
+}
+
+/**
+ * as_markup_render_li:
+ **/
+static void
+as_markup_render_li (GString *str, AsMarkupConvertFormat format, const gchar *data)
+{
+	guint i;
+	_cleanup_strv_free_ gchar **spl = NULL;
+
+	switch (format) {
+	case AS_MARKUP_CONVERT_FORMAT_SIMPLE:
+		g_string_append_printf (str, " • %s\n", data);
+		break;
+	case AS_MARKUP_CONVERT_FORMAT_MARKDOWN:
+		/* break to 80 chars, leaving room for the dot/indent */
+		spl = as_markup_text_split_words (data, 80 - 3);
+		g_string_append_printf (str, " * %s", spl[0]);
+		for (i = 1; spl[i] != NULL; i++)
+			g_string_append_printf (str, "   %s", spl[i]);
+		break;
+	default:
+		break;
+	}
+}
+
+/**
+ * as_markup_convert:
  * @markup: the text to copy.
  * @markup_len: the length of @markup, or -1 if @markup is NULL terminated.
+ * @format: the #AsMarkupConvertFormat, e.g. %AS_MARKUP_CONVERT_FORMAT_MARKDOWN
  * @error: A #GError or %NULL
  *
  * Converts an XML description into a printable form.
  *
  * Returns: (transfer full): a newly allocated %NULL terminated string
  *
- * Since: 0.1.0
+ * Since: 0.3.5
  **/
 gchar *
-as_markup_convert_simple (const gchar *markup,
-			  gssize markup_len,
-			  GError **error)
+as_markup_convert (const gchar *markup, gssize markup_len,
+		   AsMarkupConvertFormat format, GError **error)
 {
 	GNode *tmp;
 	GNode *tmp_c;
@@ -124,9 +220,7 @@ as_markup_convert_simple (const gchar *markup,
 
 		tag = as_node_get_name (tmp);
 		if (g_strcmp0 (tag, "p") == 0) {
-			if (str->len > 0)
-				g_string_append (str, "\n");
-			g_string_append_printf (str, "%s\n", as_node_get_data (tmp));
+			as_markup_render_para (str, format, as_node_get_data (tmp));
 
 		/* loop on the children */
 		} else if (g_strcmp0 (tag, "ul") == 0 ||
@@ -134,9 +228,8 @@ as_markup_convert_simple (const gchar *markup,
 			for (tmp_c = tmp->children; tmp_c != NULL; tmp_c = tmp_c->next) {
 				tag_c = as_node_get_name (tmp_c);
 				if (g_strcmp0 (tag_c, "li") == 0) {
-					g_string_append_printf (str,
-								" • %s\n",
-								as_node_get_data (tmp_c));
+					as_markup_render_li (str, format,
+							     as_node_get_data (tmp_c));
 				} else {
 					/* only <li> is valid in lists */
 					g_set_error (error,
@@ -161,6 +254,28 @@ as_markup_convert_simple (const gchar *markup,
 	if (str->len > 0)
 		g_string_truncate (str, str->len - 1);
 	return g_strdup (str->str);
+}
+
+/**
+ * as_markup_convert_simple:
+ * @markup: the text to copy.
+ * @markup_len: the length of @markup, or -1 if @markup is NULL terminated.
+ * @error: A #GError or %NULL
+ *
+ * Converts an XML description into a printable form.
+ *
+ * Returns: (transfer full): a newly allocated %NULL terminated string
+ *
+ * Since: 0.1.0
+ **/
+gchar *
+as_markup_convert_simple (const gchar *markup,
+			  gssize markup_len,
+			  GError **error)
+{
+	return as_markup_convert (markup, markup_len,
+				  AS_MARKUP_CONVERT_FORMAT_SIMPLE,
+				  error);
 }
 
 /**

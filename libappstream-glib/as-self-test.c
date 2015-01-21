@@ -2927,6 +2927,26 @@ as_test_utils_func (void)
 	g_free (tmp);
 
 	/* valid description markup */
+	tmp = as_markup_convert ("<p>Hello world with a very long line that"
+				 " probably needs splitting at least once in"
+				 " the right place.</p>"
+				 "<ul><li>"
+				 "This is an overly long item that needs to be"
+				 " broken into multiple lines that only has one"
+				 " initial bullet point."
+				 "</li></ul>",
+				 -1, AS_MARKUP_CONVERT_FORMAT_MARKDOWN, &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (tmp, ==,
+			 "Hello world with a very long line that probably"
+			 " needs splitting at least once\n"
+			 "in the right place.\n"
+			 " * This is an overly long item that needs to be"
+			 " broken into multiple lines that\n"
+			 "   only has one initial bullet point.");
+	g_free (tmp);
+
+	/* valid description markup */
 	tmp = as_markup_convert_simple ("bare text", -1, &error);
 	g_assert_no_error (error);
 	g_assert_cmpstr (tmp, ==, "bare text");
