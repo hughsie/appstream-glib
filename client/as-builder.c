@@ -24,6 +24,7 @@
 #include <appstream-glib.h>
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <stdlib.h>
 #include <locale.h>
 
 #include "as-cleanup.h"
@@ -75,6 +76,7 @@ main (int argc, char **argv)
 	gint max_threads = 4;
 	gint min_icon_size = 32;
 	guint i;
+	int retval = EXIT_SUCCESS;
 	_cleanup_dir_close_ GDir *dir = NULL;
 	_cleanup_error_free_ GError *error = NULL;
 	_cleanup_free_ gchar *basename = NULL;
@@ -174,6 +176,7 @@ main (int argc, char **argv)
 	if (!ret) {
 		/* TRANSLATORS: error message */
 		g_print ("%s: %s\n", _("Failed to parse arguments"), error->message);
+		retval = EXIT_FAILURE;
 		goto out;
 	}
 
@@ -240,6 +243,7 @@ main (int argc, char **argv)
 	if (!ret) {
 		/* TRANSLATORS: error message */
 		g_warning ("%s: %s", _("Failed to set up builder"), error->message);
+		retval = EXIT_FAILURE;
 		goto out;
 	}
 
@@ -250,6 +254,7 @@ main (int argc, char **argv)
 			if (!as_builder_search_path (packages, packages_dirs[i], &error)) {
 				/* TRANSLATORS: error message */
 				g_warning ("%s: %s", _("Failed to open packages"), error->message);
+				retval = EXIT_FAILURE;
 				goto out;
 			}
 		}
@@ -302,6 +307,7 @@ main (int argc, char **argv)
 	if (!ret) {
 		/* TRANSLATORS: error message */
 		g_warning ("%s: %s", _("Failed to generate metadata"), error->message);
+		retval = EXIT_FAILURE;
 		goto out;
 	}
 
@@ -312,5 +318,5 @@ out:
 	g_option_context_free (option_context);
 	if (ctx != NULL)
 		g_object_unref (ctx);
-	return 0;
+	return retval;
 }
