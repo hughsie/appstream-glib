@@ -193,8 +193,6 @@ main (int argc, char **argv)
 	/* set defaults */
 	if (api_version < 0.01)
 		api_version = 0.41;
-	if (packages_dirs == NULL)
-		packages_dirs = g_strsplit ("./packages", "@", 1);
 	if (temp_dir == NULL)
 		temp_dir = g_strdup ("./tmp");
 	if (log_dir == NULL)
@@ -250,6 +248,14 @@ main (int argc, char **argv)
 	/* scan each package */
 	packages = g_ptr_array_new_with_free_func (g_free);
 	if (argc == 1) {
+		/* if the user launches the tool with no arguments */
+		if (packages_dirs == NULL) {
+			_cleanup_free_ gchar *tmp = NULL;
+			tmp = g_option_context_get_help (option_context, TRUE, NULL);
+			g_print ("%s", tmp);
+			retval = EXIT_FAILURE;
+			goto out;
+		}
 		for (i = 0; packages_dirs[i] != NULL; i++) {
 			if (!as_builder_search_path (packages, packages_dirs[i], &error)) {
 				/* TRANSLATORS: error message */
