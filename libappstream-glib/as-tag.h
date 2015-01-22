@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com`
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com`
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -73,6 +73,8 @@
  * @AS_TAG_VETOS:			`vetos`
  * @AS_TAG_VETO:			`veto`
  * @AS_TAG_BUNDLE:			`bundle`
+ * @AS_TAG_PERMISSIONS:			`permissions`
+ * @AS_TAG_PERMISSION:			`permission`
  *
  * The tag type.
  **/
@@ -120,6 +122,8 @@ typedef enum {
 	AS_TAG_VETOS,			/* Since: 0.3.0 */
 	AS_TAG_VETO,			/* Since: 0.3.0 */
 	AS_TAG_BUNDLE,			/* Since: 0.3.5 */
+	AS_TAG_PERMISSIONS,		/* Since: 0.3.5 */
+	AS_TAG_PERMISSION,		/* Since: 0.3.5 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;

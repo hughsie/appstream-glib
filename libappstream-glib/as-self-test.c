@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -855,6 +855,9 @@ as_test_app_func (void)
 		"<kudos>\n"
 		"<kudo>SearchProvider</kudo>\n"
 		"</kudos>\n"
+		"<permissions>\n"
+		"<permission>Network</permission>\n"
+		"</permissions>\n"
 		"<vetos>\n"
 		"<veto>Required AppData: ConsoleOnly</veto>\n"
 		"</vetos>\n"
@@ -923,12 +926,14 @@ as_test_app_func (void)
 	g_assert_cmpint (as_app_get_releases(app)->len, ==, 1);
 	g_assert_cmpint (as_app_get_provides(app)->len, ==, 3);
 	g_assert_cmpint (as_app_get_kudos(app)->len, ==, 1);
+	g_assert_cmpint (as_app_get_permissions(app)->len, ==, 1);
 	g_assert_cmpstr (as_app_get_metadata_item (app, "SomethingRandom"), ==, "");
 	g_assert_cmpint (as_app_get_language (app, "en_GB"), ==, 90);
 	g_assert_cmpint (as_app_get_language (app, "pl"), ==, 0);
 	g_assert_cmpint (as_app_get_language (app, "xx_XX"), ==, -1);
 	g_assert (as_app_has_kudo (app, "SearchProvider"));
 	g_assert (as_app_has_kudo_kind (app, AS_KUDO_KIND_SEARCH_PROVIDER));
+	g_assert (as_app_has_permission (app, "Network"));
 	g_assert (!as_app_has_kudo (app, "MagicValue"));
 	g_assert (!as_app_has_kudo_kind (app, AS_KUDO_KIND_USER_DOCS));
 	as_node_unref (root);

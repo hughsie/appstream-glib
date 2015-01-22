@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -69,6 +69,7 @@ struct _AsAppPrivate
 	GPtrArray	*compulsory_for_desktops;	/* of string */
 	GPtrArray	*extends;			/* of string */
 	GPtrArray	*kudos;				/* of string */
+	GPtrArray	*permissions;				/* of string */
 	GPtrArray	*mimetypes;			/* of string */
 	GPtrArray	*pkgnames;			/* of string */
 	GPtrArray	*architectures;			/* of string */
@@ -272,6 +273,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->compulsory_for_desktops);
 	g_ptr_array_unref (priv->extends);
 	g_ptr_array_unref (priv->kudos);
+	g_ptr_array_unref (priv->permissions);
 	g_ptr_array_unref (priv->mimetypes);
 	g_ptr_array_unref (priv->pkgnames);
 	g_ptr_array_unref (priv->architectures);
@@ -310,6 +312,7 @@ as_app_init (AsApp *app)
 	priv->keywords = g_hash_table_new_full (g_str_hash, g_str_equal,
 						g_free, (GDestroyNotify) g_ptr_array_unref);
 	priv->kudos = g_ptr_array_new_with_free_func (g_free);
+	priv->permissions = g_ptr_array_new_with_free_func (g_free);
 	priv->mimetypes = g_ptr_array_new_with_free_func (g_free);
 	priv->pkgnames = g_ptr_array_new_with_free_func (g_free);
 	priv->architectures = g_ptr_array_new_with_free_func (g_free);
@@ -491,6 +494,32 @@ as_app_get_compulsory_for_desktops (AsApp *app)
 }
 
 /**
+ * as_app_has_permission:
+ * @app: a #AsApp instance.
+ * @permission: a permission string, e.g. "Network"
+ *
+ * Searches the permission list for a specific item.
+ *
+ * Returns: %TRUE if the application has got the specified permission
+ *
+ * Since: 0.3.5
+ */
+gboolean
+as_app_has_permission (AsApp *app, const gchar *permission)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	const gchar *tmp;
+	guint i;
+
+	for (i = 0; i < priv->permissions->len; i++) {
+		tmp = g_ptr_array_index (priv->permissions, i);
+		if (g_strcmp0 (tmp, permission) == 0)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+/**
  * as_app_get_keywords:
  * @app: a #AsApp instance.
  * @locale: the locale, or %NULL. e.g. "en_GB"
@@ -525,6 +554,23 @@ as_app_get_kudos (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->kudos;
+}
+
+/**
+ * as_app_get_permissions:
+ * @app: a #AsApp instance.
+ *
+ * Gets any permissions the application has obtained.
+ *
+ * Returns: (element-type utf8) (transfer none): an array
+ *
+ * Since: 0.3.5
+ **/
+GPtrArray *
+as_app_get_permissions (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->permissions;
 }
 
 /**
@@ -1981,6 +2027,33 @@ as_app_add_kudo (AsApp *app, const gchar *kudo, gssize kudo_len)
 }
 
 /**
+ * as_app_add_permission:
+ * @app: a #AsApp instance.
+ * @permission: the permission.
+ * @permission_len: the size of @permission, or -1 if %NULL-terminated.
+ *
+ * Add a permission the application has obtained.
+ *
+ * Since: 0.3.5
+ **/
+void
+as_app_add_permission (AsApp *app, const gchar *permission, gssize permission_len)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (permission, permission_len)) {
+		return;
+	}
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
+	    as_app_array_find_string (priv->permissions, permission, permission_len)) {
+		return;
+	}
+	g_ptr_array_add (priv->permissions, as_strndup (permission, permission_len));
+}
+
+/**
  * as_app_add_kudo_kind:
  * @app: a #AsApp instance.
  * @kudo_kind: the #AsKudoKind.
@@ -2564,6 +2637,12 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		as_app_add_kudo (app, tmp, -1);
 	}
 
+	/* permissions */
+	for (i = 0; i < priv->permissions->len; i++) {
+		tmp = g_ptr_array_index (priv->permissions, i);
+		as_app_add_permission (app, tmp, -1);
+	}
+
 	/* extends */
 	for (i = 0; i < priv->extends->len; i++) {
 		tmp = g_ptr_array_index (priv->extends, i);
@@ -3005,6 +3084,16 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		}
 	}
 
+	/* <permissions> */
+	if (priv->permissions->len > 0 && api_version >= 0.8) {
+		g_ptr_array_sort (priv->permissions, as_app_ptr_array_sort_cb);
+		node_tmp = as_node_insert (node_app, "permissions", NULL, 0, NULL);
+		for (i = 0; i < priv->permissions->len; i++) {
+			tmp = g_ptr_array_index (priv->permissions, i);
+			as_node_insert (node_tmp, "permission", tmp, 0, NULL);
+		}
+	}
+
 	/* <vetos> */
 	if (priv->vetos->len > 0 && api_version >= 0.8) {
 		g_ptr_array_sort (priv->vetos, as_app_ptr_array_sort_cb);
@@ -3314,6 +3403,20 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			if (taken == NULL)
 				continue;
 			g_ptr_array_add (priv->kudos, taken);
+		}
+		break;
+
+	/* <permissions> */
+	case AS_TAG_PERMISSIONS:
+		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
+			g_ptr_array_set_size (priv->permissions, 0);
+		for (c = n->children; c != NULL; c = c->next) {
+			if (as_node_get_tag (c) != AS_TAG_PERMISSION)
+				continue;
+			taken = as_node_take_data (c);
+			if (taken == NULL)
+				continue;
+			g_ptr_array_add (priv->permissions, taken);
 		}
 		break;
 

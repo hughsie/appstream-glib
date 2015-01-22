@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -227,6 +227,7 @@ GPtrArray	*as_app_get_extends		(AsApp		*app);
 GPtrArray	*as_app_get_keywords		(AsApp		*app,
 						 const gchar	*locale);
 GPtrArray	*as_app_get_kudos		(AsApp		*app);
+GPtrArray	*as_app_get_permissions		(AsApp		*app);
 GPtrArray	*as_app_get_mimetypes		(AsApp		*app);
 GPtrArray	*as_app_get_pkgnames		(AsApp		*app);
 GPtrArray	*as_app_get_architectures	(AsApp		*app);
@@ -274,6 +275,8 @@ gboolean	 as_app_has_kudo		(AsApp		*app,
 						 const gchar	*kudo);
 gboolean	 as_app_has_kudo_kind		(AsApp		*app,
 						 AsKudoKind	 kudo);
+gboolean	 as_app_has_permission		(AsApp		*app,
+						 const gchar	*permission);
 
 /* setters */
 void		 as_app_set_id			(AsApp		*app,
@@ -339,6 +342,9 @@ void		 as_app_add_kudo		(AsApp		*app,
 						 gssize		 kudo_len);
 void		 as_app_add_kudo_kind		(AsApp		*app,
 						 AsKudoKind	 kudo_kind);
+void		 as_app_add_permission		(AsApp		*app,
+						 const gchar	*permission,
+						 gssize		 permission_len);
 void		 as_app_add_mimetype		(AsApp		*app,
 						 const gchar	*mimetype,
 						 gssize		 mimetype_len);

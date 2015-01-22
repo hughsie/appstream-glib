@@ -50,3 +50,5 @@ source_pkgname, AS_TAG_SOURCE_PKGNAME
 vetos, AS_TAG_VETOS
 veto, AS_TAG_VETO
 bundle, AS_TAG_BUNDLE
+permissions, AS_TAG_PERMISSIONS
+permission, AS_TAG_PERMISSION
