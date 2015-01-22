@@ -134,6 +134,8 @@ gboolean	 asb_context_setup		(AsbContext	*ctx,
 gboolean	 asb_context_process		(AsbContext	*ctx,
 						 AsbContextProcessFlags flags,
 						 GError		**error);
+void		 asb_context_add_package	(AsbContext	*ctx,
+						 AsbPackage	*pkg);
 gboolean	 asb_context_add_filename	(AsbContext	*ctx,
 						 const gchar	*filename,
 						 GError		**error);

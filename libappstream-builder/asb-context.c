@@ -577,6 +577,22 @@ asb_context_get_packages (AsbContext *ctx)
 }
 
 /**
+ * asb_context_add_package:
+ * @ctx: A #AsbContext
+ * @pkg: A #AsbPackage
+ *
+ * Adds a package to the list of packages to be processed
+ *
+ * Since: 0.3.5
+ **/
+void
+asb_context_add_package (AsbContext *ctx, AsbPackage *pkg)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	g_ptr_array_add (priv->packages, g_object_ref (pkg));
+}
+
+/**
  * asb_context_add_filename:
  * @ctx: A #AsbContext
  * @filename: package filename
@@ -591,7 +607,6 @@ asb_context_get_packages (AsbContext *ctx)
 gboolean
 asb_context_add_filename (AsbContext *ctx, const gchar *filename, GError **error)
 {
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	_cleanup_object_unref_ AsbPackage *pkg = NULL;
 
 	/* can find in existing metadata */
@@ -623,7 +638,7 @@ asb_context_add_filename (AsbContext *ctx, const gchar *filename, GError **error
 		return FALSE;
 
 	/* add to array */
-	g_ptr_array_add (priv->packages, g_object_ref (pkg));
+	asb_context_add_package (ctx, pkg);
 	return TRUE;
 }
 
