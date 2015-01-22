@@ -155,7 +155,7 @@ asb_task_explode_extra_packages (AsbTask *task, GError **error)
 	array = g_ptr_array_new_with_free_func (g_free);
 	icon_themes = g_ptr_array_new_with_free_func (g_free);
 	deps = asb_package_get_deps (priv->pkg);
-	for (i = 0; deps[i] != NULL; i++) {
+	for (i = 0; deps != NULL && deps[i] != NULL; i++) {
 		if (g_strstr_len (deps[i], -1, " ") != NULL)
 			continue;
 		if (g_strstr_len (deps[i], -1, ".so") != NULL)
