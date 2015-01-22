@@ -50,7 +50,7 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 static gboolean
 _asb_plugin_check_filename (const gchar *filename)
 {
-	if (fnmatch ("/usr/share/ibus/component/*.xml", filename, 0) == 0)
+	if (asb_plugin_match_glob ("/usr/share/ibus/component/*.xml", filename))
 		return TRUE;
 	return FALSE;
 }

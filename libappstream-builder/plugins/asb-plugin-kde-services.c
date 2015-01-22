@@ -84,7 +84,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	for (i = 0; filelist[i] != NULL; i++) {
 		_cleanup_error_free_ GError *error_local = NULL;
 		_cleanup_free_ gchar *filename = NULL;
-		if (fnmatch ("/usr/share/kde4/services/*.desktop", filelist[i], 0) != 0)
+		if (!asb_plugin_match_glob ("/usr/share/kde4/services/*.desktop", filelist[i]))
 			continue;
 		filename = g_build_filename (tmpdir, filelist[i], NULL);
 		if (!asb_plugin_process_filename (filename,

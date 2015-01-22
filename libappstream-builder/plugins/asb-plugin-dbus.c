@@ -49,7 +49,7 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 static gboolean
 _asb_plugin_check_filename_system (const gchar *filename)
 {
-	if (fnmatch ("/usr/share/dbus-1/system-services/*.service", filename, 0) == 0)
+	if (asb_plugin_match_glob ("/usr/share/dbus-1/system-services/*.service", filename))
 		return TRUE;
 	return FALSE;
 }
@@ -60,7 +60,7 @@ _asb_plugin_check_filename_system (const gchar *filename)
 static gboolean
 _asb_plugin_check_filename_session (const gchar *filename)
 {
-	if (fnmatch ("/usr/share/dbus-1/services/*.service", filename, 0) == 0)
+	if (asb_plugin_match_glob ("/usr/share/dbus-1/services/*.service", filename))
 		return TRUE;
 	return FALSE;
 }

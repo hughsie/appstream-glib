@@ -48,7 +48,7 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 gboolean
 asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
 {
-	if (fnmatch ("/usr/lib64/gstreamer-1.0/libgst*.so", filename, 0) == 0)
+	if (asb_plugin_match_glob ("/usr/lib64/gstreamer-1.0/libgst*.so", filename))
 		return TRUE;
 	return FALSE;
 }

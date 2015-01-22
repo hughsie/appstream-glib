@@ -49,7 +49,7 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 static gboolean
 _asb_plugin_check_filename (const gchar *filename)
 {
-	if (fnmatch ("/usr/share/ibus-table/tables/*.db", filename, 0) == 0)
+	if (asb_plugin_match_glob ("/usr/share/ibus-table/tables/*.db", filename))
 		return TRUE;
 	return FALSE;
 }

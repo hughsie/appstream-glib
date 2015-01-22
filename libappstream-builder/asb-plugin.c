@@ -30,6 +30,7 @@
 #include "config.h"
 
 #include <glib.h>
+#include <fnmatch.h>
 
 #include "asb-plugin.h"
 #include "asb-utils.h"
@@ -117,4 +118,19 @@ void
 asb_plugin_add_glob (GPtrArray *array, const gchar *glob)
 {
 	g_ptr_array_add (array, asb_glob_value_new (glob, ""));
+}
+
+/**
+ * asb_plugin_match_glob:
+ * @glob: a filename glob
+ * @value: a filename value
+ *
+ * Matches a value against a glob.
+ *
+ * Since: 0.3.5
+ **/
+gboolean
+asb_plugin_match_glob (const gchar *glob, const gchar *value)
+{
+	return (fnmatch (glob, value, 0) == 0);
 }

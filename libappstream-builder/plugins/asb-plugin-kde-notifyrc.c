@@ -58,10 +58,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	/* look for a shell search provider */
 	filelist = asb_package_get_filelist (pkg);
 	for (i = 0; filelist[i] != NULL; i++) {
-		if (fnmatch ("/usr/share/kde4/apps/*/*.notifyrc", filelist[i], 0) == 0) {
-			as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_NOTIFICATIONS);
-			break;
-		}
+		if (!asb_plugin_match_glob ("/usr/share/kde4/apps/*/*.notifyrc", filelist[i]))
+			continue;
+		as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_NOTIFICATIONS);
+		break;
 	}
 
 	return TRUE;

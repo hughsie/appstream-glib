@@ -101,6 +101,8 @@ void		 asb_plugin_add_app			(GList		**list,
 							 AsApp		*app);
 void		 asb_plugin_add_glob			(GPtrArray	*array,
 							 const gchar	*glob);
+gboolean	 asb_plugin_match_glob			(const gchar	*glob,
+							 const gchar	*value);
 
 G_END_DECLS
 

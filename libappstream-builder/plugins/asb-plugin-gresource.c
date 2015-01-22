@@ -87,7 +87,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		GError *error_local = NULL;
 		_cleanup_free_ gchar *filename = NULL;
 
-		if (!g_str_has_prefix (filelist[i], "/usr/bin/"))
+		if (!asb_plugin_match_glob ("/usr/bin/*", filelist[i]))
 			continue;
 		if (as_app_has_kudo_kind (AS_APP (app), AS_KUDO_KIND_APP_MENU))
 			break;

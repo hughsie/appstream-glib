@@ -203,8 +203,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	/* look for any installed docs */
 	filelist = asb_package_get_filelist (pkg);
 	for (i = 0; filelist[i] != NULL; i++) {
-		if (g_str_has_prefix (filelist[i],
-				      "/usr/share/help/")) {
+		if (asb_plugin_match_glob ("/usr/share/help/*", filelist[i])) {
 			as_app_add_kudo_kind (AS_APP (app),
 					      AS_KUDO_KIND_USER_DOCS);
 			break;
@@ -213,8 +212,8 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 	/* look for a shell search provider */
 	for (i = 0; filelist[i] != NULL; i++) {
-		if (g_str_has_prefix (filelist[i],
-				      "/usr/share/gnome-shell/search-providers/")) {
+		if (asb_plugin_match_glob ("/usr/share/gnome-shell/search-providers/*",
+					   filelist[i])) {
 			as_app_add_kudo_kind (AS_APP (app),
 					      AS_KUDO_KIND_SEARCH_PROVIDER);
 			break;
@@ -223,8 +222,8 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 	/* look for a high contrast icon */
 	for (i = 0; filelist[i] != NULL; i++) {
-		if (g_str_has_prefix (filelist[i],
-				      "/usr/share/icons/HighContrast/")) {
+		if (asb_plugin_match_glob ("/usr/share/icons/HighContrast/*",
+					   filelist[i])) {
 			as_app_add_kudo_kind (AS_APP (app),
 					      AS_KUDO_KIND_HIGH_CONTRAST);
 			break;
