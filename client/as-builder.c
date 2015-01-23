@@ -107,10 +107,9 @@ as_builder_setup_ostree (AsbContext *ctx, const gchar *ostree_repo, GError **err
 	return TRUE;
 #else
 	g_set_error_literal (error,
-			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_FAILED,
-			     "No ostree support enable",
-			     filename);
+			     AS_UTILS_ERROR,
+			     AS_UTILS_ERROR_FAILED,
+			     "No ostree support enabled");
 	return FALSE;
 #endif
 }
