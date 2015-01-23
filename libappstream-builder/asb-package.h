@@ -91,6 +91,12 @@ typedef enum {
 	ASB_PACKAGE_LOG_LEVEL_LAST,
 } AsbPackageLogLevel;
 
+typedef enum {
+	ASB_PACKAGE_KIND_DEFAULT,
+	ASB_PACKAGE_KIND_BUNDLE,
+	ASB_PACKAGE_KIND_LAST
+} AsbPackageKind;
+
 GType		 asb_package_get_type		(void);
 
 void		 asb_package_log_start		(AsbPackage	*pkg);
@@ -111,6 +117,7 @@ gboolean	 asb_package_explode		(AsbPackage	*pkg,
 						 const gchar	*dir,
 						 GPtrArray	*glob,
 						 GError		**error);
+AsbPackageKind	 asb_package_get_kind		(AsbPackage	*pkg);
 const gchar	*asb_package_get_filename	(AsbPackage	*pkg);
 const gchar	*asb_package_get_basename	(AsbPackage	*pkg);
 const gchar	*asb_package_get_arch		(AsbPackage	*pkg);
@@ -123,6 +130,8 @@ const gchar	*asb_package_get_vcs		(AsbPackage	*pkg);
 const gchar	*asb_package_get_license	(AsbPackage	*pkg);
 const gchar	*asb_package_get_source		(AsbPackage	*pkg);
 const gchar	*asb_package_get_source_pkgname	(AsbPackage	*pkg);
+void		 asb_package_set_kind		(AsbPackage	*pkg,
+						 AsbPackageKind	 kind);
 void		 asb_package_set_name		(AsbPackage	*pkg,
 						 const gchar	*name);
 void		 asb_package_set_version	(AsbPackage	*pkg,

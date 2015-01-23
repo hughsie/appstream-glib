@@ -38,6 +38,7 @@
 typedef struct _AsbPackagePrivate	AsbPackagePrivate;
 struct _AsbPackagePrivate
 {
+	AsbPackageKind	 kind;
 	gboolean	 enabled;
 	gchar		**filelist;
 	gchar		**deps;
@@ -281,6 +282,23 @@ asb_package_get_filename (AsbPackage *pkg)
 }
 
 /**
+ * asb_package_get_kind:
+ * @pkg: A #AsbPackage
+ *
+ * Gets the kind of the package.
+ *
+ * Returns: a #AsbPackageKind
+ *
+ * Since: 0.2.5
+ **/
+AsbPackageKind
+asb_package_get_kind (AsbPackage *pkg)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	return priv->kind;
+}
+
+/**
  * asb_package_get_basename:
  * @pkg: A #AsbPackage
  *
@@ -448,6 +466,22 @@ asb_package_get_deps (AsbPackage *pkg)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 	return priv->deps;
+}
+
+/**
+ * asb_package_set_kind:
+ * @pkg: A #AsbPackage
+ * @kind: A #AsbPackageKind
+ *
+ * Sets the package kind.
+ *
+ * Since: 0.2.5
+ **/
+void
+asb_package_set_kind (AsbPackage *pkg, AsbPackageKind kind)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	priv->kind = kind;
 }
 
 /**
