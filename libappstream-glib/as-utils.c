@@ -990,6 +990,7 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 				 "status",
 				 "stock",
 				 NULL };
+	_cleanup_free_ gchar *prefix = NULL;
 
 	/* fallback */
 	if (destdir == NULL)
@@ -1010,6 +1011,20 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 		return g_strdup (tmp);
 	}
 
+	/* all now found in the prefix */
+	prefix = g_strdup_printf ("%s/usr", destdir);
+	if (!g_file_test (prefix, G_FILE_TEST_EXISTS)) {
+		g_free (prefix);
+		prefix = g_strdup_printf ("%s/files", destdir);
+	}
+	if (!g_file_test (prefix, G_FILE_TEST_EXISTS)) {
+		g_set_error (error,
+			     AS_UTILS_ERROR,
+			     AS_UTILS_ERROR_FAILED,
+			     "Failed to find icon in prefix %s", search);
+		return NULL;
+	}
+
 	/* icon theme apps */
 	sizes = flags & AS_UTILS_FIND_ICON_HI_DPI ? sizes_hi_dpi : sizes_lo_dpi;
 	for (k = 0; theme_dirs[k] != NULL; k++) {
@@ -1017,9 +1032,9 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 			for (m = 0; types[m] != NULL; m++) {
 				for (j = 0; supported_ext[j] != NULL; j++) {
 					_cleanup_free_ gchar *tmp = NULL;
-					tmp = g_strdup_printf ("%s/usr/share/icons/"
+					tmp = g_strdup_printf ("%s/share/icons/"
 							       "%s/%s/%s/%s%s",
-							       destdir,
+							       prefix,
 							       theme_dirs[k],
 							       sizes[i],
 							       types[m],
@@ -1036,8 +1051,8 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 	for (i = 0; pixmap_dirs[i] != NULL; i++) {
 		for (j = 0; supported_ext[j] != NULL; j++) {
 			_cleanup_free_ gchar *tmp = NULL;
-			tmp = g_strdup_printf ("%s/usr/share/%s/%s%s",
-					       destdir,
+			tmp = g_strdup_printf ("%s/share/%s/%s%s",
+					       prefix,
 					       pixmap_dirs[i],
 					       search,
 					       supported_ext[j]);

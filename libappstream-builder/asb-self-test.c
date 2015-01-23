@@ -223,18 +223,19 @@ asb_test_plugin_loader_func (void)
 
 	/* get the list of globs */
 	globs = asb_plugin_loader_get_globs (loader);\
-	g_assert_cmpint (globs->len, ==, 22);
+	g_assert_cmpint (globs->len, ==, 45);
 	g_assert_cmpstr (asb_glob_value_search (globs, "/usr/share/applications/gimp.desktop"), ==, "");
+	g_assert_cmpstr (asb_glob_value_search (globs, "/files/share/applications/gimp.desktop"), ==, "");
 	g_assert_cmpstr (asb_glob_value_search (globs, "/srv/dave.txt"), ==, NULL);
 
 	/* get the list of plugins */
 	plugins = asb_plugin_loader_get_plugins (loader);
-	g_assert_cmpint (plugins->len, ==, 17);
+	g_assert_cmpint (plugins->len, ==, 18);
 	plugin = g_ptr_array_index (plugins, 0);
 	g_assert (plugin != NULL);
 	g_assert (plugin->module != NULL);
 	g_assert (plugin->enabled);
-	g_assert_cmpstr (plugin->name, ==, "nm");
+	g_assert_cmpstr (plugin->name, ==, "ostree");
 	g_assert (plugin->ctx == ctx);
 
 	/* match the correct one */

@@ -4,6 +4,7 @@ AM_CPPFLAGS =						\
 	$(GDKPIXBUF_CFLAGS)				\
 	$(LIBARCHIVE_CFLAGS)				\
 	$(SOUP_CFLAGS)					\
+	$(OSTREE_CFLAGS)				\
 	-I$(top_srcdir)					\
 	-I$(top_builddir)				\
 	-I$(top_srcdir)/libappstream-glib		\
@@ -42,6 +43,7 @@ appstream_builder_LDADD =				\
 	$(AS_GLIB_LIBS)					\
 	$(AS_BUILDER_LIBS)				\
 	$(GLIB_LIBS)					\
+	$(OSTREE_LIBS)					\
 	$(SOUP_LIBS)					\
 	$(LIBARCHIVE_LIBS)
 appstream_builder_LDFLAGS =				\

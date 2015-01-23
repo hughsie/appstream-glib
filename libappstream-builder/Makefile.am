@@ -15,6 +15,7 @@ endif
 AM_CPPFLAGS =							\
 	$(GLIB_CFLAGS)						\
 	$(GDKPIXBUF_CFLAGS)					\
+	$(OSTREE_CFLAGS)					\
 	$(SOUP_CFLAGS)						\
 	-I$(top_srcdir)/libappstream-glib			\
 	-I$(top_builddir)/libappstream-glib			\
@@ -72,10 +73,17 @@ libappstream_builder_la_SOURCES +=				\
 	asb-package-alpm.h
 endif
 
+if HAVE_OSTREE
+libappstream_builder_la_SOURCES +=				\
+	asb-package-ostree.c					\
+	asb-package-ostree.h
+endif
+
 libappstream_builder_la_LIBADD =				\
 	$(AS_GLIB_LIBS)						\
 	$(RPM_LIBS)						\
-	$(ALPM_LIBS)					\
+	$(ALPM_LIBS)						\
+	$(OSTREE_LIBS)						\
 	$(GLIB_LIBS)						\
 	$(LIBARCHIVE_LIBS)
 

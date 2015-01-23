@@ -27,6 +27,11 @@
 #include <stdlib.h>
 #include <locale.h>
 
+#ifdef HAVE_OSTREE
+#include <ostree.h>
+#include "asb-package-ostree.h"
+#endif
+
 #include "as-cleanup.h"
 #include "asb-context.h"
 #include "asb-utils.h"
@@ -54,6 +59,60 @@ as_builder_search_path (GPtrArray *array, const gchar *path, GError **error)
 		}
 	}
 	return TRUE;
+}
+
+/**
+ * as_builder_setup_ostree:
+ **/
+static gboolean
+as_builder_setup_ostree (AsbContext *ctx, const gchar *ostree_repo, GError **error)
+{
+#ifdef HAVE_OSTREE
+	GHashTableIter iter;
+	gpointer key;
+	gpointer value;
+	_cleanup_hashtable_unref_ GHashTable *refs = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+	_cleanup_object_unref_ OstreeRepo *repo = NULL;
+
+	/* load repo */
+	file = g_file_new_for_path (ostree_repo);
+	repo = ostree_repo_new (file);
+	if (!ostree_repo_list_refs (repo, NULL, &refs, NULL, error))
+		return FALSE;
+
+	/* create a fake package for each of the refs */
+	g_hash_table_iter_init (&iter, refs);
+	while (g_hash_table_iter_next (&iter, &key, &value)) {
+		const gchar *refspec = key;
+		_cleanup_free_ gchar *remote = NULL;
+		_cleanup_free_ gchar *name = NULL;
+		_cleanup_free_ gchar *filename = NULL;
+		_cleanup_free_ gchar *ref = NULL;
+		_cleanup_object_unref_ AsbPackage *pkg = NULL;
+
+		if (!ostree_parse_refspec (refspec, &remote, &ref, error))
+			return FALSE;
+
+		pkg = asb_package_ostree_new ();
+		asb_package_set_source (pkg, ref);
+		asb_package_ostree_set_repodir (ASB_PACKAGE_OSTREE (pkg), ostree_repo);
+
+		/* open the package */
+		filename = g_build_filename (ostree_repo, name, NULL);
+		if (!asb_package_open (pkg, filename, error))
+			return FALSE;
+		asb_context_add_package (ctx, pkg);
+	}
+	return TRUE;
+#else
+	g_set_error_literal (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_FAILED,
+			     "No ostree support enable",
+			     filename);
+	return FALSE;
+#endif
 }
 
 /**
@@ -87,6 +146,7 @@ main (int argc, char **argv)
 	_cleanup_free_ gchar *log_dir = NULL;
 	_cleanup_free_ gchar *old_metadata = NULL;
 	_cleanup_free_ gchar *origin = NULL;
+	_cleanup_free_ gchar *ostree_repo = NULL;
 	_cleanup_free_ gchar *output_dir = NULL;
 	_cleanup_free_ gchar *screenshot_dir = NULL;
 	_cleanup_free_ gchar *screenshot_uri = NULL;
@@ -156,6 +216,9 @@ main (int argc, char **argv)
 		{ "screenshot-uri", '\0', 0, G_OPTION_ARG_STRING, &screenshot_uri,
 			/* TRANSLATORS: command line option */
 			_("Set the screenshot base URL"), "URI" },
+		{ "ostree-repo", '\0', 0, G_OPTION_ARG_STRING, &ostree_repo,
+			/* TRANSLATORS: command line option */
+			_("Set the ostree repo name"), "REPO" },
 		{ "old-metadata", '\0', 0, G_OPTION_ARG_FILENAME, &old_metadata,
 			/* TRANSLATORS: command line option */
 			_("Set the old metadata location"), "DIR" },
@@ -247,7 +310,7 @@ main (int argc, char **argv)
 
 	/* scan each package */
 	packages = g_ptr_array_new_with_free_func (g_free);
-	if (argc == 1) {
+	if (argc == 1 && ostree_repo == NULL) {
 		/* if the user launches the tool with no arguments */
 		if (packages_dirs == NULL) {
 			_cleanup_free_ gchar *tmp = NULL;
@@ -288,6 +351,15 @@ main (int argc, char **argv)
 			g_print (_("Parsed %i/%i files..."), i, packages->len);
 			g_print ("\n"),
 			g_timer_reset (timer);
+		}
+	}
+
+	/* load and data from an ostree repo */
+	if (ostree_repo != NULL) {
+		if (!as_builder_setup_ostree (ctx, ostree_repo, &error)) {
+			g_print ("%s\n", error->message);
+			retval = EXIT_FAILURE;
+			goto out;
 		}
 	}
 

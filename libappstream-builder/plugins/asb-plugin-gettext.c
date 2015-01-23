@@ -215,6 +215,10 @@ asb_gettext_ctx_search_path (AsbGettextContext *ctx,
 
 	/* search for .mo files in the prefix */
 	root = g_build_filename (prefix, "/usr/share/locale", NULL);
+	if (!g_file_test (root, G_FILE_TEST_EXISTS)) {
+		g_free (root);
+		root = g_build_filename (prefix, "/files/share/locale", NULL);
+	}
 	if (!g_file_test (root, G_FILE_TEST_EXISTS))
 		return TRUE;
 	dir = g_dir_open (root, 0, error);

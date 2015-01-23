@@ -511,8 +511,13 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 	/* get possible sources */
 	appdata_basename = asb_plugin_appdata_get_fn_for_app (AS_APP (app));
-	appdata_filename = g_strdup_printf ("%s/usr/share/appdata/%s.appdata.xml",
+	appdata_filename = g_strdup_printf ("%s/files/share/appdata/%s.appdata.xml",
 					    tmpdir, appdata_basename);
+	if (!g_file_test (appdata_filename, G_FILE_TEST_EXISTS)) {
+		g_free (appdata_filename);
+		appdata_filename = g_strdup_printf ("%s/usr/share/appdata/%s.appdata.xml",
+						    tmpdir, appdata_basename);
+	}
 	tmp = asb_package_get_config (pkg, "AppDataExtra");
 	if (tmp != NULL && g_file_test (tmp, G_FILE_TEST_EXISTS)) {
 		if (!asb_plugin_appdata_add_files (plugin, tmp, error))

@@ -518,8 +518,16 @@ asb_app_new (AsbPackage *pkg, const gchar *id)
 	priv = GET_PRIVATE (app);
 	if (pkg != NULL) {
 		priv->pkg = g_object_ref (pkg);
-		as_app_add_pkgname (AS_APP (app),
-				    asb_package_get_name (pkg), -1);
+		if (asb_package_get_kind (pkg) == ASB_PACKAGE_KIND_BUNDLE) {
+			_cleanup_object_unref_ AsBundle *bundle = NULL;
+			bundle = as_bundle_new ();
+			as_bundle_set_id (bundle, asb_package_get_source (pkg), -1);
+			as_bundle_set_kind (bundle, AS_BUNDLE_KIND_XDG_APP);
+			as_app_add_bundle (AS_APP (app), bundle);
+		} else {
+			as_app_add_pkgname (AS_APP (app),
+					    asb_package_get_name (pkg), -1);
+		}
 	}
 	if (id != NULL)
 		as_app_set_id (AS_APP (app), id, -1);
