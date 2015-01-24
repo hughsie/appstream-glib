@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -399,7 +399,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		}
 
 		/* set cache-id in case we want to use the metadata directly */
-		if (asb_context_get_add_cache_id (priv->ctx)) {
+		if (asb_context_get_flag (priv->ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID)) {
 			cache_id = asb_utils_get_cache_id_for_filename (priv->filename);
 			as_app_add_metadata (AS_APP (app),
 					     "X-CacheID",
@@ -429,7 +429,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 skip:
 	/* add a dummy element to the AppStream metadata so that we don't keep
 	 * parsing this every time */
-	if (asb_context_get_add_cache_id (priv->ctx) && nr_added == 0)
+	if (asb_context_get_flag (priv->ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID) && nr_added == 0)
 		asb_context_add_app_ignore (priv->ctx, priv->pkg);
 
 	/* delete tree */

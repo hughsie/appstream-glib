@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -250,7 +250,7 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	}
 
 	/* save in target directory */
-	if (asb_context_get_hidpi_enabled (plugin->ctx)) {
+	if (asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS)) {
 		name = g_strdup_printf ("%ix%i/%s.png",
 					64, 64,
 					as_app_get_id_filename (AS_APP (app)));
@@ -266,7 +266,7 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	as_app_add_icon (AS_APP (app), icon);
 
 	/* is HiDPI disabled */
-	if (!asb_context_get_hidpi_enabled (plugin->ctx))
+	if (!asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS))
 		return TRUE;
 
 	/* try to get a HiDPI icon */
@@ -321,7 +321,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	/* create app */
 	app_id = g_path_get_basename (filename);
 	app = asb_app_new (pkg, app_id);
-	asb_app_set_hidpi_enabled (app, asb_context_get_hidpi_enabled (plugin->ctx));
+	asb_app_set_hidpi_enabled (app, asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS));
 	full_filename = g_build_filename (tmpdir, filename, NULL);
 	ret = as_app_parse_file (AS_APP (app),
 				 full_filename,

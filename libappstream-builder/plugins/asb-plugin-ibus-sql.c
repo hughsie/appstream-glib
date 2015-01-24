@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -204,7 +204,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		}
 	}
 	asb_app_set_requires_appdata (app, TRUE);
-	asb_app_set_hidpi_enabled (app, asb_context_get_hidpi_enabled (plugin->ctx));
+	asb_app_set_hidpi_enabled (app, asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS));
 
 	/* add icon */
 	icon = as_icon_new ();

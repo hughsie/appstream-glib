@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -223,19 +223,18 @@ asb_test_plugin_loader_func (void)
 
 	/* get the list of globs */
 	globs = asb_plugin_loader_get_globs (loader);\
-	g_assert_cmpint (globs->len, ==, 45);
+	g_assert_cmpint (globs->len, >=, 44);
 	g_assert_cmpstr (asb_glob_value_search (globs, "/usr/share/applications/gimp.desktop"), ==, "");
 	g_assert_cmpstr (asb_glob_value_search (globs, "/files/share/applications/gimp.desktop"), ==, "");
 	g_assert_cmpstr (asb_glob_value_search (globs, "/srv/dave.txt"), ==, NULL);
 
 	/* get the list of plugins */
 	plugins = asb_plugin_loader_get_plugins (loader);
-	g_assert_cmpint (plugins->len, ==, 18);
+	g_assert_cmpint (plugins->len, >=, 17);
 	plugin = g_ptr_array_index (plugins, 0);
 	g_assert (plugin != NULL);
 	g_assert (plugin->module != NULL);
 	g_assert (plugin->enabled);
-	g_assert_cmpstr (plugin->name, ==, "ostree");
 	g_assert (plugin->ctx == ctx);
 
 	/* match the correct one */
@@ -284,12 +283,13 @@ asb_test_context_test_func (AsbTestContextMode mode)
 
 	/* set up the context */
 	ctx = asb_context_new ();
-	g_assert (!asb_context_get_add_cache_id (ctx));
+	g_assert (!asb_context_get_flag (ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID));
 	asb_context_set_max_threads (ctx, 1);
 	asb_context_set_api_version (ctx, 0.8);
-	asb_context_set_add_cache_id (ctx, TRUE);
-	asb_context_set_no_net (ctx, TRUE);
-	asb_context_set_hidpi_enabled (ctx, TRUE);
+	asb_context_set_flags (ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID |
+				    ASB_CONTEXT_FLAG_NO_NETWORK |
+				    ASB_CONTEXT_FLAG_INCLUDE_FAILED |
+				    ASB_CONTEXT_FLAG_HIDPI_ICONS);
 	asb_context_set_basename (ctx, "appstream");
 	asb_context_set_origin (ctx, "asb-self-test");
 	asb_context_set_cache_dir (ctx, "/tmp/asbuilder/cache");
@@ -309,7 +309,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	default:
 		break;
 	}
-	g_assert (asb_context_get_add_cache_id (ctx));
+	g_assert (asb_context_get_flag (ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID));
 	g_assert_cmpstr (asb_context_get_temp_dir (ctx), ==, "/tmp/asbuilder/temp");
 	ret = asb_context_setup (ctx, &error);
 	g_assert_no_error (error);
@@ -340,7 +340,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	}
 
 	/* run the plugins */
-	ret = asb_context_process (ctx, AS_CONTEXT_PARSE_FLAG_NONE, &error);
+	ret = asb_context_process (ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -771,9 +771,9 @@ asb_test_context_extra_appstream_func (void)
 	asb_context_set_extra_appstream (ctx, extra_appdata);
 	asb_context_set_max_threads (ctx, 1);
 	asb_context_set_api_version (ctx, 0.8);
-	asb_context_set_add_cache_id (ctx, TRUE);
-	asb_context_set_no_net (ctx, TRUE);
-	asb_context_set_hidpi_enabled (ctx, TRUE);
+	asb_context_set_flags (ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID |
+				    ASB_CONTEXT_FLAG_NO_NETWORK |
+				    ASB_CONTEXT_FLAG_HIDPI_ICONS);
 	asb_context_set_basename (ctx, "appstream");
 	asb_context_set_origin (ctx, "asb-self-test");
 	asb_context_set_cache_dir (ctx, "/tmp/asbuilder/cache");
@@ -784,7 +784,7 @@ asb_test_context_extra_appstream_func (void)
 	g_assert (ret);
 
 	/* run the plugins */
-	ret = asb_context_process (ctx, AS_CONTEXT_PARSE_FLAG_NONE, &error);
+	ret = asb_context_process (ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 

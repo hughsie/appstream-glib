@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -643,7 +643,7 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 		}
 
 		/* add icon */
-		if (asb_context_get_hidpi_enabled (plugin->ctx)) {
+		if (asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS)) {
 			icon_filename = g_strdup_printf ("64x64/%s.png",
 							 as_app_get_id_filename (AS_APP (app)));
 		} else {

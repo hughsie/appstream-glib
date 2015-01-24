@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -199,7 +199,7 @@ asb_plugin_appdata_load_url (AsbPlugin *plugin,
 					  as_app_get_id_filename (AS_APP (app)),
 					  basename);
 	if (!g_file_test (cache_filename, G_FILE_TEST_EXISTS)) {
-		if (asb_context_get_no_net (plugin->ctx)) {
+		if (asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_NO_NETWORK)) {
 			asb_package_log (asb_app_get_package (app),
 					 ASB_PACKAGE_LOG_LEVEL_WARNING,
 					 "Could not download %s as no network", url);

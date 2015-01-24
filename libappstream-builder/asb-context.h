@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -59,20 +59,30 @@ struct _AsbContextClass
 };
 
 /**
- * AsbContextProcessFlags:
- * @AS_CONTEXT_PARSE_FLAG_NONE:				No special actions to use
- * @AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_INFO:		Ignore missing information
- * @AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_PARENTS:	Ignore missing parents
+ * AsbContextFlags:
+ * @ASB_CONTEXT_FLAG_NONE:			No special actions to use
+ * @ASB_CONTEXT_FLAG_IGNORE_MISSING_INFO:	Ignore missing information
+ * @ASB_CONTEXT_FLAG_IGNORE_MISSING_PARENTS:	Ignore missing parents
+ * @ASB_CONTEXT_FLAG_ADD_CACHE_ID:		Add cache ID to reuse metadata
+ * @ASB_CONTEXT_FLAG_HIDPI_ICONS:		Include HiDPI icons
+ * @ASB_CONTEXT_FLAG_EMBEDDED_ICONS:		Embed the icons in the XML
+ * @ASB_CONTEXT_FLAG_NO_NETWORK:		Do not download files
+ * @ASB_CONTEXT_FLAG_INCLUDE_FAILED:		Write the origin-ignore.xml file
  *
  * The flags to use when processing the context.
  **/
 typedef enum {
-	AS_CONTEXT_PARSE_FLAG_NONE,
-	AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_INFO	= 1,	/* Since: 0.3.2 */
-	AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_PARENTS	= 2,	/* Since: 0.3.2 */
+	ASB_CONTEXT_FLAG_NONE,
+	ASB_CONTEXT_FLAG_IGNORE_MISSING_INFO	= 0,		/* Since: 0.3.5 */
+	ASB_CONTEXT_FLAG_IGNORE_MISSING_PARENTS	= 1 << 0,	/* Since: 0.3.5 */
+	ASB_CONTEXT_FLAG_ADD_CACHE_ID		= 1 << 1,	/* Since: 0.3.5 */
+	ASB_CONTEXT_FLAG_HIDPI_ICONS		= 1 << 2,	/* Since: 0.3.5 */
+	ASB_CONTEXT_FLAG_EMBEDDED_ICONS		= 1 << 3,	/* Since: 0.3.5 */
+	ASB_CONTEXT_FLAG_NO_NETWORK		= 1 << 4,	/* Since: 0.3.5 */
+	ASB_CONTEXT_FLAG_INCLUDE_FAILED		= 1 << 5,	/* Since: 0.3.5 */
 	/*< private >*/
-	AS_CONTEXT_PARSE_FLAG_LAST,
-} AsbContextProcessFlags;
+	ASB_CONTEXT_FLAG_LAST,
+} AsbContextFlags;
 
 GType		 asb_context_get_type		(void);
 
@@ -83,16 +93,10 @@ void		 asb_context_add_app		(AsbContext	*ctx,
 						 AsbApp		*app);
 void		 asb_context_add_app_ignore	(AsbContext	*ctx,
 						 AsbPackage	*pkg);
-void		 asb_context_set_no_net		(AsbContext	*ctx,
-						 gboolean	 no_net);
 void		 asb_context_set_api_version	(AsbContext	*ctx,
 						 gdouble	 api_version);
-void		 asb_context_set_add_cache_id	(AsbContext	*ctx,
-						 gboolean	 add_cache_id);
-void		 asb_context_set_hidpi_enabled	(AsbContext	*ctx,
-						 gboolean	 hidpi_enabled);
-void		 asb_context_set_embedded_icons	(AsbContext	*ctx,
-						 gboolean	 embedded_icons);
+void		 asb_context_set_flags		(AsbContext	*ctx,
+						 AsbContextFlags flags);
 void		 asb_context_set_max_threads	(AsbContext	*ctx,
 						 guint		 max_threads);
 void		 asb_context_set_min_icon_size	(AsbContext	*ctx,
@@ -122,17 +126,15 @@ void		 asb_context_set_basename	(AsbContext	*ctx,
 void		 asb_context_set_origin		(AsbContext	*ctx,
 						 const gchar	*origin);
 const gchar	*asb_context_get_temp_dir	(AsbContext	*ctx);
-gboolean	 asb_context_get_add_cache_id	(AsbContext	*ctx);
-gboolean	 asb_context_get_hidpi_enabled	(AsbContext	*ctx);
-gboolean	 asb_context_get_embedded_icons	(AsbContext	*ctx);
-gboolean	 asb_context_get_no_net		(AsbContext	*ctx);
+AsbContextFlags	 asb_context_get_flags		(AsbContext	*ctx);
+gboolean	 asb_context_get_flag		(AsbContext	*ctx,
+						 AsbContextFlags flag);
 gdouble		 asb_context_get_api_version	(AsbContext	*ctx);
 guint		 asb_context_get_min_icon_size	(AsbContext	*ctx);
 
 gboolean	 asb_context_setup		(AsbContext	*ctx,
 						 GError		**error);
 gboolean	 asb_context_process		(AsbContext	*ctx,
-						 AsbContextProcessFlags flags,
 						 GError		**error);
 void		 asb_context_add_package	(AsbContext	*ctx,
 						 AsbPackage	*pkg);

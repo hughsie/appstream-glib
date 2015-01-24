@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -63,10 +63,7 @@ struct _AsbContextPrivate
 	GPtrArray		*packages;		/* of AsbPackage */
 	AsbPanel		*panel;
 	AsbPluginLoader		*plugin_loader;
-	gboolean		 add_cache_id;
-	gboolean		 hidpi_enabled;
-	gboolean		 embedded_icons;
-	gboolean		 no_net;
+	AsbContextFlags		 flags;
 	guint			 max_threads;
 	guint			 min_icon_size;
 	gdouble			 api_version;
@@ -111,22 +108,6 @@ asb_context_realpath (const gchar *path)
 }
 
 /**
- * asb_context_set_no_net:
- * @ctx: A #AsbContext
- * @no_net: if network is disallowed
- *
- * Sets if network access is disallowed.
- *
- * Since: 0.1.0
- **/
-void
-asb_context_set_no_net (AsbContext *ctx, gboolean no_net)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->no_net = no_net;
-}
-
-/**
  * asb_context_set_api_version:
  * @ctx: A #AsbContext
  * @api_version: the AppStream API version
@@ -143,56 +124,24 @@ asb_context_set_api_version (AsbContext *ctx, gdouble api_version)
 }
 
 /**
- * asb_context_set_add_cache_id:
+ * asb_context_set_flags:
  * @ctx: A #AsbContext
- * @add_cache_id: boolean
+ * @flags: #AsbContextFlags, e.g. %ASB_CONTEXT_FLAG_ADD_CACHE_ID
  *
  * Sets if the cache id should be included in the metadata.
  *
- * Since: 0.1.0
+ * Since: 0.3.5
  **/
 void
-asb_context_set_add_cache_id (AsbContext *ctx, gboolean add_cache_id)
+asb_context_set_flags (AsbContext *ctx, AsbContextFlags flags)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	if (add_cache_id) {
+	if (flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) {
 		as_store_add_metadata_index (priv->store_failed, "X-CacheID");
 		as_store_add_metadata_index (priv->store_ignore, "X-CacheID");
 		as_store_add_metadata_index (priv->store_old, "X-CacheID");
 	}
-	priv->add_cache_id = add_cache_id;
-}
-
-/**
- * asb_context_set_hidpi_enabled:
- * @ctx: A #AsbContext
- * @hidpi_enabled: boolean
- *
- * Sets if the high DPI icons should be included in the metadata.
- *
- * Since: 0.3.1
- **/
-void
-asb_context_set_hidpi_enabled (AsbContext *ctx, gboolean hidpi_enabled)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->hidpi_enabled = hidpi_enabled;
-}
-
-/**
- * asb_context_set_embedded_icons:
- * @ctx: A #AsbContext
- * @embedded_icons: boolean
- *
- * Sets if the icons should be Base64 embedded in the metadata.
- *
- * Since: 0.3.1
- **/
-void
-asb_context_set_embedded_icons (AsbContext *ctx, gboolean embedded_icons)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->embedded_icons = embedded_icons;
+	priv->flags = flags;
 }
 
 /**
@@ -441,71 +390,38 @@ asb_context_set_origin (AsbContext *ctx, const gchar *origin)
 }
 
 /**
- * asb_context_get_add_cache_id:
+ * asb_context_get_flags:
  * @ctx: A #AsbContext
  *
- * Gets if the cache_id should be added to the metadata.
+ * Gets the build flags.
  *
- * Returns: boolean
+ * Returns: #AsbContextFlags
  *
- * Since: 0.1.0
+ * Since: 0.3.5
  **/
-gboolean
-asb_context_get_add_cache_id (AsbContext *ctx)
+AsbContextFlags
+asb_context_get_flags (AsbContext *ctx)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	return priv->add_cache_id;
+	return priv->flags;
 }
 
 /**
- * asb_context_get_hidpi_enabled:
+ * asb_context_get_flag:
  * @ctx: A #AsbContext
+ * @flag: A #AsbContextFlags
  *
- * Gets if the HiDPI support should be used.
+ * Gets one specific build flag.
  *
- * Returns: boolean
+ * Returns: %TRUE if the flag was set
  *
- * Since: 0.3.1
+ * Since: 0.3.5
  **/
 gboolean
-asb_context_get_hidpi_enabled (AsbContext *ctx)
+asb_context_get_flag (AsbContext *ctx, AsbContextFlags flag)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	return priv->hidpi_enabled;
-}
-
-/**
- * asb_context_get_embedded_icons:
- * @ctx: A #AsbContext
- *
- * Gets if the icons should be embedded in the XML.
- *
- * Returns: boolean
- *
- * Since: 0.3.1
- **/
-gboolean
-asb_context_get_embedded_icons (AsbContext *ctx)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	return priv->embedded_icons;
-}
-
-/**
- * asb_context_get_no_net:
- * @ctx: A #AsbContext
- *
- * Gets if network access is forbidden.
- *
- * Returns: boolean
- *
- * Since: 0.2.5
- **/
-gboolean
-asb_context_get_no_net (AsbContext *ctx)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	return priv->no_net;
+	return (priv->flags & flag) > 0;
 }
 
 /**
@@ -689,7 +605,7 @@ asb_context_load_extra_screenshots (AsbContext *ctx, AsApp *app, GError **error)
 
 	/* create a new AsbApp and add all the extra screenshots */
 	app_build = asb_app_new (pkg, as_app_get_id (app));
-	asb_app_set_hidpi_enabled (app_build, priv->hidpi_enabled);
+	asb_app_set_hidpi_enabled (app_build, (priv->flags & ASB_CONTEXT_FLAG_HIDPI_ICONS) > 0);
 	as_app_subsume_full (AS_APP (app_build), app,
 			     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
 	dir = g_dir_open (path, 0, error);
@@ -778,7 +694,7 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	icons_dir = g_build_filename (priv->temp_dir, "icons", NULL);
 	if (!asb_utils_ensure_exists (icons_dir, error))
 		return FALSE;
-	if (priv->hidpi_enabled) {
+	if (priv->flags & ASB_CONTEXT_FLAG_HIDPI_ICONS) {
 		_cleanup_free_ gchar *icons_dir_hidpi = NULL;
 		_cleanup_free_ gchar *icons_dir_lodpi = NULL;
 		icons_dir_lodpi = g_build_filename (icons_dir, "64x64", NULL);
@@ -791,6 +707,7 @@ asb_context_setup (AsbContext *ctx, GError **error)
 
 	/* create all the screenshot sizes */
 	if (priv->screenshot_dir != NULL) {
+		gboolean hidpi_enabled = (priv->flags & ASB_CONTEXT_FLAG_HIDPI_ICONS) > 0;
 		_cleanup_free_ gchar *ss_src = NULL;
 		ss_src = g_build_filename (priv->screenshot_dir,
 					   "source", NULL);
@@ -807,7 +724,7 @@ asb_context_setup (AsbContext *ctx, GError **error)
 			if (!asb_utils_ensure_exists (ss_dir, error))
 				return FALSE;
 		}
-		for (i = 0; sizes[i] != 0 && priv->hidpi_enabled; i += 2) {
+		for (i = 0; sizes[i] != 0 && hidpi_enabled; i += 2) {
 			_cleanup_free_ gchar *size_str = NULL;
 			_cleanup_free_ gchar *ss_dir = NULL;
 			size_str = g_strdup_printf ("%ix%i",
@@ -1010,7 +927,7 @@ asb_context_write_xml (AsbContext *ctx, GError **error)
 	g_print ("Writing %s...\n", filename);
 	as_store_set_origin (store, priv->origin);
 	as_store_set_api_version (store, priv->api_version);
-	if (priv->add_cache_id) {
+	if (priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) {
 		_cleanup_free_ gchar *builder_id = asb_utils_get_builder_id ();
 		as_store_set_builder_id (store, builder_id);
 	}
@@ -1033,7 +950,7 @@ asb_context_convert_icons (AsbContext *ctx, GError **error)
 	GList *l;
 
 	/* not enabled */
-	if (!asb_context_get_embedded_icons (ctx))
+	if ((priv->flags & ASB_CONTEXT_FLAG_EMBEDDED_ICONS) == 0)
 		return TRUE;
 
 	/* convert each one before saving resources */
@@ -1232,6 +1149,10 @@ asb_context_write_xml_fail (AsbContext *ctx, GError **error)
 	_cleanup_free_ gchar *filename = NULL;
 	_cleanup_object_unref_ GFile *file = NULL;
 
+	/* no need to create */
+	if ((priv->flags & ASB_CONTEXT_FLAG_INCLUDE_FAILED) == 0)
+		return TRUE;
+
 	for (l = priv->apps; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
 		if (!ASB_IS_APP (app))
@@ -1253,7 +1174,7 @@ asb_context_write_xml_fail (AsbContext *ctx, GError **error)
 	basename_failed = g_strdup_printf ("%s-failed", priv->origin);
 	as_store_set_origin (priv->store_failed, basename_failed);
 	as_store_set_api_version (priv->store_failed, priv->api_version);
-	if (priv->add_cache_id) {
+	if (priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) {
 		_cleanup_free_ gchar *builder_id = asb_utils_get_builder_id ();
 		as_store_set_builder_id (priv->store_failed, builder_id);
 	}
@@ -1277,7 +1198,7 @@ asb_context_write_xml_ignore (AsbContext *ctx, GError **error)
 	_cleanup_object_unref_ GFile *file = NULL;
 
 	/* no need to create */
-	if (!priv->add_cache_id)
+	if ((priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) == 0)
 		return TRUE;
 
 	/* the store is already populated */
@@ -1289,7 +1210,7 @@ asb_context_write_xml_ignore (AsbContext *ctx, GError **error)
 	basename_cache = g_strdup_printf ("%s-ignore", priv->origin);
 	as_store_set_origin (priv->store_ignore, basename_cache);
 	as_store_set_api_version (priv->store_ignore, priv->api_version);
-	if (priv->add_cache_id) {
+	if (priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) {
 		_cleanup_free_ gchar *builder_id = asb_utils_get_builder_id ();
 		as_store_set_builder_id (priv->store_ignore, builder_id);
 	}
@@ -1369,7 +1290,6 @@ asb_context_disable_multiarch_pkgs (AsbContext *ctx)
 /**
  * asb_context_process:
  * @ctx: A #AsbContext
- * @flags: Some #AsbContextProcessFlags, e.g. %AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_PARENTS
  * @error: A #GError or %NULL
  *
  * Processes all the packages that have been added to the context.
@@ -1379,7 +1299,7 @@ asb_context_disable_multiarch_pkgs (AsbContext *ctx)
  * Since: 0.1.0
  **/
 gboolean
-asb_context_process (AsbContext *ctx, AsbContextProcessFlags flags, GError **error)
+asb_context_process (AsbContext *ctx, GError **error)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	AsbPackage *pkg;
@@ -1448,11 +1368,11 @@ asb_context_process (AsbContext *ctx, AsbContextProcessFlags flags, GError **err
 	asb_plugin_loader_merge (priv->plugin_loader, priv->apps);
 
 	/* print any warnings */
-	if ((flags & AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_INFO) == 0) {
+	if ((priv->flags & ASB_CONTEXT_FLAG_IGNORE_MISSING_INFO) == 0) {
 		if (!asb_context_detect_missing_data (ctx, error))
 			return FALSE;
 	}
-	if ((flags & AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_PARENTS) == 0) {
+	if ((priv->flags & ASB_CONTEXT_FLAG_IGNORE_MISSING_PARENTS) == 0) {
 		if (!asb_context_detect_missing_parents (ctx, error))
 			return FALSE;
 	}
@@ -1600,7 +1520,7 @@ asb_context_add_app_ignore (AsbContext *ctx, AsbPackage *pkg)
 	_cleanup_ptrarray_unref_ GPtrArray *apps = NULL;
 
 	/* only do this when we are using a cache-id */
-	if (!priv->add_cache_id)
+	if ((priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) == 0)
 		return;
 
 	/* check not already added a dummy application for this package */

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -121,12 +121,13 @@ int
 main (int argc, char **argv)
 {
 	AsbContext *ctx = NULL;
-	AsbContextProcessFlags flags = AS_CONTEXT_PARSE_FLAG_NONE;
+	AsbContextFlags flags = ASB_CONTEXT_FLAG_NONE;
 	GOptionContext *option_context;
 	const gchar *filename;
 	gboolean add_cache_id = FALSE;
 	gboolean embedded_icons = FALSE;
 	gboolean hidpi_enabled = FALSE;
+	gboolean include_failed = FALSE;
 	gboolean no_net = FALSE;
 	gboolean ret;
 	gboolean verbose = FALSE;
@@ -164,6 +165,9 @@ main (int argc, char **argv)
 		{ "add-cache-id", '\0', 0, G_OPTION_ARG_NONE, &add_cache_id,
 			/* TRANSLATORS: command line option */
 			_("Add a cache ID to each component"), NULL },
+		{ "include-failed", '\0', 0, G_OPTION_ARG_NONE, &include_failed,
+			/* TRANSLATORS: command line option */
+			_("Include failed results in the output"), NULL },
 		{ "enable-hidpi", '\0', 0, G_OPTION_ARG_NONE, &hidpi_enabled,
 			/* TRANSLATORS: command line option */
 			_("Add HiDPI icons to the tarball"), NULL },
@@ -280,11 +284,7 @@ main (int argc, char **argv)
 	setlocale (LC_ALL, "");
 
 	ctx = asb_context_new ();
-	asb_context_set_no_net (ctx, no_net);
 	asb_context_set_api_version (ctx, api_version);
-	asb_context_set_add_cache_id (ctx, add_cache_id);
-	asb_context_set_hidpi_enabled (ctx, hidpi_enabled);
-	asb_context_set_embedded_icons (ctx, embedded_icons);
 	asb_context_set_old_metadata (ctx, old_metadata);
 	asb_context_set_extra_appstream (ctx, extra_appstream);
 	asb_context_set_extra_appdata (ctx, extra_appdata);
@@ -299,6 +299,37 @@ main (int argc, char **argv)
 	asb_context_set_origin (ctx, origin);
 	asb_context_set_max_threads (ctx, max_threads);
 	asb_context_set_min_icon_size (ctx, min_icon_size);
+
+	/* parse the veto ignore flags */
+	if (veto_ignore != NULL) {
+		for (i = 0; veto_ignore[i] != NULL; i++) {
+			if (g_strcmp0 (veto_ignore[i], "missing-info") == 0) {
+				flags |= ASB_CONTEXT_FLAG_IGNORE_MISSING_INFO;
+				continue;
+			}
+			if (g_strcmp0 (veto_ignore[i], "missing-parents") == 0) {
+				flags |= ASB_CONTEXT_FLAG_IGNORE_MISSING_PARENTS;
+				continue;
+			}
+			g_warning ("Unknown flag name: %s, "
+				   "expected 'missing-info' or 'missing-parents'",
+				   veto_ignore[i]);
+		}
+	}
+
+	/* set build flags */
+	if (hidpi_enabled)
+		flags |= ASB_CONTEXT_FLAG_HIDPI_ICONS;
+	if (add_cache_id)
+		flags |= ASB_CONTEXT_FLAG_ADD_CACHE_ID;
+	if (no_net)
+		flags |= ASB_CONTEXT_FLAG_NO_NETWORK;
+	if (embedded_icons)
+		flags |= ASB_CONTEXT_FLAG_EMBEDDED_ICONS;
+	if (include_failed)
+		flags |= ASB_CONTEXT_FLAG_INCLUDE_FAILED;
+	asb_context_set_flags (ctx, flags);
+
 	ret = asb_context_setup (ctx, &error);
 	if (!ret) {
 		/* TRANSLATORS: error message */
@@ -362,25 +393,8 @@ main (int argc, char **argv)
 		}
 	}
 
-	/* parse the context flags */
-	if (veto_ignore != NULL) {
-		for (i = 0; veto_ignore[i] != NULL; i++) {
-			if (g_strcmp0 (veto_ignore[i], "missing-info") == 0) {
-				flags |= AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_INFO;
-				continue;
-			}
-			if (g_strcmp0 (veto_ignore[i], "missing-parents") == 0) {
-				flags |= AS_CONTEXT_PARSE_FLAG_IGNORE_MISSING_PARENTS;
-				continue;
-			}
-			g_warning ("Unknown flag name: %s, "
-				   "expected 'missing-info' or 'missing-parents'",
-				   veto_ignore[i]);
-		}
-	}
-
 	/* process all packages in the pool */
-	ret = asb_context_process (ctx, flags, &error);
+	ret = asb_context_process (ctx, &error);
 	if (!ret) {
 		/* TRANSLATORS: error message */
 		g_warning ("%s: %s", _("Failed to generate metadata"), error->message);
