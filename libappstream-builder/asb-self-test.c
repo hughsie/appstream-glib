@@ -295,6 +295,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	asb_context_set_cache_dir (ctx, "/tmp/asbuilder/cache");
 	asb_context_set_output_dir (ctx, "/tmp/asbuilder/output");
 	asb_context_set_temp_dir (ctx, "/tmp/asbuilder/temp");
+	asb_context_set_icons_dir (ctx, "/tmp/asbuilder/temp/icons");
 	switch (mode) {
 	case ASB_TEST_CONTEXT_MODE_WITH_CACHE:
 		asb_context_set_old_metadata (ctx, "/tmp/asbuilder/output");
@@ -779,6 +780,7 @@ asb_test_context_extra_appstream_func (void)
 	asb_context_set_cache_dir (ctx, "/tmp/asbuilder/cache");
 	asb_context_set_output_dir (ctx, "/tmp/asbuilder/output");
 	asb_context_set_temp_dir (ctx, "/tmp/asbuilder/temp");
+	asb_context_set_icons_dir (ctx, "/tmp/asbuilder/temp/icons");
 	ret = asb_context_setup (ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);

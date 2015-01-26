@@ -130,6 +130,7 @@ main (int argc, char **argv)
 	gboolean include_failed = FALSE;
 	gboolean no_net = FALSE;
 	gboolean ret;
+	gboolean uncompressed_icons = FALSE;
 	gboolean verbose = FALSE;
 	gdouble api_version = 0.0f;
 	gint max_threads = 4;
@@ -144,6 +145,7 @@ main (int argc, char **argv)
 	_cleanup_free_ gchar *extra_appstream = NULL;
 	_cleanup_free_ gchar *extra_screenshots = NULL;
 	_cleanup_free_ gchar *log_dir = NULL;
+	_cleanup_free_ gchar *icons_dir = NULL;
 	_cleanup_free_ gchar *old_metadata = NULL;
 	_cleanup_free_ gchar *origin = NULL;
 	_cleanup_free_ gchar *ostree_repo = NULL;
@@ -174,6 +176,9 @@ main (int argc, char **argv)
 		{ "enable-embed", '\0', 0, G_OPTION_ARG_NONE, &embedded_icons,
 			/* TRANSLATORS: command line option */
 			_("Add encoded icons to the XML"), NULL },
+		{ "uncompressed-icons", '\0', 0, G_OPTION_ARG_NONE, &uncompressed_icons,
+			/* TRANSLATORS: command line option */
+			_("Do not compress the icons into a tarball"), NULL },
 		{ "log-dir", '\0', 0, G_OPTION_ARG_FILENAME, &log_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the logging directory"), "DIR" },
@@ -198,6 +203,9 @@ main (int argc, char **argv)
 		{ "output-dir", '\0', 0, G_OPTION_ARG_FILENAME, &output_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the output directory"), "DIR" },
+		{ "icons-dir", '\0', 0, G_OPTION_ARG_FILENAME, &icons_dir,
+			/* TRANSLATORS: command line option */
+			_("Set the icons directory"), "DIR" },
 		{ "cache-dir", '\0', 0, G_OPTION_ARG_FILENAME, &cache_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the cache directory"), "DIR" },
@@ -267,6 +275,8 @@ main (int argc, char **argv)
 		screenshot_dir = g_strdup ("./screenshots");
 	if (output_dir == NULL)
 		output_dir = g_strdup (".");
+	if (icons_dir == NULL)
+		icons_dir = g_build_filename (temp_dir, "icons", NULL);
 	if (cache_dir == NULL)
 		cache_dir = g_strdup ("./cache");
 	if (basename == NULL)
@@ -294,6 +304,7 @@ main (int argc, char **argv)
 	asb_context_set_screenshot_dir (ctx, screenshot_dir);
 	asb_context_set_temp_dir (ctx, temp_dir);
 	asb_context_set_output_dir (ctx, output_dir);
+	asb_context_set_icons_dir (ctx, icons_dir);
 	asb_context_set_cache_dir (ctx, cache_dir);
 	asb_context_set_basename (ctx, basename);
 	asb_context_set_origin (ctx, origin);
@@ -328,6 +339,8 @@ main (int argc, char **argv)
 		flags |= ASB_CONTEXT_FLAG_EMBEDDED_ICONS;
 	if (include_failed)
 		flags |= ASB_CONTEXT_FLAG_INCLUDE_FAILED;
+	if (uncompressed_icons)
+		flags |= ASB_CONTEXT_FLAG_UNCOMPRESSED_ICONS;
 	asb_context_set_flags (ctx, flags);
 
 	ret = asb_context_setup (ctx, &error);

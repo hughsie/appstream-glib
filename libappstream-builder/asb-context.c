@@ -77,6 +77,7 @@ struct _AsbContextPrivate
 	gchar			*cache_dir;
 	gchar			*temp_dir;
 	gchar			*output_dir;
+	gchar			*icons_dir;
 	gchar			*basename;
 	gchar			*origin;
 };
@@ -355,6 +356,22 @@ asb_context_set_output_dir (AsbContext *ctx, const gchar *output_dir)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	priv->output_dir = g_strdup (output_dir);
+}
+
+/**
+ * asb_context_set_icons_dir:
+ * @ctx: A #AsbContext
+ * @icons_dir: directory
+ *
+ * Sets the icons directory to use when building metadata.
+ *
+ * Since: 0.3.5
+ **/
+void
+asb_context_set_icons_dir (AsbContext *ctx, const gchar *icons_dir)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	priv->icons_dir = g_strdup (icons_dir);
 }
 
 /**
@@ -663,6 +680,13 @@ asb_context_setup (AsbContext *ctx, GError **error)
 				     "output_dir not set!");
 		return FALSE;
 	}
+	if (priv->icons_dir == NULL) {
+		g_set_error_literal (error,
+				     ASB_PLUGIN_ERROR,
+				     ASB_PLUGIN_ERROR_FAILED,
+				     "icons_dir not set!");
+		return FALSE;
+	}
 	if (priv->temp_dir == NULL) {
 		g_set_error_literal (error,
 				     ASB_PLUGIN_ERROR,
@@ -691,16 +715,15 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	}
 
 	/* icons is nuked; we can re-decompress from the -icons.tar.gz */
-	icons_dir = g_build_filename (priv->temp_dir, "icons", NULL);
-	if (!asb_utils_ensure_exists (icons_dir, error))
+	if (!asb_utils_ensure_exists (priv->icons_dir, error))
 		return FALSE;
 	if (priv->flags & ASB_CONTEXT_FLAG_HIDPI_ICONS) {
 		_cleanup_free_ gchar *icons_dir_hidpi = NULL;
 		_cleanup_free_ gchar *icons_dir_lodpi = NULL;
-		icons_dir_lodpi = g_build_filename (icons_dir, "64x64", NULL);
+		icons_dir_lodpi = g_build_filename (priv->icons_dir, "64x64", NULL);
 		if (!asb_utils_ensure_exists (icons_dir_lodpi, error))
 			return FALSE;
-		icons_dir_hidpi = g_build_filename (icons_dir, "128x128", NULL);
+		icons_dir_hidpi = g_build_filename (priv->icons_dir, "128x128", NULL);
 		if (!asb_utils_ensure_exists (icons_dir_hidpi, error))
 			return FALSE;
 	}
@@ -745,7 +768,7 @@ asb_context_setup (AsbContext *ctx, GError **error)
 					    priv->basename);
 		if (g_file_test (icons_fn, G_FILE_TEST_EXISTS)) {
 			if (!asb_utils_explode (icons_fn,
-						icons_dir,
+						priv->icons_dir,
 						NULL,
 						error))
 				return FALSE;
@@ -865,15 +888,17 @@ asb_context_write_icons (AsbContext *ctx,
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_free_ gchar *icons_dir = NULL;
 
-	icons_dir = g_build_filename (temp_dir, "icons", NULL);
-	if (!g_file_test (icons_dir, G_FILE_TEST_EXISTS))
+	/* not enabled */
+	if (priv->flags & ASB_CONTEXT_FLAG_UNCOMPRESSED_ICONS)
+		return TRUE;
+
+	if (!g_file_test (priv->icons_dir, G_FILE_TEST_EXISTS))
 		return TRUE;
 	filename = g_strdup_printf ("%s/%s-icons.tar.gz",
 				    priv->output_dir, priv->basename);
 	g_print ("Writing %s...\n", filename);
-	return asb_utils_write_archive_dir (filename, icons_dir, error);
+	return asb_utils_write_archive_dir (filename, priv->icons_dir, error);
 }
 
 /**
@@ -1346,6 +1371,7 @@ asb_context_process (AsbContext *ctx, GError **error)
 		asb_package_set_config (pkg, "ScreenshotDir", priv->screenshot_dir);
 		asb_package_set_config (pkg, "CacheDir", priv->cache_dir);
 		asb_package_set_config (pkg, "TempDir", priv->temp_dir);
+		asb_package_set_config (pkg, "IconsDir", priv->icons_dir);
 		asb_package_set_config (pkg, "OutputDir", priv->output_dir);
 
 		/* create task */
@@ -1582,6 +1608,7 @@ asb_context_finalize (GObject *object)
 	g_free (priv->cache_dir);
 	g_free (priv->temp_dir);
 	g_free (priv->output_dir);
+	g_free (priv->icons_dir);
 	g_free (priv->basename);
 	g_free (priv->origin);
 

@@ -68,6 +68,7 @@ struct _AsbContextClass
  * @ASB_CONTEXT_FLAG_EMBEDDED_ICONS:		Embed the icons in the XML
  * @ASB_CONTEXT_FLAG_NO_NETWORK:		Do not download files
  * @ASB_CONTEXT_FLAG_INCLUDE_FAILED:		Write the origin-ignore.xml file
+ * @ASB_CONTEXT_FLAG_UNCOMPRESSED_ICONS:	Do not pack icons into a tarball
  *
  * The flags to use when processing the context.
  **/
@@ -80,6 +81,7 @@ typedef enum {
 	ASB_CONTEXT_FLAG_EMBEDDED_ICONS		= 1 << 3,	/* Since: 0.3.5 */
 	ASB_CONTEXT_FLAG_NO_NETWORK		= 1 << 4,	/* Since: 0.3.5 */
 	ASB_CONTEXT_FLAG_INCLUDE_FAILED		= 1 << 5,	/* Since: 0.3.5 */
+	ASB_CONTEXT_FLAG_UNCOMPRESSED_ICONS	= 1 << 6,	/* Since: 0.3.5 */
 	/*< private >*/
 	ASB_CONTEXT_FLAG_LAST,
 } AsbContextFlags;
@@ -121,6 +123,8 @@ void		 asb_context_set_temp_dir	(AsbContext	*ctx,
 						 const gchar	*temp_dir);
 void		 asb_context_set_output_dir	(AsbContext	*ctx,
 						 const gchar	*output_dir);
+void		 asb_context_set_icons_dir	(AsbContext	*ctx,
+						 const gchar	*icons_dir);
 void		 asb_context_set_basename	(AsbContext	*ctx,
 						 const gchar	*basename);
 void		 asb_context_set_origin		(AsbContext	*ctx,

@@ -304,9 +304,8 @@ asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 			continue;
 
 		/* save to disk */
-		tmpdir = asb_package_get_config (priv->pkg, "TempDir");
+		tmpdir = asb_package_get_config (priv->pkg, "IconsDir");
 		filename = g_build_filename (tmpdir,
-					     "icons",
 					     as_icon_get_name (icon),
 					     NULL);
 		pixbuf = as_icon_get_pixbuf (icon);
