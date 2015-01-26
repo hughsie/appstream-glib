@@ -2118,7 +2118,8 @@ typedef enum {
 	AS_UTIL_PKG_STATE_OK, /* in order of badness */
 	AS_UTIL_PKG_STATE_INFO,
 	AS_UTIL_PKG_STATE_WARN,
-	AS_UTIL_PKG_STATE_FAIL
+	AS_UTIL_PKG_STATE_FAIL,
+	AS_UTIL_PKG_STATE_DEAD
 } AsUtilPkgState;
 
 /**
@@ -2148,6 +2149,9 @@ as_util_matrix_html_write_item (AsUtilPkgState *state_app,
 		break;
 	case AS_UTIL_PKG_STATE_FAIL:
 		g_string_append (html, "Failed");
+		break;
+	case AS_UTIL_PKG_STATE_DEAD:
+		g_string_append (html, "Dead");
 		break;
 	default:
 		break;
@@ -2256,9 +2260,15 @@ as_util_matrix_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 	} else {
 		_cleanup_free_ gchar *tmp = NULL;
 		tmp = as_util_status_html_join (arr);
-		as_util_matrix_html_write_item (&state_app,
-						AS_UTIL_PKG_STATE_FAIL,
-						str, tmp);
+		if (g_strstr_len (tmp, -1, "Dead upstream") != NULL) {
+			as_util_matrix_html_write_item (&state_app,
+							AS_UTIL_PKG_STATE_DEAD,
+							str, tmp);
+		} else {
+			as_util_matrix_html_write_item (&state_app,
+							AS_UTIL_PKG_STATE_FAIL,
+							str, tmp);
+		}
 	}
 
 	/* global state */
@@ -2274,6 +2284,9 @@ as_util_matrix_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 		break;
 	case AS_UTIL_PKG_STATE_FAIL:
 		g_string_prepend (str, "<tr bgcolor=\"#ffa1a5\">\n");
+		break;
+	case AS_UTIL_PKG_STATE_DEAD:
+		g_string_prepend (str, "<tr bgcolor=\"#888888\">\n");
 		break;
 	default:
 		g_string_prepend (str, "<tr>\n");
