@@ -97,6 +97,9 @@ gchar		*as_markup_convert		(const gchar	*markup,
 						 gssize		 markup_len,
 						 AsMarkupConvertFormat format,
 						 GError		**error);
+gchar		**as_markup_strsplit_words	(const gchar	*text,
+						 guint		 line_len);
+
 GQuark		 as_utils_error_quark		(void);
 gboolean	 as_utils_is_stock_icon_name	(const gchar	*name);
 gboolean	 as_utils_is_spdx_license_id	(const gchar	*license_id);

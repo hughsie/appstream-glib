@@ -83,15 +83,30 @@ as_strndup (const gchar *text, gssize text_len)
 }
 
 /**
- * as_markup_text_split_words:
+ * as_markup_strsplit_words:
+ * @text: the text to split.
+ * @line_len: the maximum length of the output line
+ *
+ * Splits up a long line into an array of smaller strings, each being no longer
+ * than @line_len. Words are not split.
+ *
+ * Returns: (transfer full): lines, or %NULL in event of an error
+ *
+ * Since: 0.3.5
  **/
-static gchar **
-as_markup_text_split_words (const gchar *text, guint len)
+gchar **
+as_markup_strsplit_words (const gchar *text, guint line_len)
 {
 	GPtrArray *lines;
 	guint i;
 	_cleanup_string_free_ GString *curline = NULL;
 	_cleanup_strv_free_ gchar **tokens = NULL;
+
+	/* sanity check */
+	if (text == NULL || text[0] == '\0')
+		return NULL;
+	if (line_len == 0)
+		return NULL;
 
 	lines = g_ptr_array_new ();
 	curline = g_string_new ("");
@@ -101,7 +116,7 @@ as_markup_text_split_words (const gchar *text, guint len)
 	for (i = 0; tokens[i] != NULL; i++) {
 
 		/* current line plus new token is okay */
-		if (curline->len + strlen (tokens[i]) < len) {
+		if (curline->len + strlen (tokens[i]) < line_len) {
 			g_string_append_printf (curline, "%s ", tokens[i]);
 			continue;
 		}
@@ -144,7 +159,7 @@ as_markup_render_para (GString *str, AsMarkupConvertFormat format, const gchar *
 		break;
 	case AS_MARKUP_CONVERT_FORMAT_MARKDOWN:
 		/* break to 80 chars */
-		spl = as_markup_text_split_words (data, 80);
+		spl = as_markup_strsplit_words (data, 80);
 		for (i = 0; spl[i] != NULL; i++)
 			g_string_append (str, spl[i]);
 		break;
@@ -168,7 +183,7 @@ as_markup_render_li (GString *str, AsMarkupConvertFormat format, const gchar *da
 		break;
 	case AS_MARKUP_CONVERT_FORMAT_MARKDOWN:
 		/* break to 80 chars, leaving room for the dot/indent */
-		spl = as_markup_text_split_words (data, 80 - 3);
+		spl = as_markup_strsplit_words (data, 80 - 3);
 		g_string_append_printf (str, " * %s", spl[0]);
 		for (i = 1; spl[i] != NULL; i++)
 			g_string_append_printf (str, "   %s", spl[i]);
