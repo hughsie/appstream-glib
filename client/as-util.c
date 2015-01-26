@@ -29,6 +29,7 @@
 #include <archive_entry.h>
 #include <archive.h>
 #include <locale.h>
+#include <stdlib.h>
 
 #define __APPSTREAM_GLIB_PRIVATE_H
 #include <as-app-private.h>
@@ -686,6 +687,364 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 	if (str->len > 1)
 		g_string_truncate (str, str->len - 1);
 	g_print ("%s", str->str);
+	return TRUE;
+}
+
+/**
+ * as_string_replace:
+ **/
+static guint
+as_string_replace (GString *string, const gchar *search, const gchar *replace)
+{
+	gchar *tmp;
+	guint count = 0;
+	guint replace_len;
+	guint search_len;
+
+	search_len = strlen (search);
+	replace_len = strlen (replace);
+
+	do {
+		tmp = g_strstr_len (string->str, -1, search);
+		if (tmp == NULL)
+			goto out;
+
+		/* reallocate the string if required */
+		if (search_len > replace_len) {
+			g_string_erase (string,
+					tmp - string->str,
+					search_len - replace_len);
+		}
+		if (search_len < replace_len) {
+			g_string_insert_len (string,
+					    tmp - string->str,
+					    search,
+					    replace_len - search_len);
+		}
+
+		/* just memcmp in the new string */
+		memcpy (tmp, replace, replace_len);
+		count++;
+	} while (TRUE);
+out:
+	return count;
+}
+
+typedef enum {
+	AS_UTIL_SECTION_KIND_UNKNOWN,
+	AS_UTIL_SECTION_KIND_HEADER,
+	AS_UTIL_SECTION_KIND_BUGFIX,
+	AS_UTIL_SECTION_KIND_FEATURES,
+	AS_UTIL_SECTION_KIND_NOTES,
+	AS_UTIL_SECTION_KIND_TRANSLATION,
+	AS_UTIL_SECTION_KIND_LAST
+} AsUtilSectionKind;
+
+/**
+ * as_util_news_to_appdata_guess_section:
+ **/
+static AsUtilSectionKind
+as_util_news_to_appdata_guess_section (const gchar *lines)
+{
+	if (g_strstr_len (lines, -1, "~~~") != NULL)
+		return AS_UTIL_SECTION_KIND_HEADER;
+	if (g_strstr_len (lines, -1, "Bugfix:\n") != NULL)
+		return AS_UTIL_SECTION_KIND_BUGFIX;
+	if (g_strstr_len (lines, -1, "Bugfixes:\n") != NULL)
+		return AS_UTIL_SECTION_KIND_BUGFIX;
+	if (g_strstr_len (lines, -1, "Bug fixes:\n") != NULL)
+		return AS_UTIL_SECTION_KIND_BUGFIX;
+	if (g_strstr_len (lines, -1, "Features:\n") != NULL)
+		return AS_UTIL_SECTION_KIND_FEATURES;
+	if (g_strstr_len (lines, -1, "Notes:\n") != NULL)
+		return AS_UTIL_SECTION_KIND_NOTES;
+	if (g_strstr_len (lines, -1, "Note:\n") != NULL)
+		return AS_UTIL_SECTION_KIND_NOTES;
+	if (g_strstr_len (lines, -1, "Translations:\n") != NULL)
+		return AS_UTIL_SECTION_KIND_TRANSLATION;
+	return AS_UTIL_SECTION_KIND_UNKNOWN;
+}
+
+/**
+ * as_util_news_add_indent:
+ **/
+static void
+as_util_news_add_indent (GString *str, guint indent_level)
+{
+	guint i;
+	for (i = 0; i < indent_level; i++)
+		g_string_append (str, "  ");
+}
+
+/**
+ * as_util_news_add_markup:
+ **/
+static void
+as_util_news_add_markup (GString *desc, const gchar *tag, const gchar *line)
+{
+	guint i;
+	guint indent = 0;
+	_cleanup_free_ gchar *escaped = NULL;
+
+	/* empty line means do nothing */
+	if (line != NULL && line[0] == '\0')
+		return;
+
+	/* work out indent */
+	if (g_strcmp0 (tag, "p") == 0)
+		indent = 4;
+	else if (g_strcmp0 (tag, "ul") == 0)
+		indent = 4;
+	else if (g_strcmp0 (tag, "/ul") == 0)
+		indent = 4;
+	else if (g_strcmp0 (tag, "release") == 0)
+		indent = 3;
+	else if (g_strcmp0 (tag, "/release") == 0)
+		indent = 3;
+	else if (g_strcmp0 (tag, "li") == 0)
+		indent = 5;
+
+	/* write XML with the correct maximum width */
+	if (line == NULL) {
+		as_util_news_add_indent (desc, indent);
+		g_string_append_printf (desc, "<%s>\n", tag);
+	} else {
+		gchar *tmp;
+		_cleanup_strv_free_ gchar **lines = NULL;
+		escaped = g_markup_escape_text (line, -1);
+		tmp = g_strrstr (escaped, " (");
+		if (tmp != NULL)
+			*tmp = '\0';
+		lines = as_markup_strsplit_words (escaped, 80 - indent * 2);
+		if (lines == NULL) {
+			g_warning ("line cannot be split `%s`", escaped);
+			return;
+		}
+		/* all fits on one line? */
+		if (g_strv_length (lines) == 1) {
+			as_util_news_add_indent (desc, indent);
+			g_string_append_printf (desc, "<%s>%s</%s>\n",
+						tag, escaped, tag);
+		} else {
+			as_util_news_add_indent (desc, indent);
+			g_string_append_printf (desc, "<%s>\n", tag);
+			for (i = 0; lines[i] != NULL; i++) {
+				as_util_news_add_indent (desc, indent + 1);
+				g_string_append (desc, lines[i]);
+			}
+			as_util_news_add_indent (desc, indent);
+			g_string_append_printf (desc, "</%s>\n", tag);
+		}
+	}
+}
+
+/**
+ * as_util_news_to_appdata_hdr:
+ **/
+static gboolean
+as_util_news_to_appdata_hdr (GString *desc, const gchar *txt, GError **error)
+{
+	guint i;
+	const gchar *version = NULL;
+	const gchar *release = NULL;
+	_cleanup_strv_free_ gchar **release_split = NULL;
+	_cleanup_date_time_unref_ GDateTime *dt = NULL;
+	_cleanup_strv_free_ gchar **lines = NULL;
+
+	/* get info */
+	lines = g_strsplit (txt, "\n", -1);
+	for (i = 0; lines[i] != NULL; i++) {
+		if (g_str_has_prefix (lines[i], "Version ")) {
+			version = lines[i] + 8;
+			continue;
+		}
+		if (g_str_has_prefix (lines[i], "Released: ")) {
+			release = lines[i] + 10;
+			continue;
+		}
+	}
+
+	/* check these exist */
+	if (version == NULL) {
+		g_set_error (error,
+			     AS_ERROR,
+			     AS_ERROR_FAILED,
+			     "Unable to find version in: %s", txt);
+		return FALSE;
+	}
+	if (release == NULL) {
+		g_set_error (error,
+			     AS_ERROR,
+			     AS_ERROR_FAILED,
+			     "Unable to find release in: %s", txt);
+		return FALSE;
+	}
+
+	/* parse date */
+	release_split = g_strsplit (release, "-", -1);
+	if (g_strv_length (release_split) != 3) {
+		g_set_error (error,
+			     AS_ERROR,
+			     AS_ERROR_FAILED,
+			     "Unable to parse release: %s", release);
+		return FALSE;
+	}
+	dt = g_date_time_new_local (atoi (release_split[0]),
+				    atoi (release_split[1]),
+				    atoi (release_split[2]),
+				    0, 0, 0);
+	if (dt == NULL) {
+		g_set_error (error,
+			     AS_ERROR,
+			     AS_ERROR_FAILED,
+			     "Unable to create release: %s", release);
+		return FALSE;
+	}
+
+	/* add markup */
+	as_util_news_add_indent (desc, 3);
+	g_string_append_printf (desc, "<release version=\"%s\" "
+				"release=\"%" G_GINT64_FORMAT "\">\n",
+				version,
+				g_date_time_to_unix (dt));
+
+	return TRUE;
+}
+
+/**
+ * as_util_news_to_appdata_list:
+ **/
+static gboolean
+as_util_news_to_appdata_list (GString *desc, gchar **lines, GError **error)
+{
+	guint i;
+
+	as_util_news_add_markup (desc, "ul", NULL);
+	for (i = 1; lines[i] != NULL; i++) {
+		guint prefix = 0;
+		if (g_str_has_prefix (lines[i], " - "))
+			prefix = 3;
+		as_util_news_add_markup (desc, "li", lines[i] + prefix);
+	}
+	as_util_news_add_markup (desc, "/ul", NULL);
+	return TRUE;
+}
+
+/**
+ * as_util_news_to_appdata_para:
+ **/
+static gboolean
+as_util_news_to_appdata_para (GString *desc, const gchar *txt, GError **error)
+{
+	guint i;
+	_cleanup_strv_free_ gchar **lines = NULL;
+
+	lines = g_strsplit (txt, "\n", -1);
+	for (i = 1; lines[i] != NULL; i++) {
+		guint prefix = 0;
+		if (g_str_has_prefix (lines[i], " - "))
+			prefix = 3;
+		as_util_news_add_markup (desc, "p", lines[i] + prefix);
+	}
+	return TRUE;
+}
+
+/**
+ * as_util_news_to_appdata:
+ **/
+static gboolean
+as_util_news_to_appdata (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	guint i;
+	_cleanup_free_ gchar *data = NULL;
+	_cleanup_string_free_ GString *data_str = NULL;
+	_cleanup_string_free_ GString *desc = NULL;
+	_cleanup_strv_free_ gchar **split = NULL;
+
+	/* check args */
+	if (g_strv_length (values) != 1) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected .appdata.xml");
+		return FALSE;
+	}
+
+	/* get data */
+	if (!g_file_get_contents (values[0], &data, NULL, error))
+		return FALSE;
+
+	/* try to unsplit lines */
+	data_str = g_string_new (data);
+	as_string_replace (data_str, "\n   ", " ");
+
+	/* break up into sections */
+	desc = g_string_new ("");
+	split = g_strsplit (data_str->str, "\n\n", -1);
+	for (i = 0; split[i] != NULL; i++) {
+		_cleanup_strv_free_ gchar **lines = NULL;
+
+		switch (as_util_news_to_appdata_guess_section (split[i])) {
+		case AS_UTIL_SECTION_KIND_HEADER:
+		{
+			/* flush old release content */
+			if (desc->len > 0) {
+				as_util_news_add_markup (desc, "/release", NULL);
+				g_print ("%s", desc->str);
+				g_string_truncate (desc, 0);
+			}
+
+			/* parse header */
+			if (!as_util_news_to_appdata_hdr (desc, split[i], error))
+				return FALSE;
+			break;
+		}
+		case AS_UTIL_SECTION_KIND_BUGFIX:
+			lines = g_strsplit (split[i], "\n", -1);
+			if (g_strv_length (lines) == 2) {
+				as_util_news_add_markup (desc, "p",
+							 "This release fixes the following bug:");
+			} else {
+				as_util_news_add_markup (desc, "p",
+							 "This release fixes the following bugs:");
+			}
+			if (!as_util_news_to_appdata_list (desc, lines + 1, error))
+				return FALSE;
+			break;
+		case AS_UTIL_SECTION_KIND_NOTES:
+			if (!as_util_news_to_appdata_para (desc, split[i], error))
+				return FALSE;
+			break;
+		case AS_UTIL_SECTION_KIND_FEATURES:
+			lines = g_strsplit (split[i], "\n", -1);
+			if (g_strv_length (lines) == 2) {
+				as_util_news_add_markup (desc, "p",
+							 "This release adds the following feature:");
+			} else {
+				as_util_news_add_markup (desc, "p",
+							 "This release adds the following features:");
+			}
+			if (!as_util_news_to_appdata_list (desc, lines + 1, error))
+				return FALSE;
+			break;
+		case AS_UTIL_SECTION_KIND_TRANSLATION:
+			break;
+		default:
+			g_set_error (error,
+				     AS_ERROR,
+				     AS_ERROR_FAILED,
+				     "failed to detect section %s", split[i]);
+			return FALSE;
+		}
+	}
+
+	/* flush old release content */
+	if (desc->len > 0) {
+		as_util_news_add_markup (desc, "/release", NULL);
+		g_print ("%s", desc->str);
+	}
+
 	return TRUE;
 }
 
@@ -2699,6 +3058,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Convert an AppData file to NEWS format"),
 		     as_util_appdata_to_news);
+	as_util_add (priv->cmd_array,
+		     "news-to-appdata",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Convert an NEWS file to AppData format"),
+		     as_util_news_to_appdata);
 	as_util_add (priv->cmd_array,
 		     "check-root",
 		     NULL,
