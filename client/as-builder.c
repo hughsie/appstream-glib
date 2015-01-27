@@ -94,6 +94,10 @@ as_builder_setup_ostree (AsbContext *ctx, const gchar *ostree_repo, GError **err
 		if (!ostree_parse_refspec (refspec, &remote, &ref, error))
 			return FALSE;
 
+                if (!g_str_has_prefix (ref, "app/") &&
+                    !g_str_has_prefix (ref, "runtime/"))
+                  continue;
+
 		pkg = asb_package_ostree_new ();
 		asb_package_set_source (pkg, ref);
 		asb_package_ostree_set_repodir (ASB_PACKAGE_OSTREE (pkg), ostree_repo);
