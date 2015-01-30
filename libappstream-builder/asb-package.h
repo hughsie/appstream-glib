@@ -152,12 +152,12 @@ void		 asb_package_set_source		(AsbPackage	*pkg,
 						 const gchar	*source);
 void		 asb_package_set_source_pkgname	(AsbPackage	*pkg,
 						 const gchar	*source_pkgname);
-void		 asb_package_set_deps		(AsbPackage	*pkg,
-						 gchar		**deps);
+void		 asb_package_add_dep		(AsbPackage	*pkg,
+						 const gchar	*dep);
 void		 asb_package_set_filelist	(AsbPackage	*pkg,
 						 gchar		**filelist);
 gchar		**asb_package_get_filelist	(AsbPackage	*pkg);
-gchar		**asb_package_get_deps		(AsbPackage	*pkg);
+GPtrArray	*asb_package_get_deps		(AsbPackage	*pkg);
 GPtrArray	*asb_package_get_releases	(AsbPackage	*pkg);
 void		 asb_package_set_config		(AsbPackage	*pkg,
 						 const gchar	*key,

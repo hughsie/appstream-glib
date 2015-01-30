@@ -419,9 +419,7 @@ asb_package_rpm_ensure_deps (AsbPackage *pkg, GError **error)
 	gboolean ret = TRUE;
 	gchar *tmp;
 	gint rc;
-	guint i = 0;
 	rpmtd td = NULL;
-	_cleanup_strv_free_ gchar **deps = NULL;
 
 	/* read out the dep list */
 	td = rpmtdNew ();
@@ -435,21 +433,19 @@ asb_package_rpm_ensure_deps (AsbPackage *pkg, GError **error)
 			     asb_package_get_filename (pkg));
 		goto out;
 	}
-	deps = g_new0 (gchar *, rpmtdCount (td) + 1);
 	while (rpmtdNext (td) != -1) {
+		_cleanup_free_ gchar *dep_no_qual = NULL;
 		dep = rpmtdGetString (td);
 		if (g_str_has_prefix (dep, "rpmlib"))
 			continue;
 		if (g_strcmp0 (dep, "/bin/sh") == 0)
 			continue;
-		deps[i] = g_strdup (dep);
-		tmp = g_strstr_len (deps[i], -1, "(");
+		dep_no_qual = g_strdup (dep);
+		tmp = g_strstr_len (dep_no_qual, -1, "(");
 		if (tmp != NULL)
 			*tmp = '\0';
-		/* TODO: deduplicate */
-		i++;
+		asb_package_add_dep (pkg, dep_no_qual);
 	}
-	asb_package_set_deps (pkg, deps);
 out:
 	rpmtdFreeData (td);
 	rpmtdFree (td);

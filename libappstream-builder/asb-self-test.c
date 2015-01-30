@@ -86,6 +86,7 @@ asb_test_package_rpm_func (void)
 {
 	AsRelease *rel;
 	GError *error = NULL;
+	GPtrArray *deps;
 	GPtrArray *releases;
 	gboolean ret;
 	gchar *tmp;
@@ -129,9 +130,11 @@ asb_test_package_rpm_func (void)
 	g_free (tmp);
 
 	/* deps */
-	tmp = g_strjoinv (";", asb_package_get_deps (pkg));
-	g_assert_cmpstr (tmp, ==, "bar;baz;foo");
-	g_free (tmp);
+	deps = asb_package_get_deps (pkg);
+	g_assert_cmpint (deps->len, ==, 3);
+	g_assert_cmpstr (g_ptr_array_index (deps, 0), ==, "bar");
+	g_assert_cmpstr (g_ptr_array_index (deps, 1), ==, "baz");
+	g_assert_cmpstr (g_ptr_array_index (deps, 2), ==, "foo");
 
 	/* releases */
 	releases = asb_package_get_releases (pkg);
@@ -403,6 +406,9 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<source_pkgname>app</source_pkgname>\n"
 		"<name>Extra</name>\n"
 		"<summary>Addons for extra functionality</summary>\n"
+		"<kudos>\n"
+		"<kudo>ModernToolkit</kudo>\n"
+		"</kudos>\n"
 		"<project_license>GPL-2.0+</project_license>\n"
 		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
 		"<extends>app.desktop</extends>\n"
@@ -599,6 +605,9 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<categories>\n"
 		"<category>ConsoleOnly</category>\n"
 		"</categories>\n"
+		"<kudos>\n"
+		"<kudo>ModernToolkit</kudo>\n"
+		"</kudos>\n"
 		"<vetos>\n"
 		"<veto>Required AppData: ConsoleOnly</veto>\n"
 		"</vetos>\n"
@@ -626,6 +635,9 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<categories>\n"
 		"<category>ConsoleOnly</category>\n"
 		"</categories>\n"
+		"<kudos>\n"
+		"<kudo>ModernToolkit</kudo>\n"
+		"</kudos>\n"
 		"<vetos>\n"
 		"<veto>Required AppData: ConsoleOnly</veto>\n"
 		"</vetos>\n"

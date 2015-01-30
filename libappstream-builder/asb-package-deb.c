@@ -56,7 +56,6 @@ asb_package_deb_ensure_simple (AsbPackage *pkg, GError **error)
 	guint i;
 	guint j;
 	_cleanup_free_ gchar *output = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *deps = NULL;
 	_cleanup_strv_free_ gchar **lines = NULL;
 
 	/* spawn sync */
@@ -68,7 +67,6 @@ asb_package_deb_ensure_simple (AsbPackage *pkg, GError **error)
 		return FALSE;
 
 	/* parse output */
-	deps = g_ptr_array_new_with_free_func (g_free);
 	lines = g_strsplit (output, "\n", -1);
 	for (i = 0; lines[i] != NULL; i++) {
 		if (g_str_has_prefix (lines[i], "Package: ")) {
@@ -100,13 +98,11 @@ asb_package_deb_ensure_simple (AsbPackage *pkg, GError **error)
 				tmp = g_strstr_len (vr[j], -1, " ");
 				if (tmp != NULL)
 					*tmp = '\0';
-				g_ptr_array_add (deps, vr[j]);
+				asb_package_add_dep (pkg, vr[j]);
 			}
 			continue;
 		}
 	}
-	g_ptr_array_add (deps, NULL);
-	asb_package_set_deps (pkg, (gchar **) deps->pdata);
 	return TRUE;
 }
 

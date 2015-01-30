@@ -149,7 +149,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 {
 	const gchar *tmp;
 	AsRelease *release;
-	gchar **deps;
+	GPtrArray *deps;
 	gchar **filelist;
 	GPtrArray *releases;
 	guint i;
@@ -232,9 +232,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 	/* look for a modern toolkit */
 	deps = asb_package_get_deps (pkg);
-	for (i = 0; deps != NULL && deps[i] != NULL; i++) {
-		if (g_strcmp0 (deps[i], "libgtk-3.so.0") == 0 ||
-		    g_strcmp0 (deps[i], "libQt5Core.so.5") == 0) {
+	for (i = 0; i < deps->len; i++) {
+		tmp = g_ptr_array_index (deps, i);
+		if (g_strcmp0 (tmp, "libgtk-3.so.0") == 0 ||
+		    g_strcmp0 (tmp, "libQt5Core.so.5") == 0) {
 			as_app_add_kudo_kind (AS_APP (app),
 					      AS_KUDO_KIND_MODERN_TOOLKIT);
 			break;
@@ -242,36 +243,37 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	}
 
 	/* look for ancient toolkits */
-	for (i = 0; deps != NULL && deps[i] != NULL; i++) {
-		if (g_strcmp0 (deps[i], "libgtk-1.2.so.0") == 0) {
+	for (i = 0; i < deps->len; i++) {
+		tmp = g_ptr_array_index (deps, i);
+		if (g_strcmp0 (tmp, "libgtk-1.2.so.0") == 0) {
 			as_app_add_veto (AS_APP (app), "Uses obsolete GTK1 toolkit");
 			break;
 		}
-		if (g_strcmp0 (deps[i], "libglib-1.2.so.0") == 0) {
+		if (g_strcmp0 (tmp, "libglib-1.2.so.0") == 0) {
 			as_app_add_veto (AS_APP (app), "Uses obsolete GLib library");
 			break;
 		}
-		if (g_strcmp0 (deps[i], "libqt-mt.so.3") == 0) {
+		if (g_strcmp0 (tmp, "libqt-mt.so.3") == 0) {
 			as_app_add_veto (AS_APP (app), "Uses obsolete QT3 toolkit");
 			break;
 		}
-		if (g_strcmp0 (deps[i], "liblcms.so.1") == 0) {
+		if (g_strcmp0 (tmp, "liblcms.so.1") == 0) {
 			as_app_add_veto (AS_APP (app), "Uses obsolete LCMS library");
 			break;
 		}
-		if (g_strcmp0 (deps[i], "libelektra.so.4") == 0) {
+		if (g_strcmp0 (tmp, "libelektra.so.4") == 0) {
 			as_app_add_veto (AS_APP (app), "Uses obsolete Elektra library");
 			break;
 		}
-		if (g_strcmp0 (deps[i], "libXt.so.6") == 0) {
+		if (g_strcmp0 (tmp, "libXt.so.6") == 0) {
 			asb_app_add_requires_appdata (app, "Uses obsolete X11 toolkit");
 			break;
 		}
-		if (g_strcmp0 (deps[i], "Xvfb") == 0) {
+		if (g_strcmp0 (tmp, "Xvfb") == 0) {
 			asb_app_add_requires_appdata (app, "Uses obsolete Xvfb");
 			break;
 		}
-		if (g_strcmp0 (deps[i], "wine-core") == 0) {
+		if (g_strcmp0 (tmp, "wine-core") == 0) {
 			asb_app_add_requires_appdata (app, "Uses wine");
 			break;
 		}

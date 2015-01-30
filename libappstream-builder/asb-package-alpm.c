@@ -159,14 +159,13 @@ asb_package_alpm_ensure_depends (AsbPackage *pkg, GError **error)
 {
 	AsbPackageAlpm *pkg_alpm = ASB_PACKAGE_ALPM (pkg);
 	AsbPackageAlpmPrivate *priv = GET_PRIVATE (pkg_alpm);
-	
 	alpm_list_t *alpm_depends;
-	GPtrArray _cleanup_ptrarray_unref_ *depends = NULL;
+	alpm_list_t *current;
 
 	alpm_depends = alpm_pkg_get_depends (priv->package);
-	depends = asb_package_alpm_list_to_array (alpm_depends);
+	for (current = alpm_depends; current; current = alpm_list_next (current))
+		asb_package_add_dep (pkg, current->data);
 
-	asb_package_set_deps (pkg, (gchar**)(depends->pdata));
 	return TRUE;
 }
 

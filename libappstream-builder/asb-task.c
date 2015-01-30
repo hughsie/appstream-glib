@@ -99,14 +99,18 @@ asb_task_explode_extra_package (AsbTask *task,
 {
 	AsbTaskPrivate *priv = GET_PRIVATE (task);
 	AsbPackage *pkg_extra;
-	gboolean ret = TRUE;
+	GPtrArray *deps;
+	guint i;
+	const gchar *dep;
 
 	/* if not found, that's fine */
 	pkg_extra = asb_context_find_by_pkgname (priv->ctx, pkg_name);
 	if (pkg_extra == NULL)
 		return TRUE;
+
 	if (!asb_package_ensure (pkg_extra,
 				 ASB_PACKAGE_ENSURE_FILES |
+				 ASB_PACKAGE_ENSURE_DEPS |
 				 ASB_PACKAGE_ENSURE_SOURCE,
 				 error))
 		return FALSE;
@@ -116,7 +120,6 @@ asb_task_explode_extra_package (AsbTask *task,
 	    (g_strcmp0 (asb_package_get_source (pkg_extra),
 		        asb_package_get_source (priv->pkg)) != 0))
 		return TRUE;
-
 	asb_panel_set_status (priv->panel, "Decompressing extra pkg %s",
 			      asb_package_get_name (pkg_extra));
 	asb_package_log (priv->pkg,
@@ -124,10 +127,19 @@ asb_task_explode_extra_package (AsbTask *task,
 			 "Adding extra package %s for %s",
 			 asb_package_get_name (pkg_extra),
 			 asb_package_get_name (priv->pkg));
-	ret = asb_package_explode (pkg_extra, priv->tmpdir,
-				   asb_context_get_file_globs (priv->ctx),
-				   error);
-	return ret;
+	if (!asb_package_explode (pkg_extra, priv->tmpdir,
+				  asb_context_get_file_globs (priv->ctx),
+				  error))
+		return FALSE;
+
+	/* copy all the extra package requires into the main package too */
+	deps = asb_package_get_deps (pkg_extra);
+	for (i = 0; i < deps->len; i++) {
+		dep = g_ptr_array_index (deps, i);
+		asb_package_add_dep (priv->pkg, dep);
+	}
+
+	return TRUE;
 }
 
 /**
@@ -137,45 +149,46 @@ static gboolean
 asb_task_explode_extra_packages (AsbTask *task, GError **error)
 {
 	AsbTaskPrivate *priv = GET_PRIVATE (task);
+	GPtrArray *deps;
 	const gchar *ignore[] = { "rtld", NULL };
 	const gchar *tmp;
-	gchar **deps;
 	guint i;
 	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *array = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *icon_themes = NULL;
 
 	/* anything the package requires */
-	hash = g_hash_table_new (g_str_hash, g_str_equal);
+	hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 	for (i = 0; ignore[i] != NULL; i++) {
 		g_hash_table_insert (hash,
-				     (gchar *) ignore[i],
+				     g_strdup (ignore[i]),
 				     GINT_TO_POINTER (1));
 	}
 	array = g_ptr_array_new_with_free_func (g_free);
 	icon_themes = g_ptr_array_new_with_free_func (g_free);
 	deps = asb_package_get_deps (priv->pkg);
-	for (i = 0; deps != NULL && deps[i] != NULL; i++) {
-		if (g_strstr_len (deps[i], -1, " ") != NULL)
+	for (i = 0; i < deps->len; i++) {
+		tmp = g_ptr_array_index (deps, i);
+		if (g_strstr_len (tmp, -1, " ") != NULL)
 			continue;
-		if (g_strstr_len (deps[i], -1, ".so") != NULL)
+		if (g_strstr_len (tmp, -1, ".so") != NULL)
 			continue;
-		if (g_str_has_prefix (deps[i], "/"))
+		if (g_str_has_prefix (tmp, "/"))
 			continue;
-		if (g_hash_table_lookup (hash, deps[i]) != NULL)
+		if (g_hash_table_lookup (hash, tmp) != NULL)
 			continue;
 		/* if an app depends on kde-runtime, that means the
 		 * oxygen icon set is available to them */
-		if (g_strcmp0 (deps[i], "oxygen-icon-theme") == 0 ||
-		    g_strcmp0 (deps[i], "kde-runtime") == 0) {
-			g_hash_table_insert (hash, (gpointer) "oxygen-icon-theme",
+		if (g_strcmp0 (tmp, "oxygen-icon-theme") == 0 ||
+		    g_strcmp0 (tmp, "kde-runtime") == 0) {
+			g_hash_table_insert (hash, g_strdup ("oxygen-icon-theme"),
 					     GINT_TO_POINTER (1));
 			g_ptr_array_add (icon_themes,
 					 g_strdup ("oxygen-icon-theme"));
 		} else {
-			g_ptr_array_add (array, g_strdup (deps[i]));
+			g_ptr_array_add (array, g_strdup (tmp));
 		}
-		g_hash_table_insert (hash, deps[i], GINT_TO_POINTER (1));
+		g_hash_table_insert (hash, g_strdup (tmp), GINT_TO_POINTER (1));
 	}
 
 	/* explode any potential packages */

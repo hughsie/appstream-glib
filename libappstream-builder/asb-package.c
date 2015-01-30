@@ -41,7 +41,7 @@ struct _AsbPackagePrivate
 	AsbPackageKind	 kind;
 	gboolean	 enabled;
 	gchar		**filelist;
-	gchar		**deps;
+	GPtrArray	*deps;
 	gchar		*filename;
 	gchar		*basename;
 	gchar		*name;
@@ -82,7 +82,7 @@ asb_package_finalize (GObject *object)
 
 	g_mutex_clear (&priv->mutex_log);
 	g_strfreev (priv->filelist);
-	g_strfreev (priv->deps);
+	g_ptr_array_unref (priv->deps);
 	g_free (priv->filename);
 	g_free (priv->basename);
 	g_free (priv->name);
@@ -116,6 +116,7 @@ asb_package_init (AsbPackage *pkg)
 	priv->enabled = TRUE;
 	priv->log = g_string_sized_new (1024);
 	priv->timer = g_timer_new ();
+	priv->deps = g_ptr_array_new_with_free_func (g_free);
 	priv->configs = g_hash_table_new_full (g_str_hash, g_str_equal,
 					       g_free, g_free);
 	priv->releases = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -459,9 +460,9 @@ asb_package_get_filelist (AsbPackage *pkg)
  *
  * Returns: (transfer none) (element-type utf8): deplist
  *
- * Since: 0.1.0
+ * Since: 0.3.5
  **/
-gchar **
+GPtrArray *
 asb_package_get_deps (AsbPackage *pkg)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
@@ -656,20 +657,19 @@ asb_package_set_source_pkgname (AsbPackage *pkg, const gchar *source_pkgname)
 }
 
 /**
- * asb_package_set_deps:
+ * asb_package_add_dep:
  * @pkg: A #AsbPackage
- * @deps: package deps
+ * @dep: package dep
  *
- * Sets the package dependancies.
+ * Add a package dependancy.
  *
- * Since: 0.1.0
+ * Since: 0.3.5
  **/
 void
-asb_package_set_deps (AsbPackage *pkg, gchar **deps)
+asb_package_add_dep (AsbPackage *pkg, const gchar *dep)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
-	g_strfreev (priv->deps);
-	priv->deps = g_strdupv (deps);
+	g_ptr_array_add (priv->deps, g_strdup (dep));
 }
 
 /**
@@ -855,7 +855,7 @@ asb_package_ensure (AsbPackage *pkg,
 		flags &= ~ASB_PACKAGE_ENSURE_SOURCE;
 	if (priv->filelist != NULL)
 		flags &= ~ASB_PACKAGE_ENSURE_FILES;
-	if (priv->deps != NULL)
+	if (priv->deps->len > 0)
 		flags &= ~ASB_PACKAGE_ENSURE_DEPS;
 	if (priv->releases->len > 0)
 		flags &= ~ASB_PACKAGE_ENSURE_RELEASES;
