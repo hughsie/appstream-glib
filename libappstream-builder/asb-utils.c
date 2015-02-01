@@ -301,25 +301,18 @@ asb_utils_explode (const gchar *filename,
 	const gchar *tmp;
 	gboolean ret = TRUE;
 	gboolean valid;
-	gsize len;
 	int r;
 	struct archive *arch = NULL;
 	struct archive *arch_preview = NULL;
 	struct archive_entry *entry;
-	_cleanup_free_ gchar *data = NULL;
 	_cleanup_hashtable_unref_ GHashTable *matches = NULL;
-
-	/* load file at once to avoid seeking */
-	ret = g_file_get_contents (filename, &data, &len, error);
-	if (!ret)
-		goto out;
 
 	/* populate a hash with all the files, symlinks and hardlinks that
 	 * actually need decompressing */
 	arch_preview = archive_read_new ();
 	archive_read_support_format_all (arch_preview);
 	archive_read_support_filter_all (arch_preview);
-	r = archive_read_open_memory (arch_preview, data, len);
+	r = archive_read_open_filename (arch_preview, filename, 1024 * 32);
 	if (r) {
 		ret = FALSE;
 		g_set_error (error,
@@ -377,7 +370,7 @@ asb_utils_explode (const gchar *filename,
 	arch = archive_read_new ();
 	archive_read_support_format_all (arch);
 	archive_read_support_filter_all (arch);
-	r = archive_read_open_memory (arch, data, len);
+	r = archive_read_open_filename (arch, filename, 1024 * 32);
 	if (r) {
 		ret = FALSE;
 		g_set_error (error,
