@@ -470,6 +470,9 @@ skip:
 out:
 	/* clear loaded resources */
 	asb_package_close (priv->pkg, NULL);
+	asb_package_clear (priv->pkg,
+			   ASB_PACKAGE_ENSURE_DEPS |
+			   ASB_PACKAGE_ENSURE_FILES);
 	g_list_free_full (apps, (GDestroyNotify) g_object_unref);
 	return TRUE;
 }

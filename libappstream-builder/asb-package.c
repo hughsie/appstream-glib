@@ -911,6 +911,27 @@ asb_package_ensure (AsbPackage *pkg,
 }
 
 /**
+ * asb_package_clear:
+ * @pkg: A #AsbPackage
+ * @flags: #AsbPackageEnsureFlags
+ *
+ * Deallocates previously ensured data.
+ *
+ * Since: 0.3.5
+ **/
+void
+asb_package_clear (AsbPackage *pkg, AsbPackageEnsureFlags flags)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	if (flags & ASB_PACKAGE_ENSURE_DEPS)
+		g_ptr_array_set_size (priv->deps, 0);
+	if (flags & ASB_PACKAGE_ENSURE_FILES) {
+		g_strfreev (priv->filelist);
+		priv->filelist = NULL;
+	}
+}
+
+/**
  * asb_package_explode:
  * @pkg: A #AsbPackage
  * @dir: directory to explode into

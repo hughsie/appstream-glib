@@ -116,6 +116,8 @@ gboolean	 asb_package_close		(AsbPackage	*pkg,
 gboolean	 asb_package_ensure		(AsbPackage	*pkg,
 						 AsbPackageEnsureFlags flags,
 						 GError		**error);
+void		 asb_package_clear		(AsbPackage	*pkg,
+						 AsbPackageEnsureFlags flags);
 gboolean	 asb_package_explode		(AsbPackage	*pkg,
 						 const gchar	*dir,
 						 GPtrArray	*glob,
