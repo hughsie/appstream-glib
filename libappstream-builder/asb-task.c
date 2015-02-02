@@ -184,6 +184,8 @@ asb_task_explode_extra_packages (AsbTask *task, GError **error)
 			continue;
 		if (g_hash_table_lookup (hash, tmp) != NULL)
 			continue;
+		if (g_strcmp0 (tmp, asb_package_get_name (priv->pkg)) == 0)
+			continue;
 		/* if an app depends on kde-runtime, that means the
 		 * oxygen icon set is available to them */
 		if (g_strcmp0 (tmp, "oxygen-icon-theme") == 0 ||
