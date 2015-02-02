@@ -794,6 +794,25 @@ asb_package_class_init (AsbPackageClass *klass)
 }
 
 /**
+ * asb_package_set_filename:
+ * @pkg: A #AsbPackage
+ * @filename: package filename
+ *
+ * Sets the package filename.
+ *
+ * Since: 0.3.5
+ **/
+void
+asb_package_set_filename (AsbPackage *pkg, const gchar *filename)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	g_free (priv->basename);
+	g_free (priv->filename);
+	priv->basename = g_path_get_basename (filename);
+	priv->filename = g_strdup (filename);
+}
+
+/**
  * asb_package_open:
  * @pkg: A #AsbPackage
  * @filename: package filename
@@ -816,10 +835,6 @@ asb_package_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	/* already open */
 	if (priv->is_open)
 		return TRUE;
-
-	/* cache here */
-	priv->filename = g_strdup (filename);
-	priv->basename = g_path_get_basename (filename);
 	priv->is_open = TRUE;
 
 	/* call distro-specific method */

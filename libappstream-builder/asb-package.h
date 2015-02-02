@@ -139,6 +139,8 @@ void		 asb_package_set_kind		(AsbPackage	*pkg,
 						 AsbPackageKind	 kind);
 void		 asb_package_set_name		(AsbPackage	*pkg,
 						 const gchar	*name);
+void		 asb_package_set_filename	(AsbPackage	*pkg,
+						 const gchar	*filename);
 void		 asb_package_set_version	(AsbPackage	*pkg,
 						 const gchar	*version);
 void		 asb_package_set_release	(AsbPackage	*pkg,

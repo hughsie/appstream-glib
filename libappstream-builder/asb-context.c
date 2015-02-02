@@ -567,10 +567,9 @@ asb_context_add_filename (AsbContext *ctx, const gchar *filename, GError **error
 			     filename);
 		return FALSE;
 	}
-	if (!asb_package_open (pkg, filename, error))
-		return FALSE;
 
 	/* add to array */
+	asb_package_set_filename (pkg, filename);
 	asb_context_add_package (ctx, pkg);
 	return TRUE;
 }
