@@ -40,6 +40,7 @@ struct _AsbPackagePrivate
 {
 	AsbPackageKind	 kind;
 	gboolean	 enabled;
+	gboolean	 is_open;
 	gchar		**filelist;
 	GPtrArray	*deps;
 	gchar		*filename;
@@ -812,13 +813,46 @@ asb_package_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	AsbPackageClass *klass = ASB_PACKAGE_GET_CLASS (pkg);
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 
+	/* already open */
+	if (priv->is_open)
+		return TRUE;
+
 	/* cache here */
 	priv->filename = g_strdup (filename);
 	priv->basename = g_path_get_basename (filename);
+	priv->is_open = TRUE;
 
 	/* call distro-specific method */
 	if (klass->open != NULL)
 		return klass->open (pkg, filename, error);
+	return TRUE;
+}
+
+/**
+ * asb_package_close:
+ * @pkg: A #AsbPackage
+ * @error: A #GError or %NULL
+ *
+ * Closes a package, which can be re-opened if required.
+ *
+ * Returns: %TRUE for success, %FALSE otherwise
+ *
+ * Since: 0.3.5
+ **/
+gboolean
+asb_package_close (AsbPackage *pkg, GError **error)
+{
+	AsbPackageClass *klass = ASB_PACKAGE_GET_CLASS (pkg);
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+
+	/* already closed */
+	if (!priv->is_open)
+		return TRUE;
+	priv->is_open = FALSE;
+
+	/* call distro-specific method */
+	if (klass->close != NULL)
+		return klass->close (pkg, error);
 	return TRUE;
 }
 
@@ -841,6 +875,12 @@ asb_package_ensure (AsbPackage *pkg,
 {
 	AsbPackageClass *klass = ASB_PACKAGE_GET_CLASS (pkg);
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+
+	/* reopen as required */
+	if (!priv->is_open) {
+		if (!asb_package_open (pkg, priv->filename, error))
+			return FALSE;
+	}
 
 	/* clear flags */
 	if (priv->name != NULL)

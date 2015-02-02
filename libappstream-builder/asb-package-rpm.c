@@ -59,7 +59,8 @@ asb_package_rpm_finalize (GObject *object)
 	AsbPackageRpm *pkg = ASB_PACKAGE_RPM (object);
 	AsbPackageRpmPrivate *priv = GET_PRIVATE (pkg);
 
-	headerFree (priv->h);
+	if (priv->h != NULL)
+		headerFree (priv->h);
 
 	G_OBJECT_CLASS (asb_package_rpm_parent_class)->finalize (object);
 }
@@ -545,6 +546,20 @@ asb_package_rpm_strerror (rpmRC rc)
 }
 
 /**
+ * asb_package_rpm_close:
+ **/
+static gboolean
+asb_package_rpm_close (AsbPackage *pkg, GError **error)
+{
+	AsbPackageRpm *pkg_rpm = ASB_PACKAGE_RPM (pkg);
+	AsbPackageRpmPrivate *priv = GET_PRIVATE (pkg_rpm);
+	if (priv->h != NULL)
+		headerFree (priv->h);
+	priv->h = NULL;
+	return TRUE;
+}
+
+/**
  * asb_package_rpm_open:
  **/
 static gboolean
@@ -656,6 +671,7 @@ asb_package_rpm_class_init (AsbPackageRpmClass *klass)
 
 	object_class->finalize = asb_package_rpm_finalize;
 	package_class->open = asb_package_rpm_open;
+	package_class->close = asb_package_rpm_close;
 	package_class->ensure = asb_package_rpm_ensure;
 	package_class->compare = asb_package_rpm_compare;
 }

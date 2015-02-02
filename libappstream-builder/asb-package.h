@@ -72,6 +72,8 @@ struct _AsbPackageClass
 						 GError		**error);
 	gint			 (*compare)	(AsbPackage	*pkg1,
 						 AsbPackage	*pkg2);
+	gboolean		 (*close)	(AsbPackage	*pkg,
+						 GError		**error);
 	/*< private >*/
 	void (*_asb_reserved1)	(void);
 	void (*_asb_reserved2)	(void);
@@ -80,7 +82,6 @@ struct _AsbPackageClass
 	void (*_asb_reserved5)	(void);
 	void (*_asb_reserved6)	(void);
 	void (*_asb_reserved7)	(void);
-	void (*_asb_reserved8)	(void);
 };
 
 typedef enum {
@@ -109,6 +110,8 @@ gboolean	 asb_package_log_flush		(AsbPackage	*pkg,
 						 GError		**error);
 gboolean	 asb_package_open		(AsbPackage	*pkg,
 						 const gchar	*filename,
+						 GError		**error);
+gboolean	 asb_package_close		(AsbPackage	*pkg,
 						 GError		**error);
 gboolean	 asb_package_ensure		(AsbPackage	*pkg,
 						 AsbPackageEnsureFlags flags,

@@ -468,6 +468,8 @@ skip:
 	/* update UI */
 	asb_panel_remove (priv->panel);
 out:
+	/* clear loaded resources */
+	asb_package_close (priv->pkg, NULL);
 	g_list_free_full (apps, (GDestroyNotify) g_object_unref);
 	return TRUE;
 }
