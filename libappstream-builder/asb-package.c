@@ -860,6 +860,10 @@ asb_package_ensure (AsbPackage *pkg,
 	if (priv->releases->len > 0)
 		flags &= ~ASB_PACKAGE_ENSURE_RELEASES;
 
+	/* nothing to do! */
+	if (flags == ASB_PACKAGE_ENSURE_NONE)
+		return TRUE;
+
 	/* call distro-specific method */
 	if (klass->ensure != NULL)
 		return klass->ensure (pkg, flags, error);
