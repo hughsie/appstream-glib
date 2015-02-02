@@ -139,6 +139,13 @@ asb_task_explode_extra_package (AsbTask *task,
 		asb_package_add_dep (priv->pkg, dep);
 	}
 
+	/* free resources */
+	if (!asb_package_close (pkg_extra, error))
+		return FALSE;
+	asb_package_clear (pkg_extra,
+			   ASB_PACKAGE_ENSURE_DEPS |
+			   ASB_PACKAGE_ENSURE_FILES);
+
 	return TRUE;
 }
 
