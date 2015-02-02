@@ -181,6 +181,18 @@ asb_test_package_rpm_func (void)
 #endif
 
 static void
+asb_test_package_func (void)
+{
+	_cleanup_object_unref_ AsbPackage *pkg = NULL;
+	pkg = asb_package_new ();
+	asb_package_set_filename (pkg, "/tmp/gambit-c-doc-4.7.3-2.fc22.noarch.rpm");
+	g_assert_cmpstr (asb_package_get_nevra (pkg), ==, "gambit-c-doc-4.7.3-2.fc22.noarch");
+	g_assert_cmpstr (asb_package_get_name (pkg), ==, "gambit-c-doc");
+	g_assert_cmpstr (asb_package_get_version (pkg), ==, "4.7.3");
+	g_assert_cmpstr (asb_package_get_arch (pkg), ==, "noarch");
+}
+
+static void
 asb_test_utils_glob_func (void)
 {
 	_cleanup_ptrarray_unref_ GPtrArray *array = NULL;
@@ -859,6 +871,7 @@ main (int argc, char **argv)
 	g_setenv ("ASB_IS_SELF_TEST", "", TRUE);
 
 	/* tests go here */
+	g_test_add_func ("/AppStreamBuilder/package", asb_test_package_func);
 	g_test_add_func ("/AppStreamBuilder/utils{replace}", asb_test_utils_replace_func);
 	g_test_add_func ("/AppStreamBuilder/utils{glob}", asb_test_utils_glob_func);
 	g_test_add_func ("/AppStreamBuilder/plugin-loader", asb_test_plugin_loader_func);

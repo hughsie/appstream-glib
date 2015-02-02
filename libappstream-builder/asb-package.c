@@ -811,6 +811,51 @@ asb_package_class_init (AsbPackageClass *klass)
 }
 
 /**
+ * asb_package_guess_from_filename:
+ **/
+static void
+asb_package_guess_from_filename (AsbPackage *pkg)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	_cleanup_free_ gchar *tmp = NULL;
+	gchar *at;
+
+	/* remove .rpm extension */
+	tmp = g_strdup (priv->filename);
+	at = g_strrstr (tmp, ".rpm");
+	if (at == NULL)
+		return;
+	*at = '\0';
+
+	/* get arch */
+	at = g_strrstr (tmp, ".");
+	if (at == NULL)
+		return;
+	priv->arch = g_strdup (at + 1);
+	*at = '\0';
+
+	/* get release */
+	at = g_strrstr (tmp, "-");
+	if (at == NULL)
+		return;
+	priv->release = g_strdup (at + 1);
+	*at = '\0';
+
+	/* get version */
+	at = g_strrstr (tmp, "-");
+	if (at == NULL)
+		return;
+	priv->version = g_strdup (at + 1);
+	*at = '\0';
+
+	/* get name */
+	at = g_strrstr (tmp, "/");
+	if (at == NULL)
+		return;
+	priv->name = g_strdup (at + 1);
+}
+
+/**
  * asb_package_set_filename:
  * @pkg: A #AsbPackage
  * @filename: package filename
@@ -827,6 +872,9 @@ asb_package_set_filename (AsbPackage *pkg, const gchar *filename)
 	g_free (priv->filename);
 	priv->basename = g_path_get_basename (filename);
 	priv->filename = g_strdup (filename);
+
+	/* this only works for correctly formatted file names */
+	asb_package_guess_from_filename (pkg);
 }
 
 /**
@@ -853,6 +901,10 @@ asb_package_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	if (priv->is_open)
 		return TRUE;
 	priv->is_open = TRUE;
+
+	/* save filename if not already set */
+	if (priv->filename == NULL)
+		asb_package_set_filename (pkg, filename);
 
 	/* call distro-specific method */
 	if (klass->open != NULL)
