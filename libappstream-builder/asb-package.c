@@ -114,7 +114,7 @@ asb_package_init (AsbPackage *pkg)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 	priv->enabled = TRUE;
-	priv->log = g_string_sized_new (1024);
+	priv->log = g_string_new (NULL);
 	priv->timer = g_timer_new ();
 	priv->deps = g_ptr_array_new_with_free_func (g_free);
 	priv->configs = g_hash_table_new_full (g_str_hash, g_str_equal,
