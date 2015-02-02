@@ -127,6 +127,7 @@ const gchar	*asb_package_get_filename	(AsbPackage	*pkg);
 const gchar	*asb_package_get_basename	(AsbPackage	*pkg);
 const gchar	*asb_package_get_arch		(AsbPackage	*pkg);
 const gchar	*asb_package_get_name		(AsbPackage	*pkg);
+const gchar	*asb_package_get_version	(AsbPackage	*pkg);
 const gchar	*asb_package_get_nevr		(AsbPackage	*pkg);
 const gchar	*asb_package_get_nevra		(AsbPackage	*pkg);
 const gchar	*asb_package_get_evr		(AsbPackage	*pkg);

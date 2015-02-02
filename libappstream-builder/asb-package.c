@@ -335,6 +335,23 @@ asb_package_get_name (AsbPackage *pkg)
 }
 
 /**
+ * asb_package_get_version:
+ * @pkg: A #AsbPackage
+ *
+ * Gets the package version
+ *
+ * Returns: utf8 string
+ *
+ * Since: 0.3.5
+ **/
+const gchar *
+asb_package_get_version (AsbPackage *pkg)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	return priv->version;
+}
+
+/**
  * asb_package_get_arch:
  * @pkg: A #AsbPackage
  *
