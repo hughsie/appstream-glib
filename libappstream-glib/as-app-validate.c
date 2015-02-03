@@ -289,7 +289,9 @@ as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper
  * as_app_validate_description_list:
  **/
 static void
-as_app_validate_description_list (const gchar *text, AsAppValidateHelper *helper)
+as_app_validate_description_list (const gchar *text,
+				  gboolean allow_short_para,
+				  AsAppValidateHelper *helper)
 {
 	guint length_para_before_list = 300;
 
@@ -305,7 +307,8 @@ as_app_validate_description_list (const gchar *text, AsAppValidateHelper *helper
 				     "<ul> cannot start a description [%s]",
 				     text);
 	}
-	if (helper->para_chars_before_list != 0 &&
+	if (!allow_short_para &&
+	    helper->para_chars_before_list != 0 &&
 	    helper->para_chars_before_list < (guint) length_para_before_list) {
 		ai_app_validate_add (helper->probs,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
@@ -326,6 +329,7 @@ as_app_validate_description (const gchar *xml,
 			     AsAppValidateHelper *helper,
 			     guint number_para_min,
 			     guint number_para_max,
+			     gboolean allow_short_para,
 			     GError **error)
 {
 	GNode *l;
@@ -349,6 +353,7 @@ as_app_validate_description (const gchar *xml,
 		} else if (g_strcmp0 (as_node_get_name (l), "ul") == 0 ||
 			   g_strcmp0 (as_node_get_name (l), "ol") == 0) {
 			as_app_validate_description_list (as_node_get_data (l),
+							  allow_short_para,
 							  helper);
 			for (l2 = l->children; l2 != NULL; l2 = l2->next) {
 				if (g_strcmp0 (as_node_get_name (l2), "li") == 0) {
@@ -860,6 +865,7 @@ as_app_validate_release (AsRelease *release, AsAppValidateHelper *helper, GError
 						  helper,
 						  number_para_min,
 						  number_para_max,
+						  TRUE,
 						  error))
 			return FALSE;
 	}
@@ -1366,6 +1372,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 						   &helper,
 						   number_para_min,
 						   number_para_max,
+						   FALSE,
 						   &error_local);
 		if (!ret) {
 			ai_app_validate_add (probs,
