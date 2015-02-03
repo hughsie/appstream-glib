@@ -798,8 +798,12 @@ as_util_news_add_markup (GString *desc, const gchar *tag, const gchar *line)
 	else if (g_strcmp0 (tag, "/ul") == 0)
 		indent = 4;
 	else if (g_strcmp0 (tag, "release") == 0)
-		indent = 3;
+		indent = 2;
 	else if (g_strcmp0 (tag, "/release") == 0)
+		indent = 2;
+	else if (g_strcmp0 (tag, "description") == 0)
+		indent = 3;
+	else if (g_strcmp0 (tag, "/description") == 0)
 		indent = 3;
 	else if (g_strcmp0 (tag, "li") == 0)
 		indent = 5;
@@ -902,11 +906,13 @@ as_util_news_to_appdata_hdr (GString *desc, const gchar *txt, GError **error)
 	}
 
 	/* add markup */
-	as_util_news_add_indent (desc, 3);
+	as_util_news_add_indent (desc, 2);
 	g_string_append_printf (desc, "<release version=\"%s\" "
-				"release=\"%" G_GINT64_FORMAT "\">\n",
+				"timestamp=\"%" G_GINT64_FORMAT "\">\n",
 				version,
 				g_date_time_to_unix (dt));
+	as_util_news_add_indent (desc, 3);
+	g_string_append (desc, "<description>\n");
 
 	return TRUE;
 }
@@ -990,6 +996,7 @@ as_util_news_to_appdata (AsUtilPrivate *priv, gchar **values, GError **error)
 		{
 			/* flush old release content */
 			if (desc->len > 0) {
+				as_util_news_add_markup (desc, "/description", NULL);
 				as_util_news_add_markup (desc, "/release", NULL);
 				g_print ("%s", desc->str);
 				g_string_truncate (desc, 0);
@@ -1041,6 +1048,7 @@ as_util_news_to_appdata (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* flush old release content */
 	if (desc->len > 0) {
+		as_util_news_add_markup (desc, "/description", NULL);
 		as_util_news_add_markup (desc, "/release", NULL);
 		g_print ("%s", desc->str);
 	}
