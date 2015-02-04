@@ -1380,9 +1380,14 @@ asb_context_process (AsbContext *ctx, GError **error)
 		asb_task_set_panel (task, priv->panel);
 		g_ptr_array_add (tasks, task);
 
-		/* add task to pool */
-		if (!g_thread_pool_push (pool, task, error))
-			return FALSE;
+		/* run the task */
+		if (priv->max_threads == 1) {
+			if (!asb_task_process (task, error))
+				return FALSE;
+		} else {
+			if (!g_thread_pool_push (pool, task, error))
+				return FALSE;
+		}
 	}
 
 	/* wait for them to finish */
