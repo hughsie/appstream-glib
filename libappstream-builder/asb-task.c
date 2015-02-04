@@ -108,14 +108,11 @@ asb_task_explode_extra_package (AsbTask *task,
 	if (pkg_extra == NULL)
 		return TRUE;
 
+	/* check it's from the same source package */
 	if (!asb_package_ensure (pkg_extra,
-				 ASB_PACKAGE_ENSURE_FILES |
-				 ASB_PACKAGE_ENSURE_DEPS |
 				 ASB_PACKAGE_ENSURE_SOURCE,
 				 error))
 		return FALSE;
-
-	/* check it's from the same source package */
 	if (require_same_srpm &&
 	    (g_strcmp0 (asb_package_get_source (pkg_extra),
 		        asb_package_get_source (priv->pkg)) != 0))
@@ -127,6 +124,11 @@ asb_task_explode_extra_package (AsbTask *task,
 			 "Adding extra package %s for %s",
 			 asb_package_get_name (pkg_extra),
 			 asb_package_get_name (priv->pkg));
+	if (!asb_package_ensure (pkg_extra,
+				 ASB_PACKAGE_ENSURE_FILES |
+				 ASB_PACKAGE_ENSURE_DEPS,
+				 error))
+		return FALSE;
 	if (!asb_package_explode (pkg_extra, priv->tmpdir,
 				  asb_context_get_file_globs (priv->ctx),
 				  error))
