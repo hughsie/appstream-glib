@@ -42,7 +42,9 @@ struct _AsbPackagePrivate
 	gboolean	 enabled;
 	gboolean	 is_open;
 	gchar		**filelist;
+	guint		 filelist_refcount;
 	GPtrArray	*deps;
+	guint		 deps_refcount;
 	gchar		*filename;
 	gchar		*basename;
 	gchar		*name;
@@ -966,6 +968,12 @@ asb_package_ensure (AsbPackage *pkg,
 			return FALSE;
 	}
 
+	/* this is recounted */
+	if (flags & ASB_PACKAGE_ENSURE_DEPS)
+		priv->deps_refcount++;
+	if (flags & ASB_PACKAGE_ENSURE_FILES)
+		priv->filelist_refcount++;
+
 	/* clear flags */
 	if (priv->name != NULL)
 		flags &= ~ASB_PACKAGE_ENSURE_NEVRA;
@@ -1007,11 +1015,17 @@ void
 asb_package_clear (AsbPackage *pkg, AsbPackageEnsureFlags flags)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
-	if (flags & ASB_PACKAGE_ENSURE_DEPS)
-		g_ptr_array_set_size (priv->deps, 0);
+
+	/* this is recounted */
+	if (flags & ASB_PACKAGE_ENSURE_DEPS) {
+		if (priv->deps_refcount > 0 && --priv->deps_refcount == 0)
+			g_ptr_array_set_size (priv->deps, 0);
+	}
 	if (flags & ASB_PACKAGE_ENSURE_FILES) {
-		g_strfreev (priv->filelist);
-		priv->filelist = NULL;
+		if (priv->filelist_refcount > 0 && --priv->filelist_refcount == 0) {
+			g_strfreev (priv->filelist);
+			priv->filelist = NULL;
+		}
 	}
 }
 

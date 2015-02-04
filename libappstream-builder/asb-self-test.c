@@ -155,6 +155,29 @@ asb_test_package_rpm_func (void)
 	asb_package_set_config (pkg, "test", "dave2");
 	g_assert_cmpstr (asb_package_get_config (pkg, "test"), ==, "dave2");
 
+	/* clear */
+	asb_package_clear (pkg,
+			   ASB_PACKAGE_ENSURE_DEPS |
+			   ASB_PACKAGE_ENSURE_FILES);
+	g_assert (asb_package_get_filelist (pkg) == NULL);
+	g_assert_cmpint (asb_package_get_deps(pkg)->len, ==, 0);
+
+	/* clear, ensure, ensure, clear, check, clear */
+	asb_package_clear (pkg, ASB_PACKAGE_ENSURE_DEPS);
+	g_assert_cmpint (asb_package_get_deps(pkg)->len, ==, 0);
+	ret = asb_package_ensure (pkg, ASB_PACKAGE_ENSURE_DEPS, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (asb_package_get_deps(pkg)->len, ==, 3);
+	ret = asb_package_ensure (pkg, ASB_PACKAGE_ENSURE_DEPS, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (asb_package_get_deps(pkg)->len, ==, 3);
+	asb_package_clear (pkg, ASB_PACKAGE_ENSURE_DEPS);
+	g_assert_cmpint (asb_package_get_deps(pkg)->len, ==, 3);
+	asb_package_clear (pkg, ASB_PACKAGE_ENSURE_DEPS);
+	g_assert_cmpint (asb_package_get_deps(pkg)->len, ==, 0);
+
 	/* compare */
 	g_assert_cmpint (asb_package_compare (pkg, pkg), ==, 0);
 
