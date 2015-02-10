@@ -756,11 +756,15 @@ as_util_news_to_appdata_guess_section (const gchar *lines)
 		return AS_UTIL_SECTION_KIND_BUGFIX;
 	if (g_strstr_len (lines, -1, "Features:\n") != NULL)
 		return AS_UTIL_SECTION_KIND_FEATURES;
+	if (g_strstr_len (lines, -1, "Removed features:\n") != NULL)
+		return AS_UTIL_SECTION_KIND_FEATURES;
 	if (g_strstr_len (lines, -1, "Notes:\n") != NULL)
 		return AS_UTIL_SECTION_KIND_NOTES;
 	if (g_strstr_len (lines, -1, "Note:\n") != NULL)
 		return AS_UTIL_SECTION_KIND_NOTES;
 	if (g_strstr_len (lines, -1, "Translations:\n") != NULL)
+		return AS_UTIL_SECTION_KIND_TRANSLATION;
+	if (g_strstr_len (lines, -1, "Translations\n") != NULL)
 		return AS_UTIL_SECTION_KIND_TRANSLATION;
 	return AS_UTIL_SECTION_KIND_UNKNOWN;
 }
@@ -926,7 +930,7 @@ as_util_news_to_appdata_list (GString *desc, gchar **lines, GError **error)
 	guint i;
 
 	as_util_news_add_markup (desc, "ul", NULL);
-	for (i = 1; lines[i] != NULL; i++) {
+	for (i = 0; lines[i] != NULL; i++) {
 		guint prefix = 0;
 		if (g_str_has_prefix (lines[i], " - "))
 			prefix = 3;
@@ -991,6 +995,10 @@ as_util_news_to_appdata (AsUtilPrivate *priv, gchar **values, GError **error)
 	for (i = 0; split[i] != NULL; i++) {
 		_cleanup_strv_free_ gchar **lines = NULL;
 
+		/* ignore empty sections */
+		if (split[i][0] == '\0')
+			continue;
+
 		switch (as_util_news_to_appdata_guess_section (split[i])) {
 		case AS_UTIL_SECTION_KIND_HEADER:
 		{
@@ -1036,12 +1044,14 @@ as_util_news_to_appdata (AsUtilPrivate *priv, gchar **values, GError **error)
 				return FALSE;
 			break;
 		case AS_UTIL_SECTION_KIND_TRANSLATION:
+			as_util_news_add_markup (desc, "p",
+						 "This release updates translations.");
 			break;
 		default:
 			g_set_error (error,
 				     AS_ERROR,
 				     AS_ERROR_FAILED,
-				     "failed to detect section %s", split[i]);
+				     "failed to detect section '%s'", split[i]);
 			return FALSE;
 		}
 	}
