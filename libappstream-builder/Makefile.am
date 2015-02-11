@@ -101,6 +101,7 @@ check_PROGRAMS =						\
 asb_self_test_SOURCES =						\
 	asb-self-test.c
 asb_self_test_LDADD =						\
+	$(AS_GLIB_LIBS)						\
 	$(GLIB_LIBS)						\
 	$(GDKPIXBUF_LIBS)					\
 	$(SOUP_LIBS)						\
