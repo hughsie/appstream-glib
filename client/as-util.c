@@ -617,12 +617,10 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 	GPtrArray *releases;
 	guint i;
 	guint j;
-	_cleanup_free_ gchar *id_new = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
-	_cleanup_string_free_ GString *str = NULL;
+	guint f;
 
 	/* check args */
-	if (g_strv_length (values) != 1) {
+	if (g_strv_length (values) < 1) {
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
@@ -631,62 +629,72 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 		return FALSE;
 	}
 
-	/* check types */
-	if (as_app_guess_source_kind (values[0]) != AS_APP_SOURCE_KIND_APPDATA) {
-		g_set_error_literal (error,
-				     AS_ERROR,
-				     AS_ERROR_INVALID_ARGUMENTS,
-				     "Format not recognised");
-		return FALSE;
-	}
+	/* convert all the AppData files */
+	for (f = 0; values[f] != NULL; f++) {
 
-	/* import the .desktop file */
-	app = as_app_new ();
-	if (!as_app_parse_file (app, values[0], 0, error))
-		return FALSE;
+		_cleanup_object_unref_ AsApp *app = NULL;
+		_cleanup_string_free_ GString *str = NULL;
 
-	/* print all the releases that match */
-	str = g_string_new ("");
-	releases = as_app_get_releases (app);
-	for (i = 0; i < releases->len; i++) {
-		AsRelease *rel;
-		const gchar *tmp;
-		_cleanup_free_ gchar *version = NULL;
-		_cleanup_free_ gchar *date = NULL;
-		_cleanup_date_time_unref_ GDateTime *dt = NULL;
+		/* add separator */
+		if (f > 0)
+			g_print ("\n\n");
 
-		rel = g_ptr_array_index (releases, i);
-
-		/* print version with underline */
-		version = g_strdup_printf ("Version %s", as_release_get_version (rel));
-		g_string_append_printf (str, "%s\n", version);
-		for (j = 0; version[j] != '\0'; j++)
-			g_string_append (str, "~");
-		g_string_append (str, "\n");
-
-		/* print release */
-		if (as_release_get_timestamp (rel) > 0) {
-			dt = g_date_time_new_from_unix_utc (as_release_get_timestamp (rel));
-			date = g_date_time_format (dt, "%F");
-			g_string_append_printf (str, "Released: %s\n\n", date);
+		/* check types */
+		if (as_app_guess_source_kind (values[f]) != AS_APP_SOURCE_KIND_APPDATA) {
+			g_set_error_literal (error,
+					     AS_ERROR,
+					     AS_ERROR_INVALID_ARGUMENTS,
+					     "Format not recognised");
+			return FALSE;
 		}
 
-		/* print description */
-		tmp = as_release_get_description (rel, NULL);
-		if (tmp != NULL) {
-			_cleanup_free_ gchar *md = NULL;
-			md = as_markup_convert (tmp, -1,
-						AS_MARKUP_CONVERT_FORMAT_MARKDOWN,
-						error);
-			if (md == NULL)
-				return FALSE;
-			g_string_append_printf (str, "%s\n", md);
+		app = as_app_new ();
+		if (!as_app_parse_file (app, values[f], 0, error))
+			return FALSE;
+
+		/* print all the releases that match */
+		str = g_string_new ("");
+		releases = as_app_get_releases (app);
+		for (i = 0; i < releases->len; i++) {
+			AsRelease *rel;
+			const gchar *tmp;
+			_cleanup_free_ gchar *version = NULL;
+			_cleanup_free_ gchar *date = NULL;
+			_cleanup_date_time_unref_ GDateTime *dt = NULL;
+
+			rel = g_ptr_array_index (releases, i);
+
+			/* print version with underline */
+			version = g_strdup_printf ("Version %s", as_release_get_version (rel));
+			g_string_append_printf (str, "%s\n", version);
+			for (j = 0; version[j] != '\0'; j++)
+				g_string_append (str, "~");
+			g_string_append (str, "\n");
+
+			/* print release */
+			if (as_release_get_timestamp (rel) > 0) {
+				dt = g_date_time_new_from_unix_utc (as_release_get_timestamp (rel));
+				date = g_date_time_format (dt, "%F");
+				g_string_append_printf (str, "Released: %s\n\n", date);
+			}
+
+			/* print description */
+			tmp = as_release_get_description (rel, NULL);
+			if (tmp != NULL) {
+				_cleanup_free_ gchar *md = NULL;
+				md = as_markup_convert (tmp, -1,
+							AS_MARKUP_CONVERT_FORMAT_MARKDOWN,
+							error);
+				if (md == NULL)
+					return FALSE;
+				g_string_append_printf (str, "%s\n", md);
+			}
+			g_string_append (str, "\n");
 		}
-		g_string_append (str, "\n");
+		if (str->len > 1)
+			g_string_truncate (str, str->len - 1);
+		g_print ("%s", str->str);
 	}
-	if (str->len > 1)
-		g_string_truncate (str, str->len - 1);
-	g_print ("%s", str->str);
 	return TRUE;
 }
 
