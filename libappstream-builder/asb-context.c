@@ -570,6 +570,13 @@ asb_context_add_filename (AsbContext *ctx, const gchar *filename, GError **error
 
 	/* add to array */
 	asb_package_set_filename (pkg, filename);
+
+	/* failed to guess the nevra */
+	if (asb_package_get_name (pkg) == NULL) {
+		if (!asb_package_open (pkg, filename, error))
+			return FALSE;
+	}
+
 	asb_context_add_package (ctx, pkg);
 	return TRUE;
 }
