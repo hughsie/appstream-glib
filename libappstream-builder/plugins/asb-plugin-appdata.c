@@ -153,7 +153,7 @@ asb_plugin_appdata_remove_file (AsbPlugin *plugin, const gchar *filename)
 }
 
 /**
- * asb_plugin_process_filename:
+ * asb_plugin_appdata_log_overwrite:
  */
 static void
 asb_plugin_appdata_log_overwrite (AsbApp *app,
