@@ -417,6 +417,8 @@ AsIcon		*as_app_get_icon_for_size	(AsApp		*app,
 						 guint		 width,
 						 guint		 height);
 AsBundle	*as_app_get_bundle_default	(AsApp		*app);
+AsRelease	*as_app_get_release		(AsApp		*app,
+						 const gchar	*version);
 gboolean	 as_app_convert_icons		(AsApp		*app,
 						 AsIconKind	 kind,
 						 GError		**error);
