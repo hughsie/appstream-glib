@@ -463,6 +463,13 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		as_app_add_metadata (AS_APP (app), key, tmp, -1);
 	}
 
+	/* add releases */
+	array = as_app_get_releases (appdata);
+	for (i = 0; i < array->len; i++) {
+		AsRelease *rel = g_ptr_array_index (array, i);
+		as_app_add_release (AS_APP (app), rel);
+	}
+
 	/* log updateinfo */
 	tmp = as_app_get_update_contact (AS_APP (appdata));
 	if (tmp != NULL) {

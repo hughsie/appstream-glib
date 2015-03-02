@@ -2136,6 +2136,21 @@ void
 as_app_add_release (AsApp *app, AsRelease *release)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsRelease *release_old;
+	const gchar *tmp;
+
+	/* if already exists them update */
+	release_old = as_app_get_release (app, as_release_get_version (release));
+	if (release_old != NULL) {
+		tmp = as_release_get_description (release, NULL);
+		if (tmp == NULL)
+			return;
+		if (as_release_get_description (release_old, NULL) != NULL)
+			return;
+		as_release_set_description (release_old, NULL, tmp, -1);
+		return;
+	}
+
 	g_ptr_array_add (priv->releases, g_object_ref (release));
 }
 
@@ -2655,6 +2670,12 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	for (i = 0; i < priv->bundles->len; i++) {
 		bundle = g_ptr_array_index (priv->bundles, i);
 		as_app_add_bundle (app, bundle);
+	}
+
+	/* releases */
+	for (i = 0; i < priv->releases->len; i++) {
+		AsRelease *rel= g_ptr_array_index (priv->releases, i);
+		as_app_add_release (app, rel);
 	}
 
 	/* kudos */
