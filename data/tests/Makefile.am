@@ -14,6 +14,7 @@ test_files =						\
 	composite-1-1.fc21.x86_64.rpm			\
 	example.appdata.xml				\
 	example.desktop					\
+	example.inf					\
 	example.metainfo.xml				\
 	example-v04.xml.gz				\
 	example-v06.yml.gz				\

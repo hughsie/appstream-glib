@@ -128,6 +128,8 @@ gboolean	 as_utils_install_filename	(AsUtilsLocation location,
 						 GError		**error);
 gboolean	 as_utils_search_token_valid	(const gchar	*token);
 gchar		**as_utils_search_tokenize	(const gchar	*search);
+GKeyFile	*as_utils_load_inf_file		(const gchar	*filename,
+						 GError		**error);
 
 G_END_DECLS
 

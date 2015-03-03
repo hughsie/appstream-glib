@@ -3288,6 +3288,38 @@ as_test_store_speed_yaml_func (void)
 }
 
 static void
+as_test_utils_inf_func (void)
+{
+	GError *error = NULL;
+	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_free_ gchar *test1 = NULL;
+	_cleanup_free_ gchar *test2 = NULL;
+	_cleanup_free_ gchar *test3 = NULL;
+	_cleanup_keyfile_unref_ GKeyFile *kf= NULL;
+
+	/* load example */
+	filename = as_test_get_filename ("example.inf");
+	kf = as_utils_load_inf_file (filename, &error);
+	g_assert_no_error (error);
+	g_assert (kf != NULL);
+
+	/* simple */
+	test1 = g_key_file_get_string (kf, "Version", "Class", &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (test1, ==, "Firmware");
+
+	/* key replacement */
+	test2 = g_key_file_get_string (kf, "Firmware_CopyFiles", "Value000", &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (test2, ==, "firmware.bin");
+
+	/* double quotes swallowing */
+	test3 = g_key_file_get_string (kf, "Strings", "FirmwareDesc", &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (test3, ==, "ColorHug Firmware");
+}
+
+static void
 as_test_utils_install_filename_func (void)
 {
 	gboolean ret;
@@ -3396,6 +3428,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils{icons}", as_test_utils_icons_func);
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/utils{install-filename}", as_test_utils_install_filename_func);
+	g_test_add_func ("/AppStream/utils{inf}", as_test_utils_inf_func);
 	g_test_add_func ("/AppStream/yaml", as_test_yaml_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
 	g_test_add_func ("/AppStream/store{demote}", as_test_store_demote_func);

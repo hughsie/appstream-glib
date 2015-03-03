@@ -1523,3 +1523,109 @@ as_utils_search_tokenize (const gchar *search)
 	}
 	return values;
 }
+
+/**
+ * as_utils_line_is_blank:
+ */
+static gboolean
+as_utils_line_is_blank (const gchar *str)
+{
+	guint i;
+	for (i = 0; str[i] != '\0'; i++) {
+		if (!g_ascii_isspace (str[i]))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
+ * as_utils_remove_quotes:
+ */
+static gchar *
+as_utils_remove_quotes (const gchar *txt)
+{
+	GString *str;
+	guint i;
+
+	/* remove double quotes */
+	str = g_string_sized_new (strlen (txt));
+	for (i = 0; txt[i] != '\0'; i++) {
+		if (txt[i] == '"')
+			continue;
+		g_string_append_c (str, txt[i]);
+	}
+	return g_string_free (str, FALSE);
+}
+
+/**
+ * as_utils_load_inf_file:
+ * @filename: the .inf file to open
+ * @error: A #GError or %NULL
+ *
+ * Repairs an .inf file and opens it as a keyfile.
+ *
+ * Returns: (transfer full): a #GKeyFile, or %NULL for error
+ *
+ * Since: 0.3.5
+ */
+GKeyFile *
+as_utils_load_inf_file (const gchar *filename, GError **error)
+{
+	guint i;
+	guint idx = 0;
+	guint nokey_idx = 0;
+	_cleanup_free_ gchar *data_fixed = NULL;
+	_cleanup_free_ gchar *data = NULL;
+	_cleanup_keyfile_unref_ GKeyFile *kf = NULL;
+	_cleanup_strv_free_ gchar **lines_fixed = NULL;
+	_cleanup_strv_free_ gchar **lines = NULL;
+
+	/* load lines of keyfile */
+	if (!g_file_get_contents (filename, &data, NULL, error))
+		return NULL;
+	lines = g_strsplit (data, "\n", -1);
+	lines_fixed = g_new0 (gchar *, g_strv_length (lines));
+
+	/* verify each line, and make sane */
+	for (i = 0; lines[i] != NULL; i++) {
+
+		/* is just whitespace */
+		if (as_utils_line_is_blank (lines[i])) {
+			lines[i][0] = '\0';
+			continue;
+		}
+
+		/* convert comments */
+		if (lines[i][0] == ';') {
+			lines_fixed[idx++] = g_strdup_printf ("#%s", lines[i] + 1);
+			continue;
+		}
+
+		/* is valid section header */
+		if (g_strstr_len (lines[i], -1, "[") != NULL &&
+		    g_strstr_len (lines[i], -1, "]") != NULL) {
+			lines_fixed[idx++] = g_strdup (lines[i]);
+			nokey_idx = 0;
+			continue;
+		}
+
+		/* value, possibly with quotes */
+		if (g_strstr_len (lines[i], -1, "=") != NULL) {
+			lines_fixed[idx++] = as_utils_remove_quotes (lines[i]);
+		} else {
+			/* value with no key */
+			lines_fixed[idx++] = g_strdup_printf ("Value%03i=%s",
+							      nokey_idx++,
+							      lines[i]);
+			continue;
+		}
+	}
+
+	/* load file */
+	kf = g_key_file_new ();
+	data_fixed = g_strjoinv ("\n", lines_fixed);
+	if (!g_key_file_load_from_data (kf, data_fixed, -1,
+					G_KEY_FILE_NONE, error))
+		return NULL;
+	return g_key_file_ref (kf);
+}
