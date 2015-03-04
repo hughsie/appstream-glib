@@ -2927,8 +2927,24 @@ as_app_releases_sort_cb (gconstpointer a, gconstpointer b)
 {
 	AsRelease **rel1 = (AsRelease **) a;
 	AsRelease **rel2 = (AsRelease **) b;
-	return g_strcmp0 (as_release_get_version (*rel2),
-			  as_release_get_version (*rel1));
+	gint64 ts_a;
+	gint64 ts_b;
+	gint val;
+
+	/* prefer the version strings */
+	val = as_utils_vercmp (as_release_get_version (*rel2),
+			       as_release_get_version (*rel1));
+	if (val != G_MAXINT)
+		return val;
+
+	/* fall back to the timestamp */
+	ts_a = as_release_get_timestamp (*rel1);
+	ts_b = as_release_get_timestamp (*rel2);
+	if (ts_a > ts_b)
+		return -1;
+	if (ts_a < ts_b)
+		return 1;
+	return 0;
 }
 
 /**

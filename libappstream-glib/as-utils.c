@@ -1629,3 +1629,63 @@ as_utils_load_inf_file (const gchar *filename, GError **error)
 		return NULL;
 	return g_key_file_ref (kf);
 }
+
+/**
+ * as_utils_vercmp:
+ * @version_a: the release version, e.g. 1.2.3
+ * @version_b: the release version, e.g. 1.2.3.1
+ *
+ * Compares version numbers for sorting. This function cannot deal with version
+ * strings that do not contain numbers, for instance "rev2706" or "1.2_alpha".
+ *
+ * Returns: -1 if a < b, +1 if a > b, 0 if they are equal, and %G_MAXINT on error
+ *
+ * Since: 0.3.5
+ */
+gint
+as_utils_vercmp (const gchar *version_a, const gchar *version_b)
+{
+	gchar *endptr;
+	guint64 ver_a;
+	guint64 ver_b;
+	guint i;
+	guint longest_split;
+	_cleanup_strv_free_ gchar **split_a = NULL;
+	_cleanup_strv_free_ gchar **split_b = NULL;
+
+	/* sanity check */
+	if (version_a == NULL || version_b == NULL)
+		return G_MAXINT;
+
+	/* optimisation */
+	if (g_strcmp0 (version_a, version_b) == 0)
+		return 0;
+
+	/* split into sections, and try to parse */
+	split_a = g_strsplit (version_a, ".", -1);
+	split_b = g_strsplit (version_b, ".", -1);
+	longest_split = MAX (g_strv_length (split_a), g_strv_length (split_b));
+	for (i = 0; i < longest_split; i++) {
+
+		/* we lost or gained a dot */
+		if (split_a[i] == NULL)
+			return -1;
+		if (split_b[i] == NULL)
+			return 1;
+
+		/* compare integers */
+		ver_a = g_ascii_strtoull (split_a[i], &endptr, 10);
+		if (endptr != NULL && endptr[0] != '\0')
+			return G_MAXINT;
+		ver_b = g_ascii_strtoull (split_b[i], &endptr, 10);
+		if (endptr != NULL && endptr[0] != '\0')
+			return G_MAXINT;
+		if (ver_a < ver_b)
+			return -1;
+		if (ver_a > ver_b)
+			return 1;
+	}
+
+	/* we really shouldn't get here */
+	return 0;
+}

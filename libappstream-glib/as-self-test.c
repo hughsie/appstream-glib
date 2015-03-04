@@ -3295,6 +3295,31 @@ as_test_store_speed_yaml_func (void)
 }
 
 static void
+as_test_utils_vercmp_func (void)
+{
+
+	/* same */
+	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.3"), ==, 0);
+
+	/* upgrade and downgrade */
+	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.4"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.2"), >, 0);
+
+	/* unequal depth */
+	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.3.1"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("1.2.3.1", "1.2.4"), <, 0);
+
+	/* non-numeric */
+	g_assert_cmpint (as_utils_vercmp ("1.2xxx.3", "1.2.3"), ==, G_MAXINT);
+	g_assert_cmpint (as_utils_vercmp ("1.2a.3", "1.2b.3"), ==, G_MAXINT);
+
+	/* invalid */
+	g_assert_cmpint (as_utils_vercmp ("1", NULL), ==, G_MAXINT);
+	g_assert_cmpint (as_utils_vercmp (NULL, "1"), ==, G_MAXINT);
+	g_assert_cmpint (as_utils_vercmp (NULL, NULL), ==, G_MAXINT);
+}
+
+static void
 as_test_utils_inf_func (void)
 {
 	GError *error = NULL;
@@ -3436,6 +3461,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/utils{install-filename}", as_test_utils_install_filename_func);
 	g_test_add_func ("/AppStream/utils{inf}", as_test_utils_inf_func);
+	g_test_add_func ("/AppStream/utils{vercmp}", as_test_utils_vercmp_func);
 	g_test_add_func ("/AppStream/yaml", as_test_yaml_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
 	g_test_add_func ("/AppStream/store{demote}", as_test_store_demote_func);
