@@ -188,6 +188,8 @@ as_tag_to_string (AsTag tag)
 		"bundle",
 		"permissions",
 		"permission",
+		"location",
+		"checksum",
 		NULL };
 	if (tag > AS_TAG_LAST)
 		tag = AS_TAG_LAST;

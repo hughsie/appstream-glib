@@ -199,6 +199,10 @@ as_test_release_appstream_func (void)
 	gboolean ret;
 	const gchar *src =
 		"<release version=\"0.1.2\" timestamp=\"123\">\n"
+		"<location>http://foo.com/bar.zip</location>\n"
+		"<location>http://baz.com/bar.cab</location>\n"
+		"<checksum type=\"md5\">deadbeef</checksum>\n"
+		"<checksum type=\"sha1\">12345</checksum>\n"
 		"<description><p>This is a new release</p></description>\n"
 		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>\n"
 		"</release>\n";
@@ -222,6 +226,9 @@ as_test_release_appstream_func (void)
 	/* verify */
 	g_assert_cmpint (as_release_get_timestamp (release), ==, 123);
 	g_assert_cmpstr (as_release_get_version (release), ==, "0.1.2");
+	g_assert_cmpstr (as_release_get_location_default (release), ==, "http://foo.com/bar.zip");
+	g_assert_cmpstr (as_release_get_checksum (release, G_CHECKSUM_SHA1), ==, "12345");
+	g_assert_cmpstr (as_release_get_checksum (release, G_CHECKSUM_MD5), ==, "deadbeef");
 	g_assert_cmpstr (as_release_get_description (release, "pl"), ==,
 				"<p>Oprogramowanie</p>");
 

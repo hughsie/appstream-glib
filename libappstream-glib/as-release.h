@@ -67,6 +67,10 @@ const gchar	*as_release_get_version		(AsRelease	*release);
 guint64		 as_release_get_timestamp	(AsRelease	*release);
 const gchar	*as_release_get_description	(AsRelease	*release,
 						 const gchar	*locale);
+GPtrArray	*as_release_get_locations	(AsRelease	*release);
+const gchar	*as_release_get_location_default (AsRelease	*release);
+const gchar	*as_release_get_checksum	(AsRelease	*release,
+						 GChecksumType	 checksum_type);
 
 /* setters */
 void		 as_release_set_version		(AsRelease	*release,
@@ -78,6 +82,13 @@ void		 as_release_set_description	(AsRelease	*release,
 						 const gchar	*locale,
 						 const gchar	*description,
 						 gssize		 description_len);
+void		 as_release_add_location	(AsRelease	*release,
+						 const gchar	*location,
+						 gssize		 location_len);
+void		 as_release_set_checksum	(AsRelease	*release,
+						 GChecksumType	 checksum_type,
+						 const gchar	*checksum,
+						 gssize		 checksum_len);
 
 G_END_DECLS
 

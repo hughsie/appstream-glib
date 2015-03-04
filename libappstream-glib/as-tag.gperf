@@ -52,3 +52,5 @@ veto, AS_TAG_VETO
 bundle, AS_TAG_BUNDLE
 permissions, AS_TAG_PERMISSIONS
 permission, AS_TAG_PERMISSION
+location, AS_TAG_LOCATION
+checksum, AS_TAG_CHECKSUM

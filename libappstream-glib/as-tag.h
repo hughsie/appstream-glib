@@ -75,6 +75,8 @@
  * @AS_TAG_BUNDLE:			`bundle`
  * @AS_TAG_PERMISSIONS:			`permissions`
  * @AS_TAG_PERMISSION:			`permission`
+ * @AS_TAG_LOCATION:			`location`
+ * @AS_TAG_CHECKSUM:			`checksum`
  *
  * The tag type.
  **/
@@ -124,6 +126,8 @@ typedef enum {
 	AS_TAG_BUNDLE,			/* Since: 0.3.5 */
 	AS_TAG_PERMISSIONS,		/* Since: 0.3.5 */
 	AS_TAG_PERMISSION,		/* Since: 0.3.5 */
+	AS_TAG_LOCATION,		/* Since: 0.3.5 */
+	AS_TAG_CHECKSUM,		/* Since: 0.3.5 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;
