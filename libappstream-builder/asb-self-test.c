@@ -47,7 +47,12 @@ asb_test_get_filename (const gchar *filename)
 	gchar *tmp;
 	_cleanup_free_ gchar *path = NULL;
 
-	path = g_build_filename (TESTDATADIR, filename, NULL);
+	/* try the source then the destdir */
+	path = g_build_filename (TESTDIRSRC, filename, NULL);
+	if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
+		g_free (path);
+		path = g_build_filename (TESTDIRBUILD, filename, NULL);
+	}
 	tmp = realpath (path, full_tmp);
 	if (tmp == NULL)
 		return NULL;
