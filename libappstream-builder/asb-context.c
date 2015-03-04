@@ -1305,6 +1305,7 @@ asb_context_disable_multiarch_pkgs (AsbContext *ctx)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	AsbPackage *pkg;
+	const gchar *arch;
 	gboolean found_arch = FALSE;
 	guint i;
 
@@ -1322,9 +1323,15 @@ asb_context_disable_multiarch_pkgs (AsbContext *ctx)
 	/* disable any alternate-arch packages */
 	for (i = 0; i < priv->packages->len; i++) {
 		pkg = ASB_PACKAGE (g_ptr_array_index (priv->packages, i));
-		if (g_strcmp0 (asb_package_get_arch (pkg), "x86_64") != 0 &&
-		    g_strcmp0 (asb_package_get_arch (pkg), "noarch") != 0)
+		arch = asb_package_get_arch (pkg);
+		if (arch == NULL)
+			continue;
+		if (g_strcmp0 (arch, "x86_64") != 0 &&
+		    g_strcmp0 (arch, "noarch") != 0) {
+			g_debug ("disabling alternate-arch %s",
+				 asb_package_get_filename (pkg));
 			asb_package_set_enabled (pkg, FALSE);
+		}
 	}
 }
 

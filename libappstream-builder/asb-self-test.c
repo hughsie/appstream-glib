@@ -322,13 +322,14 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"composite-1-1.fc21.x86_64.rpm",	/* multiple GUI apps */
 		"font-1-1.fc21.noarch.rpm",		/* font */
 		"font-serif-1-1.fc21.noarch.rpm",	/* font that extends */
+		"colorhug-als-2.0.2.cab",		/* firmware */
 		NULL};
 
 	/* set up the context */
 	ctx = asb_context_new ();
 	g_assert (!asb_context_get_flag (ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID));
 	asb_context_set_max_threads (ctx, 1);
-	asb_context_set_api_version (ctx, 0.8);
+	asb_context_set_api_version (ctx, 0.9);
 	asb_context_set_flags (ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID |
 				    ASB_CONTEXT_FLAG_NO_NETWORK |
 				    ASB_CONTEXT_FLAG_INCLUDE_FAILED |
@@ -375,7 +376,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	switch (mode) {
 	case ASB_TEST_CONTEXT_MODE_NO_CACHE:
 	case ASB_TEST_CONTEXT_MODE_WITH_OLD_CACHE:
-		g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 8);
+		g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 9);
 		break;
 	default:
 		/* no packages should need extracting */
@@ -400,7 +401,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store), ==, 5);
+	g_assert_cmpint (as_store_get_size (store), ==, 6);
 	app = as_store_get_app_by_pkgname (store, "app");
 	g_assert (app != NULL);
 	app = as_store_get_app_by_id (store, "app.desktop");
@@ -409,7 +410,30 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	/* check it matches what we expect */
 	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
-		"<components version=\"0.8\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test\">\n"
+		"<components version=\"0.9\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test\">\n"
+		"<component type=\"firmware\">\n"
+		"<id>84f40464-9272-4ef7-9399-cd95f12da696</id>\n"
+		"<name>ColorHug Firmware</name>\n"
+		"<summary>Firmware for the ColorHug Colorimeter</summary>\n"
+		"<developer_name>Hughski Limited</developer_name>\n"
+		"<description><p>Updating the firmware on your ColorHug device "
+		"improves performance and adds new features.</p></description>\n"
+		"<icon type=\"stock\">application-x-executable</icon>\n"
+		"<kudos>\n"
+		"<kudo>HiDpiIcon</kudo>\n"
+		"</kudos>\n"
+		"<url type=\"homepage\">http://www.hughski.com/</url>\n"
+		"<releases>\n"
+		"<release version=\"2.0.2\" timestamp=\"1424116753\">\n"
+		"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.2.cab</location>\n"
+		"<checksum type=\"sha1\">9de398ebe3bbf477ad1fa344955dcba07e535dc0</checksum>\n"
+		"<description><p>This unstable release adds the following features:</p></description>\n"
+		"</release>\n"
+		"</releases>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">colorhug-als-2.0.2.cab</value>\n"
+		"</metadata>\n"
+		"</component>\n"
 		"<component type=\"font\">\n"
 		"<id>Liberation</id>\n"
 		"<pkgname>font</pkgname>\n"
@@ -564,7 +588,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	/* check output */
 	xml_failed = as_store_to_xml (store_failed, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
-		"<components version=\"0.8\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test-failed\">\n"
+		"<components version=\"0.9\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test-failed\">\n"
 		"<component type=\"font\">\n"
 		"<id>LiberationSerif</id>\n"
 		"<pkgname>font-serif</pkgname>\n"
@@ -710,7 +734,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	/* check output */
 	xml_ignore = as_store_to_xml (store_ignore, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
-		"<components version=\"0.8\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test-ignore\">\n"
+		"<components version=\"0.9\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test-ignore\">\n"
 		"<component>\n"
 		"<id>app-console.noarch</id>\n"
 		"<metadata>\n"
@@ -910,8 +934,7 @@ asb_test_firmware_func (void)
 	ctx = asb_context_new ();
 	asb_context_set_max_threads (ctx, 1);
 	asb_context_set_api_version (ctx, 0.9);
-	asb_context_set_flags (ctx, ASB_CONTEXT_FLAG_NO_NETWORK |
-				    ASB_CONTEXT_FLAG_INCLUDE_FAILED);
+	asb_context_set_flags (ctx, ASB_CONTEXT_FLAG_NO_NETWORK);
 	asb_context_set_basename (ctx, "appstream");
 	asb_context_set_origin (ctx, "asb-self-test");
 	asb_context_set_cache_dir (ctx, "/tmp/asbuilder/cache");
@@ -1013,11 +1036,11 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStreamBuilder/utils{replace}", asb_test_utils_replace_func);
 	g_test_add_func ("/AppStreamBuilder/utils{glob}", asb_test_utils_glob_func);
 	g_test_add_func ("/AppStreamBuilder/plugin-loader", asb_test_plugin_loader_func);
+	g_test_add_func ("/AppStreamBuilder/firmware", asb_test_firmware_func);
 	g_test_add_func ("/AppStreamBuilder/context{no-cache}", asb_test_context_nocache_func);
 	g_test_add_func ("/AppStreamBuilder/context{cache}", asb_test_context_cache_func);
 	g_test_add_func ("/AppStreamBuilder/context{old-cache}", asb_test_context_oldcache_func);
 	g_test_add_func ("/AppStreamBuilder/context{extra-appstream}", asb_test_context_extra_appstream_func);
-	g_test_add_func ("/AppStreamBuilder/firmware", asb_test_firmware_func);
 #ifdef HAVE_RPM
 	g_test_add_func ("/AppStreamBuilder/package{rpm}", asb_test_package_rpm_func);
 #endif
