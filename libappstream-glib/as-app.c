@@ -2890,6 +2890,18 @@ as_app_ptr_array_sort_cb (gconstpointer a, gconstpointer b)
 }
 
 /**
+ * as_app_releases_sort_cb:
+ **/
+static gint
+as_app_releases_sort_cb (gconstpointer a, gconstpointer b)
+{
+	AsRelease **rel1 = (AsRelease **) a;
+	AsRelease **rel2 = (AsRelease **) b;
+	return g_strcmp0 (as_release_get_version (*rel2),
+			  as_release_get_version (*rel1));
+}
+
+/**
  * as_app_list_sort_cb:
  **/
 static gint
@@ -3212,6 +3224,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 
 	/* <releases> */
 	if (priv->releases->len > 0 && api_version >= 0.6) {
+		g_ptr_array_sort (priv->releases, as_app_releases_sort_cb);
 		node_tmp = as_node_insert (node_app, "releases", NULL, 0, NULL);
 		for (i = 0; i < priv->releases->len && i < 3; i++) {
 			rel = g_ptr_array_index (priv->releases, i);
