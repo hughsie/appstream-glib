@@ -1602,7 +1602,7 @@ as_utils_load_inf_file (const gchar *filename, GError **error)
 		}
 
 		/* is valid section header */
-		if (g_strstr_len (lines[i], -1, "[") != NULL &&
+		if (g_str_has_prefix (lines[i], "[") &&
 		    g_strstr_len (lines[i], -1, "]") != NULL) {
 			lines_fixed[idx++] = g_strdup (lines[i]);
 			nokey_idx = 0;

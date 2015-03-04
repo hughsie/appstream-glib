@@ -186,6 +186,13 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 
 	/* parse */
 	class = g_key_file_get_string (kf, "Version", "Class", NULL);
+	if (class == NULL) {
+		g_set_error_literal (error,
+				     ASB_PLUGIN_ERROR,
+				     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
+				     "Driver class is missing");
+		return FALSE;
+	}
 	if (g_strcmp0 (class, "Firmware") != 0) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
