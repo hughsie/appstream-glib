@@ -53,16 +53,19 @@ test_files =						\
 	validate.xml.gz
 
 colorhug-als-2.0.0.cab: $(srcdir)/firmware/2_0_0/firmware.*
-	$(AM_V_GEN) gcab --create --nopath $@		\
+	$(AM_V_GEN) touch -c -m -d"2000-01-01" $?;	\
+	$(GCAB) --create --nopath $@			\
 		$(srcdir)/firmware/2_0_0/firmware.bin	\
 		$(srcdir)/firmware/2_0_0/firmware.inf
 colorhug-als-2.0.1.cab: $(srcdir)/firmware/2_0_1/firmware.*
-	$(AM_V_GEN) gcab --create --nopath $@		\
+	$(AM_V_GEN) touch -c -m -d"2000-01-01" $?;	\
+	$(GCAB) --create --nopath $@			\
 		$(srcdir)/firmware/2_0_1/firmware.bin	\
 		$(srcdir)/firmware/2_0_1/firmware.inf	\
 		$(srcdir)/firmware/2_0_1/firmware.metainfo.xml
 colorhug-als-2.0.2.cab: $(srcdir)/firmware/2_0_2/firmware.*
-	$(AM_V_GEN) gcab --create --nopath $@		\
+	$(AM_V_GEN) touch -c -m -d"2000-01-01" $?;	\
+	$(GCAB) --create --nopath $@			\
 		$(srcdir)/firmware/2_0_2/firmware.bin	\
 		$(srcdir)/firmware/2_0_2/firmware.inf	\
 		$(srcdir)/firmware/2_0_2/firmware.metainfo.xml
