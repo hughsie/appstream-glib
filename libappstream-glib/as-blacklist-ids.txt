@@ -10,7 +10,7 @@ authconfig.desktop
 bf-*-editor.desktop
 bitmap2component.desktop
 bted.desktop
-cairo-dock-cairo.desktop
+cairo-dock*.desktop
 caja-home.desktop
 calf-dssi.desktop
 cinnamon-settings*.desktop
