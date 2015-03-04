@@ -2124,6 +2124,39 @@ as_app_add_mimetype (AsApp *app, const gchar *mimetype, gssize mimetype_len)
 }
 
 /**
+ * as_app_subsume_release:
+ **/
+static void
+as_app_subsume_release (AsRelease *release, AsRelease *donor)
+{
+	GPtrArray *locations;
+	const gchar *tmp;
+	guint i;
+
+	/* this is high quality metadata */
+	tmp = as_release_get_description (donor, NULL);
+	if (tmp != NULL) {
+		as_release_set_description (release, NULL, tmp, -1);
+		as_release_set_timestamp (release, as_release_get_timestamp (donor));
+	}
+
+	/* copy all locations */
+	locations = as_release_get_locations (donor);
+	for (i = 0; i < locations->len; i++) {
+		tmp = g_ptr_array_index (locations, i);
+		as_release_add_location (release, tmp, -1);
+	}
+
+	/* copy metadata if set */
+	for (i = 0; i < 4; i++) {
+		tmp = as_release_get_checksum (donor, i);
+		if (tmp == NULL)
+			continue;
+		as_release_set_checksum (release, i, tmp, -1);
+	}
+}
+
+/**
  * as_app_add_release:
  * @app: a #AsApp instance.
  * @release: a #AsRelease instance.
@@ -2137,17 +2170,11 @@ as_app_add_release (AsApp *app, AsRelease *release)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsRelease *release_old;
-	const gchar *tmp;
 
 	/* if already exists them update */
 	release_old = as_app_get_release (app, as_release_get_version (release));
 	if (release_old != NULL) {
-		tmp = as_release_get_description (release, NULL);
-		if (tmp == NULL)
-			return;
-		if (as_release_get_description (release_old, NULL) != NULL)
-			return;
-		as_release_set_description (release_old, NULL, tmp, -1);
+		as_app_subsume_release (release_old, release);
 		return;
 	}
 
