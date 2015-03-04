@@ -2998,6 +2998,13 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		return NULL;
 	}
 
+	/* no firmware allowed here */
+	if (api_version < 0.9 && priv->id_kind == AS_ID_KIND_FIRMWARE) {
+		g_warning ("Not writing firmware '%s' as API version %.1f < 0.9",
+			   priv->id, api_version);
+		return NULL;
+	}
+
 	/* <component> or <application> */
 	if (api_version >= 0.6) {
 		node_app = as_node_insert (parent, "component", NULL, 0, NULL);

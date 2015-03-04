@@ -1107,6 +1107,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	case AS_ID_KIND_FONT:
 	case AS_ID_KIND_ADDON:
 	case AS_ID_KIND_SOURCE:
+	case AS_ID_KIND_FIRMWARE:
 		/* anything goes */
 		ret = TRUE;
 	default:

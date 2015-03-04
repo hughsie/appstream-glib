@@ -40,6 +40,7 @@ G_BEGIN_DECLS
  * @AS_ID_KIND_WEB_APP:			A web appication
  * @AS_ID_KIND_SOURCE:			A software source
  * @AS_ID_KIND_ADDON:			An addon, e.g. a plugin
+ * @AS_ID_KIND_FIRMWARE:		A firmware update
  *
  * The ID type.
  **/
@@ -52,6 +53,7 @@ typedef enum {
 	AS_ID_KIND_WEB_APP,		/* Since: 0.1.0 */
 	AS_ID_KIND_SOURCE,		/* Since: 0.1.0 */
 	AS_ID_KIND_ADDON,		/* Since: 0.1.7 */
+	AS_ID_KIND_FIRMWARE,		/* Since: 0.3.5 */
 	/*< private >*/
 	AS_ID_KIND_LAST
 } AsIdKind;

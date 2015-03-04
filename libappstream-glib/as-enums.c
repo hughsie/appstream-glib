@@ -59,6 +59,8 @@ as_id_kind_to_string (AsIdKind id_kind)
 		return "source";
 	if (id_kind == AS_ID_KIND_ADDON)
 		return "addon";
+	if (id_kind == AS_ID_KIND_FIRMWARE)
+		return "firmware";
 	return "unknown";
 }
 
@@ -89,6 +91,8 @@ as_id_kind_from_string (const gchar *id_kind)
 		return AS_ID_KIND_SOURCE;
 	if (g_strcmp0 (id_kind, "addon") == 0)
 		return AS_ID_KIND_ADDON;
+	if (g_strcmp0 (id_kind, "firmware") == 0)
+		return AS_ID_KIND_FIRMWARE;
 	return AS_ID_KIND_UNKNOWN;
 }
 
