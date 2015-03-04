@@ -1,0 +1,15 @@
+; Copyright (C) 2015 Hughski Limited
+
+[Version]
+Class=Firmware
+ClassGuid=84f40464-9272-4ef7-9399-cd95f12da696
+DriverVer=03/01/2015,2.0.1
+
+[Firmware_CopyFiles]
+firmware.bin
+
+[Strings]
+Provider     = "Hughski"
+MfgName      = "Hughski Limited"
+FirmwareDesc = "ColorHug Firmware"
+DiskName     = "Firmware for the ColorHug Colorimeter"

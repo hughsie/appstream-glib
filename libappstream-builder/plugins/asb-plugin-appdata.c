@@ -85,6 +85,7 @@ void
 asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
 	asb_plugin_add_glob (globs, "/usr/share/appdata/*.appdata.xml");
+	asb_plugin_add_glob (globs, "*.metainfo.xml");
 }
 
 /**
@@ -544,6 +545,13 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 		/* we used this */
 		asb_plugin_appdata_remove_file (plugin, appdata_filename_extra);
+	}
+
+	/* firmware */
+	if (asb_package_get_kind (pkg) == ASB_PACKAGE_KIND_FIRMWARE) {
+		appdata_filename = g_strdup_printf ("%s/%s.metainfo.xml",
+						    tmpdir,
+						    asb_package_get_source_pkgname (pkg));
 	}
 
 	/* any appdata-extra file */

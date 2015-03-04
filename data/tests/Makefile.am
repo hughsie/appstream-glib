@@ -21,6 +21,14 @@ test_files =						\
 	example.yml					\
 	extra-appdata/test.xml				\
 	extra-appdata/local.xml				\
+	firmware/2_0_0/firmware.bin			\
+	firmware/2_0_0/firmware.inf			\
+	firmware/2_0_1/firmware.bin			\
+	firmware/2_0_1/firmware.inf			\
+	firmware/2_0_1/firmware.metainfo.xml		\
+	firmware/2_0_2/firmware.bin			\
+	firmware/2_0_2/firmware.inf			\
+	firmware/2_0_2/firmware.metainfo.xml		\
 	font-1-1.fc21.noarch.rpm			\
 	font-serif-1-1.fc21.noarch.rpm			\
 	intltool.appdata.xml.in				\
@@ -44,7 +52,28 @@ test_files =						\
 	usr/share/pixmaps/test.png			\
 	validate.xml.gz
 
+colorhug-als-2.0.0.cab: $(srcdir)/firmware/2_0_0/firmware.*
+	$(AM_V_GEN) gcab --create --nopath $@		\
+		$(srcdir)/firmware/2_0_0/firmware.bin	\
+		$(srcdir)/firmware/2_0_0/firmware.inf
+colorhug-als-2.0.1.cab: $(srcdir)/firmware/2_0_1/firmware.*
+	$(AM_V_GEN) gcab --create --nopath $@		\
+		$(srcdir)/firmware/2_0_1/firmware.bin	\
+		$(srcdir)/firmware/2_0_1/firmware.inf	\
+		$(srcdir)/firmware/2_0_1/firmware.metainfo.xml
+colorhug-als-2.0.2.cab: $(srcdir)/firmware/2_0_2/firmware.*
+	$(AM_V_GEN) gcab --create --nopath $@		\
+		$(srcdir)/firmware/2_0_2/firmware.bin	\
+		$(srcdir)/firmware/2_0_2/firmware.inf	\
+		$(srcdir)/firmware/2_0_2/firmware.metainfo.xml
+
+BUILT_SOURCES =						\
+	colorhug-als-2.0.0.cab				\
+	colorhug-als-2.0.1.cab				\
+	colorhug-als-2.0.2.cab
+
 CLEANFILES =						\
+	$(BUILT_SOURCES)				\
 	rpmbuild/app.bin				\
 	rpmbuild/en_GB.mo				\
 	rpmbuild/ru.mo

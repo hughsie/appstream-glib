@@ -48,6 +48,8 @@ libappstream_builder_la_SOURCES =				\
 	asb-context.h						\
 	asb-context-private.h					\
 	asb-package.c						\
+	asb-package-cab.c					\
+	asb-package-cab.h					\
 	asb-package-deb.c					\
 	asb-package-deb.h					\
 	asb-package.h						\

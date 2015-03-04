@@ -27,6 +27,7 @@ BuildRequires: freetype-devel
 BuildRequires: pango-devel
 BuildRequires: rpm-devel
 BuildRequires: sqlite-devel
+BuildRequires: gcab
 
 # for the manpages
 BuildRequires: libxslt

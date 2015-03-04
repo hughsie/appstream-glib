@@ -48,7 +48,7 @@
 #ifdef HAVE_ALPM
 #include "asb-package-alpm.h"
 #endif
-
+#include "asb-package-cab.h"
 #include "asb-package-deb.h"
 
 typedef struct _AsbContextPrivate	AsbContextPrivate;
@@ -557,6 +557,8 @@ asb_context_add_filename (AsbContext *ctx, const gchar *filename, GError **error
 	if (g_str_has_suffix (filename, ".pkg.tar.xz"))
 		pkg = asb_package_alpm_new ();
 #endif
+	if (g_str_has_suffix (filename, ".cab"))
+		pkg = asb_package_cab_new ();
 	if (g_str_has_suffix (filename, ".deb"))
 		pkg = asb_package_deb_new ();
 	if (pkg == NULL) {
@@ -1275,13 +1277,21 @@ asb_context_disable_older_pkgs (AsbContext *ctx)
 		key = asb_package_get_name (pkg);
 		if (key == NULL)
 			continue;
-		found = g_hash_table_lookup (newest, key);
-		if (found != NULL) {
-			if (asb_package_compare (pkg, found) <= 0) {
-				asb_package_set_enabled (pkg, FALSE);
-				continue;
+		switch (asb_package_get_kind (pkg)) {
+		case ASB_PACKAGE_KIND_DEFAULT:
+		case ASB_PACKAGE_KIND_BUNDLE:
+			found = g_hash_table_lookup (newest, key);
+			if (found != NULL) {
+				if (asb_package_compare (pkg, found) <= 0) {
+					asb_package_set_enabled (pkg, FALSE);
+					continue;
+				}
+				asb_package_set_enabled (found, FALSE);
 			}
-			asb_package_set_enabled (found, FALSE);
+			break;
+		default:
+			/* allow multiple versions */
+			break;
 		}
 		g_hash_table_insert (newest, g_strdup (key), g_object_ref (pkg));
 	}

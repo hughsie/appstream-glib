@@ -128,6 +128,7 @@ PKG_CHECK_MODULES(SOUP, libsoup-2.4 >= 2.24)
 PKG_CHECK_MODULES(GDKPIXBUF, gdk-pixbuf-2.0 >= 2.14 gtk+-3.0)
 PKG_CHECK_MODULES(SQLITE, sqlite3)
 PKG_CHECK_MODULES(FREETYPE, pango fontconfig freetype2 >= 9.10.0)
+AC_PATH_PROG(GCAB, gcab)
 
 # ostree (default enabled)
 AC_ARG_ENABLE(ostree, AS_HELP_STRING([--disable-ostree],[Disable ostree support]), enable_ostree=$enableval)

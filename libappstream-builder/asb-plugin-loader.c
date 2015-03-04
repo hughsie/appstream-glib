@@ -319,6 +319,10 @@ asb_plugin_loader_merge (AsbPluginLoader *plugin_loader, GList *apps)
 					     (gpointer) app);
 			continue;
 		}
+		if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_FIRMWARE) {
+			as_app_subsume_full (AS_APP (found), AS_APP (app),
+					     AS_APP_SUBSUME_FLAG_PARTIAL);
+		}
 		tmp = asb_package_get_nevr (asb_app_get_package (found));
 		as_app_add_veto (AS_APP (app), "duplicate of %s", tmp);
 		asb_package_log (asb_app_get_package (app),

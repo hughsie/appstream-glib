@@ -888,6 +888,116 @@ asb_test_context_extra_appstream_func (void)
 	g_assert (ret);
 }
 
+static void
+asb_test_firmware_func (void)
+{
+	AsApp *app;
+	const gchar *expected_xml;
+	gboolean ret;
+	guint i;
+	_cleanup_error_free_ GError *error = NULL;
+	_cleanup_object_unref_ AsbContext *ctx = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+	_cleanup_string_free_ GString *xml = NULL;
+	const gchar *filenames[] = {
+		"colorhug-als-2.0.1.cab",
+		"colorhug-als-2.0.0.cab",
+		"colorhug-als-2.0.2.cab",
+		NULL};
+
+	/* set up the context */
+	ctx = asb_context_new ();
+	asb_context_set_max_threads (ctx, 1);
+	asb_context_set_api_version (ctx, 0.9);
+	asb_context_set_flags (ctx, ASB_CONTEXT_FLAG_NO_NETWORK |
+				    ASB_CONTEXT_FLAG_INCLUDE_FAILED);
+	asb_context_set_basename (ctx, "appstream");
+	asb_context_set_origin (ctx, "asb-self-test");
+	asb_context_set_cache_dir (ctx, "/tmp/asbuilder/cache");
+	asb_context_set_output_dir (ctx, "/tmp/asbuilder/output");
+	asb_context_set_temp_dir (ctx, "/tmp/asbuilder/temp");
+	asb_context_set_icons_dir (ctx, "/tmp/asbuilder/temp/icons");
+	ret = asb_context_setup (ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* add packages */
+	for (i = 0; filenames[i] != NULL; i++) {
+		_cleanup_free_ gchar *filename = NULL;
+		filename = asb_test_get_filename (filenames[i]);
+		if (filename == NULL)
+			g_warning ("%s not found", filenames[i]);
+		g_assert (filename != NULL);
+		ret = asb_context_add_filename (ctx, filename, &error);
+		g_assert_no_error (error);
+		g_assert (ret);
+	}
+
+	/* verify queue size */
+	g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 3);
+
+	/* run the plugins */
+	ret = asb_context_process (ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* check files created */
+	g_assert (g_file_test ("/tmp/asbuilder/output/appstream.xml.gz", G_FILE_TEST_EXISTS));
+
+	/* load AppStream metadata */
+	file = g_file_new_for_path ("/tmp/asbuilder/output/appstream.xml.gz");
+	store = as_store_new ();
+	ret = as_store_from_file (store, file, NULL, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (as_store_get_size (store), ==, 1);
+	app = as_store_get_app_by_id (store, "84f40464-9272-4ef7-9399-cd95f12da696");
+	g_assert (app != NULL);
+
+	/* check it matches what we expect */
+	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	expected_xml =
+		"<components version=\"0.9\" origin=\"asb-self-test\">\n"
+		"<component type=\"firmware\">\n"
+		"<id>84f40464-9272-4ef7-9399-cd95f12da696</id>\n"
+		"<name>ColorHug Firmware</name>\n"
+		"<summary>Firmware for the ColorHug Colorimeter</summary>\n"
+		"<developer_name>Hughski Limited</developer_name>\n"
+		"<description><p>Updating the firmware on your ColorHug device "
+		"improves performance and adds new features.</p></description>\n"
+		"<icon type=\"stock\">application-x-executable</icon>\n"
+		"<kudos>\n"
+		"<kudo>HiDpiIcon</kudo>\n"
+		"</kudos>\n"
+		"<url type=\"homepage\">http://www.hughski.com/</url>\n"
+		"<releases>\n"
+		"<release version=\"2.0.2\" timestamp=\"1424116753\">\n"
+		"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.2.cab</location>\n"
+		"<checksum type=\"sha1\">61d79eb4e4c50e4f6387ee850bebe9fa00a17f83</checksum>\n"
+		"<description><p>This unstable release adds the following features:</p></description>\n"
+		"</release>\n"
+		"<release version=\"2.0.1\" timestamp=\"1424116753\">\n"
+		"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.1.cab</location>\n"
+		"<checksum type=\"sha1\">20159760e34aefc84f29f11429ef3f25b9eacec2</checksum>\n"
+		"<description><p>This unstable release adds the following features:</p></description>\n"
+		"</release>\n"
+		"<release version=\"2.0.0\" timestamp=\"1425168000\">\n"
+		"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.0.cab</location>\n"
+		"<checksum type=\"sha1\">4377866970cd07b2415d85e853f9cf738f3d7eca</checksum>\n"
+		"</release>\n"
+		"</releases>\n"
+		"</component>\n"
+		"</components>\n";
+	ret = asb_test_compare_lines (xml->str, expected_xml, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	ret = asb_utils_rmtree ("/tmp/asbuilder", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -907,6 +1017,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStreamBuilder/context{cache}", asb_test_context_cache_func);
 	g_test_add_func ("/AppStreamBuilder/context{old-cache}", asb_test_context_oldcache_func);
 	g_test_add_func ("/AppStreamBuilder/context{extra-appstream}", asb_test_context_extra_appstream_func);
+	g_test_add_func ("/AppStreamBuilder/firmware", asb_test_firmware_func);
 #ifdef HAVE_RPM
 	g_test_add_func ("/AppStreamBuilder/package{rpm}", asb_test_package_rpm_func);
 #endif

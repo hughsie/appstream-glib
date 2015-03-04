@@ -1,0 +1,19 @@
+; Copyright (C) 2015 Hughski Limited
+
+[Version]
+Class=Firmware
+ClassGuid=84f40464-9272-4ef7-9399-cd95f12da696
+DriverVer=03/01/2015,2.0.0
+
+; this is a nonstandard section
+[Location]
+URLs=http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.0.cab
+
+[Firmware_CopyFiles]
+firmware.bin
+
+[Strings]
+Provider     = "Hughski"
+MfgName      = "Hughski Limited"
+FirmwareDesc = "ColorHug Firmware"
+DiskName     = "Firmware for the ColorHug Colorimeter"
