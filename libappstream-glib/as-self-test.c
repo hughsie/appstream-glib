@@ -3312,6 +3312,7 @@ as_test_utils_vercmp_func (void)
 	/* non-numeric */
 	g_assert_cmpint (as_utils_vercmp ("1.2xxx.3", "1.2.3"), ==, G_MAXINT);
 	g_assert_cmpint (as_utils_vercmp ("1.2a.3", "1.2b.3"), ==, G_MAXINT);
+	g_assert_cmpint (as_utils_vercmp ("1.2.-3", "1.2.3"), ==, G_MAXINT);
 
 	/* invalid */
 	g_assert_cmpint (as_utils_vercmp ("1", NULL), ==, G_MAXINT);

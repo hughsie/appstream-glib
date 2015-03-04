@@ -1646,8 +1646,8 @@ gint
 as_utils_vercmp (const gchar *version_a, const gchar *version_b)
 {
 	gchar *endptr;
-	guint64 ver_a;
-	guint64 ver_b;
+	gint64 ver_a;
+	gint64 ver_b;
 	guint i;
 	guint longest_split;
 	_cleanup_strv_free_ gchar **split_a = NULL;
@@ -1674,11 +1674,15 @@ as_utils_vercmp (const gchar *version_a, const gchar *version_b)
 			return 1;
 
 		/* compare integers */
-		ver_a = g_ascii_strtoull (split_a[i], &endptr, 10);
+		ver_a = g_ascii_strtoll (split_a[i], &endptr, 10);
 		if (endptr != NULL && endptr[0] != '\0')
 			return G_MAXINT;
-		ver_b = g_ascii_strtoull (split_b[i], &endptr, 10);
+		if (ver_a < 0)
+			return G_MAXINT;
+		ver_b = g_ascii_strtoll (split_b[i], &endptr, 10);
 		if (endptr != NULL && endptr[0] != '\0')
+			return G_MAXINT;
+		if (ver_b < 0)
 			return G_MAXINT;
 		if (ver_a < ver_b)
 			return -1;
