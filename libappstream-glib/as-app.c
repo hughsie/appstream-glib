@@ -2135,10 +2135,13 @@ as_app_subsume_release (AsRelease *release, AsRelease *donor)
 
 	/* this is high quality metadata */
 	tmp = as_release_get_description (donor, NULL);
-	if (tmp != NULL) {
+	if (tmp != NULL)
 		as_release_set_description (release, NULL, tmp, -1);
+
+	/* overwrite the timestamp if the metadata is high quality,
+	 * or if no timestamp has already been set */
+	if (tmp != NULL || as_release_get_timestamp (release) == 0)
 		as_release_set_timestamp (release, as_release_get_timestamp (donor));
-	}
 
 	/* copy all locations */
 	locations = as_release_get_locations (donor);
