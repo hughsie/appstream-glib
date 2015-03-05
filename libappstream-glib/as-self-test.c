@@ -203,7 +203,7 @@ as_test_release_appstream_func (void)
 		"<location>http://baz.com/bar.cab</location>\n"
 		"<checksum type=\"md5\">deadbeef</checksum>\n"
 		"<checksum type=\"sha1\">12345</checksum>\n"
-		"<description><p>This is a new release</p></description>\n"
+		"<description><p>This is a new release</p><ul><li>Point</li></ul></description>\n"
 		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>\n"
 		"</release>\n";
 	_cleanup_free_ AsNodeContext *ctx = NULL;
@@ -231,6 +231,8 @@ as_test_release_appstream_func (void)
 	g_assert_cmpstr (as_release_get_checksum (release, G_CHECKSUM_MD5), ==, "deadbeef");
 	g_assert_cmpstr (as_release_get_description (release, "pl"), ==,
 				"<p>Oprogramowanie</p>");
+	g_assert_cmpstr (as_release_get_description (release, NULL), ==,
+				"<p>This is a new release</p><ul><li>Point</li></ul>");
 
 	/* back to node */
 	root = as_node_new ();

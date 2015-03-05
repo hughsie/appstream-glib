@@ -467,7 +467,8 @@ as_release_node_parse (AsRelease *release, GNode *node,
 			_cleanup_string_free_ GString *xml = NULL;
 			if (as_node_get_tag (n) != AS_TAG_DESCRIPTION)
 				continue;
-			xml = as_node_to_xml (n->children, AS_NODE_TO_XML_FLAG_NONE);
+			xml = as_node_to_xml (n->children,
+					      AS_NODE_TO_XML_FLAG_INCLUDE_SIBLINGS);
 			as_release_set_description (release,
 						    as_node_get_attribute (n, "xml:lang"),
 						    xml->str, xml->len);
