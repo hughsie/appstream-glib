@@ -22,7 +22,6 @@
 #include <config.h>
 #include <fnmatch.h>
 #include <string.h>
-#include <stdlib.h>
 
 #include <asb-plugin.h>
 
@@ -83,38 +82,6 @@ asb_plugin_firmware_sanitize_guid (const gchar *id)
 }
 
 /**
- * asb_plugin_firmware_parse_date:
- */
-static guint64
-asb_plugin_firmware_parse_date (const gchar *date, GError **error)
-{
-	_cleanup_date_time_unref_ GDateTime *dt = NULL;
-	_cleanup_strv_free_ gchar **split = NULL;
-
-	/* split up into MM/DD/YYYY, because America */
-	split = g_strsplit (date, "/", -1);
-	if (g_strv_length (split) != 3) {
-		g_set_error (error,
-			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
-			     "DriverVer date invalid: %s", date);
-		return 0;
-	}
-	dt = g_date_time_new_local (atoi (split[2]),
-				    atoi (split[0]),
-				    atoi (split[1]),
-				    0, 0, 0);
-	if (dt == NULL) {
-		g_set_error (error,
-			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
-			     "DriverVer date invalid: %s", date);
-		return 0;
-	}
-	return g_date_time_to_unix (dt);
-}
-
-/**
  * asb_plugin_firmware_get_source_package:
  */
 static gchar *
@@ -162,7 +129,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	_cleanup_free_ gchar *checksum = NULL;
 	_cleanup_free_ gchar *class = NULL;
 	_cleanup_free_ gchar *comment = NULL;
-	_cleanup_free_ gchar *date_version = NULL;
+	_cleanup_free_ gchar *driver_ver = NULL;
 	_cleanup_free_ gchar *filename_full = NULL;
 	_cleanup_free_ gchar *id_new = NULL;
 	_cleanup_free_ gchar *id = NULL;
@@ -171,12 +138,12 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	_cleanup_free_ gchar *name = NULL;
 	_cleanup_free_ gchar *srcpkg = NULL;
 	_cleanup_free_ gchar *vendor = NULL;
+	_cleanup_free_ gchar *version = NULL;
 	_cleanup_keyfile_unref_ GKeyFile *kf = NULL;
 	_cleanup_object_unref_ AsbApp *app = NULL;
 	_cleanup_object_unref_ AsIcon *icon = NULL;
 	_cleanup_object_unref_ AsProvide *provide = NULL;
 	_cleanup_object_unref_ AsRelease *release = NULL;
-	_cleanup_strv_free_ gchar **date_version_split = NULL;
 
 	/* fix up the inf file */
 	filename_full = g_build_filename (tmpdir, filename, NULL);
@@ -230,8 +197,8 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		as_app_set_comment (AS_APP (app), NULL, comment, -1);
 
 	/* get the release date and the version in case there's no metainfo */
-	date_version = g_key_file_get_string (kf, "Version", "DriverVer", NULL);
-	if (date_version == NULL) {
+	driver_ver = g_key_file_get_string (kf, "Version", "DriverVer", NULL);
+	if (driver_ver == NULL) {
 		g_set_error_literal (error,
 				     ASB_PLUGIN_ERROR,
 				     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
@@ -240,21 +207,13 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	}
 
 	/* parse the DriverVer */
-	date_version_split = g_strsplit (date_version, ",", -1);
-	if (g_strv_length (date_version_split) != 2) {
-		g_set_error (error,
-			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
-			     "DriverVer is invalid: %s", date_version);
-		return FALSE;
-	}
-	timestamp = asb_plugin_firmware_parse_date (date_version_split[0], error);
-	if (timestamp == 0)
+	version = as_utils_parse_driver_version (driver_ver, &timestamp, error);
+	if (version == NULL)
 		return FALSE;
 
 	/* add a release with no real description */
 	release = as_release_new ();
-	as_release_set_version (release, date_version_split[1], -1);
+	as_release_set_version (release, version, -1);
 	as_release_set_timestamp (release, timestamp);
 	as_app_add_release (AS_APP (app), release);
 

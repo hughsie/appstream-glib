@@ -3295,9 +3295,35 @@ as_test_store_speed_yaml_func (void)
 }
 
 static void
+as_test_utils_driver_ver_func (void)
+{
+	gchar *tmp;
+	guint64 ts;
+	GError *error = NULL;
+
+	/* valid */
+	tmp = as_utils_parse_driver_version ("03/01/2015,2.0.0", &ts, &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (tmp, ==, "2.0.0");
+	g_assert_cmpint (ts, ==, 1425168000);
+	g_free (tmp);
+
+	/* invalid date */
+	tmp = as_utils_parse_driver_version ("13/01/2015,2.0.0", &ts, &error);
+	g_assert_error (error, AS_UTILS_ERROR, AS_UTILS_ERROR_INVALID_TYPE);
+	g_assert_cmpstr (tmp, ==, NULL);
+	g_clear_error (&error);
+
+	/* no date */
+	tmp = as_utils_parse_driver_version ("2.0.0", NULL, &error);
+	g_assert_error (error, AS_UTILS_ERROR, AS_UTILS_ERROR_INVALID_TYPE);
+	g_assert_cmpstr (tmp, ==, NULL);
+	g_clear_error (&error);
+}
+
+static void
 as_test_utils_vercmp_func (void)
 {
-
 	/* same */
 	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.3"), ==, 0);
 
@@ -3463,6 +3489,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils{install-filename}", as_test_utils_install_filename_func);
 	g_test_add_func ("/AppStream/utils{inf}", as_test_utils_inf_func);
 	g_test_add_func ("/AppStream/utils{vercmp}", as_test_utils_vercmp_func);
+	g_test_add_func ("/AppStream/utils{driver-version}", as_test_utils_driver_ver_func);
 	g_test_add_func ("/AppStream/yaml", as_test_yaml_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
 	g_test_add_func ("/AppStream/store{demote}", as_test_store_demote_func);

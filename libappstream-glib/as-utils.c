@@ -37,6 +37,7 @@
 #include <libsoup/soup.h>
 #include <archive_entry.h>
 #include <archive.h>
+#include <stdlib.h>
 
 #include "as-app.h"
 #include "as-cleanup.h"
@@ -1692,4 +1693,63 @@ as_utils_vercmp (const gchar *version_a, const gchar *version_b)
 
 	/* we really shouldn't get here */
 	return 0;
+}
+
+/**
+ * as_utils_parse_driver_version:
+ * @driver_version: the DriverVer string, e.g. "03/01/2015,2.0.0"
+ * @timestamp: the returned driverver timestamp, or %NULL
+ * @error: A #GError or %NULL
+ *
+ * Parses the DriverVer string into a recognisable version and timestamp;
+ *
+ * Returns: the version string, or %NULL for error.
+ *
+ * Since: 0.3.5
+ */
+gchar *
+as_utils_parse_driver_version (const gchar *driver_version,
+			       guint64 *timestamp,
+			       GError **error)
+{
+	_cleanup_date_time_unref_ GDateTime *dt = NULL;
+	_cleanup_strv_free_ gchar **split = NULL;
+	_cleanup_strv_free_ gchar **dv_split = NULL;
+
+	/* split into driver date and version */
+	dv_split = g_strsplit (driver_version, ",", -1);
+	if (g_strv_length (dv_split) != 2) {
+		g_set_error (error,
+			     AS_UTILS_ERROR,
+			     AS_UTILS_ERROR_INVALID_TYPE,
+			     "DriverVer is invalid: %s", driver_version);
+		return NULL;
+	}
+
+	/* split up into MM/DD/YYYY, because America */
+	if (timestamp != NULL) {
+		split = g_strsplit (dv_split[0], "/", -1);
+		if (g_strv_length (split) != 3) {
+			g_set_error (error,
+				     AS_UTILS_ERROR,
+				     AS_UTILS_ERROR_INVALID_TYPE,
+				     "DriverVer date invalid: %s",
+				     dv_split[0]);
+			return NULL;
+		}
+		dt = g_date_time_new_local (atoi (split[2]),
+					    atoi (split[0]),
+					    atoi (split[1]),
+					    0, 0, 0);
+		if (dt == NULL) {
+			g_set_error (error,
+				     AS_UTILS_ERROR,
+				     AS_UTILS_ERROR_INVALID_TYPE,
+				     "DriverVer date invalid: %s",
+				     dv_split[0]);
+			return NULL;
+		}
+		*timestamp = g_date_time_to_unix (dt);
+	}
+	return g_strdup (dv_split[1]);
 }
