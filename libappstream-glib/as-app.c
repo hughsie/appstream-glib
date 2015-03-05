@@ -2176,6 +2176,8 @@ as_app_add_release (AsApp *app, AsRelease *release)
 
 	/* if already exists them update */
 	release_old = as_app_get_release (app, as_release_get_version (release));
+	if (release_old == release)
+		return;
 	if (release_old != NULL) {
 		as_app_subsume_release (release_old, release);
 		return;
