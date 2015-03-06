@@ -849,11 +849,7 @@ as_app_validate_release (AsRelease *release, AsAppValidateHelper *helper, GError
 
 	/* check description */
 	tmp = as_release_get_description (release, "C");
-	if (tmp == NULL) {
-		ai_app_validate_add (helper->probs,
-				     AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
-				     "<release> has no description");
-	} else {
+	if (tmp != NULL) {
 		if (as_app_validate_has_hyperlink (tmp)) {
 			ai_app_validate_add (helper->probs,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
