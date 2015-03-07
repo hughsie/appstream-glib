@@ -30,6 +30,7 @@
 #include "as-enums.h"
 #include "as-icon-private.h"
 #include "as-image-private.h"
+#include "as-inf.h"
 #include "as-node-private.h"
 #include "as-problem.h"
 #include "as-provide-private.h"
@@ -3297,33 +3298,6 @@ as_test_store_speed_yaml_func (void)
 }
 
 static void
-as_test_utils_driver_ver_func (void)
-{
-	gchar *tmp;
-	guint64 ts;
-	GError *error = NULL;
-
-	/* valid */
-	tmp = as_utils_parse_driver_version ("03/01/2015,2.0.0", &ts, &error);
-	g_assert_no_error (error);
-	g_assert_cmpstr (tmp, ==, "2.0.0");
-	g_assert_cmpint (ts, ==, 1425168000);
-	g_free (tmp);
-
-	/* invalid date */
-	tmp = as_utils_parse_driver_version ("13/01/2015,2.0.0", &ts, &error);
-	g_assert_error (error, AS_UTILS_ERROR, AS_UTILS_ERROR_INVALID_TYPE);
-	g_assert_cmpstr (tmp, ==, NULL);
-	g_clear_error (&error);
-
-	/* no date */
-	tmp = as_utils_parse_driver_version ("2.0.0", NULL, &error);
-	g_assert_error (error, AS_UTILS_ERROR, AS_UTILS_ERROR_INVALID_TYPE);
-	g_assert_cmpstr (tmp, ==, NULL);
-	g_clear_error (&error);
-}
-
-static void
 as_test_utils_vercmp_func (void)
 {
 	/* same */
@@ -3349,35 +3323,291 @@ as_test_utils_vercmp_func (void)
 }
 
 static void
-as_test_utils_inf_func (void)
+as_test_inf_func (void)
 {
 	GError *error = NULL;
+	GKeyFile *kf;
+	const gchar *data;
+	gboolean ret;
+	gchar *tmp;
+	guint64 ts;
+	_cleanup_dir_close_ GDir *dir = NULL;
 	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_free_ gchar *test1 = NULL;
-	_cleanup_free_ gchar *test2 = NULL;
-	_cleanup_free_ gchar *test3 = NULL;
-	_cleanup_keyfile_unref_ GKeyFile *kf= NULL;
+	_cleanup_free_ gchar *infs = NULL;
 
-	/* load example */
-	filename = as_test_get_filename ("example.inf");
-	kf = as_utils_load_inf_file (filename, &error);
+	/* case insensitive */
+	kf = g_key_file_new ();
+	ret = as_inf_load_data (kf, "[Version]\nClass=Firmware",
+				AS_INF_LOAD_FLAG_CASE_INSENSITIVE, &error);
 	g_assert_no_error (error);
-	g_assert (kf != NULL);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "version", "class", NULL);
+	g_assert_cmpstr (tmp, ==, "Firmware");
+	g_free (tmp);
+
+	/* section merging */
+	ret = as_inf_load_data (kf, "[Version]\nPnpLockdown=1", 0, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "version", "class", NULL);
+	g_assert_cmpstr (tmp, ==, "Firmware");
+	g_free (tmp);
+	tmp = g_key_file_get_string (kf, "Version", "PnpLockdown", NULL);
+	g_assert_cmpstr (tmp, ==, "1");
+	g_free (tmp);
+
+	/* dequoting */
+	ret = as_inf_load_data (kf, "[Version]\n"
+				    "PnpLockdown  =  \" 2 \"\n"
+				    "Empty = \"\"", 0, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "Version", "PnpLockdown", NULL);
+	g_assert_cmpstr (tmp, ==, " 2 ");
+	g_free (tmp);
+	tmp = g_key_file_get_string (kf, "Version", "Empty", NULL);
+	g_assert_cmpstr (tmp, ==, "");
+	g_free (tmp);
+
+	/* autovalues */
+	ret = as_inf_load_data (kf, "[RandomList]\nfilename.cap", 0, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "RandomList", "value000", NULL);
+	g_assert_cmpstr (tmp, ==, "filename.cap");
+	g_free (tmp);
+
+	/* autovalues with quotes */
+	ret = as_inf_load_data (kf, "[RandomList2]\n\"SomeRandomValue=1\"", 0, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "RandomList2", "value000", NULL);
+	g_assert_cmpstr (tmp, ==, "SomeRandomValue=1");
+	g_free (tmp);
+
+	/* comments */
+	data =	"; group priority\n"
+		"[Metadata] ; similar to [Version]\n"
+		"Vendor=Hughski ; vendor name\n"
+		"Owner=\"Richard; Ania\"\n"
+		"; device name priority\n"
+		"Device=\"ColorHug\" ; device name";
+	ret = as_inf_load_data (kf, data, 0, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "Metadata", "Vendor", NULL);
+	g_assert_cmpstr (tmp, ==, "Hughski");
+	g_free (tmp);
+	tmp = g_key_file_get_string (kf, "Metadata", "Device", NULL);
+	g_assert_cmpstr (tmp, ==, "ColorHug");
+	g_free (tmp);
+	tmp = g_key_file_get_string (kf, "Metadata", "Owner", NULL);
+	g_assert_cmpstr (tmp, ==, "Richard; Ania");
+	g_free (tmp);
+
+	/* comment values */
+	tmp = g_key_file_get_comment (kf, "Metadata", "Vendor", NULL);
+	g_assert_cmpstr (tmp, ==, "vendor name\n");
+	g_free (tmp);
+	tmp = g_key_file_get_comment (kf, "Metadata", "Device", NULL);
+	g_assert_cmpstr (tmp, ==, "device name priority\n");
+	g_free (tmp);
+	tmp = g_key_file_get_comment (kf, "Metadata", "Owner", NULL);
+	g_assert_cmpstr (tmp, ==, NULL);
+	g_free (tmp);
+//	tmp = g_key_file_get_comment (kf, "metadata", NULL, NULL);
+//	g_assert_cmpstr (tmp, ==, "group priority");
+//	g_free (tmp);
+
+	/* strings substitution */
+	data =	"[Version]\n"
+		"Provider=Vendor was %Provider% now %Unknown% Ltd\n"
+		"[Strings]\n"
+		"Provider=Hughski\n";
+	ret = as_inf_load_data (kf, data, 0, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "Version", "Provider", NULL);
+	g_assert_cmpstr (tmp, ==, "Vendor was Hughski now %Unknown% Ltd");
+	g_free (tmp);
+
+	/* continued lines */
+	data =	"[Version]\n"
+		"Provider=Richard & \\\n"
+		"Ania & \\\n"
+		"Friends";
+	ret = as_inf_load_data (kf, data, 0, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "Version", "Provider", NULL);
+	g_assert_cmpstr (tmp, ==, "Richard & Ania & Friends");
+	g_free (tmp);
+
+	/* multiline value */
+	data =	"[Metadata]\n"
+		"UpdateDescription = \"This is a very \"long\" update \"  |\n"
+		"                    \"description designed to be shown \" |\n"
+		"                    \"to the end user.\"";
+	ret = as_inf_load_data (kf, data, 0, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "Metadata", "UpdateDescription", NULL);
+	g_assert_cmpstr (tmp, ==, "This is a very \"long\" update description "
+				  "designed to be shown to the end user.");
+	g_free (tmp);
+
+	/* substitution as the key name */
+	data =	"[Version]\n"
+		"%Manufacturer.Foo% = \"Devices\"\n"
+		"[Strings]\n"
+		"Manufacturer.Foo = \"Hughski\"\n";
+	ret = as_inf_load_data (kf, data, 0, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "Version", "Hughski", NULL);
+	g_assert_cmpstr (tmp, ==, "Devices");
+	g_free (tmp);
+
+	/* key names with double quotes */
+	ret = as_inf_load_data (kf, "[\"Firmware\"]\nFoo=Bar\n", 0, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "Firmware", "Foo", NULL);
+	g_assert_cmpstr (tmp, ==, "Bar");
+	g_free (tmp);
+
+	/* unbalanced quotes */
+	ret = as_inf_load_data (kf, "[Version]\nProvider = \"Hughski\n",
+			        AS_INF_LOAD_FLAG_STRICT, &error);
+	g_assert_error (error, AS_INF_ERROR, AS_INF_ERROR_FAILED);
+	g_assert (!ret);
+	g_clear_error (&error);
+	ret = as_inf_load_data (kf, "[Version]\nProvider = \"Hughski\n",
+			        AS_INF_LOAD_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "Version", "Provider", NULL);
+	g_assert_cmpstr (tmp, ==, "Hughski");
+	g_free (tmp);
+
+	/* missing string replacement */
+	ret = as_inf_load_data (kf, "[Version]\nProvider = \"%MISSING%\"\n",
+			        AS_INF_LOAD_FLAG_STRICT, &error);
+	g_assert_error (error, AS_INF_ERROR, AS_INF_ERROR_FAILED);
+	g_assert (!ret);
+	g_clear_error (&error);
+	ret = as_inf_load_data (kf, "[Version]\nProvider = \"%MISSING%\"\n",
+			        AS_INF_LOAD_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "Version", "Provider", NULL);
+	g_assert_cmpstr (tmp, ==, "%MISSING%");
+	g_free (tmp);
+
+	/* invalid UTF-8 */
+	ret = as_inf_load_data (kf, "[Version]\nProvider = Hughski \xae\n",
+			        AS_INF_LOAD_FLAG_STRICT, &error);
+	g_assert_error (error, AS_INF_ERROR, AS_INF_ERROR_FAILED);
+	g_assert (!ret);
+	g_clear_error (&error);
+	ret = as_inf_load_data (kf, "[Version]\nProvider = Hughski \xae\n",
+			        AS_INF_LOAD_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "Version", "Provider", NULL);
+	g_assert_cmpstr (tmp, ==, "Hughski ?");
+	g_free (tmp);
+
+	g_key_file_unref (kf);
+
+	/* parse file */
+	kf = g_key_file_new ();
+	filename = as_test_get_filename ("example.inf");
+	ret = as_inf_load_file (kf, filename, 0, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 
 	/* simple */
-	test1 = g_key_file_get_string (kf, "Version", "Class", &error);
-	g_assert_no_error (error);
-	g_assert_cmpstr (test1, ==, "Firmware");
+	tmp = g_key_file_get_string (kf, "Version", "Class", NULL);
+	g_assert_cmpstr (tmp, ==, "Firmware");
+	g_free (tmp);
 
 	/* key replacement */
-	test2 = g_key_file_get_string (kf, "Firmware_CopyFiles", "Value000", &error);
-	g_assert_no_error (error);
-	g_assert_cmpstr (test2, ==, "firmware.bin");
+	tmp = g_key_file_get_string (kf, "Firmware_CopyFiles", "value000", NULL);
+	g_assert_cmpstr (tmp, ==, "firmware.bin");
+	g_free (tmp);
 
 	/* double quotes swallowing */
-	test3 = g_key_file_get_string (kf, "Strings", "FirmwareDesc", &error);
+	tmp = g_key_file_get_string (kf, "Strings", "FirmwareDesc", NULL);
+	g_assert_cmpstr (tmp, ==, "ColorHug Firmware");
+	g_free (tmp);
+
+	/* string replacement */
+	tmp = g_key_file_get_string (kf, "Version", "Provider", NULL);
+	g_assert_cmpstr (tmp, ==, "Hughski");
+	g_free (tmp);
+
+	/* valid DriverVer */
+	ret = as_inf_load_data (kf, "[Version]\n"
+				    "DriverVer = \"03/01/2015,2.0.0\"\n",
+				AS_INF_LOAD_FLAG_NONE, &error);
 	g_assert_no_error (error);
-	g_assert_cmpstr (test3, ==, "ColorHug Firmware");
+	g_assert (ret);
+	tmp = as_inf_get_driver_version (kf, &ts, &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (tmp, ==, "2.0.0");
+	g_assert_cmpint (ts, ==, 1425168000);
+	g_free (tmp);
+
+	/* invalid DriverVer date */
+	ret = as_inf_load_data (kf, "[Version]\n"
+				    "DriverVer = \"13/01/2015,2.0.0\"\n",
+				AS_INF_LOAD_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = as_inf_get_driver_version (kf, &ts, &error);
+	g_assert_error (error, AS_INF_ERROR, AS_INF_ERROR_INVALID_TYPE);
+	g_assert_cmpstr (tmp, ==, NULL);
+	g_clear_error (&error);
+
+	/* no DriverVer date */
+	ret = as_inf_load_data (kf, "[Version]\n"
+				    "DriverVer = \"2.0.0\"\n",
+				AS_INF_LOAD_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = as_inf_get_driver_version (kf, &ts, &error);
+	g_assert_error (error, AS_INF_ERROR, AS_INF_ERROR_INVALID_TYPE);
+	g_assert_cmpstr (tmp, ==, NULL);
+	g_clear_error (&error);
+
+	g_key_file_unref (kf);
+
+	/* test every .inf file from my Windows XP installation disk */
+	infs = as_test_get_filename ("infs");
+	if (infs != NULL) {
+		dir = g_dir_open (infs, 0, NULL);
+		while ((data = g_dir_read_name (dir)) != NULL) {
+			_cleanup_free_ gchar *path = NULL;
+			path = g_build_filename (infs, data, NULL);
+			kf = g_key_file_new ();
+			ret = as_inf_load_file (kf, path,
+						AS_INF_LOAD_FLAG_NONE,
+						&error);
+			if (g_error_matches (error,
+					     AS_INF_ERROR,
+					     AS_INF_ERROR_INVALID_TYPE)) {
+				g_clear_error (&error);
+			} else {
+				if (error != NULL)
+					g_print ("Failed to process: %s\n",
+						 path);
+				g_assert_no_error (error);
+				g_assert (ret);
+			}
+			g_key_file_unref (kf);
+		}
+	}
 }
 
 static void
@@ -3474,6 +3704,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/app{no-markup}", as_test_app_no_markup_func);
 	g_test_add_func ("/AppStream/app{subsume}", as_test_app_subsume_func);
 	g_test_add_func ("/AppStream/app{search}", as_test_app_search_func);
+	g_test_add_func ("/AppStream/inf", as_test_inf_func);
 	g_test_add_func ("/AppStream/node", as_test_node_func);
 	g_test_add_func ("/AppStream/node{reflow}", as_test_node_reflow_text_func);
 	g_test_add_func ("/AppStream/node{xml}", as_test_node_xml_func);
@@ -3489,9 +3720,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils{icons}", as_test_utils_icons_func);
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/utils{install-filename}", as_test_utils_install_filename_func);
-	g_test_add_func ("/AppStream/utils{inf}", as_test_utils_inf_func);
 	g_test_add_func ("/AppStream/utils{vercmp}", as_test_utils_vercmp_func);
-	g_test_add_func ("/AppStream/utils{driver-version}", as_test_utils_driver_ver_func);
 	g_test_add_func ("/AppStream/yaml", as_test_yaml_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
 	g_test_add_func ("/AppStream/store{demote}", as_test_store_demote_func);

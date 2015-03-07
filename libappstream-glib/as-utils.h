@@ -128,11 +128,6 @@ gboolean	 as_utils_install_filename	(AsUtilsLocation location,
 						 GError		**error);
 gboolean	 as_utils_search_token_valid	(const gchar	*token);
 gchar		**as_utils_search_tokenize	(const gchar	*search);
-GKeyFile	*as_utils_load_inf_file		(const gchar	*filename,
-						 GError		**error);
-gchar		*as_utils_parse_driver_version	(const gchar	*driver_version,
-						 guint64	*timestamp,
-						 GError		**error);
 gint		 as_utils_vercmp		(const gchar	*version_a,
 						 const gchar	*version_b);
 

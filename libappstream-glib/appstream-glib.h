@@ -29,6 +29,7 @@
 #include <as-enums.h>
 #include <as-icon.h>
 #include <as-image.h>
+#include <as-inf.h>
 #include <as-node.h>
 #include <as-problem.h>
 #include <as-provide.h>

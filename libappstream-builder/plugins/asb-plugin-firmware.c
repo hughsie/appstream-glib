@@ -129,7 +129,6 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	_cleanup_free_ gchar *checksum = NULL;
 	_cleanup_free_ gchar *class = NULL;
 	_cleanup_free_ gchar *comment = NULL;
-	_cleanup_free_ gchar *driver_ver = NULL;
 	_cleanup_free_ gchar *filename_full = NULL;
 	_cleanup_free_ gchar *id_new = NULL;
 	_cleanup_free_ gchar *id = NULL;
@@ -147,8 +146,8 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 
 	/* fix up the inf file */
 	filename_full = g_build_filename (tmpdir, filename, NULL);
-	kf = as_utils_load_inf_file (filename_full, error);
-	if (kf == NULL)
+	kf = g_key_file_new ();
+	if (!as_inf_load_file (kf, filename_full, AS_INF_LOAD_FLAG_NONE, error))
 		return FALSE;
 
 	/* parse */
@@ -184,7 +183,9 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	as_app_set_id_kind (AS_APP (app), AS_ID_KIND_FIRMWARE);
 
 	/* add localizable strings */
-	vendor = g_key_file_get_string (kf, "Strings", "MfgName", NULL);
+	vendor = g_key_file_get_string (kf, "Version", "Provider", NULL);
+	if (vendor == NULL)
+		vendor = g_key_file_get_string (kf, "Version", "MfgName", NULL);
 	if (vendor == NULL)
 		vendor = g_key_file_get_string (kf, "Strings", "Provider", NULL);
 	if (vendor != NULL)
@@ -192,22 +193,14 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	name = g_key_file_get_string (kf, "Strings", "FirmwareDesc", NULL);
 	if (name != NULL)
 		as_app_set_name (AS_APP (app), NULL, name, -1);
-	comment = g_key_file_get_string (kf, "Strings", "DiskName", NULL);
+	comment = g_key_file_get_string (kf, "SourceDisksNames", "1", NULL);
+	if (comment == NULL)
+		comment = g_key_file_get_string (kf, "Strings", "DiskName", NULL);
 	if (comment != NULL)
 		as_app_set_comment (AS_APP (app), NULL, comment, -1);
 
-	/* get the release date and the version in case there's no metainfo */
-	driver_ver = g_key_file_get_string (kf, "Version", "DriverVer", NULL);
-	if (driver_ver == NULL) {
-		g_set_error_literal (error,
-				     ASB_PLUGIN_ERROR,
-				     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
-				     "DriverVer is missing");
-		return FALSE;
-	}
-
 	/* parse the DriverVer */
-	version = as_utils_parse_driver_version (driver_ver, &timestamp, error);
+	version = as_inf_get_driver_version (kf, &timestamp, error);
 	if (version == NULL)
 		return FALSE;
 
