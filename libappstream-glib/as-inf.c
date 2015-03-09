@@ -79,6 +79,20 @@ as_inf_make_case_insensitive (AsInfHelper *helper, const gchar *text)
 }
 
 /**
+ * as_inf_string_isdigits:
+ */
+static gboolean
+as_inf_string_isdigits (const gchar *str)
+{
+	guint i;
+	for (i = 0; str[i] != '\0'; i++) {
+		if (!g_ascii_isdigit (str[i]))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
  * as_inf_replace_variable:
  *
  * Replaces any instance of %val% with the 'val' key value found in @dict.
@@ -99,7 +113,14 @@ as_inf_replace_variable (AsInfHelper *helper, const gchar *line, GError **error)
 
 		/* the text between the substitutions */
 		if (i % 2 == 0) {
+			g_strdelimit (split[i], "\\", '/');
 			g_string_append (new, split[i]);
+			continue;
+		}
+
+		/* a Dirid */
+		if (as_inf_string_isdigits (split[i])) {
+			g_string_append (new, "/tmp");
 			continue;
 		}
 

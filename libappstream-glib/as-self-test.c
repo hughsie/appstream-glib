@@ -3385,6 +3385,14 @@ as_test_inf_func (void)
 	g_assert_cmpstr (tmp, ==, "SomeRandomValue=1");
 	g_free (tmp);
 
+	/* Dirids */
+	ret = as_inf_load_data (kf, "[DriverServiceInst]\nServiceBinary=%12%\\service.exe", 0, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	tmp = g_key_file_get_string (kf, "DriverServiceInst", "ServiceBinary", NULL);
+	g_assert_cmpstr (tmp, ==, "/tmp/service.exe");
+	g_free (tmp);
+
 	/* comments */
 	data =	"; group priority\n"
 		"[Metadata] ; similar to [Version]\n"
