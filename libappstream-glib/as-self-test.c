@@ -1458,7 +1458,7 @@ as_test_app_validate_style_func (void)
 }
 
 static void
-as_test_app_parse_file_func (void)
+as_test_app_parse_file_desktop_func (void)
 {
 	AsIcon *ic;
 	GError *error = NULL;
@@ -1518,6 +1518,52 @@ as_test_app_parse_file_func (void)
 	g_assert_error (error, AS_APP_ERROR, AS_APP_ERROR_INVALID_TYPE);
 	g_assert (!ret);
 	g_clear_error (&error);
+}
+
+static void
+as_test_app_parse_file_inf_func (void)
+{
+	AsIcon *ic;
+	AsRelease *rel;
+	GError *error = NULL;
+	GPtrArray *releases;
+	gboolean ret;
+	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_object_unref_ AsApp *app = NULL;
+
+	/* create an AsApp from a desktop file */
+	app = as_app_new ();
+	filename = as_test_get_filename ("example.inf");
+	ret = as_app_parse_file (app,
+				 filename,
+				 AS_APP_PARSE_FLAG_NONE,
+				 &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* test things we found */
+	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "ColorHug Firmware");
+	g_assert_cmpstr (as_app_get_comment (app, "C"), ==,
+		"Firmware for the ColorHug Colorimeter");
+	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
+
+	/* check icon */
+	g_assert_cmpint (as_app_get_icons(app)->len, ==, 1);
+	ic = as_app_get_icon_default (app);
+	g_assert (ic != NULL);
+	g_assert_cmpstr (as_icon_get_name (ic), ==, "application-x-executable");
+	g_assert_cmpint (as_icon_get_kind (ic), ==, AS_ICON_KIND_STOCK);
+	g_assert_cmpint (as_icon_get_width (ic), ==, 0);
+	g_assert_cmpint (as_icon_get_height (ic), ==, 0);
+
+	/* check releases */
+	releases = as_app_get_releases (app);
+	g_assert_cmpint (releases->len, ==, 1);
+	rel = g_ptr_array_index (releases, 0);
+	g_assert_cmpstr (as_release_get_location_default (rel), ==, "http://www.hughski.com/foo.cab");
+	g_assert_cmpint (as_release_get_timestamp (rel), ==, 1425340800);
+	g_assert_cmpstr (as_release_get_version (rel), ==, "2.0.2");
+	//g_assert_cmpstr (as_release_get_description (rel), ==, "XXX");
 }
 
 static void
@@ -3708,7 +3754,8 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/app{validate-file-bad}", as_test_app_validate_file_bad_func);
 	g_test_add_func ("/AppStream/app{validate-meta-bad}", as_test_app_validate_meta_bad_func);
 	g_test_add_func ("/AppStream/app{validate-intltool}", as_test_app_validate_intltool_func);
-	g_test_add_func ("/AppStream/app{parse-file}", as_test_app_parse_file_func);
+	g_test_add_func ("/AppStream/app{parse-file:desktop}", as_test_app_parse_file_desktop_func);
+	g_test_add_func ("/AppStream/app{parse-file:inf}", as_test_app_parse_file_inf_func);
 	g_test_add_func ("/AppStream/app{no-markup}", as_test_app_no_markup_func);
 	g_test_add_func ("/AppStream/app{subsume}", as_test_app_subsume_func);
 	g_test_add_func ("/AppStream/app{search}", as_test_app_search_func);

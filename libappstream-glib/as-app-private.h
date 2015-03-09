@@ -94,6 +94,10 @@ gboolean	 as_app_parse_desktop_file	(AsApp		*app,
 						 const gchar	*filename,
 						 AsAppParseFlags flags,
 						 GError		**error);
+gboolean	 as_app_parse_inf_file		(AsApp		*app,
+						 const gchar	*filename,
+						 AsAppParseFlags flags,
+						 GError		**error);
 
 G_END_DECLS
 

@@ -9,6 +9,10 @@ DriverVer=03/03/2015,2.0.2
 PnpLockdown=1
 CatalogFile=firmware.cat
 
+; nonstandard
+[Location]
+URLs = "http://www.hughski.com/foo.cab"
+
 [Manufacturer]
 %MfgName% = Hughski,NTamd64
 

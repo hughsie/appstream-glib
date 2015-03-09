@@ -143,6 +143,8 @@ as_app_source_kind_from_string (const gchar *source_kind)
 		return AS_APP_SOURCE_KIND_METAINFO;
 	if (g_strcmp0 (source_kind, "desktop") == 0)
 		return AS_APP_SOURCE_KIND_DESKTOP;
+	if (g_strcmp0 (source_kind, "inf") == 0)
+		return AS_APP_SOURCE_KIND_INF;
 	return AS_APP_SOURCE_KIND_UNKNOWN;
 }
 
@@ -167,6 +169,8 @@ as_app_source_kind_to_string (AsAppSourceKind source_kind)
 		return "metainfo";
 	if (source_kind == AS_APP_SOURCE_KIND_DESKTOP)
 		return "desktop";
+	if (source_kind == AS_APP_SOURCE_KIND_INF)
+		return "inf";
 	return NULL;
 }
 
@@ -237,6 +241,8 @@ as_app_guess_source_kind (const gchar *filename)
 		return AS_APP_SOURCE_KIND_METAINFO;
 	if (g_str_has_suffix (filename, ".xml"))
 		return AS_APP_SOURCE_KIND_APPSTREAM;
+	if (g_str_has_suffix (filename, ".inf"))
+		return AS_APP_SOURCE_KIND_INF;
 	return AS_APP_SOURCE_KIND_UNKNOWN;
 }
 
@@ -4498,6 +4504,10 @@ as_app_parse_file (AsApp *app,
 	case AS_APP_SOURCE_KIND_APPDATA:
 	case AS_APP_SOURCE_KIND_METAINFO:
 		if (!as_app_parse_appdata_file (app, filename, flags, error))
+			return FALSE;
+		break;
+	case AS_APP_SOURCE_KIND_INF:
+		if (!as_app_parse_inf_file (app, filename, flags, error))
 			return FALSE;
 		break;
 	default:

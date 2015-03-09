@@ -163,6 +163,7 @@ typedef enum {
  * @AS_APP_SOURCE_KIND_DESKTOP:			Sourced from a desktop file
  * @AS_APP_SOURCE_KIND_APPDATA:			Sourced from a AppData file
  * @AS_APP_SOURCE_KIND_METAINFO:		Sourced from a MetaInfo file
+ * @AS_APP_SOURCE_KIND_INF:			Sourced from a inf file
  *
  * The source kind.
  **/
@@ -172,6 +173,7 @@ typedef enum {
 	AS_APP_SOURCE_KIND_DESKTOP,			/* Since: 0.1.4 */
 	AS_APP_SOURCE_KIND_APPDATA,			/* Since: 0.1.4 */
 	AS_APP_SOURCE_KIND_METAINFO,			/* Since: 0.1.7 */
+	AS_APP_SOURCE_KIND_INF,				/* Since: 0.3.5 */
 	/*< private >*/
 	AS_APP_SOURCE_KIND_LAST
 } AsAppSourceKind;
