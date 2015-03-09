@@ -85,6 +85,7 @@ libappstream_glib_include_HEADERS =				\
 
 libappstream_glib_la_SOURCES =					\
 	as-app.c						\
+	as-app-desktop.c					\
 	as-app-private.h					\
 	as-app-validate.c					\
 	as-bundle.c						\

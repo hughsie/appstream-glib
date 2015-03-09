@@ -90,6 +90,10 @@ gboolean	 as_app_node_parse_dep11	(AsApp		*app,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+gboolean	 as_app_parse_desktop_file	(AsApp		*app,
+						 const gchar	*filename,
+						 AsAppParseFlags flags,
+						 GError		**error);
 
 G_END_DECLS
 
