@@ -633,6 +633,34 @@ as_app_get_release (AsApp *app, const gchar *version)
 }
 
 /**
+ * as_app_get_release_default:
+ * @app: a #AsApp instance.
+ *
+ * Gets the default (newest) release from the application.
+ *
+ * Returns: (transfer none): a release, or %NULL
+ *
+ * Since: 0.3.5
+ **/
+AsRelease *
+as_app_get_release_default (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsRelease *release_newest = NULL;
+	AsRelease *release_tmp = NULL;
+	guint i;
+
+	for (i = 0; i < priv->releases->len; i++) {
+		release_tmp = g_ptr_array_index (priv->releases, i);
+		if (release_newest == NULL ||
+		    as_release_get_timestamp (release_tmp) >
+		    as_release_get_timestamp (release_newest))
+			release_newest = release_tmp;
+	}
+	return release_newest;
+}
+
+/**
  * as_app_get_provides:
  * @app: a #AsApp instance.
  *
