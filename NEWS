@@ -1,3 +1,25 @@
+Version 0.3.5
+~~~~~~~~~~~~~
+Released: 2015-03-11
+
+New Features:
+ - Add new API required for firmware support (Richard Hughes)
+ - Add new API required for OSTree and xdg-app support (Richard Hughes)
+ - Add 'news-to-appdata' and 'appdata-to-news' cmds to appstream-util (Richard Hughes)
+ - Support all of the yet-unreleased AppStream 0.9 spec (Richard Hughes)
+
+Bugfixes:
+ - Add releases from the upstream AppData files (Richard Hughes)
+ - Allow short descriptions when validating <description> in releases (Richard Hughes)
+ - Correctly load descriptions from <releases> in AppData files (Richard Hughes)
+ - Fix a builder crash where a package depends on itself (Richard Hughes)
+ - Fix a crash when more than one thread tries to ensure the same package (Richard Hughes)
+ - Fix DSO Linking error when built with --as-needed (Tim Lunn)
+ - Make the failed AppStream metadata optional (Richard Hughes)
+ - Make the icon tarball optional (Richard Hughes)
+ - Relax validation checks to allow empty release sections (Richard Hughes)
+ - Return the correct exit code from appstream-builder (Richard Hughes)
+
 Version 0.3.4
 ~~~~~~~~~~~~~
 Released: 2015-01-17
