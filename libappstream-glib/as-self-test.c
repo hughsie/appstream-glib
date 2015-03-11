@@ -3559,12 +3559,12 @@ as_test_inf_func (void)
 	g_free (tmp);
 
 	/* invalid UTF-8 */
-	ret = as_inf_load_data (kf, "[Version]\nProvider = Hughski \xae\n",
+	ret = as_inf_load_data (kf, "[Version]\nProvider = Hughski \x99\n",
 			        AS_INF_LOAD_FLAG_STRICT, &error);
 	g_assert_error (error, AS_INF_ERROR, AS_INF_ERROR_FAILED);
 	g_assert (!ret);
 	g_clear_error (&error);
-	ret = as_inf_load_data (kf, "[Version]\nProvider = Hughski \xae\n",
+	ret = as_inf_load_data (kf, "[Version]\nProvider = Hughski \x99\n",
 			        AS_INF_LOAD_FLAG_NONE, &error);
 	g_assert_no_error (error);
 	g_assert (ret);

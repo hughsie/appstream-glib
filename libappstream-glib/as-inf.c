@@ -460,7 +460,7 @@ as_inf_repair_utf8 (AsInfHelper *helper, gchar *line, GError **error)
 	/* Microsoft keeps using 0x99 as UTF-8 (R), and it's not valid */
 	for (i = 0; line[i] != '\0'; i++) {
 		val = (guint8) line[i];
-		if (val == 0xAE || val == 0x99) {
+		if (val == 0x99) {
 			if (helper->flags & AS_INF_LOAD_FLAG_STRICT) {
 				g_set_error (error,
 					     AS_INF_ERROR,
