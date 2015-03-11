@@ -350,6 +350,12 @@ asb_font_get_pixbuf (FT_Face ft_face,
 	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
 	cairo_show_text (cr, text);
 	pixbuf = gdk_pixbuf_get_from_surface (surface, 0, 0, width, height);
+	if (pixbuf == NULL) {
+		g_set_error_literal (error,
+				     ASB_PLUGIN_ERROR,
+				     ASB_PLUGIN_ERROR_FAILED,
+				     "Could not get font pixbuf");
+	}
 
 	cairo_destroy (cr);
 	cairo_font_face_destroy (font_face);
