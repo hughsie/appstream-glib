@@ -2819,6 +2819,12 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	if (priv->origin != NULL)
 		as_app_set_origin (app, priv->origin);
 
+	/* licenses */
+	if (priv->project_license != NULL)
+		as_app_set_project_license (app, priv->project_license, -1);
+	if (priv->metadata_license != NULL)
+		as_app_set_metadata_license (app, priv->metadata_license, -1);
+
 	/* project_group */
 	if (priv->project_group != NULL)
 		as_app_set_project_group (app, priv->project_group, -1);
