@@ -186,6 +186,10 @@ GPtrArray	*as_store_validate		(AsStore	*store,
 						 GError		**error);
 void		 as_store_add_metadata_index	(AsStore	*store,
 						 const gchar	*key);
+void		 as_store_add_filter		(AsStore	*store,
+						 AsIdKind	 kind);
+void		 as_store_remove_filter		(AsStore	*store,
+						 AsIdKind	 kind);
 
 G_END_DECLS
 

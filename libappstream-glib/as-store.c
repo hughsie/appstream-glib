@@ -66,6 +66,7 @@ struct _AsStorePrivate
 	GHashTable		*metadata_indexes;	/* GHashTable{key} */
 	AsStoreAddFlags		 add_flags;
 	AsStoreProblems		 problems;
+	guint32			 filter;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsStore, as_store, G_TYPE_OBJECT)
@@ -165,6 +166,47 @@ as_store_class_init (AsStoreClass *klass)
 			      G_TYPE_NONE, 0);
 
 	object_class->finalize = as_store_finalize;
+}
+
+/**
+ * as_store_add_filter:
+ * @store: a #AsStore instance.
+ * @kind: a #AsIdKind, e.g. %AS_ID_KIND_FIRMWARE
+ *
+ * Adds a filter to the store so that only components of this type are
+ * loaded into the store. This may be useful if the client is only interested
+ * in certain types of component, or not interested in loading components
+ * it cannot process.
+ *
+ * If no filter is set then all types of components are loaded.
+ *
+ * Since: 0.3.5
+ **/
+void
+as_store_add_filter (AsStore *store, AsIdKind kind)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	priv->filter |= 1 << kind;
+}
+
+/**
+ * as_store_remove_filter:
+ * @store: a #AsStore instance.
+ * @kind: a #AsIdKind, e.g. %AS_ID_KIND_FIRMWARE
+ *
+ * Removed a filter from the store so that components of this type are no longer
+ * loaded into the store. This may be useful if the client is only interested
+ * in certain types of component.
+ *
+ * If all filters are removed then all types of components are loaded.
+ *
+ * Since: 0.3.5
+ **/
+void
+as_store_remove_filter (AsStore *store, AsIdKind kind)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	priv->filter &= ~(1 << kind);
 }
 
 /**
@@ -630,6 +672,18 @@ as_store_from_root (AsStore *store,
 		_cleanup_object_unref_ AsApp *app = NULL;
 		if (as_node_get_tag (n) != AS_TAG_APPLICATION)
 			continue;
+
+		/* do the filtering here */
+		if (priv->filter != 0) {
+			if (g_strcmp0 (as_node_get_name (n), "component") == 0) {
+				AsIdKind kind_tmp;
+				tmp = as_node_get_attribute (n, "type");
+				kind_tmp = as_id_kind_from_string (tmp);
+				if ((priv->filter & (1 << kind_tmp)) == 0)
+					continue;
+			}
+		}
+
 		app = as_app_new ();
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path, -1);
