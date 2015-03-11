@@ -565,7 +565,6 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	const gchar *tmp;
 	gboolean ret = TRUE;
 	const FcPattern *pattern;
-	_cleanup_free_ gchar *app_id = NULL;
 	_cleanup_free_ gchar *comment = NULL;
 	_cleanup_free_ gchar *icon_filename = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
@@ -603,7 +602,6 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	}
 
 	/* create app that might get merged later */
-	app_id = g_path_get_basename (filename);
 	as_app_add_category (AS_APP (app), "Addons", -1);
 	as_app_add_category (AS_APP (app), "Fonts", -1);
 	if (as_app_get_name (AS_APP (app), NULL) == NULL)

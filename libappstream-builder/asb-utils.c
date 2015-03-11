@@ -267,8 +267,6 @@ asb_utils_explode_file (struct archive_entry *entry, const gchar *dir)
 	tmp = archive_entry_symlink (entry);
 	if (tmp != NULL) {
 		_cleanup_free_ gchar *buf_link = NULL;
-		_cleanup_free_ gchar *path_link = NULL;
-		path_link = asb_utils_sanitise_path (tmp);
 		symlink_depth = asb_utils_count_directories_deep (path) - 1;
 		back_up = asb_utils_get_back_to_root (symlink_depth);
 		if (tmp[0] == '/')
