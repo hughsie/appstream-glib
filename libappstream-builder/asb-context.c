@@ -143,6 +143,10 @@ asb_context_set_flags (AsbContext *ctx, AsbContextFlags flags)
 		as_store_add_metadata_index (priv->store_old, "X-CacheID");
 	}
 	priv->flags = flags;
+
+	/* only enable the fancy panel if not in batch mode */
+	asb_panel_set_enabled (priv->panel,
+			       (flags & ASB_CONTEXT_FLAG_BATCH_OUTPUT) == 0);
 }
 
 /**

@@ -333,6 +333,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	asb_context_set_flags (ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID |
 				    ASB_CONTEXT_FLAG_NO_NETWORK |
 				    ASB_CONTEXT_FLAG_INCLUDE_FAILED |
+				    ASB_CONTEXT_FLAG_BATCH_OUTPUT |
 				    ASB_CONTEXT_FLAG_HIDPI_ICONS);
 	asb_context_set_basename (ctx, "appstream");
 	asb_context_set_origin (ctx, "asb-self-test");
@@ -853,6 +854,7 @@ asb_test_context_extra_appstream_func (void)
 	asb_context_set_api_version (ctx, 0.8);
 	asb_context_set_flags (ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID |
 				    ASB_CONTEXT_FLAG_NO_NETWORK |
+				    ASB_CONTEXT_FLAG_BATCH_OUTPUT |
 				    ASB_CONTEXT_FLAG_HIDPI_ICONS);
 	asb_context_set_basename (ctx, "appstream");
 	asb_context_set_origin (ctx, "asb-self-test");

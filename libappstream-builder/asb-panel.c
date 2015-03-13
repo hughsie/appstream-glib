@@ -364,6 +364,22 @@ asb_panel_set_job_total (AsbPanel *panel, guint job_total)
 }
 
 /**
+ * asb_panel_set_enabled:
+ * @panel: A #AsbPanel
+ * @enabled: %TRUE for enabled
+ *
+ * Enables or disables the fancy progress panel.
+ *
+ * Since: 0.3.6
+ **/
+void
+asb_panel_set_enabled (AsbPanel *panel, gboolean enabled)
+{
+	AsbPanelPrivate *priv = GET_PRIVATE (panel);
+	priv->enabled = enabled;
+}
+
+/**
  * asb_panel_finalize:
  **/
 static void

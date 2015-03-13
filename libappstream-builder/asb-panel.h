@@ -61,6 +61,8 @@ AsbPanel	*asb_panel_new			(void);
 void		 asb_panel_remove		(AsbPanel	*panel);
 void		 asb_panel_set_title		(AsbPanel	*panel,
 						 const gchar	*title);
+void		 asb_panel_set_enabled		(AsbPanel	*panel,
+						 gboolean	 enabled);
 void		 asb_panel_set_status		(AsbPanel	*panel,
 						 const gchar	*fmt,
 						 ...)
