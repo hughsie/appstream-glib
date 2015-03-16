@@ -15,6 +15,7 @@ endif
 AM_CPPFLAGS =							\
 	$(GLIB_CFLAGS)						\
 	$(GDKPIXBUF_CFLAGS)					\
+	$(GTK_CFLAGS)						\
 	$(OSTREE_CFLAGS)					\
 	$(SOUP_CFLAGS)						\
 	-I$(top_srcdir)/libappstream-glib			\
@@ -88,6 +89,7 @@ libappstream_builder_la_LIBADD =				\
 	$(ALPM_LIBS)						\
 	$(OSTREE_LIBS)						\
 	$(GLIB_LIBS)						\
+	$(GTK_LIBS)						\
 	$(LIBARCHIVE_LIBS)
 
 libappstream_builder_la_LDFLAGS =				\
