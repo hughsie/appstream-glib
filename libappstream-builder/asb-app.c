@@ -357,7 +357,7 @@ asb_app_save_thumbnail (AsScreenshot *ss, AsImage *im_src,
 		    height * scale > as_image_get_height (im_src))
 			return TRUE;
 	}
-	size_str = g_strdup_printf ("%ix%i", width, height);
+	size_str = g_strdup_printf ("%ix%i", width * scale, height * scale);
 	url_tmp = g_build_filename (mirror_uri,
 				    size_str,
 				    as_image_get_basename (im_src),
