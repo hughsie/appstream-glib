@@ -1473,9 +1473,8 @@ static gboolean
 as_util_uninstall (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	const gchar *destdir;
-	_cleanup_free_ gchar *path_icons = NULL;
-	_cleanup_free_ gchar *path_xml = NULL;
-	_cleanup_object_unref_ GFile *file_xml = NULL;
+	guint i;
+	const gchar *locations[] = { "/usr/share", "/var/cache", NULL };
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
@@ -1489,28 +1488,29 @@ as_util_uninstall (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* remove XML file */
 	destdir = g_getenv ("DESTDIR");
-	path_xml = g_strdup_printf ("%s/usr/share/app-info/xmls/%s.xml.gz",
-				    destdir != NULL ? destdir : "", values[0]);
-	if (!g_file_test (path_xml, G_FILE_TEST_EXISTS)) {
-		g_set_error (error,
-			     AS_ERROR,
-			     AS_ERROR_INVALID_ARGUMENTS,
-			     "AppStream file with that ID not found: %s",
-			     path_xml);
-		return FALSE;
-	}
-	file_xml = g_file_new_for_path (path_xml);
-	if (!g_file_delete (file_xml, NULL, error)) {
-		g_prefix_error (error, "Failed to remove %s: ", path_xml);
-		return FALSE;
+	for (i = 0; locations[i] != NULL; i++) {
+		_cleanup_free_ gchar *path_xml = NULL;
+		path_xml = g_strdup_printf ("%s%s/app-info/xmls/%s.xml.gz",
+					    destdir != NULL ? destdir : "",
+					    locations[i], values[0]);
+		if (g_file_test (path_xml, G_FILE_TEST_EXISTS)) {
+			_cleanup_object_unref_ GFile *file = NULL;
+			file = g_file_new_for_path (path_xml);
+			if (!g_file_delete (file, NULL, error))
+				return FALSE;
+		}
 	}
 
 	/* remove icons */
-	path_icons = g_strdup_printf ("%s/usr/share/app-info/icons/%s",
-				      destdir != NULL ? destdir : "", values[0]);
-	if (g_file_test (path_icons, G_FILE_TEST_EXISTS)) {
-		if (!as_util_rmtree (path_icons, error))
-			return FALSE;
+	for (i = 0; locations[i] != NULL; i++) {
+		_cleanup_free_ gchar *path_icons = NULL;
+		path_icons = g_strdup_printf ("%s%s/app-info/icons/%s",
+					      destdir != NULL ? destdir : "",
+					      locations[i], values[0]);
+		if (g_file_test (path_icons, G_FILE_TEST_EXISTS)) {
+			if (!as_util_rmtree (path_icons, error))
+				return FALSE;
+		}
 	}
 	return TRUE;
 }
