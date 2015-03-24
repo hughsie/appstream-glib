@@ -426,6 +426,16 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 			if (image == NULL)
 				continue;
 
+			/* if no network just use the upstream location */
+			if (asb_context_get_flag (plugin->ctx,
+						  ASB_CONTEXT_FLAG_NO_NETWORK)) {
+				asb_package_log (asb_app_get_package (app),
+						 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+						 "Using upstream screenshot");
+				as_app_add_screenshot (AS_APP (app), ass);
+				continue;
+			}
+
 			/* load the URI or get from a cache */
 			tmp = as_image_get_url (image);
 			ret = asb_plugin_appdata_load_url (plugin,
