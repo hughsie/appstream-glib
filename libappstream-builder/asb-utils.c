@@ -442,7 +442,12 @@ asb_utils_write_archive (const gchar *filename,
 	struct stat st;
 
 	a = archive_write_new ();
-	archive_write_add_filter_gzip (a);
+	if (g_str_has_suffix (filename, ".gz"))
+		archive_write_add_filter_gzip (a);
+	if (g_str_has_suffix (filename, ".bz2"))
+		archive_write_add_filter_bzip2 (a);
+	if (g_str_has_suffix (filename, ".xz"))
+		archive_write_add_filter_xz (a);
 	archive_write_set_format_pax_restricted (a);
 	archive_write_open_filename (a, filename);
 	for (i = 0; i < files->len; i++) {
