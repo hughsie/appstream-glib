@@ -280,7 +280,7 @@ main (int argc, char **argv)
 	if (log_dir == NULL)
 		log_dir = g_strdup ("./logs");
 	if (screenshot_dir == NULL)
-		screenshot_dir = g_strdup ("./screenshots");
+		screenshot_dir = g_build_filename (temp_dir, "screenshots", NULL);
 	if (output_dir == NULL)
 		output_dir = g_strdup (".");
 	if (icons_dir == NULL)

@@ -341,6 +341,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	asb_context_set_output_dir (ctx, "/tmp/asbuilder/output");
 	asb_context_set_temp_dir (ctx, "/tmp/asbuilder/temp");
 	asb_context_set_icons_dir (ctx, "/tmp/asbuilder/temp/icons");
+	asb_context_set_screenshot_dir (ctx, "/tmp/asbuilder/temp/screenshots");
 	switch (mode) {
 	case ASB_TEST_CONTEXT_MODE_WITH_CACHE:
 		asb_context_set_old_metadata (ctx, "/tmp/asbuilder/output");
@@ -395,6 +396,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	g_assert (g_file_test ("/tmp/asbuilder/output/appstream-failed.xml.gz", G_FILE_TEST_EXISTS));
 	g_assert (g_file_test ("/tmp/asbuilder/output/appstream-ignore.xml.gz", G_FILE_TEST_EXISTS));
 	g_assert (g_file_test ("/tmp/asbuilder/output/appstream-icons.tar.gz", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder/output/appstream-screenshots.tar", G_FILE_TEST_EXISTS));
 
 	/* load AppStream metadata */
 	file = g_file_new_for_path ("/tmp/asbuilder/output/appstream.xml.gz");

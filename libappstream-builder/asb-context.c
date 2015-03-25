@@ -914,6 +914,29 @@ asb_context_write_icons (AsbContext *ctx,
 }
 
 /**
+ * asb_context_write_screenshots:
+ **/
+static gboolean
+asb_context_write_screenshots (AsbContext *ctx,
+			       const gchar *temp_dir,
+			       GError **error)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	_cleanup_free_ gchar *filename = NULL;
+
+	/* not enabled */
+	if (priv->flags & ASB_CONTEXT_FLAG_UNCOMPRESSED_ICONS)
+		return TRUE;
+
+	if (!g_file_test (priv->screenshot_dir, G_FILE_TEST_EXISTS))
+		return TRUE;
+	filename = g_strdup_printf ("%s/%s-screenshots.tar",
+				    priv->output_dir, priv->basename);
+	g_print ("Writing %s...\n", filename);
+	return asb_utils_write_archive_dir (filename, priv->screenshot_dir, error);
+}
+
+/**
  * asb_context_write_xml:
  **/
 static gboolean
@@ -1463,6 +1486,13 @@ asb_context_process (AsbContext *ctx, GError **error)
 	ret = asb_context_write_icons (ctx,
 				       priv->temp_dir,
 				       error);
+	if (!ret)
+		return FALSE;
+
+	/* write screenshots archive */
+	ret = asb_context_write_screenshots (ctx,
+					     priv->temp_dir,
+					     error);
 	if (!ret)
 		return FALSE;
 
