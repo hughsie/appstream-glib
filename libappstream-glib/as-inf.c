@@ -915,10 +915,10 @@ as_inf_get_driver_version (GKeyFile *keyfile, guint64 *timestamp, GError **error
 				     dv_split[0]);
 			return NULL;
 		}
-		dt = g_date_time_new_local (atoi (split[2]),
-					    atoi (split[0]),
-					    atoi (split[1]),
-					    0, 0, 0);
+		dt = g_date_time_new_utc (atoi (split[2]),
+					  atoi (split[0]),
+					  atoi (split[1]),
+					  0, 0, 0);
 		if (dt == NULL) {
 			g_set_error (error,
 				     AS_INF_ERROR,
