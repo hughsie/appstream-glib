@@ -341,7 +341,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	asb_context_set_output_dir (ctx, "/tmp/asbuilder/output");
 	asb_context_set_temp_dir (ctx, "/tmp/asbuilder/temp");
 	asb_context_set_icons_dir (ctx, "/tmp/asbuilder/temp/icons");
-	asb_context_set_screenshot_dir (ctx, "/tmp/asbuilder/temp/screenshots");
 	switch (mode) {
 	case ASB_TEST_CONTEXT_MODE_WITH_CACHE:
 		asb_context_set_old_metadata (ctx, "/tmp/asbuilder/output");
@@ -453,11 +452,11 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<screenshots>\n"
 		"<screenshot type=\"default\">\n"
 		"<caption>Liberation Serif – Regular</caption>\n"
-		"<image type=\"source\" height=\"48\" width=\"640\"/>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-660e7a5a60fdeb133d3e8b24e2766f2e.png</image>\n"
 		"</screenshot>\n"
 		"<screenshot priority=\"-32\">\n"
 		"<caption>Liberation Serif – Bold</caption>\n"
-		"<image type=\"source\" height=\"48\" width=\"640\"/>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-660e7a5a60fdeb133d3e8b24e2766f2e.png</image>\n"
 		"</screenshot>\n"
 		"</screenshots>\n"
 		"<releases>\n"
@@ -619,11 +618,11 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<screenshots>\n"
 		"<screenshot type=\"default\">\n"
 		"<caption>Liberation Serif – Regular</caption>\n"
-		"<image type=\"source\" height=\"48\" width=\"640\"/>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-660e7a5a60fdeb133d3e8b24e2766f2e.png</image>\n"
 		"</screenshot>\n"
 		"<screenshot priority=\"-32\">\n"
 		"<caption>Liberation Serif – Bold</caption>\n"
-		"<image type=\"source\" height=\"48\" width=\"640\"/>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-660e7a5a60fdeb133d3e8b24e2766f2e.png</image>\n"
 		"</screenshot>\n"
 		"</screenshots>\n"
 		"<releases>\n"

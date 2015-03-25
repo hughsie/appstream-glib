@@ -133,7 +133,6 @@ main (int argc, char **argv)
 	gboolean embedded_icons = FALSE;
 	gboolean hidpi_enabled = FALSE;
 	gboolean include_failed = FALSE;
-	gboolean no_net = FALSE;
 	gboolean ret;
 	gboolean uncompressed_icons = FALSE;
 	gboolean verbose = FALSE;
@@ -154,8 +153,6 @@ main (int argc, char **argv)
 	_cleanup_free_ gchar *origin = NULL;
 	_cleanup_free_ gchar *ostree_repo = NULL;
 	_cleanup_free_ gchar *output_dir = NULL;
-	_cleanup_free_ gchar *screenshot_dir = NULL;
-	_cleanup_free_ gchar *screenshot_uri = NULL;
 	_cleanup_free_ gchar *temp_dir = NULL;
 	_cleanup_free_ gchar **veto_ignore = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *packages = NULL;
@@ -165,9 +162,6 @@ main (int argc, char **argv)
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
 			/* TRANSLATORS: command line option */
 			_("Show extra debugging information"), NULL },
-		{ "no-net", '\0', 0, G_OPTION_ARG_NONE, &no_net,
-			/* TRANSLATORS: command line option */
-			_("Do not use the network to download screenshots"), NULL },
 		{ "add-cache-id", '\0', 0, G_OPTION_ARG_NONE, &add_cache_id,
 			/* TRANSLATORS: command line option */
 			_("Add a cache ID to each component"), NULL },
@@ -189,9 +183,6 @@ main (int argc, char **argv)
 		{ "log-dir", '\0', 0, G_OPTION_ARG_FILENAME, &log_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the logging directory"), "DIR" },
-		{ "screenshot-dir", '\0', 0, G_OPTION_ARG_FILENAME, &screenshot_dir,
-			/* TRANSLATORS: command line option */
-			_("Set the screenshots directory"), "DIR" },
 		{ "packages-dir", '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &packages_dirs,
 			/* TRANSLATORS: command line option */
 			_("Set the packages directory"), "DIR" },
@@ -228,9 +219,6 @@ main (int argc, char **argv)
 		{ "api-version", '\0', 0, G_OPTION_ARG_DOUBLE, &api_version,
 			/* TRANSLATORS: command line option */
 			_("Set the AppStream version"), "API_VERSION" },
-		{ "screenshot-uri", '\0', 0, G_OPTION_ARG_STRING, &screenshot_uri,
-			/* TRANSLATORS: command line option */
-			_("Set the screenshot base URL"), "URI" },
 		{ "ostree-repo", '\0', 0, G_OPTION_ARG_STRING, &ostree_repo,
 			/* TRANSLATORS: command line option */
 			_("Set the ostree repo name"), "REPO" },
@@ -275,8 +263,6 @@ main (int argc, char **argv)
 		temp_dir = g_strdup ("./tmp");
 	if (log_dir == NULL)
 		log_dir = g_strdup ("./logs");
-	if (screenshot_dir == NULL)
-		screenshot_dir = g_build_filename (temp_dir, "screenshots", NULL);
 	if (output_dir == NULL)
 		output_dir = g_strdup (".");
 	if (icons_dir == NULL)
@@ -287,8 +273,6 @@ main (int argc, char **argv)
 		basename = g_strdup ("appstream");
 	if (origin == NULL)
 		origin = g_strdup ("example");
-	if (screenshot_uri == NULL)
-		screenshot_uri = g_strdup ("http://www.example.com/screenshots/");
 	if (extra_appdata == NULL)
 		extra_appdata = g_strdup ("./appdata-extra");
 	if (extra_screenshots == NULL)
@@ -300,9 +284,7 @@ main (int argc, char **argv)
 	asb_context_set_old_metadata (ctx, old_metadata);
 	asb_context_set_extra_appdata (ctx, extra_appdata);
 	asb_context_set_extra_screenshots (ctx, extra_screenshots);
-	asb_context_set_screenshot_uri (ctx, screenshot_uri);
 	asb_context_set_log_dir (ctx, log_dir);
-	asb_context_set_screenshot_dir (ctx, screenshot_dir);
 	asb_context_set_temp_dir (ctx, temp_dir);
 	asb_context_set_output_dir (ctx, output_dir);
 	asb_context_set_icons_dir (ctx, icons_dir);
@@ -334,8 +316,6 @@ main (int argc, char **argv)
 		flags |= ASB_CONTEXT_FLAG_HIDPI_ICONS;
 	if (add_cache_id)
 		flags |= ASB_CONTEXT_FLAG_ADD_CACHE_ID;
-	if (no_net)
-		flags |= ASB_CONTEXT_FLAG_NO_NETWORK;
 	if (embedded_icons)
 		flags |= ASB_CONTEXT_FLAG_EMBEDDED_ICONS;
 	if (include_failed)

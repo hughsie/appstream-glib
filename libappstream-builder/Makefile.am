@@ -109,7 +109,6 @@ asb_self_test_LDADD =						\
 	$(AS_GLIB_LIBS)						\
 	$(GLIB_LIBS)						\
 	$(GDKPIXBUF_LIBS)					\
-	$(SOUP_LIBS)						\
 	$(lib_LTLIBRARIES)
 asb_self_test_CFLAGS = $(WARNINGFLAGS_C)
 

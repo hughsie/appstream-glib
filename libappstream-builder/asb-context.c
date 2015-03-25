@@ -70,9 +70,7 @@ struct _AsbContextPrivate
 	gchar			*old_metadata;
 	gchar			*extra_appdata;
 	gchar			*extra_screenshots;
-	gchar			*screenshot_uri;
 	gchar			*log_dir;
-	gchar			*screenshot_dir;
 	gchar			*cache_dir;
 	gchar			*temp_dir;
 	gchar			*output_dir;
@@ -249,22 +247,6 @@ asb_context_set_extra_screenshots (AsbContext *ctx, const gchar *extra_screensho
 }
 
 /**
- * asb_context_set_screenshot_uri:
- * @ctx: A #AsbContext
- * @screenshot_uri: Remote URI root, e.g. "http://www.mysite.com/screenshots/"
- *
- * Sets the remote screenshot URI for screenshots.
- *
- * Since: 0.1.0
- **/
-void
-asb_context_set_screenshot_uri (AsbContext *ctx, const gchar *screenshot_uri)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->screenshot_uri = g_strdup (screenshot_uri);
-}
-
-/**
  * asb_context_set_log_dir:
  * @ctx: A #AsbContext
  * @log_dir: directory
@@ -278,22 +260,6 @@ asb_context_set_log_dir (AsbContext *ctx, const gchar *log_dir)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	priv->log_dir = asb_context_realpath (log_dir);
-}
-
-/**
- * asb_context_set_screenshot_dir:
- * @ctx: A #AsbContext
- * @screenshot_dir: directory
- *
- * Sets the screenshot directory to use when building metadata.
- *
- * Since: 0.2.2
- **/
-void
-asb_context_set_screenshot_dir (AsbContext *ctx, const gchar *screenshot_dir)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->screenshot_dir = g_strdup (screenshot_dir);
 }
 
 /**
@@ -462,6 +428,23 @@ asb_context_get_temp_dir (AsbContext *ctx)
 }
 
 /**
+ * asb_context_get_cache_dir:
+ * @ctx: A #AsbContext
+ *
+ * Gets the screenshot directory to use
+ *
+ * Returns: directory
+ *
+ * Since: 0.3.6
+ **/
+const gchar *
+asb_context_get_cache_dir (AsbContext *ctx)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	return priv->cache_dir;
+}
+
+/**
  * asb_context_get_plugin_loader:
  * @ctx: A #AsbContext
  *
@@ -601,12 +584,9 @@ gboolean
 asb_context_setup (AsbContext *ctx, GError **error)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	guint i;
-	guint sizes[] = { AS_IMAGE_NORMAL_WIDTH,    AS_IMAGE_NORMAL_HEIGHT,
-			  AS_IMAGE_THUMBNAIL_WIDTH, AS_IMAGE_THUMBNAIL_HEIGHT,
-			  AS_IMAGE_LARGE_WIDTH,     AS_IMAGE_LARGE_HEIGHT,
-			  0 };
 	_cleanup_free_ gchar *icons_dir = NULL;
+	_cleanup_free_ gchar *screenshot_dir1 = NULL;
+	_cleanup_free_ gchar *screenshot_dir2 = NULL;
 
 	/* required stuff set */
 	if (priv->origin == NULL) {
@@ -646,11 +626,13 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	}
 
 	/* create temp space */
-	if (!asb_utils_ensure_exists_and_empty (priv->temp_dir, error))
-		return FALSE;
 	if (!asb_utils_ensure_exists (priv->output_dir, error))
 		return FALSE;
-	if (!asb_utils_ensure_exists (priv->cache_dir, error))
+	screenshot_dir1 = g_build_filename (priv->temp_dir, "screenshots", NULL);
+	if (!asb_utils_ensure_exists_and_empty (screenshot_dir1, error))
+		return FALSE;
+	screenshot_dir2 = g_build_filename (priv->cache_dir, "screenshots", NULL);
+	if (!asb_utils_ensure_exists (screenshot_dir2, error))
 		return FALSE;
 	if (priv->log_dir != NULL) {
 		if (!asb_utils_ensure_exists (priv->log_dir, error))
@@ -669,38 +651,6 @@ asb_context_setup (AsbContext *ctx, GError **error)
 		icons_dir_hidpi = g_build_filename (priv->icons_dir, "128x128", NULL);
 		if (!asb_utils_ensure_exists (icons_dir_hidpi, error))
 			return FALSE;
-	}
-
-	/* create all the screenshot sizes */
-	if (priv->screenshot_dir != NULL) {
-		gboolean hidpi_enabled = (priv->flags & ASB_CONTEXT_FLAG_HIDPI_ICONS) > 0;
-		_cleanup_free_ gchar *ss_src = NULL;
-		ss_src = g_build_filename (priv->screenshot_dir,
-					   "source", NULL);
-		if (!asb_utils_ensure_exists (ss_src, error))
-			return FALSE;
-		for (i = 0; sizes[i] != 0; i += 2) {
-			_cleanup_free_ gchar *size_str = NULL;
-			_cleanup_free_ gchar *ss_dir = NULL;
-			size_str = g_strdup_printf ("%ix%i",
-						    sizes[i],
-						    sizes[i+1]);
-			ss_dir = g_build_filename (priv->screenshot_dir,
-						   size_str, NULL);
-			if (!asb_utils_ensure_exists (ss_dir, error))
-				return FALSE;
-		}
-		for (i = 0; sizes[i] != 0 && hidpi_enabled; i += 2) {
-			_cleanup_free_ gchar *size_str = NULL;
-			_cleanup_free_ gchar *ss_dir = NULL;
-			size_str = g_strdup_printf ("%ix%i",
-						    sizes[i] * 2,
-						    sizes[i+1] * 2);
-			ss_dir = g_build_filename (priv->screenshot_dir,
-						   size_str, NULL);
-			if (!asb_utils_ensure_exists (ss_dir, error))
-				return FALSE;
-		}
 	}
 
 	/* decompress the icons */
@@ -839,17 +789,19 @@ asb_context_write_screenshots (AsbContext *ctx,
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	_cleanup_free_ gchar *filename = NULL;
+	_cleanup_free_ gchar *screenshot_dir = NULL;
 
 	/* not enabled */
 	if (priv->flags & ASB_CONTEXT_FLAG_UNCOMPRESSED_ICONS)
 		return TRUE;
 
-	if (!g_file_test (priv->screenshot_dir, G_FILE_TEST_EXISTS))
+	screenshot_dir = g_build_filename (temp_dir, "screenshots", NULL);
+	if (!g_file_test (screenshot_dir, G_FILE_TEST_EXISTS))
 		return TRUE;
 	filename = g_strdup_printf ("%s/%s-screenshots.tar",
 				    priv->output_dir, priv->basename);
 	g_print ("Writing %s...\n", filename);
-	return asb_utils_write_archive_dir (filename, priv->screenshot_dir, error);
+	return asb_utils_write_archive_dir (filename, screenshot_dir, error);
 }
 
 /**
@@ -1332,10 +1284,7 @@ asb_context_process (AsbContext *ctx, GError **error)
 		/* set locations of external resources */
 		asb_package_set_config (pkg, "AppDataExtra", priv->extra_appdata);
 		asb_package_set_config (pkg, "ScreenshotsExtra", priv->extra_screenshots);
-		asb_package_set_config (pkg, "MirrorURI", priv->screenshot_uri);
 		asb_package_set_config (pkg, "LogDir", priv->log_dir);
-		asb_package_set_config (pkg, "ScreenshotDir", priv->screenshot_dir);
-		asb_package_set_config (pkg, "CacheDir", priv->cache_dir);
 		asb_package_set_config (pkg, "TempDir", priv->temp_dir);
 		asb_package_set_config (pkg, "IconsDir", priv->icons_dir);
 		asb_package_set_config (pkg, "OutputDir", priv->output_dir);
@@ -1579,9 +1528,7 @@ asb_context_finalize (GObject *object)
 	g_free (priv->old_metadata);
 	g_free (priv->extra_appdata);
 	g_free (priv->extra_screenshots);
-	g_free (priv->screenshot_uri);
 	g_free (priv->log_dir);
-	g_free (priv->screenshot_dir);
 	g_free (priv->cache_dir);
 	g_free (priv->temp_dir);
 	g_free (priv->output_dir);

@@ -171,84 +171,6 @@ asb_app_get_package (AsbApp *app)
 }
 
 /**
- * asb_app_save_resources_image:
- **/
-static gboolean
-asb_app_save_resources_image (AsbApp *app,
-			      AsImage *image,
-			      GError **error)
-{
-	const gchar *output_dir;
-	gboolean ret = TRUE;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_free_ gchar *size_str = NULL;
-
-	/* treat source images differently */
-	if (as_image_get_kind (image) == AS_IMAGE_KIND_SOURCE) {
-		size_str = g_strdup ("source");
-	} else {
-		size_str = g_strdup_printf ("%ix%i",
-					    as_image_get_width (image),
-					    as_image_get_height (image));
-	}
-
-	/* does screenshot already exist */
-	output_dir = asb_package_get_config (asb_app_get_package (app), "ScreenshotDir");
-	if (output_dir == NULL)
-		return TRUE;
-	filename = g_build_filename (output_dir,
-				     size_str,
-				     as_image_get_basename (image),
-				     NULL);
-	if (g_file_test (filename, G_FILE_TEST_EXISTS)) {
-		asb_package_log (asb_app_get_package (app),
-				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
-				 "%s screenshot already exists", size_str);
-		return TRUE;
-	}
-
-	/* thumbnails will already be 16:9 */
-	ret = as_image_save_filename (image,
-				      filename,
-				      0, 0,
-				      AS_IMAGE_SAVE_FLAG_NONE,
-				      error);
-	if (!ret)
-		return FALSE;
-
-	/* set new AppStream compatible screenshot name */
-	asb_package_log (asb_app_get_package (app),
-			 ASB_PACKAGE_LOG_LEVEL_DEBUG,
-			 "saved %s screenshot", size_str);
-	return TRUE;
-
-}
-
-/**
- * asb_app_save_resources_screenshot:
- **/
-static gboolean
-asb_app_save_resources_screenshot (AsbApp *app,
-				   AsScreenshot *screenshot,
-				   GError **error)
-{
-	AsImage *im;
-	GPtrArray *images;
-	guint i;
-
-	images = as_screenshot_get_images (screenshot);
-	for (i = 0; i < images->len; i++) {
-		im = g_ptr_array_index (images, i);
-		if (!asb_app_save_resources_image (app, im, error))
-			return FALSE;
-
-		/* clear the image data to reduce memory usage */
-		as_image_set_pixbuf (im, NULL);
-	}
-	return TRUE;
-}
-
-/**
  * asb_app_set_hidpi_enabled:
  * @app: A #AsbApp
  * @hidpi_enabled: if HiDPI mode should be enabled
@@ -281,10 +203,8 @@ asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 	AsIcon *icon;
-	AsScreenshot *ss;
 	GdkPixbuf *pixbuf;
 	GPtrArray *icons = NULL;
-	GPtrArray *screenshots = NULL;
 	guint i;
 
 	/* any non-stock icon set */
@@ -325,56 +245,6 @@ asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 				 "Saved icon %s", filename);
 	}
-
-	/* save any screenshots */
-	if (save_flags & ASB_APP_SAVE_FLAG_SCREENSHOTS)
-		screenshots = as_app_get_screenshots (AS_APP (app));
-	for (i = 0; screenshots != NULL && i < screenshots->len; i++) {
-		ss = g_ptr_array_index (screenshots, i);
-		if (!asb_app_save_resources_screenshot (app, ss, error))
-			return FALSE;
-	}
-	return TRUE;
-}
-
-/**
- * asb_app_save_thumbnail:
- **/
-static gboolean
-asb_app_save_thumbnail (AsScreenshot *ss, AsImage *im_src,
-			guint width, guint height, guint scale,
-			const gchar *mirror_uri,
-			GError **error)
-{
-	_cleanup_free_ gchar *size_str = NULL;
-	_cleanup_free_ gchar *url_tmp = NULL;
-	_cleanup_object_unref_ AsImage *im_tmp = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
-
-	/* only save the HiDPI screenshot if it's not padded */
-	if (scale > 1) {
-		if (width * scale > as_image_get_width (im_src) ||
-		    height * scale > as_image_get_height (im_src))
-			return TRUE;
-	}
-	size_str = g_strdup_printf ("%ix%i", width * scale, height * scale);
-	url_tmp = g_build_filename (mirror_uri,
-				    size_str,
-				    as_image_get_basename (im_src),
-				    NULL);
-	pixbuf = as_image_save_pixbuf (im_src,
-				       width * scale,
-				       height * scale,
-				       AS_IMAGE_SAVE_FLAG_PAD_16_9 |
-				       AS_IMAGE_SAVE_FLAG_SHARPEN);
-	im_tmp = as_image_new ();
-	as_image_set_width (im_tmp, width * scale);
-	as_image_set_height (im_tmp, height * scale);
-	as_image_set_url (im_tmp, url_tmp, -1);
-	as_image_set_pixbuf (im_tmp, pixbuf);
-	as_image_set_kind (im_tmp, AS_IMAGE_KIND_THUMBNAIL);
-	as_image_set_basename (im_tmp, as_image_get_basename (im_src));
-	as_screenshot_add_image (ss, im_tmp);
 	return TRUE;
 }
 
@@ -393,20 +263,13 @@ asb_app_save_thumbnail (AsScreenshot *ss, AsImage *im_src,
 gboolean
 asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **error)
 {
-	AsbAppPrivate *priv = GET_PRIVATE (app);
 	AsImageAlphaFlags alpha_flags;
 	gboolean is_default;
-	const gchar *mirror_uri;
-	guint i;
 	_cleanup_free_ gchar *basename = NULL;
 	_cleanup_free_ gchar *filename_no_path = NULL;
 	_cleanup_free_ gchar *url_src = NULL;
 	_cleanup_object_unref_ AsImage *im_src = NULL;
 	_cleanup_object_unref_ AsScreenshot *ss = NULL;
-	guint sizes[] = { AS_IMAGE_NORMAL_WIDTH,    AS_IMAGE_NORMAL_HEIGHT,
-			  AS_IMAGE_THUMBNAIL_WIDTH, AS_IMAGE_THUMBNAIL_HEIGHT,
-			  AS_IMAGE_LARGE_WIDTH,     AS_IMAGE_LARGE_HEIGHT,
-			  0 };
 
 	im_src = as_image_new ();
 	if (!as_image_load_filename (im_src, filename, error))
@@ -467,31 +330,10 @@ asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **erro
 	as_image_set_basename (im_src, basename);
 
 	/* fonts only have full sized screenshots */
-	mirror_uri = asb_package_get_config (asb_app_get_package (app), "MirrorURI");
-	url_src = g_build_filename (mirror_uri, "source", basename, NULL);
+	url_src = g_build_filename ("file://", basename, NULL);
 	as_image_set_url (im_src, url_src, -1);
 	as_image_set_kind (im_src, AS_IMAGE_KIND_SOURCE);
 	as_screenshot_add_image (ss, im_src);
-	if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_FONT) {
-		for (i = 0; sizes[i] != 0; i += 2) {
-
-			/* save LoDPI */
-			if (!asb_app_save_thumbnail (ss, im_src,
-						     sizes[i], sizes[i+1],
-						     1, mirror_uri, error))
-				return FALSE;
-
-			/* save HiDPI version */
-			if (priv->hidpi_enabled) {
-				if (!asb_app_save_thumbnail (ss, im_src,
-							     sizes[i],
-							     sizes[i+1],
-							     2, mirror_uri,
-							     error))
-					return FALSE;
-			}
-		}
-	}
 	as_app_add_screenshot (AS_APP (app), ss);
 	return TRUE;
 }

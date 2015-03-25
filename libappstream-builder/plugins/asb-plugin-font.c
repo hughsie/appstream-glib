@@ -387,13 +387,14 @@ asb_font_get_caption (AsbApp *app)
  * asb_font_add_screenshot:
  */
 static gboolean
-asb_font_add_screenshot (AsbApp *app, FT_Face ft_face, GError **error)
+asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face, GError **error)
 {
 	const gchar *cache_dir;
-	const gchar *mirror_uri;
+	const gchar *temp_dir;
 	const gchar *tmp;
 	_cleanup_free_ gchar *basename = NULL;
 	_cleanup_free_ gchar *cache_fn = NULL;
+	_cleanup_free_ gchar *output_fn = NULL;
 	_cleanup_free_ gchar *caption = NULL;
 	_cleanup_free_ gchar *url_tmp = NULL;
 	_cleanup_object_unref_ AsImage *im = NULL;
@@ -405,8 +406,8 @@ asb_font_add_screenshot (AsbApp *app, FT_Face ft_face, GError **error)
 		return TRUE;
 
 	/* is in the cache */
-	cache_dir = asb_package_get_config (asb_app_get_package (app), "CacheDir");
-	cache_fn = g_strdup_printf ("%s/%s.png",
+	cache_dir = asb_context_get_cache_dir (plugin->ctx);
+	cache_fn = g_strdup_printf ("%s/screenshots/%s.png",
 				    cache_dir,
 				    as_app_get_id_filename (AS_APP (app)));
 	if (g_file_test (cache_fn, G_FILE_TEST_EXISTS)) {
@@ -428,8 +429,13 @@ asb_font_add_screenshot (AsbApp *app, FT_Face ft_face, GError **error)
 		return FALSE;
 	}
 
-	mirror_uri = asb_package_get_config (asb_app_get_package (app),
-					     "MirrorURI");
+	/* save to the cache for next time */
+	if (!g_file_test (cache_fn, G_FILE_TEST_EXISTS)) {
+		if (!gdk_pixbuf_save (pixbuf, cache_fn, "png", error, NULL))
+			return FALSE;
+	}
+
+	/* copy it to the screenshot directory */
 	im = as_image_new ();
 	as_image_set_pixbuf (im, pixbuf);
 	as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
@@ -437,11 +443,16 @@ asb_font_add_screenshot (AsbApp *app, FT_Face ft_face, GError **error)
 				    as_app_get_id_filename (AS_APP (app)),
 				    as_image_get_md5 (im));
 	as_image_set_basename (im, basename);
-	url_tmp = g_build_filename (mirror_uri,
-				    "source",
+	url_tmp = g_build_filename ("file://",
 				    basename,
 				    NULL);
 	as_image_set_url (im, url_tmp, -1);
+
+	/* put this in a special place so it gets packaged up */
+	temp_dir = asb_context_get_temp_dir (plugin->ctx);
+	output_fn = g_build_filename (temp_dir, "screenshots", basename, NULL);
+	if (!gdk_pixbuf_save (pixbuf, output_fn, "png", error, NULL))
+		return FALSE;
 
 	ss = as_screenshot_new ();
 	as_screenshot_set_kind (ss, AS_SCREENSHOT_KIND_DEFAULT);
@@ -621,7 +632,7 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	asb_font_add_languages (app, pattern);
 	asb_font_add_metadata (app, ft_face);
 	asb_font_fix_metadata (app);
-	ret = asb_font_add_screenshot (app, ft_face, error);
+	ret = asb_font_add_screenshot (plugin, app, ft_face, error);
 	if (!ret)
 		goto out;
 

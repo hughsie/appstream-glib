@@ -176,80 +176,6 @@ asb_plugin_appdata_log_overwrite (AsbApp *app,
 }
 
 /**
- * asb_plugin_appdata_load_url:
- **/
-static gboolean
-asb_plugin_appdata_load_url (AsbPlugin *plugin,
-			     AsbApp *app,
-			     const gchar *url,
-			     GError **error)
-{
-	const gchar *cache_dir;
-	gboolean ret = TRUE;
-	SoupStatus status;
-	SoupURI *uri = NULL;
-	_cleanup_free_ gchar *basename = NULL;
-	_cleanup_free_ gchar *cache_filename = NULL;
-	_cleanup_object_unref_ SoupMessage *msg = NULL;
-
-	/* download to cache if not already added */
-	basename = g_path_get_basename (url);
-	cache_dir = asb_package_get_config (asb_app_get_package (app), "CacheDir");
-	cache_filename = g_strdup_printf ("%s/%s-%s",
-					  cache_dir,
-					  as_app_get_id_filename (AS_APP (app)),
-					  basename);
-	if (!g_file_test (cache_filename, G_FILE_TEST_EXISTS)) {
-		if (asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_NO_NETWORK)) {
-			asb_package_log (asb_app_get_package (app),
-					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "Could not download %s as no network", url);
-			goto out;
-		}
-		uri = soup_uri_new (url);
-		if (uri == NULL) {
-			ret = FALSE;
-			g_set_error (error,
-				     ASB_PLUGIN_ERROR,
-				     ASB_PLUGIN_ERROR_FAILED,
-				     "Could not parse '%s' as a URL", url);
-			goto out;
-		}
-		asb_package_log (asb_app_get_package (app),
-				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
-				 "Downloading %s", url);
-		msg = soup_message_new_from_uri (SOUP_METHOD_GET, uri);
-		status = soup_session_send_message (plugin->priv->session, msg);
-		if (status != SOUP_STATUS_OK) {
-			ret = FALSE;
-			g_set_error (error,
-				     ASB_PLUGIN_ERROR,
-				     ASB_PLUGIN_ERROR_FAILED,
-				     "Downloading failed: %s",
-				     soup_status_get_phrase (status));
-			goto out;
-		}
-
-		/* save new file */
-		ret = g_file_set_contents (cache_filename,
-					   msg->response_body->data,
-					   msg->response_body->length,
-					   error);
-		if (!ret)
-			goto out;
-	}
-
-	/* load the pixbuf */
-	ret = asb_app_add_screenshot_source (app, cache_filename, error);
-	if (!ret)
-		goto out;
-out:
-	if (uri != NULL)
-		soup_uri_free (uri);
-	return ret;
-}
-
-/**
  * asb_plugin_process_filename:
  */
 static gboolean
@@ -415,44 +341,12 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	/* add screenshots if not already added */
 	array = as_app_get_screenshots (AS_APP (app));
 	if (array->len == 0) {
+		/* just use the upstream locations */
 		array = as_app_get_screenshots (appdata);
 		for (i = 0; i < array->len; i++) {
-			GError *error_local = NULL;
-			AsScreenshot *ass;
-			AsImage *image;
-
-			ass = g_ptr_array_index (array, i);
-			image = as_screenshot_get_source (ass);
-			if (image == NULL)
-				continue;
-
-			/* if no network just use the upstream location */
-			if (asb_context_get_flag (plugin->ctx,
-						  ASB_CONTEXT_FLAG_NO_NETWORK)) {
-				asb_package_log (asb_app_get_package (app),
-						 ASB_PACKAGE_LOG_LEVEL_DEBUG,
-						 "Using upstream screenshot");
-				as_app_add_screenshot (AS_APP (app), ass);
-				continue;
-			}
-
-			/* load the URI or get from a cache */
-			tmp = as_image_get_url (image);
-			ret = asb_plugin_appdata_load_url (plugin,
-							   app,
-							   as_image_get_url (image),
-							   &error_local);
-			if (ret) {
-				asb_package_log (asb_app_get_package (app),
-						 ASB_PACKAGE_LOG_LEVEL_DEBUG,
-						 "Added screenshot %s", tmp);
-			} else {
-				asb_package_log (asb_app_get_package (app),
-						 ASB_PACKAGE_LOG_LEVEL_WARNING,
-						 "Failed to load screenshot %s: %s",
-						 tmp, error_local->message);
-				g_clear_error (&error_local);
-			}
+			AsScreenshot *ss;
+			ss = g_ptr_array_index (array, i);
+			as_app_add_screenshot (AS_APP (app), ss);
 		}
 	} else {
 		array = as_app_get_screenshots (appdata);

@@ -111,8 +111,6 @@ void		 asb_context_set_extra_appdata	(AsbContext	*ctx,
 						 const gchar	*extra_appdata);
 void		 asb_context_set_extra_screenshots (AsbContext	*ctx,
 						 const gchar	*extra_screenshots);
-void		 asb_context_set_screenshot_uri	(AsbContext	*ctx,
-						 const gchar	*screenshot_uri);
 void		 asb_context_set_log_dir	(AsbContext	*ctx,
 						 const gchar	*log_dir);
 void		 asb_context_set_screenshot_dir	(AsbContext	*ctx,
@@ -130,6 +128,7 @@ void		 asb_context_set_basename	(AsbContext	*ctx,
 void		 asb_context_set_origin		(AsbContext	*ctx,
 						 const gchar	*origin);
 const gchar	*asb_context_get_temp_dir	(AsbContext	*ctx);
+const gchar	*asb_context_get_cache_dir	(AsbContext	*ctx);
 AsbContextFlags	 asb_context_get_flags		(AsbContext	*ctx);
 gboolean	 asb_context_get_flag		(AsbContext	*ctx,
 						 AsbContextFlags flag);
