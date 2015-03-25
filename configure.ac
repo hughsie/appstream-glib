@@ -126,62 +126,70 @@ PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.16.1 gio-2.0 gobject-2.0 gthread-2.0 gio-u
 PKG_CHECK_MODULES(LIBARCHIVE, libarchive)
 PKG_CHECK_MODULES(SOUP, libsoup-2.4 >= 2.24)
 PKG_CHECK_MODULES(GDKPIXBUF, gdk-pixbuf-2.0 >= 2.14)
-PKG_CHECK_MODULES(GTK, gtk+-3.0)
-PKG_CHECK_MODULES(SQLITE, sqlite3)
-PKG_CHECK_MODULES(FREETYPE, pango fontconfig freetype2 >= 9.10.0)
-AC_PATH_PROG(GCAB, [gcab], [no])
-if test x$GCAB = "xno" ; then
-	AC_MSG_ERROR([gcab program not found])
-fi
 
-# ostree (default enabled)
-AC_ARG_ENABLE(ostree, AS_HELP_STRING([--disable-ostree],[Disable ostree support]), enable_ostree=$enableval)
-if test x$enable_ostree != xno; then
-	PKG_CHECK_MODULES(OSTREE, ostree-1 >= 2015.1, HAVE_OSTREE="yes", HAVE_OSTREE="no")
-	if test "x$HAVE_OSTREE" = "xyes"; then
-		AC_DEFINE(HAVE_OSTREE, 1, [define if OSTREE is installed])
-	else
-		if test x$enable_ostree = xyes; then
-			AC_MSG_ERROR([ostree enabled but not found])
-		fi
+# builder (default enabled)
+AC_ARG_ENABLE(builder, AS_HELP_STRING([--disable-builder],[Disable AppStream builder support]), enable_builder=$enableval)
+if test x$enable_builder != xno; then
+	PKG_CHECK_MODULES(GTK, gtk+-3.0)
+	PKG_CHECK_MODULES(SQLITE, sqlite3)
+	PKG_CHECK_MODULES(FREETYPE, pango fontconfig freetype2 >= 9.10.0)
+	AC_PATH_PROG(GCAB, [gcab], [no])
+	if test x$GCAB = "xno" ; then
+		AC_MSG_ERROR([gcab program not found])
 	fi
-else
-	HAVE_OSTREE=no
-fi
-AM_CONDITIONAL(HAVE_OSTREE, test x$HAVE_OSTREE = xyes)
 
-# rpm (default enabled)
-AC_ARG_ENABLE(rpm, AS_HELP_STRING([--disable-rpm],[Disable rpm support]), enable_rpm=$enableval)
-if test x$enable_rpm != xno; then
-	PKG_CHECK_MODULES(RPM, rpm, HAVE_RPM="yes", HAVE_RPM="no")
-	if test "x$HAVE_RPM" = "xyes"; then
-		AC_DEFINE(HAVE_RPM, 1, [define if RPM is installed])
-	else
-		if test x$enable_rpm = xyes; then
-			AC_MSG_ERROR([rpm enabled but not found])
+	# ostree (default enabled)
+	AC_ARG_ENABLE(ostree, AS_HELP_STRING([--disable-ostree],[Disable ostree support]), enable_ostree=$enableval)
+	if test x$enable_ostree != xno; then
+		PKG_CHECK_MODULES(OSTREE, ostree-1 >= 2015.1, HAVE_OSTREE="yes", HAVE_OSTREE="no")
+		if test "x$HAVE_OSTREE" = "xyes"; then
+			AC_DEFINE(HAVE_OSTREE, 1, [define if OSTREE is installed])
+		else
+			if test x$enable_ostree = xyes; then
+				AC_MSG_ERROR([ostree enabled but not found])
+			fi
 		fi
+	else
+		HAVE_OSTREE=no
 	fi
+
+	# rpm (default enabled)
+	AC_ARG_ENABLE(rpm, AS_HELP_STRING([--disable-rpm],[Disable rpm support]), enable_rpm=$enableval)
+	if test x$enable_rpm != xno; then
+		PKG_CHECK_MODULES(RPM, rpm, HAVE_RPM="yes", HAVE_RPM="no")
+		if test "x$HAVE_RPM" = "xyes"; then
+			AC_DEFINE(HAVE_RPM, 1, [define if RPM is installed])
+		else
+			if test x$enable_rpm = xyes; then
+				AC_MSG_ERROR([rpm enabled but not found])
+			fi
+		fi
+	else
+		HAVE_RPM=no
+	fi
+
+	# alpm (default disabled)
+	AC_ARG_ENABLE(alpm, AS_HELP_STRING([--enable-alpm],[Enable alpm support]), enable_alpm=yes, enable_alpm=no)
+	if test x$enable_alpm != xno; then
+		PKG_CHECK_MODULES(ALPM, libalpm, HAVE_ALPM="yes", HAVE_ALPM="no")
+		if test "x$HAVE_ALPM" = "xyes"; then
+			AC_DEFINE(HAVE_ALPM, 1, [define if ALPM is installed])
+		else
+			if test x$enable_alpm = xyes; then
+				AC_MSG_ERROR([alpm enabled but not found])
+			fi
+		fi
+	else
+		HAVE_ALPM=no
+	fi
+	enable_builder=yes
 else
-	HAVE_RPM=no
+	enable_builder=no
 fi
+AM_CONDITIONAL(HAVE_BUILDER, test x$enable_builder = xyes)
 AM_CONDITIONAL(HAVE_RPM, test x$HAVE_RPM = xyes)
-
-# alpm (default disabled)
-AC_ARG_ENABLE(alpm, AS_HELP_STRING([--enable-alpm],[Enable alpm support]), enable_alpm=yes, enable_alpm=no)
-if test x$enable_alpm != xno; then
-	PKG_CHECK_MODULES(ALPM, libalpm, HAVE_ALPM="yes", HAVE_ALPM="no")
-	if test "x$HAVE_ALPM" = "xyes"; then
-		AC_DEFINE(HAVE_ALPM, 1, [define if ALPM is installed])
-	else
-		if test x$enable_alpm = xyes; then
-			AC_MSG_ERROR([alpm enabled but not found])
-		fi
-	fi
-else
-	HAVE_ALPM=no
-fi
+AM_CONDITIONAL(HAVE_OSTREE, test x$HAVE_OSTREE = xyes)
 AM_CONDITIONAL(HAVE_ALPM, test x$HAVE_ALPM = xyes)
-
 
 # man files
 AC_ARG_ENABLE(man,
@@ -245,5 +253,6 @@ AC_MSG_RESULT([
     includedir:              ${includedir}
     lib dir:                 ${libdir}
     DEP-11 support:          ${enable_dep11}
+    Builder support:         ${enable_builder}
     Bash completion dir:     ${with_bashcompletiondir}
               ])

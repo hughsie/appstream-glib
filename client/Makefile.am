@@ -21,8 +21,12 @@ AS_BUILDER_LIBS =					\
 	$(top_builddir)/libappstream-builder/libappstream-builder.la
 
 bin_PROGRAMS =						\
-	appstream-builder				\
 	appstream-util
+
+if HAVE_BUILDER
+bin_PROGRAMS +=						\
+	appstream-builder
+endif
 
 appstream_util_SOURCES =				\
 	as-util.c
@@ -37,6 +41,7 @@ appstream_util_LDFLAGS =				\
 appstream_util_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
+if HAVE_BUILDER
 appstream_builder_SOURCES =				\
 	as-builder.c
 appstream_builder_LDADD =				\
@@ -50,6 +55,7 @@ appstream_builder_LDFLAGS =				\
 	$(PIE_LDFLAGS)
 appstream_builder_CFLAGS =				\
 	$(WARNINGFLAGS_C)
+endif
 
 # ship this obsolete binary
 bin_PROGRAMS +=						\

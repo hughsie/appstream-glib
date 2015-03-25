@@ -2,11 +2,18 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = 						\
 	libappstream-glib				\
-	libappstream-builder				\
-	client						\
 	data						\
 	docs						\
 	po
+
+if HAVE_BUILDER
+SUBDIRS +=						\
+	libappstream-builder
+endif
+
+# depends on libappstream-builder
+SUBDIRS +=						\
+	client
 
 DISTCLEANFILES =					\
 	appstream-glib-*.tar.xz
@@ -67,6 +74,7 @@ ChangeLog:
 
 DISTCHECK_CONFIGURE_FLAGS =				\
 	--enable-dep11					\
+	--enable-builder				\
 	--with-bashcompletiondir=/${prefix}/share/bash-completion/completions
 
 .PHONY: ChangeLog
