@@ -274,7 +274,7 @@ main (int argc, char **argv)
 #endif
 	/* set defaults */
 	if (api_version < 0.01)
-		api_version = 0.41;
+		api_version = 0.8;
 	if (temp_dir == NULL)
 		temp_dir = g_strdup ("./tmp");
 	if (log_dir == NULL)
