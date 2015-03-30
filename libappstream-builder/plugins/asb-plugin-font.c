@@ -578,7 +578,7 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	/* load font */
 	config = FcConfigCreate ();
 	ret = FcConfigAppFontAddFile (config, (FcChar8 *) filename);
-	if (!ret) {
+	if (FALSE && !ret) { /* FIXME: fails since f22 even for success */
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
 			     ASB_PLUGIN_ERROR_FAILED,
