@@ -1,3 +1,29 @@
+Version 0.3.6
+~~~~~~~~~~~~~
+Released: 2015-03-30
+
+New Features:
+ - Add a 'replace-screenshots' command to appstream-util (Richard Hughes)
+ - Add --batch-output to be able to disable the panel (Richard Hughes)
+ - Make the AppStream builder support optional (Richard Hughes)
+ - Now gcab is a hard requirement (Marc-Andre Lureau, Alberto Ruiz)
+ - Put all the screenshots in a file (Richard Hughes)
+ - Use the latest released version for unspecified (Richard Hughes)
+ - Use the upstream screenshot when we are using --no-net (Richard Hughes)
+
+Bugfixes:
+ - Add the source-only tags when outputting AppData files (Richard Hughes)
+ - Allow uninstalling AppStream files from /var/cache (Richard Hughes)
+ - Also subsume application licenses (Richard Hughes)
+ - Always upscale screenshots if they are too small (Kalev Lember)
+ - Assume the INF DriverVer is UTC (Richard Hughes)
+ - Do not fail due to style warnings when using relaxed validation (Richard Hughes)
+ - Do not trust the result of FcConfigAppFontAddFile() (Richard Hughes)
+ - Remove the gtk3 dep from libappstream-glib (Richard Hughes)
+ - Teach the builder how to write other archive formats (Richard Hughes)
+ - Update the checksums for the gcab-generated firmware (Richard Hughes)
+ - Use the correct image URL for HiDPI screenshots (Richard Hughes)
+
 Version 0.3.5
 ~~~~~~~~~~~~~
 Released: 2015-03-11
