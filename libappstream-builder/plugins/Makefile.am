@@ -125,7 +125,7 @@ libasb_plugin_ibus_xml_la_LDFLAGS = -module -avoid-version
 libasb_plugin_ibus_xml_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
 libasb_plugin_font_la_SOURCES = asb-plugin-font.c
-libasb_plugin_font_la_LIBADD = $(GLIB_LIBS) $(FREETYPE_LIBS) $(GDKPIXBUF_LIBS)
+libasb_plugin_font_la_LIBADD = $(GLIB_LIBS) $(FREETYPE_LIBS) $(GDKPIXBUF_LIBS) $(GTK_LIBS)
 libasb_plugin_font_la_LDFLAGS = -module -avoid-version
 libasb_plugin_font_la_CFLAGS = $(GLIB_CFLAGS) $(GTK_CFLAGS) $(WARNINGFLAGS_C)
 
