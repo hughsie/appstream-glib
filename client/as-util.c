@@ -2874,6 +2874,57 @@ as_util_check_root_app (AsApp *app, GPtrArray *problems)
 }
 
 /**
+ * as_util_replace_screenshots:
+ *
+ **/
+static gboolean
+as_util_replace_screenshots (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	GPtrArray *screenshots;
+	guint i;
+	_cleanup_object_unref_ AsApp *app = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+
+	/* check args */
+	if (g_strv_length (values) < 2) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, expected: file screenshot");
+		return FALSE;
+	}
+
+	/* parse file */
+	app = as_app_new ();
+	if (!as_app_parse_file (app, values[0],
+				AS_APP_PARSE_FLAG_KEEP_COMMENTS, error))
+		return FALSE;
+
+	/* replace screenshots */
+	screenshots = as_app_get_screenshots (app);
+	g_ptr_array_set_size (screenshots, 0);
+	for (i = 1; values[i] != NULL; i++) {
+		_cleanup_object_unref_ AsImage *im = NULL;
+		_cleanup_object_unref_ AsScreenshot *ss = NULL;
+		im = as_image_new ();
+		as_image_set_url (im, values[i], -1);
+		as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
+		ss = as_screenshot_new ();
+		as_screenshot_add_image (ss, im);
+		as_screenshot_set_kind (ss, i == 1 ? AS_SCREENSHOT_KIND_DEFAULT :
+						     AS_SCREENSHOT_KIND_NORMAL);
+		as_app_add_screenshot (app, ss);
+	}
+
+	/* save file */
+	file = g_file_new_for_path (values[0]);
+	if (!as_app_to_file (app, file, NULL, error))
+		return FALSE;
+
+	return TRUE;
+}
+
+/**
  * as_util_check_root:
  *
  * What kind of errors this will detect:
@@ -3109,6 +3160,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Check installed application data"),
 		     as_util_check_root);
+	as_util_add (priv->cmd_array,
+		     "replace-screenshots",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Replace screenshots in source file"),
+		     as_util_replace_screenshots);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
