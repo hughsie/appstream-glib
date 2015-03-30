@@ -931,6 +931,7 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 	/* add applications */
 	ctx = as_node_context_new ();
 	as_node_context_set_version (ctx, priv->api_version);
+	as_node_context_set_output (ctx, AS_APP_SOURCE_KIND_APPSTREAM);
 	for (i = 0; i < priv->array->len; i++) {
 		app = g_ptr_array_index (priv->array, i);
 		as_app_node_insert (app, node_apps, ctx);

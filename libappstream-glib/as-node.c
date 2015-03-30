@@ -1909,6 +1909,7 @@ as_node_get_localized_unwrap (const GNode *node, GError **error)
 /* helper struct */
 struct _AsNodeContext {
 	AsAppSourceKind	 source_kind;
+	AsAppSourceKind	 output;
 	gdouble		 version;
 };
 
@@ -1928,6 +1929,7 @@ as_node_context_new (void)
 	ctx = g_new0 (AsNodeContext, 1);
 	ctx->version = 0.f;
 	ctx->source_kind = AS_APP_SOURCE_KIND_APPSTREAM;
+	ctx->output = AS_APP_SOURCE_KIND_UNKNOWN;
 	return ctx;
 }
 
@@ -1966,7 +1968,7 @@ as_node_context_set_version (AsNodeContext *ctx, gdouble version)
  * as_node_context_get_source_kind: (skip)
  * @ctx: a #AsNodeContext.
  *
- * Gets the AppStream API source_kind used when parsing or inserting nodes.
+ * Gets the AppStream API source_kind used when parsing nodes.
  *
  * Returns: source_kind number
  *
@@ -1983,7 +1985,7 @@ as_node_context_get_source_kind (AsNodeContext *ctx)
  * @ctx: a #AsNodeContext.
  * @source_kind: an API source_kind number to target.
  *
- * Sets the AppStream API source_kind used when parsing or inserting nodes.
+ * Sets the AppStream API source_kind used when parsing nodes.
  *
  * Since: 0.3.6
  **/
@@ -1991,4 +1993,35 @@ void
 as_node_context_set_source_kind (AsNodeContext *ctx, AsAppSourceKind source_kind)
 {
 	ctx->source_kind = source_kind;
+}
+
+/**
+ * as_node_context_get_output: (skip)
+ * @ctx: a #AsNodeContext.
+ *
+ * Gets the AppStream API destination kind used when inserting nodes.
+ *
+ * Returns: output format, e.g. %AS_APP_SOURCE_KIND_APPDATA
+ *
+ * Since: 0.3.6
+ **/
+AsAppSourceKind
+as_node_context_get_output (AsNodeContext *ctx)
+{
+	return ctx->output;
+}
+
+/**
+ * as_node_context_set_output: (skip)
+ * @ctx: a #AsNodeContext.
+ * @output: an output kind, e.g. %AS_APP_SOURCE_KIND_APPDATA
+ *
+ * Sets the AppStream API destination kind used when inserting nodes.
+ *
+ * Since: 0.3.6
+ **/
+void
+as_node_context_set_output (AsNodeContext *ctx, AsAppSourceKind output)
+{
+	ctx->output = output;
 }

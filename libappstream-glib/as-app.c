@@ -3267,6 +3267,15 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		}
 	}
 
+	/* <metadata_license> */
+	if (as_node_context_get_output (ctx) == AS_APP_SOURCE_KIND_APPDATA ||
+	    as_node_context_get_output (ctx) == AS_APP_SOURCE_KIND_METAINFO) {
+		if (priv->metadata_license != NULL) {
+			as_node_insert (node_app, "metadata_license",
+					priv->metadata_license, 0, NULL);
+		}
+	}
+
 	/* <project_license> or <licence> */
 	if (priv->project_license != NULL) {
 		if (api_version >= 0.4) {
@@ -3339,6 +3348,15 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	/* <languages> */
 	if (g_hash_table_size (priv->languages) > 0 && api_version >= 0.4)
 		as_app_node_insert_languages (app, node_app);
+
+	/* <update_contact> */
+	if (as_node_context_get_output (ctx) == AS_APP_SOURCE_KIND_APPDATA ||
+	    as_node_context_get_output (ctx) == AS_APP_SOURCE_KIND_METAINFO) {
+		if (priv->update_contact != NULL) {
+			as_node_insert (node_app, "update_contact",
+					priv->update_contact, 0, NULL);
+		}
+	}
 
 	/* <metadata> */
 	if (g_hash_table_size (priv->metadata) > 0 && api_version >= 0.4) {
@@ -4566,6 +4584,7 @@ as_app_to_file (AsApp *app,
 	root = as_node_new ();
 	ctx = as_node_context_new ();
 	as_node_context_set_version (ctx, 1.0);
+	as_node_context_set_output (ctx, AS_APP_SOURCE_KIND_APPDATA);
 	as_app_node_insert (app, root, ctx);
 	xml = as_node_to_xml (root,
 			      AS_NODE_TO_XML_FLAG_ADD_HEADER |

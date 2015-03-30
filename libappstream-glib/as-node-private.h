@@ -39,6 +39,9 @@ void		 as_node_context_set_version	(AsNodeContext	*ctx,
 AsAppSourceKind	 as_node_context_get_source_kind (AsNodeContext	*ctx);
 void		 as_node_context_set_source_kind (AsNodeContext	*ctx,
 						 AsAppSourceKind source_kind);
+AsAppSourceKind	 as_node_context_get_output	(AsNodeContext	*ctx);
+void		 as_node_context_set_output	(AsNodeContext	*ctx,
+						 AsAppSourceKind output);
 
 gchar		*as_node_take_data		(const GNode	*node);
 gchar		*as_node_take_attribute		(const GNode	*node,
