@@ -138,8 +138,6 @@ asb_app_load_icon (AsbApp *app,
 		size_str = g_strdup_printf ("%ix%i",
 					    pixbuf_width,
 					    pixbuf_height);
-		as_app_add_metadata (AS_APP (app), "PaddedIcon",
-				     size_str, -1);
 		asb_package_log (asb_app_get_package (app),
 				 ASB_PACKAGE_LOG_LEVEL_INFO,
 				 "icon %s padded to %ix%i as size %s",
