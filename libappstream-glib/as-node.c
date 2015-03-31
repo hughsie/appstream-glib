@@ -1871,6 +1871,16 @@ as_node_get_localized_unwrap (const GNode *node, GError **error)
 	_cleanup_list_free_ GList *keys = NULL;
 
 	/* work out what kind of normalization this is */
+	xml_lang = as_node_get_attribute (node, "xml:lang");
+	if (xml_lang != NULL) {
+		str = as_node_to_xml (node->children, AS_NODE_TO_XML_FLAG_NONE);
+		results = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+		g_hash_table_insert (results,
+				     g_strdup (xml_lang),
+				     g_strdup (str->str));
+		g_string_free (str, TRUE);
+		return results;
+	}
 	for (tmp = node->children; tmp != NULL; tmp = tmp->next) {
 		data = tmp->data;
 		if (g_strcmp0 (data->name, "ul") == 0 ||
