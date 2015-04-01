@@ -68,7 +68,6 @@ struct _AsbContextPrivate
 	guint			 min_icon_size;
 	gdouble			 api_version;
 	gchar			*old_metadata;
-	gchar			*extra_appstream;
 	gchar			*extra_appdata;
 	gchar			*extra_screenshots;
 	gchar			*screenshot_uri;
@@ -213,23 +212,6 @@ asb_context_set_old_metadata (AsbContext *ctx, const gchar *old_metadata)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	priv->old_metadata = asb_context_realpath (old_metadata);
-}
-
-/**
- * asb_context_set_extra_appstream:
- * @ctx: A #AsbContext
- * @extra_appstream: directory name, or %NULL
- *
- * Sets the location of a directory which is used for supplimental AppStream
- * files.
- *
- * Since: 0.1.0
- **/
-void
-asb_context_set_extra_appstream (AsbContext *ctx, const gchar *extra_appstream)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->extra_appstream = asb_context_realpath (extra_appstream);
 }
 
 /**
@@ -793,21 +775,6 @@ asb_context_setup (AsbContext *ctx, GError **error)
 
 	/* get a cache of the file globs */
 	priv->file_globs = asb_plugin_loader_get_globs (priv->plugin_loader);
-
-	/* add any extra applications and resize screenshots */
-	if (priv->extra_appstream != NULL &&
-	    g_file_test (priv->extra_appstream, G_FILE_TEST_EXISTS)) {
-		if (!asb_utils_add_apps_from_dir (&priv->apps,
-						  priv->extra_appstream,
-						  error))
-			return FALSE;
-		for (l = priv->apps; l != NULL; l = l->next) {
-			app = AS_APP (l->data);
-			if (!asb_context_load_extra_screenshots (ctx, app, error))
-				return FALSE;
-		}
-		g_print ("Added extra %i apps\n", g_list_length (priv->apps));
-	}
 
 	/* add old metadata */
 	if (priv->old_metadata != NULL) {
@@ -1661,7 +1628,6 @@ asb_context_finalize (GObject *object)
 		g_ptr_array_unref (priv->file_globs);
 	g_mutex_clear (&priv->apps_mutex);
 	g_free (priv->old_metadata);
-	g_free (priv->extra_appstream);
 	g_free (priv->extra_appdata);
 	g_free (priv->extra_screenshots);
 	g_free (priv->screenshot_uri);

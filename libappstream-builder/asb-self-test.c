@@ -841,90 +841,6 @@ asb_test_context_oldcache_func (void)
 }
 
 static void
-asb_test_context_extra_appstream_func (void)
-{
-	GError *error = NULL;
-	gboolean ret;
-	AsApp *app;
-	const gchar *expected_xml;
-	_cleanup_free_ gchar *extra_appdata = NULL;
-	_cleanup_object_unref_ AsbContext *ctx = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
-	_cleanup_string_free_ GString *xml = NULL;
-
-	ctx = asb_context_new ();
-	extra_appdata = asb_test_get_filename ("extra-appdata");
-	g_assert (extra_appdata != NULL);
-	asb_context_set_extra_appstream (ctx, extra_appdata);
-	asb_context_set_max_threads (ctx, 1);
-	asb_context_set_api_version (ctx, 0.8);
-	asb_context_set_flags (ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID |
-				    ASB_CONTEXT_FLAG_NO_NETWORK |
-				    ASB_CONTEXT_FLAG_BATCH_OUTPUT |
-				    ASB_CONTEXT_FLAG_HIDPI_ICONS);
-	asb_context_set_basename (ctx, "appstream");
-	asb_context_set_origin (ctx, "asb-self-test");
-	asb_context_set_cache_dir (ctx, "/tmp/asbuilder/cache");
-	asb_context_set_output_dir (ctx, "/tmp/asbuilder/output");
-	asb_context_set_temp_dir (ctx, "/tmp/asbuilder/temp");
-	asb_context_set_icons_dir (ctx, "/tmp/asbuilder/temp/icons");
-	ret = asb_context_setup (ctx, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* run the plugins */
-	ret = asb_context_process (ctx, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* check files created */
-	g_assert (g_file_test ("/tmp/asbuilder/output/appstream.xml.gz", G_FILE_TEST_EXISTS));
-
-	/* load AppStream metadata */
-	file = g_file_new_for_path ("/tmp/asbuilder/output/appstream.xml.gz");
-	store = as_store_new ();
-	ret = as_store_from_file (store, file, NULL, NULL, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store), ==, 2);
-	app = as_store_get_app_by_id (store, "epiphany-test.desktop");
-	g_assert (app != NULL);
-	app = as_store_get_app_by_id (store, "epiphany-local.desktop");
-	g_assert (app != NULL);
-
-	/* check it matches what we expect */
-	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
-	expected_xml =
-		"<components version=\"0.8\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test\">\n"
-		"<component type=\"webapp\">\n"
-		"<id>epiphany-local.desktop</id>\n"
-		"<name>Local</name>\n"
-		"<summary>My local webapp</summary>\n"
-		"<description><p>This is awesome</p></description>\n"
-		"<icon type=\"local\">/usr/share/icons/hicolor/256x256/apps/fedora-logo-icon.png</icon>\n"
-		"<url type=\"homepage\">http://www.hughski.com/</url>\n"
-		"</component>\n"
-		"<component type=\"webapp\">\n"
-		"<id>epiphany-test.desktop</id>\n"
-		"<name>Test</name>\n"
-		"<summary>Please use my awesome webapp</summary>\n"
-		"<description><p>This could be awesome</p></description>\n"
-		"<icon type=\"remote\">http://www.hughski.com/img/logo.png</icon>\n"
-		"<url type=\"homepage\">http://www.hughski.com/</url>\n"
-		"</component>\n"
-		"</components>\n";
-	ret = asb_test_compare_lines (xml->str, expected_xml, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* remove temp space */
-	ret = asb_utils_rmtree ("/tmp/asbuilder", &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-}
-
-static void
 asb_test_firmware_func (void)
 {
 	AsApp *app;
@@ -1058,7 +974,6 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStreamBuilder/context{no-cache}", asb_test_context_nocache_func);
 	g_test_add_func ("/AppStreamBuilder/context{cache}", asb_test_context_cache_func);
 	g_test_add_func ("/AppStreamBuilder/context{old-cache}", asb_test_context_oldcache_func);
-	g_test_add_func ("/AppStreamBuilder/context{extra-appstream}", asb_test_context_extra_appstream_func);
 #ifdef HAVE_RPM
 	g_test_add_func ("/AppStreamBuilder/package{rpm}", asb_test_package_rpm_func);
 #endif
