@@ -587,55 +587,6 @@ asb_context_get_file_globs (AsbContext *ctx)
 }
 
 /**
- * asb_context_load_extra_screenshots:
- **/
-static gboolean
-asb_context_load_extra_screenshots (AsbContext *ctx, AsApp *app, GError **error)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	const gchar *tmp;
-	_cleanup_dir_close_ GDir *dir = NULL;
-	_cleanup_free_ gchar *path = NULL;
-	_cleanup_object_unref_ AsbApp *app_build = NULL;
-	_cleanup_object_unref_ AsbPackage *pkg = NULL;
-
-	/* are there any extra screenshots for this app */
-	if (priv->extra_screenshots == NULL ||
-	    priv->screenshot_uri == NULL ||
-	    priv->screenshot_dir == NULL)
-		return TRUE;
-	path = g_build_filename (priv->extra_screenshots, as_app_get_id_filename (app), NULL);
-	if (!g_file_test (path, G_FILE_TEST_EXISTS))
-		return TRUE;
-
-	/* create a virtual package */
-	pkg = asb_package_new ();
-	asb_package_set_name (pkg, as_app_get_id (app));
-	asb_package_set_config (pkg, "MirrorURI", priv->screenshot_uri);
-	asb_package_set_config (pkg, "ScreenshotDir", priv->screenshot_dir);
-
-	/* create a new AsbApp and add all the extra screenshots */
-	app_build = asb_app_new (pkg, as_app_get_id (app));
-	asb_app_set_hidpi_enabled (app_build, (priv->flags & ASB_CONTEXT_FLAG_HIDPI_ICONS) > 0);
-	as_app_subsume_full (AS_APP (app_build), app,
-			     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
-	dir = g_dir_open (path, 0, error);
-	if (dir == NULL)
-		return FALSE;
-	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free_ gchar *filename = NULL;
-		filename = g_build_filename (path, tmp, NULL);
-		if (!asb_app_add_screenshot_source (app_build, filename, error))
-			return FALSE;
-	}
-	as_app_subsume_full (app, AS_APP (app_build),
-			     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
-
-	/* save all the screenshots to disk */
-	return asb_app_save_resources (app_build, ASB_APP_SAVE_FLAG_SCREENSHOTS, error);
-}
-
-/**
  * asb_context_setup:
  * @ctx: A #AsbContext
  * @error: A #GError or %NULL
@@ -649,9 +600,7 @@ asb_context_load_extra_screenshots (AsbContext *ctx, AsApp *app, GError **error)
 gboolean
 asb_context_setup (AsbContext *ctx, GError **error)
 {
-	AsApp *app;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	GList *l;
 	guint i;
 	guint sizes[] = { AS_IMAGE_NORMAL_WIDTH,    AS_IMAGE_NORMAL_HEIGHT,
 			  AS_IMAGE_THUMBNAIL_WIDTH, AS_IMAGE_THUMBNAIL_HEIGHT,
