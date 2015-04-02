@@ -2874,6 +2874,455 @@ as_util_check_root_app (AsApp *app, GPtrArray *problems)
 }
 
 /**
+ * as_util_app_log:
+ **/
+G_GNUC_PRINTF (2, 3)
+static void
+as_util_app_log (AsApp *app, const gchar *fmt, ...)
+{
+	const gchar *id;
+	guint i;
+	va_list args;
+	_cleanup_free_ gchar *tmp = NULL;
+
+	va_start (args, fmt);
+	tmp = g_strdup_vprintf (fmt, args);
+	va_end (args);
+
+	/* print status */
+	id = as_app_get_id (app);
+	g_print ("%s: ", id);
+	for (i = strlen (id) + 2; i < 35; i++)
+		g_print (" ");
+	g_print ("%s\n", tmp);
+}
+
+/**
+ * as_util_mirror_screenshots_thumb:
+ **/
+static gboolean
+as_util_mirror_screenshots_thumb (AsScreenshot *ss, AsImage *im_src,
+				  guint width, guint height, guint scale,
+				  const gchar *mirror_uri,
+				  const gchar *output_dir,
+				  GError **error)
+{
+	_cleanup_free_ gchar *fn = NULL;
+	_cleanup_free_ gchar *size_str = NULL;
+	_cleanup_free_ gchar *url_tmp = NULL;
+	_cleanup_object_unref_ AsImage *im_tmp = NULL;
+
+	/* only save the HiDPI screenshot if it's not padded */
+	if (scale > 1) {
+		if (width * scale > as_image_get_width (im_src) ||
+		    height * scale > as_image_get_height (im_src))
+			return TRUE;
+	}
+
+	/* save to disk */
+	size_str = g_strdup_printf ("%ix%i", width * scale, height * scale);
+	fn = g_build_filename (output_dir, size_str,
+			       as_image_get_basename (im_src),
+			       NULL);
+	if (!g_file_test (fn, G_FILE_TEST_EXISTS)) {
+		if (!as_image_save_filename (im_src, fn,
+					     width * scale,
+					     height * scale,
+					     AS_IMAGE_SAVE_FLAG_PAD_16_9 |
+					     AS_IMAGE_SAVE_FLAG_SHARPEN,
+					     error))
+			return FALSE;
+	}
+
+	/* add resized image to the screenshot */
+	im_tmp = as_image_new ();
+	as_image_set_width (im_tmp, width * scale);
+	as_image_set_height (im_tmp, height * scale);
+	url_tmp = g_build_filename (mirror_uri,
+				    size_str,
+				    as_image_get_basename (im_src),
+				    NULL);
+	as_image_set_url (im_tmp, url_tmp, -1);
+	as_image_set_kind (im_tmp, AS_IMAGE_KIND_THUMBNAIL);
+	as_image_set_basename (im_tmp, as_image_get_basename (im_src));
+	as_screenshot_add_image (ss, im_tmp);
+	return TRUE;
+}
+
+/**
+ * as_util_mirror_screenshots_app_file:
+ **/
+static gboolean
+as_util_mirror_screenshots_app_file (AsApp *app,
+				     const gchar *source_url,
+				     const gchar *filename,
+				     const gchar *mirror_uri,
+				     const gchar *output_dir,
+				     GError **error)
+{
+	AsImageAlphaFlags alpha_flags;
+	gboolean is_default;
+	guint i;
+	_cleanup_free_ gchar *basename = NULL;
+	_cleanup_free_ gchar *filename_no_path = NULL;
+	_cleanup_free_ gchar *url_src = NULL;
+	_cleanup_object_unref_ AsImage *im = NULL;
+	_cleanup_object_unref_ AsImage *im_src = NULL;
+	_cleanup_object_unref_ AsScreenshot *ss = NULL;
+	guint sizes[] = { AS_IMAGE_NORMAL_WIDTH,    AS_IMAGE_NORMAL_HEIGHT,
+			  AS_IMAGE_THUMBNAIL_WIDTH, AS_IMAGE_THUMBNAIL_HEIGHT,
+			  AS_IMAGE_LARGE_WIDTH,     AS_IMAGE_LARGE_HEIGHT,
+			  0 };
+
+	im_src = as_image_new ();
+	if (!as_image_load_filename (im_src, filename, error))
+		return FALSE;
+
+	/* is the aspect ratio of the source perfectly 16:9 */
+	if ((as_image_get_width (im_src) / 16) * 9 !=
+	     as_image_get_height (im_src)) {
+		filename_no_path = g_path_get_basename (filename);
+		g_debug ("%s is not in 16:9 aspect ratio",
+			 filename_no_path);
+	}
+
+	/* check screenshot is reasonable in size */
+	if (as_image_get_width (im_src) * 2 < AS_IMAGE_NORMAL_WIDTH ||
+	    as_image_get_height (im_src) * 2 < AS_IMAGE_NORMAL_HEIGHT) {
+		filename_no_path = g_path_get_basename (filename);
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_FAILED,
+			     "%s is too small to be used: %ix%i",
+			     filename_no_path,
+			     as_image_get_width (im_src),
+			     as_image_get_height (im_src));
+		return FALSE;
+	}
+
+	/* check the image is not padded */
+	alpha_flags = as_image_get_alpha_flags (im_src);
+	if ((alpha_flags & AS_IMAGE_ALPHA_FLAG_TOP) > 0||
+	    (alpha_flags & AS_IMAGE_ALPHA_FLAG_BOTTOM) > 0) {
+		filename_no_path = g_path_get_basename (filename);
+		g_debug ("%s has vertical alpha padding",
+			 filename_no_path);
+	}
+	if ((alpha_flags & AS_IMAGE_ALPHA_FLAG_LEFT) > 0||
+	    (alpha_flags & AS_IMAGE_ALPHA_FLAG_RIGHT) > 0) {
+		filename_no_path = g_path_get_basename (filename);
+		g_debug ("%s has horizontal alpha padding",
+			 filename_no_path);
+	}
+
+	ss = as_screenshot_new ();
+	is_default = as_app_get_screenshots(AS_APP(app))->len == 0;
+	as_screenshot_set_kind (ss, is_default ? AS_SCREENSHOT_KIND_DEFAULT :
+						 AS_SCREENSHOT_KIND_NORMAL);
+
+	/* add back the source image */
+	im = as_image_new ();
+	as_image_set_url (im, source_url, -1);
+	as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
+	as_screenshot_add_image (ss, im);
+
+	/* include the app-id in the basename */
+	basename = g_strdup_printf ("%s-%s.png",
+				    as_app_get_id_filename (AS_APP (app)),
+				    as_image_get_md5 (im_src));
+	as_image_set_basename (im_src, basename);
+
+	/* fonts only have full sized screenshots */
+	if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_FONT) {
+		for (i = 0; sizes[i] != 0; i += 2) {
+
+			/* save LoDPI */
+			if (!as_util_mirror_screenshots_thumb (ss,
+							       im_src,
+							       sizes[i],
+							       sizes[i+1],
+							       1, /* scale */
+							       mirror_uri,
+							       output_dir,
+							       error))
+				return FALSE;
+
+			/* save HiDPI version */
+			if (!as_util_mirror_screenshots_thumb (ss, im_src,
+							       sizes[i],
+							       sizes[i+1],
+							       2, /* scale */
+							       mirror_uri,
+							       output_dir,
+							       error))
+				return FALSE;
+		}
+	}
+
+	as_app_add_screenshot (app, ss);
+	return TRUE;
+}
+
+/**
+ * as_util_mirror_screenshots_app_url:
+ **/
+static gboolean
+as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
+				    AsApp *app,
+				    const gchar *url,
+				    const gchar *mirror_uri,
+				    const gchar *cache_dir,
+				    const gchar *output_dir,
+				    GError **error)
+{
+	gboolean ret = TRUE;
+	SoupStatus status;
+	SoupURI *uri = NULL;
+	_cleanup_free_ gchar *basename = NULL;
+	_cleanup_free_ gchar *cache_filename = NULL;
+	_cleanup_object_unref_ SoupMessage *msg = NULL;
+	_cleanup_object_unref_ SoupSession *session = NULL;
+
+	/* local files, typically fonts */
+	if (g_str_has_prefix (url, "file:/")) {
+		_cleanup_free_ gchar *url_new = NULL;
+		_cleanup_object_unref_ AsImage *im = NULL;
+		_cleanup_object_unref_ AsScreenshot *ss = NULL;
+		url_new = g_build_filename (mirror_uri, "source", url + 6, NULL);
+		im = as_image_new ();
+		as_image_set_url (im, url_new, -1);
+		as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
+		ss = as_screenshot_new ();
+		as_screenshot_set_kind (ss, AS_SCREENSHOT_KIND_DEFAULT);
+		as_screenshot_add_image (ss, im);
+		as_app_add_screenshot (app, ss);
+		return TRUE;
+	}
+
+	/* set up networking */
+	session = soup_session_new_with_options (SOUP_SESSION_USER_AGENT, "appstream-util",
+						 SOUP_SESSION_TIMEOUT, 10,
+						 NULL);
+	soup_session_add_feature_by_type (session,
+					  SOUP_TYPE_PROXY_RESOLVER_DEFAULT);
+
+	/* download to cache if not already added */
+	basename = g_path_get_basename (url);
+	cache_filename = g_strdup_printf ("%s/%s-%s",
+					  cache_dir,
+					  as_app_get_id_filename (AS_APP (app)),
+					  basename);
+	if (g_file_test (cache_filename, G_FILE_TEST_EXISTS)) {
+		as_util_app_log (app, "In cache %s", cache_filename);
+	} else if (priv->nonet) {
+		as_util_app_log (app, "Missing %s:%s", url, cache_filename);
+	} else {
+		uri = soup_uri_new (url);
+		if (uri == NULL) {
+			ret = FALSE;
+			g_set_error (error,
+				     AS_ERROR,
+				     AS_ERROR_FAILED,
+				     "Could not parse '%s' as a URL", url);
+			goto out;
+		}
+		msg = soup_message_new_from_uri (SOUP_METHOD_GET, uri);
+		as_util_app_log (app, "Downloading %s", url);
+		status = soup_session_send_message (session, msg);
+		if (status != SOUP_STATUS_OK) {
+			ret = FALSE;
+			g_set_error (error,
+				     AS_ERROR,
+				     AS_ERROR_FAILED,
+				     "Downloading failed: %s",
+				     soup_status_get_phrase (status));
+			goto out;
+		}
+
+		/* save new file */
+		ret = g_file_set_contents (cache_filename,
+					   msg->response_body->data,
+					   msg->response_body->length,
+					   error);
+		if (!ret)
+			goto out;
+		as_util_app_log (app, "Saved to cache %s", cache_filename);
+	}
+
+	/* mirror the filename */
+	ret = as_util_mirror_screenshots_app_file (app,
+						   url,
+						   cache_filename,
+						   mirror_uri,
+						   output_dir,
+						   error);
+	if (!ret)
+		goto out;
+out:
+	if (uri != NULL)
+		soup_uri_free (uri);
+	return ret;
+}
+
+/**
+ * as_util_mirror_screenshots_app:
+ **/
+static gboolean
+as_util_mirror_screenshots_app (AsUtilPrivate *priv,
+				AsApp *app,
+				GPtrArray *urls,
+				const gchar *mirror_uri,
+				const gchar *cache_dir,
+				const gchar *output_dir,
+				GError **error)
+{
+	guint i;
+	const gchar *url;
+
+	for (i = 0; i < urls->len; i++) {
+		_cleanup_error_free_ GError *error_local = NULL;
+
+		/* download URL or get from cache */
+		url = g_ptr_array_index (urls, i);
+		if (!as_util_mirror_screenshots_app_url (priv,
+							 app,
+							 url,
+							 mirror_uri,
+							 cache_dir,
+							 output_dir,
+							 &error_local)) {
+			as_util_app_log (app, "Failed to download %s: %s",
+					 url, error_local->message);
+			continue;
+		}
+	}
+	return TRUE;
+}
+
+/**
+ * as_util_mirror_screenshots:
+ **/
+static gboolean
+as_util_mirror_screenshots (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsApp *app;
+	AsImage *im;
+	AsScreenshot *ss;
+	GPtrArray *apps;
+	GPtrArray *images;
+	GPtrArray *screenshots;
+	guint i;
+	guint j;
+	guint k;
+	const gchar *cache_dir = "./cache/";
+	const gchar *output_dir = "./screenshots/";
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+	guint sizes[] = { AS_IMAGE_NORMAL_WIDTH,    AS_IMAGE_NORMAL_HEIGHT,
+			  AS_IMAGE_THUMBNAIL_WIDTH, AS_IMAGE_THUMBNAIL_HEIGHT,
+			  AS_IMAGE_LARGE_WIDTH,     AS_IMAGE_LARGE_HEIGHT,
+			  0 };
+
+	/* check args */
+	if (g_strv_length (values) < 2) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, expected: "
+				     "file url [cachedir] [outputdir]");
+		return FALSE;
+	}
+
+	/* overrides */
+	if (g_strv_length (values) >= 3)
+		cache_dir = values[2];
+	if (g_strv_length (values) >= 4)
+		output_dir = values[3];
+
+	/* create dirs */
+	if (g_mkdir_with_parents (cache_dir, 0700) != 0) {
+		g_set_error (error,
+			     AS_ERROR,
+			     AS_ERROR_FAILED,
+			     "Failed to create: %s", cache_dir);
+		return FALSE;
+	}
+
+	/* create the tree of screenshot directories */
+	for (j = 1; j <= 2; j++) {
+		for (i = 0; sizes[i] != 0; i += 2) {
+			_cleanup_free_ gchar *size_str = NULL;
+			_cleanup_free_ gchar *fn = NULL;
+			size_str = g_strdup_printf ("%ix%i",
+						    sizes[i+0] * j,
+						    sizes[i+1] * j);
+			fn = g_build_filename (output_dir, size_str, NULL);
+			if (g_mkdir_with_parents (fn, 0700) != 0) {
+				g_set_error (error,
+					     AS_ERROR,
+					     AS_ERROR_FAILED,
+					     "Failed to create: %s", fn);
+				return FALSE;
+			}
+		}
+	}
+
+	/* open file */
+	store = as_store_new ();
+	file = g_file_new_for_path (values[0]);
+	if (!as_store_from_file (store, file, NULL, NULL, error))
+		return FALSE;
+
+	/* convert all the screenshots */
+	apps = as_store_get_apps (store);
+	for (i = 0; i < apps->len; i++) {
+		_cleanup_ptrarray_unref_ GPtrArray *urls = NULL;
+
+		/* get app */
+		app = g_ptr_array_index (apps, i);
+		screenshots = as_app_get_screenshots (app);
+		if (screenshots->len == 0)
+			continue;
+
+		/* get source screenshots */
+		urls = g_ptr_array_new_with_free_func (g_free);
+		for (j = 0; j < screenshots->len; j++) {
+			ss = g_ptr_array_index (screenshots, j);
+			images = as_screenshot_get_images (ss);
+			for (k = 0; k < images->len; k++) {
+				im = g_ptr_array_index (images, k);
+				if (as_image_get_kind (im) != AS_IMAGE_KIND_SOURCE)
+					continue;
+				g_ptr_array_add (urls, g_strdup (as_image_get_url (im)));
+			}
+		}
+
+		/* invalidate */
+		g_ptr_array_set_size (screenshots, 0);
+		if (urls->len == 0)
+			continue;
+
+		/* download and save new versions */
+		if (!as_util_mirror_screenshots_app (priv, app, urls,
+						     values[1],
+						     cache_dir,
+						     output_dir,
+						     error))
+			return FALSE;
+	}
+
+	/* save file */
+	if (!as_store_to_file (store, file,
+			       AS_NODE_TO_XML_FLAG_ADD_HEADER |
+			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+			       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE,
+			       NULL, error))
+		return FALSE;
+
+	return TRUE;
+}
+
+/**
  * as_util_replace_screenshots:
  *
  **/
@@ -3166,6 +3615,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Replace screenshots in source file"),
 		     as_util_replace_screenshots);
+	as_util_add (priv->cmd_array,
+		     "mirror-screenshots",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Mirror upstream screenshots"),
+		     as_util_mirror_screenshots);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
