@@ -129,7 +129,6 @@ main (int argc, char **argv)
 	GOptionContext *option_context;
 	const gchar *filename;
 	gboolean add_cache_id = FALSE;
-	gboolean batch_output = FALSE;
 	gboolean embedded_icons = FALSE;
 	gboolean hidpi_enabled = FALSE;
 	gboolean include_failed = FALSE;
@@ -175,9 +174,6 @@ main (int argc, char **argv)
 		{ "uncompressed-icons", '\0', 0, G_OPTION_ARG_NONE, &uncompressed_icons,
 			/* TRANSLATORS: command line option */
 			_("Do not compress the icons into a tarball"), NULL },
-		{ "batch-output", '\0', 0, G_OPTION_ARG_NONE, &batch_output,
-			/* TRANSLATORS: command line option */
-			_("Do not use escape sequences in terminal output"), NULL },
 		{ "log-dir", '\0', 0, G_OPTION_ARG_FILENAME, &log_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the logging directory"), "DIR" },
@@ -308,8 +304,6 @@ main (int argc, char **argv)
 		flags |= ASB_CONTEXT_FLAG_INCLUDE_FAILED;
 	if (uncompressed_icons)
 		flags |= ASB_CONTEXT_FLAG_UNCOMPRESSED_ICONS;
-	if (batch_output)
-		flags |= ASB_CONTEXT_FLAG_BATCH_OUTPUT;
 	asb_context_set_flags (ctx, flags);
 
 	ret = asb_context_setup (ctx, &error);

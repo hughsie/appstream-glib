@@ -54,8 +54,6 @@ libappstream_builder_la_SOURCES =				\
 	asb-package-deb.c					\
 	asb-package-deb.h					\
 	asb-package.h						\
-	asb-panel.c						\
-	asb-panel.h						\
 	asb-task.c						\
 	asb-task.h						\
 	asb-utils.c						\

@@ -43,11 +43,9 @@ struct _AsbTaskPrivate
 {
 	AsbContext		*ctx;
 	AsbPackage		*pkg;
-	AsbPanel		*panel;
 	GPtrArray		*plugins_to_run;
 	gchar			*filename;
 	gchar			*tmpdir;
-	guint			 id;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbTask, asb_task, G_TYPE_OBJECT)
@@ -117,8 +115,7 @@ asb_task_explode_extra_package (AsbTask *task,
 	    (g_strcmp0 (asb_package_get_source (pkg_extra),
 		        asb_package_get_source (priv->pkg)) != 0))
 		return TRUE;
-	asb_panel_set_status (priv->panel, "Decompressing extra pkg %s",
-			      asb_package_get_name (pkg_extra));
+	g_debug ("decompressing extra pkg %s", asb_package_get_name (pkg_extra));
 	asb_package_log (priv->pkg,
 			 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 			 "Adding extra package %s for %s",
@@ -256,9 +253,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 				 error_not_used))
 		return FALSE;
 
-	asb_panel_set_job_number (priv->panel, priv->id + 1);
-	asb_panel_set_title (priv->panel, asb_package_get_name (priv->pkg));
-	asb_panel_set_status (priv->panel, "Starting");
+	g_debug ("starting: %s", asb_package_get_name (priv->pkg));
 
 	/* ensure file list read */
 	if (!asb_package_ensure (priv->pkg,
@@ -288,7 +283,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	}
 
 	/* explode tree */
-	asb_panel_set_status (priv->panel, "Decompressing files");
+	g_debug ("decompressing files: %s", asb_package_get_name (priv->pkg));
 	asb_package_log (priv->pkg,
 			 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 			 "Exploding tree for %s",
@@ -321,7 +316,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	}
 
 	/* run plugins */
-	asb_panel_set_status (priv->panel, "Examining");
+	g_debug ("examining: %s", asb_package_get_name (priv->pkg));
 	for (i = 0; i < priv->plugins_to_run->len; i++) {
 		GList *apps_tmp = NULL;
 		plugin = g_ptr_array_index (priv->plugins_to_run, i);
@@ -348,7 +343,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		goto skip;
 
 	/* print */
-	asb_panel_set_status (priv->panel, "Processing");
+	g_debug ("processing: %s", asb_package_get_name (priv->pkg));
 	for (l = apps; l != NULL; l = l->next) {
 		app = l->data;
 
@@ -457,7 +452,7 @@ skip:
 		asb_context_add_app_ignore (priv->ctx, priv->pkg);
 
 	/* delete tree */
-	asb_panel_set_status (priv->panel, "Deleting temp files");
+	g_debug ("deleting temp files: %s", asb_package_get_name (priv->pkg));
 	if (!asb_utils_rmtree (priv->tmpdir, &error)) {
 		asb_package_log (priv->pkg,
 				 ASB_PACKAGE_LOG_LEVEL_WARNING,
@@ -467,7 +462,7 @@ skip:
 	}
 
 	/* write log */
-	asb_panel_set_status (priv->panel, "Writing log");
+	g_debug ("writing log: %s", asb_package_get_name (priv->pkg));
 	if (!asb_package_log_flush (priv->pkg, &error)) {
 		asb_package_log (priv->pkg,
 				 ASB_PACKAGE_LOG_LEVEL_WARNING,
@@ -475,9 +470,6 @@ skip:
 				 error->message);
 		goto out;
 	}
-
-	/* update UI */
-	asb_panel_remove (priv->panel);
 out:
 	/* clear loaded resources */
 	asb_package_close (priv->pkg, NULL);
@@ -501,8 +493,6 @@ asb_task_finalize (GObject *object)
 	g_ptr_array_unref (priv->plugins_to_run);
 	if (priv->pkg != NULL)
 		g_object_unref (priv->pkg);
-	if (priv->panel != NULL)
-		g_object_unref (priv->panel);
 	g_free (priv->filename);
 	g_free (priv->tmpdir);
 
@@ -526,38 +516,6 @@ asb_task_set_package (AsbTask *task, AsbPackage *pkg)
 					 asb_package_get_nevr (pkg), NULL);
 	priv->filename = g_strdup (asb_package_get_filename (pkg));
 	priv->pkg = g_object_ref (pkg);
-}
-
-/**
- * asb_task_set_panel: (skip):
- * @task: A #AsbTask
- * @panel: A #AsbPanel
- *
- * Sets the panel used for the task.
- *
- * Since: 0.2.3
- **/
-void
-asb_task_set_panel (AsbTask *task, AsbPanel *panel)
-{
-	AsbTaskPrivate *priv = GET_PRIVATE (task);
-	priv->panel = g_object_ref (panel);
-}
-
-/**
- * asb_task_set_id:
- * @task: A #AsbTask
- * @id: numeric identifier
- *
- * Sets the ID to use for the task.
- *
- * Since: 0.1.0
- **/
-void
-asb_task_set_id (AsbTask *task, guint id)
-{
-	AsbTaskPrivate *priv = GET_PRIVATE (task);
-	priv->id = id;
 }
 
 /**

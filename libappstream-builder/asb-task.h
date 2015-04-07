@@ -25,7 +25,6 @@
 #include <glib-object.h>
 
 #include "asb-package.h"
-#include "asb-panel.h"
 #include "asb-context.h"
 
 #define ASB_TYPE_TASK		(asb_task_get_type())
@@ -67,10 +66,6 @@ gboolean	 asb_task_process		(AsbTask	*task,
 						 GError		**error_not_used);
 void		 asb_task_set_package		(AsbTask	*task,
 						 AsbPackage	*pkg);
-void		 asb_task_set_panel		(AsbTask	*task,
-						 AsbPanel	*panel);
-void		 asb_task_set_id		(AsbTask	*task,
-						 guint		 id);
 
 G_END_DECLS
 

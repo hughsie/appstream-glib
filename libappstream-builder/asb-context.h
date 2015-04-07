@@ -69,7 +69,6 @@ struct _AsbContextClass
  * @ASB_CONTEXT_FLAG_NO_NETWORK:		Do not download files
  * @ASB_CONTEXT_FLAG_INCLUDE_FAILED:		Write the origin-ignore.xml file
  * @ASB_CONTEXT_FLAG_UNCOMPRESSED_ICONS:	Do not pack icons into a tarball
- * @ASB_CONTEXT_FLAG_BATCH_OUTPUT:		Do not write escape sequences
  *
  * The flags to use when processing the context.
  **/
@@ -83,7 +82,6 @@ typedef enum {
 	ASB_CONTEXT_FLAG_NO_NETWORK		= 1 << 4,	/* Since: 0.3.5 */
 	ASB_CONTEXT_FLAG_INCLUDE_FAILED		= 1 << 5,	/* Since: 0.3.5 */
 	ASB_CONTEXT_FLAG_UNCOMPRESSED_ICONS	= 1 << 6,	/* Since: 0.3.5 */
-	ASB_CONTEXT_FLAG_BATCH_OUTPUT		= 1 << 7,	/* Since: 0.3.6 */
 	/*< private >*/
 	ASB_CONTEXT_FLAG_LAST,
 } AsbContextFlags;
