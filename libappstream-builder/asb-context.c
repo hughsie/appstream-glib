@@ -68,8 +68,6 @@ struct _AsbContextPrivate
 	guint			 min_icon_size;
 	gdouble			 api_version;
 	gchar			*old_metadata;
-	gchar			*extra_appdata;
-	gchar			*extra_screenshots;
 	gchar			*log_dir;
 	gchar			*cache_dir;
 	gchar			*temp_dir;
@@ -210,40 +208,6 @@ asb_context_set_old_metadata (AsbContext *ctx, const gchar *old_metadata)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	priv->old_metadata = asb_context_realpath (old_metadata);
-}
-
-/**
- * asb_context_set_extra_appdata:
- * @ctx: A #AsbContext
- * @extra_appdata: directory name, or %NULL
- *
- * Sets the location of a directory which is used for supplimental AppData
- * files.
- *
- * Since: 0.1.0
- **/
-void
-asb_context_set_extra_appdata (AsbContext *ctx, const gchar *extra_appdata)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->extra_appdata = asb_context_realpath (extra_appdata);
-}
-
-/**
- * asb_context_set_extra_screenshots:
- * @ctx: A #AsbContext
- * @extra_screenshots: directory name, or %NULL
- *
- * Sets the location of a directory which is used for supplimental screenshot
- * files.
- *
- * Since: 0.1.0
- **/
-void
-asb_context_set_extra_screenshots (AsbContext *ctx, const gchar *extra_screenshots)
-{
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->extra_screenshots = asb_context_realpath (extra_screenshots);
 }
 
 /**
@@ -1282,8 +1246,6 @@ asb_context_process (AsbContext *ctx, GError **error)
 		}
 
 		/* set locations of external resources */
-		asb_package_set_config (pkg, "AppDataExtra", priv->extra_appdata);
-		asb_package_set_config (pkg, "ScreenshotsExtra", priv->extra_screenshots);
 		asb_package_set_config (pkg, "LogDir", priv->log_dir);
 		asb_package_set_config (pkg, "TempDir", priv->temp_dir);
 		asb_package_set_config (pkg, "IconsDir", priv->icons_dir);
@@ -1526,8 +1488,6 @@ asb_context_finalize (GObject *object)
 		g_ptr_array_unref (priv->file_globs);
 	g_mutex_clear (&priv->apps_mutex);
 	g_free (priv->old_metadata);
-	g_free (priv->extra_appdata);
-	g_free (priv->extra_screenshots);
 	g_free (priv->log_dir);
 	g_free (priv->cache_dir);
 	g_free (priv->temp_dir);

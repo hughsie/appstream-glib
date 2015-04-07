@@ -88,56 +88,6 @@ asb_plugin_destroy (AsbPlugin *plugin)
 }
 
 /**
- * asb_plugin_hardcoded_sort_screenshots_cb:
- */
-static gint
-asb_plugin_hardcoded_sort_screenshots_cb (gconstpointer a, gconstpointer b)
-{
-	return g_strcmp0 ((gchar *) a, (gchar *) b);
-}
-
-/**
- * asb_plugin_hardcoded_add_screenshots:
- */
-static gboolean
-asb_plugin_hardcoded_add_screenshots (AsbApp *app,
-				      const gchar *location,
-				      GError **error)
-{
-	const gchar *tmp;
-	gboolean ret = TRUE;
-	GList *l;
-	GList *list = NULL;
-	_cleanup_dir_close_ GDir *dir = NULL;
-
-	/* scan for files */
-	dir = g_dir_open (location, 0, error);
-	if (dir == NULL) {
-		ret = FALSE;
-		goto out;
-	}
-	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		if (!g_str_has_suffix (tmp, ".png"))
-			continue;
-		list = g_list_prepend (list, g_build_filename (location, tmp, NULL));
-	}
-	list = g_list_sort (list, asb_plugin_hardcoded_sort_screenshots_cb);
-	for (l = list; l != NULL; l = l->next) {
-		tmp = l->data;
-		asb_package_log (asb_app_get_package (app),
-				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
-				 "Adding extra screenshot: %s", tmp);
-		ret = asb_app_add_screenshot_source (app, tmp, error);
-		if (!ret)
-			goto out;
-	}
-	as_app_add_metadata (AS_APP (app), "DistroScreenshots", NULL, -1);
-out:
-	g_list_free_full (list, g_free);
-	return ret;
-}
-
-/**
  * asb_plugin_process_app:
  */
 gboolean
@@ -306,17 +256,6 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		if (secs > 0 && days > 365 * 5) {
 			asb_app_add_requires_appdata (app,
 				"Dead upstream for > %i years", 5);
-		}
-	}
-
-	/* do any extra screenshots exist */
-	tmp = asb_package_get_config (pkg, "ScreenshotsExtra");
-	if (tmp != NULL) {
-		_cleanup_free_ gchar *dirname = NULL;
-		dirname = g_build_filename (tmp, as_app_get_id_filename (AS_APP (app)), NULL);
-		if (g_file_test (dirname, G_FILE_TEST_EXISTS)) {
-			if (!asb_plugin_hardcoded_add_screenshots (app, dirname, error))
-				return FALSE;
 		}
 	}
 

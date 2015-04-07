@@ -107,10 +107,6 @@ void		 asb_context_set_min_icon_size	(AsbContext	*ctx,
 						 guint		 min_icon_size);
 void		 asb_context_set_old_metadata	(AsbContext	*ctx,
 						 const gchar	*old_metadata);
-void		 asb_context_set_extra_appdata	(AsbContext	*ctx,
-						 const gchar	*extra_appdata);
-void		 asb_context_set_extra_screenshots (AsbContext	*ctx,
-						 const gchar	*extra_screenshots);
 void		 asb_context_set_log_dir	(AsbContext	*ctx,
 						 const gchar	*log_dir);
 void		 asb_context_set_screenshot_dir	(AsbContext	*ctx,

@@ -145,8 +145,6 @@ main (int argc, char **argv)
 	_cleanup_error_free_ GError *error = NULL;
 	_cleanup_free_ gchar *basename = NULL;
 	_cleanup_free_ gchar *cache_dir = NULL;
-	_cleanup_free_ gchar *extra_appdata = NULL;
-	_cleanup_free_ gchar *extra_screenshots = NULL;
 	_cleanup_free_ gchar *log_dir = NULL;
 	_cleanup_free_ gchar *icons_dir = NULL;
 	_cleanup_free_ gchar *old_metadata = NULL;
@@ -189,12 +187,6 @@ main (int argc, char **argv)
 		{ "temp-dir", '\0', 0, G_OPTION_ARG_FILENAME, &temp_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the temporary directory"), "DIR" },
-		{ "extra-appdata-dir", '\0', 0, G_OPTION_ARG_FILENAME, &extra_appdata,
-			/* TRANSLATORS: command line option */
-			_("Use extra appdata data"), "DIR" },
-		{ "extra-screenshots-dir", '\0', 0, G_OPTION_ARG_FILENAME, &extra_screenshots,
-			/* TRANSLATORS: command line option */
-			_("Use extra screenshots data"), "DIR" },
 		{ "output-dir", '\0', 0, G_OPTION_ARG_FILENAME, &output_dir,
 			/* TRANSLATORS: command line option */
 			_("Set the output directory"), "DIR" },
@@ -273,17 +265,11 @@ main (int argc, char **argv)
 		basename = g_strdup ("appstream");
 	if (origin == NULL)
 		origin = g_strdup ("example");
-	if (extra_appdata == NULL)
-		extra_appdata = g_strdup ("./appdata-extra");
-	if (extra_screenshots == NULL)
-		extra_screenshots = g_strdup ("./screenshots-extra");
 	setlocale (LC_ALL, "");
 
 	ctx = asb_context_new ();
 	asb_context_set_api_version (ctx, api_version);
 	asb_context_set_old_metadata (ctx, old_metadata);
-	asb_context_set_extra_appdata (ctx, extra_appdata);
-	asb_context_set_extra_screenshots (ctx, extra_screenshots);
 	asb_context_set_log_dir (ctx, log_dir);
 	asb_context_set_temp_dir (ctx, temp_dir);
 	asb_context_set_output_dir (ctx, output_dir);
