@@ -2954,21 +2954,18 @@ as_util_mirror_screenshots_thumb (AsScreenshot *ss, AsImage *im_src,
  **/
 static gboolean
 as_util_mirror_screenshots_app_file (AsApp *app,
-				     const gchar *source_url,
+				     AsScreenshot *ss,
 				     const gchar *filename,
 				     const gchar *mirror_uri,
 				     const gchar *output_dir,
 				     GError **error)
 {
 	AsImageAlphaFlags alpha_flags;
-	gboolean is_default;
 	guint i;
 	_cleanup_free_ gchar *basename = NULL;
 	_cleanup_free_ gchar *filename_no_path = NULL;
 	_cleanup_free_ gchar *url_src = NULL;
-	_cleanup_object_unref_ AsImage *im = NULL;
 	_cleanup_object_unref_ AsImage *im_src = NULL;
-	_cleanup_object_unref_ AsScreenshot *ss = NULL;
 	guint sizes[] = { AS_IMAGE_NORMAL_WIDTH,    AS_IMAGE_NORMAL_HEIGHT,
 			  AS_IMAGE_THUMBNAIL_WIDTH, AS_IMAGE_THUMBNAIL_HEIGHT,
 			  AS_IMAGE_LARGE_WIDTH,     AS_IMAGE_LARGE_HEIGHT,
@@ -3015,17 +3012,6 @@ as_util_mirror_screenshots_app_file (AsApp *app,
 			 filename_no_path);
 	}
 
-	ss = as_screenshot_new ();
-	is_default = as_app_get_screenshots(AS_APP(app))->len == 0;
-	as_screenshot_set_kind (ss, is_default ? AS_SCREENSHOT_KIND_DEFAULT :
-						 AS_SCREENSHOT_KIND_NORMAL);
-
-	/* add back the source image */
-	im = as_image_new ();
-	as_image_set_url (im, source_url, -1);
-	as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
-	as_screenshot_add_image (ss, im);
-
 	/* include the app-id in the basename */
 	basename = g_strdup_printf ("%s-%s.png",
 				    as_app_get_id_filename (AS_APP (app)),
@@ -3058,8 +3044,6 @@ as_util_mirror_screenshots_app_file (AsApp *app,
 				return FALSE;
 		}
 	}
-
-	as_app_add_screenshot (app, ss);
 	return TRUE;
 }
 
@@ -3075,19 +3059,20 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 				    const gchar *output_dir,
 				    GError **error)
 {
+	gboolean is_default;
 	gboolean ret = TRUE;
 	SoupStatus status;
 	SoupURI *uri = NULL;
 	_cleanup_free_ gchar *basename = NULL;
 	_cleanup_free_ gchar *cache_filename = NULL;
+	_cleanup_object_unref_ AsImage *im = NULL;
+	_cleanup_object_unref_ AsScreenshot *ss = NULL;
 	_cleanup_object_unref_ SoupMessage *msg = NULL;
 	_cleanup_object_unref_ SoupSession *session = NULL;
 
 	/* local files, typically fonts */
 	if (g_str_has_prefix (url, "file:/")) {
 		_cleanup_free_ gchar *url_new = NULL;
-		_cleanup_object_unref_ AsImage *im = NULL;
-		_cleanup_object_unref_ AsScreenshot *ss = NULL;
 		url_new = g_build_filename (mirror_uri, "source", url + 6, NULL);
 		im = as_image_new ();
 		as_image_set_url (im, url_new, -1);
@@ -3149,9 +3134,20 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 		as_util_app_log (app, "Saved to cache %s", cache_filename);
 	}
 
+	/* add back the source image */
+	ss = as_screenshot_new ();
+	is_default = as_app_get_screenshots(AS_APP(app))->len == 0;
+	as_screenshot_set_kind (ss, is_default ? AS_SCREENSHOT_KIND_DEFAULT :
+						 AS_SCREENSHOT_KIND_NORMAL);
+	im = as_image_new ();
+	as_image_set_url (im, url, -1);
+	as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
+	as_screenshot_add_image (ss, im);
+	as_app_add_screenshot (app, ss);
+
 	/* mirror the filename */
 	ret = as_util_mirror_screenshots_app_file (app,
-						   url,
+						   ss,
 						   cache_filename,
 						   mirror_uri,
 						   output_dir,
