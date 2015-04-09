@@ -511,7 +511,11 @@ as_node_to_xml (const GNode *node, AsNodeToXmlFlags flags)
 {
 	GString *xml;
 	const GNode *l;
-	guint depth_offset = g_node_depth ((GNode *) node) + 1;
+	guint depth_offset;
+
+	g_return_val_if_fail (node != NULL, NULL);
+
+	depth_offset = g_node_depth ((GNode *) node) + 1;
 	xml = g_string_new ("");
 	if ((flags & AS_NODE_TO_XML_FLAG_ADD_HEADER) > 0)
 		g_string_append (xml, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -1870,9 +1874,11 @@ as_node_get_localized_unwrap (const GNode *node, GError **error)
 	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
 	_cleanup_list_free_ GList *keys = NULL;
 
+	g_return_val_if_fail (node != NULL, NULL);
+
 	/* work out what kind of normalization this is */
 	xml_lang = as_node_get_attribute (node, "xml:lang");
-	if (xml_lang != NULL) {
+	if (xml_lang != NULL && node->children != NULL) {
 		str = as_node_to_xml (node->children, AS_NODE_TO_XML_FLAG_NONE);
 		results = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 		g_hash_table_insert (results,
