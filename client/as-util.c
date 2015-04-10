@@ -3070,10 +3070,11 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	_cleanup_object_unref_ SoupMessage *msg = NULL;
 	_cleanup_object_unref_ SoupSession *session = NULL;
 
-	/* local files, typically fonts */
-	if (g_str_has_prefix (url, "file:/")) {
+	/* fonts screenshots are auto-generated */
+	if (as_app_get_id_kind (app) == AS_ID_KIND_FONT) {
 		_cleanup_free_ gchar *url_new = NULL;
-		url_new = g_build_filename (mirror_uri, "source", url + 6, NULL);
+		basename = g_path_get_basename (url);
+		url_new = g_build_filename (mirror_uri, "source", basename, NULL);
 		im = as_image_new ();
 		as_image_set_url (im, url_new, -1);
 		as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
