@@ -387,7 +387,8 @@ asb_font_get_caption (AsbApp *app)
  * asb_font_add_screenshot:
  */
 static gboolean
-asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face, GError **error)
+asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
+			 const gchar *cache_id, GError **error)
 {
 	const gchar *cache_dir;
 	const gchar *temp_dir;
@@ -408,8 +409,7 @@ asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face, GError
 	/* is in the cache */
 	cache_dir = asb_context_get_cache_dir (plugin->ctx);
 	cache_fn = g_strdup_printf ("%s/screenshots/%s.png",
-				    cache_dir,
-				    as_app_get_id_filename (AS_APP (app)));
+				    cache_dir, cache_id);
 	if (g_file_test (cache_fn, G_FILE_TEST_EXISTS)) {
 		pixbuf = gdk_pixbuf_new_from_file (cache_fn, error);
 		if (pixbuf == NULL)
@@ -581,7 +581,9 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	FT_Library library = NULL;
 	const gchar *tmp;
 	gboolean ret = TRUE;
+	guint i;
 	const FcPattern *pattern;
+	_cleanup_free_ gchar *cache_id = NULL;
 	_cleanup_free_ gchar *comment = NULL;
 	_cleanup_free_ gchar *icon_filename = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
@@ -618,6 +620,14 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 		goto out;
 	}
 
+	/* use the filename as the cache-id */
+	cache_id = g_path_get_basename (filename);
+	for (i = 0; cache_id[i] != '\0'; i++) {
+		if (g_ascii_isalnum (cache_id[i]))
+			continue;
+		cache_id[i] = '_';
+	}
+
 	/* create app that might get merged later */
 	as_app_add_category (AS_APP (app), "Addons", -1);
 	as_app_add_category (AS_APP (app), "Fonts", -1);
@@ -632,7 +642,7 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	asb_font_add_languages (app, pattern);
 	asb_font_add_metadata (app, ft_face);
 	asb_font_fix_metadata (app);
-	ret = asb_font_add_screenshot (plugin, app, ft_face, error);
+	ret = asb_font_add_screenshot (plugin, app, ft_face, cache_id, error);
 	if (!ret)
 		goto out;
 
