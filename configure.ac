@@ -1,8 +1,8 @@
 AC_PREREQ(2.63)
 
 m4_define([as_major_version], [0])
-m4_define([as_minor_version], [3])
-m4_define([as_micro_version], [7])
+m4_define([as_minor_version], [4])
+m4_define([as_micro_version], [0])
 m4_define([as_version],
           [as_major_version.as_minor_version.as_micro_version])
 
