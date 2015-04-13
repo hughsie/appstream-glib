@@ -390,9 +390,13 @@ static gboolean
 asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
 			 const gchar *cache_id, GError **error)
 {
+	AsImage *im_tmp;
+	AsScreenshot *ss_tmp;
+	GPtrArray *screenshots;
 	const gchar *cache_dir;
 	const gchar *temp_dir;
 	const gchar *tmp;
+	guint i;
 	_cleanup_free_ gchar *basename = NULL;
 	_cleanup_free_ gchar *cache_fn = NULL;
 	_cleanup_free_ gchar *output_fn = NULL;
@@ -454,6 +458,25 @@ asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
 	if (!gdk_pixbuf_save (pixbuf, output_fn, "png", error, NULL))
 		return FALSE;
 
+	/* check the screenshot does not already exist */
+	screenshots = as_app_get_screenshots (AS_APP (app));
+	for (i = 0; i < screenshots->len; i++) {
+		ss_tmp = g_ptr_array_index (screenshots, i);
+		im_tmp = as_screenshot_get_source (ss_tmp);
+		if (im_tmp == NULL)
+			continue;
+		if (g_strcmp0 (as_image_get_md5 (im_tmp),
+			       as_image_get_md5 (im)) == 0) {
+			g_set_error (error,
+				     ASB_PLUGIN_ERROR,
+				     ASB_PLUGIN_ERROR_FAILED,
+				     "Font screenshot already exists with hash %s",
+				     as_image_get_md5 (im));
+			return FALSE;
+		}
+	}
+
+	/* add screenshot */
 	ss = as_screenshot_new ();
 	as_screenshot_set_kind (ss, AS_SCREENSHOT_KIND_DEFAULT);
 	as_screenshot_add_image (ss, im);
