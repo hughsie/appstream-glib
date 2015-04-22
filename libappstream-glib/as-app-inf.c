@@ -57,6 +57,7 @@ as_app_parse_inf_file (AsApp *app,
 	guint64 timestamp;
 	guint i;
 	_cleanup_error_free_ GError *error_local = NULL;
+	_cleanup_free_ gchar *catalog_basename = NULL;
 	_cleanup_free_ gchar *class = NULL;
 	_cleanup_free_ gchar *comment = NULL;
 	_cleanup_free_ gchar *filename_full = NULL;
@@ -161,6 +162,11 @@ as_app_parse_inf_file (AsApp *app,
 		return FALSE;
 	}
 	as_app_add_metadata (app, "FirmwareBasename", firmware_basename, -1);
+
+	/* optional */
+	catalog_basename = g_key_file_get_string (kf, "Version", "CatalogFile", NULL);
+	if (catalog_basename != NULL)
+		as_app_add_metadata (app, "CatalogBasename", catalog_basename, -1);
 
 	/* add a release with no real description */
 	release = as_release_new ();
