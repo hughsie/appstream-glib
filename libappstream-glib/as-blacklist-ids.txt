@@ -79,7 +79,6 @@ rygel-preferences.desktop
 *-shareware.desktop
 sr-editor.desktop
 superkaramba.desktop
-system-config-*.desktop
 tracker-preferences.desktop
 transgui.desktop
 WebHTTrack-Websites.desktop
