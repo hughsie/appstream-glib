@@ -178,6 +178,12 @@ asb_plugin_process_app (AsbPlugin *plugin,
 					      AS_KUDO_KIND_HIGH_CONTRAST);
 			break;
 		}
+		if (asb_plugin_match_glob ("/usr/share/icons/hicolor/symbolic/apps/*.svg",
+					   filelist[i])) {
+			as_app_add_kudo_kind (AS_APP (app),
+					      AS_KUDO_KIND_HIGH_CONTRAST);
+			break;
+		}
 	}
 
 	/* look for a modern toolkit */
