@@ -24,7 +24,7 @@ emerald-decorator.desktop
 exo-file-manager.desktop
 exo-mail-reader.desktop
 exo-terminal-emulator.desktop
-exo-web-browser
+exo-web-browser.desktop
 fldigi-doc.desktop
 flight-of-the-amazon-queen-cd.desktop
 freedink-dfarc.desktop
