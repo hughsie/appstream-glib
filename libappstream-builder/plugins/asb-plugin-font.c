@@ -629,8 +629,13 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	_cleanup_free_ gchar *icon_filename = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
 
-	/* load font */
+	/* create a new fontconfig configuration */
 	config = FcConfigCreate ();
+
+	/* ensure that default configuration and fonts are not loaded */
+	FcConfigSetCurrent (config);
+
+	/* add just this one font */
 	ret = FcConfigAppFontAddFile (config, (FcChar8 *) filename);
 	if (FALSE && !ret) { /* FIXME: fails since f22 even for success */
 		g_set_error (error,
