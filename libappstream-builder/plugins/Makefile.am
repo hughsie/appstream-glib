@@ -13,7 +13,7 @@ AM_CPPFLAGS =						\
 	-I$(top_builddir)/libappstream-builder		\
 	-DG_LOG_DOMAIN=\"Asb\"
 
-plugindir = $(libdir)/asb-plugins
+plugindir = $(libdir)/asb-plugins-$(AS_PLUGIN_VERSION)
 plugin_LTLIBRARIES =					\
 	libasb_plugin_absorb.la				\
 	libasb_plugin_appdata.la			\

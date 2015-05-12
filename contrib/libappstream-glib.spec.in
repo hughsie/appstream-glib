@@ -37,6 +37,9 @@ BuildRequires: docbook-style-xsl
 Obsoletes: appdata-tools < 0.1.9
 Provides: appdata-tools
 
+# this is not a library version
+%define as_plugin_version               2
+
 %description
 This library provides GObjects and helper methods to make it easy to read and
 write AppStream metadata. It also provides a simple DOM implementation that
@@ -83,7 +86,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 %__rm -f %{buildroot}%{_libdir}/libappstream-glib*.la
 %__rm -f %{buildroot}%{_libdir}/libappstream-builder*.la
-%__rm -f %{buildroot}%{_libdir}/asb-plugins/*.la
+%__rm -f %{buildroot}%{_libdir}/asb-plugins-%{as_plugin_version}/*.la
 
 %find_lang appstream-glib
 
@@ -117,7 +120,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %doc COPYING
 %{_bindir}/appstream-builder
 %{_datadir}/bash-completion/completions/appstream-builder
-%{_libdir}/asb-plugins/*.so
+%{_libdir}/asb-plugins-%{as_plugin_version}/*.so
 %{_libdir}/libappstream-builder.so.7*
 %{_mandir}/man1/appstream-builder.1.gz
 

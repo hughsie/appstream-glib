@@ -24,6 +24,12 @@ AC_SUBST(AS_MINOR_VERSION)
 AC_SUBST(AS_MICRO_VERSION)
 AC_SUBST(AS_VERSION)
 
+# this refers to the plugin API version
+# this is not in any way related to a package or soname version
+AS_PLUGIN_VERSION=2
+AC_SUBST(AS_PLUGIN_VERSION)
+AC_DEFINE_UNQUOTED([AS_PLUGIN_VERSION], "$AS_PLUGIN_VERSION", [plugin API version])
+
 # enable nice build output on automake1.11
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
