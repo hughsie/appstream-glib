@@ -257,11 +257,17 @@ main (int argc, char **argv)
 		icons_dir = g_build_filename (temp_dir, "icons", NULL);
 	if (cache_dir == NULL)
 		cache_dir = g_strdup ("./cache");
-	if (basename == NULL)
-		basename = g_strdup ("appstream");
-	if (origin == NULL)
-		origin = g_strdup ("example");
 	setlocale (LC_ALL, "");
+
+	/* this really ought to be set */
+	if (basename == NULL) {
+		g_print ("WARNING: Metadata basename not set, using 'appstream'\n");
+		basename = g_strdup ("example");
+	}
+	if (origin == NULL) {
+		g_print ("WARNING: Metadata origin not set, using 'example'\n");
+		origin = g_strdup ("example");
+	}
 
 	ctx = asb_context_new ();
 	asb_context_set_api_version (ctx, api_version);
