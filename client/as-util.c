@@ -1400,6 +1400,7 @@ static gboolean
 as_util_install_origin (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	guint i;
+	const gchar *destdir;
 
 	/* check args */
 	if (g_strv_length (values) < 2) {
@@ -1413,10 +1414,12 @@ as_util_install_origin (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* for each item on the command line, install the xml files and
 	 * explode the icon files */
+	destdir = g_getenv ("DESTDIR");
 	for (i = 1; values[i] != NULL; i++) {
-		if (!as_utils_install_filename (AS_UTILS_LOCATION_CACHE,
+		if (!as_utils_install_filename (destdir != NULL ? AS_UTILS_LOCATION_SHARED :
+								  AS_UTILS_LOCATION_CACHE,
 						values[i], values[0],
-						g_getenv ("DESTDIR"),
+						destdir,
 						error))
 			return FALSE;
 	}
