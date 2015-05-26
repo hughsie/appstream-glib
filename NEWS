@@ -1,3 +1,28 @@
+Version 0.4.0
+~~~~~~~~~~~~~
+Released: 2015-05-26
+
+Notes:
+ - Remove extra-appstream support from the builder (Richard Hughes)
+ - Remove all networking support when building metadata (Richard Hughes)
+ - Remove the batch output option from the builder (Richard Hughes)
+ - Remove the extra screenshots and appdata options from the builder (Richard Hughes)
+
+New Features:
+ - Add a mirror-screenshots command to appstream-util (Richard Hughes)
+ - Detect recolorable symbolic icons (Richard Hughes)
+
+Bugfixes:
+ - Add text icons and sample text for some languages (Parag Nemade)
+ - Allow using unwrapped description markup (Richard Hughes)
+ - Check for duplicate screenshots when adding fonts (Richard Hughes)
+ - Do not use the cache location when using install-origin with a DESTDIR (Richard Hughes)
+ - Fix a crash for an invalid AppData file (Richard Hughes)
+ - Fix exo-web-browser blacklist entry (Kalev Lember)
+ - Link libasb_plugin_font.la with GTK3 (Dominique Leuenberger)
+ - Remove overzealous blacklisting entry (Richard Hughes)
+ - Version the builder plugin location (Richard Hughes)
+
 Version 0.3.6
 ~~~~~~~~~~~~~
 Released: 2015-03-30
