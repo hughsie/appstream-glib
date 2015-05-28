@@ -263,8 +263,8 @@ as_util_convert_appdata (GFile *file_input,
 	n2 = as_node_find (n, "metadata_license");
 	if (n2 == NULL) {
 		action_required = TRUE;
-		n2 = as_node_insert (n, "metadata_license", "<!-- Insert SPDX ID Here -->",
-				     AS_NODE_INSERT_FLAG_PRE_ESCAPED, NULL);
+		as_node_insert (n, "metadata_license", "<!-- Insert SPDX ID Here -->",
+				AS_NODE_INSERT_FLAG_PRE_ESCAPED, NULL);
 	} else {
 		tmp = as_node_get_data (n2);
 
@@ -361,8 +361,8 @@ as_util_convert_appdata (GFile *file_input,
 			n3 = as_node_insert (n, "url", "<!-- http://www.homepage.com/ -->",
 					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "homepage", NULL);
-			as_node_set_comment (n3, "FIXME: homepage for the application", -1);
 		}
+		as_node_set_comment (n3, "FIXME: homepage for the application", -1);
 	}
 	if (as_node_find_with_attribute (n, "url", "type", "bugtracker") == NULL) {
 		if (g_strcmp0 (project_group, "GNOME") == 0) {
@@ -3464,7 +3464,7 @@ as_util_ignore_cb (const gchar *log_domain, GLogLevelFlags log_level,
 int
 main (int argc, char *argv[])
 {
-	AsUtilPrivate *priv;
+	AsUtilPrivate *priv = NULL;
 	gboolean ret;
 	gboolean nonet = FALSE;
 	gboolean verbose = FALSE;
