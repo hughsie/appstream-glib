@@ -899,6 +899,8 @@ as_node_get_child_node (const GNode *root, const gchar *name,
 	GNode *node;
 
 	/* invalid */
+	if (root == NULL)
+		return NULL;
 	if (name == NULL || name[0] == '\0')
 		return NULL;
 
