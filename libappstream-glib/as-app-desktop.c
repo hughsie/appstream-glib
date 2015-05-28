@@ -40,7 +40,7 @@ as_app_desktop_key_get_locale (const gchar *key)
 	if (tmp1 == NULL)
 		return NULL;
 	tmp2 = g_strstr_len (tmp1, -1, "]");
-	if (tmp1 == NULL)
+	if (tmp2 == NULL)
 		return NULL;
 	locale = g_strdup (tmp1 + 1);
 	locale[tmp2 - tmp1 - 1] = '\0';
