@@ -112,7 +112,16 @@ you should finally see:
 
 You now have two choices what to do with these files. You can either upload
 them with the rest of the metadata you ship (e.g. in the same directory as
-`repomd.xml` and `primary.sqlite.bz2`) which will work with Fedora 22 and later.
+`repomd.xml` and `primary.sqlite.bz2`) which will work with Fedora 22 and later:
+
+    modifyrepo_c \
+        --no-compress \
+        /tmp/asb-md/appstream.xml.gz \
+        /path/to/repodata/
+    modifyrepo_c \
+        --no-compress \
+        /tmp/asb-md/appstream-icons.tar.gz \
+        /path/to/repodata/
 
 For Fedora 20 and 21, you have to actually install these files, so you can do
 something like this in the megarpms-release.spec file:
