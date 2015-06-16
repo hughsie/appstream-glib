@@ -3374,6 +3374,92 @@ as_util_replace_screenshots (AsUtilPrivate *priv, gchar **values, GError **error
 }
 
 /**
+ * as_util_pad_strings:
+ **/
+static void
+as_util_pad_strings (const gchar *id, const gchar *msg, guint align)
+{
+	guint i;
+	g_print ("%s", id);
+	for (i = strlen (id); i < align; i++)
+		g_print (" ");
+	g_print (" %s\n", msg);
+}
+
+/**
+ * as_util_incorporate:
+ **/
+static gboolean
+as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsApp *app;
+	AsApp *app_source;
+	GPtrArray *apps;
+	const gchar *id;
+	const guint align = 50;
+	guint i;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ AsStore *helper = NULL;
+	_cleanup_object_unref_ GFile *file_new = NULL;
+	_cleanup_object_unref_ GFile *file_old= NULL;
+	_cleanup_object_unref_ GFile *file_helper = NULL;
+
+	/* check args */
+	if (g_strv_length (values) < 3) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, expected: old.xml helper.xml new.xml");
+		return FALSE;
+	}
+
+	/* load old data */
+	file_old = g_file_new_for_path (values[0]);
+	store = as_store_new ();
+	if (!as_store_from_file (store, file_old, NULL, NULL, error))
+		return FALSE;
+
+	/* load as_util_helper data */
+	file_helper = g_file_new_for_path (values[1]);
+	helper = as_store_new ();
+	if (!as_store_from_file (helper, file_helper, NULL, NULL, error))
+		return FALSE;
+
+	/* try to incorporate apps in the old store */
+	apps = as_store_get_apps (store);
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		id = as_app_get_id (app);
+		if (as_app_get_description_size (app) > 0) {
+			as_util_pad_strings (id, "Already has AppData", align);
+			continue;
+		}
+		app_source = as_store_get_app_by_id (helper, id);
+		if (app_source == NULL) {
+			as_util_pad_strings (id, "Not found", align);
+			continue;
+		}
+		if (as_app_get_description_size (app_source) == 0) {
+			as_util_pad_strings (id, "No source AppData", align);
+			continue;
+		}
+		as_util_pad_strings (id, "Incorporating...", align);
+		as_app_subsume_full (app, app_source,
+				     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
+	}
+
+	/* save new store */
+	file_new = g_file_new_for_path (values[2]);
+	if (!as_store_to_file (store, file_new,
+			       AS_NODE_TO_XML_FLAG_ADD_HEADER |
+			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+			       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE,
+			       NULL, error))
+		return FALSE;
+	return TRUE;
+}
+
+/**
  * as_util_check_root:
  *
  * What kind of errors this will detect:
@@ -3621,6 +3707,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Mirror upstream screenshots"),
 		     as_util_mirror_screenshots);
+	as_util_add (priv->cmd_array,
+		     "incorporate",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Incorporate extra metadata from an external file"),
+		     as_util_incorporate);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
