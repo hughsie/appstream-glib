@@ -312,22 +312,23 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 			     GError **error)
 {
 	AsIcon *icon;
+	AsAppParseFlags parse_flags = AS_APP_PARSE_FLAG_USE_HEURISTICS;
 	gboolean ret;
 	_cleanup_free_ gchar *app_id = NULL;
 	_cleanup_free_ gchar *full_filename = NULL;
 	_cleanup_object_unref_ AsbApp *app = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
 
+	/* use GenericName fallback */
+	if (asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_USE_FALLBACKS))
+		parse_flags |= AS_APP_PARSE_FLAG_USE_FALLBACKS;
+
 	/* create app */
 	app_id = g_path_get_basename (filename);
 	app = asb_app_new (pkg, app_id);
 	asb_app_set_hidpi_enabled (app, asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS));
 	full_filename = g_build_filename (tmpdir, filename, NULL);
-	ret = as_app_parse_file (AS_APP (app),
-				 full_filename,
-				 AS_APP_PARSE_FLAG_USE_HEURISTICS,
-				 error);
-	if (!ret)
+	if (!as_app_parse_file (AS_APP (app), full_filename, parse_flags, error))
 		return FALSE;
 
 	/* NoDisplay apps are never included */

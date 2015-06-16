@@ -320,6 +320,43 @@ as_app_parse_file_key (AsApp *app,
 }
 
 /**
+ * as_app_parse_file_key_fallback_comment:
+ **/
+static gboolean
+as_app_parse_file_key_fallback_comment (AsApp *app,
+					GKeyFile *kf,
+					const gchar *key,
+					GError **error)
+{
+	_cleanup_free_ gchar *locale = NULL;
+	_cleanup_free_ gchar *tmp = NULL;
+
+	/* GenericName */
+	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME) == 0 ||
+	           g_strcmp0 (key, "_GenericName") == 0) {
+		tmp = g_key_file_get_string (kf,
+					     G_KEY_FILE_DESKTOP_GROUP,
+					     key,
+					     NULL);
+		if (tmp != NULL && tmp[0] != '\0')
+			as_app_set_comment (app, "C", tmp, -1);
+
+	/* GenericName[] */
+	} else if (g_str_has_prefix (key, G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME)) {
+		locale = as_app_desktop_key_get_locale (key);
+		tmp = g_key_file_get_locale_string (kf,
+						    G_KEY_FILE_DESKTOP_GROUP,
+						    G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME,
+						    locale,
+						    NULL);
+		if (tmp != NULL && tmp[0] != '\0')
+			as_app_set_comment (app, locale, tmp, -1);
+	}
+
+	return TRUE;
+}
+
+/**
  * as_app_parse_desktop_file:
  **/
 gboolean
@@ -373,6 +410,18 @@ as_app_parse_desktop_file (AsApp *app,
 			return FALSE;
 		if ((flags & AS_APP_PARSE_FLAG_USE_HEURISTICS) > 0) {
 			if (!as_app_infer_file_key (app, kf, keys[i], error))
+				return FALSE;
+		}
+	}
+
+	/* perform any fallbacks */
+	if ((flags & AS_APP_PARSE_FLAG_USE_FALLBACKS) > 0 &&
+	    as_app_get_comment_size (app) == 0) {
+		for (i = 0; keys[i] != NULL; i++) {
+			if (!as_app_parse_file_key_fallback_comment (app,
+								     kf,
+								     keys[i],
+								     error))
 				return FALSE;
 		}
 	}
