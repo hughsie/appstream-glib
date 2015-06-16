@@ -3425,7 +3425,7 @@ as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 	if (!as_store_from_file (helper, file_helper, NULL, NULL, error))
 		return FALSE;
 
-	/* try to incorporate apps in the old store */
+	/* try to incorporate apps using the application ID */
 	apps = as_store_get_apps (store);
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
@@ -3435,6 +3435,29 @@ as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 			continue;
 		}
 		app_source = as_store_get_app_by_id_with_fallbacks (helper, id);
+		if (app_source == NULL) {
+			as_util_pad_strings (id, "Not found", align);
+			continue;
+		}
+		if (as_app_get_description_size (app_source) == 0) {
+			as_util_pad_strings (id, "No source AppData", align);
+			continue;
+		}
+		as_util_pad_strings (id, "Incorporating...", align);
+		as_app_subsume_full (app, app_source,
+				     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
+	}
+
+	/* try to incorporate apps using the package name */
+	apps = as_store_get_apps (store);
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		id = as_app_get_id (app);
+		if (as_app_get_description_size (app) > 0) {
+			as_util_pad_strings (id, "Already has AppData", align);
+			continue;
+		}
+		app_source = as_store_get_app_by_pkgname (helper, as_app_get_pkgname_default (app));
 		if (app_source == NULL) {
 			as_util_pad_strings (id, "Not found", align);
 			continue;
