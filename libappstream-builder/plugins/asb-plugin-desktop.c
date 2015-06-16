@@ -216,26 +216,28 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	}
 
 	/* is icon in a unsupported format */
-	if (g_str_has_suffix (fn, ".xpm")) {
-		g_set_error (error,
-			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
-			     "Uses XPM icon: %s", key);
-		return FALSE;
-	}
-	if (g_str_has_suffix (fn, ".gif")) {
-		g_set_error (error,
-			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
-			     "Uses GIF icon: %s", key);
-		return FALSE;
-	}
-	if (g_str_has_suffix (fn, ".ico")) {
-		g_set_error (error,
-			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
-			     "Uses ICO icon: %s", key);
-		return FALSE;
+	if (!asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_IGNORE_LEGACY_ICONS)) {
+		if (g_str_has_suffix (fn, ".xpm")) {
+			g_set_error (error,
+				     ASB_PLUGIN_ERROR,
+				     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
+				     "Uses XPM icon: %s", key);
+			return FALSE;
+		}
+		if (g_str_has_suffix (fn, ".gif")) {
+			g_set_error (error,
+				     ASB_PLUGIN_ERROR,
+				     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
+				     "Uses GIF icon: %s", key);
+			return FALSE;
+		}
+		if (g_str_has_suffix (fn, ".ico")) {
+			g_set_error (error,
+				     ASB_PLUGIN_ERROR,
+				     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
+				     "Uses ICO icon: %s", key);
+			return FALSE;
+		}
 	}
 
 	/* load the icon */

@@ -293,6 +293,18 @@ main (int argc, char **argv)
 				flags |= ASB_CONTEXT_FLAG_IGNORE_MISSING_PARENTS;
 				continue;
 			}
+			if (g_strcmp0 (veto_ignore[i], "dead-upstream") == 0) {
+				flags |= ASB_CONTEXT_FLAG_IGNORE_DEAD_UPSTREAM;
+				continue;
+			}
+			if (g_strcmp0 (veto_ignore[i], "obsolete-deps") == 0) {
+				flags |= ASB_CONTEXT_FLAG_IGNORE_OBSOLETE_DEPS;
+				continue;
+			}
+			if (g_strcmp0 (veto_ignore[i], "legacy-icons") == 0) {
+				flags |= ASB_CONTEXT_FLAG_IGNORE_LEGACY_ICONS;
+				continue;
+			}
 			g_warning ("Unknown flag name: %s, "
 				   "expected 'missing-info' or 'missing-parents'",
 				   veto_ignore[i]);
