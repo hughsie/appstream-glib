@@ -72,6 +72,7 @@ struct _AsbContextClass
  * @ASB_CONTEXT_FLAG_IGNORE_DEAD_UPSTREAM:	Include apps that are dead upstream
  * @ASB_CONTEXT_FLAG_IGNORE_OBSOLETE_DEPS:	Include apps that use obsolete toolkits
  * @ASB_CONTEXT_FLAG_IGNORE_LEGACY_ICONS:	Include apps that use legacy icon formats
+ * @ASB_CONTEXT_FLAG_IGNORE_SETTINGS:		Include apps that are marked as settings
  *
  * The flags to use when processing the context.
  **/
@@ -88,6 +89,7 @@ typedef enum {
 	ASB_CONTEXT_FLAG_IGNORE_DEAD_UPSTREAM	= 1 << 7,	/* Since: 0.4.1 */
 	ASB_CONTEXT_FLAG_IGNORE_OBSOLETE_DEPS	= 1 << 8,	/* Since: 0.4.1 */
 	ASB_CONTEXT_FLAG_IGNORE_LEGACY_ICONS	= 1 << 9,	/* Since: 0.4.1 */
+	ASB_CONTEXT_FLAG_IGNORE_SETTINGS	= 1 << 10,	/* Since: 0.4.1 */
 	/*< private >*/
 	ASB_CONTEXT_FLAG_LAST,
 } AsbContextFlags;

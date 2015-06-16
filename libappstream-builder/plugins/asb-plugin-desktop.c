@@ -335,10 +335,12 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		asb_app_add_requires_appdata (app, "NoDisplay=true");
 
 	/* Settings or DesktopSettings requires AppData */
-	if (as_app_has_category (AS_APP (app), "Settings"))
-		asb_app_add_requires_appdata (app, "Category=Settings");
-	if (as_app_has_category (AS_APP (app), "DesktopSettings"))
-		asb_app_add_requires_appdata (app, "Category=DesktopSettings");
+	if (!asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_IGNORE_SETTINGS)) {
+		if (as_app_has_category (AS_APP (app), "Settings"))
+			asb_app_add_requires_appdata (app, "Category=Settings");
+		if (as_app_has_category (AS_APP (app), "DesktopSettings"))
+			asb_app_add_requires_appdata (app, "Category=DesktopSettings");
+	}
 
 	/* is the icon a stock-icon-name? */
 	icon = as_app_get_icon_default (AS_APP (app));

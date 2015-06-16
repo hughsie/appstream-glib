@@ -305,6 +305,10 @@ main (int argc, char **argv)
 				flags |= ASB_CONTEXT_FLAG_IGNORE_LEGACY_ICONS;
 				continue;
 			}
+			if (g_strcmp0 (veto_ignore[i], "ignore-settings") == 0) {
+				flags |= ASB_CONTEXT_FLAG_IGNORE_SETTINGS;
+				continue;
+			}
 			g_warning ("Unknown flag name: %s, "
 				   "expected 'missing-info' or 'missing-parents'",
 				   veto_ignore[i]);
