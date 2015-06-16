@@ -29,7 +29,6 @@ fldigi-doc.desktop
 flight-of-the-amazon-queen-cd.desktop
 freedink-dfarc.desktop
 freedinkedit.desktop
-fedora-release-notes*.desktop
 gcompris-edit.desktop
 glade3.desktop
 gnome-glade-2.desktop
@@ -41,7 +40,7 @@ hamster-time-tracker-overview.desktop
 ibus-setup-*.desktop
 importwizard.desktop
 itweb-settings.desktop
-java-*-openjdk.desktop
+java-*-openjdk*.desktop
 kaddressbook-importer.desktop
 kbd-layout-viewer.desktop
 kcm*.desktop
@@ -69,7 +68,8 @@ razor-config*.desktop
 redhat-userinfo.desktop
 redhat-usermount.desktop
 redhat-userpasswd.desktop
-*-release-notes.desktop
+*release-notes*.desktop
+*Release_Notes*.desktop
 remote-viewer.desktop
 Rodent-*.desktop
 rxvt-unicode-*.desktop
