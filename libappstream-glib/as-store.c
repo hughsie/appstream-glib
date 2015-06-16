@@ -391,6 +391,113 @@ as_store_get_app_by_id (AsStore *store, const gchar *id)
 }
 
 /**
+ * as_store_get_app_by_id_with_fallbacks:
+ * @store: a #AsStore instance.
+ * @id: the application full ID.
+ *
+ * Finds an application in the store by either by the current desktop ID
+ * or a desktop ID that it has used previously. This allows upstream software
+ * to change their ID (e.g. from cheese.desktop to org.gnome.Cheese.desktop)
+ * without us duplicating entries in the software center.
+ *
+ * Returns: (transfer none): a #AsApp or %NULL
+ *
+ * Since: 0.4.1
+ **/
+AsApp *
+as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
+{
+	AsApp *app;
+	guint i;
+	const struct {
+		const gchar	*old;
+		const gchar	*new;
+	} id_map[] = {
+		/* GNOME */
+		{ "baobab.desktop",		"org.gnome.baobab.desktop" },
+		{ "california.desktop",		"org.gnome.Calendar.desktop" },
+		{ "cheese.desktop",		"org.gnome.Cheese.desktop" },
+		{ "file-roller.desktop",	"org.gnome.FileRoller.desktop" },
+		{ "gcalctool.desktop",		"gnome-calculator.desktop" },
+		{ "gedit.desktop",		"org.gnome.gedit.desktop" },
+		{ "glchess.desktop",		"gnome-chess.desktop" },
+		{ "glines.desktop",		"five-or-more.desktop" },
+		{ "gnect.desktop",		"four-in-a-row.desktop" },
+		{ "gnibbles.desktop",		"gnome-nibbles.desktop" },
+		{ "gnobots2.desktop",		"gnome-robots.desktop" },
+		{ "gnome-2048.desktop",		"org.gnome.gnome-2048.desktop" },
+		{ "gnome-boxes.desktop",	"org.gnome.Boxes.desktop" },
+		{ "gnome-clocks.desktop",	"org.gnome.clocks.desktop" },
+		{ "gnome-contacts.desktop",	"org.gnome.Contacts.desktop" },
+		{ "gnome-dictionary.desktop",	"org.gnome.Dictionary.desktop" },
+		{ "gnome-disks.desktop",	"org.gnome.DiskUtility.desktop" },
+		{ "gnome-documents.desktop",	"org.gnome.Documents.desktop" },
+		{ "gnome-font-viewer.desktop",	"org.gnome.font-viewer.desktop" },
+		{ "gnome-maps.desktop",		"org.gnome.Maps.desktop" },
+		{ "gnome-photos.desktop",	"org.gnome.Photos.desktop" },
+		{ "gnome-screenshot.desktop",	"org.gnome.Screenshot.desktop" },
+		{ "gnome-software.desktop",	"org.gnome.Software.desktop" },
+		{ "gnome-sound-recorder.desktop", "org.gnome.SoundRecorder.desktop" },
+		{ "gnome-terminal.desktop",	"org.gnome.Terminal.desktop" },
+		{ "gnome-weather.desktop",	"org.gnome.Weather.Application.desktop" },
+		{ "gnomine.desktop",		"gnome-mines.desktop" },
+		{ "gnotravex.desktop",		"gnome-tetravex.desktop" },
+		{ "gnotski.desktop",		"gnome-klotski.desktop" },
+		{ "gtali.desktop",		"tali.desktop" },
+		{ "nautilus.desktop",		"org.gnome.Nautilus.desktop" },
+		{ "polari.desktop",		"org.gnome.Polari.desktop" },
+		{ "totem.desktop",		"org.gnome.Totem.desktop" },
+
+		/* KDE */
+		{ "blinken.desktop",		"org.kde.blinken.desktop" },
+		{ "cantor.desktop",		"org.kde.cantor.desktop" },
+		{ "filelight.desktop",		"org.kde.filelight.desktop" },
+		{ "gwenview.desktop",		"org.kde.gwenview.desktop" },
+		{ "kalgebra.desktop",		"org.kde.kalgebra.desktop" },
+		{ "kanagram.desktop",		"org.kde.kanagram.desktop" },
+		{ "kapman.desktop",		"org.kde.kapman.desktop" },
+		{ "kbruch.desktop",		"org.kde.kbruch.desktop" },
+		{ "kgeography.desktop",		"org.kde.kgeography.desktop" },
+		{ "khangman.desktop",		"org.kde.khangman.desktop" },
+		{ "kiten.desktop",		"org.kde.kiten.desktop" },
+		{ "klettres.desktop",		"org.kde.klettres.desktop" },
+		{ "klipper.desktop",		"org.kde.klipper.desktop" },
+		{ "kmplot.desktop",		"org.kde.kmplot.desktop" },
+		{ "kollision.desktop",		"org.kde.kollision.desktop" },
+		{ "konsole.desktop",		"org.kde.konsole.desktop" },
+		{ "kstars.desktop",		"org.kde.kstars.desktop" },
+		{ "kturtle.desktop",		"org.kde.kturtle.desktop" },
+		{ "kwordquiz.desktop",		"org.kde.kwordquiz.desktop" },
+		{ "okteta.desktop",		"org.kde.okteta.desktop" },
+		{ "parley.desktop",		"org.kde.parley.desktop" },
+		{ "partitionmanager.desktop",	"org.kde.PartitionManager.desktop" },
+		{ "step.desktop",		"org.kde.step.desktop" },
+
+		/* others */
+		{ "colorhug-ccmx.desktop",	"com.hughski.ColorHug.CcmxLoader.desktop" },
+		{ "colorhug-flash.desktop",	"com.hughski.ColorHug.FlashLoader.desktop" },
+		{ "dconf-editor.desktop",	"ca.desrt.dconf-editor.desktop" },
+
+		{ NULL, NULL }
+	};
+
+	/* trivial case */
+	app = as_store_get_app_by_id (store, id);
+	if (app != NULL)
+		return app;
+
+	/* has the application ID been renamed */
+	for (i = 0; id_map[i].old != NULL; i++) {
+		if (g_strcmp0 (id, id_map[i].old) == 0)
+			return as_store_get_app_by_id (store, id_map[i].new);
+		if (g_strcmp0 (id, id_map[i].new) == 0)
+			return as_store_get_app_by_id (store, id_map[i].old);
+	}
+
+	return NULL;
+}
+
+/**
  * as_store_get_app_by_pkgname:
  * @store: a #AsStore instance.
  * @pkgname: the package name.

@@ -1323,6 +1323,10 @@ as_test_store_local_app_install_func (void)
 	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "A test program");
 	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_APP_SOURCE_KIND_APPSTREAM);
 
+	/* get the new name too */
+	app = as_store_get_app_by_id_with_fallbacks (store, "test.desktop");
+	g_assert (app != NULL);
+
 	/* check icons */
 	g_assert_cmpint (as_app_get_icons(app)->len, ==, 1);
 	ic = as_app_get_icon_default (app);

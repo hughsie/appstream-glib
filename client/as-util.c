@@ -3434,7 +3434,7 @@ as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 			as_util_pad_strings (id, "Already has AppData", align);
 			continue;
 		}
-		app_source = as_store_get_app_by_id (helper, id);
+		app_source = as_store_get_app_by_id_with_fallbacks (helper, id);
 		if (app_source == NULL) {
 			as_util_pad_strings (id, "Not found", align);
 			continue;
