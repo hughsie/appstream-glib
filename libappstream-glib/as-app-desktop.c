@@ -98,12 +98,34 @@ as_app_infer_file_key (AsApp *app,
 }
 
 /**
+ * _as_utils_is_stock_icon_name_fallback:
+ **/
+static gboolean
+_as_utils_is_stock_icon_name_fallback (const gchar *name)
+{
+	guint i;
+	const gchar *names[] = {
+		"fedora-logo-sprite",
+		"gtk-preferences",
+		"hwinfo",
+		"trash-empty",
+		"utilities-log-viewer",
+		NULL };
+	for (i = 0; names[i] != NULL; i++) {
+		if (g_strcmp0 (name, names[i]) == 0)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+/**
  * as_app_parse_file_key:
  **/
 static gboolean
 as_app_parse_file_key (AsApp *app,
 		       GKeyFile *kf,
 		       const gchar *key,
+		       AsAppParseFlags flags,
 		       GError **error)
 {
 	gchar *dot = NULL;
@@ -150,6 +172,10 @@ as_app_parse_file_key (AsApp *app,
 			if (dot != NULL)
 				*dot = '\0';
 			if (as_utils_is_stock_icon_name (tmp)) {
+				as_icon_set_name (icon, tmp, -1);
+				as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+			} else if ((flags & AS_APP_PARSE_FLAG_USE_FALLBACKS) > 0 &&
+				   _as_utils_is_stock_icon_name_fallback (tmp)) {
 				as_icon_set_name (icon, tmp, -1);
 				as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
 			} else {
@@ -406,7 +432,7 @@ as_app_parse_desktop_file (AsApp *app,
 	if (keys == NULL)
 		return FALSE;
 	for (i = 0; keys[i] != NULL; i++) {
-		if (!as_app_parse_file_key (app, kf, keys[i], error))
+		if (!as_app_parse_file_key (app, kf, keys[i], flags, error))
 			return FALSE;
 		if ((flags & AS_APP_PARSE_FLAG_USE_HEURISTICS) > 0) {
 			if (!as_app_infer_file_key (app, kf, keys[i], error))
