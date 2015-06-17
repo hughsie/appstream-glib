@@ -3387,6 +3387,70 @@ as_util_pad_strings (const gchar *id, const gchar *msg, guint align)
 }
 
 /**
+ * as_util_compare:
+ **/
+static gboolean
+as_util_compare (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsApp *app;
+	GPtrArray *apps;
+	const gchar *id;
+	const guint align = 50;
+	guint i;
+	_cleanup_object_unref_ GFile *file_new = NULL;
+	_cleanup_object_unref_ GFile *file_old= NULL;
+	_cleanup_object_unref_ AsStore *store_new = NULL;
+	_cleanup_object_unref_ AsStore *store_old = NULL;
+
+	/* check args */
+	if (g_strv_length (values) != 2) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, expected: old.xml new.xml");
+		return FALSE;
+	}
+
+	/* load old data */
+	file_old = g_file_new_for_path (values[0]);
+	store_old = as_store_new ();
+	if (!as_store_from_file (store_old, file_old, NULL, NULL, error))
+		return FALSE;
+
+	/* load new data */
+	file_new = g_file_new_for_path (values[1]);
+	store_new = as_store_new ();
+	if (!as_store_from_file (store_new, file_new, NULL, NULL, error))
+		return FALSE;
+
+	/* find apps in old that are not in new */
+	apps = as_store_get_apps (store_old);
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_id_kind (app) == AS_ID_KIND_WEB_APP)
+			continue;
+		id = as_app_get_id (app);
+		if (as_store_get_app_by_id_with_fallbacks (store_new, id) != NULL)
+			continue;
+		as_util_pad_strings (id, "Removed", align);
+	}
+
+	/* find apps in new that are not in old */
+	apps = as_store_get_apps (store_new);
+	for (i = 0; i < apps->len; i++) {
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_id_kind (app) == AS_ID_KIND_WEB_APP)
+			continue;
+		id = as_app_get_id (app);
+		if (as_store_get_app_by_id_with_fallbacks (store_old, id) != NULL)
+			continue;
+		as_util_pad_strings (id, "Added", align);
+	}
+
+	return TRUE;
+}
+
+/**
  * as_util_incorporate:
  **/
 static gboolean
@@ -3736,6 +3800,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Incorporate extra metadata from an external file"),
 		     as_util_incorporate);
+	as_util_add (priv->cmd_array,
+		     "compare",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Compare the contents of two AppStream files"),
+		     as_util_compare);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
