@@ -2749,6 +2749,12 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		as_app_add_kudo (app, tmp, -1);
 	}
 
+	/* categories */
+	for (i = 0; i < priv->categories->len; i++) {
+		tmp = g_ptr_array_index (priv->categories, i);
+		as_app_add_category (app, tmp, -1);
+	}
+
 	/* permissions */
 	for (i = 0; i < priv->permissions->len; i++) {
 		tmp = g_ptr_array_index (priv->permissions, i);
