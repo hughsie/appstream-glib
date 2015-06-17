@@ -415,7 +415,6 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 	} id_map[] = {
 		/* GNOME */
 		{ "baobab.desktop",		"org.gnome.baobab.desktop" },
-		{ "california.desktop",		"org.gnome.Calendar.desktop" },
 		{ "cheese.desktop",		"org.gnome.Cheese.desktop" },
 		{ "file-roller.desktop",	"org.gnome.FileRoller.desktop" },
 		{ "gcalctool.desktop",		"gnome-calculator.desktop" },
