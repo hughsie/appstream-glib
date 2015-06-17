@@ -516,6 +516,35 @@ as_store_get_app_by_pkgname (AsStore *store, const gchar *pkgname)
 }
 
 /**
+ * as_store_get_app_by_pkgnames:
+ * @store: a #AsStore instance.
+ * @pkgnames: the package names to find.
+ *
+ * Finds an application in the store by any of the possible package names.
+ *
+ * Returns: (transfer none): a #AsApp or %NULL
+ *
+ * Since: 0.4.1
+ **/
+AsApp *
+as_store_get_app_by_pkgnames (AsStore *store, gchar **pkgnames)
+{
+	AsApp *app;
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	guint i;
+
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+	g_return_val_if_fail (pkgnames != NULL, NULL);
+
+	for (i = 0; pkgnames[i] != NULL; i++) {
+		app = g_hash_table_lookup (priv->hash_pkgname, pkgnames[i]);
+		if (app != NULL)
+			return app;
+	}
+	return NULL;
+}
+
+/**
  * as_store_remove_app:
  * @store: a #AsStore instance.
  * @app: a #AsApp instance.

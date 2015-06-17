@@ -3462,6 +3462,7 @@ as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 	const gchar *id;
 	const guint align = 50;
 	guint i;
+	guint j;
 	_cleanup_object_unref_ AsStore *store = NULL;
 	_cleanup_object_unref_ AsStore *helper = NULL;
 	_cleanup_object_unref_ GFile *file_new = NULL;
@@ -3518,13 +3519,24 @@ as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 	/* try to incorporate apps using the package name */
 	apps = as_store_get_apps (store);
 	for (i = 0; i < apps->len; i++) {
+		GPtrArray *pkgnames;
+		_cleanup_strv_free_ gchar **tmp = NULL;
+
 		app = g_ptr_array_index (apps, i);
 		id = as_app_get_id (app);
 		if (as_app_get_description_size (app) > 0) {
 			as_util_pad_strings (id, "Already has AppData", align);
 			continue;
 		}
-		app_source = as_store_get_app_by_pkgname (helper, as_app_get_pkgname_default (app));
+		pkgnames = as_app_get_pkgnames (app);
+		if (pkgnames->len == 0)
+			continue;
+
+		/* copy to a GStrv */
+		tmp = g_new0 (gchar *, pkgnames->len + 1);
+		for (j = 0; j < pkgnames->len; j++)
+			tmp[j] = g_strdup (g_ptr_array_index (pkgnames, j));
+		app_source = as_store_get_app_by_pkgnames (helper, tmp);
 		if (app_source == NULL) {
 			as_util_pad_strings (id, "Not found", align);
 			continue;

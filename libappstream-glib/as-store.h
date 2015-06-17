@@ -152,6 +152,8 @@ AsApp		*as_store_get_app_by_id_with_fallbacks (AsStore	*store,
 						 const gchar	*id);
 AsApp		*as_store_get_app_by_pkgname	(AsStore	*store,
 						 const gchar	*pkgname);
+AsApp		*as_store_get_app_by_pkgnames	(AsStore	*store,
+						 gchar		**pkgnames);
 void		 as_store_add_app		(AsStore	*store,
 						 AsApp		*app);
 void		 as_store_remove_app		(AsStore	*store,
