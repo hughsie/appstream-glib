@@ -3510,6 +3510,9 @@ as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 		as_util_pad_strings (id, "Incorporating...", align);
 		as_app_subsume_full (app, app_source,
 				     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
+
+		/* good enough for us now */
+		as_app_remove_veto (app, "Required AppData");
 	}
 
 	/* try to incorporate apps using the package name */
@@ -3533,6 +3536,9 @@ as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 		as_util_pad_strings (id, "Incorporating...", align);
 		as_app_subsume_full (app, app_source,
 				     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
+
+		/* good enough for us now */
+		as_app_remove_veto (app, "Required AppData");
 	}
 
 	/* save new store */

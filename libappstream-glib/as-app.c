@@ -4740,6 +4740,31 @@ as_app_add_veto (AsApp *app, const gchar *fmt, ...)
 }
 
 /**
+ * as_app_remove_veto:
+ * @app: A #AsApp
+ * @description: veto string
+ *
+ * Removes a reason to not include the application in the metadata.
+ *
+ * Since: 0.4.1
+ **/
+void
+as_app_remove_veto (AsApp *app, const gchar *description)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	const gchar *tmp;
+	guint i;
+
+	for (i = 0; i < priv->vetos->len; i++) {
+		tmp = g_ptr_array_index (priv->vetos, i);
+		if (g_strcmp0 (tmp, description) == 0) {
+			g_ptr_array_remove (priv->vetos, (gpointer) tmp);
+			break;
+		}
+	}
+}
+
+/**
  * as_app_new:
  *
  * Creates a new #AsApp.

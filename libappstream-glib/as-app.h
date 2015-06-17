@@ -404,6 +404,8 @@ void		 as_app_add_veto		(AsApp		*app,
 						 const gchar	*fmt,
 						 ...)
 						 G_GNUC_PRINTF(2,3);
+void		 as_app_remove_veto		(AsApp		*app,
+						 const gchar	*description);
 guint		 as_app_search_matches_all	(AsApp		*app,
 						 gchar		**search);
 guint		 as_app_search_matches		(AsApp		*app,
