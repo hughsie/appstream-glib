@@ -465,6 +465,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "kollision.desktop",		"org.kde.kollision.desktop" },
 		{ "konsole.desktop",		"org.kde.konsole.desktop" },
 		{ "kstars.desktop",		"org.kde.kstars.desktop" },
+		{ "ktp-log-viewer.desktop",	"org.kde.ktplogviewer.desktop" },
 		{ "kturtle.desktop",		"org.kde.kturtle.desktop" },
 		{ "kwordquiz.desktop",		"org.kde.kwordquiz.desktop" },
 		{ "okteta.desktop",		"org.kde.okteta.desktop" },
