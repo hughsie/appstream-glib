@@ -105,6 +105,8 @@ asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 		{ "CDDL",			"CDDL-1.0" },
 		{ "CeCILL-C",			"CECILL-C" },
 		{ "CeCILL",			"CECILL-2.0" },
+		{ "CPAL",			"CPAL-1.0" },
+		{ "CPL",			"CPL-1.0" },
 		{ "EPL",			"EPL-1.0" },
 		{ "Free Art",			"ClArtistic" },
 		{ "GFDL",			"GFDL-1.3" },
