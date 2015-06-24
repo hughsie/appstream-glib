@@ -3323,6 +3323,70 @@ as_util_mirror_screenshots (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
+ * as_util_mirror_local_firmware:
+ **/
+static gboolean
+as_util_mirror_local_firmware (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsApp *app;
+	GPtrArray *apps;
+	guint i;
+	guint j;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+
+	/* check args */
+	if (g_strv_length (values) != 2) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, expected: "
+				     "file url");
+		return FALSE;
+	}
+
+	/* open file */
+	store = as_store_new ();
+	file = g_file_new_for_path (values[0]);
+	if (!as_store_from_file (store, file, NULL, NULL, error))
+		return FALSE;
+
+	/* convert all the screenshots */
+	apps = as_store_get_apps (store);
+	for (i = 0; i < apps->len; i++) {
+		GPtrArray *releases;
+		AsRelease *rel;
+
+		/* get app */
+		app = g_ptr_array_index (apps, i);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_FIRMWARE)
+			continue;
+		releases = as_app_get_releases (app);
+		if (releases->len == 0)
+			continue;
+		for (j = 0; j < releases->len; j++) {
+			_cleanup_free_ gchar *loc = NULL;
+			_cleanup_free_ gchar *fn = NULL;
+			rel = g_ptr_array_index (releases, j);
+			fn = g_strdup_printf ("%s.cab", as_release_get_checksum (rel, G_CHECKSUM_SHA1));
+			loc = g_build_filename (values[1], fn, NULL);
+			g_ptr_array_set_size (as_release_get_locations (rel), 0);
+			as_release_add_location (rel, loc, -1);
+		}
+	}
+
+	/* save file */
+	if (!as_store_to_file (store, file,
+			       AS_NODE_TO_XML_FLAG_ADD_HEADER |
+			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+			       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE,
+			       NULL, error))
+		return FALSE;
+
+	return TRUE;
+}
+
+/**
  * as_util_replace_screenshots:
  *
  **/
@@ -3812,6 +3876,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Mirror upstream screenshots"),
 		     as_util_mirror_screenshots);
+	as_util_add (priv->cmd_array,
+		     "mirror-local-firmware",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Mirror local firmware files"),
+		     as_util_mirror_local_firmware);
 	as_util_add (priv->cmd_array,
 		     "incorporate",
 		     NULL,
