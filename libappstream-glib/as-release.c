@@ -244,6 +244,11 @@ as_release_add_location (AsRelease *release,
 			 gssize location_len)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+
+	/* deduplicate */
+	if (as_ptr_array_find_string (priv->locations, location, location_len))
+		return;
+
 	g_ptr_array_add (priv->locations, as_strndup (location, location_len));
 }
 

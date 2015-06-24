@@ -1929,23 +1929,6 @@ as_app_set_priority (AsApp *app, gint priority)
 }
 
 /**
- * as_app_array_find_string:
- **/
-static gboolean
-as_app_array_find_string (GPtrArray *array, const gchar *value, gssize value_len)
-{
-	const gchar *tmp;
-	guint i;
-
-	for (i = 0; i < array->len; i++) {
-		tmp = g_ptr_array_index (array, i);
-		if (g_strcmp0 (tmp, value) == 0)
-			return TRUE;
-	}
-	return FALSE;
-}
-
-/**
  * as_app_add_category:
  * @app: a #AsApp instance.
  * @category: the category.
@@ -1967,7 +1950,7 @@ as_app_add_category (AsApp *app, const gchar *category, gssize category_len)
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_app_array_find_string (priv->categories, category, category_len)) {
+	    as_ptr_array_find_string (priv->categories, category, category_len)) {
 		return;
 	}
 
@@ -2003,7 +1986,7 @@ as_app_add_compulsory_for_desktop (AsApp *app,
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_app_array_find_string (priv->compulsory_for_desktops,
+	    as_ptr_array_find_string (priv->compulsory_for_desktops,
 				      compulsory_for_desktop,
 				      compulsory_for_desktop_len)) {
 		return;
@@ -2052,7 +2035,7 @@ as_app_add_keyword (AsApp *app,
 		tmp = g_ptr_array_new_with_free_func (g_free);
 		g_hash_table_insert (priv->keywords, g_strdup (tmp_locale), tmp);
 	} else if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
-		if (as_app_array_find_string (tmp, keyword, keyword_len))
+		if (as_ptr_array_find_string (tmp, keyword, keyword_len))
 			return;
 	}
 	g_ptr_array_add (tmp, as_strndup (keyword, keyword_len));
@@ -2079,7 +2062,7 @@ as_app_add_kudo (AsApp *app, const gchar *kudo, gssize kudo_len)
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_app_array_find_string (priv->kudos, kudo, kudo_len)) {
+	    as_ptr_array_find_string (priv->kudos, kudo, kudo_len)) {
 		return;
 	}
 	g_ptr_array_add (priv->kudos, as_strndup (kudo, kudo_len));
@@ -2106,7 +2089,7 @@ as_app_add_permission (AsApp *app, const gchar *permission, gssize permission_le
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_app_array_find_string (priv->permissions, permission, permission_len)) {
+	    as_ptr_array_find_string (priv->permissions, permission, permission_len)) {
 		return;
 	}
 	g_ptr_array_add (priv->permissions, as_strndup (permission, permission_len));
@@ -2149,7 +2132,7 @@ as_app_add_mimetype (AsApp *app, const gchar *mimetype, gssize mimetype_len)
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_app_array_find_string (priv->mimetypes, mimetype, mimetype_len)) {
+	    as_ptr_array_find_string (priv->mimetypes, mimetype, mimetype_len)) {
 		return;
 	}
 
@@ -2398,7 +2381,7 @@ as_app_add_pkgname (AsApp *app, const gchar *pkgname, gssize pkgname_len)
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_app_array_find_string (priv->pkgnames, pkgname, pkgname_len)) {
+	    as_ptr_array_find_string (priv->pkgnames, pkgname, pkgname_len)) {
 		return;
 	}
 
@@ -2427,7 +2410,7 @@ as_app_add_arch (AsApp *app, const gchar *arch, gssize arch_len)
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_app_array_find_string (priv->architectures, arch, arch_len)) {
+	    as_ptr_array_find_string (priv->architectures, arch, arch_len)) {
 		return;
 	}
 
@@ -2569,7 +2552,7 @@ as_app_add_extends (AsApp *app, const gchar *extends, gssize extends_len)
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_app_array_find_string (priv->extends, extends, extends_len)) {
+	    as_ptr_array_find_string (priv->extends, extends, extends_len)) {
 		return;
 	}
 

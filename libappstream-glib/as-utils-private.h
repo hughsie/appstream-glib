@@ -42,6 +42,9 @@ void		 as_pixbuf_sharpen		(GdkPixbuf	*src,
 void		 as_pixbuf_blur			(GdkPixbuf	*src,
 						 gint		 radius,
 						 gint		 iterations);
+const gchar	*as_ptr_array_find_string	(GPtrArray	*array,
+						 const gchar	*value,
+						 gssize		 value_len);
 
 G_END_DECLS
 

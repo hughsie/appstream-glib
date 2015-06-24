@@ -1588,3 +1588,43 @@ as_utils_vercmp (const gchar *version_a, const gchar *version_b)
 	/* we really shouldn't get here */
 	return 0;
 }
+
+/**
+ * as_strncmp:
+ **/
+static gint
+as_strncmp (const gchar *value1, const gchar *value2, gssize value_len)
+{
+	if (value_len < 0)
+		return g_strcmp0 (value1, value2);
+	if (value1 == NULL && value2 == NULL)
+		return 0;
+	if (value1 != NULL && value2 == NULL)
+		return -1;
+	if (value1 == NULL && value2 != NULL)
+		return 1;
+	return strncmp (value1, value2, value_len);
+}
+
+/**
+ * as_ptr_array_find_string:
+ * @array: gchar* array
+ * @value: string to find
+ * @value_len: length of @value
+ *
+ * Finds a string in a pointer array.
+ *
+ * Returns: the const string, or %NULL if not found
+ **/
+const gchar *
+as_ptr_array_find_string (GPtrArray *array, const gchar *value, gssize value_len)
+{
+	const gchar *tmp;
+	guint i;
+	for (i = 0; i < array->len; i++) {
+		tmp = g_ptr_array_index (array, i);
+		if (as_strncmp (tmp, value, value_len) == 0)
+			return tmp;
+	}
+	return NULL;
+}
