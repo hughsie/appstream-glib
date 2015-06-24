@@ -2995,6 +2995,17 @@ as_app_releases_sort_cb (gconstpointer a, gconstpointer b)
 }
 
 /**
+ * as_app_icons_sort_cb:
+ **/
+static gint
+as_app_icons_sort_cb (gconstpointer a, gconstpointer b)
+{
+	AsIcon **ic1 = (AsIcon **) a;
+	AsIcon **ic2 = (AsIcon **) b;
+	return g_strcmp0 (as_icon_get_name (*ic1), as_icon_get_name (*ic2));
+}
+
+/**
  * as_app_list_sort_cb:
  **/
 static gint
@@ -3191,6 +3202,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <icon> */
+	g_ptr_array_sort (priv->icons, as_app_icons_sort_cb);
 	for (i = 0; i < priv->icons->len; i++) {
 		AsIcon *ic = g_ptr_array_index (priv->icons, i);
 		as_icon_node_insert (ic, node_app, ctx);

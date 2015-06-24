@@ -852,7 +852,8 @@ as_test_app_func (void)
 		"<developer_name>GNOME Foundation</developer_name>\n"
 		"<description><p>Software allows you to find stuff</p></description>\n"
 		"<description xml:lang=\"pt_BR\"><p>O aplicativo Software.</p></description>\n"
-		"<icon height=\"64\" width=\"64\" type=\"cached\">org.gnome.Software.png</icon>\n"
+		"<icon height=\"64\" width=\"64\" type=\"cached\">org.gnome.Software1.png</icon>\n"
+		"<icon height=\"64\" width=\"64\" type=\"cached\">org.gnome.Software2.png</icon>\n"
 		"<categories>\n"
 		"<category>System</category>\n"
 		"</categories>\n"
@@ -951,7 +952,7 @@ as_test_app_func (void)
 	/* check icons */
 	icons = as_app_get_icons (app);
 	g_assert (icons != NULL);
-	g_assert_cmpint (icons->len, ==, 1);
+	g_assert_cmpint (icons->len, ==, 2);
 
 	/* check bundle */
 	bu = as_app_get_bundle_default (app);
@@ -964,7 +965,7 @@ as_test_app_func (void)
 	g_assert (ic == NULL);
 	ic = as_app_get_icon_for_size (app, 64, 64);
 	g_assert (ic != NULL);
-	g_assert_cmpstr (as_icon_get_name (ic), ==, "org.gnome.Software.png");
+	g_assert_cmpstr (as_icon_get_name (ic), ==, "org.gnome.Software1.png");
 	g_assert_cmpint (as_icon_get_kind (ic), ==, AS_ICON_KIND_CACHED);
 
 	/* we can't extend ourself */
