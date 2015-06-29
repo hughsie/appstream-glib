@@ -416,6 +416,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		/* GNOME */
 		{ "baobab.desktop",		"org.gnome.baobab.desktop" },
 		{ "cheese.desktop",		"org.gnome.Cheese.desktop" },
+		{ "devhelp.desktop",		"org.gnome.Devhelp.desktop" },
 		{ "file-roller.desktop",	"org.gnome.FileRoller.desktop" },
 		{ "gcalctool.desktop",		"gnome-calculator.desktop" },
 		{ "gedit.desktop",		"org.gnome.gedit.desktop" },
