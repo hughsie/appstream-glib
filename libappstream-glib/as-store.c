@@ -1781,10 +1781,6 @@ as_store_load (AsStore *store,
 		if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM) > 0) {
 			path = g_build_filename (data_dirs[i], "app-info", NULL);
 			g_ptr_array_add (app_info, path);
-			path = g_build_filename (LOCALSTATEDIR, "lib", "app-info", NULL);
-			g_ptr_array_add (app_info, path);
-			path = g_build_filename (LOCALSTATEDIR, "cache", "app-info", NULL);
-			g_ptr_array_add (app_info, path);
 		}
 		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 			path = g_build_filename (data_dirs[i], "appdata", NULL);
@@ -1794,6 +1790,12 @@ as_store_load (AsStore *store,
 			path = g_build_filename (data_dirs[i], "applications", NULL);
 			g_ptr_array_add (installed, path);
 		}
+	}
+	if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM) > 0) {
+		path = g_build_filename (LOCALSTATEDIR, "lib", "app-info", NULL);
+		g_ptr_array_add (app_info, path);
+		path = g_build_filename (LOCALSTATEDIR, "cache", "app-info", NULL);
+		g_ptr_array_add (app_info, path);
 	}
 
 	/* per-user locations */
