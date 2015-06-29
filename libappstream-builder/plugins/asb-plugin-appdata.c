@@ -112,25 +112,18 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				 as_problem_get_message (problem));
 	}
 
-	/* check app id */
+	/* check <id> matches, but still accept if missing or incorrect */
 	tmp = as_app_get_id (appdata);
 	if (tmp == NULL) {
-		g_set_error (error,
-			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_FAILED,
-			     "AppData %s has no ID",
-			     filename);
-		return FALSE;
-	}
-	if (g_strcmp0 (tmp, as_app_get_id (AS_APP (app))) != 0) {
-		g_set_error (error,
-			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_FAILED,
-			     "AppData %s does not match '%s':'%s'",
-			     filename,
-			     tmp,
-			     as_app_get_id (AS_APP (app)));
-		return FALSE;
+		asb_package_log (asb_app_get_package (app),
+				 ASB_PACKAGE_LOG_LEVEL_WARNING,
+				 "AppData %s has no ID", filename);
+	} else if (g_strcmp0 (tmp, as_app_get_id (AS_APP (app))) != 0) {
+		asb_package_log (asb_app_get_package (app),
+				 ASB_PACKAGE_LOG_LEVEL_WARNING,
+				 "AppData %s does not match '%s':'%s'",
+				 filename, tmp,
+				 as_app_get_id (AS_APP (app)));
 	}
 
 	/* check license */
