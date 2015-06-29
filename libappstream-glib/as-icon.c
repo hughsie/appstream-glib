@@ -742,8 +742,6 @@ as_icon_load (AsIcon *icon, AsIconLoadFlags flags, GError **error)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	_cleanup_free_ gchar *fn_fallback = NULL;
-	_cleanup_free_ gchar *fn_size = NULL;
-	_cleanup_free_ gchar *size_str = NULL;
 	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
 
 	/* absolute filename */
@@ -778,14 +776,21 @@ as_icon_load (AsIcon *icon, AsIconLoadFlags flags, GError **error)
 
 	/* try getting a pixbuf of the right size */
 	if (flags & AS_ICON_LOAD_FLAG_SEARCH_SIZE) {
-		size_str = g_strdup_printf ("%ix%i", priv->width, priv->height);
-		fn_size = g_build_filename (priv->prefix, size_str, priv->name, NULL);
-		if (g_file_test (fn_size, G_FILE_TEST_EXISTS)) {
-			pixbuf = gdk_pixbuf_new_from_file (fn_size, error);
-			if (pixbuf == NULL)
-				return FALSE;
-			as_icon_set_pixbuf (icon, pixbuf);
-			return TRUE;
+		guint widths[] = { priv->width, 64, 128, 0 };
+		guint height[] = { priv->height, 64, 128, 0 };
+		guint i;
+		for (i = 0; widths[i] != 0; i++) {
+			_cleanup_free_ gchar *fn_size = NULL;
+			_cleanup_free_ gchar *size_str = NULL;
+			size_str = g_strdup_printf ("%ix%i", widths[i], height[i]);
+			fn_size = g_build_filename (priv->prefix, size_str, priv->name, NULL);
+			if (g_file_test (fn_size, G_FILE_TEST_EXISTS)) {
+				pixbuf = gdk_pixbuf_new_from_file (fn_size, error);
+				if (pixbuf == NULL)
+					return FALSE;
+				as_icon_set_pixbuf (icon, pixbuf);
+				return TRUE;
+			}
 		}
 	}
 
