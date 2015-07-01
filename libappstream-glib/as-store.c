@@ -1797,6 +1797,14 @@ as_store_load (AsStore *store,
 		g_ptr_array_add (app_info, path);
 		path = g_build_filename (LOCALSTATEDIR, "cache", "app-info", NULL);
 		g_ptr_array_add (app_info, path);
+		/* ignore the prefix; we actually want to use the
+		 * distro-provided data in this case. */
+		if (g_strcmp0 (LOCALSTATEDIR, "/var") != 0) {
+			path = g_build_filename ("/var", "lib", "app-info", NULL);
+			g_ptr_array_add (app_info, path);
+			path = g_build_filename ("/var", "cache", "app-info", NULL);
+			g_ptr_array_add (app_info, path);
+		}
 	}
 
 	/* per-user locations */
