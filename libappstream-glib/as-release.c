@@ -373,15 +373,18 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	GNode *n;
-	_cleanup_free_ gchar *timestamp_str = NULL;
 
-	timestamp_str = g_strdup_printf ("%" G_GUINT64_FORMAT,
-					 priv->timestamp);
 	n = as_node_insert (parent, "release", NULL,
 			    AS_NODE_INSERT_FLAG_NONE,
-			    "timestamp", timestamp_str,
-			    "version", priv->version,
 			    NULL);
+	if (priv->timestamp > 0) {
+		_cleanup_free_ gchar *timestamp_str = NULL;
+		timestamp_str = g_strdup_printf ("%" G_GUINT64_FORMAT,
+						 priv->timestamp);
+		as_node_add_attribute (n, "timestamp", timestamp_str, -1);
+	}
+	if (priv->version != NULL)
+		as_node_add_attribute (n, "version", priv->version, -1);
 	if (as_node_context_get_version (ctx) >= 0.9) {
 		const gchar *tmp;
 		guint i;
