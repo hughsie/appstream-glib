@@ -3,7 +3,7 @@
 [Version]
 Signature="$WINDOWS NT$"
 Class=Firmware
-ClassGuid={84f40464-9272-4ef7-9399-cd95f12da696}
+ClassGuid={F2E7DD72-6468-4E36-B6f1-6488F42C1B52}
 Provider=%Provider%
 DriverVer=03/03/2015,2.0.2
 PnpLockdown=1
@@ -30,8 +30,8 @@ AddReg = Firmware_AddReg
 
 [Firmware_AddReg]
 HKR,,FirmwareId,,{84f40464-9272-4ef7-9399-cd95f12da695}
-HKR,,FirmwareVersion,%REG_DWORD%,0x0000000
-HKR,,FirmwareFilename,,firmware.bin
+HKR,,FirmwareVersion,%REG_DWORD%, 0x0000000
+HKR , , FirmwareFilename , , "firmware.bin"
 
 [SourceDisksNames]
 1 = %DiskName%

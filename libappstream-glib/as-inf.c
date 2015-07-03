@@ -687,6 +687,49 @@ as_inf_parse_line (AsInfHelper *helper, gchar *line, GError **error)
 		goto out;
 	}
 
+	/* convert registry entries. e.g.
+	 * "HKR,,FirmwareFilename,,firmware.bin"
+	 *   -> "HKR_FirmwareFilename"="firmware.bin"
+	 * "HKR,,FirmwareVersion,%REG_DWORD%,0x0000000"
+	 *   -> "HKR_FirmwareVersion_0x00010001"="0x0000000" */
+	if (g_strcmp0 (helper->group, "Firmware_AddReg") == 0 &&
+	    g_str_has_prefix (line, "HK")) {
+		guint i;
+		_cleanup_strv_free_ gchar **reg_split = NULL;
+		_cleanup_string_free_ GString *str = NULL;
+		str = g_string_new ("");
+		reg_split = g_strsplit (line, ",", -1);
+		for (i = 0; reg_split[i+1] != NULL; i++) {
+			g_strstrip (reg_split[i]);
+			if (reg_split[i][0] == '\0')
+				continue;
+			g_string_append_printf (str, "%s_", reg_split[i]);
+		}
+		if (str->len > 0) {
+			_cleanup_free_ gchar *key_tmp = NULL;
+
+			/* remove trailing '_' */
+			g_string_truncate (str, str->len - 1);
+
+			/* remove leading and trailing quote */
+			g_strchug (reg_split[i]);
+			if (!as_inf_strip_value (helper, reg_split[i], error)) {
+				ret = FALSE;
+				goto out;
+			}
+			if (helper->dict == NULL) {
+				helper->require_2nd_pass = TRUE;
+				helper->last_line_continuation_ignore = TRUE;
+				goto out;
+			}
+			key_tmp = as_inf_replace_variable (helper, str->str, error);
+			if (key_tmp == NULL)
+				return FALSE;
+			as_inf_set_key (helper, key_tmp, reg_split[i]);
+			goto out;
+		}
+	}
+
 	/* add fake key */
 	key = g_strdup_printf ("value%03i", helper->nokey_idx++);
 	as_inf_set_key (helper, key, line);

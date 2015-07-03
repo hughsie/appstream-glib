@@ -1551,6 +1551,7 @@ as_test_app_parse_file_inf_func (void)
 	g_assert_cmpstr (as_app_get_comment (app, "C"), ==,
 		"Firmware for the ColorHug Colorimeter");
 	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
+	g_assert_cmpstr (as_app_get_id (app), ==, "84f40464-9272-4ef7-9399-cd95f12da695");
 
 	/* check icon */
 	g_assert_cmpint (as_app_get_icons(app)->len, ==, 1);
@@ -3589,6 +3590,17 @@ as_test_inf_func (void)
 	/* simple */
 	tmp = g_key_file_get_string (kf, "Version", "Class", NULL);
 	g_assert_cmpstr (tmp, ==, "Firmware");
+	g_free (tmp);
+
+	/* HK */
+	tmp = g_key_file_get_string (kf, "Firmware_AddReg", "HKR_FirmwareId", NULL);
+	g_assert_cmpstr (tmp, ==, "{84f40464-9272-4ef7-9399-cd95f12da695}");
+	g_free (tmp);
+	tmp = g_key_file_get_string (kf, "Firmware_AddReg", "HKR_FirmwareVersion_0x00010001", NULL);
+	g_assert_cmpstr (tmp, ==, "0x0000000");
+	g_free (tmp);
+	tmp = g_key_file_get_string (kf, "Firmware_AddReg", "HKR_FirmwareFilename", NULL);
+	g_assert_cmpstr (tmp, ==, "firmware.bin");
 	g_free (tmp);
 
 	/* key replacement */

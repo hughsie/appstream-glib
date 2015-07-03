@@ -25,7 +25,8 @@
 #include "as-app-private.h"
 #include "as-cleanup.h"
 #include "as-inf.h"
-//#include "as-utils.h"
+
+#define AS_APP_INF_CLASS_GUID_FIRMWARE	"f2e7dd72-6468-4e36-b6f1-6488f42c1b52"
 
 /**
  * as_app_parse_inf_sanitize_guid:
@@ -40,7 +41,7 @@ as_app_parse_inf_sanitize_guid (const gchar *guid)
 
 	for (i = 0; guid[i] != '\0'; i++) {
 		if (g_ascii_isalnum (guid[i]) || guid[i] == '-')
-			g_string_append_c (id, guid[i]);
+			g_string_append_c (id, g_ascii_tolower (guid[i]));
 	}
 	return g_string_free (id, FALSE);
 }
@@ -58,6 +59,8 @@ as_app_parse_inf_file (AsApp *app,
 	guint i;
 	_cleanup_error_free_ GError *error_local = NULL;
 	_cleanup_free_ gchar *catalog_basename = NULL;
+	_cleanup_free_ gchar *class_guid = NULL;
+	_cleanup_free_ gchar *class_guid_unsafe = NULL;
 	_cleanup_free_ gchar *class = NULL;
 	_cleanup_free_ gchar *comment = NULL;
 	_cleanup_free_ gchar *filename_full = NULL;
@@ -102,22 +105,39 @@ as_app_parse_inf_file (AsApp *app,
 			     AS_APP_ERROR_INVALID_TYPE,
 			     "Driver class is '%s', not 'Firmware'", class);
 		return FALSE;
-	}
+       }
 	as_app_set_id_kind (app, AS_ID_KIND_FIRMWARE);
 
-	/* get the GUID */
-	guid = g_key_file_get_string (kf, "Version", "ClassGuid", NULL);
-	if (guid == NULL) {
+	/* get the Class GUID */
+	class_guid_unsafe = g_key_file_get_string (kf, "Version", "ClassGuid", NULL);
+	if (class_guid_unsafe == NULL) {
 		g_set_error_literal (error,
 				     AS_APP_ERROR,
 				     AS_APP_ERROR_INVALID_TYPE,
-				     "Driver ID is missing");
+				     "ClassGuid is missing");
 		return FALSE;
 	}
-
-	/* strip any curley brackets */
-	id = as_app_parse_inf_sanitize_guid (guid);
-	as_app_set_id (app, id, -1);
+	class_guid = as_app_parse_inf_sanitize_guid (class_guid_unsafe);
+	if (g_strcmp0 (class_guid, AS_APP_INF_CLASS_GUID_FIRMWARE) != 0) {
+		g_debug ("ClassGuid is '%s', not '%s', so using as an ID",
+			 class_guid, AS_APP_INF_CLASS_GUID_FIRMWARE);
+		as_app_set_id (app, class_guid, -1);
+	} else {
+		/* get the ESRT GUID */
+		guid = g_key_file_get_string (kf,
+					      "Firmware_AddReg",
+					      "HKR_FirmwareId",
+					      NULL);
+		if (guid == NULL) {
+			g_set_error_literal (error,
+					     AS_APP_ERROR,
+					     AS_APP_ERROR_INVALID_TYPE,
+					     "HKR->FirmwareId missing from [Firmware_AddReg]");
+			return FALSE;
+		}
+		id = as_app_parse_inf_sanitize_guid (guid);
+		as_app_set_id (app, id, -1);
+	}
 
 	/* get vendor */
 	vendor = g_key_file_get_string (kf, "Version", "Provider", NULL);
