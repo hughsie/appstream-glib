@@ -1072,7 +1072,7 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 					       pixmap_dirs[i],
 					       search,
 					       supported_ext[j]);
-			if (g_file_test (tmp, G_FILE_TEST_EXISTS))
+			if (g_file_test (tmp, G_FILE_TEST_IS_REGULAR))
 				return g_strdup (tmp);
 		}
 	}
