@@ -1,3 +1,31 @@
+Version 0.4.1
+~~~~~~~~~~~~~
+Released: 2015-07-20
+
+New Features:
+ - Add a 'compare' command to appstream-util (Richard Hughes)
+ - Add a 'mirror-local-firmware' command to appstream-util (Richard Hughes)
+ - Add a flag to relax the AppData Category=Settings requirement (Richard Hughes)
+ - Add a flag to use non-optimal data sources when building metadata (Richard Hughes)
+ - Add am 'incorporate' command to appstream-util (Richard Hughes)
+ - Add two flags to veto-ignore to relax the requirements for metadata (Richard Hughes)
+
+Bugfixes:
+ - Be less strict when loading incorrect AppData files (Richard Hughes)
+ - Do not duplicate <location> tags within a release (Richard Hughes)
+ - Do not expect the INF ClassGuid to be the ESRT GUID (Richard Hughes)
+ - Don't crash when parsing a <release> with no description (Richard Hughes)
+ - Fix a potential crash spotted by clang (Richard Hughes)
+ - Fix autogen with latest Intltool (Matthias Klumpp)
+ - Ignore the prefix when loading system-wide AppStream information (Richard Hughes)
+ - Include <pkgname> when writing the ignored metadata (Richard Hughes)
+ - Only write the release timestamp if non-zero (Richard Hughes)
+ - Remove the AppData veto when incorporating metadata (Richard Hughes)
+ - Search harder when using AS_ICON_LOAD_FLAG_SEARCH_SIZE (Richard Hughes)
+ - Sort multiple <icon> entries by name (Richard Hughes)
+ - Update the SPDX licence list to v2.0 (Richard Hughes)
+ - When building metadata with the use-fallback flag accept legacy icon names (Richard Hughes)
+
 Version 0.4.0
 ~~~~~~~~~~~~~
 Released: 2015-05-26

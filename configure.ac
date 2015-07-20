@@ -33,7 +33,7 @@ AC_DEFINE_UNQUOTED([AS_PLUGIN_VERSION], "$AS_PLUGIN_VERSION", [plugin API versio
 # enable nice build output on automake1.11
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
-# libtool versioning - this applies to libpackagekit
+# libtool versioning - this applies to libappstream-glib
 #
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 #
