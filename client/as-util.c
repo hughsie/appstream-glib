@@ -3365,10 +3365,14 @@ as_util_mirror_local_firmware (AsUtilPrivate *priv, gchar **values, GError **err
 		if (releases->len == 0)
 			continue;
 		for (j = 0; j < releases->len; j++) {
+			const gchar *tmp;
 			_cleanup_free_ gchar *loc = NULL;
 			_cleanup_free_ gchar *fn = NULL;
 			rel = g_ptr_array_index (releases, j);
-			fn = g_strdup_printf ("%s.cab", as_release_get_checksum (rel, G_CHECKSUM_SHA1));
+			tmp = as_release_get_location_default (rel);
+			if (tmp == NULL)
+				continue;
+			fn = g_path_get_basename (tmp);
 			loc = g_build_filename (values[1], fn, NULL);
 			g_ptr_array_set_size (as_release_get_locations (rel), 0);
 			as_release_add_location (rel, loc, -1);
