@@ -64,10 +64,10 @@ asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
 }
 
 /**
- * asb_plugin_firmware_get_source_package:
+ * asb_plugin_firmware_get_basename:
  */
 static gchar *
-asb_plugin_firmware_get_source_package (const gchar *filename)
+asb_plugin_firmware_get_basename (const gchar *filename)
 {
 	gchar *basename;
 	gchar *tmp;
@@ -111,7 +111,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	_cleanup_free_ gchar *checksum = NULL;
 	_cleanup_free_ gchar *filename_full = NULL;
 	_cleanup_free_ gchar *location_checksum = NULL;
-	_cleanup_free_ gchar *srcpkg = NULL;
+	_cleanup_free_ gchar *fw_basename = NULL;
 	_cleanup_object_unref_ AsbApp *app = NULL;
 
 	/* parse */
@@ -135,10 +135,10 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	release = as_app_get_release_default (AS_APP (app));
 	as_release_set_checksum (release, G_CHECKSUM_SHA1, checksum, -1);
 
-	/* this is a hack */
-	srcpkg = asb_plugin_firmware_get_source_package (filename);
-	if (srcpkg != NULL)
-		asb_package_set_source_pkgname (pkg, srcpkg);
+	/* for the adddata plugin; removed in asb_plugin_merge() */
+	fw_basename = asb_plugin_firmware_get_basename (filename);
+	if (fw_basename != NULL)
+		as_app_add_metadata (AS_APP (app), "FirmwareBasename", fw_basename, -1);
 
 	asb_plugin_add_app (apps, AS_APP (app));
 	return TRUE;
@@ -200,12 +200,11 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 	AsApp *app;
 	GList *l;
 
-	/* remove the source package name, which doesn't make sense */
+	/* remove the FirmwareBasename metadata */
 	for (l = list; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
 		if (as_app_get_id_kind (app) != AS_ID_KIND_FIRMWARE)
 			continue;
-		as_app_set_source_pkgname (app, NULL, -1);
 		as_app_remove_metadata (app, "FirmwareBasename");
 	}
 }

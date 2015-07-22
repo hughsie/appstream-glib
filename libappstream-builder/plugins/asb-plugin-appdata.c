@@ -305,7 +305,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	if (asb_package_get_kind (pkg) == ASB_PACKAGE_KIND_FIRMWARE) {
 		appdata_filename = g_strdup_printf ("%s/%s.metainfo.xml",
 						    tmpdir,
-						    asb_package_get_source_pkgname (pkg));
+						    as_app_get_metadata_item (AS_APP (app), "FirmwareBasename"));
 	} else {
 		_cleanup_free_ gchar *appdata_basename = NULL;
 		appdata_basename = asb_plugin_appdata_get_fn_for_app (AS_APP (app));
