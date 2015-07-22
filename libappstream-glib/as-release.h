@@ -61,6 +61,8 @@ struct _AsReleaseClass
 
 GType		 as_release_get_type		(void);
 AsRelease	*as_release_new			(void);
+gint		 as_release_vercmp		(AsRelease	*rel1,
+						 AsRelease	*rel2);
 
 /* getters */
 const gchar	*as_release_get_version		(AsRelease	*release);

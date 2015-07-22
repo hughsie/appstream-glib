@@ -659,8 +659,7 @@ as_app_get_release_default (AsApp *app)
 	for (i = 0; i < priv->releases->len; i++) {
 		release_tmp = g_ptr_array_index (priv->releases, i);
 		if (release_newest == NULL ||
-		    as_release_get_timestamp (release_tmp) >
-		    as_release_get_timestamp (release_newest))
+		    as_release_vercmp (release_tmp, release_newest) < 1)
 			release_newest = release_tmp;
 	}
 	return release_newest;
@@ -2957,24 +2956,7 @@ as_app_releases_sort_cb (gconstpointer a, gconstpointer b)
 {
 	AsRelease **rel1 = (AsRelease **) a;
 	AsRelease **rel2 = (AsRelease **) b;
-	gint64 ts_a;
-	gint64 ts_b;
-	gint val;
-
-	/* prefer the version strings */
-	val = as_utils_vercmp (as_release_get_version (*rel2),
-			       as_release_get_version (*rel1));
-	if (val != G_MAXINT)
-		return val;
-
-	/* fall back to the timestamp */
-	ts_a = as_release_get_timestamp (*rel1);
-	ts_b = as_release_get_timestamp (*rel2);
-	if (ts_a > ts_b)
-		return -1;
-	if (ts_a < ts_b)
-		return 1;
-	return 0;
+	return as_release_vercmp (*rel1, *rel2);
 }
 
 /**

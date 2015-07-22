@@ -101,6 +101,37 @@ as_release_class_init (AsReleaseClass *klass)
 }
 
 /**
+ * as_release_vercmp:
+ * @rel1: a #AsRelease instance.
+ * @rel2: a #AsRelease instance.
+ *
+ * Compares two release.
+ *
+ * Returns: -1 if rel1 > rel2, +1 if rel1 < rel2, 0 otherwise
+ *
+ * Since: 0.4.2
+ **/
+gint
+as_release_vercmp (AsRelease *rel1, AsRelease *rel2)
+{
+	AsReleasePrivate *priv1 = GET_PRIVATE (rel1);
+	AsReleasePrivate *priv2 = GET_PRIVATE (rel2);
+	gint val;
+
+	/* prefer the version strings */
+	val = as_utils_vercmp (priv2->version, priv1->version);
+	if (val != G_MAXINT)
+		return val;
+
+	/* fall back to the timestamp */
+	if (priv1->timestamp > priv2->timestamp)
+		return -1;
+	if (priv1->timestamp < priv2->timestamp)
+		return 1;
+	return 0;
+}
+
+/**
  * as_release_get_version:
  * @release: a #AsRelease instance.
  *

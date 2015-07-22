@@ -834,6 +834,7 @@ as_test_app_func (void)
 {
 	AsIcon *ic;
 	AsBundle *bu;
+	AsRelease *rel;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
@@ -888,6 +889,7 @@ as_test_app_func (void)
 		"</screenshot>\n"
 		"</screenshots>\n"
 		"<releases>\n"
+		"<release version=\"3.11.91\" timestamp=\"1392724801\"/>\n"
 		"<release version=\"3.11.90\" timestamp=\"1392724800\"/>\n"
 		"</releases>\n"
 		"<provides>\n"
@@ -934,7 +936,7 @@ as_test_app_func (void)
 	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);
 	g_assert_cmpint (as_app_get_priority (app), ==, -4);
 	g_assert_cmpint (as_app_get_screenshots(app)->len, ==, 2);
-	g_assert_cmpint (as_app_get_releases(app)->len, ==, 1);
+	g_assert_cmpint (as_app_get_releases(app)->len, ==, 2);
 	g_assert_cmpint (as_app_get_provides(app)->len, ==, 3);
 	g_assert_cmpint (as_app_get_kudos(app)->len, ==, 1);
 	g_assert_cmpint (as_app_get_permissions(app)->len, ==, 1);
@@ -948,6 +950,11 @@ as_test_app_func (void)
 	g_assert (!as_app_has_kudo (app, "MagicValue"));
 	g_assert (!as_app_has_kudo_kind (app, AS_KUDO_KIND_USER_DOCS));
 	as_node_unref (root);
+
+	/* check newest release */
+	rel = as_app_get_release_default (app);
+	g_assert (rel != NULL);
+	g_assert_cmpstr (as_release_get_version (rel), ==, "3.11.91");
 
 	/* check icons */
 	icons = as_app_get_icons (app);
