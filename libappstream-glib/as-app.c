@@ -2803,6 +2803,10 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	if (priv->source_file != NULL)
 		as_app_set_source_file (app, priv->source_file);
 
+	/* source_pkgname */
+	if (priv->source_pkgname != NULL)
+		as_app_set_source_pkgname (app, priv->source_pkgname, -1);
+
 	/* origin */
 	if (priv->origin != NULL)
 		as_app_set_origin (app, priv->origin);

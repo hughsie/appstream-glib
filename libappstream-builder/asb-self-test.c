@@ -442,6 +442,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<id>Liberation</id>\n"
 		"<pkgname>font</pkgname>\n"
 		"<pkgname>font-serif</pkgname>\n"
+		"<source_pkgname>font</source_pkgname>\n"
 		"<name>Liberation</name>\n"
 		"<summary>Open source versions of several commecial fonts</summary>\n"
 		"<description><p>The Liberation Fonts are intended to be replacements for Times New Roman, Arial, and Courier New.</p></description>\n"
