@@ -56,7 +56,6 @@ as_app_parse_inf_file (AsApp *app,
 		       GError **error)
 {
 	guint64 timestamp;
-	guint i;
 	_cleanup_error_free_ GError *error_local = NULL;
 	_cleanup_free_ gchar *catalog_basename = NULL;
 	_cleanup_free_ gchar *class_guid = NULL;
@@ -68,7 +67,6 @@ as_app_parse_inf_file (AsApp *app,
 	_cleanup_free_ gchar *guid = NULL;
 	_cleanup_free_ gchar *id = NULL;
 	_cleanup_free_ gchar *location_checksum = NULL;
-	_cleanup_free_ gchar *location_url = NULL;
 	_cleanup_free_ gchar *name = NULL;
 	_cleanup_free_ gchar *srcpkg = NULL;
 	_cleanup_free_ gchar *vendor = NULL;
@@ -193,15 +191,6 @@ as_app_parse_inf_file (AsApp *app,
 	as_release_set_version (release, version, -1);
 	as_release_set_timestamp (release, timestamp);
 	as_app_add_release (app, release);
-
-	/* this is a Linux extension */
-	location_url = g_key_file_get_string (kf, "Location", "URLs", NULL);
-	if (location_url != NULL) {
-		_cleanup_strv_free_ gchar **location_urls = NULL;
-		location_urls = g_strsplit (location_url, ",", -1);
-		for (i = 0; location_urls[i] != NULL; i++)
-			as_release_add_location (release, location_urls[i], -1);
-	}
 
 	/* add icon */
 	icon = as_icon_new ();

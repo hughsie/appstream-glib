@@ -1575,7 +1575,6 @@ as_test_app_parse_file_inf_func (void)
 	releases = as_app_get_releases (app);
 	g_assert_cmpint (releases->len, ==, 1);
 	rel = g_ptr_array_index (releases, 0);
-	g_assert_cmpstr (as_release_get_location_default (rel), ==, "http://www.hughski.com/foo.cab");
 	g_assert_cmpint (as_release_get_timestamp (rel), ==, 1425340800);
 	g_assert_cmpstr (as_release_get_version (rel), ==, "2.0.2");
 	//g_assert_cmpstr (as_release_get_description (rel), ==, "XXX");
