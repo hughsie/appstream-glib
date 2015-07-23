@@ -2675,6 +2675,7 @@ as_test_store_origin_func (void)
 	g_assert_cmpstr (as_app_get_icon_path (app), ==,
 		"/usr/share/app-info/icons/fedora-21");
 	g_assert_cmpstr (as_app_get_origin (app), ==, "fedora-21");
+	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
 }
 
 static void

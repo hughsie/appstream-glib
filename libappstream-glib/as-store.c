@@ -756,6 +756,7 @@ static gboolean
 as_store_from_root (AsStore *store,
 		    GNode *root,
 		    const gchar *icon_root,
+		    const gchar *source_filename,
 		    GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
@@ -834,6 +835,8 @@ as_store_from_root (AsStore *store,
 			return FALSE;
 		}
 		as_app_set_origin (app, priv->origin);
+		if (source_filename != NULL)
+			as_app_set_source_file (app, source_filename);
 		as_store_add_app (store, app);
 	}
 
@@ -959,7 +962,7 @@ as_store_from_file (AsStore *store,
 			     filename, error_local->message);
 		return FALSE;
 	}
-	return as_store_from_root (store, root, icon_root, error);
+	return as_store_from_root (store, root, icon_root, filename, error);
 }
 
 /**
@@ -1003,7 +1006,7 @@ as_store_from_xml (AsStore *store,
 			     error_local->message);
 		return TRUE;
 	}
-	return as_store_from_root (store, root, icon_root, error);
+	return as_store_from_root (store, root, icon_root, NULL, error);
 }
 
 /**
