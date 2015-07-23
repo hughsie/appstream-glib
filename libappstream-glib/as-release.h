@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -66,6 +66,7 @@ gint		 as_release_vercmp		(AsRelease	*rel1,
 
 /* getters */
 const gchar	*as_release_get_version		(AsRelease	*release);
+const gchar	*as_release_get_filename	(AsRelease	*release);
 guint64		 as_release_get_timestamp	(AsRelease	*release);
 const gchar	*as_release_get_description	(AsRelease	*release,
 						 const gchar	*locale);
@@ -78,6 +79,9 @@ const gchar	*as_release_get_checksum	(AsRelease	*release,
 void		 as_release_set_version		(AsRelease	*release,
 						 const gchar	*version,
 						 gssize		 version_len);
+void		 as_release_set_filename	(AsRelease	*release,
+						 const gchar	*filename,
+						 gssize		 filename_len);
 void		 as_release_set_timestamp	(AsRelease	*release,
 						 guint64	 timestamp);
 void		 as_release_set_description	(AsRelease	*release,

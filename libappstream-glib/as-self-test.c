@@ -204,6 +204,7 @@ as_test_release_appstream_func (void)
 		"<location>http://baz.com/bar.cab</location>\n"
 		"<checksum type=\"md5\">deadbeef</checksum>\n"
 		"<checksum type=\"sha1\">12345</checksum>\n"
+		"<filename>firmware.cab</filename>\n"
 		"<description><p>This is a new release</p><ul><li>Point</li></ul></description>\n"
 		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>\n"
 		"</release>\n";
@@ -227,6 +228,7 @@ as_test_release_appstream_func (void)
 	/* verify */
 	g_assert_cmpint (as_release_get_timestamp (release), ==, 123);
 	g_assert_cmpstr (as_release_get_version (release), ==, "0.1.2");
+	g_assert_cmpstr (as_release_get_filename (release), ==, "firmware.cab");
 	g_assert_cmpstr (as_release_get_location_default (release), ==, "http://foo.com/bar.zip");
 	g_assert_cmpstr (as_release_get_checksum (release, G_CHECKSUM_SHA1), ==, "12345");
 	g_assert_cmpstr (as_release_get_checksum (release, G_CHECKSUM_MD5), ==, "deadbeef");

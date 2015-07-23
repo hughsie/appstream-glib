@@ -3369,10 +3369,18 @@ as_util_mirror_local_firmware (AsUtilPrivate *priv, gchar **values, GError **err
 			_cleanup_free_ gchar *loc = NULL;
 			_cleanup_free_ gchar *fn = NULL;
 			rel = g_ptr_array_index (releases, j);
-			tmp = as_release_get_location_default (rel);
-			if (tmp == NULL)
-				continue;
-			fn = g_path_get_basename (tmp);
+
+			/* get the release filename, but fall back to
+			 * the default location basename if unset */
+			tmp = as_release_get_filename (rel);
+			if (tmp != NULL) {
+				fn = g_strdup (tmp);
+			} else {
+				tmp = as_release_get_location_default (rel);
+				if (tmp == NULL)
+					continue;
+				fn = g_path_get_basename (tmp);
+			}
 			loc = g_build_filename (values[1], fn, NULL);
 			g_ptr_array_set_size (as_release_get_locations (rel), 0);
 			as_release_add_location (rel, loc, -1);

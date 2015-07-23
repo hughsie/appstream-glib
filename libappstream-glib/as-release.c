@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -51,6 +51,7 @@ typedef struct _AsReleasePrivate	AsReleasePrivate;
 struct _AsReleasePrivate
 {
 	gchar			*version;
+	gchar			*filename;
 	GHashTable		*descriptions;
 	guint64			 timestamp;
 	GPtrArray		*locations;
@@ -71,6 +72,7 @@ as_release_finalize (GObject *object)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 
 	g_free (priv->version);
+	g_free (priv->filename);
 	g_strfreev (priv->checksums);
 	g_ptr_array_unref (priv->locations);
 	if (priv->descriptions != NULL)
@@ -146,6 +148,23 @@ as_release_get_version (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	return priv->version;
+}
+
+/**
+ * as_release_get_filename:
+ * @release: a #AsRelease instance.
+ *
+ * Gets the release filename.
+ *
+ * Returns: string, or %NULL for not set or invalid
+ *
+ * Since: 0.4.2
+ **/
+const gchar *
+as_release_get_filename (AsRelease *release)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	return priv->filename;
 }
 
 /**
@@ -257,6 +276,26 @@ as_release_set_version (AsRelease *release,
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	g_free (priv->version);
 	priv->version = as_strndup (version, version_len);
+}
+
+/**
+ * as_release_set_filename:
+ * @release: a #AsRelease instance.
+ * @filename: the filename string.
+ * @filename_len: the size of @filename, or -1 if %NULL-terminated.
+ *
+ * Sets the release filename.
+ *
+ * Since: 0.4.2
+ **/
+void
+as_release_set_filename (AsRelease *release,
+			const gchar *filename,
+			gssize filename_len)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_free (priv->filename);
+	priv->filename = as_strndup (filename, filename_len);
 }
 
 /**
@@ -432,6 +471,11 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 					"type", _g_checksum_type_to_string (i),
 					NULL);
 		}
+		if (priv->filename != NULL) {
+			as_node_insert (n, "filename", priv->filename,
+					AS_NODE_INSERT_FLAG_NONE,
+					NULL);
+		}
 	}
 	if (priv->descriptions != NULL && as_node_context_get_version (ctx) >= 0.6) {
 		as_node_insert_localized (n, "description", priv->descriptions,
@@ -479,6 +523,14 @@ as_release_node_parse (AsRelease *release, GNode *node,
 		if (as_node_get_tag (n) != AS_TAG_LOCATION)
 			continue;
 		g_ptr_array_add (priv->locations, as_node_take_data (n));
+	}
+
+	/* get optional filename */
+	for (n = node->children; n != NULL; n = n->next) {
+		if (as_node_get_tag (n) != AS_TAG_FILENAME)
+			continue;
+		g_free (priv->filename);
+		priv->filename = as_node_take_data (n);
 	}
 
 	/* get optional checksums */

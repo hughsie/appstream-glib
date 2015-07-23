@@ -5,10 +5,6 @@ Class=Firmware
 ClassGuid={f2e7dd72-6468-4e36-b6f1-6488f42c1b52}
 DriverVer=03/01/2015,2.0.0
 
-; this is a nonstandard section
-[Location]
-URLs=http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.0.cab
-
 [Firmware_CopyFiles]
 firmware.bin
 

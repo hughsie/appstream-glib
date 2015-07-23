@@ -140,6 +140,9 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	if (fw_basename != NULL)
 		as_app_add_metadata (AS_APP (app), "FirmwareBasename", fw_basename, -1);
 
+	/* added so we can mirror files */
+	as_release_set_filename (release, asb_package_get_basename (pkg), -1);
+
 	asb_plugin_add_app (apps, AS_APP (app));
 	return TRUE;
 }
