@@ -2447,6 +2447,152 @@ as_test_store_embedded_func (void)
 	g_assert (g_file_test ("/tmp/origin/32x32/eog.png", G_FILE_TEST_EXISTS));
 }
 
+static void
+store_changed_cb (AsStore *store, guint *cnt)
+{
+	as_test_loop_quit ();
+	(*cnt)++;
+	g_debug ("changed callback, now #%i", *cnt);
+}
+
+/* automatically reload changed directories */
+static void
+as_test_store_auto_reload_dir_func (void)
+{
+	AsApp *app;
+	gboolean ret;
+	guint cnt = 0;
+	_cleanup_error_free_ GError *error = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+
+	/* add this file to a store */
+	store = as_store_new ();
+	g_signal_connect (store, "changed",
+			  G_CALLBACK (store_changed_cb), &cnt);
+	as_store_set_watch_flags (store, AS_STORE_WATCH_FLAG_ADDED |
+					   AS_STORE_WATCH_FLAG_REMOVED);
+
+	as_store_set_destdir (store, "/tmp/repo-tmp");
+	g_mkdir_with_parents ("/tmp/repo-tmp/usr/share/app-info/xmls", 0700);
+	g_unlink ("/tmp/repo-tmp/usr/share/app-info/xmls/foo.xml");
+
+	/* load store */
+	ret = as_store_load (store, AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (cnt, ==, 1);
+
+	/* create file */
+	ret = g_file_set_contents ("/tmp/repo-tmp/usr/share/app-info/xmls/foo.xml",
+				   "<components version=\"0.6\">"
+				   "<component type=\"desktop\">"
+				   "<id>test.desktop</id>"
+				   "</component>"
+				   "</components>",
+				   -1, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	as_test_loop_run_with_timeout (2000);
+	g_assert_cmpint (cnt, ==, 2);
+
+	/* verify */
+	app = as_store_get_app_by_id (store, "test.desktop");
+	g_assert (app != NULL);
+
+	/* remove file */
+	g_unlink ("/tmp/repo-tmp/usr/share/app-info/xmls/foo.xml");
+	as_test_loop_run_with_timeout (2000);
+	g_assert_cmpint (cnt, ==, 3);
+	app = as_store_get_app_by_id (store, "test.desktop");
+	g_assert (app == NULL);
+}
+
+/* automatically reload changed files */
+static void
+as_test_store_auto_reload_file_func (void)
+{
+	AsApp *app;
+	AsRelease *rel;
+	gboolean ret;
+	guint cnt = 0;
+	_cleanup_error_free_ GError *error = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+	_cleanup_object_unref_ GFile *file = NULL;
+
+	/* set initial file */
+	ret = g_file_set_contents ("/tmp/foo.xml",
+				   "<components version=\"0.6\">"
+				   "<component type=\"desktop\">"
+				   "<id>test.desktop</id>"
+				   "<releases>"
+				   "<release version=\"0.1.2\" timestamp=\"123\">"
+				   "</release>"
+				   "</releases>"
+				   "</component>"
+				   "</components>",
+				   -1, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* add this file to a store */
+	store = as_store_new ();
+	g_signal_connect (store, "changed",
+			  G_CALLBACK (store_changed_cb), &cnt);
+	as_store_set_watch_flags (store, AS_STORE_WATCH_FLAG_ADDED |
+					   AS_STORE_WATCH_FLAG_REMOVED);
+	file = g_file_new_for_path ("/tmp/foo.xml");
+	ret = as_store_from_file (store, file, NULL, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (cnt, ==, 1);
+
+	/* verify */
+	app = as_store_get_app_by_id (store, "test.desktop");
+	g_assert (app != NULL);
+	rel = as_app_get_release_default (app);
+	g_assert_cmpstr (as_release_get_version (rel), ==, "0.1.2");
+	g_assert_cmpstr (as_app_get_source_file (app), ==, "/tmp/foo.xml");
+
+	/* change the file, and ensure we get the callback */
+	g_debug ("changing file");
+	ret = g_file_set_contents ("/tmp/foo.xml",
+				   "<components version=\"0.6\">"
+				   "<component type=\"desktop\">"
+				   "<id>test.desktop</id>"
+				   "<releases>"
+				   "<release version=\"0.1.0\" timestamp=\"100\">"
+				   "</release>"
+				   "</releases>"
+				   "</component>"
+				   "<component type=\"desktop\">"
+				   "<id>baz.desktop</id>"
+				   "</component>"
+				   "</components>",
+				   -1, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_test_loop_run_with_timeout (2000);
+	g_assert_cmpint (cnt, ==, 2);
+
+	/* verify */
+	app = as_store_get_app_by_id (store, "baz.desktop");
+	g_assert (app != NULL);
+	app = as_store_get_app_by_id (store, "test.desktop");
+	g_assert (app != NULL);
+	rel = as_app_get_release_default (app);
+	g_assert_cmpstr (as_release_get_version (rel), ==, "0.1.0");
+
+	/* remove file */
+	g_unlink ("/tmp/foo.xml");
+	as_test_loop_run_with_timeout (2000);
+	g_assert_cmpint (cnt, ==, 3);
+	app = as_store_get_app_by_id (store, "baz.desktop");
+	g_assert (app == NULL);
+	app = as_store_get_app_by_id (store, "test.desktop");
+	g_assert (app == NULL);
+}
+
 /* demote the .desktop "application" to an addon */
 static void
 as_test_store_demote_func (void)
@@ -4039,6 +4185,8 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/monitor{file}", as_test_monitor_file_func);
 	g_test_add_func ("/AppStream/yaml", as_test_yaml_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
+	g_test_add_func ("/AppStream/store{auto-reload-dir}", as_test_store_auto_reload_dir_func);
+	g_test_add_func ("/AppStream/store{auto-reload-file}", as_test_store_auto_reload_file_func);
 	g_test_add_func ("/AppStream/store{demote}", as_test_store_demote_func);
 	g_test_add_func ("/AppStream/store{merges}", as_test_store_merges_func);
 	g_test_add_func ("/AppStream/store{merges-local}", as_test_store_merges_local_func);

@@ -102,6 +102,22 @@ typedef enum {
 } AsStoreAddFlags;
 
 /**
+ * AsStoreWatchFlags:
+ * @AS_STORE_WATCH_FLAG_NONE:			No extra flags to use
+ * @AS_STORE_WATCH_FLAG_ADDED:			Add applications if files change or are added
+ * @AS_STORE_WATCH_FLAG_REMOVED:		Remove applications if files are changed or deleted
+ *
+ * The flags to use when local files are added or removed from the store.
+ **/
+typedef enum {
+	AS_STORE_WATCH_FLAG_NONE			= 0,	/* Since: 0.4.2 */
+	AS_STORE_WATCH_FLAG_ADDED			= 1,	/* Since: 0.4.2 */
+	AS_STORE_WATCH_FLAG_REMOVED			= 2,	/* Since: 0.4.2 */
+	/*< private >*/
+	AS_STORE_WATCH_FLAG_LAST
+} AsStoreWatchFlags;
+
+/**
  * AsStoreError:
  * @AS_STORE_ERROR_FAILED:			Generic failure
  *
@@ -185,6 +201,9 @@ void		 as_store_set_api_version	(AsStore	*store,
 AsStoreAddFlags	 as_store_get_add_flags		(AsStore	*store);
 void		 as_store_set_add_flags		(AsStore	*store,
 						 AsStoreAddFlags add_flags);
+AsStoreWatchFlags as_store_get_watch_flags	(AsStore	*store);
+void		 as_store_set_watch_flags	(AsStore	*store,
+						 AsStoreWatchFlags watch_flags);
 GPtrArray	*as_store_validate		(AsStore	*store,
 						 AsAppValidateFlags flags,
 						 GError		**error);
