@@ -2325,9 +2325,16 @@ as_app_add_icon (AsApp *app, AsIcon *icon)
 		}
 	}
 
-	/* assume that stock icons are available in HiDPI sizes */
-	if (as_icon_get_kind (icon) == AS_ICON_KIND_STOCK)
-		as_app_add_kudo_kind (app, AS_KUDO_KIND_HI_DPI_ICON);
+	/* assume that desktop stock icons are available in HiDPI sizes */
+	if (as_icon_get_kind (icon) == AS_ICON_KIND_STOCK) {
+		switch (priv->id_kind) {
+		case AS_ID_KIND_DESKTOP:
+			as_app_add_kudo_kind (app, AS_KUDO_KIND_HI_DPI_ICON);
+			break;
+		default:
+			break;
+		}
+	}
 	g_ptr_array_add (priv->icons, g_object_ref (icon));
 }
 
