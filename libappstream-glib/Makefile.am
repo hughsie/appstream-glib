@@ -99,6 +99,8 @@ libappstream_glib_la_SOURCES =					\
 	as-image-private.h					\
 	as-inf.c						\
 	as-inf.h						\
+	as-monitor.c						\
+	as-monitor.h						\
 	as-node.c						\
 	as-node-private.h					\
 	as-problem.c						\
