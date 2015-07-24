@@ -425,6 +425,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<release version=\"2.0.2\" timestamp=\"1424116753\">\n"
 		"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.2.cab</location>\n"
 		"<checksum type=\"sha1\">522aeefdcc7f27658d73de76107fe62550c61868</checksum>\n"
+		"<filename>colorhug-als-2.0.2.cab</filename>\n"
 		"<description><p>This unstable release adds the following features:</p>"
 		"<ul><li>Add TakeReadingArray to enable panel latency measurements</li>"
 		"<li>Speed up the auto-scaled measurements considerably, using 256ms "
