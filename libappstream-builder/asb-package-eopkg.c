@@ -39,8 +39,6 @@
 #include <errno.h>
 #include <string.h>
 
-G_DEFINE_TYPE (AsbPackageEopkg, asb_package_eopkg, ASB_TYPE_PACKAGE)
-
 /**
  * Storage for eopkg metadata
  */
@@ -87,6 +85,17 @@ typedef struct eopkg_t {
 	GPtrArray *files;	/**<List of files (not directories) */
 } eopkg_t;
 
+
+
+typedef struct _AsbPackageEopkgPrivate	AsbPackageEopkgPrivate;
+struct _AsbPackageEopkgPrivate
+{
+	eopkg_t	*package;
+};
+
+G_DEFINE_TYPE_WITH_PRIVATE (AsbPackageEopkg, asb_package_eopkg, ASB_TYPE_PACKAGE)
+
+#define GET_PRIVATE(o) (asb_package_eopkg_get_instance_private (o))
 
 /**
  * Process metadata.xml node
@@ -439,6 +448,19 @@ asb_package_eopkg_init (AsbPackageEopkg *pkg)
 {
 }
 
+/**
+ * asb_package_eopkg_finalize:
+ **/
+static void
+asb_package_eopkg_finalize (GObject *object)
+{
+	AsbPackageEopkg *pkg = ASB_PACKAGE_EOPKG (object);
+	AsbPackageEopkgPrivate *priv = GET_PRIVATE (pkg);
+
+	close_eopkg (priv->package);
+
+	G_OBJECT_CLASS (asb_package_eopkg_parent_class)->finalize (object);
+}
 
 /**
  * asb_package_eopkg_open:
@@ -449,10 +471,13 @@ asb_package_eopkg_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	eopkg_t *eopkg = NULL;
 	gchar *rel = NULL;
 	GSList *elem = NULL;
+	AsbPackageEopkgPrivate *priv = NULL;
 
 	eopkg = open_eopkg(filename);
 	if (!eopkg)
 		return FALSE;
+
+	priv = GET_PRIVATE(ASB_PACKAGE_EOPKG(pkg));
 
 	asb_package_set_name (pkg, eopkg->meta->name);
 	asb_package_set_source (pkg, eopkg->meta->source);
@@ -470,7 +495,7 @@ asb_package_eopkg_open (AsbPackage *pkg, const gchar *filename, GError **error)
 
 	asb_package_set_license (pkg, eopkg->meta->licenses->data);
 
-	close_eopkg(eopkg);
+	priv->package = eopkg;
 
 	return TRUE;
 }
@@ -505,14 +530,37 @@ asb_package_eopkg_explode (AsbPackage *pkg,
 }
 
 /**
+ * asb_package_eopkg_compare:
+ **/
+static gint
+asb_package_eopkg_compare (AsbPackage *pkg1, AsbPackage *pkg2)
+{
+	AsbPackageEopkg *pkg_eopkg1 = ASB_PACKAGE_EOPKG (pkg1);
+	AsbPackageEopkgPrivate *priv1 = GET_PRIVATE (pkg_eopkg1);
+
+	AsbPackageEopkg *pkg_eopkg2 = ASB_PACKAGE_EOPKG (pkg2);
+	AsbPackageEopkgPrivate *priv2 = GET_PRIVATE (pkg_eopkg2);
+
+	gint rel1 = priv1->package->meta->release;
+	gint rel2 = priv2->package->meta->release;
+
+	return (rel1 > rel2) - (rel1 < rel2);
+}
+
+/**
  * asb_package_eopkg_class_init:
  **/
 static void
 asb_package_eopkg_class_init (AsbPackageEopkgClass *klass)
 {
 	AsbPackageClass *package_class = ASB_PACKAGE_CLASS (klass);
+	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+	object_class->finalize = asb_package_eopkg_finalize;
+
 	package_class->open = asb_package_eopkg_open;
 	package_class->explode = asb_package_eopkg_explode;
+	package_class->compare = asb_package_eopkg_compare;
 }
 
 /**
