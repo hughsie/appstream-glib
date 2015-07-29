@@ -260,6 +260,7 @@ asb_test_plugin_loader_func (void)
 	/* set up loader */
 	ctx = asb_context_new ();
 	loader = asb_context_get_plugin_loader (ctx);
+	asb_plugin_loader_set_dir (loader, TESTPLUGINDIR);
 	ret = asb_plugin_loader_setup (loader, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -299,6 +300,7 @@ static void
 asb_test_context_test_func (AsbTestContextMode mode)
 {
 	AsApp *app;
+	AsbPluginLoader *loader;
 	GError *error = NULL;
 	const gchar *expected_xml;
 	gboolean ret;
@@ -356,6 +358,8 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	}
 	g_assert (asb_context_get_flag (ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID));
 	g_assert_cmpstr (asb_context_get_temp_dir (ctx), ==, "/tmp/asbuilder/temp");
+	loader = asb_context_get_plugin_loader (ctx);
+	asb_plugin_loader_set_dir (loader, TESTPLUGINDIR);
 	ret = asb_context_setup (ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -846,6 +850,7 @@ static void
 asb_test_firmware_func (void)
 {
 	AsApp *app;
+	AsbPluginLoader *loader;
 	const gchar *expected_xml;
 	gboolean ret;
 	guint i;
@@ -871,6 +876,8 @@ asb_test_firmware_func (void)
 	asb_context_set_output_dir (ctx, "/tmp/asbuilder/output");
 	asb_context_set_temp_dir (ctx, "/tmp/asbuilder/temp");
 	asb_context_set_icons_dir (ctx, "/tmp/asbuilder/temp/icons");
+	loader = asb_context_get_plugin_loader (ctx);
+	asb_plugin_loader_set_dir (loader, TESTPLUGINDIR);
 	ret = asb_context_setup (ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);

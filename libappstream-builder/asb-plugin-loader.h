@@ -60,6 +60,9 @@ struct _AsbPluginLoaderClass
 GType		 asb_plugin_loader_get_type	(void);
 AsbPluginLoader	*asb_plugin_loader_new		(AsbContext		*ctx);
 
+const gchar	*asb_plugin_loader_get_dir	(AsbPluginLoader	*plugin_loader);
+void		 asb_plugin_loader_set_dir	(AsbPluginLoader	*plugin_loader,
+						 const gchar		*plugin_dir);
 gboolean	 asb_plugin_loader_setup	(AsbPluginLoader	*plugin_loader,
 						 GError			**error);
 GPtrArray	*asb_plugin_loader_get_globs	(AsbPluginLoader	*plugin_loader);

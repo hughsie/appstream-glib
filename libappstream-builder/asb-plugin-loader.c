@@ -39,6 +39,7 @@ struct _AsbPluginLoaderPrivate
 {
 	GPtrArray		*plugins;
 	AsbContext		*ctx;
+	gchar			*plugin_dir;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbPluginLoader, asb_plugin_loader, G_TYPE_OBJECT)
@@ -85,6 +86,7 @@ asb_plugin_loader_finalize (GObject *object)
 					      (gpointer*) &priv->ctx);
 	}
 	g_ptr_array_unref (priv->plugins);
+	g_free (priv->plugin_dir);
 
 	G_OBJECT_CLASS (asb_plugin_loader_parent_class)->finalize (object);
 }
@@ -387,6 +389,40 @@ asb_plugin_loader_sort_cb (gconstpointer a, gconstpointer b)
 }
 
 /**
+ * asb_plugin_loader_get_dir:
+ * @plugin_loader: A #AsbPluginLoader
+ *
+ * Gets the plugin location.
+ *
+ * Returns: the location of the plugins
+ *
+ * Since: 0.4.2
+ **/
+const gchar *
+asb_plugin_loader_get_dir (AsbPluginLoader *plugin_loader)
+{
+	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
+	return priv->plugin_dir;
+}
+
+/**
+ * asb_plugin_loader_set_dir:
+ * @plugin_loader: A #AsbPluginLoader
+ * @plugin_dir: the location of the plugins
+ *
+ * Set the plugin location.
+ *
+ * Since: 0.4.2
+ **/
+void
+asb_plugin_loader_set_dir (AsbPluginLoader *plugin_loader, const gchar *plugin_dir)
+{
+	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
+	g_free (priv->plugin_dir);
+	priv->plugin_dir = g_strdup (plugin_dir);
+}
+
+/**
  * asb_plugin_loader_setup:
  * @plugin_loader: A #AsbPluginLoader
  * @error: A #GError or %NULL
@@ -402,20 +438,19 @@ asb_plugin_loader_setup (AsbPluginLoader *plugin_loader, GError **error)
 {
 	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
 	const gchar *filename_tmp;
-	const gchar *location = "./plugins/.libs/";
 	_cleanup_dir_close_ GDir *dir = NULL;
 
-	/* search system-wide if not found locally */
-	if (!g_file_test (location, G_FILE_TEST_EXISTS))
-		location = ASB_PLUGIN_DIR;
+	/* never set */
+	if (priv->plugin_dir == NULL)
+		priv->plugin_dir = g_strdup (ASB_PLUGIN_DIR);
 
 	/* search in the plugin directory for plugins */
-	dir = g_dir_open (location, 0, error);
+	dir = g_dir_open (priv->plugin_dir, 0, error);
 	if (dir == NULL)
 		return FALSE;
 
 	/* try to open each plugin */
-	g_debug ("searching for plugins in %s", location);
+	g_debug ("searching for plugins in %s", priv->plugin_dir);
 	do {
 		_cleanup_free_ gchar *filename_plugin = NULL;
 		filename_tmp = g_dir_read_name (dir);
@@ -423,7 +458,7 @@ asb_plugin_loader_setup (AsbPluginLoader *plugin_loader, GError **error)
 			break;
 		if (!g_str_has_suffix (filename_tmp, ".so"))
 			continue;
-		filename_plugin = g_build_filename (location,
+		filename_plugin = g_build_filename (priv->plugin_dir,
 						    filename_tmp,
 						    NULL);
 		asb_plugin_loader_open_plugin (plugin_loader, filename_plugin);
