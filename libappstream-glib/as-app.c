@@ -2144,7 +2144,10 @@ as_app_add_mimetype (AsApp *app, const gchar *mimetype, gssize mimetype_len)
 static void
 as_app_subsume_release (AsRelease *release, AsRelease *donor)
 {
+	AsChecksum *csum;
+	AsChecksum *csum_tmp;
 	GPtrArray *locations;
+	GPtrArray *checksums;
 	const gchar *tmp;
 	guint i;
 
@@ -2165,12 +2168,15 @@ as_app_subsume_release (AsRelease *release, AsRelease *donor)
 		as_release_add_location (release, tmp, -1);
 	}
 
-	/* copy metadata if set */
-	for (i = 0; i < 4; i++) {
-		tmp = as_release_get_checksum (donor, i);
-		if (tmp == NULL)
+	/* copy checksums if set */
+	checksums = as_release_get_checksums (donor);
+	for (i = 0; i < checksums->len; i++) {
+		csum = g_ptr_array_index (checksums, i);
+		tmp = as_checksum_get_filename (csum);
+		csum_tmp = as_release_get_checksum_by_fn (release, tmp);
+		if (csum_tmp != NULL)
 			continue;
-		as_release_set_checksum (release, i, tmp, -1);
+		as_release_add_checksum (release, csum);
 	}
 }
 

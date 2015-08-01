@@ -28,6 +28,8 @@
 
 #include <glib-object.h>
 
+#include "as-checksum.h"
+
 #define AS_TYPE_RELEASE			(as_release_get_type())
 #define AS_RELEASE(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_RELEASE, AsRelease))
 #define AS_RELEASE_CLASS(cls)		(G_TYPE_CHECK_CLASS_CAST((cls), AS_TYPE_RELEASE, AsReleaseClass))
@@ -72,8 +74,11 @@ const gchar	*as_release_get_description	(AsRelease	*release,
 						 const gchar	*locale);
 GPtrArray	*as_release_get_locations	(AsRelease	*release);
 const gchar	*as_release_get_location_default (AsRelease	*release);
-const gchar	*as_release_get_checksum	(AsRelease	*release,
-						 GChecksumType	 checksum_type);
+AsChecksum	*as_release_get_checksum_by_fn	(AsRelease	*release,
+						 const gchar	*fn);
+AsChecksum	*as_release_get_checksum_by_target (AsRelease	*release,
+						 AsChecksumTarget target);
+GPtrArray	*as_release_get_checksums	(AsRelease	*release);
 
 /* setters */
 void		 as_release_set_version		(AsRelease	*release,
@@ -91,10 +96,18 @@ void		 as_release_set_description	(AsRelease	*release,
 void		 as_release_add_location	(AsRelease	*release,
 						 const gchar	*location,
 						 gssize		 location_len);
+void		 as_release_add_checksum	(AsRelease	*release,
+						 AsChecksum	*checksum);
+
+/* deprecated */
+G_DEPRECATED_FOR(as_checksum_set_value)
 void		 as_release_set_checksum	(AsRelease	*release,
 						 GChecksumType	 checksum_type,
-						 const gchar	*checksum,
+						 const gchar	*checksum_value,
 						 gssize		 checksum_len);
+G_DEPRECATED_FOR(as_checksum_get_value)
+const gchar	*as_release_get_checksum	(AsRelease	*release,
+						 GChecksumType	 checksum_type);
 
 G_END_DECLS
 

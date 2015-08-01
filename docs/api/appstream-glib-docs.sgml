@@ -34,6 +34,7 @@
       </para>
     </partintro>
     <xi:include href="xml/as-app.xml"/>
+    <xi:include href="xml/as-checksum.xml"/>
     <xi:include href="xml/as-icon.xml"/>
     <xi:include href="xml/as-image.xml"/>
     <xi:include href="xml/as-release.xml"/>

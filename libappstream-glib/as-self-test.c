@@ -27,6 +27,7 @@
 
 #include "as-app-private.h"
 #include "as-bundle-private.h"
+#include "as-checksum-private.h"
 #include "as-cleanup.h"
 #include "as-enums.h"
 #include "as-icon-private.h"
@@ -426,6 +427,7 @@ as_test_provide_func (void)
 static void
 as_test_release_appstream_func (void)
 {
+	AsChecksum *csum;
 	GError *error = NULL;
 	GNode *n;
 	GNode *root;
@@ -435,9 +437,8 @@ as_test_release_appstream_func (void)
 		"<release version=\"0.1.2\" timestamp=\"123\">\n"
 		"<location>http://foo.com/bar.zip</location>\n"
 		"<location>http://baz.com/bar.cab</location>\n"
-		"<checksum type=\"md5\">deadbeef</checksum>\n"
-		"<checksum type=\"sha1\">12345</checksum>\n"
-		"<filename>firmware.cab</filename>\n"
+		"<checksum filename=\"firmware.cab\" target=\"container\" type=\"sha1\">12345</checksum>\n"
+		"<checksum filename=\"firmware.cab\" target=\"container\" type=\"md5\">deadbeef</checksum>\n"
 		"<description><p>This is a new release</p><ul><li>Point</li></ul></description>\n"
 		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>\n"
 		"</release>\n";
@@ -461,14 +462,35 @@ as_test_release_appstream_func (void)
 	/* verify */
 	g_assert_cmpint (as_release_get_timestamp (release), ==, 123);
 	g_assert_cmpstr (as_release_get_version (release), ==, "0.1.2");
-	g_assert_cmpstr (as_release_get_filename (release), ==, "firmware.cab");
 	g_assert_cmpstr (as_release_get_location_default (release), ==, "http://foo.com/bar.zip");
-	g_assert_cmpstr (as_release_get_checksum (release, G_CHECKSUM_SHA1), ==, "12345");
-	g_assert_cmpstr (as_release_get_checksum (release, G_CHECKSUM_MD5), ==, "deadbeef");
 	g_assert_cmpstr (as_release_get_description (release, "pl"), ==,
 				"<p>Oprogramowanie</p>");
 	g_assert_cmpstr (as_release_get_description (release, NULL), ==,
 				"<p>This is a new release</p><ul><li>Point</li></ul>");
+
+	/* checksum */
+	g_assert_cmpint (as_release_get_checksums(release)->len, ==, 2);
+	csum = as_release_get_checksum_by_fn (release, "firmware.inf");
+	g_assert (csum == NULL);
+	csum = as_release_get_checksum_by_fn (release, "firmware.cab");
+	g_assert (csum != NULL);
+	g_assert_cmpint (as_checksum_get_kind (csum), ==, G_CHECKSUM_SHA1);
+	g_assert_cmpint (as_checksum_get_target (csum), ==, AS_CHECKSUM_TARGET_CONTAINER);
+	g_assert_cmpstr (as_checksum_get_filename (csum), ==, "firmware.cab");
+	g_assert_cmpstr (as_checksum_get_value (csum), ==, "12345");
+
+	/* get by target type */
+	csum = as_release_get_checksum_by_target (release, AS_CHECKSUM_TARGET_CONTENT);
+	g_assert (csum == NULL);
+	csum = as_release_get_checksum_by_target (release, AS_CHECKSUM_TARGET_CONTAINER);
+	g_assert (csum != NULL);
+	g_assert_cmpstr (as_checksum_get_value (csum), ==, "12345");
+
+	/* deprecated */
+	G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+	g_assert_cmpstr (as_release_get_checksum (release, G_CHECKSUM_SHA1), ==, "12345");
+	g_assert_cmpstr (as_release_get_checksum (release, G_CHECKSUM_MD5), ==, "deadbeef");
+	G_GNUC_END_IGNORE_DEPRECATIONS
 
 	/* back to node */
 	root = as_node_new ();
@@ -776,6 +798,58 @@ as_test_icon_func (void)
 	g_assert_cmpstr (as_icon_get_url (icon), ==, NULL);
 	g_assert (as_icon_get_pixbuf (icon) != NULL);
 	g_assert (as_icon_get_data (icon) != NULL);
+}
+
+static void
+as_test_checksum_func (void)
+{
+	GError *error = NULL;
+	GNode *n;
+	GNode *root;
+	GString *xml;
+	const gchar *src = "<checksum filename=\"fn.cab\" target=\"container\" type=\"sha1\">12345</checksum>";
+	gboolean ret;
+	_cleanup_free_ AsNodeContext *ctx = NULL;
+	_cleanup_object_unref_ AsChecksum *csum = NULL;
+
+	/* helpers */
+	g_assert_cmpint (as_checksum_target_from_string ("container"), ==, AS_CHECKSUM_TARGET_CONTAINER);
+	g_assert_cmpint (as_checksum_target_from_string ("content"), ==, AS_CHECKSUM_TARGET_CONTENT);
+	g_assert_cmpint (as_checksum_target_from_string (NULL), ==, AS_CHECKSUM_TARGET_UNKNOWN);
+	g_assert_cmpstr (as_checksum_target_to_string (AS_CHECKSUM_TARGET_CONTAINER), ==, "container");
+	g_assert_cmpstr (as_checksum_target_to_string (AS_CHECKSUM_TARGET_CONTENT), ==, "content");
+	g_assert_cmpstr (as_checksum_target_to_string (AS_CHECKSUM_TARGET_UNKNOWN), ==, NULL);
+
+	csum = as_checksum_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, -1, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "checksum");
+	g_assert (n != NULL);
+	ctx = as_node_context_new ();
+	ret = as_checksum_node_parse (csum, n, ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_checksum_get_kind (csum), ==, G_CHECKSUM_SHA1);
+	g_assert_cmpint (as_checksum_get_target (csum), ==, AS_CHECKSUM_TARGET_CONTAINER);
+	g_assert_cmpstr (as_checksum_get_filename (csum), ==, "fn.cab");
+	g_assert_cmpstr (as_checksum_get_value (csum), ==, "12345");
+
+	/* back to node */
+	root = as_node_new ();
+	as_node_context_set_version (ctx, 0.4);
+	n = as_checksum_node_insert (csum, root, ctx);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
 }
 
 static void
@@ -4141,6 +4215,7 @@ main (int argc, char **argv)
 	/* tests go here */
 	g_test_add_func ("/AppStream/tag", as_test_tag_func);
 	g_test_add_func ("/AppStream/provide", as_test_provide_func);
+	g_test_add_func ("/AppStream/checksum", as_test_checksum_func);
 	g_test_add_func ("/AppStream/release", as_test_release_func);
 	g_test_add_func ("/AppStream/release{appdata}", as_test_release_appdata_func);
 	g_test_add_func ("/AppStream/release{appstream}", as_test_release_appstream_func);

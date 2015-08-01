@@ -3365,6 +3365,7 @@ as_util_mirror_local_firmware (AsUtilPrivate *priv, gchar **values, GError **err
 		if (releases->len == 0)
 			continue;
 		for (j = 0; j < releases->len; j++) {
+			AsChecksum *csum;
 			const gchar *tmp;
 			_cleanup_free_ gchar *loc = NULL;
 			_cleanup_free_ gchar *fn = NULL;
@@ -3372,8 +3373,11 @@ as_util_mirror_local_firmware (AsUtilPrivate *priv, gchar **values, GError **err
 
 			/* get the release filename, but fall back to
 			 * the default location basename if unset */
-			tmp = as_release_get_filename (rel);
-			if (tmp != NULL) {
+			csum = as_release_get_checksum_by_target (rel, AS_CHECKSUM_TARGET_CONTAINER);
+			if (csum != NULL) {
+				tmp = as_checksum_get_filename (csum);
+				if (tmp == NULL)
+					continue;
 				fn = g_strdup (tmp);
 			} else {
 				tmp = as_release_get_location_default (rel);

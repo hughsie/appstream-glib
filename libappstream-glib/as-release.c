@@ -40,22 +40,20 @@
 #include <stdlib.h>
 
 #include "as-cleanup.h"
+#include "as-checksum-private.h"
 #include "as-node-private.h"
 #include "as-release-private.h"
 #include "as-tag.h"
 #include "as-utils-private.h"
 
-#define AS_RELEASE_CHECKSUM_TYPE_MAX	G_CHECKSUM_SHA512
-
 typedef struct _AsReleasePrivate	AsReleasePrivate;
 struct _AsReleasePrivate
 {
 	gchar			*version;
-	gchar			*filename;
 	GHashTable		*descriptions;
 	guint64			 timestamp;
 	GPtrArray		*locations;
-	gchar			**checksums;
+	GPtrArray		*checksums;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsRelease, as_release, G_TYPE_OBJECT)
@@ -72,8 +70,7 @@ as_release_finalize (GObject *object)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 
 	g_free (priv->version);
-	g_free (priv->filename);
-	g_strfreev (priv->checksums);
+	g_ptr_array_unref (priv->checksums);
 	g_ptr_array_unref (priv->locations);
 	if (priv->descriptions != NULL)
 		g_hash_table_unref (priv->descriptions);
@@ -89,7 +86,7 @@ as_release_init (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	priv->locations = g_ptr_array_new_with_free_func (g_free);
-	priv->checksums = g_new0 (gchar *, AS_RELEASE_CHECKSUM_TYPE_MAX + 1);
+	priv->checksums = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 }
 
 /**
@@ -151,23 +148,6 @@ as_release_get_version (AsRelease *release)
 }
 
 /**
- * as_release_get_filename:
- * @release: a #AsRelease instance.
- *
- * Gets the release filename.
- *
- * Returns: string, or %NULL for not set or invalid
- *
- * Since: 0.4.2
- **/
-const gchar *
-as_release_get_filename (AsRelease *release)
-{
-	AsReleasePrivate *priv = GET_PRIVATE (release);
-	return priv->filename;
-}
-
-/**
  * as_release_get_locations:
  * @release: a #AsRelease instance.
  *
@@ -204,6 +184,73 @@ as_release_get_location_default (AsRelease *release)
 }
 
 /**
+ * as_release_get_checksums:
+ * @release: a #AsRelease instance.
+ *
+ * Gets the release checksums.
+ *
+ * Returns: (transfer none) (element-type AsChecksum): list of checksums
+ *
+ * Since: 0.4.2
+ **/
+GPtrArray *
+as_release_get_checksums (AsRelease *release)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	return priv->checksums;
+}
+
+/**
+ * as_release_get_checksum_by_fn:
+ * @release: a #AsRelease instance.
+ *
+ * Gets the checksum for a release.
+ *
+ * Returns: (transfer none): an #AsChecksum, or %NULL for not found
+ *
+ * Since: 0.4.2
+ **/
+AsChecksum *
+as_release_get_checksum_by_fn (AsRelease *release, const gchar *fn)
+{
+	AsChecksum *checksum;
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	guint i;
+
+	for (i = 0; i < priv->checksums->len; i++) {
+		checksum = g_ptr_array_index (priv->checksums, i);
+		if (g_strcmp0 (fn, as_checksum_get_filename (checksum)) == 0)
+			return checksum;
+	}
+	return NULL;
+}
+
+/**
+ * as_release_get_checksum_by_target:
+ * @target: a #AsChecksumTarget, e.g. %AS_CHECKSUM_TARGET_CONTAINER
+ *
+ * Gets the checksum for a release.
+ *
+ * Returns: (transfer none): an #AsChecksum, or %NULL for not found
+ *
+ * Since: 0.4.2
+ **/
+AsChecksum *
+as_release_get_checksum_by_target (AsRelease *release, AsChecksumTarget target)
+{
+	AsChecksum *checksum;
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	guint i;
+
+	for (i = 0; i < priv->checksums->len; i++) {
+		checksum = g_ptr_array_index (priv->checksums, i);
+		if (as_checksum_get_target (checksum) == target)
+			return checksum;
+	}
+	return NULL;
+}
+
+/**
  * as_release_get_checksum:
  * @release: a #AsRelease instance.
  *
@@ -216,9 +263,16 @@ as_release_get_location_default (AsRelease *release)
 const gchar *
 as_release_get_checksum (AsRelease *release, GChecksumType checksum_type)
 {
+	AsChecksum *checksum;
 	AsReleasePrivate *priv = GET_PRIVATE (release);
-	g_return_val_if_fail (checksum_type <= AS_RELEASE_CHECKSUM_TYPE_MAX, NULL);
-	return priv->checksums[checksum_type];
+	guint i;
+
+	for (i = 0; i < priv->checksums->len; i++) {
+		checksum = g_ptr_array_index (priv->checksums, i);
+		if (checksum_type == as_checksum_get_kind (checksum))
+			return as_checksum_get_value (checksum);
+	}
+	return NULL;
 }
 
 /**
@@ -279,26 +333,6 @@ as_release_set_version (AsRelease *release,
 }
 
 /**
- * as_release_set_filename:
- * @release: a #AsRelease instance.
- * @filename: the filename string.
- * @filename_len: the size of @filename, or -1 if %NULL-terminated.
- *
- * Sets the release filename.
- *
- * Since: 0.4.2
- **/
-void
-as_release_set_filename (AsRelease *release,
-			const gchar *filename,
-			gssize filename_len)
-{
-	AsReleasePrivate *priv = GET_PRIVATE (release);
-	g_free (priv->filename);
-	priv->filename = as_strndup (filename, filename_len);
-}
-
-/**
  * as_release_add_location:
  * @release: a #AsRelease instance.
  * @location: the location string.
@@ -323,10 +357,26 @@ as_release_add_location (AsRelease *release,
 }
 
 /**
+ * as_release_add_checksum:
+ * @release: a #AsRelease instance.
+ * @checksum: a #AsChecksum instance.
+ *
+ * Adds a release checksum.
+ *
+ * Since: 0.4.2
+ **/
+void
+as_release_add_checksum (AsRelease *release, AsChecksum *checksum)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_ptr_array_add (priv->checksums, g_object_ref (checksum));
+}
+
+/**
  * as_release_set_checksum:
  * @release: a #AsRelease instance.
  * @checksum_type: a #GChecksumType, e.g. %G_CHECKSUM_SHA1
- * @checksum: the checksum string.
+ * @checksum_value: the checksum string.
  * @checksum_len: the size of @checksum, or -1 if %NULL-terminated.
  *
  * Sets the release checksum.
@@ -336,13 +386,21 @@ as_release_add_location (AsRelease *release,
 void
 as_release_set_checksum (AsRelease *release,
 			 GChecksumType checksum_type,
-			 const gchar *checksum,
+			 const gchar *checksum_value,
 			 gssize checksum_len)
 {
+	AsChecksum *checksum;
 	AsReleasePrivate *priv = GET_PRIVATE (release);
-	g_return_if_fail (checksum_type <= AS_RELEASE_CHECKSUM_TYPE_MAX);
-	g_free (priv->checksums[checksum_type]);
-	priv->checksums[checksum_type] = as_strndup (checksum, checksum_len);
+
+	/* compat */
+	if (priv->checksums->len > 0) {
+		checksum = g_ptr_array_index (priv->checksums, 0);
+	} else {
+		checksum = as_checksum_new ();
+		as_release_add_checksum (release, checksum);
+	}
+	as_checksum_set_value (checksum, checksum_value);
+	as_checksum_set_kind (checksum, checksum_type);
 }
 
 /**
@@ -393,40 +451,6 @@ as_release_set_description (AsRelease *release,
 }
 
 /**
- * _g_checksum_type_from_string:
- **/
-static GChecksumType
-_g_checksum_type_from_string (const gchar *checksum_type)
-{
-	if (g_ascii_strcasecmp (checksum_type, "md5") == 0)
-		return G_CHECKSUM_MD5;
-	if (g_ascii_strcasecmp (checksum_type, "sha1") == 0)
-		return G_CHECKSUM_SHA1;
-	if (g_ascii_strcasecmp (checksum_type, "sha256") == 0)
-		return G_CHECKSUM_SHA256;
-	if (g_ascii_strcasecmp (checksum_type, "sha512") == 0)
-		return G_CHECKSUM_SHA512;
-	return -1;
-}
-
-/**
- * _g_checksum_type_to_string:
- **/
-static const gchar *
-_g_checksum_type_to_string (GChecksumType checksum_type)
-{
-	if (checksum_type == G_CHECKSUM_MD5)
-		return "md5";
-	if (checksum_type == G_CHECKSUM_SHA1)
-		return "sha1";
-	if (checksum_type == G_CHECKSUM_SHA256)
-		return "sha256";
-	if (checksum_type == G_CHECKSUM_SHA512)
-		return "sha512";
-	return NULL;
-}
-
-/**
  * as_release_node_insert: (skip)
  * @release: a #AsRelease instance.
  * @parent: the parent #GNode to use..
@@ -442,6 +466,7 @@ GNode *
 as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	AsChecksum *checksum;
 	GNode *n;
 
 	n = as_node_insert (parent, "release", NULL,
@@ -463,18 +488,9 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 			as_node_insert (n, "location", tmp,
 					AS_NODE_INSERT_FLAG_NONE, NULL);
 		}
-		for (i = 0; i <= AS_RELEASE_CHECKSUM_TYPE_MAX; i++) {
-			if (priv->checksums[i] == NULL)
-				continue;
-			as_node_insert (n, "checksum", priv->checksums[i],
-					AS_NODE_INSERT_FLAG_NONE,
-					"type", _g_checksum_type_to_string (i),
-					NULL);
-		}
-		if (priv->filename != NULL) {
-			as_node_insert (n, "filename", priv->filename,
-					AS_NODE_INSERT_FLAG_NONE,
-					NULL);
+		for (i = 0; i < priv->checksums->len; i++) {
+			checksum = g_ptr_array_index (priv->checksums, i);
+			as_checksum_node_insert (checksum, n, ctx);
 		}
 	}
 	if (priv->descriptions != NULL && as_node_context_get_version (ctx) >= 0.6) {
@@ -506,7 +522,6 @@ as_release_node_parse (AsRelease *release, GNode *node,
 	GNode *n;
 	const gchar *tmp;
 	gchar *taken;
-	guint i;
 
 	tmp = as_node_get_attribute (node, "timestamp");
 	if (tmp != NULL)
@@ -525,31 +540,15 @@ as_release_node_parse (AsRelease *release, GNode *node,
 		g_ptr_array_add (priv->locations, as_node_take_data (n));
 	}
 
-	/* get optional filename */
-	for (n = node->children; n != NULL; n = n->next) {
-		if (as_node_get_tag (n) != AS_TAG_FILENAME)
-			continue;
-		g_free (priv->filename);
-		priv->filename = as_node_take_data (n);
-	}
-
 	/* get optional checksums */
-	for (i = 0; i <= AS_RELEASE_CHECKSUM_TYPE_MAX; i++) {
-		g_free (priv->checksums[i]);
-		priv->checksums[i] = NULL;
-	}
 	for (n = node->children; n != NULL; n = n->next) {
-		GChecksumType checksum_type;
-		const gchar *type;
+		_cleanup_object_unref_ AsChecksum *csum = NULL;
 		if (as_node_get_tag (n) != AS_TAG_CHECKSUM)
 			continue;
-		type = as_node_get_attribute (n, "type");
-		if (type == NULL)
-			continue;
-		checksum_type = _g_checksum_type_from_string (type);
-		if ((gint) checksum_type == -1)
-			continue;
-		priv->checksums[checksum_type] = as_node_take_data (n);
+		csum = as_checksum_new ();
+		if (!as_checksum_node_parse (csum, n, ctx, error))
+			return FALSE;
+		as_release_add_checksum (release, csum);
 	}
 
 	/* AppStream: multiple <description> tags */

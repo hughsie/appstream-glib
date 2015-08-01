@@ -77,7 +77,6 @@
  * @AS_TAG_PERMISSION:			`permission`
  * @AS_TAG_LOCATION:			`location`
  * @AS_TAG_CHECKSUM:			`checksum`
- * @AS_TAG_FILENAME:			`filename`
  *
  * The tag type.
  **/
@@ -129,7 +128,6 @@ typedef enum {
 	AS_TAG_PERMISSION,		/* Since: 0.3.5 */
 	AS_TAG_LOCATION,		/* Since: 0.3.5 */
 	AS_TAG_CHECKSUM,		/* Since: 0.3.5 */
-	AS_TAG_FILENAME,		/* Since: 0.4.2 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;

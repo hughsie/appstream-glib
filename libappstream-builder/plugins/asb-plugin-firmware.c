@@ -41,6 +41,8 @@ void
 asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
 	asb_plugin_add_glob (globs, "*.inf");
+	asb_plugin_add_glob (globs, "*.bin");
+	asb_plugin_add_glob (globs, "*.cap");
 }
 
 /**
@@ -64,10 +66,10 @@ asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
 }
 
 /**
- * asb_plugin_firmware_get_basename:
+ * asb_plugin_firmware_get_metainfo_fn:
  */
 static gchar *
-asb_plugin_firmware_get_basename (const gchar *filename)
+asb_plugin_firmware_get_metainfo_fn (const gchar *filename)
 {
 	gchar *basename;
 	gchar *tmp;
@@ -76,7 +78,7 @@ asb_plugin_firmware_get_basename (const gchar *filename)
 	tmp = g_strrstr (basename, ".inf");
 	if (tmp != NULL)
 		*tmp = '\0';
-	return basename;
+	return g_strdup_printf ("%s.metainfo.xml", basename);
 }
 
 /**
@@ -108,11 +110,13 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 {
 	AsRelease *release;
 	GError *error_local = NULL;
+	const gchar *fw_basename = NULL;
 	_cleanup_free_ gchar *checksum = NULL;
 	_cleanup_free_ gchar *filename_full = NULL;
 	_cleanup_free_ gchar *location_checksum = NULL;
-	_cleanup_free_ gchar *fw_basename = NULL;
+	_cleanup_free_ gchar *metainfo_fn = NULL;
 	_cleanup_object_unref_ AsbApp *app = NULL;
+	_cleanup_object_unref_ AsChecksum *csum = NULL;
 
 	/* parse */
 	filename_full = g_build_filename (tmpdir, filename, NULL);
@@ -133,15 +137,43 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	if (checksum == NULL)
 		return FALSE;
 	release = as_app_get_release_default (AS_APP (app));
-	as_release_set_checksum (release, G_CHECKSUM_SHA1, checksum, -1);
+
+	/* add checksum */
+	csum = as_checksum_new ();
+	as_checksum_set_kind (csum, G_CHECKSUM_SHA1);
+	as_checksum_set_target (csum, AS_CHECKSUM_TARGET_CONTAINER);
+	as_checksum_set_value (csum, checksum);
+	as_checksum_set_filename (csum, asb_package_get_basename (pkg));
+	as_release_add_checksum (release, csum);
 
 	/* for the adddata plugin; removed in asb_plugin_merge() */
-	fw_basename = asb_plugin_firmware_get_basename (filename);
-	if (fw_basename != NULL)
-		as_app_add_metadata (AS_APP (app), "FirmwareBasename", fw_basename, -1);
+	metainfo_fn = asb_plugin_firmware_get_metainfo_fn (filename);
+	if (metainfo_fn != NULL)
+		as_app_add_metadata (AS_APP (app), "MetainfoBasename", metainfo_fn, -1);
 
-	/* added so we can mirror files */
-	as_release_set_filename (release, asb_package_get_basename (pkg), -1);
+	/* set the internal checksum */
+	fw_basename = as_app_get_metadata_item (AS_APP (app), "FirmwareBasename");
+	if (fw_basename != NULL) {
+		_cleanup_free_ gchar *checksum_bin = NULL;
+		_cleanup_free_ gchar *fn_bin = NULL;
+		_cleanup_object_unref_ AsChecksum *csum_bin = NULL;
+
+		/* add the checksum for the .bin file */
+		fn_bin = g_build_filename (tmpdir, fw_basename, NULL);
+		checksum_bin = asb_plugin_firmware_get_checksum (fn_bin,
+								 G_CHECKSUM_SHA1,
+								 error);
+		if (checksum_bin == NULL)
+			return FALSE;
+
+		/* add internal checksum */
+		csum_bin = as_checksum_new ();
+		as_checksum_set_kind (csum_bin, G_CHECKSUM_SHA1);
+		as_checksum_set_target (csum_bin, AS_CHECKSUM_TARGET_CONTENT);
+		as_checksum_set_value (csum_bin, checksum_bin);
+		as_checksum_set_filename (csum_bin, fw_basename);
+		as_release_add_checksum (release, csum_bin);
+	}
 
 	asb_plugin_add_app (apps, AS_APP (app));
 	return TRUE;
@@ -203,11 +235,12 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 	AsApp *app;
 	GList *l;
 
-	/* remove the FirmwareBasename metadata */
+	/* remove the MetainfoBasename metadata */
 	for (l = list; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
 		if (as_app_get_id_kind (app) != AS_ID_KIND_FIRMWARE)
 			continue;
+		as_app_remove_metadata (app, "MetainfoBasename");
 		as_app_remove_metadata (app, "FirmwareBasename");
 	}
 }
