@@ -260,7 +260,7 @@ main (int argc, char **argv)
 	setlocale (LC_ALL, "");
 
 	/* obsolete */
-	if (api_version < 0.4) {
+	if (api_version < 0.6) {
 		/* TRANSLATORS: error message */
 		g_warning ("%s", _("API version no longer supported"));
 		retval = EXIT_FAILURE;

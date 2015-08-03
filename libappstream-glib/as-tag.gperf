@@ -8,8 +8,8 @@
 struct tag_data { gint name; guint etag; };
 %%
 unknown, AS_TAG_UNKNOWN
-components, AS_TAG_APPLICATIONS
-component, AS_TAG_APPLICATION
+components, AS_TAG_COMPONENTS
+component, AS_TAG_COMPONENT
 id, AS_TAG_ID
 pkgname, AS_TAG_PKGNAME
 name, AS_TAG_NAME

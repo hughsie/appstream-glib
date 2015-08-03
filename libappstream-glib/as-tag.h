@@ -31,8 +31,8 @@
 /**
  * AsTag:
  * @AS_TAG_UNKNOWN:			Type invalid or not known
- * @AS_TAG_APPLICATIONS:		`applications`
- * @AS_TAG_APPLICATION:			`application`
+ * @AS_TAG_COMPONENTS:			`components`
+ * @AS_TAG_COMPONENT:			`component`
  * @AS_TAG_ID:				`id`
  * @AS_TAG_PKGNAME:			`pkgname`
  * @AS_TAG_NAME:			`name`
@@ -40,14 +40,14 @@
  * @AS_TAG_DESCRIPTION:			`description`
  * @AS_TAG_URL:				`url`
  * @AS_TAG_ICON:			`icon`
- * @AS_TAG_CATEGORIES:			`categories` (or `appcategories`)
- * @AS_TAG_CATEGORY:			`category` (or `appcategory`)
+ * @AS_TAG_CATEGORIES:			`categories`
+ * @AS_TAG_CATEGORY:			`category`
  * @AS_TAG_KEYWORDS:			`keywords`
  * @AS_TAG_KEYWORD:			`keyword`
  * @AS_TAG_MIMETYPES:			`mimetypes`
  * @AS_TAG_MIMETYPE:			`mimetype`
  * @AS_TAG_PROJECT_GROUP:		`project_group`
- * @AS_TAG_PROJECT_LICENSE:		`project_license` (or `licence`)
+ * @AS_TAG_PROJECT_LICENSE:		`project_license`
  * @AS_TAG_SCREENSHOT:			`screenshot`
  * @AS_TAG_SCREENSHOTS:			`screenshots`
  * @AS_TAG_UPDATE_CONTACT:		`update_contact`
@@ -82,8 +82,8 @@
  **/
 typedef enum {
 	AS_TAG_UNKNOWN,			/* Since: 0.1.0 */
-	AS_TAG_APPLICATIONS,		/* Since: 0.1.0 */
-	AS_TAG_APPLICATION,		/* Since: 0.1.0 */
+	AS_TAG_COMPONENTS,		/* Since: 0.5.0 */
+	AS_TAG_COMPONENT,		/* Since: 0.5.0 */
 	AS_TAG_ID,			/* Since: 0.1.0 */
 	AS_TAG_PKGNAME,			/* Since: 0.1.0 */
 	AS_TAG_NAME,			/* Since: 0.1.0 */

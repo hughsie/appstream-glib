@@ -45,7 +45,7 @@
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
-#define AS_API_VERSION_NEWEST	0.6
+#define AS_API_VERSION_NEWEST	0.8
 
 typedef enum {
 	AS_STORE_PROBLEM_NONE			= 0,
@@ -859,7 +859,7 @@ as_store_from_root (AsStore *store,
 	for (n = apps->children; n != NULL; n = n->next) {
 		_cleanup_error_free_ GError *error_local = NULL;
 		_cleanup_object_unref_ AsApp *app = NULL;
-		if (as_node_get_tag (n) != AS_TAG_APPLICATION)
+		if (as_node_get_tag (n) != AS_TAG_COMPONENT)
 			continue;
 
 		/* do the filtering here */
@@ -1215,11 +1215,7 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 
 	/* get XML text */
 	node_root = as_node_new ();
-	if (priv->api_version >= 0.6) {
-		node_apps = as_node_insert (node_root, "components", NULL, 0, NULL);
-	} else {
-		node_apps = as_node_insert (node_root, "applications", NULL, 0, NULL);
-	}
+	node_apps = as_node_insert (node_root, "components", NULL, 0, NULL);
 
 	/* set origin attribute */
 	if (priv->origin != NULL)

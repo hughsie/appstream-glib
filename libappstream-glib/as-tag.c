@@ -25,7 +25,7 @@
  * @include: appstream-glib.h
  * @stability: Stable
  *
- * These functions will convert a tag enum such as %AS_TAG_APPLICATION to
+ * These functions will convert a tag enum such as %AS_TAG_COMPONENT to
  * it's string form, and also vice-versa.
  *
  * These helper functions may be useful if implementing an AppStream parser.
@@ -106,9 +106,9 @@ as_tag_from_string_full (const gchar *tag, AsTagFlags flags)
 		if (g_strcmp0 (tag, "licence") == 0)
 			return AS_TAG_PROJECT_LICENSE;
 		if (g_strcmp0 (tag, "applications") == 0)
-			return AS_TAG_APPLICATIONS;
+			return AS_TAG_COMPONENTS;
 		if (g_strcmp0 (tag, "application") == 0)
-			return AS_TAG_APPLICATION;
+			return AS_TAG_COMPONENT;
 		if (g_strcmp0 (tag, "updatecontact") == 0)
 			return AS_TAG_UPDATE_CONTACT;
 		/* fix spelling error */

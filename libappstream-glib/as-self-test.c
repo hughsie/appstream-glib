@@ -1890,10 +1890,10 @@ as_test_app_no_markup_func (void)
 	GString *xml;
 	gboolean ret;
 	const gchar *src =
-		"<application>\n"
-		"<id type=\"desktop\">org.gnome.Software.desktop</id>\n"
+		"<component type=\"desktop\">\n"
+		"<id>org.gnome.Software.desktop</id>\n"
 		"<description>Software is awesome:\n\n * Bada\n * Boom!</description>\n"
-		"</application>\n";
+		"</component>\n";
 	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_object_unref_ AsApp *app = NULL;
 
@@ -1905,7 +1905,7 @@ as_test_app_no_markup_func (void)
 				 &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
-	n = as_node_find (root, "application");
+	n = as_node_find (root, "component");
 	g_assert (n != NULL);
 	ctx = as_node_context_new ();
 	ret = as_app_node_parse (app, n, ctx, &error);
@@ -2862,14 +2862,14 @@ as_test_store_func (void)
 	as_store_remove_app (store, app);
 
 	/* check string output */
-	as_store_set_api_version (store, 0.4);
+	as_store_set_api_version (store, 0.6);
 	xml = as_store_to_xml (store, 0);
 	g_assert_cmpstr (xml->str, ==,
-		"<applications version=\"0.4\">"
-		"<application>"
-		"<id type=\"desktop\">gnome-software.desktop</id>"
-		"</application>"
-		"</applications>");
+		"<components version=\"0.6\">"
+		"<component type=\"desktop\">"
+		"<id>gnome-software.desktop</id>"
+		"</component>"
+		"</components>");
 	g_string_free (xml, TRUE);
 
 	/* add another app and ensure it's sorted */
@@ -2880,14 +2880,14 @@ as_test_store_func (void)
 	g_object_unref (app);
 	xml = as_store_to_xml (store, 0);
 	g_assert_cmpstr (xml->str, ==,
-		"<applications version=\"0.4\">"
-		"<application>"
-		"<id type=\"font\">aaa.desktop</id>"
-		"</application>"
-		"<application>"
-		"<id type=\"desktop\">gnome-software.desktop</id>"
-		"</application>"
-		"</applications>");
+		"<components version=\"0.6\">"
+		"<component type=\"font\">"
+		"<id>aaa.desktop</id>"
+		"</component>"
+		"<component type=\"desktop\">"
+		"<id>gnome-software.desktop</id>"
+		"</component>"
+		"</components>");
 	g_string_free (xml, TRUE);
 
 	/* empty the store */
@@ -2897,7 +2897,7 @@ as_test_store_func (void)
 	g_assert (as_store_get_app_by_id (store, "gnome-software.desktop") == NULL);
 	xml = as_store_to_xml (store, 0);
 	g_assert_cmpstr (xml->str, ==,
-		"<applications version=\"0.4\"/>");
+		"<components version=\"0.6\"/>");
 	g_string_free (xml, TRUE);
 }
 
@@ -2913,9 +2913,9 @@ as_test_store_versions_func (void)
 	/* load a file to the store */
 	store = as_store_new ();
 	ret = as_store_from_xml (store,
-		"<applications version=\"0.4\">"
-		"<application>"
-		"<id type=\"desktop\">test.desktop</id>"
+		"<components version=\"0.6\">"
+		"<component type=\"desktop\">"
+		"<id>test.desktop</id>"
 		"<description><p>Hello world</p></description>"
 		"<architectures><arch>i386</arch></architectures>"
 		"<releases>"
@@ -2923,12 +2923,12 @@ as_test_store_versions_func (void)
 		"<description><p>Hello</p></description>"
 		"</release>"
 		"</releases>"
-		"</application>"
-		"</applications>", NULL, &error);
+		"</component>"
+		"</components>", NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpfloat (as_store_get_api_version (store), <, 0.4 + 0.01);
-	g_assert_cmpfloat (as_store_get_api_version (store), >, 0.4 - 0.01);
+	g_assert_cmpfloat (as_store_get_api_version (store), <, 0.6 + 0.01);
+	g_assert_cmpfloat (as_store_get_api_version (store), >, 0.6 - 0.01);
 
 	/* verify source kind */
 	app = as_store_get_app_by_id (store, "test.desktop");
@@ -2955,15 +2955,21 @@ as_test_store_versions_func (void)
 	g_string_free (str, TRUE);
 
 	/* test with legacy options */
-	as_store_set_api_version (store, 0.3);
+	as_store_set_api_version (store, 0.6);
 	str = as_store_to_xml (store, 0);
 	g_assert_cmpstr (str->str, ==,
-		"<applications version=\"0.3\">"
-		"<application>"
-		"<id type=\"desktop\">test.desktop</id>"
-		"<description>Hello world</description>"
-		"</application>"
-		"</applications>");
+		"<components version=\"0.6\">"
+		"<component type=\"desktop\">"
+		"<id>test.desktop</id>"
+		"<description><p>Hello world</p></description>"
+		"<architectures><arch>i386</arch></architectures>"
+		"<releases>"
+		"<release version=\"0.1.2\" timestamp=\"123\">"
+		"<description><p>Hello</p></description>"
+		"</release>"
+		"</releases>"
+		"</component>"
+		"</components>");
 	g_string_free (str, TRUE);
 
 	g_object_unref (store);
@@ -3057,11 +3063,11 @@ as_test_node_no_dup_c_func (void)
 	GString *xml;
 	gboolean ret;
 	const gchar *src =
-		"<application>"
-		"<id type=\"desktop\">test.desktop</id>"
+		"<component type=\"desktop\">"
+		"<id>test.desktop</id>"
 		"<name>Krita</name>"
 		"<name xml:lang=\"pl\">Krita</name>"
-		"</application>";
+		"</component>";
 	_cleanup_free_ AsNodeContext *ctx = NULL;
 	_cleanup_object_unref_ AsApp *app = NULL;
 
@@ -3070,7 +3076,7 @@ as_test_node_no_dup_c_func (void)
 	root = as_node_from_xml (src, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
-	n = as_node_find (root, "application");
+	n = as_node_find (root, "component");
 	g_assert (n != NULL);
 	ctx = as_node_context_new ();
 	ret = as_app_node_parse (app, n, ctx, &error);
@@ -3088,10 +3094,10 @@ as_test_node_no_dup_c_func (void)
 	n = as_app_node_insert (app, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	g_assert_cmpstr (xml->str, ==,
-		"<application>"
-		"<id type=\"desktop\">test.desktop</id>"
+		"<component type=\"desktop\">"
+		"<id>test.desktop</id>"
 		"<name>Krita</name>"
-		"</application>");
+		"</component>");
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 }
@@ -3524,20 +3530,20 @@ as_test_store_metadata_func (void)
 	GPtrArray *apps;
 	gboolean ret;
 	const gchar *xml =
-		"<applications version=\"0.3\">"
-		"<application>"
-		"<id type=\"desktop\">test.desktop</id>"
+		"<components version=\"0.6\">"
+		"<component type=\"desktop\">"
+		"<id>test.desktop</id>"
 		"<metadata>"
 		"<value key=\"foo\">bar</value>"
 		"</metadata>"
-		"</application>"
-		"<application>"
-		"<id type=\"desktop\">tested.desktop</id>"
+		"</component>"
+		"<component type=\"desktop\">"
+		"<id>tested.desktop</id>"
 		"<metadata>"
 		"<value key=\"foo\">bar</value>"
 		"</metadata>"
-		"</application>"
-		"</applications>";
+		"</component>"
+		"</components>";
 	_cleanup_object_unref_ AsStore *store = NULL;
 
 	store = as_store_new ();

@@ -3031,7 +3031,6 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	const gchar *tmp;
 	gdouble api_version = as_node_context_get_version (ctx);
 	guint i;
-	static gint old_prio_value = 0;
 
 	/* no addons allowed here */
 	if (api_version < 0.7 && priv->id_kind == AS_ID_KIND_ADDON) {
@@ -3048,39 +3047,19 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <component> or <application> */
-	if (api_version >= 0.6) {
-		node_app = as_node_insert (parent, "component", NULL, 0, NULL);
-		if (priv->id_kind != AS_ID_KIND_UNKNOWN) {
-			as_node_add_attribute (node_app,
-					       "type",
-					       as_id_kind_to_string (priv->id_kind));
-		}
-	} else {
-		node_app = as_node_insert (parent, "application", NULL, 0, NULL);
-	}
-
-	/* <id> */
-	node_tmp = as_node_insert (node_app, "id", priv->id, 0, NULL);
-	if (api_version < 0.6 && priv->id_kind != AS_ID_KIND_UNKNOWN) {
-		as_node_add_attribute (node_tmp,
+	node_app = as_node_insert (parent, "component", NULL, 0, NULL);
+	if (priv->id_kind != AS_ID_KIND_UNKNOWN) {
+		as_node_add_attribute (node_app,
 				       "type",
 				       as_id_kind_to_string (priv->id_kind));
 	}
 
-	/* <priority> */
-	if (priv->priority != 0 && api_version >= 0.61)
-		as_node_add_attribute_as_int (node_app, "priority", priv->priority);
+	/* <id> */
+	as_node_insert (node_app, "id", priv->id, 0, NULL);
 
-	/* this looks crazy, but priority was initially implemented on
-	 * the <applications> node and was designed to be per-file */
-	if (api_version <= 0.5 &&
-	    api_version > 0.3 &&
-	    old_prio_value != priv->priority) {
-		gchar prio[6];
-		g_snprintf (prio, sizeof (prio), "%i", priv->priority);
-		as_node_insert (parent, "priority", prio, 0, NULL);
-		old_prio_value = priv->priority;
-	}
+	/* <priority> */
+	if (priv->priority != 0)
+		as_node_add_attribute_as_int (node_app, "priority", priv->priority);
 
 	/* <pkgname> */
 	g_ptr_array_sort (priv->pkgnames, as_app_ptr_array_sort_cb);
@@ -3119,17 +3098,10 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <description> */
-	if (api_version < 0.6) {
-		as_node_insert_localized (node_app, "description",
-					  priv->descriptions,
-					  AS_NODE_INSERT_FLAG_NO_MARKUP |
-					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
-	} else {
-		as_node_insert_localized (node_app, "description",
-					  priv->descriptions,
-					  AS_NODE_INSERT_FLAG_PRE_ESCAPED |
-					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
-	}
+	as_node_insert_localized (node_app, "description",
+				  priv->descriptions,
+				  AS_NODE_INSERT_FLAG_PRE_ESCAPED |
+				  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 
 	/* <icon> */
 	g_ptr_array_sort (priv->icons, as_app_icons_sort_cb);
@@ -3139,28 +3111,17 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <categories> */
-	if (api_version >= 0.5) {
+	if (priv->categories->len > 0) {
 		g_ptr_array_sort (priv->categories, as_app_ptr_array_sort_cb);
-		if (priv->categories->len > 0) {
-			node_tmp = as_node_insert (node_app, "categories", NULL, 0, NULL);
-			for (i = 0; i < priv->categories->len; i++) {
-				tmp = g_ptr_array_index (priv->categories, i);
-				as_node_insert (node_tmp, "category", tmp, 0, NULL);
-			}
-		}
-	} else {
-		g_ptr_array_sort (priv->categories, as_app_ptr_array_sort_cb);
-		if (priv->categories->len > 0) {
-			node_tmp = as_node_insert (node_app, "appcategories", NULL, 0, NULL);
-			for (i = 0; i < priv->categories->len; i++) {
-				tmp = g_ptr_array_index (priv->categories, i);
-				as_node_insert (node_tmp, "appcategory", tmp, 0, NULL);
-			}
+		node_tmp = as_node_insert (node_app, "categories", NULL, 0, NULL);
+		for (i = 0; i < priv->categories->len; i++) {
+			tmp = g_ptr_array_index (priv->categories, i);
+			as_node_insert (node_tmp, "category", tmp, 0, NULL);
 		}
 	}
 
 	/* <architectures> */
-	if (priv->architectures->len > 0 && api_version >= 0.6) {
+	if (priv->architectures->len > 0) {
 		g_ptr_array_sort (priv->architectures, as_app_ptr_array_sort_cb);
 		node_tmp = as_node_insert (node_app, "architectures", NULL, 0, NULL);
 		for (i = 0; i < priv->architectures->len; i++) {
@@ -3269,7 +3230,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <releases> */
-	if (priv->releases->len > 0 && api_version >= 0.6) {
+	if (priv->releases->len > 0) {
 		g_ptr_array_sort (priv->releases, as_app_releases_sort_cb);
 		node_tmp = as_node_insert (node_app, "releases", NULL, 0, NULL);
 		for (i = 0; i < priv->releases->len && i < 3; i++) {
@@ -3279,7 +3240,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <provides> */
-	if (priv->provides->len > 0 && api_version >= 0.6) {
+	if (priv->provides->len > 0) {
 		AsProvide *provide;
 		node_tmp = as_node_insert (node_app, "provides", NULL, 0, NULL);
 		for (i = 0; i < priv->provides->len; i++) {
@@ -4396,7 +4357,7 @@ as_app_parse_appdata_file (AsApp *app,
 			priv->problems |= AS_APP_PROBLEM_DEPRECATED_LICENCE;
 			continue;
 		}
-		if (as_node_get_tag (l) == AS_TAG_APPLICATION) {
+		if (as_node_get_tag (l) == AS_TAG_COMPONENT) {
 			if (seen_application)
 				priv->problems |= AS_APP_PROBLEM_MULTIPLE_ENTRIES;
 			seen_application = TRUE;
