@@ -68,13 +68,13 @@ as_app_infer_file_key (AsApp *app,
 					     key,
 					     NULL);
 		if (g_strcmp0 (tmp, "GNOME") == 0)
-			as_app_set_project_group (app, "GNOME", -1);
+			as_app_set_project_group (app, "GNOME");
 
 	} else if (g_strcmp0 (key, "X-MATE-Bugzilla-Product") == 0) {
-		as_app_set_project_group (app, "MATE", -1);
+		as_app_set_project_group (app, "MATE");
 
 	} else if (g_strcmp0 (key, "X-KDE-StartupNotify") == 0) {
-		as_app_set_project_group (app, "KDE", -1);
+		as_app_set_project_group (app, "KDE");
 
 	} else if (g_strcmp0 (key, "X-DocPath") == 0) {
 		tmp = g_key_file_get_string (kf,
@@ -82,7 +82,7 @@ as_app_infer_file_key (AsApp *app,
 					     key,
 					     NULL);
 		if (g_str_has_prefix (tmp, "http://userbase.kde.org/"))
-			as_app_set_project_group (app, "KDE", -1);
+			as_app_set_project_group (app, "KDE");
 
 	/* Exec */
 	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_EXEC) == 0) {
@@ -91,7 +91,7 @@ as_app_infer_file_key (AsApp *app,
 					     key,
 					     NULL);
 		if (g_str_has_prefix (tmp, "xfce4-"))
-			as_app_set_project_group (app, "XFCE", -1);
+			as_app_set_project_group (app, "XFCE");
 	}
 
 	return TRUE;
@@ -167,16 +167,16 @@ as_app_parse_file_key (AsApp *app,
 		if (tmp != NULL && tmp[0] != '\0') {
 			_cleanup_object_unref_ AsIcon *icon = NULL;
 			icon = as_icon_new ();
-			as_icon_set_name (icon, tmp, -1);
+			as_icon_set_name (icon, tmp);
 			dot = g_strstr_len (tmp, -1, ".");
 			if (dot != NULL)
 				*dot = '\0';
 			if (as_utils_is_stock_icon_name (tmp)) {
-				as_icon_set_name (icon, tmp, -1);
+				as_icon_set_name (icon, tmp);
 				as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
 			} else if ((flags & AS_APP_PARSE_FLAG_USE_FALLBACKS) > 0 &&
 				   _as_utils_is_stock_icon_name_fallback (tmp)) {
-				as_icon_set_name (icon, tmp, -1);
+				as_icon_set_name (icon, tmp);
 				as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
 			} else {
 				as_icon_set_kind (icon, AS_ICON_KIND_LOCAL);
@@ -218,7 +218,7 @@ as_app_parse_file_key (AsApp *app,
 				continue;
 			if (g_strcmp0 (list[i], "GNOME") == 0)
 				continue;
-			as_app_add_category (app, list[i], -1);
+			as_app_add_category (app, list[i]);
 		}
 
 	} else if (g_strcmp0 (key, "Keywords") == 0) {
@@ -232,8 +232,7 @@ as_app_parse_file_key (AsApp *app,
 			for (j = 0; kw_split[j] != NULL; j++) {
 				if (kw_split[j][0] == '\0')
 					continue;
-				as_app_add_keyword (app, "C",
-						    kw_split[j], -1);
+				as_app_add_keyword (app, "C", kw_split[j]);
 			}
 		}
 
@@ -250,8 +249,7 @@ as_app_parse_file_key (AsApp *app,
 			for (j = 0; kw_split[j] != NULL; j++) {
 				if (kw_split[j][0] == '\0')
 					continue;
-				as_app_add_keyword (app, locale,
-						    kw_split[j], -1);
+				as_app_add_keyword (app, locale, kw_split[j]);
 			}
 		}
 
@@ -261,7 +259,7 @@ as_app_parse_file_key (AsApp *app,
 						   key,
 						   NULL, NULL);
 		for (i = 0; list[i] != NULL; i++)
-			as_app_add_mimetype (app, list[i], -1);
+			as_app_add_mimetype (app, list[i]);
 
 	} else if (g_strcmp0 (key, "X-AppInstall-Package") == 0) {
 		tmp = g_key_file_get_string (kf,
@@ -269,7 +267,7 @@ as_app_parse_file_key (AsApp *app,
 					     key,
 					     NULL);
 		if (tmp != NULL && tmp[0] != '\0')
-			as_app_add_pkgname (app, tmp, -1);
+			as_app_add_pkgname (app, tmp);
 
 	/* OnlyShowIn */
 	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN) == 0) {
@@ -279,7 +277,7 @@ as_app_parse_file_key (AsApp *app,
 						   key,
 						   NULL, NULL);
 		if (g_strv_length (list) == 1)
-			as_app_set_project_group (app, list[0], -1);
+			as_app_set_project_group (app, list[0]);
 
 	/* Name */
 	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_NAME) == 0 ||
@@ -289,7 +287,7 @@ as_app_parse_file_key (AsApp *app,
 					     key,
 					     NULL);
 		if (tmp != NULL && tmp[0] != '\0')
-			as_app_set_name (app, "C", tmp, -1);
+			as_app_set_name (app, "C", tmp);
 
 	/* Name[] */
 	} else if (g_str_has_prefix (key, G_KEY_FILE_DESKTOP_KEY_NAME)) {
@@ -300,7 +298,7 @@ as_app_parse_file_key (AsApp *app,
 						    locale,
 						    NULL);
 		if (tmp != NULL && tmp[0] != '\0')
-			as_app_set_name (app, locale, tmp, -1);
+			as_app_set_name (app, locale, tmp);
 
 	/* Comment */
 	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_COMMENT) == 0 ||
@@ -310,7 +308,7 @@ as_app_parse_file_key (AsApp *app,
 					     key,
 					     NULL);
 		if (tmp != NULL && tmp[0] != '\0')
-			as_app_set_comment (app, "C", tmp, -1);
+			as_app_set_comment (app, "C", tmp);
 
 	/* Comment[] */
 	} else if (g_str_has_prefix (key, G_KEY_FILE_DESKTOP_KEY_COMMENT)) {
@@ -321,7 +319,7 @@ as_app_parse_file_key (AsApp *app,
 						    locale,
 						    NULL);
 		if (tmp != NULL && tmp[0] != '\0')
-			as_app_set_comment (app, locale, tmp, -1);
+			as_app_set_comment (app, locale, tmp);
 
 	/* non-standard */
 	} else if (g_strcmp0 (key, "X-Ubuntu-Software-Center-Name") == 0) {
@@ -330,7 +328,7 @@ as_app_parse_file_key (AsApp *app,
 					     key,
 					     NULL);
 		if (tmp != NULL && tmp[0] != '\0')
-			as_app_set_name (app, "C", tmp, -1);
+			as_app_set_name (app, "C", tmp);
 	} else if (g_str_has_prefix (key, "X-Ubuntu-Software-Center-Name")) {
 		locale = as_app_desktop_key_get_locale (key);
 		tmp = g_key_file_get_locale_string (kf,
@@ -339,7 +337,7 @@ as_app_parse_file_key (AsApp *app,
 						    locale,
 						    NULL);
 		if (tmp != NULL && tmp[0] != '\0')
-			as_app_set_name (app, locale, tmp, -1);
+			as_app_set_name (app, locale, tmp);
 	}
 
 	return TRUE;
@@ -365,7 +363,7 @@ as_app_parse_file_key_fallback_comment (AsApp *app,
 					     key,
 					     NULL);
 		if (tmp != NULL && tmp[0] != '\0')
-			as_app_set_comment (app, "C", tmp, -1);
+			as_app_set_comment (app, "C", tmp);
 
 	/* GenericName[] */
 	} else if (g_str_has_prefix (key, G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME)) {
@@ -376,7 +374,7 @@ as_app_parse_file_key_fallback_comment (AsApp *app,
 						    locale,
 						    NULL);
 		if (tmp != NULL && tmp[0] != '\0')
-			as_app_set_comment (app, locale, tmp, -1);
+			as_app_set_comment (app, locale, tmp);
 	}
 
 	return TRUE;
@@ -423,9 +421,9 @@ as_app_parse_desktop_file (AsApp *app,
 	/* Ubuntu helpfully put the package name in the desktop file name */
 	tmp = g_strstr_len (app_id, -1, ":");
 	if (tmp != NULL)
-		as_app_set_id (app, tmp + 1, -1);
+		as_app_set_id (app, tmp + 1);
 	else
-		as_app_set_id (app, app_id, -1);
+		as_app_set_id (app, app_id);
 
 	/* look at all the keys */
 	keys = g_key_file_get_keys (kf, G_KEY_FILE_DESKTOP_GROUP, NULL, error);

@@ -88,8 +88,7 @@ AsBundleKind	 as_bundle_get_kind		(AsBundle	*bundle);
 
 /* setters */
 void		 as_bundle_set_id		(AsBundle	*bundle,
-						 const gchar	*id,
-						 gssize		 id_len);
+						 const gchar	*id);
 void		 as_bundle_set_kind		(AsBundle	*bundle,
 						 AsBundleKind	 kind);
 

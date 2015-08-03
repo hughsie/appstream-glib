@@ -109,46 +109,46 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	/* add extra categories */
 	tmp = as_app_get_id (AS_APP (app));
 	if (g_strcmp0 (tmp, "0install.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System", -1);
+		as_app_add_category (AS_APP (app), "System");
 	if (g_strcmp0 (tmp, "alacarte.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System", -1);
+		as_app_add_category (AS_APP (app), "System");
 	if (g_strcmp0 (tmp, "deja-dup.desktop") == 0)
-		as_app_add_category (AS_APP (app), "Utility", -1);
+		as_app_add_category (AS_APP (app), "Utility");
 	if (g_strcmp0 (tmp, "gddccontrol.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System", -1);
+		as_app_add_category (AS_APP (app), "System");
 	if (g_strcmp0 (tmp, "nautilus.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System", -1);
+		as_app_add_category (AS_APP (app), "System");
 	if (g_strcmp0 (tmp, "pessulus.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System", -1);
+		as_app_add_category (AS_APP (app), "System");
 	if (g_strcmp0 (tmp, "pmdefaults.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System", -1);
+		as_app_add_category (AS_APP (app), "System");
 	if (g_strcmp0 (tmp, "fwfstab.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System", -1);
+		as_app_add_category (AS_APP (app), "System");
 	if (g_strcmp0 (tmp, "bmpanel2cfg.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System", -1);
+		as_app_add_category (AS_APP (app), "System");
 	if (g_strcmp0 (tmp, "wallpapoz.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System", -1);
+		as_app_add_category (AS_APP (app), "System");
 	if (g_strcmp0 (tmp, "superkaramba.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System", -1);
+		as_app_add_category (AS_APP (app), "System");
 
 	/* add extra project groups */
 	if (g_strcmp0 (tmp, "nemo.desktop") == 0)
-		as_app_set_project_group (AS_APP (app), "Cinnamon", -1);
+		as_app_set_project_group (AS_APP (app), "Cinnamon");
 	if (g_strcmp0 (tmp, "xfdashboard.desktop") == 0)
-		as_app_set_project_group (AS_APP (app), "XFCE", -1);
+		as_app_set_project_group (AS_APP (app), "XFCE");
 
 	/* use the URL to guess the project group */
 	tmp = asb_package_get_url (pkg);
 	if (as_app_get_project_group (AS_APP (app)) == NULL && tmp != NULL) {
 		tmp = asb_glob_value_search (plugin->priv->project_groups, tmp);
 		if (tmp != NULL)
-			as_app_set_project_group (AS_APP (app), tmp, -1);
+			as_app_set_project_group (AS_APP (app), tmp);
 	}
 
 	/* use summary to guess the project group */
 	tmp = as_app_get_comment (AS_APP (app), NULL);
 	if (tmp != NULL && g_strstr_len (tmp, -1, "for KDE") != NULL)
-		as_app_set_project_group (AS_APP (app), "KDE", -1);
+		as_app_set_project_group (AS_APP (app), "KDE");
 
 	/* look for any installed docs */
 	filelist = asb_package_get_filelist (pkg);
@@ -247,7 +247,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			days = secs / (60 * 60 * 24);
 			if (secs > 0 && days < 365) {
 				as_app_add_metadata (AS_APP (app),
-						     "X-Kudo-RecentRelease", "", -1);
+						     "X-Kudo-RecentRelease", "");
 				break;
 			}
 		}

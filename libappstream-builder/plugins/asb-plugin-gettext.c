@@ -271,7 +271,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		e = l->data;
 		if (e->percentage < 25)
 			continue;
-		as_app_add_language (AS_APP (app), e->percentage, e->locale, -1);
+		as_app_add_language (AS_APP (app), e->percentage, e->locale);
 	}
 out:
 	asb_gettext_ctx_free (ctx);

@@ -82,20 +82,16 @@ GPtrArray	*as_release_get_checksums	(AsRelease	*release);
 
 /* setters */
 void		 as_release_set_version		(AsRelease	*release,
-						 const gchar	*version,
-						 gssize		 version_len);
+						 const gchar	*version);
 void		 as_release_set_filename	(AsRelease	*release,
-						 const gchar	*filename,
-						 gssize		 filename_len);
+						 const gchar	*filename);
 void		 as_release_set_timestamp	(AsRelease	*release,
 						 guint64	 timestamp);
 void		 as_release_set_description	(AsRelease	*release,
 						 const gchar	*locale,
-						 const gchar	*description,
-						 gssize		 description_len);
+						 const gchar	*description);
 void		 as_release_add_location	(AsRelease	*release,
-						 const gchar	*location,
-						 gssize		 location_len);
+						 const gchar	*location);
 void		 as_release_add_checksum	(AsRelease	*release,
 						 AsChecksum	*checksum);
 
@@ -103,8 +99,7 @@ void		 as_release_add_checksum	(AsRelease	*release,
 G_DEPRECATED_FOR(as_checksum_set_value)
 void		 as_release_set_checksum	(AsRelease	*release,
 						 GChecksumType	 checksum_type,
-						 const gchar	*checksum_value,
-						 gssize		 checksum_len);
+						 const gchar	*checksum_value);
 G_DEPRECATED_FOR(as_checksum_get_value)
 const gchar	*as_release_get_checksum	(AsRelease	*release,
 						 GChecksumType	 checksum_type);

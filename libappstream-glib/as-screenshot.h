@@ -102,8 +102,7 @@ void		 as_screenshot_set_priority	(AsScreenshot	*screenshot,
 						 gint		 priority);
 void		 as_screenshot_set_caption	(AsScreenshot	*screenshot,
 						 const gchar	*locale,
-						 const gchar	*caption,
-						 gsize		 caption_len);
+						 const gchar	*caption);
 void		 as_screenshot_add_image	(AsScreenshot	*screenshot,
 						 AsImage	*image);
 

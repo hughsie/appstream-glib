@@ -317,10 +317,10 @@ as_checksum_node_insert (AsChecksum *checksum, GNode *parent, AsNodeContext *ctx
 			    NULL);
 	if (priv->target != AS_CHECKSUM_TARGET_UNKNOWN) {
 		as_node_add_attribute (n, "target",
-				       as_checksum_target_to_string (priv->target), -1);
+				       as_checksum_target_to_string (priv->target));
 	}
 	if (priv->filename != NULL)
-		as_node_add_attribute (n, "filename", priv->filename, -1);
+		as_node_add_attribute (n, "filename", priv->filename);
 	return n;
 }
 

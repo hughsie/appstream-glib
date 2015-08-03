@@ -329,18 +329,17 @@ as_icon_get_data (AsIcon *icon)
  * as_icon_set_name:
  * @icon: a #AsIcon instance.
  * @name: the icon name, e.g. "gimp.png"
- * @name_len: the size of @name, or -1 if %NULL-terminated.
  *
  * Sets the basename to use for the icon.
  *
  * Since: 0.3.1
  **/
 void
-as_icon_set_name (AsIcon *icon, const gchar *name, gssize name_len)
+as_icon_set_name (AsIcon *icon, const gchar *name)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	g_free (priv->name);
-	priv->name = as_strndup (name, name_len);
+	priv->name = g_strdup (name);
 }
 
 /**
@@ -664,11 +663,11 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 
 		/* store the name without any prefix */
 		if (g_strstr_len (tmp, -1, "/") == NULL) {
-			as_icon_set_name (icon, tmp, -1);
+			as_icon_set_name (icon, tmp);
 		} else {
 			_cleanup_free_ gchar *basename = NULL;
 			basename = g_path_get_basename (tmp);
-			as_icon_set_name (icon, basename, -1);
+			as_icon_set_name (icon, basename);
 		}
 
 		/* width is optional, assume 64px if missing */
@@ -720,7 +719,7 @@ as_icon_node_parse_dep11 (AsIcon *im, GNode *node,
 {
 	if (g_strcmp0 (as_yaml_node_get_key (node), "cached") != 0)
 		return TRUE;
-	as_icon_set_name (im, as_yaml_node_get_value (node), -1);
+	as_icon_set_name (im, as_yaml_node_get_value (node));
 	as_icon_set_kind (im, AS_ICON_KIND_CACHED);
 	return TRUE;
 }

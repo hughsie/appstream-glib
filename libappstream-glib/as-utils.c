@@ -65,25 +65,6 @@ as_utils_error_quark (void)
 }
 
 /**
- * as_strndup:
- * @text: the text to copy.
- * @text_len: the length of @text, or -1 if @text is NULL terminated.
- *
- * Copies a string, with an optional length argument.
- *
- * Returns: (transfer full): a newly allocated %NULL terminated string
- *
- * Since: 0.1.0
- **/
-gchar *
-as_strndup (const gchar *text, gssize text_len)
-{
-	if (text_len < 0)
-		return g_strdup (text);
-	return g_strndup (text, text_len);
-}
-
-/**
  * as_markup_strsplit_words:
  * @text: the text to split.
  * @line_len: the maximum length of the output line
@@ -197,7 +178,6 @@ as_markup_render_li (GString *str, AsMarkupConvertFormat format, const gchar *da
 /**
  * as_markup_convert:
  * @markup: the text to copy.
- * @markup_len: the length of @markup, or -1 if @markup is NULL terminated.
  * @format: the #AsMarkupConvertFormat, e.g. %AS_MARKUP_CONVERT_FORMAT_MARKDOWN
  * @error: A #GError or %NULL
  *
@@ -208,7 +188,7 @@ as_markup_render_li (GString *str, AsMarkupConvertFormat format, const gchar *da
  * Since: 0.3.5
  **/
 gchar *
-as_markup_convert (const gchar *markup, gssize markup_len,
+as_markup_convert (const gchar *markup,
 		   AsMarkupConvertFormat format, GError **error)
 {
 	GNode *tmp;
@@ -219,19 +199,19 @@ as_markup_convert (const gchar *markup, gssize markup_len,
 	_cleanup_string_free_ GString *str = NULL;
 
 	/* is this actually markup */
-	if (g_strstr_len (markup, markup_len, "<") == NULL)
-		return as_strndup (markup, markup_len);
+	if (g_strstr_len (markup, -1, "<") == NULL)
+		return g_strdup (markup);
 
 	/* load */
 	root = as_node_from_xml (markup,
-				 markup_len,
+				 -1,
 				 AS_NODE_FROM_XML_FLAG_NONE,
 				 error);
 	if (root == NULL)
 		return NULL;
 
 	/* format */
-	str = g_string_sized_new (markup_len);
+	str = g_string_new ("");
 	for (tmp = root->children; tmp != NULL; tmp = tmp->next) {
 
 		tag = as_node_get_name (tmp);
@@ -275,7 +255,6 @@ as_markup_convert (const gchar *markup, gssize markup_len,
 /**
  * as_markup_convert_simple:
  * @markup: the text to copy.
- * @markup_len: the length of @markup, or -1 if @markup is NULL terminated.
  * @error: A #GError or %NULL
  *
  * Converts an XML description into a printable form.
@@ -285,11 +264,9 @@ as_markup_convert (const gchar *markup, gssize markup_len,
  * Since: 0.1.0
  **/
 gchar *
-as_markup_convert_simple (const gchar *markup,
-			  gssize markup_len,
-			  GError **error)
+as_markup_convert_simple (const gchar *markup, GError **error)
 {
-	return as_markup_convert (markup, markup_len,
+	return as_markup_convert (markup,
 				  AS_MARKUP_CONVERT_FORMAT_SIMPLE,
 				  error);
 }
@@ -1590,40 +1567,22 @@ as_utils_vercmp (const gchar *version_a, const gchar *version_b)
 }
 
 /**
- * as_strncmp:
- **/
-static gint
-as_strncmp (const gchar *value1, const gchar *value2, gssize value_len)
-{
-	if (value_len < 0)
-		return g_strcmp0 (value1, value2);
-	if (value1 == NULL && value2 == NULL)
-		return 0;
-	if (value1 != NULL && value2 == NULL)
-		return -1;
-	if (value1 == NULL && value2 != NULL)
-		return 1;
-	return strncmp (value1, value2, value_len);
-}
-
-/**
  * as_ptr_array_find_string:
  * @array: gchar* array
  * @value: string to find
- * @value_len: length of @value
  *
  * Finds a string in a pointer array.
  *
  * Returns: the const string, or %NULL if not found
  **/
 const gchar *
-as_ptr_array_find_string (GPtrArray *array, const gchar *value, gssize value_len)
+as_ptr_array_find_string (GPtrArray *array, const gchar *value)
 {
 	const gchar *tmp;
 	guint i;
 	for (i = 0; i < array->len; i++) {
 		tmp = g_ptr_array_index (array, i);
-		if (as_strncmp (tmp, value, value_len) == 0)
+		if (g_strcmp0 (tmp, value) == 0)
 			return tmp;
 	}
 	return NULL;

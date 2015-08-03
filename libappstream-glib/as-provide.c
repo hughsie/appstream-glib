@@ -188,18 +188,17 @@ as_provide_get_kind (AsProvide *provide)
  * as_provide_set_value:
  * @provide: a #AsProvide instance.
  * @value: the URL.
- * @value_len: the size of @value, or -1 if %NULL-terminated.
  *
  * Sets the fully-qualified mirror URL to use for the provide.
  *
  * Since: 0.1.6
  **/
 void
-as_provide_set_value (AsProvide *provide, const gchar *value, gssize value_len)
+as_provide_set_value (AsProvide *provide, const gchar *value)
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
 	g_free (priv->value);
-	priv->value = as_strndup (value, value_len);
+	priv->value = g_strdup (value);
 }
 
 /**

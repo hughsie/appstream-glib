@@ -162,18 +162,17 @@ as_bundle_get_kind (AsBundle *bundle)
  * as_bundle_set_id:
  * @bundle: a #AsBundle instance.
  * @id: the URL.
- * @id_len: the size of @id, or -1 if %NULL-terminated.
  *
  * Sets the ID for this bundle.
  *
  * Since: 0.3.5
  **/
 void
-as_bundle_set_id (AsBundle *bundle, const gchar *id, gssize id_len)
+as_bundle_set_id (AsBundle *bundle, const gchar *id)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
 	g_free (priv->id);
-	priv->id = as_strndup (id, id_len);
+	priv->id = g_strdup (id);
 }
 
 /**
@@ -271,7 +270,7 @@ as_bundle_node_parse_dep11 (AsBundle *im, GNode *node,
 	for (n = node->children; n != NULL; n = n->next) {
 		tmp = as_yaml_node_get_key (n);
 		if (g_strcmp0 (tmp, "id") == 0)
-			as_bundle_set_id (im, as_yaml_node_get_value (n), -1);
+			as_bundle_set_id (im, as_yaml_node_get_value (n));
 	}
 	return TRUE;
 }

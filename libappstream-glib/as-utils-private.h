@@ -32,8 +32,6 @@
 
 G_BEGIN_DECLS
 
-gchar		*as_strndup			(const gchar	*text,
-						 gssize		 text_len);
 const gchar	*as_hash_lookup_by_locale	(GHashTable	*hash,
 						 const gchar	*locale);
 void		 as_pixbuf_sharpen		(GdkPixbuf	*src,
@@ -43,8 +41,7 @@ void		 as_pixbuf_blur			(GdkPixbuf	*src,
 						 gint		 radius,
 						 gint		 iterations);
 const gchar	*as_ptr_array_find_string	(GPtrArray	*array,
-						 const gchar	*value,
-						 gssize		 value_len);
+						 const gchar	*value);
 
 G_END_DECLS
 

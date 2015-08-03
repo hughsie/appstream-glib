@@ -130,8 +130,7 @@ GdkPixbuf	*as_icon_get_pixbuf		(AsIcon		*icon);
 
 /* setters */
 void		 as_icon_set_name		(AsIcon		*icon,
-						 const gchar	*name,
-						 gssize		 name_len);
+						 const gchar	*name);
 void		 as_icon_set_url		(AsIcon		*icon,
 						 const gchar	*url);
 void		 as_icon_set_filename		(AsIcon		*icon,

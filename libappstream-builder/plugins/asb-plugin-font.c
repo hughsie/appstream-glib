@@ -161,7 +161,7 @@ asb_font_fix_metadata (AsbApp *app)
 			if (percentage >= 0) {
 				as_app_add_metadata (AS_APP (app),
 						      "FontSampleText",
-						      text_sample[j].value, -1);
+						      text_sample[j].value);
 				break;
 			}
 		}
@@ -174,7 +174,7 @@ asb_font_fix_metadata (AsbApp *app)
 			if (percentage >= 0) {
 				as_app_add_metadata (AS_APP (app),
 						      "FontIconText",
-						      text_icon[j].value, -1);
+						      text_icon[j].value);
 				break;
 			}
 		}
@@ -197,17 +197,17 @@ asb_font_fix_metadata (AsbApp *app)
 				continue;
 			as_app_add_metadata (AS_APP (app),
 					      "FontSampleText",
-					      value, -1);
+					      value);
 			if (g_strcmp0 (value, "The quick brown fox jumps over the lazy dog.") == 0) {
 				as_app_add_metadata (AS_APP (app),
 						      "FontIconText",
-						      "Aa", -1);
+						      "Aa");
 			} else {
 				_cleanup_free_ gchar *icon_tmp = NULL;
 				icon_tmp = g_utf8_substring (value, 0, 2);
 				as_app_add_metadata (AS_APP (app),
 						      "FontIconText",
-						      icon_tmp, -1);
+						      icon_tmp);
 			}
 		}
 	}
@@ -284,7 +284,7 @@ asb_font_add_metadata (AsbApp *app, FT_Face ft_face)
 			if (asb_font_string_is_valid (val)) {
 				as_app_add_metadata (AS_APP (app),
 						     tt_idx_to_md_name[j].key,
-						     val, -1);
+						     val);
 			} else {
 				asb_package_log (asb_app_get_package (app),
 						 ASB_PACKAGE_LOG_LEVEL_WARNING,
@@ -468,7 +468,7 @@ asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
 	url_tmp = g_build_filename ("file://",
 				    basename,
 				    NULL);
-	as_image_set_url (im, url_tmp, -1);
+	as_image_set_url (im, url_tmp);
 
 	/* put this in a special place so it gets packaged up */
 	temp_dir = asb_context_get_temp_dir (plugin->ctx);
@@ -500,7 +500,7 @@ asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
 	as_screenshot_add_image (ss, im);
 	caption = asb_font_get_caption (app);
 	if (caption != NULL)
-		as_screenshot_set_caption (ss, NULL, caption, -1);
+		as_screenshot_set_caption (ss, NULL, caption);
 	as_app_add_screenshot (AS_APP (app), ss);
 
 	/* find screenshot priority */
@@ -559,7 +559,7 @@ asb_font_add_languages (AsbApp *app, const FcPattern *pattern)
 			list = FcStrListCreate (langs);
 			FcStrListFirst (list);
 			while ((tmp = (const gchar*) FcStrListNext (list)) != NULL) {
-				as_app_add_language (AS_APP (app), 0, tmp, -1);
+				as_app_add_language (AS_APP (app), 0, tmp);
 				any_added = TRUE;
 			}
 			FcStrListDone (list);
@@ -569,7 +569,7 @@ asb_font_add_languages (AsbApp *app, const FcPattern *pattern)
 
 	/* assume 'en' is available */
 	if (!any_added)
-		as_app_add_language (AS_APP (app), 0, "en", -1);
+		as_app_add_language (AS_APP (app), 0, "en");
 }
 
 /**
@@ -605,7 +605,7 @@ asb_plugin_font_set_name (AsbApp *app, const gchar *name)
 		if (g_str_has_prefix (tmp, prefixes[i]))
 			ptr += strlen (prefixes[i]);
 	}
-	as_app_set_name (AS_APP (app), "C", ptr, -1);
+	as_app_set_name (AS_APP (app), "C", ptr);
 }
 
 /**
@@ -675,15 +675,15 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	}
 
 	/* create app that might get merged later */
-	as_app_add_category (AS_APP (app), "Addons", -1);
-	as_app_add_category (AS_APP (app), "Fonts", -1);
+	as_app_add_category (AS_APP (app), "Addons");
+	as_app_add_category (AS_APP (app), "Fonts");
 	if (as_app_get_name (AS_APP (app), NULL) == NULL)
 		asb_plugin_font_set_name (app, ft_face->family_name);
 	if (as_app_get_comment (AS_APP (app), NULL) == NULL) {
 		comment = g_strdup_printf ("A %s font from %s",
 					   ft_face->style_name,
 					   ft_face->family_name);
-		as_app_set_comment (AS_APP (app), "C", comment, -1);
+		as_app_set_comment (AS_APP (app), "C", comment);
 	}
 	asb_font_add_languages (app, pattern);
 	asb_font_add_metadata (app, ft_face);
@@ -723,7 +723,7 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 		}
 		icon = as_icon_new ();
 		as_icon_set_kind (icon, AS_ICON_KIND_CACHED);
-		as_icon_set_name (icon, icon_filename, -1);
+		as_icon_set_name (icon, icon_filename);
 		as_icon_set_pixbuf (icon, pixbuf);
 		as_app_add_icon (AS_APP (app), icon);
 	}

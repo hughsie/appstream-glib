@@ -149,7 +149,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	/* for the adddata plugin; removed in asb_plugin_merge() */
 	metainfo_fn = asb_plugin_firmware_get_metainfo_fn (filename);
 	if (metainfo_fn != NULL)
-		as_app_add_metadata (AS_APP (app), "MetainfoBasename", metainfo_fn, -1);
+		as_app_add_metadata (AS_APP (app), "MetainfoBasename", metainfo_fn);
 
 	/* set the internal checksum */
 	fw_basename = as_app_get_metadata_item (AS_APP (app), "FirmwareBasename");

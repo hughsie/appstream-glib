@@ -1,8 +1,8 @@
 AC_PREREQ(2.63)
 
 m4_define([as_major_version], [0])
-m4_define([as_minor_version], [4])
-m4_define([as_micro_version], [2])
+m4_define([as_minor_version], [5])
+m4_define([as_micro_version], [0])
 m4_define([as_version],
           [as_major_version.as_minor_version.as_micro_version])
 
@@ -50,8 +50,8 @@ m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 # - If the interface is the same as the previous version, but bugs are
 #   fixed, change:
 #      REVISION += 1
-LT_CURRENT=7
-LT_REVISION=5
+LT_CURRENT=8
+LT_REVISION=0
 LT_AGE=0
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)

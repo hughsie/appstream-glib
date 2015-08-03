@@ -56,7 +56,7 @@ asb_plugin_absorb_parent_for_pkgname (GList *list, AsApp *parent, const gchar *p
 			 as_app_get_pkgname_default (app));
 		as_app_add_metadata (app,
 				     "X-Merge-With-Parent",
-				     as_app_get_id (parent), -1);
+				     as_app_get_id (parent));
 	}
 }
 

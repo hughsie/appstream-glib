@@ -316,44 +316,38 @@ as_release_get_description (AsRelease *release, const gchar *locale)
  * as_release_set_version:
  * @release: a #AsRelease instance.
  * @version: the version string.
- * @version_len: the size of @version, or -1 if %NULL-terminated.
  *
  * Sets the release version.
  *
  * Since: 0.1.0
  **/
 void
-as_release_set_version (AsRelease *release,
-			const gchar *version,
-			gssize version_len)
+as_release_set_version (AsRelease *release, const gchar *version)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	g_free (priv->version);
-	priv->version = as_strndup (version, version_len);
+	priv->version = g_strdup (version);
 }
 
 /**
  * as_release_add_location:
  * @release: a #AsRelease instance.
  * @location: the location string.
- * @location_len: the size of @location, or -1 if %NULL-terminated.
  *
  * Adds a release location.
  *
  * Since: 0.3.5
  **/
 void
-as_release_add_location (AsRelease *release,
-			 const gchar *location,
-			 gssize location_len)
+as_release_add_location (AsRelease *release, const gchar *location)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 
 	/* deduplicate */
-	if (as_ptr_array_find_string (priv->locations, location, location_len))
+	if (as_ptr_array_find_string (priv->locations, location))
 		return;
 
-	g_ptr_array_add (priv->locations, as_strndup (location, location_len));
+	g_ptr_array_add (priv->locations, g_strdup (location));
 }
 
 /**
@@ -377,7 +371,6 @@ as_release_add_checksum (AsRelease *release, AsChecksum *checksum)
  * @release: a #AsRelease instance.
  * @checksum_type: a #GChecksumType, e.g. %G_CHECKSUM_SHA1
  * @checksum_value: the checksum string.
- * @checksum_len: the size of @checksum, or -1 if %NULL-terminated.
  *
  * Sets the release checksum.
  *
@@ -386,8 +379,7 @@ as_release_add_checksum (AsRelease *release, AsChecksum *checksum)
 void
 as_release_set_checksum (AsRelease *release,
 			 GChecksumType checksum_type,
-			 const gchar *checksum_value,
-			 gssize checksum_len)
+			 const gchar *checksum_value)
 {
 	AsChecksum *checksum;
 	AsReleasePrivate *priv = GET_PRIVATE (release);
@@ -424,7 +416,6 @@ as_release_set_timestamp (AsRelease *release, guint64 timestamp)
  * @release: a #AsRelease instance.
  * @locale: the locale, or %NULL. e.g. "en_GB"
  * @description: the description markup.
- * @description_len: the size of @description, or -1 if %NULL-terminated.
  *
  * Sets the description release markup.
  *
@@ -433,8 +424,7 @@ as_release_set_timestamp (AsRelease *release, guint64 timestamp)
 void
 as_release_set_description (AsRelease *release,
 			    const gchar *locale,
-			    const gchar *description,
-			    gssize description_len)
+			    const gchar *description)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	if (locale == NULL)
@@ -447,7 +437,7 @@ as_release_set_description (AsRelease *release,
 	}
 	g_hash_table_insert (priv->descriptions,
 			     g_strdup (locale),
-			     as_strndup (description, description_len));
+			     g_strdup (description));
 }
 
 /**
@@ -476,10 +466,10 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 		_cleanup_free_ gchar *timestamp_str = NULL;
 		timestamp_str = g_strdup_printf ("%" G_GUINT64_FORMAT,
 						 priv->timestamp);
-		as_node_add_attribute (n, "timestamp", timestamp_str, -1);
+		as_node_add_attribute (n, "timestamp", timestamp_str);
 	}
 	if (priv->version != NULL)
-		as_node_add_attribute (n, "version", priv->version, -1);
+		as_node_add_attribute (n, "version", priv->version);
 	if (as_node_context_get_version (ctx) >= 0.9) {
 		const gchar *tmp;
 		guint i;
@@ -565,7 +555,7 @@ as_release_node_parse (AsRelease *release, GNode *node,
 				continue;
 			as_release_set_description (release,
 						    as_node_get_attribute (n, "xml:lang"),
-						    xml->str, xml->len);
+						    xml->str);
 		}
 
 	/* AppData: mutliple languages encoded in one <description> tag */

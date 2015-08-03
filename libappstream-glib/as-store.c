@@ -875,7 +875,7 @@ as_store_from_root (AsStore *store,
 
 		app = as_app_new ();
 		if (icon_path != NULL)
-			as_app_set_icon_path (app, icon_path, -1);
+			as_app_set_icon_path (app, icon_path);
 		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
 		if (!as_app_node_parse (app, n, ctx, &error_local)) {
 			g_set_error (error,
@@ -959,7 +959,7 @@ as_store_load_yaml_file (AsStore *store,
 			continue;
 		app = as_app_new ();
 		if (icon_path != NULL)
-			as_app_set_icon_path (app, icon_path, -1);
+			as_app_set_icon_path (app, icon_path);
 		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
 		if (!as_app_node_parse_dep11 (app, app_n, ctx, error))
 			return FALSE;
@@ -1225,17 +1225,17 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 
 	/* set origin attribute */
 	if (priv->origin != NULL)
-		as_node_add_attribute (node_apps, "origin", priv->origin, -1);
+		as_node_add_attribute (node_apps, "origin", priv->origin);
 
 	/* set origin attribute */
 	if (priv->builder_id != NULL)
-		as_node_add_attribute (node_apps, "builder_id", priv->builder_id, -1);
+		as_node_add_attribute (node_apps, "builder_id", priv->builder_id);
 
 	/* set version attribute */
 	if (priv->api_version > 0.1f) {
 		g_ascii_formatd (version, sizeof (version),
 				 "%.1f", priv->api_version);
-		as_node_add_attribute (node_apps, "version", version, -1);
+		as_node_add_attribute (node_apps, "version", version);
 	}
 
 	/* sort by ID */
@@ -1723,7 +1723,7 @@ as_store_add_app_install_screenshot (AsApp *app)
 
 	/* screenshots.debian.net doesn't specify a size, so this is a guess */
 	im = as_image_new ();
-	as_image_set_url (im, url, -1);
+	as_image_set_url (im, url);
 	as_image_set_width (im, 800);
 	as_image_set_height (im, 600);
 
@@ -1749,7 +1749,7 @@ as_store_load_app_install_file (AsStore *store,
 	_cleanup_object_unref_ AsApp *app = NULL;
 
 	app = as_app_new ();
-	as_app_set_icon_path (app, path_icons, -1);
+	as_app_set_icon_path (app, path_icons);
 	if (!as_app_parse_file (app,
 				filename,
 				AS_APP_PARSE_FLAG_USE_HEURISTICS,

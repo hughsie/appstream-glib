@@ -256,18 +256,17 @@ as_image_get_pixbuf (AsImage *image)
  * as_image_set_url:
  * @image: a #AsImage instance.
  * @url: the URL.
- * @url_len: the size of @url, or -1 if %NULL-terminated.
  *
  * Sets the fully-qualified mirror URL to use for the image.
  *
  * Since: 0.1.0
  **/
 void
-as_image_set_url (AsImage *image, const gchar *url, gssize url_len)
+as_image_set_url (AsImage *image, const gchar *url)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	g_free (priv->url);
-	priv->url = as_strndup (url, url_len);
+	priv->url = g_strdup (url);
 }
 
 /**
@@ -473,7 +472,7 @@ as_image_node_parse_dep11 (AsImage *im, GNode *node,
 		else if (g_strcmp0 (tmp, "width") == 0)
 			as_image_set_width (im, as_yaml_node_get_value_as_int (n));
 		else if (g_strcmp0 (tmp, "url") == 0)
-			as_image_set_url (im, as_yaml_node_get_value (n), -1);
+			as_image_set_url (im, as_yaml_node_get_value (n));
 	}
 	return TRUE;
 }
@@ -806,3 +805,4 @@ as_image_new (void)
 	image = g_object_new (AS_TYPE_IMAGE, NULL);
 	return AS_IMAGE (image);
 }
+ 

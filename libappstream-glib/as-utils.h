@@ -91,10 +91,8 @@ typedef enum {
 } AsMarkupConvertFormat;
 
 gchar		*as_markup_convert_simple	(const gchar	*markup,
-						 gssize		 markup_len,
 						 GError		**error);
 gchar		*as_markup_convert		(const gchar	*markup,
-						 gssize		 markup_len,
 						 AsMarkupConvertFormat format,
 						 GError		**error);
 gchar		**as_markup_strsplit_words	(const gchar	*text,

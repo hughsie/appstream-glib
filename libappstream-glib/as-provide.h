@@ -102,8 +102,7 @@ AsProvideKind	 as_provide_get_kind		(AsProvide	*provide);
 
 /* setters */
 void		 as_provide_set_value		(AsProvide	*provide,
-						 const gchar	*value,
-						 gssize		 value_len);
+						 const gchar	*value);
 void		 as_provide_set_kind		(AsProvide	*provide,
 						 AsProvideKind	 kind);
 

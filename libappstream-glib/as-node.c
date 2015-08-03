@@ -437,7 +437,6 @@ as_node_to_xml_string (GString *xml,
 /**
  * as_node_reflow_text:
  * @text: XML text data
- * @text_len: length of @text
  *
  * Converts pretty-formatted source text into a format suitable for AppStream.
  * This might include joining paragraphs, supressing newlines or doing other
@@ -560,7 +559,7 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	/* transfer the ownership of the comment to the new child */
 	tmp = as_node_take_attribute (helper->current, "@comment-tmp");
 	if (tmp != NULL) {
-		as_node_add_attribute (current, "@comment", tmp, -1);
+		as_node_add_attribute (current, "@comment", tmp);
 		g_free (tmp);
 	}
 
@@ -667,11 +666,11 @@ as_node_passthrough_cb (GMarkupParseContext *context,
 	/* append together comments */
 	existing = as_node_get_attribute (helper->current, "@comment-tmp");
 	if (existing == NULL) {
-		as_node_add_attribute (helper->current, "@comment-tmp", tmp, -1);
+		as_node_add_attribute (helper->current, "@comment-tmp", tmp);
 	} else {
 		_cleanup_free_ gchar *join = NULL;
 		join = g_strdup_printf ("%s<&>%s", existing, tmp);
-		as_node_add_attribute (helper->current, "@comment-tmp", join, -1);
+		as_node_add_attribute (helper->current, "@comment-tmp", join);
 	}
 }
 
@@ -1044,7 +1043,6 @@ as_node_get_tag (const GNode *node)
  * as_node_set_data: (skip)
  * @node: a #GNode
  * @cdata: new data
- * @cdata_len: length of @data, or -1 if NULL terminated
  * @insert_flags: any %AsNodeInsertFlags.
  *
  * Sets new data on a node.
@@ -1054,7 +1052,6 @@ as_node_get_tag (const GNode *node)
 void
 as_node_set_data (GNode *node,
 		  const gchar *cdata,
-		  gssize cdata_len,
 		  AsNodeInsertFlags insert_flags)
 {
 	AsNodeData *data;
@@ -1066,7 +1063,7 @@ as_node_set_data (GNode *node,
 
 	data = (AsNodeData *) node->data;
 	g_free (data->cdata);
-	data->cdata = as_strndup (cdata, cdata_len);
+	data->cdata = g_strdup (cdata);
 	data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 }
 
@@ -1074,16 +1071,15 @@ as_node_set_data (GNode *node,
  * as_node_set_comment: (skip)
  * @node: a #GNode
  * @comment: new comment
- * @comment_len: length of @data, or -1 if NULL terminated
  *
  * Sets new comment for the node.
  *
  * Since: 0.1.6
  **/
 void
-as_node_set_comment (GNode *node, const gchar *comment, gssize comment_len)
+as_node_set_comment (GNode *node, const gchar *comment)
 {
-	return as_node_add_attribute (node, "@comment", comment, comment_len);
+	return as_node_add_attribute (node, "@comment", comment);
 }
 
 /**
@@ -1232,7 +1228,6 @@ as_node_remove_attribute (GNode *node, const gchar *key)
  * @node: a #GNode
  * @key: the attribute key
  * @value: new data
- * @value_len: length of @data, or -1 if NULL terminated
  *
  * Adds a new attribute to a node.
  *
@@ -1241,8 +1236,7 @@ as_node_remove_attribute (GNode *node, const gchar *key)
 void
 as_node_add_attribute (GNode *node,
 		       const gchar *key,
-		       const gchar *value,
-		       gssize value_len)
+		       const gchar *value)
 {
 	AsNodeData *data;
 	AsNodeAttr *attr;
@@ -1254,7 +1248,7 @@ as_node_add_attribute (GNode *node,
 		return;
 	data = (AsNodeData *) node->data;
 	attr = as_node_attr_insert (data, key, NULL);
-	attr->value = as_strndup (value, value_len);
+	attr->value = g_strdup (value);
 }
 
 /**
@@ -1271,7 +1265,7 @@ void
 as_node_add_attribute_as_int (GNode *node, const gchar *key, gint value)
 {
 	_cleanup_free_ gchar *tmp = g_strdup_printf ("%i", value);
-	as_node_add_attribute (node, key, tmp, -1);
+	as_node_add_attribute (node, key, tmp);
 }
 
 /**
@@ -1463,7 +1457,7 @@ as_node_insert_localized (GNode *parent,
 	data = g_slice_new0 (AsNodeData);
 	as_node_data_set_name (data, name, insert_flags);
 	if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
-		data->cdata = as_markup_convert_simple (value_c, -1, NULL);
+		data->cdata = as_markup_convert_simple (value_c, NULL);
 		data->cdata_escaped = FALSE;
 	} else {
 		data->cdata = g_strdup (value_c);
@@ -1486,7 +1480,7 @@ as_node_insert_localized (GNode *parent,
 		as_node_attr_insert (data, "xml:lang", key);
 		as_node_data_set_name (data, name, insert_flags);
 		if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
-			data->cdata = as_markup_convert_simple (value, -1, NULL);
+			data->cdata = as_markup_convert_simple (value, NULL);
 			data->cdata_escaped = FALSE;
 		} else {
 			data->cdata = g_strdup (value);

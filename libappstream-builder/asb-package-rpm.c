@@ -370,7 +370,7 @@ asb_package_rpm_add_release (AsbPackage *pkg,
 			as_release_set_timestamp (release, timestamp);
 	} else {
 		release = as_release_new ();
-		as_release_set_version (release, version, -1);
+		as_release_set_version (release, version);
 		as_release_set_timestamp (release, timestamp);
 		asb_package_add_release (pkg, version, release);
 		g_object_unref (release);

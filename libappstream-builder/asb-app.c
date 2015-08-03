@@ -331,7 +331,7 @@ asb_app_add_screenshot_source (AsbApp *app, const gchar *filename, GError **erro
 
 	/* fonts only have full sized screenshots */
 	url_src = g_build_filename ("file://", basename, NULL);
-	as_image_set_url (im_src, url_src, -1);
+	as_image_set_url (im_src, url_src);
 	as_image_set_kind (im_src, AS_IMAGE_KIND_SOURCE);
 	as_screenshot_add_image (ss, im_src);
 	as_app_add_screenshot (AS_APP (app), ss);
@@ -362,13 +362,13 @@ asb_app_new (AsbPackage *pkg, const gchar *id)
 		switch (asb_package_get_kind (pkg)) {
 		case ASB_PACKAGE_KIND_DEFAULT:
 			as_app_add_pkgname (AS_APP (app),
-					    asb_package_get_name (pkg), -1);
+					    asb_package_get_name (pkg));
 			break;
 		case ASB_PACKAGE_KIND_BUNDLE:
 		{
 			_cleanup_object_unref_ AsBundle *bundle = NULL;
 			bundle = as_bundle_new ();
-			as_bundle_set_id (bundle, asb_package_get_source (pkg), -1);
+			as_bundle_set_id (bundle, asb_package_get_source (pkg));
 			as_bundle_set_kind (bundle, AS_BUNDLE_KIND_XDG_APP);
 			as_app_add_bundle (AS_APP (app), bundle);
 		};
@@ -377,6 +377,6 @@ asb_app_new (AsbPackage *pkg, const gchar *id)
 		}
 	}
 	if (id != NULL)
-		as_app_set_id (AS_APP (app), id, -1);
+		as_app_set_id (AS_APP (app), id);
 	return ASB_APP (app);
 }

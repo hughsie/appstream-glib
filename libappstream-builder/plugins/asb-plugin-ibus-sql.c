@@ -188,19 +188,19 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	basename = g_path_get_basename (filename);
 	app = asb_app_new (pkg, basename);
 	as_app_set_id_kind (AS_APP (app), AS_ID_KIND_INPUT_METHOD);
-	as_app_add_category (AS_APP (app), "Addons", -1);
-	as_app_add_category (AS_APP (app), "InputSources", -1);
-	as_app_set_name (AS_APP (app), "C", name, -1);
-	as_app_set_comment (AS_APP (app), "C", description, -1);
+	as_app_add_category (AS_APP (app), "Addons");
+	as_app_add_category (AS_APP (app), "InputSources");
+	as_app_set_name (AS_APP (app), "C", name);
+	as_app_set_comment (AS_APP (app), "C", description);
 	if (symbol != NULL && symbol[0] != '\0')
-		as_app_add_metadata (AS_APP (app), "X-IBus-Symbol", symbol, -1);
+		as_app_add_metadata (AS_APP (app), "X-IBus-Symbol", symbol);
 	if (language_string != NULL) {
 		languages = g_strsplit (language_string, ",", -1);
 		for (i = 0; languages[i] != NULL; i++) {
 			if (g_strcmp0 (languages[i], "other") == 0)
 				continue;
 			as_app_add_language (AS_APP (app),
-					     100, languages[i], -1);
+					     100, languages[i]);
 		}
 	}
 	asb_app_set_requires_appdata (app, TRUE);
@@ -209,7 +209,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	/* add icon */
 	icon = as_icon_new ();
 	as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
-	as_icon_set_name (icon, "system-run-symbolic", -1);
+	as_icon_set_name (icon, "system-run-symbolic");
 	as_app_add_icon (AS_APP (app), icon);
 
 	asb_plugin_add_app (apps, AS_APP (app));

@@ -1446,16 +1446,16 @@ asb_context_add_app_ignore (AsbContext *ctx, AsbPackage *pkg)
 	app_tmp = as_store_get_app_by_id (priv->store_ignore, name_arch);
 	if (app_tmp != NULL) {
 		as_app_add_metadata (AS_APP (app_tmp), "X-CacheID",
-				     asb_package_get_basename (pkg), -1);
+				     asb_package_get_basename (pkg));
 		return;
 	}
 
 	/* never encountered before, so add */
 	app = as_app_new ();
-	as_app_set_id (app, name_arch, -1);
-	as_app_add_pkgname (app, asb_package_get_name (pkg), -1);
+	as_app_set_id (app, name_arch);
+	as_app_add_pkgname (app, asb_package_get_name (pkg));
 	as_app_add_metadata (app, "X-CacheID",
-			     asb_package_get_basename (pkg), -1);
+			     asb_package_get_basename (pkg));
 	as_store_add_app (priv->store_ignore, app);
 }
 

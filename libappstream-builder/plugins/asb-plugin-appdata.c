@@ -148,7 +148,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	/* other optional data */
 	tmp = as_app_get_url_item (appdata, AS_URL_KIND_HOMEPAGE);
 	if (tmp != NULL)
-		as_app_add_url (AS_APP (app), AS_URL_KIND_HOMEPAGE, tmp, -1);
+		as_app_add_url (AS_APP (app), AS_URL_KIND_HOMEPAGE, tmp);
 	tmp = as_app_get_project_group (appdata);
 	if (tmp != NULL) {
 		/* check the category is valid */
@@ -158,13 +158,13 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 					 "AppData project group invalid, "
 					 "so ignoring: %s", tmp);
 		} else {
-			as_app_set_project_group (AS_APP (app), tmp, -1);
+			as_app_set_project_group (AS_APP (app), tmp);
 		}
 	}
 	array = as_app_get_compulsory_for_desktops (appdata);
 	if (array->len > 0) {
 		tmp = g_ptr_array_index (array, 0);
-		as_app_add_compulsory_for_desktop (AS_APP (app), tmp, -1);
+		as_app_add_compulsory_for_desktop (AS_APP (app), tmp);
 	}
 
 	/* perhaps get name */
@@ -178,7 +178,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 			asb_plugin_appdata_log_overwrite (app, "name",
 							  old, tmp);
 		}
-		as_app_set_name (AS_APP (app), key, tmp, -1);
+		as_app_set_name (AS_APP (app), key, tmp);
 	}
 	if (g_list_length (list) == 1) {
 		asb_package_log (asb_app_get_package (app),
@@ -198,7 +198,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 			asb_plugin_appdata_log_overwrite (app, "summary",
 							  old, tmp);
 		}
-		as_app_set_comment (AS_APP (app), key, tmp, -1);
+		as_app_set_comment (AS_APP (app), key, tmp);
 	}
 	if (g_list_length (list) == 1) {
 		asb_package_log (asb_app_get_package (app),
@@ -213,7 +213,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	for (l = list; l != NULL; l = l->next) {
 		key = l->data;
 		tmp = g_hash_table_lookup (hash, key);
-		as_app_set_description (AS_APP (app), key, tmp, -1);
+		as_app_set_description (AS_APP (app), key, tmp);
 	}
 	if (g_list_length (list) == 1) {
 		asb_package_log (asb_app_get_package (app),
@@ -249,7 +249,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		tmp = g_hash_table_lookup (hash, key);
 		old = as_app_get_metadata_item (AS_APP (app), key);
 		asb_plugin_appdata_log_overwrite (app, "metadata", old, tmp);
-		as_app_add_metadata (AS_APP (app), key, tmp, -1);
+		as_app_add_metadata (AS_APP (app), key, tmp);
 	}
 
 	/* add releases */

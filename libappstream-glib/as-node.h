@@ -137,15 +137,12 @@ void		 as_node_set_name		(GNode		*node,
 						 const gchar	*name);
 void		 as_node_set_data		(GNode		*node,
 						 const gchar	*cdata,
-						 gssize		 cdata_len,
 						 AsNodeInsertFlags insert_flags);
 void		 as_node_set_comment		(GNode		*node,
-						 const gchar	*comment,
-						 gssize		 comment_len);
+						 const gchar	*comment);
 void		 as_node_add_attribute		(GNode		*node,
 						 const gchar	*key,
-						 const gchar	*value,
-						 gssize		 value_len);
+						 const gchar	*value);
 void		 as_node_add_attribute_as_int	(GNode		*node,
 						 const gchar	*key,
 						 gint		 value);

@@ -98,7 +98,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 %files -f appstream-glib.lang
 %doc README.md AUTHORS NEWS COPYING
-%{_libdir}/libappstream-glib.so.7*
+%{_libdir}/libappstream-glib.so.8*
 %{_libdir}/girepository-1.0/*.typelib
 %{_bindir}/appstream-util
 %{_bindir}/appdata-validate
@@ -121,7 +121,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_bindir}/appstream-builder
 %{_datadir}/bash-completion/completions/appstream-builder
 %{_libdir}/asb-plugins-%{as_plugin_version}/*.so
-%{_libdir}/libappstream-builder.so.7*
+%{_libdir}/libappstream-builder.so.8*
 %{_mandir}/man1/appstream-builder.1.gz
 
 %files builder-devel

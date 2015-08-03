@@ -367,20 +367,18 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		if (asb_package_get_url (priv->pkg) != NULL) {
 			as_app_add_url (AS_APP (app),
 					AS_URL_KIND_HOMEPAGE,
-					asb_package_get_url (priv->pkg), -1);
+					asb_package_get_url (priv->pkg));
 		}
 		if (asb_package_get_license (priv->pkg) != NULL) {
 			as_app_set_project_license (AS_APP (app),
-						    asb_package_get_license (priv->pkg),
-						    -1);
+						    asb_package_get_license (priv->pkg));
 		}
 
 		/* add the source name so we can suggest these together */
 		if (g_strcmp0 (asb_package_get_source_pkgname (priv->pkg),
 			       asb_package_get_name (priv->pkg)) != 0) {
 			as_app_set_source_pkgname (AS_APP (app),
-						   asb_package_get_source_pkgname (priv->pkg),
-						   -1);
+						   asb_package_get_source_pkgname (priv->pkg));
 		}
 
 		/* set all the releases on the app */
@@ -422,7 +420,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			cache_id = asb_utils_get_cache_id_for_filename (priv->filename);
 			as_app_add_metadata (AS_APP (app),
 					     "X-CacheID",
-					     cache_id, -1);
+					     cache_id);
 			g_free (cache_id);
 		}
 
@@ -430,7 +428,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		if (asb_package_get_vcs (priv->pkg) != NULL) {
 			as_app_add_metadata (AS_APP (app),
 					     "VersionControlSystem",
-					     asb_package_get_vcs (priv->pkg), -1);
+					     asb_package_get_vcs (priv->pkg));
 		}
 
 		/* save any screenshots early */

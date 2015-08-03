@@ -158,16 +158,16 @@ asb_plugin_process (AsbPlugin *plugin,
 	/* create app */
 	app = asb_app_new (pkg, app_id);
 	as_app_set_id_kind (AS_APP (app), AS_ID_KIND_CODEC);
-	as_app_set_name (AS_APP (app), "C", "GStreamer Multimedia Codecs", -1);
+	as_app_set_name (AS_APP (app), "C", "GStreamer Multimedia Codecs");
 	asb_app_set_requires_appdata (app, TRUE);
 	asb_app_set_hidpi_enabled (app, asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS));
-	as_app_add_category (AS_APP (app), "Addons", -1);
-	as_app_add_category (AS_APP (app), "Codecs", -1);
+	as_app_add_category (AS_APP (app), "Addons");
+	as_app_add_category (AS_APP (app), "Codecs");
 
 	/* add icon */
 	icon = as_icon_new ();
 	as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
-	as_icon_set_name (icon, "application-x-executable", -1);
+	as_icon_set_name (icon, "application-x-executable");
 	as_app_add_icon (AS_APP (app), icon);
 
 	for (i = 0; data[i].path != NULL; i++) {
@@ -175,7 +175,7 @@ asb_plugin_process (AsbPlugin *plugin,
 			continue;
 		split = g_strsplit (data[i].text, "|", -1);
 		for (j = 0; split[j] != NULL; j++)
-			as_app_add_keyword (AS_APP (app), NULL, split[j], -1);
+			as_app_add_keyword (AS_APP (app), NULL, split[j]);
 		g_strfreev (split);
 	}
 
@@ -206,7 +206,7 @@ asb_plugin_process (AsbPlugin *plugin,
 	} else {
 		g_string_append (str, g_ptr_array_index (keywords, 0));
 	}
-	as_app_set_comment (AS_APP (app), "C", str->str, -1);
+	as_app_set_comment (AS_APP (app), "C", str->str);
 
 	/* add */
 	asb_plugin_add_app (&apps, AS_APP (app));

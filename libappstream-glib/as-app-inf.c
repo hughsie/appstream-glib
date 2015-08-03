@@ -119,7 +119,7 @@ as_app_parse_inf_file (AsApp *app,
 	if (g_strcmp0 (class_guid, AS_APP_INF_CLASS_GUID_FIRMWARE) != 0) {
 		g_debug ("ClassGuid is '%s', not '%s', so using as an ID",
 			 class_guid, AS_APP_INF_CLASS_GUID_FIRMWARE);
-		as_app_set_id (app, class_guid, -1);
+		as_app_set_id (app, class_guid);
 	} else {
 		/* get the ESRT GUID */
 		guid = g_key_file_get_string (kf,
@@ -134,7 +134,7 @@ as_app_parse_inf_file (AsApp *app,
 			return FALSE;
 		}
 		id = as_app_parse_inf_sanitize_guid (guid);
-		as_app_set_id (app, id, -1);
+		as_app_set_id (app, id);
 	}
 
 	/* get vendor */
@@ -144,19 +144,19 @@ as_app_parse_inf_file (AsApp *app,
 	if (vendor == NULL) /* FIXME: is a hack */
 		vendor = g_key_file_get_string (kf, "Strings", "Provider", NULL);
 	if (vendor != NULL)
-		as_app_set_developer_name (app, NULL, vendor, -1);
+		as_app_set_developer_name (app, NULL, vendor);
 
 	/* get name */
 	name = g_key_file_get_string (kf, "Strings", "FirmwareDesc", NULL);
 	if (name != NULL)
-		as_app_set_name (app, NULL, name, -1);
+		as_app_set_name (app, NULL, name);
 
 	/* get comment */
 	comment = g_key_file_get_string (kf, "SourceDisksNames", "1", NULL);
 	if (comment == NULL) /* FIXME: is a hack */
 		comment = g_key_file_get_string (kf, "Strings", "DiskName", NULL);
 	if (comment != NULL)
-		as_app_set_comment (app, NULL, comment, -1);
+		as_app_set_comment (app, NULL, comment);
 
 	/* parse the DriverVer */
 	version = as_inf_get_driver_version (kf, &timestamp, error);
@@ -179,23 +179,23 @@ as_app_parse_inf_file (AsApp *app,
 			     "no SourceDisksFiles or Firmware_CopyFiles");
 		return FALSE;
 	}
-	as_app_add_metadata (app, "FirmwareBasename", firmware_basename, -1);
+	as_app_add_metadata (app, "FirmwareBasename", firmware_basename);
 
 	/* optional */
 	catalog_basename = g_key_file_get_string (kf, "Version", "CatalogFile", NULL);
 	if (catalog_basename != NULL)
-		as_app_add_metadata (app, "CatalogBasename", catalog_basename, -1);
+		as_app_add_metadata (app, "CatalogBasename", catalog_basename);
 
 	/* add a release with no real description */
 	release = as_release_new ();
-	as_release_set_version (release, version, -1);
+	as_release_set_version (release, version);
 	as_release_set_timestamp (release, timestamp);
 	as_app_add_release (app, release);
 
 	/* add icon */
 	icon = as_icon_new ();
 	as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
-	as_icon_set_name (icon, "application-x-executable", -1);
+	as_icon_set_name (icon, "application-x-executable");
 	as_app_add_icon (app, icon);
 
 	return TRUE;

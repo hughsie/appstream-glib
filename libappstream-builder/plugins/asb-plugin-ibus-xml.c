@@ -119,44 +119,44 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	basename = g_path_get_basename (filename);
 	app = asb_app_new (pkg, basename);
 	as_app_set_id_kind (AS_APP (app), AS_ID_KIND_INPUT_METHOD);
-	as_app_add_category (AS_APP (app), "Addons", -1);
-	as_app_add_category (AS_APP (app), "InputSources", -1);
+	as_app_add_category (AS_APP (app), "Addons");
+	as_app_add_category (AS_APP (app), "InputSources");
 	asb_app_set_requires_appdata (app, TRUE);
 	asb_app_set_hidpi_enabled (app, asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS));
 
 	/* add icon */
 	icon = as_icon_new ();
 	as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
-	as_icon_set_name (icon, "system-run-symbolic", -1);
+	as_icon_set_name (icon, "system-run-symbolic");
 	as_app_add_icon (AS_APP (app), icon);
 
 	/* read the component header which all input methods have */
 	n = as_node_find (root, "component/description");
 	if (n != NULL) {
-		as_app_set_name (AS_APP (app), "C", as_node_get_data (n), -1);
-		as_app_set_comment (AS_APP (app), "C", as_node_get_data (n), -1);
+		as_app_set_name (AS_APP (app), "C", as_node_get_data (n));
+		as_app_set_comment (AS_APP (app), "C", as_node_get_data (n));
 	}
 	n = as_node_find (root, "component/homepage");
 	if (n != NULL) {
 		as_app_add_url (AS_APP (app),
 				AS_URL_KIND_HOMEPAGE,
-				as_node_get_data (n), -1);
+				as_node_get_data (n));
 	}
 
 	/* do we have a engine section we can use? */
 	n = as_node_find (root, "component/engines/engine/longname");
 	if (n != NULL)
-		as_app_set_name (AS_APP (app), "C", as_node_get_data (n), -1);
+		as_app_set_name (AS_APP (app), "C", as_node_get_data (n));
 	n = as_node_find (root, "component/engines/engine/description");
 	if (n != NULL)
-		as_app_set_comment (AS_APP (app), "C", as_node_get_data (n), -1);
+		as_app_set_comment (AS_APP (app), "C", as_node_get_data (n));
 	n = as_node_find (root, "component/engines/engine/symbol");
 	if (n != NULL) {
 		tmp = as_node_get_data (n);
 		if (tmp != NULL && tmp[0] != '\0') {
 			as_app_add_metadata (AS_APP (app),
 					     "X-IBus-Symbol",
-					     tmp, -1);
+					     tmp);
 		}
 	}
 	n = as_node_find (root, "component/engines/engine/language");
@@ -168,7 +168,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				if (g_strcmp0 (languages[i], "other") == 0)
 					continue;
 				as_app_add_language (AS_APP (app),
-						     100, languages[i], -1);
+						     100, languages[i]);
 			}
 		}
 	}

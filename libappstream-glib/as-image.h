@@ -140,8 +140,7 @@ GdkPixbuf	*as_image_get_pixbuf		(AsImage	*image);
 
 /* setters */
 void		 as_image_set_url		(AsImage	*image,
-						 const gchar	*url,
-						 gssize		 url_len);
+						 const gchar	*url);
 void		 as_image_set_basename		(AsImage	*image,
 						 const gchar	*basename);
 void		 as_image_set_width		(AsImage	*image,

@@ -56,12 +56,12 @@ asb_plugin_process_filename (const gchar *filename, AsbApp *app, GError **error)
 		return FALSE;
 	app_runtime = g_key_file_get_string (kf, "Application", "runtime", NULL);
 	if (app_runtime != NULL)
-		as_app_add_metadata (AS_APP (app), "BundleRuntime", app_runtime, -1);
+		as_app_add_metadata (AS_APP (app), "BundleRuntime", app_runtime);
 	app_sdk = g_key_file_get_string (kf, "Application", "sdk", NULL);
 	if (app_sdk != NULL)
-		as_app_add_metadata (AS_APP (app), "BundleSDK", app_sdk, -1);
+		as_app_add_metadata (AS_APP (app), "BundleSDK", app_sdk);
 	if (g_key_file_get_string (kf, "Environment", "network", NULL))
-		as_app_add_permission (AS_APP (app), "network", -1);
+		as_app_add_permission (AS_APP (app), "network");
 	return TRUE;
 }
 

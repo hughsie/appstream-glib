@@ -240,7 +240,7 @@ as_util_convert_appdata (GFile *file_input,
 		if (n2 != NULL) {
 			tmp = as_node_get_attribute (n2, "type");
 			if (tmp != NULL)
-				as_node_add_attribute (n, "type", tmp, -1);
+				as_node_add_attribute (n, "type", tmp);
 			as_node_remove_attribute (n2, "type");
 		}
 	}
@@ -270,22 +270,22 @@ as_util_convert_appdata (GFile *file_input,
 
 		/* convert the old license defines */
 		if (g_strcmp0 (tmp, "CC0") == 0)
-			as_node_set_data (n2, "CC0-1.0", -1,
+			as_node_set_data (n2, "CC0-1.0",
 					  AS_NODE_INSERT_FLAG_NONE);
 		else if (g_strcmp0 (tmp, "CC-BY") == 0)
-			as_node_set_data (n2, "CC-BY-3.0", -1,
+			as_node_set_data (n2, "CC-BY-3.0",
 					  AS_NODE_INSERT_FLAG_NONE);
 		else if (g_strcmp0 (tmp, "CC-BY-SA") == 0)
-			as_node_set_data (n2, "CC-BY-SA-3.0", -1,
+			as_node_set_data (n2, "CC-BY-SA-3.0",
 					  AS_NODE_INSERT_FLAG_NONE);
 		else if (g_strcmp0 (tmp, "GFDL") == 0)
-			as_node_set_data (n2, "GFDL-1.3", -1,
+			as_node_set_data (n2, "GFDL-1.3",
 					  AS_NODE_INSERT_FLAG_NONE);
 
 		/* ensure in SPDX format */
 		if (!as_utils_is_spdx_license_id (as_node_get_data (n2))) {
 			action_required = TRUE;
-			as_node_set_comment (n2, "FIXME: convert to an SPDX ID", -1);
+			as_node_set_comment (n2, "FIXME: convert to an SPDX ID");
 		}
 	}
 
@@ -295,12 +295,12 @@ as_util_convert_appdata (GFile *file_input,
 		action_required = TRUE;
 		n2 = as_node_insert (n, "project_license", "<!-- Insert SPDX ID Here -->",
 				     AS_NODE_INSERT_FLAG_PRE_ESCAPED, NULL);
-		as_node_set_comment (n2, "FIXME: Use https://spdx.org/licenses/", -1);
+		as_node_set_comment (n2, "FIXME: Use https://spdx.org/licenses/");
 	} else {
 		/* ensure in SPDX format */
 		if (!as_utils_is_spdx_license_id (as_node_get_data (n2))) {
 			action_required = TRUE;
-			as_node_set_comment (n2, "FIXME: convert to an SPDX ID", -1);
+			as_node_set_comment (n2, "FIXME: convert to an SPDX ID");
 		}
 	}
 
@@ -319,31 +319,31 @@ as_util_convert_appdata (GFile *file_input,
 			if (g_strcmp0 (as_node_get_data (n3), "GNOME") == 0) {
 				n3 = as_node_insert (n, "developer_name", "The GNOME Project",
 						     flags_translate, NULL);
-				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group", -1);
+				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group");
 			} else if (g_strcmp0 (as_node_get_data (n3), "KDE") == 0) {
 				n3 = as_node_insert (n, "developer_name", "The KDE Community",
 						     AS_NODE_INSERT_FLAG_NONE, NULL);
-				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group", -1);
+				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group");
 			} else if (g_strcmp0 (as_node_get_data (n3), "XFCE") == 0) {
 				n3 = as_node_insert (n, "developer_name", "Xfce Development Team",
 						     flags_translate, NULL);
-				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group", -1);
+				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group");
 			} else if (g_strcmp0 (as_node_get_data (n3), "MATE") == 0) {
 				n3 = as_node_insert (n, "developer_name", "The MATE Project",
 						     flags_translate, NULL);
-				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group", -1);
+				as_node_set_comment (n3, "FIXME: this is a translatable version of project_group");
 			} else {
 				action_required = TRUE;
 				n3 = as_node_insert (n, "developer_name", "<!-- Company Name -->",
 						     AS_NODE_INSERT_FLAG_PRE_ESCAPED, NULL);
-				as_node_set_comment (n3, "FIXME: compulsory_for_desktop was not recognised", -1);
+				as_node_set_comment (n3, "FIXME: compulsory_for_desktop was not recognised");
 			}
 		} else {
 			action_required = TRUE;
 			n3 = as_node_insert (n, "developer_name", "<!-- Company Name -->",
 					     AS_NODE_INSERT_FLAG_PRE_ESCAPED, NULL);
 			as_node_set_comment (n3, "FIXME: You can use a project or "
-					     "developer name if there's no company", -1);
+					     "developer name if there's no company");
 		}
 	}
 
@@ -362,7 +362,7 @@ as_util_convert_appdata (GFile *file_input,
 					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "homepage", NULL);
 		}
-		as_node_set_comment (n3, "FIXME: homepage for the application", -1);
+		as_node_set_comment (n3, "FIXME: homepage for the application");
 	}
 	if (as_node_find_with_attribute (n, "url", "type", "bugtracker") == NULL) {
 		if (g_strcmp0 (project_group, "GNOME") == 0) {
@@ -383,19 +383,19 @@ as_util_convert_appdata (GFile *file_input,
 					     "type", "bugtracker", NULL);
 		}
 		as_node_set_comment (n3, "FIXME: where to report bugs for "
-				     "the application", -1);
+				     "the application");
 	}
 	if (as_node_find_with_attribute (n, "url", "type", "donation") == NULL) {
 		if (g_strcmp0 (project_group, "GNOME") == 0) {
 			n3 = as_node_insert (n, "url", "http://www.gnome.org/friends/",
 					     AS_NODE_INSERT_FLAG_NONE,
 					     "type", "donation", NULL);
-			as_node_set_comment (n3, "GNOME Projects usually have no per-app donation page", -1);
+			as_node_set_comment (n3, "GNOME Projects usually have no per-app donation page");
 		} else {
 			n3 = as_node_insert (n, "url", "<!-- http://www.homepage.com/donation.html -->",
 					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "donation", NULL);
-			as_node_set_comment (n3, "FIXME: where to donate to the application", -1);
+			as_node_set_comment (n3, "FIXME: where to donate to the application");
 		}
 	}
 	if (as_node_find_with_attribute (n, "url", "type", "help") == NULL) {
@@ -404,13 +404,13 @@ as_util_convert_appdata (GFile *file_input,
 					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "help", NULL);
 			as_node_set_comment (n3, "FIXME: where on the internet users "
-					     "can find help", -1);
+					     "can find help");
 		} else {
 			n3 = as_node_insert (n, "url", "<!-- http://www.homepage.com/docs/ -->",
 					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "help", NULL);
 			as_node_set_comment (n3, "FIXME: where to report bugs for "
-					     "the application", -1);
+					     "the application");
 		}
 	}
 
@@ -428,7 +428,7 @@ as_util_convert_appdata (GFile *file_input,
 		action_required = TRUE;
 		n3 = as_node_insert (n, "update_contact", "<!-- upstream-contact_at_email.com -->",
 				     AS_NODE_INSERT_FLAG_PRE_ESCAPED, NULL);
-		as_node_set_comment (n3, "FIXME: this is optional, but recommended", -1);
+		as_node_set_comment (n3, "FIXME: this is optional, but recommended");
 	}
 
 	/* convert from <screenshot>url</screenshot> to:
@@ -446,8 +446,8 @@ as_util_convert_appdata (GFile *file_input,
 				continue;
 			n3 = as_node_insert (n2, "image", tmp,
 					     AS_NODE_INSERT_FLAG_NONE, NULL);
-			as_node_set_data (n3, tmp, -1, AS_NODE_INSERT_FLAG_NONE);
-			as_node_set_data (n2, NULL, -1, AS_NODE_INSERT_FLAG_NONE);
+			as_node_set_data (n3, tmp, AS_NODE_INSERT_FLAG_NONE);
+			as_node_set_data (n2, NULL, AS_NODE_INSERT_FLAG_NONE);
 			action_required = TRUE;
 			as_node_insert (n2, "caption", "<!-- Describe this "
 					"screenshot in less than ~10 words -->",
@@ -682,7 +682,7 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 			tmp = as_release_get_description (rel, NULL);
 			if (tmp != NULL) {
 				_cleanup_free_ gchar *md = NULL;
-				md = as_markup_convert (tmp, -1,
+				md = as_markup_convert (tmp,
 							AS_MARKUP_CONVERT_FORMAT_MARKDOWN,
 							error);
 				if (md == NULL)
@@ -1119,16 +1119,16 @@ as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **erro
 	/* set some initial values */
 	as_app_set_description (app, NULL,
 				"\n  <p>\n   This should be long prose.\n  </p>\n"
-				"  <p>\n   This should a second paragraph.\n  </p>\n", -1);
-	as_app_set_developer_name (app, NULL, "XXX: Insert Company or Developer Name", -1);
-	as_app_set_project_group (app, "XXX: Values valid are none, GNOME, KDE or XFCE", -1);
+				"  <p>\n   This should a second paragraph.\n  </p>\n");
+	as_app_set_developer_name (app, NULL, "XXX: Insert Company or Developer Name");
+	as_app_set_project_group (app, "XXX: Values valid are none, GNOME, KDE or XFCE");
 
 	/* fix the ID */
 	id_new = g_strdup (as_app_get_id (app));
 	instr = g_strstr_len (id_new, -1, ".desktop.in");
 	if (instr != NULL) {
 		instr[8] = '\0';
-		as_app_set_id (app, id_new, -1);
+		as_app_set_id (app, id_new);
 	}
 
 	/* set things that don't belong in the AppData file */
@@ -1139,24 +1139,24 @@ as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **erro
 
 	/* add urls */
 	as_app_add_url (app, AS_URL_KIND_HOMEPAGE,
-			"XXX: http://www.homepage.com/", -1);
+			"XXX: http://www.homepage.com/");
 	as_app_add_url (app, AS_URL_KIND_BUGTRACKER,
-			"XXX: http://www.homepage.com/where-to-report_bug.html", -1);
+			"XXX: http://www.homepage.com/where-to-report_bug.html");
 	as_app_add_url (app, AS_URL_KIND_FAQ,
-			"XXX: http://www.homepage.com/faq.html", -1);
+			"XXX: http://www.homepage.com/faq.html");
 	as_app_add_url (app, AS_URL_KIND_DONATION,
-			"XXX: http://www.homepage.com/donation.html", -1);
+			"XXX: http://www.homepage.com/donation.html");
 	as_app_add_url (app, AS_URL_KIND_HELP,
-			"XXX: http://www.homepage.com/docs/", -1);
-	as_app_set_project_license (app, "XXX: Insert SPDX value here", -1);
-	as_app_set_metadata_license (app, "XXX: Insert SPDX value here", -1);
+			"XXX: http://www.homepage.com/docs/");
+	as_app_set_project_license (app, "XXX: Insert SPDX value here");
+	as_app_set_metadata_license (app, "XXX: Insert SPDX value here");
 
 	/* add first screenshot */
 	ss1 = as_screenshot_new ();
 	as_screenshot_set_kind (ss1, AS_SCREENSHOT_KIND_DEFAULT);
-	as_screenshot_set_caption (ss1, NULL, "XXX: Describe the default screenshot", -1);
+	as_screenshot_set_caption (ss1, NULL, "XXX: Describe the default screenshot");
 	im1 = as_image_new ();
-	as_image_set_url (im1, "XXX: http://www.my-screenshot-default.png", -1);
+	as_image_set_url (im1, "XXX: http://www.my-screenshot-default.png");
 	as_image_set_width (im1, 1120);
 	as_image_set_height (im1, 630);
 	as_screenshot_add_image (ss1, im1);
@@ -1165,9 +1165,9 @@ as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **erro
 	/* add second screenshot */
 	ss2 = as_screenshot_new ();
 	as_screenshot_set_kind (ss2, AS_SCREENSHOT_KIND_NORMAL);
-	as_screenshot_set_caption (ss2, NULL, "XXX: Describe another screenshot", -1);
+	as_screenshot_set_caption (ss2, NULL, "XXX: Describe another screenshot");
 	im2 = as_image_new ();
-	as_image_set_url (im2, "XXX: http://www.my-screenshot.png", -1);
+	as_image_set_url (im2, "XXX: http://www.my-screenshot.png");
 	as_image_set_width (im2, 1120);
 	as_image_set_height (im2, 630);
 	as_screenshot_add_image (ss2, im2);
@@ -2945,7 +2945,7 @@ as_util_mirror_screenshots_thumb (AsScreenshot *ss, AsImage *im_src,
 				    size_str,
 				    as_image_get_basename (im_src),
 				    NULL);
-	as_image_set_url (im_tmp, url_tmp, -1);
+	as_image_set_url (im_tmp, url_tmp);
 	as_image_set_kind (im_tmp, AS_IMAGE_KIND_THUMBNAIL);
 	as_image_set_basename (im_tmp, as_image_get_basename (im_src));
 	as_screenshot_add_image (ss, im_tmp);
@@ -3079,7 +3079,7 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 		basename = g_path_get_basename (url);
 		url_new = g_build_filename (mirror_uri, "source", basename, NULL);
 		im = as_image_new ();
-		as_image_set_url (im, url_new, -1);
+		as_image_set_url (im, url_new);
 		as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
 		ss = as_screenshot_new ();
 		as_screenshot_set_kind (ss, AS_SCREENSHOT_KIND_DEFAULT);
@@ -3144,7 +3144,7 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	as_screenshot_set_kind (ss, is_default ? AS_SCREENSHOT_KIND_DEFAULT :
 						 AS_SCREENSHOT_KIND_NORMAL);
 	im = as_image_new ();
-	as_image_set_url (im, url, -1);
+	as_image_set_url (im, url);
 	as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
 	as_screenshot_add_image (ss, im);
 	as_app_add_screenshot (app, ss);
@@ -3387,7 +3387,7 @@ as_util_mirror_local_firmware (AsUtilPrivate *priv, gchar **values, GError **err
 			}
 			loc = g_build_filename (values[1], fn, NULL);
 			g_ptr_array_set_size (as_release_get_locations (rel), 0);
-			as_release_add_location (rel, loc, -1);
+			as_release_add_location (rel, loc);
 		}
 	}
 
@@ -3436,7 +3436,7 @@ as_util_replace_screenshots (AsUtilPrivate *priv, gchar **values, GError **error
 		_cleanup_object_unref_ AsImage *im = NULL;
 		_cleanup_object_unref_ AsScreenshot *ss = NULL;
 		im = as_image_new ();
-		as_image_set_url (im, values[i], -1);
+		as_image_set_url (im, values[i]);
 		as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
 		ss = as_screenshot_new ();
 		as_screenshot_add_image (ss, im);

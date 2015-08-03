@@ -317,7 +317,6 @@ as_screenshot_add_image (AsScreenshot *screenshot, AsImage *image)
  * @screenshot: a #AsScreenshot instance.
  * @locale: the locale, or %NULL. e.g. "en_GB"
  * @caption: the caption text.
- * @caption_len: the size of @caption, or -1 if %NULL-terminated.
  *
  * Sets a caption on the screenshot for a specific locale.
  *
@@ -326,15 +325,14 @@ as_screenshot_add_image (AsScreenshot *screenshot, AsImage *image)
 void
 as_screenshot_set_caption (AsScreenshot *screenshot,
 			   const gchar *locale,
-			   const gchar *caption,
-			   gsize caption_len)
+			   const gchar *caption)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	if (locale == NULL)
 		locale = "C";
 	g_hash_table_insert (priv->captions,
 			     g_strdup (locale),
-			     as_strndup (caption, caption_len));
+			     g_strdup (caption));
 }
 
 /**
@@ -363,10 +361,8 @@ as_screenshot_node_insert (AsScreenshot *screenshot,
 			    AS_NODE_INSERT_FLAG_NONE,
 			    NULL);
 	if (priv->kind != AS_SCREENSHOT_KIND_NORMAL) {
-		as_node_add_attribute (n,
-				       "type",
-				       as_screenshot_kind_to_string (priv->kind),
-				       -1);
+		as_node_add_attribute (n, "type",
+				       as_screenshot_kind_to_string (priv->kind));
 	}
 	if (as_node_context_get_version (ctx) >= 0.41) {
 		as_node_insert_localized (n,
@@ -426,8 +422,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node,
 			tmp = l->data;
 			as_screenshot_set_caption (screenshot,
 						   tmp,
-						   g_hash_table_lookup (captions, tmp),
-						   -1);
+						   g_hash_table_lookup (captions, tmp));
 		}
 	}
 
@@ -443,7 +438,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node,
 		size = as_node_get_attribute_as_int (node, "height");
 		if (size != G_MAXINT)
 			as_image_set_height (image, size);
-		as_image_set_url (image, tmp, -1);
+		as_image_set_url (image, tmp);
 		g_ptr_array_add (priv->images, image);
 	}
 

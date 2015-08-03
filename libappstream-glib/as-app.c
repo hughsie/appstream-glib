@@ -1373,7 +1373,7 @@ as_app_get_source_file (AsApp *app)
  * as_app_validate_utf8:
  **/
 static gboolean
-as_app_validate_utf8 (const gchar *text, gssize text_len)
+as_app_validate_utf8 (const gchar *text)
 {
 	gboolean is_whitespace = TRUE;
 	guint i;
@@ -1391,7 +1391,7 @@ as_app_validate_utf8 (const gchar *text, gssize text_len)
 		return FALSE;
 
 	/* standard UTF-8 checks */
-	if (!g_utf8_validate (text, text_len, NULL))
+	if (!g_utf8_validate (text, -1, NULL))
 		return FALSE;
 
 	/* additional check for xmllint */
@@ -1408,21 +1408,20 @@ as_app_validate_utf8 (const gchar *text, gssize text_len)
  * as_app_set_id:
  * @app: a #AsApp instance.
  * @id: the new _full_ application ID, e.g. "org.gnome.Software.desktop".
- * @id_len: the size of @id, or -1 if %NULL-terminated.
  *
  * Sets a new application ID. Any invalid characters will be automatically replaced.
  *
  * Since: 0.1.0
  **/
 void
-as_app_set_id (AsApp *app, const gchar *id, gssize id_len)
+as_app_set_id (AsApp *app, const gchar *id)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	gchar *tmp;
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (id, id_len)) {
+	    !as_app_validate_utf8 (id)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
@@ -1430,7 +1429,7 @@ as_app_set_id (AsApp *app, const gchar *id, gssize id_len)
 	g_free (priv->id);
 	g_free (priv->id_filename);
 
-	priv->id = as_strndup (id, id_len);
+	priv->id = g_strdup (id);
 	priv->id_filename = g_strdup (priv->id);
 	g_strdelimit (priv->id_filename, "&<>", '-');
 	tmp = g_strrstr_len (priv->id_filename, -1, ".");
@@ -1507,79 +1506,70 @@ as_app_set_id_kind (AsApp *app, AsIdKind id_kind)
  * as_app_set_project_group:
  * @app: a #AsApp instance.
  * @project_group: the project group, e.g. "GNOME".
- * @project_group_len: the size of @project_group, or -1 if %NULL-terminated.
  *
  * Set any project affiliation.
  *
  * Since: 0.1.0
  **/
 void
-as_app_set_project_group (AsApp *app,
-			  const gchar *project_group,
-			  gssize project_group_len)
+as_app_set_project_group (AsApp *app, const gchar *project_group)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (project_group, project_group_len)) {
+	    !as_app_validate_utf8 (project_group)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
 	g_free (priv->project_group);
-	priv->project_group = as_strndup (project_group, project_group_len);
+	priv->project_group = g_strdup (project_group);
 }
 
 /**
  * as_app_set_project_license:
  * @app: a #AsApp instance.
  * @project_license: the project license string.
- * @project_license_len: the size of @project_license, or -1 if %NULL-terminated.
  *
  * Set the project license.
  *
  * Since: 0.1.0
  **/
 void
-as_app_set_project_license (AsApp *app,
-			    const gchar *project_license,
-			    gssize project_license_len)
+as_app_set_project_license (AsApp *app, const gchar *project_license)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (project_license, project_license_len)) {
+	    !as_app_validate_utf8 (project_license)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
 	g_free (priv->project_license);
-	priv->project_license = as_strndup (project_license, project_license_len);
+	priv->project_license = g_strdup (project_license);
 }
 
 /**
  * as_app_set_metadata_license:
  * @app: a #AsApp instance.
  * @metadata_license: the project license string.
- * @metadata_license_len: the size of @metadata_license, or -1 if %NULL-terminated.
  *
  * Set the project license.
  *
  * Since: 0.1.4
  **/
 void
-as_app_set_metadata_license (AsApp *app,
-			     const gchar *metadata_license,
-			     gssize metadata_license_len)
+as_app_set_metadata_license (AsApp *app, const gchar *metadata_license)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	_cleanup_strv_free_ gchar **tokens = NULL;
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (metadata_license, metadata_license_len)) {
+	    !as_app_validate_utf8 (metadata_license)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
@@ -1594,7 +1584,6 @@ as_app_set_metadata_license (AsApp *app,
  * as_app_set_source_pkgname:
  * @app: a #AsApp instance.
  * @source_pkgname: the project license string.
- * @source_pkgname_len: the size of @source_pkgname, or -1 if %NULL-terminated.
  *
  * Set the project license.
  *
@@ -1602,19 +1591,18 @@ as_app_set_metadata_license (AsApp *app,
  **/
 void
 as_app_set_source_pkgname (AsApp *app,
-			     const gchar *source_pkgname,
-			     gssize source_pkgname_len)
+			     const gchar *source_pkgname)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (source_pkgname, source_pkgname_len)) {
+	    !as_app_validate_utf8 (source_pkgname)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 	g_free (priv->source_pkgname);
-	priv->source_pkgname = as_strndup (source_pkgname, source_pkgname_len);
+	priv->source_pkgname = g_strdup (source_pkgname);
 }
 
 /**
@@ -1638,16 +1626,13 @@ as_app_set_source_file (AsApp *app, const gchar *source_file)
  * as_app_set_update_contact:
  * @app: a #AsApp instance.
  * @update_contact: the project license string.
- * @update_contact_len: the size of @update_contact, or -1 if %NULL-terminated.
  *
  * Set the project license.
  *
  * Since: 0.1.4
  **/
 void
-as_app_set_update_contact (AsApp *app,
-			   const gchar *update_contact,
-			   gssize update_contact_len)
+as_app_set_update_contact (AsApp *app, const gchar *update_contact)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	gboolean done_replacement = TRUE;
@@ -1669,14 +1654,14 @@ as_app_set_update_contact (AsApp *app,
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (update_contact, update_contact_len)) {
+	    !as_app_validate_utf8 (update_contact)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
 	/* copy as-is */
 	g_free (priv->update_contact);
-	priv->update_contact = as_strndup (update_contact, update_contact_len);
+	priv->update_contact = g_strdup (update_contact);
 	if (priv->update_contact == NULL)
 		return;
 
@@ -1719,26 +1704,25 @@ as_app_set_origin (AsApp *app, const gchar *origin)
  * as_app_set_icon_path:
  * @app: a #AsApp instance.
  * @icon_path: the local path.
- * @icon_path_len: the size of @icon_path, or -1 if %NULL-terminated.
  *
  * Sets the icon path, where local icons would be found.
  *
  * Since: 0.1.0
  **/
 void
-as_app_set_icon_path (AsApp *app, const gchar *icon_path, gssize icon_path_len)
+as_app_set_icon_path (AsApp *app, const gchar *icon_path)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (icon_path, icon_path_len)) {
+	    !as_app_validate_utf8 (icon_path)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
 	g_free (priv->icon_path);
-	priv->icon_path = as_strndup (icon_path, icon_path_len);
+	priv->icon_path = g_strdup (icon_path);
 }
 
 /**
@@ -1765,7 +1749,6 @@ as_app_parse_locale (const gchar *locale)
  * @app: a #AsApp instance.
  * @locale: the locale, or %NULL. e.g. "en_GB"
  * @name: the application name.
- * @name_len: the size of @name, or -1 if %NULL-terminated.
  *
  * Sets the application name for a specific locale.
  *
@@ -1774,15 +1757,14 @@ as_app_parse_locale (const gchar *locale)
 void
 as_app_set_name (AsApp *app,
 		 const gchar *locale,
-		 const gchar *name,
-		 gssize name_len)
+		 const gchar *name)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	gchar *tmp_locale;
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (name, name_len)) {
+	    !as_app_validate_utf8 (name)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
@@ -1793,7 +1775,7 @@ as_app_set_name (AsApp *app,
 		return;
 	g_hash_table_insert (priv->names,
 			     tmp_locale,
-			     as_strndup (name, name_len));
+			     g_strdup (name));
 }
 
 /**
@@ -1801,7 +1783,6 @@ as_app_set_name (AsApp *app,
  * @app: a #AsApp instance.
  * @locale: the locale, or %NULL. e.g. "en_GB"
  * @comment: the application summary.
- * @comment_len: the size of @comment, or -1 if %NULL-terminated.
  *
  * Sets the application summary for a specific locale.
  *
@@ -1810,8 +1791,7 @@ as_app_set_name (AsApp *app,
 void
 as_app_set_comment (AsApp *app,
 		    const gchar *locale,
-		    const gchar *comment,
-		    gssize comment_len)
+		    const gchar *comment)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	gchar *tmp_locale;
@@ -1820,7 +1800,7 @@ as_app_set_comment (AsApp *app,
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (comment, comment_len)) {
+	    !as_app_validate_utf8 (comment)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
@@ -1831,7 +1811,7 @@ as_app_set_comment (AsApp *app,
 		return;
 	g_hash_table_insert (priv->comments,
 			     tmp_locale,
-			     as_strndup (comment, comment_len));
+			     g_strdup (comment));
 }
 
 /**
@@ -1839,7 +1819,6 @@ as_app_set_comment (AsApp *app,
  * @app: a #AsApp instance.
  * @locale: the locale, or %NULL. e.g. "en_GB"
  * @developer_name: the application developer name.
- * @developer_name_len: the size of @developer_name, or -1 if %NULL-terminated.
  *
  * Sets the application developer name for a specific locale.
  *
@@ -1848,8 +1827,7 @@ as_app_set_comment (AsApp *app,
 void
 as_app_set_developer_name (AsApp *app,
 			   const gchar *locale,
-			   const gchar *developer_name,
-			   gssize developer_name_len)
+			   const gchar *developer_name)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	gchar *tmp_locale;
@@ -1858,7 +1836,7 @@ as_app_set_developer_name (AsApp *app,
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (developer_name, developer_name_len)) {
+	    !as_app_validate_utf8 (developer_name)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
@@ -1869,7 +1847,7 @@ as_app_set_developer_name (AsApp *app,
 		return;
 	g_hash_table_insert (priv->developer_names,
 			     tmp_locale,
-			     as_strndup (developer_name, developer_name_len));
+			     g_strdup (developer_name));
 }
 
 /**
@@ -1877,7 +1855,6 @@ as_app_set_developer_name (AsApp *app,
  * @app: a #AsApp instance.
  * @locale: the locale, or %NULL. e.g. "en_GB"
  * @description: the application description.
- * @description_len: the size of @description, or -1 if %NULL-terminated.
  *
  * Sets the application descrption markup for a specific locale.
  *
@@ -1886,8 +1863,7 @@ as_app_set_developer_name (AsApp *app,
 void
 as_app_set_description (AsApp *app,
 			const gchar *locale,
-			const gchar *description,
-			gssize description_len)
+			const gchar *description)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	gchar *tmp_locale;
@@ -1896,7 +1872,7 @@ as_app_set_description (AsApp *app,
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (description, description_len)) {
+	    !as_app_validate_utf8 (description)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
@@ -1907,7 +1883,7 @@ as_app_set_description (AsApp *app,
 		return;
 	g_hash_table_insert (priv->descriptions,
 			     tmp_locale,
-			     as_strndup (description, description_len));
+			     g_strdup (description));
 }
 
 /**
@@ -1931,25 +1907,24 @@ as_app_set_priority (AsApp *app, gint priority)
  * as_app_add_category:
  * @app: a #AsApp instance.
  * @category: the category.
- * @category_len: the size of @category, or -1 if %NULL-terminated.
  *
  * Adds a menu category to the application.
  *
  * Since: 0.1.0
  **/
 void
-as_app_add_category (AsApp *app, const gchar *category, gssize category_len)
+as_app_add_category (AsApp *app, const gchar *category)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (category, category_len)) {
+	    !as_app_validate_utf8 (category)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_ptr_array_find_string (priv->categories, category, category_len)) {
+	    as_ptr_array_find_string (priv->categories, category)) {
 		return;
 	}
 
@@ -1957,7 +1932,7 @@ as_app_add_category (AsApp *app, const gchar *category, gssize category_len)
 	if (g_strcmp0 (category, "Feed") == 0)
 		category = "News";
 
-	g_ptr_array_add (priv->categories, as_strndup (category, category_len));
+	g_ptr_array_add (priv->categories, g_strdup (category));
 }
 
 
@@ -1965,35 +1940,30 @@ as_app_add_category (AsApp *app, const gchar *category, gssize category_len)
  * as_app_add_compulsory_for_desktop:
  * @app: a #AsApp instance.
  * @compulsory_for_desktop: the desktop string, e.g. "GNOME".
- * @compulsory_for_desktop_len: the size of @compulsory_for_desktop, or -1 if %NULL-terminated.
  *
  * Adds a desktop that requires this application to be installed.
  *
  * Since: 0.1.0
  **/
 void
-as_app_add_compulsory_for_desktop (AsApp *app,
-				   const gchar *compulsory_for_desktop,
-				   gssize compulsory_for_desktop_len)
+as_app_add_compulsory_for_desktop (AsApp *app, const gchar *compulsory_for_desktop)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (compulsory_for_desktop, compulsory_for_desktop_len)) {
+	    !as_app_validate_utf8 (compulsory_for_desktop)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
 	    as_ptr_array_find_string (priv->compulsory_for_desktops,
-				      compulsory_for_desktop,
-				      compulsory_for_desktop_len)) {
+				      compulsory_for_desktop)) {
 		return;
 	}
 
 	g_ptr_array_add (priv->compulsory_for_desktops,
-			 as_strndup (compulsory_for_desktop,
-				     compulsory_for_desktop_len));
+			 g_strdup (compulsory_for_desktop));
 }
 
 /**
@@ -2001,7 +1971,6 @@ as_app_add_compulsory_for_desktop (AsApp *app,
  * @app: a #AsApp instance.
  * @locale: the locale, or %NULL. e.g. "en_GB"
  * @keyword: the keyword.
- * @keyword_len: the size of @keyword, or -1 if %NULL-terminated.
  *
  * Add a keyword the application should match against.
  *
@@ -2010,8 +1979,7 @@ as_app_add_compulsory_for_desktop (AsApp *app,
 void
 as_app_add_keyword (AsApp *app,
 		    const gchar *locale,
-		    const gchar *keyword,
-		    gssize keyword_len)
+		    const gchar *keyword)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	GPtrArray *tmp;
@@ -2019,7 +1987,7 @@ as_app_add_keyword (AsApp *app,
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (keyword, keyword_len)) {
+	    !as_app_validate_utf8 (keyword)) {
 		return;
 	}
 
@@ -2034,64 +2002,62 @@ as_app_add_keyword (AsApp *app,
 		tmp = g_ptr_array_new_with_free_func (g_free);
 		g_hash_table_insert (priv->keywords, g_strdup (tmp_locale), tmp);
 	} else if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
-		if (as_ptr_array_find_string (tmp, keyword, keyword_len))
+		if (as_ptr_array_find_string (tmp, keyword))
 			return;
 	}
-	g_ptr_array_add (tmp, as_strndup (keyword, keyword_len));
+	g_ptr_array_add (tmp, g_strdup (keyword));
 }
 
 /**
  * as_app_add_kudo:
  * @app: a #AsApp instance.
  * @kudo: the kudo.
- * @kudo_len: the size of @kudo, or -1 if %NULL-terminated.
  *
  * Add a kudo the application has obtained.
  *
  * Since: 0.2.2
  **/
 void
-as_app_add_kudo (AsApp *app, const gchar *kudo, gssize kudo_len)
+as_app_add_kudo (AsApp *app, const gchar *kudo)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (kudo, kudo_len)) {
+	    !as_app_validate_utf8 (kudo)) {
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_ptr_array_find_string (priv->kudos, kudo, kudo_len)) {
+	    as_ptr_array_find_string (priv->kudos, kudo)) {
 		return;
 	}
-	g_ptr_array_add (priv->kudos, as_strndup (kudo, kudo_len));
+	g_ptr_array_add (priv->kudos, g_strdup (kudo));
 }
 
 /**
  * as_app_add_permission:
  * @app: a #AsApp instance.
  * @permission: the permission.
- * @permission_len: the size of @permission, or -1 if %NULL-terminated.
  *
  * Add a permission the application has obtained.
  *
  * Since: 0.3.5
  **/
 void
-as_app_add_permission (AsApp *app, const gchar *permission, gssize permission_len)
+as_app_add_permission (AsApp *app, const gchar *permission)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (permission, permission_len)) {
+	    !as_app_validate_utf8 (permission)) {
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_ptr_array_find_string (priv->permissions, permission, permission_len)) {
+	    as_ptr_array_find_string (priv->permissions, permission)) {
 		return;
 	}
-	g_ptr_array_add (priv->permissions, as_strndup (permission, permission_len));
+	g_ptr_array_add (priv->permissions, g_strdup (permission));
 }
 
 /**
@@ -2106,36 +2072,35 @@ as_app_add_permission (AsApp *app, const gchar *permission, gssize permission_le
 void
 as_app_add_kudo_kind (AsApp *app, AsKudoKind kudo_kind)
 {
-	as_app_add_kudo (app, as_kudo_kind_to_string (kudo_kind), -1);
+	as_app_add_kudo (app, as_kudo_kind_to_string (kudo_kind));
 }
 
 /**
  * as_app_add_mimetype:
  * @app: a #AsApp instance.
  * @mimetype: the mimetype.
- * @mimetype_len: the size of @mimetype, or -1 if %NULL-terminated.
  *
  * Adds a mimetype the application can process.
  *
  * Since: 0.1.0
  **/
 void
-as_app_add_mimetype (AsApp *app, const gchar *mimetype, gssize mimetype_len)
+as_app_add_mimetype (AsApp *app, const gchar *mimetype)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (mimetype, mimetype_len)) {
+	    !as_app_validate_utf8 (mimetype)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_ptr_array_find_string (priv->mimetypes, mimetype, mimetype_len)) {
+	    as_ptr_array_find_string (priv->mimetypes, mimetype)) {
 		return;
 	}
 
-	g_ptr_array_add (priv->mimetypes, as_strndup (mimetype, mimetype_len));
+	g_ptr_array_add (priv->mimetypes, g_strdup (mimetype));
 }
 
 /**
@@ -2154,7 +2119,7 @@ as_app_subsume_release (AsRelease *release, AsRelease *donor)
 	/* this is high quality metadata */
 	tmp = as_release_get_description (donor, NULL);
 	if (tmp != NULL)
-		as_release_set_description (release, NULL, tmp, -1);
+		as_release_set_description (release, NULL, tmp);
 
 	/* overwrite the timestamp if the metadata is high quality,
 	 * or if no timestamp has already been set */
@@ -2165,7 +2130,7 @@ as_app_subsume_release (AsRelease *release, AsRelease *donor)
 	locations = as_release_get_locations (donor);
 	for (i = 0; i < locations->len; i++) {
 		tmp = g_ptr_array_index (locations, i);
-		as_release_add_location (release, tmp, -1);
+		as_release_add_location (release, tmp);
 	}
 
 	/* copy checksums if set */
@@ -2375,58 +2340,56 @@ as_app_add_bundle (AsApp *app, AsBundle *bundle)
  * as_app_add_pkgname:
  * @app: a #AsApp instance.
  * @pkgname: the package name.
- * @pkgname_len: the size of @pkgname, or -1 if %NULL-terminated.
  *
  * Adds a package name to an application.
  *
  * Since: 0.1.0
  **/
 void
-as_app_add_pkgname (AsApp *app, const gchar *pkgname, gssize pkgname_len)
+as_app_add_pkgname (AsApp *app, const gchar *pkgname)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (pkgname, pkgname_len)) {
+	    !as_app_validate_utf8 (pkgname)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_ptr_array_find_string (priv->pkgnames, pkgname, pkgname_len)) {
+	    as_ptr_array_find_string (priv->pkgnames, pkgname)) {
 		return;
 	}
 
-	g_ptr_array_add (priv->pkgnames, as_strndup (pkgname, pkgname_len));
+	g_ptr_array_add (priv->pkgnames, g_strdup (pkgname));
 }
 
 /**
  * as_app_add_arch:
  * @app: a #AsApp instance.
  * @arch: the package name.
- * @arch_len: the size of @arch, or -1 if %NULL-terminated.
  *
  * Adds a package name to an application.
  *
  * Since: 0.1.1
  **/
 void
-as_app_add_arch (AsApp *app, const gchar *arch, gssize arch_len)
+as_app_add_arch (AsApp *app, const gchar *arch)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (arch, arch_len)) {
+	    !as_app_validate_utf8 (arch)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_ptr_array_find_string (priv->architectures, arch, arch_len)) {
+	    as_ptr_array_find_string (priv->architectures, arch)) {
 		return;
 	}
 
-	g_ptr_array_add (priv->architectures, as_strndup (arch, arch_len));
+	g_ptr_array_add (priv->architectures, g_strdup (arch));
 }
 
 /**
@@ -2434,7 +2397,6 @@ as_app_add_arch (AsApp *app, const gchar *arch, gssize arch_len)
  * @app: a #AsApp instance.
  * @percentage: the percentage completion of the translation, or 0 for unknown
  * @locale: the locale, or %NULL. e.g. "en_GB"
- * @locale_len: the size of @locale, or -1 if %NULL-terminated.
  *
  * Adds a language to the application.
  *
@@ -2443,14 +2405,13 @@ as_app_add_arch (AsApp *app, const gchar *arch, gssize arch_len)
 void
 as_app_add_language (AsApp *app,
 		     gint percentage,
-		     const gchar *locale,
-		     gssize locale_len)
+		     const gchar *locale)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (locale, locale_len)) {
+	    !as_app_validate_utf8 (locale)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
@@ -2458,7 +2419,7 @@ as_app_add_language (AsApp *app,
 	if (locale == NULL)
 		locale = "C";
 	g_hash_table_insert (priv->languages,
-			     as_strndup (locale, locale_len),
+			     g_strdup (locale),
 			     GINT_TO_POINTER (percentage));
 }
 
@@ -2467,7 +2428,6 @@ as_app_add_language (AsApp *app,
  * @app: a #AsApp instance.
  * @url_kind: the URL kind, e.g. %AS_URL_KIND_HOMEPAGE
  * @url: the full URL.
- * @url_len: the size of @url, or -1 if %NULL-terminated.
  *
  * Adds some URL data to the application.
  *
@@ -2476,21 +2436,20 @@ as_app_add_language (AsApp *app,
 void
 as_app_add_url (AsApp *app,
 		AsUrlKind url_kind,
-		const gchar *url,
-		gssize url_len)
+		const gchar *url)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (url, url_len)) {
+	    !as_app_validate_utf8 (url)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 
 	g_hash_table_insert (priv->urls,
 			     g_strdup (as_url_kind_to_string (url_kind)),
-			     as_strndup (url, url_len));
+			     g_strdup (url));
 }
 
 /**
@@ -2498,7 +2457,6 @@ as_app_add_url (AsApp *app,
  * @app: a #AsApp instance.
  * @key: the metadata key.
  * @value: the value to store.
- * @value_len: the size of @value, or -1 if %NULL-terminated.
  *
  * Adds a metadata entry to the application.
  *
@@ -2507,15 +2465,14 @@ as_app_add_url (AsApp *app,
 void
 as_app_add_metadata (AsApp *app,
 		     const gchar *key,
-		     const gchar *value,
-		     gssize value_len)
+		     const gchar *value)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_return_if_fail (key != NULL);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (value, value_len)) {
+	    !as_app_validate_utf8 (value)) {
 		return;
 	}
 
@@ -2523,7 +2480,7 @@ as_app_add_metadata (AsApp *app,
 		value = "";
 	g_hash_table_insert (priv->metadata,
 			     g_strdup (key),
-			     as_strndup (value, value_len));
+			     g_strdup (value));
 }
 
 /**
@@ -2546,25 +2503,24 @@ as_app_remove_metadata (AsApp *app, const gchar *key)
  * as_app_add_extends:
  * @app: a #AsApp instance.
  * @extends: the full ID, e.g. "eclipse.desktop".
- * @extends_len: the size of @extends, or -1 if %NULL-terminated.
  *
  * Adds a parent ID to the application.
  *
  * Since: 0.1.7
  **/
 void
-as_app_add_extends (AsApp *app, const gchar *extends, gssize extends_len)
+as_app_add_extends (AsApp *app, const gchar *extends)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
-	    !as_app_validate_utf8 (extends, extends_len)) {
+	    !as_app_validate_utf8 (extends)) {
 		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
 		return;
 	}
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
-	    as_ptr_array_find_string (priv->extends, extends, extends_len)) {
+	    as_ptr_array_find_string (priv->extends, extends)) {
 		return;
 	}
 
@@ -2572,7 +2528,7 @@ as_app_add_extends (AsApp *app, const gchar *extends, gssize extends_len)
 	if (g_strcmp0 (priv->id, extends) == 0)
 		return;
 
-	g_ptr_array_add (priv->extends, as_strndup (extends, extends_len));
+	g_ptr_array_add (priv->extends, g_strdup (extends));
 }
 
 /**
@@ -2649,7 +2605,7 @@ as_app_subsume_keywords (AsApp *app, AsApp *donor, gboolean overwrite)
 			continue;
 		for (i = 0; i < array->len; i++) {
 			tmp = g_ptr_array_index (array, i);
-			as_app_add_keyword (app, key, tmp, -1);
+			as_app_add_keyword (app, key, tmp);
 		}
 	}
 }
@@ -2723,7 +2679,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	/* pkgnames */
 	for (i = 0; i < priv->pkgnames->len; i++) {
 		tmp = g_ptr_array_index (priv->pkgnames, i);
-		as_app_add_pkgname (app, tmp, -1);
+		as_app_add_pkgname (app, tmp);
 	}
 
 	/* bundles */
@@ -2741,31 +2697,31 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	/* kudos */
 	for (i = 0; i < priv->kudos->len; i++) {
 		tmp = g_ptr_array_index (priv->kudos, i);
-		as_app_add_kudo (app, tmp, -1);
+		as_app_add_kudo (app, tmp);
 	}
 
 	/* categories */
 	for (i = 0; i < priv->categories->len; i++) {
 		tmp = g_ptr_array_index (priv->categories, i);
-		as_app_add_category (app, tmp, -1);
+		as_app_add_category (app, tmp);
 	}
 
 	/* permissions */
 	for (i = 0; i < priv->permissions->len; i++) {
 		tmp = g_ptr_array_index (priv->permissions, i);
-		as_app_add_permission (app, tmp, -1);
+		as_app_add_permission (app, tmp);
 	}
 
 	/* extends */
 	for (i = 0; i < priv->extends->len; i++) {
 		tmp = g_ptr_array_index (priv->extends, i);
-		as_app_add_extends (app, tmp, -1);
+		as_app_add_extends (app, tmp);
 	}
 
 	/* compulsory_for_desktops */
 	for (i = 0; i < priv->compulsory_for_desktops->len; i++) {
 		tmp = g_ptr_array_index (priv->compulsory_for_desktops, i);
-		as_app_add_compulsory_for_desktop (app, tmp, -1);
+		as_app_add_compulsory_for_desktop (app, tmp);
 	}
 
 	/* screenshots */
@@ -2783,7 +2739,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	/* mimetypes */
 	for (i = 0; i < priv->mimetypes->len; i++) {
 		tmp = g_ptr_array_index (priv->mimetypes, i);
-		as_app_add_mimetype (app, tmp, -1);
+		as_app_add_mimetype (app, tmp);
 	}
 
 	/* do not subsume all properties */
@@ -2800,7 +2756,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 				continue;
 		}
 		percentage = GPOINTER_TO_INT (g_hash_table_lookup (priv->languages, key));
-		as_app_add_language (app, percentage, key, -1);
+		as_app_add_language (app, percentage, key);
 	}
 
 	/* dictionaries */
@@ -2818,7 +2774,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* source_pkgname */
 	if (priv->source_pkgname != NULL)
-		as_app_set_source_pkgname (app, priv->source_pkgname, -1);
+		as_app_set_source_pkgname (app, priv->source_pkgname);
 
 	/* origin */
 	if (priv->origin != NULL)
@@ -2826,13 +2782,13 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* licenses */
 	if (priv->project_license != NULL)
-		as_app_set_project_license (app, priv->project_license, -1);
+		as_app_set_project_license (app, priv->project_license);
 	if (priv->metadata_license != NULL)
-		as_app_set_metadata_license (app, priv->metadata_license, -1);
+		as_app_set_metadata_license (app, priv->metadata_license);
 
 	/* project_group */
 	if (priv->project_group != NULL)
-		as_app_set_project_group (app, priv->project_group, -1);
+		as_app_set_project_group (app, priv->project_group);
 }
 
 /**
@@ -3045,7 +3001,7 @@ as_app_node_insert_keywords (AsApp *app, GNode *parent, AsNodeContext *ctx)
 			if (g_strcmp0 (lang, "C") != 0) {
 				as_node_add_attribute (node_tmp,
 						       "xml:lang",
-						       lang, -1);
+						       lang);
 			}
 		}
 	}
@@ -3097,8 +3053,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		if (priv->id_kind != AS_ID_KIND_UNKNOWN) {
 			as_node_add_attribute (node_app,
 					       "type",
-					       as_id_kind_to_string (priv->id_kind),
-					       -1);
+					       as_id_kind_to_string (priv->id_kind));
 		}
 	} else {
 		node_app = as_node_insert (parent, "application", NULL, 0, NULL);
@@ -3109,19 +3064,12 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	if (api_version < 0.6 && priv->id_kind != AS_ID_KIND_UNKNOWN) {
 		as_node_add_attribute (node_tmp,
 				       "type",
-				       as_id_kind_to_string (priv->id_kind),
-				       -1);
+				       as_id_kind_to_string (priv->id_kind));
 	}
 
 	/* <priority> */
-	if (priv->priority != 0) {
-		gchar prio[6];
-		g_snprintf (prio, sizeof (prio), "%i", priv->priority);
-		if (api_version >= 0.61) {
-			as_node_add_attribute (node_app,
-					       "priority", prio, -1);
-		}
-	}
+	if (priv->priority != 0 && api_version >= 0.61)
+		as_node_add_attribute_as_int (node_app, "priority", priv->priority);
 
 	/* this looks crazy, but priority was initially implemented on
 	 * the <applications> node and was designed to be per-file */
@@ -3401,7 +3349,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		tmp = as_node_get_attribute (n, "type");
 		if (tmp != NULL)
 			as_app_set_id_kind (app, as_id_kind_from_string (tmp));
-		as_app_set_id (app, as_node_get_data (n), -1);
+		as_app_set_id (app, as_node_get_data (n));
 		break;
 
 	/* <priority> */
@@ -3489,15 +3437,14 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			priv->problems |= AS_APP_PROBLEM_PREFORMATTED_DESCRIPTION;
 			as_app_set_description (app,
 						as_node_get_attribute (n, "xml:lang"),
-						as_node_get_data (n),
-						-1);
+						as_node_get_data (n));
 		} else {
 			_cleanup_string_free_ GString *xml = NULL;
 			xml = as_node_to_xml (n->children,
 					      AS_NODE_TO_XML_FLAG_INCLUDE_SIBLINGS);
 			as_app_set_description (app,
 						as_node_get_attribute (n, "xml:lang"),
-						xml->str, xml->len);
+						xml->str);
 		}
 		break;
 
@@ -3554,7 +3501,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			taken = as_app_parse_locale (as_node_get_attribute (c, "xml:lang"));
 			if (taken == NULL)
 				continue;
-			as_app_add_keyword (app, taken, tmp, -1);
+			as_app_add_keyword (app, taken, tmp);
 			g_free (taken);
 		}
 		break;
@@ -3631,17 +3578,17 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			priv->problems |= AS_APP_PROBLEM_TRANSLATED_LICENSE;
 			break;
 		}
-		as_app_set_metadata_license (app, as_node_get_data (n), -1);
+		as_app_set_metadata_license (app, as_node_get_data (n));
 		break;
 
 	/* <source_pkgname> */
 	case AS_TAG_SOURCE_PKGNAME:
-		as_app_set_source_pkgname (app, as_node_get_data (n), -1);
+		as_app_set_source_pkgname (app, as_node_get_data (n));
 		break;
 
 	/* <update_contact> */
 	case AS_TAG_UPDATE_CONTACT:
-		as_app_set_update_contact (app, as_node_get_data (n), -1);
+		as_app_set_update_contact (app, as_node_get_data (n));
 		break;
 
 	/* <url> */
@@ -3649,7 +3596,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		tmp = as_node_get_attribute (n, "type");
 		as_app_add_url (app,
 				as_url_kind_from_string (tmp),
-				as_node_get_data (n), -1);
+				as_node_get_data (n));
 		break;
 
 	/* <project_group> */
@@ -3731,7 +3678,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			if (percent == G_MAXINT)
 				percent = 0;
 			as_app_add_language (app, percent,
-					     as_node_get_data (c), -1);
+					     as_node_get_data (c));
 		}
 		break;
 
@@ -3791,7 +3738,7 @@ as_app_check_for_hidpi_icons (AsApp *app)
 	/* create the HiDPI version */
 	icon_hidpi = as_icon_new ();
 	as_icon_set_prefix (icon_hidpi, priv->icon_path);
-	as_icon_set_name (icon_hidpi, as_icon_get_name (icon_tmp), -1);
+	as_icon_set_name (icon_hidpi, as_icon_get_name (icon_tmp));
 	as_icon_set_width (icon_hidpi, 128);
 	as_icon_set_height (icon_hidpi, 128);
 	as_app_add_icon (app, icon_hidpi);
@@ -3898,7 +3845,7 @@ as_app_node_parse_dep11_icons (AsApp *app, GNode *node,
 		ic = as_icon_new ();
 		as_icon_set_kind (ic, AS_ICON_KIND_CACHED);
 		as_icon_set_prefix (ic, priv->icon_path);
-		as_icon_set_name (ic, size_name, -1);
+		as_icon_set_name (ic, size_name);
 		as_icon_set_width (ic, size);
 		as_icon_set_height (ic, size);
 		as_app_add_icon (app, ic);
@@ -3931,7 +3878,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 	for (n = node->children; n != NULL; n = n->next) {
 		tmp = as_yaml_node_get_key (n);
 		if (g_strcmp0 (tmp, "ID") == 0) {
-			as_app_set_id (app, as_yaml_node_get_value (n), -1);
+			as_app_set_id (app, as_yaml_node_get_value (n));
 			continue;
 		}
 		if (g_strcmp0 (tmp, "Type") == 0) {
@@ -3943,14 +3890,14 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 		}
 		if (g_strcmp0 (tmp, "Packages") == 0) {
 			for (c = n->children; c != NULL; c = c->next)
-				as_app_add_pkgname (app, as_yaml_node_get_key (c), -1);
+				as_app_add_pkgname (app, as_yaml_node_get_key (c));
 			continue;
 		}
 		if (g_strcmp0 (tmp, "Name") == 0) {
 			for (c = n->children; c != NULL; c = c->next) {
 				as_app_set_name (app,
 						 as_yaml_node_get_key (c),
-						 as_yaml_node_get_value (c), -1);
+						 as_yaml_node_get_value (c));
 			}
 			continue;
 		}
@@ -3958,7 +3905,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 			for (c = n->children; c != NULL; c = c->next) {
 				as_app_set_comment (app,
 						    as_yaml_node_get_key (c),
-						    as_yaml_node_get_value (c), -1);
+						    as_yaml_node_get_value (c));
 			}
 			continue;
 		}
@@ -3966,7 +3913,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 			for (c = n->children; c != NULL; c = c->next) {
 				as_app_set_description (app,
 							as_yaml_node_get_key (c),
-							as_yaml_node_get_value (c), -1);
+							as_yaml_node_get_value (c));
 			}
 			continue;
 		}
@@ -3977,14 +3924,14 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 						continue;
 					as_app_add_keyword (app,
 							   as_yaml_node_get_key (c),
-							   as_yaml_node_get_key (c2), -1);
+							   as_yaml_node_get_key (c2));
 				}
 			}
 			continue;
 		}
 		if (g_strcmp0 (tmp, "Categories") == 0) {
 			for (c = n->children; c != NULL; c = c->next)
-				as_app_add_category (app, as_yaml_node_get_key (c), -1);
+				as_app_add_category (app, as_yaml_node_get_key (c));
 			continue;
 		}
 		if (g_strcmp0 (tmp, "Icon") == 0) {
@@ -4009,8 +3956,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 				if (g_strcmp0 (as_yaml_node_get_key (c), "homepage") == 0) {
 					as_app_add_url (app,
 							AS_URL_KIND_HOMEPAGE,
-							as_yaml_node_get_value (c),
-							-1);
+							as_yaml_node_get_value (c));
 					continue;
 				}
 			}
@@ -4021,8 +3967,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 				if (g_strcmp0 (as_yaml_node_get_key (c), "mimetypes") == 0) {
 					for (c2 = c->children; c2 != NULL; c2 = c2->next) {
 						as_app_add_mimetype (app,
-								     as_yaml_node_get_key (c2),
-								     -1);
+								     as_yaml_node_get_key (c2));
 					}
 					continue;
 				} else {
