@@ -80,6 +80,8 @@ typedef enum {
  * AsImageSaveFlags:
  * @AS_IMAGE_SAVE_FLAG_NONE:		No special flags set
  * @AS_IMAGE_SAVE_FLAG_PAD_16_9:	Pad with alpha to 16:9 aspect
+ * @AS_IMAGE_SAVE_FLAG_SHARPEN:		Sharpen the image to clarify detail
+ * @AS_IMAGE_SAVE_FLAG_BLUR:		Blur the image to clear detail
  *
  * The flags used for saving images.
  **/

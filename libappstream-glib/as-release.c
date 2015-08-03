@@ -202,7 +202,8 @@ as_release_get_checksums (AsRelease *release)
 
 /**
  * as_release_get_checksum_by_fn:
- * @release: a #AsRelease instance.
+ * @release: a #AsRelease instance
+ * @fn: a file basename
  *
  * Gets the checksum for a release.
  *
@@ -227,6 +228,7 @@ as_release_get_checksum_by_fn (AsRelease *release, const gchar *fn)
 
 /**
  * as_release_get_checksum_by_target:
+ * @release: a #AsRelease instance
  * @target: a #AsChecksumTarget, e.g. %AS_CHECKSUM_TARGET_CONTAINER
  *
  * Gets the checksum for a release.

@@ -78,7 +78,7 @@ typedef enum {
 
 /**
  * AsMarkupConvertFormat:
- * @AS_MARKUP_CONVERT_FORMAT_SIMPLE		UTF-8 text
+ * @AS_MARKUP_CONVERT_FORMAT_SIMPLE:		UTF-8 text
  * @AS_MARKUP_CONVERT_FORMAT_MARKDOWN:		Markdown format
  *
  * The output format used when converting AppStream descriptions.

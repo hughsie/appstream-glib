@@ -416,6 +416,16 @@ as_monitor_file_changed_cb (GFileMonitor *mon,
 
 /**
  * as_monitor_add_directory:
+ * @monitor: an #AsMonitor
+ * @filename: directory name
+ * @cancellable: a #GCancellable or %NULL
+ * @error: a #GError or %NULL
+ *
+ * Adds a directory of files to the watch list.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.5.0
  **/
 gboolean
 as_monitor_add_directory (AsMonitor *monitor,
@@ -455,6 +465,16 @@ as_monitor_add_directory (AsMonitor *monitor,
 
 /**
  * as_monitor_add_file:
+ * @monitor: an #AsMonitor
+ * @filename: a filename
+ * @cancellable: a #GCancellable or %NULL
+ * @error: a #GError or %NULL
+ *
+ * Adds a file to the watch list.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.5.0
  **/
 gboolean
 as_monitor_add_file (AsMonitor *monitor,
