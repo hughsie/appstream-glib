@@ -259,6 +259,14 @@ main (int argc, char **argv)
 		cache_dir = g_strdup ("./cache");
 	setlocale (LC_ALL, "");
 
+	/* obsolete */
+	if (api_version < 0.4) {
+		/* TRANSLATORS: error message */
+		g_warning ("%s", _("API version no longer supported"));
+		retval = EXIT_FAILURE;
+		goto out;
+	}
+
 	/* this really ought to be set */
 	if (basename == NULL) {
 		g_print ("WARNING: Metadata basename not set, using 'appstream'\n");

@@ -3258,7 +3258,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <mimetypes> */
-	if (priv->mimetypes->len > 0 && api_version >= 0.4) {
+	if (priv->mimetypes->len > 0) {
 		g_ptr_array_sort (priv->mimetypes, as_app_ptr_array_sort_cb);
 		node_tmp = as_node_insert (node_app, "mimetypes", NULL, 0, NULL);
 		for (i = 0; i < priv->mimetypes->len; i++) {
@@ -3276,28 +3276,23 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		}
 	}
 
-	/* <project_license> or <licence> */
+	/* <project_license> */
 	if (priv->project_license != NULL) {
-		if (api_version >= 0.4) {
-			as_node_insert (node_app, "project_license",
-					priv->project_license, 0, NULL);
-		} else if (api_version >= 0.31) {
-			as_node_insert (node_app, "licence",
-					priv->project_license, 0, NULL);
-		}
+		as_node_insert (node_app, "project_license",
+				priv->project_license, 0, NULL);
 	}
 
 	/* <url> */
 	as_node_insert_hash (node_app, "url", "type", priv->urls, 0);
 
 	/* <project_group> */
-	if (priv->project_group != NULL && api_version >= 0.4) {
+	if (priv->project_group != NULL) {
 		as_node_insert (node_app, "project_group",
 				priv->project_group, 0, NULL);
 	}
 
 	/* <compulsory_for_desktop> */
-	if (priv->compulsory_for_desktops != NULL && api_version >= 0.4) {
+	if (priv->compulsory_for_desktops != NULL) {
 		g_ptr_array_sort (priv->compulsory_for_desktops,
 				  as_app_ptr_array_sort_cb);
 		for (i = 0; i < priv->compulsory_for_desktops->len; i++) {
@@ -3317,7 +3312,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <screenshots> */
-	if (priv->screenshots->len > 0 && api_version >= 0.4) {
+	if (priv->screenshots->len > 0) {
 		node_tmp = as_node_insert (node_app, "screenshots", NULL, 0, NULL);
 		for (i = 0; i < priv->screenshots->len; i++) {
 			ss = g_ptr_array_index (priv->screenshots, i);
@@ -3346,7 +3341,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <languages> */
-	if (g_hash_table_size (priv->languages) > 0 && api_version >= 0.4)
+	if (g_hash_table_size (priv->languages) > 0)
 		as_app_node_insert_languages (app, node_app);
 
 	/* <update_contact> */
@@ -3359,7 +3354,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <metadata> */
-	if (g_hash_table_size (priv->metadata) > 0 && api_version >= 0.4) {
+	if (g_hash_table_size (priv->metadata) > 0) {
 		node_tmp = as_node_insert (node_app, "metadata", NULL, 0, NULL);
 		as_node_insert_hash (node_tmp, "value", "key", priv->metadata, FALSE);
 
