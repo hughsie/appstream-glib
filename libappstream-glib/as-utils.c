@@ -203,10 +203,7 @@ as_markup_convert (const gchar *markup,
 		return g_strdup (markup);
 
 	/* load */
-	root = as_node_from_xml (markup,
-				 -1,
-				 AS_NODE_FROM_XML_FLAG_NONE,
-				 error);
+	root = as_node_from_xml (markup, AS_NODE_FROM_XML_FLAG_NONE, error);
 	if (root == NULL)
 		return NULL;
 

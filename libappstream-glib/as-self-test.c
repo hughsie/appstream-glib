@@ -355,7 +355,7 @@ as_test_release_func (void)
 	release = as_release_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, 0, &error);
+	root = as_node_from_xml (src, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "release");
@@ -397,7 +397,7 @@ as_test_provide_func (void)
 	provide = as_provide_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, 0, &error);
+	root = as_node_from_xml (src, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "binary");
@@ -448,7 +448,7 @@ as_test_release_appstream_func (void)
 	release = as_release_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, 0, &error);
+	root = as_node_from_xml (src, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "release");
@@ -520,7 +520,7 @@ as_test_release_appdata_func (void)
 	release = as_release_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, 0, &error);
+	root = as_node_from_xml (src, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "release");
@@ -748,7 +748,7 @@ as_test_icon_func (void)
 	icon = as_icon_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, 0, &error);
+	root = as_node_from_xml (src, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "icon");
@@ -817,7 +817,7 @@ as_test_checksum_func (void)
 	csum = as_checksum_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, 0, &error);
+	root = as_node_from_xml (src, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "checksum");
@@ -907,7 +907,7 @@ as_test_icon_embedded_func (void)
 	icon = as_icon_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, 0, &error);
+	root = as_node_from_xml (src, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "icon");
@@ -971,7 +971,7 @@ as_test_image_func (void)
 	image = as_image_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, 0, &error);
+	root = as_node_from_xml (src, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "image");
@@ -1042,7 +1042,7 @@ as_test_bundle_func (void)
 	bundle = as_bundle_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, 0, &error);
+	root = as_node_from_xml (src, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "bundle");
@@ -1091,7 +1091,7 @@ as_test_screenshot_func (void)
 	screenshot = as_screenshot_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, 0, &error);
+	root = as_node_from_xml (src, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "screenshot");
@@ -1214,7 +1214,7 @@ as_test_app_func (void)
 	app = as_app_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1, 0, &error);
+	root = as_node_from_xml (src, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "component");
@@ -1900,7 +1900,7 @@ as_test_app_no_markup_func (void)
 	app = as_app_new ();
 
 	/* to object */
-	root = as_node_from_xml (src, -1,
+	root = as_node_from_xml (src,
 				 AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
 				 &error);
 	g_assert_no_error (error);
@@ -1968,7 +1968,7 @@ as_test_node_sort_func (void)
 	_cleanup_node_unref_ GNode *root = NULL;
 	_cleanup_string_free_ GString *str = NULL;
 
-	root = as_node_from_xml ("<d>ddd</d><c>ccc</c><b>bbb</b><a>aaa</a>", -1, 0, &error);
+	root = as_node_from_xml ("<d>ddd</d><c>ccc</c><b>bbb</b><a>aaa</a>", 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 
@@ -2041,17 +2041,17 @@ as_test_node_xml_func (void)
 	GString *xml;
 
 	/* invalid XML */
-	root = as_node_from_xml ("<moo>", -1, 0, &error);
+	root = as_node_from_xml ("<moo>", 0, &error);
 	g_assert (root == NULL);
 	g_assert_error (error, AS_NODE_ERROR, AS_NODE_ERROR_FAILED);
 	g_clear_error (&error);
-	root = as_node_from_xml ("<foo></bar>", -1, 0, &error);
+	root = as_node_from_xml ("<foo></bar>", 0, &error);
 	g_assert (root == NULL);
 	g_assert_error (error, AS_NODE_ERROR, AS_NODE_ERROR_FAILED);
 	g_clear_error (&error);
 
 	/* valid XML */
-	root = as_node_from_xml (valid, -1, 0, &error);
+	root = as_node_from_xml (valid, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 
@@ -2087,7 +2087,7 @@ as_test_node_xml_func (void)
 	as_node_unref (root);
 
 	/* convert all the children to XML */
-	root = as_node_from_xml ("<p>One</p><p>Two</p>", -1, 0, &error);
+	root = as_node_from_xml ("<p>One</p><p>Two</p>", 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	g_assert_cmpint (g_node_n_nodes (root, G_TRAVERSE_ALL), ==, 3);
@@ -2098,7 +2098,7 @@ as_test_node_xml_func (void)
 	as_node_unref (root);
 
 	/* keep comments */
-	root = as_node_from_xml (valid, -1,
+	root = as_node_from_xml (valid,
 				 AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS,
 				 &error);
 	g_assert_no_error (error);
@@ -2112,7 +2112,7 @@ as_test_node_xml_func (void)
 	as_node_unref (root);
 
 	/* keep comment formatting */
-	root = as_node_from_xml (valid, -1,
+	root = as_node_from_xml (valid,
 				 AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS |
 				 AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
 				 &error);
@@ -2133,7 +2133,7 @@ as_test_node_xml_func (void)
 	as_node_unref (root);
 
 	/* check comments are appended together */
-	root = as_node_from_xml ("<!-- 1st -->\n<!-- 2nd -->\n<foo/>\n", -1,
+	root = as_node_from_xml ("<!-- 1st -->\n<!-- 2nd -->\n<foo/>\n",
 				 AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS |
 				 AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
 				 &error);
@@ -2249,7 +2249,7 @@ as_test_node_localized_wrap_func (void)
 	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
 
-	root = as_node_from_xml (xml, -1, 0, &error);
+	root = as_node_from_xml (xml, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 
@@ -2306,7 +2306,7 @@ as_test_node_localized_wrap2_func (void)
 	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
 
-	root = as_node_from_xml (xml, -1, 0, &error);
+	root = as_node_from_xml (xml, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 
@@ -2487,7 +2487,7 @@ as_test_store_embedded_func (void)
 	/* load AppStream file with embedded icon */
 	store = as_store_new ();
 	as_store_set_origin (store, "origin");
-	ret = as_store_from_xml (store, xml_src, -1, "/tmp", &error);
+	ret = as_store_from_xml (store, xml_src, "/tmp", &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -2924,7 +2924,7 @@ as_test_store_versions_func (void)
 		"</release>"
 		"</releases>"
 		"</application>"
-		"</applications>", -1, NULL, &error);
+		"</applications>", NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_assert_cmpfloat (as_store_get_api_version (store), <, 0.4 + 0.01);
@@ -2975,7 +2975,7 @@ as_test_store_versions_func (void)
 		"<component type=\"desktop\">"
 		"<id>test.desktop</id>"
 		"</component>"
-		"</components>", -1, NULL, &error);
+		"</components>", NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -3017,7 +3017,7 @@ as_test_store_addons_func (void)
 
 	/* load a file to the store */
 	store = as_store_new ();
-	ret = as_store_from_xml (store, xml, -1, NULL, &error);
+	ret = as_store_from_xml (store, xml, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -3067,7 +3067,7 @@ as_test_node_no_dup_c_func (void)
 
 	/* to object */
 	app = as_app_new ();
-	root = as_node_from_xml (src, -1, 0, &error);
+	root = as_node_from_xml (src, 0, &error);
 	g_assert_no_error (error);
 	g_assert (root != NULL);
 	n = as_node_find (root, "application");
@@ -3541,7 +3541,7 @@ as_test_store_metadata_func (void)
 	_cleanup_object_unref_ AsStore *store = NULL;
 
 	store = as_store_new ();
-	ret = as_store_from_xml (store, xml, -1, NULL, &error);
+	ret = as_store_from_xml (store, xml, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 

@@ -109,7 +109,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	}
 
 	/* parse contents */
-	root = as_node_from_xml (valid_xml->str, -1,
+	root = as_node_from_xml (valid_xml->str,
 				 AS_NODE_FROM_XML_FLAG_NONE,
 				 error);
 	if (!ret)

@@ -437,6 +437,7 @@ as_node_to_xml_string (GString *xml,
 /**
  * as_node_reflow_text:
  * @text: XML text data
+ * @text_len: length of @text
  *
  * Converts pretty-formatted source text into a format suitable for AppStream.
  * This might include joining paragraphs, supressing newlines or doing other
@@ -677,7 +678,6 @@ as_node_passthrough_cb (GMarkupParseContext *context,
 /**
  * as_node_from_xml: (skip)
  * @data: XML data
- * @data_len: Length of @data, or -1 if NULL terminated
  * @flags: #AsNodeFromXmlFlags, e.g. %AS_NODE_FROM_XML_FLAG_NONE
  * @error: A #GError or %NULL
  *
@@ -689,7 +689,6 @@ as_node_passthrough_cb (GMarkupParseContext *context,
  **/
 GNode *
 as_node_from_xml (const gchar *data,
-		  gssize data_len,
 		  AsNodeFromXmlFlags flags,
 		  GError **error)
 {
@@ -716,7 +715,7 @@ as_node_from_xml (const gchar *data,
 					  NULL);
 	ret = g_markup_parse_context_parse (ctx,
 					    data,
-					    data_len,
+					    -1,
 					    &error_local);
 	if (!ret) {
 		g_set_error_literal (error,

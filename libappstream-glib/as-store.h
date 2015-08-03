@@ -146,7 +146,6 @@ gboolean	 as_store_from_file		(AsStore	*store,
 						 GError		**error);
 gboolean	 as_store_from_xml		(AsStore	*store,
 						 const gchar	*data,
-						 gssize		 data_len,
 						 const gchar	*icon_root,
 						 GError		**error);
 gboolean	 as_store_load			(AsStore	*store,

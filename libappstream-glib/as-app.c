@@ -4358,7 +4358,7 @@ as_app_parse_appdata_file (AsApp *app,
 	/* parse */
 	if (flags & AS_APP_PARSE_FLAG_KEEP_COMMENTS)
 		from_xml_flags |= AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS;
-	root = as_node_from_xml (data, len, from_xml_flags, &error_local);
+	root = as_node_from_xml (data, from_xml_flags, &error_local);
 	if (root == NULL) {
 		g_set_error (error,
 			     AS_APP_ERROR,

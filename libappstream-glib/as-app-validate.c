@@ -342,9 +342,7 @@ as_app_validate_description (const gchar *xml,
 	_cleanup_node_unref_ GNode *node = NULL;
 
 	/* parse xml */
-	node = as_node_from_xml (xml, -1,
-				 AS_NODE_FROM_XML_FLAG_NONE,
-				 error);
+	node = as_node_from_xml (xml, AS_NODE_FROM_XML_FLAG_NONE, error);
 	if (node == NULL)
 		return FALSE;
 	helper->number_paragraphs = 0;

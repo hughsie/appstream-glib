@@ -152,7 +152,6 @@ void		 as_node_remove_attribute	(GNode		*node,
 GString		*as_node_to_xml			(const GNode	*node,
 						 AsNodeToXmlFlags flags);
 GNode		*as_node_from_xml		(const gchar	*data,
-						 gssize		 data_len,
 						 AsNodeFromXmlFlags flags,
 						 GError		**error)
 						 G_GNUC_WARN_UNUSED_RESULT;

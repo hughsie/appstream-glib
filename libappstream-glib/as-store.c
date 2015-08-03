@@ -1142,7 +1142,6 @@ as_store_from_file (AsStore *store,
  * as_store_from_xml:
  * @store: a #AsStore instance.
  * @data: XML data
- * @data_len: Length of @data, or -1 if NULL terminated
  * @icon_root: the icon path, or %NULL for the default.
  * @error: A #GError or %NULL.
  *
@@ -1159,7 +1158,6 @@ as_store_from_file (AsStore *store,
 gboolean
 as_store_from_xml (AsStore *store,
 		   const gchar *data,
-		   gssize data_len,
 		   const gchar *icon_root,
 		   GError **error)
 {
@@ -1168,7 +1166,7 @@ as_store_from_xml (AsStore *store,
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
-	root = as_node_from_xml (data, data_len,
+	root = as_node_from_xml (data,
 				 AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
 				 &error_local);
 	if (root == NULL) {
