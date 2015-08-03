@@ -95,15 +95,6 @@ void		 as_release_add_location	(AsRelease	*release,
 void		 as_release_add_checksum	(AsRelease	*release,
 						 AsChecksum	*checksum);
 
-/* deprecated */
-G_DEPRECATED_FOR(as_checksum_set_value)
-void		 as_release_set_checksum	(AsRelease	*release,
-						 GChecksumType	 checksum_type,
-						 const gchar	*checksum_value);
-G_DEPRECATED_FOR(as_checksum_get_value)
-const gchar	*as_release_get_checksum	(AsRelease	*release,
-						 GChecksumType	 checksum_type);
-
 G_END_DECLS
 
 #endif /* __AS_RELEASE_H */

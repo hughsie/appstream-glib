@@ -486,12 +486,6 @@ as_test_release_appstream_func (void)
 	g_assert (csum != NULL);
 	g_assert_cmpstr (as_checksum_get_value (csum), ==, "12345");
 
-	/* deprecated */
-	G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-	g_assert_cmpstr (as_release_get_checksum (release, G_CHECKSUM_SHA1), ==, "12345");
-	g_assert_cmpstr (as_release_get_checksum (release, G_CHECKSUM_MD5), ==, "deadbeef");
-	G_GNUC_END_IGNORE_DEPRECATIONS
-
 	/* back to node */
 	root = as_node_new ();
 	as_node_context_set_version (ctx, 1.0);

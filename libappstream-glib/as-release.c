@@ -251,31 +251,6 @@ as_release_get_checksum_by_target (AsRelease *release, AsChecksumTarget target)
 }
 
 /**
- * as_release_get_checksum:
- * @release: a #AsRelease instance.
- *
- * Gets the release checksum, typically a SHA1 hash.
- *
- * Returns: string, or %NULL for not set or invalid
- *
- * Since: 0.3.5
- **/
-const gchar *
-as_release_get_checksum (AsRelease *release, GChecksumType checksum_type)
-{
-	AsChecksum *checksum;
-	AsReleasePrivate *priv = GET_PRIVATE (release);
-	guint i;
-
-	for (i = 0; i < priv->checksums->len; i++) {
-		checksum = g_ptr_array_index (priv->checksums, i);
-		if (checksum_type == as_checksum_get_kind (checksum))
-			return as_checksum_get_value (checksum);
-	}
-	return NULL;
-}
-
-/**
  * as_release_get_timestamp:
  * @release: a #AsRelease instance.
  *
@@ -364,35 +339,6 @@ as_release_add_checksum (AsRelease *release, AsChecksum *checksum)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	g_ptr_array_add (priv->checksums, g_object_ref (checksum));
-}
-
-/**
- * as_release_set_checksum:
- * @release: a #AsRelease instance.
- * @checksum_type: a #GChecksumType, e.g. %G_CHECKSUM_SHA1
- * @checksum_value: the checksum string.
- *
- * Sets the release checksum.
- *
- * Since: 0.3.5
- **/
-void
-as_release_set_checksum (AsRelease *release,
-			 GChecksumType checksum_type,
-			 const gchar *checksum_value)
-{
-	AsChecksum *checksum;
-	AsReleasePrivate *priv = GET_PRIVATE (release);
-
-	/* compat */
-	if (priv->checksums->len > 0) {
-		checksum = g_ptr_array_index (priv->checksums, 0);
-	} else {
-		checksum = as_checksum_new ();
-		as_release_add_checksum (release, checksum);
-	}
-	as_checksum_set_value (checksum, checksum_value);
-	as_checksum_set_kind (checksum, checksum_type);
 }
 
 /**
