@@ -117,8 +117,6 @@ gchar		*as_utils_find_icon_filename_full (const gchar	*destdir,
 						 const gchar	*search,
 						 AsUtilsFindIconFlag flags,
 						 GError		**error);
-gchar		*as_utils_get_string_overlap	(const gchar	*s1,
-						 const gchar	*s2);
 gboolean	 as_utils_install_filename	(AsUtilsLocation location,
 						 const gchar	*filename,
 						 const gchar	*origin,

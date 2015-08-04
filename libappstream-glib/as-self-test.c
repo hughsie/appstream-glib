@@ -3210,48 +3210,6 @@ as_test_store_speed_desktop_func (void)
 }
 
 static void
-as_test_utils_overlap_func (void)
-{
-	gchar *tmp;
-
-	/* same */
-	tmp = as_utils_get_string_overlap ("dave.ttf", "dave.ttf");
-	g_assert_cmpstr (tmp, ==, "dave.ttf");
-	g_free (tmp);
-
-	/* only prefix */
-	tmp = as_utils_get_string_overlap ("dave.ttf", "daniel.doc");
-	g_assert_cmpstr (tmp, ==, "da");
-	g_free (tmp);
-
-	/* only suffix */
-	tmp = as_utils_get_string_overlap ("dave.ttf", "sara.ttf");
-	g_assert_cmpstr (tmp, ==, ".ttf");
-	g_free (tmp);
-
-	/* different */
-	tmp = as_utils_get_string_overlap ("dave.ttf", "bob.doc");
-	g_assert_cmpstr (tmp, ==, NULL);
-	g_free (tmp);
-
-	/* long left */
-	tmp = as_utils_get_string_overlap ("aaabbbccc.ttf", "bbbccc.ttf");
-	g_assert_cmpstr (tmp, ==, "bbbccc.ttf");
-	g_free (tmp);
-
-	/* long right */
-	tmp = as_utils_get_string_overlap ("bbbccc.ttf", "aaabbbccc.ttf");
-	g_assert_cmpstr (tmp, ==, "bbbccc.ttf");
-	g_free (tmp);
-
-	/* extra dots */
-	tmp = as_utils_get_string_overlap ("org.gnome.Music.Player.desktop",
-					   "org.gnome.Music.Record.desktop");
-	g_assert_cmpstr (tmp, ==, "org.gnome.Music.desktop");
-	g_free (tmp);
-}
-
-static void
 as_test_utils_icons_func (void)
 {
 	gchar *tmp;
@@ -4239,7 +4197,6 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{intltool}", as_test_node_intltool_func);
 	g_test_add_func ("/AppStream/node{sort}", as_test_node_sort_func);
 	g_test_add_func ("/AppStream/utils", as_test_utils_func);
-	g_test_add_func ("/AppStream/utils{overlap}", as_test_utils_overlap_func);
 	g_test_add_func ("/AppStream/utils{icons}", as_test_utils_icons_func);
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/utils{install-filename}", as_test_utils_install_filename_func);
