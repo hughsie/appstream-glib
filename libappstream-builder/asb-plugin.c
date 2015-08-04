@@ -36,21 +36,6 @@
 #include "asb-utils.h"
 
 /**
- * asb_plugin_set_enabled:
- * @plugin: A #AsbPlugin
- * @enabled: boolean
- *
- * Enables or disables a plugin.
- *
- * Since: 0.1.0
- **/
-void
-asb_plugin_set_enabled (AsbPlugin *plugin, gboolean enabled)
-{
-	plugin->enabled = enabled;
-}
-
-/**
  * asb_plugin_process:
  * @plugin: A #AsbPlugin
  * @pkg: A #AsbPackage
