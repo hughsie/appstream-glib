@@ -91,9 +91,6 @@ void		 asb_app_set_requires_appdata	(AsbApp		*app,
 						 gboolean	 requires_appdata);
 void		 asb_app_add_pixbuf		(AsbApp		*app,
 						 GdkPixbuf	*pixbuf);
-gboolean	 asb_app_add_screenshot_source	(AsbApp		*app,
-						 const gchar	*filename,
-						 GError		**error);
 
 GPtrArray	*asb_app_get_requires_appdata	(AsbApp		*app);
 AsbPackage	*asb_app_get_package		(AsbApp		*app);
