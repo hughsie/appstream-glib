@@ -130,13 +130,19 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		return FALSE;
 	}
 
+	/* get the default release, creating if required */
+	release = as_app_get_release_default (AS_APP (app));
+	if (release == NULL) {
+		release = as_release_new ();
+		as_app_add_release (AS_APP (app), release);
+	}
+
 	/* add the checksum for the .cab file */
 	checksum = asb_plugin_firmware_get_checksum (asb_package_get_filename (pkg),
 						     G_CHECKSUM_SHA1,
 						     error);
 	if (checksum == NULL)
 		return FALSE;
-	release = as_app_get_release_default (AS_APP (app));
 
 	/* add checksum */
 	csum = as_checksum_new ();

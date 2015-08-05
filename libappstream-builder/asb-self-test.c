@@ -940,7 +940,7 @@ asb_test_firmware_func (void)
 		"</release>\n"
 		"<release version=\"2.0.1\" timestamp=\"1424116753\">\n"
 		"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.1.cab</location>\n"
-		"<checksum filename=\"colorhug-als-2.0.1.cab\" target=\"container\" type=\"sha1\">c7cc46d54d8d4ba452b677a2367214efbaa40fd5</checksum>\n"
+		"<checksum filename=\"colorhug-als-2.0.1.cab\" target=\"container\" type=\"sha1\">c61e55ccb2ce8de401550a731b0f364a18cb2639</checksum>\n"
 		"<checksum filename=\"firmware.bin\" target=\"content\" type=\"sha1\">767a8a7b8a7b350b513f57761204b4aaa657aa44</checksum>\n"
 		"<description><p>This unstable release adds the following features:</p>"
 		"<ul><li>Use TakeReadings() to do a quick non-adaptive measurement</li>"

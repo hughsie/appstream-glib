@@ -3,7 +3,6 @@
 [Version]
 Class=Firmware
 ClassGuid={f2e7dd72-6468-4e36-b6f1-6488f42c1b52}
-DriverVer=03/01/2015,2.0.1
 
 [Firmware_CopyFiles]
 firmware.bin

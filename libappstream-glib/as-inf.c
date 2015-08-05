@@ -932,7 +932,7 @@ as_inf_get_driver_version (GKeyFile *keyfile, guint64 *timestamp, GError **error
 	if (driver_ver == NULL) {
 		g_set_error_literal (error,
 				     AS_INF_ERROR,
-				     AS_INF_ERROR_INVALID_TYPE,
+				     AS_INF_ERROR_NOT_FOUND,
 				     "DriverVer is missing");
 		return FALSE;
 	}

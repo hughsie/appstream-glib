@@ -34,12 +34,14 @@ G_BEGIN_DECLS
  * AsInfError:
  * @AS_INF_ERROR_FAILED:			Generic failure
  * @AS_INF_ERROR_INVALID_TYPE:			Invalid type
+ * @AS_INF_ERROR_NOT_FOUND:			Data not found
  *
  * The error type.
  **/
 typedef enum {
 	AS_INF_ERROR_FAILED,
 	AS_INF_ERROR_INVALID_TYPE,
+	AS_INF_ERROR_NOT_FOUND,
 	/*< private >*/
 	AS_INF_ERROR_LAST
 } AsInfError;

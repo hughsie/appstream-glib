@@ -2126,6 +2126,11 @@ as_app_subsume_release (AsRelease *release, AsRelease *donor)
 	if (tmp != NULL || as_release_get_timestamp (release) == 0)
 		as_release_set_timestamp (release, as_release_get_timestamp (donor));
 
+	/* overwrite the version */
+	tmp = as_release_get_version (donor);
+	if (tmp != NULL && as_release_get_version (release) == NULL)
+		as_release_set_version (release, tmp);
+
 	/* copy all locations */
 	locations = as_release_get_locations (donor);
 	for (i = 0; i < locations->len; i++) {
@@ -2162,6 +2167,8 @@ as_app_add_release (AsApp *app, AsRelease *release)
 
 	/* if already exists them update */
 	release_old = as_app_get_release (app, as_release_get_version (release));
+	if (release_old == NULL)
+		release_old = as_app_get_release (app, NULL);
 	if (release_old == release)
 		return;
 	if (release_old != NULL) {
