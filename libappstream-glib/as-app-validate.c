@@ -317,7 +317,9 @@ as_app_validate_description_list (const gchar *text,
 	    helper->para_chars_before_list < (guint) length_para_before_list) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "Not enough <p> content before <ul>");
+				     "Content before <ul> is too short [%d], at least %d characters required",
+				     helper->para_chars_before_list,
+				     length_para_before_list);
 	}
 
 	/* we allow the previous paragraph to be short to
