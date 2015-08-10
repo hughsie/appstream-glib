@@ -2862,46 +2862,6 @@ as_app_subsume (AsApp *app, AsApp *donor)
 }
 
 /**
- * as_app_kudo_kind_from_legacy_string:
- **/
-static AsKudoKind
-as_app_kudo_kind_from_legacy_string (const gchar *legacy_name)
-{
-	if (g_strcmp0 (legacy_name, "X-Kudo-SearchProvider") == 0)
-		return AS_KUDO_KIND_SEARCH_PROVIDER;
-	if (g_strcmp0 (legacy_name, "X-Kudo-InstallsUserDocs") == 0)
-		return AS_KUDO_KIND_USER_DOCS;
-	if (g_strcmp0 (legacy_name, "X-Kudo-UsesAppMenu") == 0)
-		return AS_KUDO_KIND_APP_MENU;
-	if (g_strcmp0 (legacy_name, "X-Kudo-GTK3") == 0)
-		return AS_KUDO_KIND_MODERN_TOOLKIT;
-	if (g_strcmp0 (legacy_name, "X-Kudo-QT5") == 0)
-		return AS_KUDO_KIND_MODERN_TOOLKIT;
-	if (g_strcmp0 (legacy_name, "X-Kudo-UsesNotifications") == 0)
-		return AS_KUDO_KIND_NOTIFICATIONS;
-	return AS_KUDO_KIND_UNKNOWN;
-}
-
-/**
- * as_app_kudo_kind_to_legacy_string:
- **/
-static const gchar *
-as_app_kudo_kind_to_legacy_string (AsKudoKind kudo_kind)
-{
-	if (kudo_kind == AS_KUDO_KIND_SEARCH_PROVIDER)
-		return "X-Kudo-SearchProvider";
-	if (kudo_kind == AS_KUDO_KIND_USER_DOCS)
-		return "X-Kudo-InstallsUserDocs";
-	if (kudo_kind == AS_KUDO_KIND_APP_MENU)
-		return "X-Kudo-UsesAppMenu";
-	if (kudo_kind == AS_KUDO_KIND_MODERN_TOOLKIT)
-		return "X-Kudo-GTK3";
-	if (kudo_kind == AS_KUDO_KIND_NOTIFICATIONS)
-		return "X-Kudo-UsesNotifications";
-	return NULL;
-}
-
-/**
  * gs_app_node_language_sort_cb:
  **/
 static gint
@@ -3057,22 +3017,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	GNode *node_app;
 	GNode *node_tmp;
 	const gchar *tmp;
-	gdouble api_version = as_node_context_get_version (ctx);
 	guint i;
-
-	/* no addons allowed here */
-	if (api_version < 0.7 && priv->id_kind == AS_ID_KIND_ADDON) {
-		g_warning ("Not writing addon '%s' as API version %.1f < 0.7",
-			   priv->id, api_version);
-		return NULL;
-	}
-
-	/* no firmware allowed here */
-	if (api_version < 0.9 && priv->id_kind == AS_ID_KIND_FIRMWARE) {
-		g_warning ("Not writing firmware '%s' as API version %.1f < 0.9",
-			   priv->id, api_version);
-		return NULL;
-	}
 
 	/* <component> or <application> */
 	node_app = as_node_insert (parent, "component", NULL, 0, NULL);
@@ -3097,7 +3042,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <source_pkgname> */
-	if (priv->source_pkgname != NULL && api_version >= 0.8) {
+	if (priv->source_pkgname != NULL) {
 		as_node_insert (node_app, "source_pkgname",
 				priv->source_pkgname, 0, NULL);
 	}
@@ -3119,11 +3064,9 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 				  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 
 	/* <developer_name> */
-	if (api_version >= 0.7) {
-		as_node_insert_localized (node_app, "developer_name",
-					  priv->developer_names,
-					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
-	}
+	as_node_insert_localized (node_app, "developer_name",
+				  priv->developer_names,
+				  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 
 	/* <description> */
 	as_node_insert_localized (node_app, "description",
@@ -3165,7 +3108,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <kudos> */
-	if (priv->kudos->len > 0 && api_version >= 0.8) {
+	if (priv->kudos->len > 0) {
 		g_ptr_array_sort (priv->kudos, as_app_ptr_array_sort_cb);
 		node_tmp = as_node_insert (node_app, "kudos", NULL, 0, NULL);
 		for (i = 0; i < priv->kudos->len; i++) {
@@ -3175,7 +3118,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <permissions> */
-	if (priv->permissions->len > 0 && api_version >= 0.8) {
+	if (priv->permissions->len > 0) {
 		g_ptr_array_sort (priv->permissions, as_app_ptr_array_sort_cb);
 		node_tmp = as_node_insert (node_app, "permissions", NULL, 0, NULL);
 		for (i = 0; i < priv->permissions->len; i++) {
@@ -3185,7 +3128,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <vetos> */
-	if (priv->vetos->len > 0 && api_version >= 0.8) {
+	if (priv->vetos->len > 0) {
 		g_ptr_array_sort (priv->vetos, as_app_ptr_array_sort_cb);
 		node_tmp = as_node_insert (node_app, "vetos", NULL, 0, NULL);
 		for (i = 0; i < priv->vetos->len; i++) {
@@ -3240,7 +3183,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <extends> */
-	if (api_version >= 0.7) {
+	if (priv->extends->len > 0) {
 		g_ptr_array_sort (priv->extends, as_app_ptr_array_sort_cb);
 		for (i = 0; i < priv->extends->len; i++) {
 			tmp = g_ptr_array_index (priv->extends, i);
@@ -3294,22 +3237,6 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	if (g_hash_table_size (priv->metadata) > 0) {
 		node_tmp = as_node_insert (node_app, "metadata", NULL, 0, NULL);
 		as_node_insert_hash (node_tmp, "value", "key", priv->metadata, FALSE);
-
-		/* convert the kudos to the old name */
-		if (priv->kudos->len > 0 && api_version < 0.8) {
-			for (i = 0; i < priv->kudos->len; i++) {
-				AsKudoKind kudo;
-				tmp = g_ptr_array_index (priv->kudos, i);
-				kudo = as_kudo_kind_from_string (tmp);
-				tmp = as_app_kudo_kind_to_legacy_string (kudo);
-				if (tmp != NULL) {
-					as_node_insert (node_tmp, "value", NULL,
-							AS_NODE_INSERT_FLAG_NONE,
-							"key", tmp,
-							NULL);
-				}
-			}
-		}
 	}
 
 	return node_app;
@@ -3676,26 +3603,14 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
 			g_hash_table_remove_all (priv->metadata);
 		for (c = n->children; c != NULL; c = c->next) {
-			AsKudoKind kudo;
 			gchar *key;
-
 			if (as_node_get_tag (c) != AS_TAG_VALUE)
 				continue;
 			key = as_node_take_attribute (c, "key");
-
-			/* check if it's not an old-style metadata kudo */
-			kudo = as_app_kudo_kind_from_legacy_string (key);
-			if (kudo == AS_KUDO_KIND_UNKNOWN) {
-				taken = as_node_take_data (c);
-				if (taken == NULL)
-					taken = g_strdup ("");
-				g_hash_table_insert (priv->metadata, key, taken);
-			} else {
-				/* storing a a string is inelegant, but allows
-				 * us to show kudos not (yet) supported */
-				as_app_add_kudo_kind (app, kudo);
-				g_free (key);
-			}
+			taken = as_node_take_data (c);
+			if (taken == NULL)
+				taken = g_strdup ("");
+			g_hash_table_insert (priv->metadata, key, taken);
 		}
 		break;
 	default:
