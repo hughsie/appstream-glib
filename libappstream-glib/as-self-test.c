@@ -2902,6 +2902,43 @@ as_test_store_func (void)
 }
 
 static void
+as_test_store_provides_func (void)
+{
+	AsApp *app;
+	gboolean ret;
+	_cleanup_error_free_ GError *error = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+
+	/* create a store and add a single app */
+	store = as_store_new ();
+	ret = as_store_from_xml (store,
+		"<components version=\"0.6\">"
+		"<component type=\"desktop\">"
+		"<id>test.desktop</id>"
+		"<provides>"
+		"<firmware type=\"flashed\">deadbeef</firmware>"
+		"</provides>"
+		"</component>"
+		"</components>", NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* get an appication by the provide value */
+	app = as_store_get_app_by_provide (store,
+					   AS_PROVIDE_KIND_FIRMWARE_FLASHED,
+					   "deadbeef");
+	g_assert_cmpstr (as_app_get_id (app), ==, "test.desktop");
+	app = as_store_get_app_by_provide (store,
+					   AS_PROVIDE_KIND_FIRMWARE_RUNTIME,
+					   "deadbeef");
+	g_assert (app == NULL);
+	app = as_store_get_app_by_provide (store,
+					   AS_PROVIDE_KIND_FIRMWARE_FLASHED,
+					   "beefdead");
+	g_assert (app == NULL);
+}
+
+static void
 as_test_store_versions_func (void)
 {
 	AsApp *app;
@@ -4240,6 +4277,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{metadata-index}", as_test_store_metadata_index_func);
 	g_test_add_func ("/AppStream/store{validate}", as_test_store_validate_func);
 	g_test_add_func ("/AppStream/store{embedded}", as_test_store_embedded_func);
+	g_test_add_func ("/AppStream/store{provides}", as_test_store_provides_func);
 	g_test_add_func ("/AppStream/store{local-app-install}", as_test_store_local_app_install_func);
 	g_test_add_func ("/AppStream/store{local-appdata}", as_test_store_local_appdata_func);
 	g_test_add_func ("/AppStream/store{speed-appstream}", as_test_store_speed_appstream_func);

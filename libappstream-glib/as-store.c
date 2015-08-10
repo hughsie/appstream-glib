@@ -429,6 +429,49 @@ as_store_get_app_by_id (AsStore *store, const gchar *id)
 }
 
 /**
+ * as_store_get_app_by_provide:
+ * @store: a #AsStore instance.
+ * @kind: the #AsProvideKind
+ * @value: the provide value, e.g. "com.hughski.ColorHug2.firmware"
+ *
+ * Finds an application in the store by something that it provides.
+ *
+ * Returns: (transfer none): a #AsApp or %NULL
+ *
+ * Since: 0.5.0
+ **/
+AsApp *
+as_store_get_app_by_provide (AsStore *store, AsProvideKind kind, const gchar *value)
+{
+	AsApp *app;
+	AsProvide *tmp;
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	guint i;
+	guint j;
+	GPtrArray *provides;
+
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+	g_return_val_if_fail (kind != AS_PROVIDE_KIND_UNKNOWN, NULL);
+	g_return_val_if_fail (value != NULL, NULL);
+
+	/* find an application that provides something */
+	for (i = 0; i < priv->array->len; i++) {
+		app = g_ptr_array_index (priv->array, i);
+		provides = as_app_get_provides (app);
+		for (j = 0; j < provides->len; j++) {
+			tmp = g_ptr_array_index (provides, j);
+			if (kind != as_provide_get_kind (tmp))
+				continue;
+			if (g_strcmp0 (as_provide_get_value (tmp), value) != 0)
+				continue;
+			return app;
+		}
+	}
+	return NULL;
+
+}
+
+/**
  * as_store_get_app_by_id_with_fallbacks:
  * @store: a #AsStore instance.
  * @id: the application full ID.
