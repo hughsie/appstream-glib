@@ -103,8 +103,10 @@ as_provide_kind_from_string (const gchar *kind)
 		return AS_PROVIDE_KIND_FONT;
 	if (g_strcmp0 (kind, "modalias") == 0)
 		return AS_PROVIDE_KIND_MODALIAS;
-	if (g_strcmp0 (kind, "firmware") == 0)
-		return AS_PROVIDE_KIND_FIRMWARE;
+	if (g_strcmp0 (kind, "firmware-runtime") == 0)
+		return AS_PROVIDE_KIND_FIRMWARE_RUNTIME;
+	if (g_strcmp0 (kind, "firmware-flashed") == 0)
+		return AS_PROVIDE_KIND_FIRMWARE_FLASHED;
 	if (g_strcmp0 (kind, "python2") == 0)
 		return AS_PROVIDE_KIND_PYTHON2;
 	if (g_strcmp0 (kind, "python3") == 0)
@@ -137,8 +139,10 @@ as_provide_kind_to_string (AsProvideKind kind)
 		return "font";
 	if (kind == AS_PROVIDE_KIND_MODALIAS)
 		return "modalias";
-	if (kind == AS_PROVIDE_KIND_FIRMWARE)
-		return "firmware";
+	if (kind == AS_PROVIDE_KIND_FIRMWARE_RUNTIME)
+		return "firmware-runtime";
+	if (kind == AS_PROVIDE_KIND_FIRMWARE_FLASHED)
+		return "firmware-flashed";
 	if (kind == AS_PROVIDE_KIND_PYTHON2)
 		return "python2";
 	if (kind == AS_PROVIDE_KIND_PYTHON3)
@@ -252,6 +256,20 @@ as_provide_node_insert (AsProvide *provide, GNode *parent, AsNodeContext *ctx)
 				    "type", "system",
 				    NULL);
 		break;
+	case AS_PROVIDE_KIND_FIRMWARE_FLASHED:
+		n = as_node_insert (parent, "firmware",
+				    priv->value,
+				    AS_NODE_INSERT_FLAG_NONE,
+				    "type", "flashed",
+				    NULL);
+		break;
+	case AS_PROVIDE_KIND_FIRMWARE_RUNTIME:
+		n = as_node_insert (parent, "firmware",
+				    priv->value,
+				    AS_NODE_INSERT_FLAG_NONE,
+				    "type", "runtime",
+				    NULL);
+		break;
 	default:
 		n = as_node_insert (parent, as_provide_kind_to_string (priv->kind),
 				    priv->value,
@@ -300,14 +318,20 @@ as_provide_node_parse (AsProvide *provide, GNode *node,
 		       AsNodeContext *ctx, GError **error)
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
+	const gchar *tmp;
 
 	if (g_strcmp0 (as_node_get_name (node), "dbus") == 0) {
-		const gchar *tmp;
 		tmp = as_node_get_attribute (node, "type");
 		if (g_strcmp0 (tmp, "system") == 0)
 			priv->kind = AS_PROVIDE_KIND_DBUS_SYSTEM;
-		else if (g_strcmp0 (tmp, "session") == 0)
+		else
 			priv->kind = AS_PROVIDE_KIND_DBUS_SESSION;
+	} else if (g_strcmp0 (as_node_get_name (node), "firmware") == 0) {
+		tmp = as_node_get_attribute (node, "type");
+		if (g_strcmp0 (tmp, "flashed") == 0)
+			priv->kind = AS_PROVIDE_KIND_FIRMWARE_FLASHED;
+		else
+			priv->kind = AS_PROVIDE_KIND_FIRMWARE_RUNTIME;
 	} else {
 		priv->kind = as_provide_kind_from_string (as_node_get_name (node));
 	}

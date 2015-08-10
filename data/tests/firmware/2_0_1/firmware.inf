@@ -3,6 +3,7 @@
 [Version]
 Class=Firmware
 ClassGuid={f2e7dd72-6468-4e36-b6f1-6488f42c1b52}
+Provider=%Provider%
 
 [Firmware_CopyFiles]
 firmware.bin
@@ -13,7 +14,6 @@ HKR,,FirmwareVersion,%REG_DWORD%,0x0000000
 HKR,,FirmwareFilename,,firmware.bin
 
 [Strings]
-Provider     = "Hughski"
-MfgName      = "Hughski Limited"
+Provider      = "Hughski Limited"
 FirmwareDesc = "ColorHug Firmware"
 DiskName     = "Firmware for the ColorHug Colorimeter"

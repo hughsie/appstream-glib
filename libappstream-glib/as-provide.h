@@ -66,11 +66,12 @@ struct _AsProvideClass
  * @AS_PROVIDE_KIND_BINARY:		A binary file
  * @AS_PROVIDE_KIND_FONT:		A font file
  * @AS_PROVIDE_KIND_MODALIAS:		A hardware modalias
- * @AS_PROVIDE_KIND_FIRMWARE:		A firmware file
+ * @AS_PROVIDE_KIND_FIRMWARE_RUNTIME:	A runtime-loadable firmware file
  * @AS_PROVIDE_KIND_PYTHON2:		A Python 2 module
  * @AS_PROVIDE_KIND_PYTHON3:		A Python 3 module
  * @AS_PROVIDE_KIND_DBUS_SESSION:	A D-Bus session service
  * @AS_PROVIDE_KIND_DBUS_SYSTEM:	A D-Bus system service
+ * @AS_PROVIDE_KIND_FIRMWARE_FLASHED:	A flashed firmware GUID
  *
  * The provide type.
  **/
@@ -80,11 +81,12 @@ typedef enum {
 	AS_PROVIDE_KIND_BINARY,
 	AS_PROVIDE_KIND_FONT,
 	AS_PROVIDE_KIND_MODALIAS,
-	AS_PROVIDE_KIND_FIRMWARE,
+	AS_PROVIDE_KIND_FIRMWARE_RUNTIME,
 	AS_PROVIDE_KIND_PYTHON2,
 	AS_PROVIDE_KIND_PYTHON3,
-	AS_PROVIDE_KIND_DBUS_SESSION,	/* Since: 0.1.7 */
-	AS_PROVIDE_KIND_DBUS_SYSTEM,	/* Since: 0.2.4 */
+	AS_PROVIDE_KIND_DBUS_SESSION,		/* Since: 0.1.7 */
+	AS_PROVIDE_KIND_DBUS_SYSTEM,		/* Since: 0.2.4 */
+	AS_PROVIDE_KIND_FIRMWARE_FLASHED,	/* Since: 0.5.0 */
 	/*< private >*/
 	AS_PROVIDE_KIND_LAST
 } AsProvideKind;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2015 Richard Hughes <richard@hughsie.com> -->
 <component type="firmware">
-  <id>84f40464-9272-4ef7-9399-cd95f12da696</id>
+  <id>com.hughski.ColorHug2.firmware</id>
   <name>ColorHug Firmware</name>
   <summary>Firmware for the ColorHug Colorimeter</summary>
   <description>

@@ -57,6 +57,7 @@ as_app_parse_inf_file (AsApp *app,
 {
 	guint64 timestamp;
 	_cleanup_error_free_ GError *error_local = NULL;
+	_cleanup_free_ gchar *appstream_id = NULL;
 	_cleanup_free_ gchar *catalog_basename = NULL;
 	_cleanup_free_ gchar *class_guid = NULL;
 	_cleanup_free_ gchar *class_guid_unsafe = NULL;
@@ -65,7 +66,7 @@ as_app_parse_inf_file (AsApp *app,
 	_cleanup_free_ gchar *filename_full = NULL;
 	_cleanup_free_ gchar *firmware_basename = NULL;
 	_cleanup_free_ gchar *guid = NULL;
-	_cleanup_free_ gchar *id = NULL;
+	_cleanup_free_ gchar *provide_guid = NULL;
 	_cleanup_free_ gchar *location_checksum = NULL;
 	_cleanup_free_ gchar *name = NULL;
 	_cleanup_free_ gchar *srcpkg = NULL;
@@ -117,32 +118,50 @@ as_app_parse_inf_file (AsApp *app,
 	}
 	class_guid = as_app_parse_inf_sanitize_guid (class_guid_unsafe);
 	if (g_strcmp0 (class_guid, AS_APP_INF_CLASS_GUID_FIRMWARE) != 0) {
-		g_debug ("ClassGuid is '%s', not '%s', so using as an ID",
-			 class_guid, AS_APP_INF_CLASS_GUID_FIRMWARE);
-		as_app_set_id (app, class_guid);
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "ClassGuid is invalid, expected %s, got %s",
+			     AS_APP_INF_CLASS_GUID_FIRMWARE,
+			     class_guid);
+		return FALSE;
+	}
+
+	/* get the ESRT GUID */
+	guid = g_key_file_get_string (kf,
+				      "Firmware_AddReg",
+				      "HKR_FirmwareId",
+				      NULL);
+	if (guid == NULL) {
+		g_set_error_literal (error,
+				     AS_APP_ERROR,
+				     AS_APP_ERROR_INVALID_TYPE,
+				     "HKR->FirmwareId missing from [Firmware_AddReg]");
+		return FALSE;
+	}
+
+	/* add the GUID as a provide */
+	provide_guid = as_app_parse_inf_sanitize_guid (guid);
+	if (provide_guid != NULL) {
+		provide = as_provide_new ();
+		as_provide_set_kind (provide, AS_PROVIDE_KIND_FIRMWARE_FLASHED);
+		as_provide_set_value (provide, provide_guid);
+		as_app_add_provide (AS_APP (app), provide);
+	}
+
+	/* get the ID, which might be missing */
+	appstream_id = g_key_file_get_string (kf, "Version", "AppstreamId", NULL);
+	if (appstream_id != NULL) {
+		g_debug ("Using AppstreamId as ID");
+		as_app_set_id (app, appstream_id);
 	} else {
-		/* get the ESRT GUID */
-		guid = g_key_file_get_string (kf,
-					      "Firmware_AddReg",
-					      "HKR_FirmwareId",
-					      NULL);
-		if (guid == NULL) {
-			g_set_error_literal (error,
-					     AS_APP_ERROR,
-					     AS_APP_ERROR_INVALID_TYPE,
-					     "HKR->FirmwareId missing from [Firmware_AddReg]");
-			return FALSE;
-		}
-		id = as_app_parse_inf_sanitize_guid (guid);
-		as_app_set_id (app, id);
+		as_app_set_id (app, provide_guid);
 	}
 
 	/* get vendor */
 	vendor = g_key_file_get_string (kf, "Version", "Provider", NULL);
 	if (vendor == NULL)
 		vendor = g_key_file_get_string (kf, "Version", "MfgName", NULL);
-	if (vendor == NULL) /* FIXME: is a hack */
-		vendor = g_key_file_get_string (kf, "Strings", "Provider", NULL);
 	if (vendor != NULL)
 		as_app_set_developer_name (app, NULL, vendor);
 

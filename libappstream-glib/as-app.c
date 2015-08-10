@@ -2192,6 +2192,20 @@ void
 as_app_add_provide (AsApp *app, AsProvide *provide)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsProvide *tmp;
+	guint i;
+
+	/* check for duplicates */
+	if (priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) {
+		for (i = 0; i < priv->provides->len; i++) {
+			tmp = g_ptr_array_index (priv->provides, i);
+			if (as_provide_get_kind (tmp) == as_provide_get_kind (provide) &&
+			    g_strcmp0 (as_provide_get_value (tmp),
+				       as_provide_get_value (provide)) == 0)
+				return;
+		}
+	}
+
 	g_ptr_array_add (priv->provides, g_object_ref (provide));
 }
 
@@ -2656,6 +2670,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	AsAppPrivate *papp = GET_PRIVATE (app);
 	AsBundle *bundle;
 	AsScreenshot *ss;
+	AsProvide *pr;
 	const gchar *tmp;
 	const gchar *key;
 	gboolean overwrite;
@@ -2735,6 +2750,12 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	for (i = 0; i < priv->screenshots->len; i++) {
 		ss = g_ptr_array_index (priv->screenshots, i);
 		as_app_add_screenshot (app, ss);
+	}
+
+	/* provides */
+	for (i = 0; i < priv->provides->len; i++) {
+		pr = g_ptr_array_index (priv->provides, i);
+		as_app_add_provide (app, pr);
 	}
 
 	/* icons */

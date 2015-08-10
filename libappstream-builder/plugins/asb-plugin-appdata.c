@@ -126,6 +126,28 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				 as_app_get_id (AS_APP (app)));
 	}
 
+	/* overwrite the app ID with the metadata one for firmware */
+	if (as_app_get_id_kind (appdata) == AS_ID_KIND_FIRMWARE) {
+		old = as_app_get_id (AS_APP (app));
+		if (old != NULL) {
+			asb_package_log (asb_app_get_package (app),
+					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+					 "renaming ID %s -> %s",
+					 old, as_app_get_id (AS_APP (appdata)));
+		}
+		as_app_set_id (AS_APP (app), as_app_get_id (AS_APP (appdata)));
+	}
+
+	/* add provide if missing */
+	if (as_app_get_id_kind (appdata) == AS_ID_KIND_FIRMWARE &&
+	    as_utils_guid_is_valid (tmp)) {
+		_cleanup_object_unref_ AsProvide *provide = NULL;
+		provide = as_provide_new ();
+		as_provide_set_kind (provide, AS_PROVIDE_KIND_FIRMWARE_FLASHED);
+		as_provide_set_value (provide, tmp);
+		as_app_add_provide (AS_APP (app), provide);
+	}
+
 	/* check license */
 	tmp = as_app_get_metadata_license (appdata);
 	if (tmp == NULL) {
@@ -252,11 +274,23 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		as_app_add_metadata (AS_APP (app), key, tmp);
 	}
 
+	/* add developer name */
+	tmp = as_app_get_developer_name (AS_APP (appdata), NULL);
+	if (tmp != NULL)
+		as_app_set_developer_name (AS_APP (app), NULL, tmp);
+
 	/* add releases */
 	array = as_app_get_releases (appdata);
 	for (i = 0; i < array->len; i++) {
 		AsRelease *rel = g_ptr_array_index (array, i);
 		as_app_add_release (AS_APP (app), rel);
+	}
+
+	/* add provides */
+	array = as_app_get_provides (appdata);
+	for (i = 0; i < array->len; i++) {
+		AsProvide *pr = g_ptr_array_index (array, i);
+		as_app_add_provide (AS_APP (app), pr);
 	}
 
 	/* log updateinfo */

@@ -1106,10 +1106,13 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 				     "<id> has invalid type attribute");
 
 		break;
+	case AS_ID_KIND_FIRMWARE:
+		if (g_str_has_suffix (id, ".firmware"))
+			ret = TRUE;
+		break;
 	case AS_ID_KIND_FONT:
 	case AS_ID_KIND_ADDON:
 	case AS_ID_KIND_SOURCE:
-	case AS_ID_KIND_FIRMWARE:
 		/* anything goes */
 		ret = TRUE;
 	default:
