@@ -4259,12 +4259,16 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/utils{install-filename}", as_test_utils_install_filename_func);
 	g_test_add_func ("/AppStream/utils{vercmp}", as_test_utils_vercmp_func);
-	g_test_add_func ("/AppStream/monitor{dir}", as_test_monitor_dir_func);
-	g_test_add_func ("/AppStream/monitor{file}", as_test_monitor_file_func);
+	if (g_test_slow ()) {
+		g_test_add_func ("/AppStream/monitor{dir}", as_test_monitor_dir_func);
+		g_test_add_func ("/AppStream/monitor{file}", as_test_monitor_file_func);
+	}
 	g_test_add_func ("/AppStream/yaml", as_test_yaml_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
-	g_test_add_func ("/AppStream/store{auto-reload-dir}", as_test_store_auto_reload_dir_func);
-	g_test_add_func ("/AppStream/store{auto-reload-file}", as_test_store_auto_reload_file_func);
+	if (g_test_slow ()) {
+		g_test_add_func ("/AppStream/store{auto-reload-dir}", as_test_store_auto_reload_dir_func);
+		g_test_add_func ("/AppStream/store{auto-reload-file}", as_test_store_auto_reload_file_func);
+	}
 	g_test_add_func ("/AppStream/store{demote}", as_test_store_demote_func);
 	g_test_add_func ("/AppStream/store{merges}", as_test_store_merges_func);
 	g_test_add_func ("/AppStream/store{merges-local}", as_test_store_merges_local_func);
