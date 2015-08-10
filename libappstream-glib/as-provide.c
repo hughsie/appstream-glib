@@ -109,8 +109,8 @@ as_provide_kind_from_string (const gchar *kind)
 		return AS_PROVIDE_KIND_PYTHON2;
 	if (g_strcmp0 (kind, "python3") == 0)
 		return AS_PROVIDE_KIND_PYTHON3;
-	if (g_strcmp0 (kind, "dbus") == 0)
-		return AS_PROVIDE_KIND_DBUS;
+	if (g_strcmp0 (kind, "dbus-session") == 0)
+		return AS_PROVIDE_KIND_DBUS_SESSION;
 	if (g_strcmp0 (kind, "dbus-system") == 0)
 		return AS_PROVIDE_KIND_DBUS_SYSTEM;
 	return AS_PROVIDE_KIND_UNKNOWN;
@@ -143,7 +143,7 @@ as_provide_kind_to_string (AsProvideKind kind)
 		return "python2";
 	if (kind == AS_PROVIDE_KIND_PYTHON3)
 		return "python3";
-	if (kind == AS_PROVIDE_KIND_DBUS)
+	if (kind == AS_PROVIDE_KIND_DBUS_SESSION)
 		return "dbus";
 	if (kind == AS_PROVIDE_KIND_DBUS_SYSTEM)
 		return "dbus-system";
@@ -238,7 +238,7 @@ as_provide_node_insert (AsProvide *provide, GNode *parent, AsNodeContext *ctx)
 	switch (priv->kind) {
 	case AS_PROVIDE_KIND_UNKNOWN:
 		break;
-	case AS_PROVIDE_KIND_DBUS:
+	case AS_PROVIDE_KIND_DBUS_SESSION:
 		n = as_node_insert (parent, "dbus",
 				    priv->value,
 				    AS_NODE_INSERT_FLAG_NONE,
@@ -300,10 +300,17 @@ as_provide_node_parse (AsProvide *provide, GNode *node,
 		       AsNodeContext *ctx, GError **error)
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
-	priv->kind = as_provide_kind_from_string (as_node_get_name (node));
-	if (priv->kind == AS_PROVIDE_KIND_DBUS &&
-	    g_strcmp0 (as_node_get_attribute (node, "type"), "system") == 0)
-		priv->kind = AS_PROVIDE_KIND_DBUS_SYSTEM;
+
+	if (g_strcmp0 (as_node_get_name (node), "dbus") == 0) {
+		const gchar *tmp;
+		tmp = as_node_get_attribute (node, "type");
+		if (g_strcmp0 (tmp, "system") == 0)
+			priv->kind = AS_PROVIDE_KIND_DBUS_SYSTEM;
+		else if (g_strcmp0 (tmp, "session") == 0)
+			priv->kind = AS_PROVIDE_KIND_DBUS_SESSION;
+	} else {
+		priv->kind = as_provide_kind_from_string (as_node_get_name (node));
+	}
 	g_free (priv->value);
 	priv->value = as_node_take_data (node);
 	return TRUE;

@@ -92,7 +92,7 @@ asb_plugin_process_dbus (AsbApp *app,
 	/* add provide */
 	provide = as_provide_new ();
 	as_provide_set_kind (provide, is_system ? AS_PROVIDE_KIND_DBUS_SYSTEM :
-						  AS_PROVIDE_KIND_DBUS);
+						  AS_PROVIDE_KIND_DBUS_SESSION);
 	as_provide_set_value (provide, name);
 	as_app_add_provide (AS_APP (app), provide);
 	return TRUE;
