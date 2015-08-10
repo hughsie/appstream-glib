@@ -3210,6 +3210,26 @@ as_test_store_speed_desktop_func (void)
 }
 
 static void
+as_test_utils_guid_func (void)
+{
+	_cleanup_free_ gchar *guid = NULL;
+
+	/* invalid */
+	g_assert (!as_utils_guid_is_valid (NULL));
+	g_assert (!as_utils_guid_is_valid (""));
+	g_assert (!as_utils_guid_is_valid ("1ff60ab2-3905-06a1-b476"));
+	g_assert (!as_utils_guid_is_valid ("1ff60ab2-XXXX-XXXX-XXXX-0371f00c9e9b"));
+	g_assert (!as_utils_guid_is_valid (" 1ff60ab2-3905-06a1-b476-0371f00c9e9b"));
+
+	/* valid */
+	g_assert (as_utils_guid_is_valid ("1ff60ab2-3905-06a1-b476-0371f00c9e9b"));
+
+	/* make valid */
+	guid = as_utils_guid_from_string ("0x8086:0x0406");
+	g_assert_cmpstr (guid, ==, "1ff60ab2-3905-06a1-b476-0371f00c9e9b");
+}
+
+static void
 as_test_utils_icons_func (void)
 {
 	gchar *tmp;
@@ -4197,6 +4217,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{intltool}", as_test_node_intltool_func);
 	g_test_add_func ("/AppStream/node{sort}", as_test_node_sort_func);
 	g_test_add_func ("/AppStream/utils", as_test_utils_func);
+	g_test_add_func ("/AppStream/utils{guid}", as_test_utils_guid_func);
 	g_test_add_func ("/AppStream/utils{icons}", as_test_utils_icons_func);
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/utils{install-filename}", as_test_utils_install_filename_func);

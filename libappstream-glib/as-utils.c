@@ -1513,3 +1513,75 @@ as_ptr_array_find_string (GPtrArray *array, const gchar *value)
 	}
 	return NULL;
 }
+
+/**
+ * as_utils_guid_is_xdigit:
+ **/
+static gboolean
+as_utils_guid_is_xdigit (const gchar *str)
+{
+	guint i;
+	for (i = 0; str[i] != '\0'; i++) {
+		if (!g_ascii_isxdigit (str[i]))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
+ * as_utils_guid_is_valid:
+ * @guid: string to check
+ *
+ * Checks the source string is a valid string GUID descriptor.
+ *
+ * Returns: %TRUE if @guid was a valid GUID, %FALSE otherwise
+ *
+ * Since: 0.5.0
+ **/
+gboolean
+as_utils_guid_is_valid (const gchar *guid)
+{
+	_cleanup_strv_free_ gchar **split = NULL;
+	if (guid == NULL)
+		return FALSE;
+	split = g_strsplit (guid, "-", -1);
+	if (g_strv_length (split) != 5)
+		return FALSE;
+	if (strlen (split[0]) != 8 || !as_utils_guid_is_xdigit (split[0]))
+		return FALSE;
+	if (strlen (split[1]) != 4 || !as_utils_guid_is_xdigit (split[1]))
+		return FALSE;
+	if (strlen (split[2]) != 4 || !as_utils_guid_is_xdigit (split[2]))
+		return FALSE;
+	if (strlen (split[3]) != 4 || !as_utils_guid_is_xdigit (split[3]))
+		return FALSE;
+	if (strlen (split[4]) != 12 || !as_utils_guid_is_xdigit (split[4]))
+		return FALSE;
+	return TRUE;
+}
+
+/**
+ * as_utils_guid_from_string:
+ * @str: A source string to use as a key
+ *
+ * Returns a GUID for a given string. This uses SHA1 and some string
+ * modification so even small differences in the @str will produce radically
+ * different GUID return values.
+ *
+ * Returns: A new GUID, or %NULL if the string was invalid
+ *
+ * Since: 0.5.0
+ **/
+gchar *
+as_utils_guid_from_string (const gchar *str)
+{
+	gchar *tmp;
+	tmp = g_compute_checksum_for_string (G_CHECKSUM_SHA1, str, -1);
+	tmp[8] = '-';
+	tmp[13] = '-';
+	tmp[18] = '-';
+	tmp[23] = '-';
+	tmp[36] = '\0';
+	g_assert (as_utils_guid_is_valid (tmp));
+	return tmp;
+}
