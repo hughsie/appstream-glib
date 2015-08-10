@@ -89,8 +89,6 @@ void		 asb_app_add_requires_appdata	(AsbApp		*app,
 						 G_GNUC_PRINTF(2,3);
 void		 asb_app_set_requires_appdata	(AsbApp		*app,
 						 gboolean	 requires_appdata);
-void		 asb_app_add_pixbuf		(AsbApp		*app,
-						 GdkPixbuf	*pixbuf);
 
 GPtrArray	*asb_app_get_requires_appdata	(AsbApp		*app);
 AsbPackage	*asb_app_get_package		(AsbApp		*app);
