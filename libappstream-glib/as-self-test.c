@@ -3491,21 +3491,6 @@ as_test_utils_func (void)
 	g_assert_cmpstr (tmp, ==, NULL);
 	g_clear_error (&error);
 
-	/* invalid URLs */
-	ret = as_utils_check_url_exists ("hello dave", 1, &error);
-	g_assert (!ret);
-	g_assert (error != NULL);
-	g_clear_error (&error);
-	ret = as_utils_check_url_exists ("http://www.bbc.co.uk/notgoingtoexist", 1, &error);
-	g_assert (!ret);
-	g_assert (error != NULL);
-	g_clear_error (&error);
-
-	/* valid URLs */
-	//ret = as_utils_check_url_exists ("http://www.bbc.co.uk/", &error);
-	//g_assert (ret);
-	//g_assert_no_error (error);
-
 	/* valid tokens */
 	g_assert (as_utils_search_token_valid ("battery"));
 	g_assert (!as_utils_search_token_valid ("and"));

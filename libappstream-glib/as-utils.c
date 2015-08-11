@@ -34,7 +34,6 @@
 
 #include <fnmatch.h>
 #include <string.h>
-#include <libsoup/soup.h>
 #include <archive_entry.h>
 #include <archive.h>
 #include <stdlib.h>
@@ -644,75 +643,6 @@ as_utils_is_spdx_license (const gchar *license)
 			continue;
 		if (g_strcmp0 (tokens[i], "|") == 0)
 			continue;
-		return FALSE;
-	}
-	return TRUE;
-}
-
-/**
- * as_utils_check_url_exists:
- * @url: the URL to check.
- * @timeout: the timeout in seconds.
- * @error: A #GError or %NULL
- *
- * Checks to see if a URL is reachable.
- *
- * Returns: %TRUE if the URL was reachable and pointed to a non-zero-length file.
- *
- * Since: 0.1.5
- **/
-gboolean
-as_utils_check_url_exists (const gchar *url, guint timeout, GError **error)
-{
-	_cleanup_object_unref_ SoupMessage *msg = NULL;
-	_cleanup_object_unref_ SoupSession *session = NULL;
-	_cleanup_uri_unref_ SoupURI *base_uri = NULL;
-
-	/* GET file */
-	base_uri = soup_uri_new (url);
-	if (base_uri == NULL) {
-		g_set_error_literal (error,
-				     AS_NODE_ERROR,
-				     AS_NODE_ERROR_FAILED,
-				     "URL not valid");
-		return FALSE;
-	}
-	msg = soup_message_new_from_uri (SOUP_METHOD_GET, base_uri);
-	if (msg == NULL) {
-		g_set_error_literal (error,
-				     AS_NODE_ERROR,
-				     AS_NODE_ERROR_FAILED,
-				     "Failed to setup message");
-		return FALSE;
-	}
-	session = soup_session_sync_new_with_options (SOUP_SESSION_USER_AGENT,
-						      "libappstream-glib",
-						      SOUP_SESSION_TIMEOUT,
-						      timeout,
-						      NULL);
-	if (session == NULL) {
-		g_set_error_literal (error,
-				     AS_NODE_ERROR,
-				     AS_NODE_ERROR_FAILED,
-				     "Failed to set up networking");
-		return FALSE;
-	}
-
-	/* send sync */
-	if (soup_session_send_message (session, msg) != SOUP_STATUS_OK) {
-		g_set_error_literal (error,
-				     AS_NODE_ERROR,
-				     AS_NODE_ERROR_FAILED,
-				     msg->reason_phrase);
-		return FALSE;
-	}
-
-	/* check if it's a zero sized file */
-	if (msg->response_body->length == 0) {
-		g_set_error (error,
-			     AS_NODE_ERROR,
-			     AS_NODE_ERROR_FAILED,
-			     "Returned a zero length file");
 		return FALSE;
 	}
 	return TRUE;
