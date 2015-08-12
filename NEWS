@@ -1,3 +1,25 @@
+Version 0.5.0
+~~~~~~~~~~~~~
+Released: 2015-08-12
+
+Notes:
+ - Remove some deprecated API which bumps soname (Richard Hughes)
+ - Drop the unused _len arguments on many functions (Richard Hughes)
+
+New Features:
+ - Add AsChecksum (Richard Hughes)
+ - Add as_release_vercmp() (Richard Hughes)
+ - Add support for the flashed firmware provide kind (Richard Hughes)
+ - Add two functions from fwupd for checking GUID strings (Richard Hughes)
+
+Bugfixes:
+ - Emit the AsStore::changed signal if files or directories change (Richard Hughes)
+ - Find the application in a store by the provide value (Richard Hughes)
+ - Make the DriverVer in the .inf file optional (Richard Hughes)
+ - Only add the HiDPI kudo for desktop applications using stock icons (Richard Hughes)
+ - Remove support for AppStream 0.8 and lower (Richard Hughes)
+ - Show a better error message when there's not enough text (Kalev Lember)
+
 Version 0.4.1
 ~~~~~~~~~~~~~
 Released: 2015-07-20
