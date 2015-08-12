@@ -1300,7 +1300,7 @@ as_utils_search_token_valid (const gchar *token)
 {
 	guint i;
 	const gchar *blacklist[] = {
-		"and", "the", "desktop", "application", "for", "you", "your",
+		"and", "the", "application", "for", "you", "your",
 		"with", "can", "are", "from", "that", "use", "allows", "also",
 		"this", "other", "all", "using", "has", "some", "like", "them",
 		"well", "not", "using", "not", "but", "set", "its", "into",

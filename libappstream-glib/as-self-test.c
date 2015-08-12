@@ -3080,6 +3080,7 @@ as_test_store_addons_func (void)
 
 	/* check we can search for token from the addon */
 	g_assert_cmpint (as_app_search_matches (app, "xtest"), >, 0);
+	g_assert_cmpint (as_app_search_matches (app, "eclipse-php"), >, 0);
 
 	/* check it marshals back to the same XML */
 	str = as_store_to_xml (store, 0);

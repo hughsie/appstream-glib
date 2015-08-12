@@ -4000,8 +4000,8 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 	guint j;
 
 	/* add all the data we have */
-	if (priv->id != NULL)
-		as_app_add_tokens (app, priv->id, "C", 100);
+	if (priv->id_filename != NULL)
+		as_app_add_tokens (app, priv->id_filename, "C", 100);
 	locales = g_get_language_names ();
 	for (i = 0; locales[i] != NULL; i++) {
 		if (g_str_has_suffix (locales[i], ".UTF-8"))
