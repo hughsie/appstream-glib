@@ -1078,7 +1078,7 @@ as_node_set_data (GNode *node,
 void
 as_node_set_comment (GNode *node, const gchar *comment)
 {
-	return as_node_add_attribute (node, "@comment", comment);
+	as_node_add_attribute (node, "@comment", comment);
 }
 
 /**
