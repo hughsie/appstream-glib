@@ -636,6 +636,14 @@ as_utils_is_spdx_license (const gchar *license)
 	guint i;
 	_cleanup_strv_free_ gchar **tokens = NULL;
 
+	/* no license information whatsoever */
+	if (g_strcmp0 (license, "NONE") == 0)
+		return TRUE;
+
+	/* creator has intentionally provided no information */
+	if (g_strcmp0 (license, "NOASSERTION") == 0)
+		return TRUE;
+
 	tokens = as_utils_spdx_license_tokenize (license);
 	for (i = 0; tokens[i] != NULL; i++) {
 		if (tokens[i][0] == '@') {
