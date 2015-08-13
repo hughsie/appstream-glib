@@ -349,6 +349,10 @@ as_utils_is_spdx_license_id (const gchar *license_id)
 	_cleanup_bytes_unref_ GBytes *data = NULL;
 	_cleanup_free_ gchar *key = NULL;
 
+	/* this is used to map non-SPDX licence-ids to legitimate values */
+	if (g_str_has_prefix (license_id, "LicenseRef-"))
+		return TRUE;
+
 	/* load the readonly data section and look for the icon name */
 	data = g_resource_lookup_data (as_get_resource (),
 				       "/org/freedesktop/appstream-glib/as-license-ids.txt",
@@ -475,6 +479,7 @@ as_utils_spdx_license_tokenize_drop (AsUtilsSpdxHelper *helper)
 		{ "GFDL",	"GFDL-1.3" },
 		{ "GPL-2",	"GPL-2.0" },
 		{ "GPL-3",	"GPL-3.0" },
+		{ "proprietary", "LicenseRef-proprietary" },
 		{ NULL, NULL } };
 
 	/* nothing from last time */

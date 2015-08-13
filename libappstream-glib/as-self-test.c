@@ -3414,6 +3414,7 @@ as_test_utils_spdx_token_func (void)
 
 	/* SPDX strings */
 	g_assert (as_utils_is_spdx_license ("CC0"));
+	g_assert (as_utils_is_spdx_license ("LicenseRef-proprietary"));
 	g_assert (as_utils_is_spdx_license ("CC0 and GFDL-1.3"));
 	g_assert (as_utils_is_spdx_license ("CC0 AND GFDL-1.3"));
 	g_assert (!as_utils_is_spdx_license ("CC0 dave"));
