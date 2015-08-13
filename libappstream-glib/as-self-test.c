@@ -3424,7 +3424,6 @@ as_test_utils_spdx_token_func (void)
 static void
 as_test_utils_func (void)
 {
-	gboolean ret;
 	gchar *tmp;
 	gchar **tokens;
 	GError *error = NULL;
