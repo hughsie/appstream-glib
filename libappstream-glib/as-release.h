@@ -68,7 +68,6 @@ gint		 as_release_vercmp		(AsRelease	*rel1,
 
 /* getters */
 const gchar	*as_release_get_version		(AsRelease	*release);
-const gchar	*as_release_get_filename	(AsRelease	*release);
 guint64		 as_release_get_timestamp	(AsRelease	*release);
 const gchar	*as_release_get_description	(AsRelease	*release,
 						 const gchar	*locale);
