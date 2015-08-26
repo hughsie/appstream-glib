@@ -40,10 +40,7 @@
  * as_builder_search_path:
  **/
 static gboolean
-as_builder_search_path (GPtrArray *array,
-			const gchar *path,
-			GHashTable *filter,
-			GError **error)
+as_builder_search_path (GPtrArray *array, const gchar *path, GError **error)
 {
 	const gchar *filename;
 	_cleanup_dir_close_ GDir *dir = NULL;
@@ -53,14 +50,9 @@ as_builder_search_path (GPtrArray *array,
 		return FALSE;
 	while ((filename = g_dir_read_name (dir)) != NULL) {
 		_cleanup_free_ gchar *tmp = NULL;
-
-		/* not in filter */
-		if (filter != NULL && g_hash_table_lookup (filter, filename) == NULL)
-			continue;
-
 		tmp = g_build_filename (path, filename, NULL);
 		if (g_file_test (tmp, G_FILE_TEST_IS_DIR)) {
-			if (!as_builder_search_path (array, tmp, filter, error))
+			if (!as_builder_search_path (array, tmp, error))
 				return FALSE;
 		} else {
 			g_ptr_array_add (array, g_strdup (tmp));
@@ -152,7 +144,6 @@ main (int argc, char **argv)
 	_cleanup_error_free_ GError *error = NULL;
 	_cleanup_free_ gchar *basename = NULL;
 	_cleanup_free_ gchar *cache_dir = NULL;
-	_cleanup_free_ gchar *filter_fn = NULL;
 	_cleanup_free_ gchar *log_dir = NULL;
 	_cleanup_free_ gchar *icons_dir = NULL;
 	_cleanup_free_ gchar *old_metadata = NULL;
@@ -161,7 +152,6 @@ main (int argc, char **argv)
 	_cleanup_free_ gchar *output_dir = NULL;
 	_cleanup_free_ gchar *temp_dir = NULL;
 	_cleanup_free_ gchar **veto_ignore = NULL;
-	_cleanup_hashtable_unref_ GHashTable *filter = NULL;
 	_cleanup_ptrarray_unref_ GPtrArray *packages = NULL;
 	_cleanup_strv_free_ gchar **packages_dirs = NULL;
 	_cleanup_timer_destroy_ GTimer *timer = NULL;
@@ -223,9 +213,6 @@ main (int argc, char **argv)
 		{ "old-metadata", '\0', 0, G_OPTION_ARG_FILENAME, &old_metadata,
 			/* TRANSLATORS: command line option */
 			_("Set the old metadata location"), "DIR" },
-		{ "filter", '\0', 0, G_OPTION_ARG_FILENAME, &filter_fn,
-			/* TRANSLATORS: command line option */
-			_("Sets a filter file containing valid filenames"), "FILE" },
 		{ "veto-ignore", '\0', 0, G_OPTION_ARG_STRING_ARRAY, &veto_ignore,
 			/* TRANSLATORS: command line option */
 			_("Ignore certain types of veto"), "NAME" },
@@ -361,25 +348,6 @@ main (int argc, char **argv)
 		goto out;
 	}
 
-	/* parse filter file */
-	if (filter_fn != NULL) {
-		_cleanup_strv_free_ gchar **lines = NULL;
-		_cleanup_free_ gchar *filter_data = NULL;
-		filter = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-		if (!g_file_get_contents (filter_fn, &filter_data, NULL, &error)) {
-			/* TRANSLATORS: error message */
-			g_warning ("%s: %s", _("Failed to load filter file"), error->message);
-			retval = EXIT_FAILURE;
-			goto out;
-		}
-		lines = g_strsplit (filter_data, "\n", -1);
-		for (i = 0; lines[i] != NULL; i++) {
-			g_hash_table_insert (filter,
-					     g_strdup (lines[i]),
-					     GUINT_TO_POINTER (1));
-		}
-	}
-
 	/* scan each package */
 	packages = g_ptr_array_new_with_free_func (g_free);
 	if (argc == 1 && ostree_repo == NULL) {
@@ -392,10 +360,7 @@ main (int argc, char **argv)
 			goto out;
 		}
 		for (i = 0; packages_dirs[i] != NULL; i++) {
-			if (!as_builder_search_path (packages,
-						     packages_dirs[i],
-						     filter,
-						     &error)) {
+			if (!as_builder_search_path (packages, packages_dirs[i], &error)) {
 				/* TRANSLATORS: error message */
 				g_warning ("%s: %s", _("Failed to open packages"), error->message);
 				retval = EXIT_FAILURE;
