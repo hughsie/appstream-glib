@@ -43,8 +43,7 @@
 static gchar *
 asb_test_get_filename (const gchar *filename)
 {
-	char full_tmp[PATH_MAX];
-	gchar *tmp;
+	_cleanup_free_libc_ gchar *tmp = NULL;
 	_cleanup_free_ gchar *path = NULL;
 
 	/* try the source then the destdir */
@@ -53,10 +52,11 @@ asb_test_get_filename (const gchar *filename)
 		g_free (path);
 		path = g_build_filename (TESTDIRBUILD, filename, NULL);
 	}
-	tmp = realpath (path, full_tmp);
+	/* glibc allocates a buffer */
+	tmp = realpath (path, NULL);
 	if (tmp == NULL)
 		return NULL;
-	return g_strdup (full_tmp);
+	return g_strdup (tmp);
 }
 
 /**

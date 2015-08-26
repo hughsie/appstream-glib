@@ -29,6 +29,8 @@
 #include "as-node.h"
 #include "as-yaml.h"
 
+#include <stdlib.h>
+
 G_BEGIN_DECLS
 
 #define GS_DEFINE_CLEANUP_FUNCTION(Type, name, func) \
@@ -76,10 +78,13 @@ GS_DEFINE_CLEANUP_FUNCTION(char**, gs_local_strfreev, g_strfreev)
 GS_DEFINE_CLEANUP_FUNCTION(GList*, gs_local_free_list, g_list_free)
 GS_DEFINE_CLEANUP_FUNCTION(void*, gs_local_free, g_free)
 
+GS_DEFINE_CLEANUP_FUNCTION(void*, gs_local_free_libc, free)
+
 #define _cleanup_date_time_unref_ __attribute__ ((cleanup(gs_local_date_time_unref)))
 #define _cleanup_dir_close_ __attribute__ ((cleanup(gs_local_dir_close)))
 #define _cleanup_timer_destroy_ __attribute__ ((cleanup(gs_local_destroy_timer)))
 #define _cleanup_free_ __attribute__ ((cleanup(gs_local_free)))
+#define _cleanup_free_libc_ __attribute__ ((cleanup(gs_local_free_libc)))
 #define _cleanup_checksum_free_ __attribute__ ((cleanup(gs_local_checksum_free)))
 #define _cleanup_error_free_ __attribute__ ((cleanup(gs_local_free_error)))
 #define _cleanup_list_free_ __attribute__ ((cleanup(gs_local_free_list)))
