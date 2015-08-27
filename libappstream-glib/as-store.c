@@ -1208,6 +1208,11 @@ as_store_from_xml (AsStore *store,
 	_cleanup_node_unref_ GNode *root = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
+	g_return_val_if_fail (data != NULL, FALSE);
+
+	/* ignore empty file */
+	if (data[0] == '\0')
+		return TRUE;
 
 	root = as_node_from_xml (data,
 				 AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,

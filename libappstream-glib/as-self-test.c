@@ -2836,6 +2836,19 @@ as_test_store_merges_local_func (void)
 }
 
 static void
+as_test_store_empty_func (void)
+{
+	gboolean ret;
+	_cleanup_error_free_ GError *error = NULL;
+	_cleanup_object_unref_ AsStore *store = NULL;
+
+	store = as_store_new ();
+	ret = as_store_from_xml (store, "", NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+}
+
+static void
 as_test_store_func (void)
 {
 	AsApp *app;
@@ -4252,6 +4265,7 @@ main (int argc, char **argv)
 	}
 	g_test_add_func ("/AppStream/yaml", as_test_yaml_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
+	g_test_add_func ("/AppStream/store{empty}", as_test_store_empty_func);
 	if (g_test_slow ()) {
 		g_test_add_func ("/AppStream/store{auto-reload-dir}", as_test_store_auto_reload_dir_func);
 		g_test_add_func ("/AppStream/store{auto-reload-file}", as_test_store_auto_reload_file_func);
