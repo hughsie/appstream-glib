@@ -350,11 +350,6 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			appdata_filename = g_strdup_printf ("%s/usr/share/appdata/%s.appdata.xml",
 							    tmpdir, appdata_basename);
 		}
-		if (!g_file_test (appdata_filename, G_FILE_TEST_EXISTS)) {
-			g_free (appdata_filename);
-			appdata_filename = g_strdup_printf ("%s/usr/share/appdata-extra/%s.appdata.xml",
-							    tmpdir, appdata_basename);
-		}
 	}
 
 	/* any installed appdata file */
