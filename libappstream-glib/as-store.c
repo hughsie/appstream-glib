@@ -530,8 +530,11 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "totem.desktop",		"org.gnome.Totem.desktop" },
 
 		/* KDE */
+		{ "ark.desktop",		"org.kde.ark.desktop" },
 		{ "blinken.desktop",		"org.kde.blinken.desktop" },
 		{ "cantor.desktop",		"org.kde.cantor.desktop" },
+		{ "dolphin.desktop",		"org.kde.dolphin.desktop" },
+		{ "dragonplayer.desktop",	"org.kde.dragonplayer.desktop" },
 		{ "filelight.desktop",		"org.kde.filelight.desktop" },
 		{ "gwenview.desktop",		"org.kde.gwenview.desktop" },
 		{ "kalgebra.desktop",		"org.kde.kalgebra.desktop" },
@@ -540,12 +543,15 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "kbruch.desktop",		"org.kde.kbruch.desktop" },
 		{ "kgeography.desktop",		"org.kde.kgeography.desktop" },
 		{ "khangman.desktop",		"org.kde.khangman.desktop" },
+		{ "kig.desktop",		"org.kde.kig.desktop" },
+		{ "kiriki.desktop",		"org.kde.kiriki.desktop" },
 		{ "kiten.desktop",		"org.kde.kiten.desktop" },
 		{ "klettres.desktop",		"org.kde.klettres.desktop" },
 		{ "klipper.desktop",		"org.kde.klipper.desktop" },
 		{ "kmplot.desktop",		"org.kde.kmplot.desktop" },
 		{ "kollision.desktop",		"org.kde.kollision.desktop" },
 		{ "konsole.desktop",		"org.kde.konsole.desktop" },
+		{ "kshisen.desktop",		"org.kde.kshisen.desktop" },
 		{ "kstars.desktop",		"org.kde.kstars.desktop" },
 		{ "ktp-log-viewer.desktop",	"org.kde.ktplogviewer.desktop" },
 		{ "kturtle.desktop",		"org.kde.kturtle.desktop" },
@@ -553,6 +559,8 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "okteta.desktop",		"org.kde.okteta.desktop" },
 		{ "parley.desktop",		"org.kde.parley.desktop" },
 		{ "partitionmanager.desktop",	"org.kde.PartitionManager.desktop" },
+		{ "picmi.desktop",		"org.kde.picmi.desktop" },
+		{ "rocs.desktop",		"org.kde.rocs.desktop" },
 		{ "step.desktop",		"org.kde.step.desktop" },
 
 		/* others */
