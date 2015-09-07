@@ -361,6 +361,10 @@ asb_package_rpm_add_release (AsbPackage *pkg,
 	if (tmp != NULL)
 		version = tmp + 1;
 
+	/* remove any version prefix */
+	if (version != NULL && version[0] == '-')
+		version = version + 1;
+
 	/* is version already in the database */
 	release = asb_package_get_release (pkg, version);
 	if (release != NULL) {
