@@ -499,6 +499,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "cheese.desktop",		"org.gnome.Cheese.desktop" },
 		{ "devhelp.desktop",		"org.gnome.Devhelp.desktop" },
 		{ "file-roller.desktop",	"org.gnome.FileRoller.desktop" },
+		{ "font-manager.desktop",	"org.gnome.FontManager.desktop" },
 		{ "gcalctool.desktop",		"gnome-calculator.desktop" },
 		{ "gedit.desktop",		"org.gnome.gedit.desktop" },
 		{ "glchess.desktop",		"gnome-chess.desktop" },
