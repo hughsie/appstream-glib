@@ -3071,7 +3071,7 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	g_autoptr(AsImage) im = NULL;
 	g_autoptr(AsScreenshot) ss = NULL;
 	_cleanup_object_unref_ SoupMessage *msg = NULL;
-	g_autoptr(SoupSession) session = NULL;
+	_cleanup_object_unref_ SoupSession *session = NULL;
 
 	/* fonts screenshots are auto-generated */
 	if (as_app_get_id_kind (app) == AS_ID_KIND_FONT) {
