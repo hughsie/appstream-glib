@@ -776,7 +776,11 @@ as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 		number_screenshots_min = 0;
 	}
 
-	/* metainfo and firmware do not require any screenshots */
+	/* firmware does not need screenshots */
+	if (as_app_get_id_kind (app) == AS_ID_KIND_FIRMWARE)
+		number_screenshots_min = 0;
+
+	/* metainfo and inf do not require any screenshots */
 	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO ||
 	    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_INF)
 		number_screenshots_min = 0;
