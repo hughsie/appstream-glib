@@ -34,13 +34,12 @@
 
 #include "as-problem.h"
 
-typedef struct _AsProblemPrivate	AsProblemPrivate;
-struct _AsProblemPrivate
+typedef struct
 {
 	AsProblemKind		 kind;
 	gchar			*message;
 	guint			 line_number;
-};
+} AsProblemPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsProblem, as_problem, G_TYPE_OBJECT)
 

@@ -41,14 +41,13 @@
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
-typedef struct _AsScreenshotPrivate	AsScreenshotPrivate;
-struct _AsScreenshotPrivate
+typedef struct
 {
 	AsScreenshotKind	 kind;
 	GHashTable		*captions;
 	GPtrArray		*images;
 	gint			 priority;
-};
+} AsScreenshotPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsScreenshot, as_screenshot, G_TYPE_OBJECT)
 

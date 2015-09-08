@@ -28,22 +28,10 @@
 
 #include <glib-object.h>
 
-#define AS_TYPE_CHECKSUM		(as_checksum_get_type())
-#define AS_CHECKSUM(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_CHECKSUM, AsChecksum))
-#define AS_CHECKSUM_CLASS(cls)		(G_TYPE_CHECK_CLASS_CAST((cls), AS_TYPE_CHECKSUM, AsChecksumClass))
-#define AS_IS_CHECKSUM(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), AS_TYPE_CHECKSUM))
-#define AS_IS_CHECKSUM_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), AS_TYPE_CHECKSUM))
-#define AS_CHECKSUM_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), AS_TYPE_CHECKSUM, AsChecksumClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsChecksum	AsChecksum;
-typedef struct _AsChecksumClass	AsChecksumClass;
-
-struct _AsChecksum
-{
-	GObject			parent;
-};
+#define AS_TYPE_CHECKSUM (as_checksum_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsChecksum, as_checksum, AS, CHECKSUM, GObject)
 
 struct _AsChecksumClass
 {
@@ -75,7 +63,6 @@ typedef enum {
 	AS_CHECKSUM_TARGET_LAST
 } AsChecksumTarget;
 
-GType		 as_checksum_get_type		(void);
 AsChecksum	*as_checksum_new		(void);
 AsChecksumTarget as_checksum_target_from_string	(const gchar	*target);
 const gchar	*as_checksum_target_to_string	(AsChecksumTarget target);

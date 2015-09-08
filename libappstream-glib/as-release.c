@@ -46,15 +46,14 @@
 #include "as-tag.h"
 #include "as-utils-private.h"
 
-typedef struct _AsReleasePrivate	AsReleasePrivate;
-struct _AsReleasePrivate
+typedef struct
 {
 	gchar			*version;
 	GHashTable		*descriptions;
 	guint64			 timestamp;
 	GPtrArray		*locations;
 	GPtrArray		*checksums;
-};
+} AsReleasePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsRelease, as_release, G_TYPE_OBJECT)
 

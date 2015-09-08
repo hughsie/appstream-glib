@@ -40,8 +40,7 @@
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
-typedef struct _AsIconPrivate	AsIconPrivate;
-struct _AsIconPrivate
+typedef struct
 {
 	AsIconKind		 kind;
 	gchar			*name;
@@ -53,7 +52,7 @@ struct _AsIconPrivate
 	guint			 height;
 	GdkPixbuf		*pixbuf;
 	GBytes			*data;
-};
+} AsIconPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsIcon, as_icon, G_TYPE_OBJECT)
 

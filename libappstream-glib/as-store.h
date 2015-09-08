@@ -32,22 +32,10 @@
 #include "as-app.h"
 #include "as-node.h"
 
-#define AS_TYPE_STORE		(as_store_get_type())
-#define AS_STORE(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_STORE, AsStore))
-#define AS_STORE_CLASS(cls)	(G_TYPE_CHECK_CLASS_CAST((cls), AS_TYPE_STORE, AsStoreClass))
-#define AS_IS_STORE(obj)	(G_TYPE_CHECK_INSTANCE_TYPE((obj), AS_TYPE_STORE))
-#define AS_IS_STORE_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), AS_TYPE_STORE))
-#define AS_STORE_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), AS_TYPE_STORE, AsStoreClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsStore		AsStore;
-typedef struct _AsStoreClass	AsStoreClass;
-
-struct _AsStore
-{
-	GObject			parent;
-};
+#define AS_TYPE_STORE (as_store_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsStore, as_store, AS, STORE, GObject)
 
 struct _AsStoreClass
 {
@@ -131,7 +119,6 @@ typedef enum {
 
 #define	AS_STORE_ERROR				as_store_error_quark ()
 
-GType		 as_store_get_type		(void);
 AsStore		*as_store_new			(void);
 GQuark		 as_store_error_quark		(void);
 

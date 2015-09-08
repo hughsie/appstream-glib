@@ -29,22 +29,10 @@
 #include <glib-object.h>
 #include <gio/gio.h>
 
-#define AS_TYPE_MONITOR			(as_monitor_get_type())
-#define AS_MONITOR(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_MONITOR, AsMonitor))
-#define AS_MONITOR_CLASS(cls)		(G_TYPE_CHECK_CLASS_CAST((cls), AS_TYPE_MONITOR, AsMonitorClass))
-#define AS_IS_MONITOR(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), AS_TYPE_MONITOR))
-#define AS_IS_MONITOR_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), AS_TYPE_MONITOR))
-#define AS_MONITOR_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), AS_TYPE_MONITOR, AsMonitorClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsMonitor	AsMonitor;
-typedef struct _AsMonitorClass	AsMonitorClass;
-
-struct _AsMonitor
-{
-	GObject			parent;
-};
+#define AS_TYPE_MONITOR (as_monitor_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsMonitor, as_monitor, AS, MONITOR, GObject)
 
 struct _AsMonitorClass
 {
@@ -79,7 +67,6 @@ typedef enum {
 
 #define	AS_MONITOR_ERROR			as_monitor_error_quark ()
 
-GType		 as_monitor_get_type		(void);
 AsMonitor	*as_monitor_new			(void);
 GQuark		 as_monitor_error_quark		(void);
 

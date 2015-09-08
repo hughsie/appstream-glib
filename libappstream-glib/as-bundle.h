@@ -28,22 +28,10 @@
 
 #include <glib-object.h>
 
-#define AS_TYPE_BUNDLE			(as_bundle_get_type())
-#define AS_BUNDLE(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_BUNDLE, AsBundle))
-#define AS_BUNDLE_CLASS(cls)		(G_TYPE_CHECK_CLASS_CAST((cls), AS_TYPE_BUNDLE, AsBundleClass))
-#define AS_IS_BUNDLE(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), AS_TYPE_BUNDLE))
-#define AS_IS_BUNDLE_CLASS(cls)		(G_TYPE_CHECK_CLASS_TYPE((cls), AS_TYPE_BUNDLE))
-#define AS_BUNDLE_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), AS_TYPE_BUNDLE, AsBundleClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsBundle		AsBundle;
-typedef struct _AsBundleClass	AsBundleClass;
-
-struct _AsBundle
-{
-	GObject			parent;
-};
+#define AS_TYPE_BUNDLE (as_bundle_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsBundle, as_bundle, AS, BUNDLE, GObject)
 
 struct _AsBundleClass
 {
@@ -75,7 +63,6 @@ typedef enum {
 	AS_BUNDLE_KIND_LAST
 } AsBundleKind;
 
-GType		 as_bundle_get_type		(void);
 AsBundle	*as_bundle_new			(void);
 
 /* helpers */

@@ -30,22 +30,10 @@
 
 #include "as-checksum.h"
 
-#define AS_TYPE_RELEASE			(as_release_get_type())
-#define AS_RELEASE(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_RELEASE, AsRelease))
-#define AS_RELEASE_CLASS(cls)		(G_TYPE_CHECK_CLASS_CAST((cls), AS_TYPE_RELEASE, AsReleaseClass))
-#define AS_IS_RELEASE(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), AS_TYPE_RELEASE))
-#define AS_IS_RELEASE_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), AS_TYPE_RELEASE))
-#define AS_RELEASE_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), AS_TYPE_RELEASE, AsReleaseClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsRelease	AsRelease;
-typedef struct _AsReleaseClass	AsReleaseClass;
-
-struct _AsRelease
-{
-	GObject			parent;
-};
+#define AS_TYPE_RELEASE	(as_release_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsRelease, as_release, AS, RELEASE, GObject)
 
 struct _AsReleaseClass
 {
@@ -61,7 +49,6 @@ struct _AsReleaseClass
 	void (*_as_reserved8)	(void);
 };
 
-GType		 as_release_get_type		(void);
 AsRelease	*as_release_new			(void);
 gint		 as_release_vercmp		(AsRelease	*rel1,
 						 AsRelease	*rel2);

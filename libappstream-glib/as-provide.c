@@ -38,12 +38,11 @@
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
-typedef struct _AsProvidePrivate	AsProvidePrivate;
-struct _AsProvidePrivate
+typedef struct
 {
 	AsProvideKind		 kind;
 	gchar			*value;
-};
+} AsProvidePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsProvide, as_provide, G_TYPE_OBJECT)
 

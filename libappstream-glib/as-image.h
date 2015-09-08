@@ -29,22 +29,10 @@
 #include <glib-object.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#define AS_TYPE_IMAGE		(as_image_get_type())
-#define AS_IMAGE(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_IMAGE, AsImage))
-#define AS_IMAGE_CLASS(cls)	(G_TYPE_CHECK_CLASS_CAST((cls), AS_TYPE_IMAGE, AsImageClass))
-#define AS_IS_IMAGE(obj)	(G_TYPE_CHECK_INSTANCE_TYPE((obj), AS_TYPE_IMAGE))
-#define AS_IS_IMAGE_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), AS_TYPE_IMAGE))
-#define AS_IMAGE_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), AS_TYPE_IMAGE, AsImageClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsImage		AsImage;
-typedef struct _AsImageClass	AsImageClass;
-
-struct _AsImage
-{
-	GObject			parent;
-};
+#define AS_TYPE_IMAGE (as_image_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsImage, as_image, AS, IMAGE, GObject)
 
 struct _AsImageClass
 {
@@ -124,7 +112,6 @@ typedef enum {
 #define AS_IMAGE_THUMBNAIL_HEIGHT	63	/* Since: 0.2.2 */
 #define AS_IMAGE_THUMBNAIL_WIDTH 	112	/* Since: 0.2.2 */
 
-GType		 as_image_get_type		(void);
 AsImage		*as_image_new			(void);
 
 /* helpers */

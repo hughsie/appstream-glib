@@ -30,22 +30,10 @@
 
 #include "as-image.h"
 
-#define AS_TYPE_SCREENSHOT		(as_screenshot_get_type())
-#define AS_SCREENSHOT(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_SCREENSHOT, AsScreenshot))
-#define AS_SCREENSHOT_CLASS(cls)	(G_TYPE_CHECK_CLASS_CAST((cls), AS_TYPE_SCREENSHOT, AsScreenshotClass))
-#define AS_IS_SCREENSHOT(obj)	(G_TYPE_CHECK_INSTANCE_TYPE((obj), AS_TYPE_SCREENSHOT))
-#define AS_IS_SCREENSHOT_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), AS_TYPE_SCREENSHOT))
-#define AS_SCREENSHOT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), AS_TYPE_SCREENSHOT, AsScreenshotClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsScreenshot		AsScreenshot;
-typedef struct _AsScreenshotClass	AsScreenshotClass;
-
-struct _AsScreenshot
-{
-	GObject			parent;
-};
+#define AS_TYPE_SCREENSHOT (as_screenshot_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsScreenshot, as_screenshot, AS, SCREENSHOT, GObject)
 
 struct _AsScreenshotClass
 {
@@ -77,7 +65,6 @@ typedef enum {
 	AS_SCREENSHOT_KIND_LAST
 } AsScreenshotKind;
 
-GType		 as_screenshot_get_type		(void);
 AsScreenshot	*as_screenshot_new		(void);
 
 /* helpers */

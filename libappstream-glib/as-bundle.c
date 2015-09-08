@@ -40,12 +40,11 @@
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
-typedef struct _AsBundlePrivate	AsBundlePrivate;
-struct _AsBundlePrivate
+typedef struct
 {
 	AsBundleKind		 kind;
 	gchar			*id;
-};
+} AsBundlePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsBundle, as_bundle, G_TYPE_OBJECT)
 

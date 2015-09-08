@@ -35,22 +35,10 @@
 #include "as-release.h"
 #include "as-screenshot.h"
 
-#define AS_TYPE_APP		(as_app_get_type())
-#define AS_APP(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_APP, AsApp))
-#define AS_APP_CLASS(cls)	(G_TYPE_CHECK_CLASS_CAST((cls), AS_TYPE_APP, AsAppClass))
-#define AS_IS_APP(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), AS_TYPE_APP))
-#define AS_IS_APP_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), AS_TYPE_APP))
-#define AS_APP_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), AS_TYPE_APP, AsAppClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsApp		AsApp;
-typedef struct _AsAppClass	AsAppClass;
-
-struct _AsApp
-{
-	GObject			parent;
-};
+#define AS_TYPE_APP (as_app_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsApp, as_app, AS, APP, GObject)
 
 struct _AsAppClass
 {
@@ -210,7 +198,6 @@ typedef enum {
 
 #define	AS_APP_ERROR				as_app_error_quark ()
 
-GType		 as_app_get_type		(void);
 AsApp		*as_app_new			(void);
 GQuark		 as_app_error_quark		(void);
 AsAppSourceKind	 as_app_guess_source_kind	(const gchar	*filename);

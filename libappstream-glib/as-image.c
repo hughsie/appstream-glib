@@ -40,8 +40,7 @@
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
-typedef struct _AsImagePrivate	AsImagePrivate;
-struct _AsImagePrivate
+typedef struct
 {
 	AsImageKind		 kind;
 	gchar			*url;
@@ -50,7 +49,7 @@ struct _AsImagePrivate
 	guint			 width;
 	guint			 height;
 	GdkPixbuf		*pixbuf;
-};
+} AsImagePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsImage, as_image, G_TYPE_OBJECT)
 

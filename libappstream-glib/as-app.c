@@ -49,8 +49,7 @@
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
-typedef struct _AsAppPrivate	AsAppPrivate;
-struct _AsAppPrivate
+typedef struct
 {
 	AsAppProblems	 problems;
 	AsIconKind	 icon_kind;
@@ -94,7 +93,7 @@ struct _AsAppPrivate
 	gint		 priority;
 	gsize		 token_cache_valid;
 	GPtrArray	*token_cache;			/* of AsAppTokenItem */
-};
+} AsAppPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsApp, as_app, G_TYPE_OBJECT)
 

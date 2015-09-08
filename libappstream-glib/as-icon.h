@@ -29,22 +29,10 @@
 #include <glib-object.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#define AS_TYPE_ICON		(as_icon_get_type())
-#define AS_ICON(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_ICON, AsIcon))
-#define AS_ICON_CLASS(cls)	(G_TYPE_CHECK_CLASS_CAST((cls), AS_TYPE_ICON, AsIconClass))
-#define AS_IS_ICON(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), AS_TYPE_ICON))
-#define AS_IS_ICON_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), AS_TYPE_ICON))
-#define AS_ICON_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), AS_TYPE_ICON, AsIconClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsIcon		AsIcon;
-typedef struct _AsIconClass	AsIconClass;
-
-struct _AsIcon
-{
-	GObject			parent;
-};
+#define AS_TYPE_ICON (as_icon_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsIcon, as_icon, AS, ICON, GObject)
 
 struct _AsIconClass
 {
@@ -110,7 +98,6 @@ typedef enum {
 
 #define	AS_ICON_ERROR				as_icon_error_quark ()
 
-GType		 as_icon_get_type		(void);
 AsIcon		*as_icon_new			(void);
 GQuark		 as_icon_error_quark		(void);
 

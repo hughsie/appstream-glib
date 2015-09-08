@@ -28,22 +28,10 @@
 
 #include <glib-object.h>
 
-#define AS_TYPE_PROBLEM			(as_problem_get_type())
-#define AS_PROBLEM(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_PROBLEM, AsProblem))
-#define AS_PROBLEM_CLASS(cls)		(G_TYPE_CHECK_CLASS_CAST((cls), AS_TYPE_PROBLEM, AsProblemClass))
-#define AS_IS_PROBLEM(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), AS_TYPE_PROBLEM))
-#define AS_IS_PROBLEM_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), AS_TYPE_PROBLEM))
-#define AS_PROBLEM_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), AS_TYPE_PROBLEM, AsProblemClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsProblem		AsProblem;
-typedef struct _AsProblemClass		AsProblemClass;
-
-struct _AsProblem
-{
-	GObject			parent;
-};
+#define AS_TYPE_PROBLEM (as_problem_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsProblem, as_problem, AS, PROBLEM, GObject)
 
 struct _AsProblemClass
 {
@@ -99,7 +87,6 @@ typedef enum {
 	AS_PROBLEM_KIND_LAST
 } AsProblemKind;
 
-GType		 as_problem_get_type		(void);
 AsProblem	*as_problem_new			(void);
 
 /* helpers */

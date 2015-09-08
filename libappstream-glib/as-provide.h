@@ -28,22 +28,10 @@
 
 #include <glib-object.h>
 
-#define AS_TYPE_PROVIDE			(as_provide_get_type())
-#define AS_PROVIDE(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), AS_TYPE_PROVIDE, AsProvide))
-#define AS_PROVIDE_CLASS(cls)		(G_TYPE_CHECK_CLASS_CAST((cls), AS_TYPE_PROVIDE, AsProvideClass))
-#define AS_IS_PROVIDE(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), AS_TYPE_PROVIDE))
-#define AS_IS_PROVIDE_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), AS_TYPE_PROVIDE))
-#define AS_PROVIDE_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), AS_TYPE_PROVIDE, AsProvideClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsProvide		AsProvide;
-typedef struct _AsProvideClass		AsProvideClass;
-
-struct _AsProvide
-{
-	GObject			parent;
-};
+#define AS_TYPE_PROVIDE (as_provide_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsProvide, as_provide, AS, PROVIDE, GObject)
 
 struct _AsProvideClass
 {
@@ -91,7 +79,6 @@ typedef enum {
 	AS_PROVIDE_KIND_LAST
 } AsProvideKind;
 
-GType		 as_provide_get_type		(void);
 AsProvide	*as_provide_new			(void);
 
 /* helpers */

@@ -38,14 +38,13 @@
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
-typedef struct _AsChecksumPrivate	AsChecksumPrivate;
-struct _AsChecksumPrivate
+typedef struct
 {
 	AsChecksumTarget	 target;
 	GChecksumType		 kind;
 	gchar			*filename;
 	gchar			*value;
-};
+} AsChecksumPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsChecksum, as_checksum, G_TYPE_OBJECT)
 

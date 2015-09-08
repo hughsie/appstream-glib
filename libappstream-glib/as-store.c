@@ -53,8 +53,7 @@ typedef enum {
 	AS_STORE_PROBLEM_LAST
 } AsStoreProblems;
 
-typedef struct _AsStorePrivate	AsStorePrivate;
-struct _AsStorePrivate
+typedef struct
 {
 	gchar			*destdir;
 	gchar			*origin;
@@ -71,7 +70,7 @@ struct _AsStorePrivate
 	guint32			 filter;
 	guint			 changed_block_refcnt;
 	gboolean		 is_pending_changed_signal;
-};
+} AsStorePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsStore, as_store, G_TYPE_OBJECT)
 

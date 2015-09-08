@@ -35,10 +35,7 @@
 #include "as-cleanup.h"
 #include "as-monitor.h"
 
-
-
-typedef struct _AsMonitorPrivate	AsMonitorPrivate;
-struct _AsMonitorPrivate
+typedef struct
 {
 	GPtrArray		*array;		/* of GFileMonitor */
 	GPtrArray		*files;		/* of gchar* */
@@ -46,7 +43,7 @@ struct _AsMonitorPrivate
 	GPtrArray		*queue_changed;	/* of gchar* */
 	GPtrArray		*queue_temp;	/* of gchar* */
 	guint			 pending_id;
-};
+} AsMonitorPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsMonitor, as_monitor, G_TYPE_OBJECT)
 
