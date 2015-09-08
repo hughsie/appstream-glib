@@ -34,7 +34,6 @@
 
 #include "config.h"
 
-#include "as-cleanup.h"
 #include "as-bundle-private.h"
 #include "as-node-private.h"
 #include "as-utils-private.h"

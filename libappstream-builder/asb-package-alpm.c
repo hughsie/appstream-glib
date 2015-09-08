@@ -33,7 +33,6 @@
 
 #include <alpm.h>
 
-#include "as-cleanup.h"
 #include "asb-package-alpm.h"
 #include "asb-plugin.h"
 

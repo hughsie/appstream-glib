@@ -23,7 +23,6 @@
 #include <string.h>
 
 #include "as-app-private.h"
-#include "as-cleanup.h"
 #include "as-utils.h"
 
 /**

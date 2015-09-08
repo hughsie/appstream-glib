@@ -32,7 +32,6 @@
 
 #include "config.h"
 
-#include "as-cleanup.h"
 #include "as-monitor.h"
 
 typedef struct

@@ -33,7 +33,6 @@
 #include <appstream-glib.h>
 
 #include "asb-app.h"
-#include "as-cleanup.h"
 
 typedef struct
 {

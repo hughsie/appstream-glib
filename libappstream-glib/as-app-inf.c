@@ -23,7 +23,6 @@
 #include <string.h>
 
 #include "as-app-private.h"
-#include "as-cleanup.h"
 #include "as-inf.h"
 
 #define AS_APP_INF_CLASS_GUID_FIRMWARE	"f2e7dd72-6468-4e36-b6f1-6488f42c1b52"

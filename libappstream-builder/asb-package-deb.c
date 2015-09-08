@@ -29,7 +29,6 @@
 
 #include "config.h"
 
-#include "as-cleanup.h"
 #include "asb-package-deb.h"
 #include "asb-plugin.h"
 

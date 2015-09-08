@@ -33,7 +33,6 @@
 #include <archive_entry.h>
 #include <string.h>
 
-#include "as-cleanup.h"
 #include "asb-utils.h"
 #include "asb-plugin.h"
 

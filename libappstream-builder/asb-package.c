@@ -31,7 +31,6 @@
 
 #include <limits.h>
 
-#include "as-cleanup.h"
 #include "asb-package.h"
 #include "asb-plugin.h"
 

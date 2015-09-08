@@ -25,7 +25,6 @@
 #include <yaml.h>
 #endif
 
-#include "as-cleanup.h"
 #include "as-node.h"
 #include "as-yaml.h"
 

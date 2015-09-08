@@ -36,7 +36,6 @@
 #include <rpm/rpmlib.h>
 #include <rpm/rpmts.h>
 
-#include "as-cleanup.h"
 #include "asb-package-rpm.h"
 #include "asb-plugin.h"
 

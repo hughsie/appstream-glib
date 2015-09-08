@@ -31,8 +31,6 @@
 #include <as-app.h>
 #include <as-problem.h>
 
-#include "as-cleanup.h"
-
 #define EXIT_CODE_SUCCESS	0
 #define EXIT_CODE_USAGE		1
 #define EXIT_CODE_WARNINGS	2

@@ -30,7 +30,6 @@
 
 #include "config.h"
 
-#include "as-cleanup.h"
 #include "asb-plugin-loader.h"
 #include "asb-plugin.h"
 

@@ -31,7 +31,6 @@
 
 #include <ostree.h>
 
-#include "as-cleanup.h"
 #include "asb-package-ostree.h"
 #include "asb-plugin.h"
 

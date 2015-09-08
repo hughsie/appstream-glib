@@ -33,7 +33,6 @@
 
 #include "config.h"
 
-#include "as-cleanup.h"
 #include "as-image-private.h"
 #include "as-node-private.h"
 #include "as-screenshot-private.h"
