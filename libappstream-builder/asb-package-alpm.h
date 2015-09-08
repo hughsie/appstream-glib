@@ -29,29 +29,15 @@
 
 #include "asb-package.h"
 
-#define ASB_TYPE_PACKAGE_ALPM		(asb_package_alpm_get_type())
-#define ASB_PACKAGE_ALPM(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), ASB_TYPE_PACKAGE_ALPM, AsbPackageAlpm))
-#define ASB_PACKAGE_ALPM_CLASS(cls)	(G_TYPE_CHECK_CLASS_CAST((cls), ASB_TYPE_PACKAGE_ALPM, AsbPackageAlpmClass))
-#define ASB_IS_PACKAGE_ALPM(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), ASB_TYPE_PACKAGE_ALPM))
-#define ASB_IS_PACKAGE_ALPM_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), ASB_TYPE_PACKAGE_ALPM))
-#define ASB_PACKAGE_ALPM_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), ASB_TYPE_PACKAGE_ALPM, AsbPackageAlpmClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsbPackageAlpm		AsbPackageAlpm;
-typedef struct _AsbPackageAlpmClass	AsbPackageAlpmClass;
-
-struct _AsbPackageAlpm
-{
-	AsbPackage			parent;
-};
+#define ASB_TYPE_PACKAGE_ALPM (asb_package_alpm_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsbPackageAlpm, asb_package_alpm, ASB, PACKAGE_ALPM, GObject)
 
 struct _AsbPackageAlpmClass
 {
 	AsbPackageClass			parent_class;
 };
-
-GType		 asb_package_alpm_get_type	(void);
 
 AsbPackage	*asb_package_alpm_new		(void);
 

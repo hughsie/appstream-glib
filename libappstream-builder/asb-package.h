@@ -27,22 +27,10 @@
 #include <stdarg.h>
 #include <appstream-glib.h>
 
-#define ASB_TYPE_PACKAGE		(asb_package_get_type())
-#define ASB_PACKAGE(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), ASB_TYPE_PACKAGE, AsbPackage))
-#define ASB_PACKAGE_CLASS(cls)		(G_TYPE_CHECK_CLASS_CAST((cls), ASB_TYPE_PACKAGE, AsbPackageClass))
-#define ASB_IS_PACKAGE(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), ASB_TYPE_PACKAGE))
-#define ASB_IS_PACKAGE_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), ASB_TYPE_PACKAGE))
-#define ASB_PACKAGE_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), ASB_TYPE_PACKAGE, AsbPackageClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsbPackage		AsbPackage;
-typedef struct _AsbPackageClass		AsbPackageClass;
-
-struct _AsbPackage
-{
-	GObject			parent;
-};
+#define ASB_TYPE_PACKAGE (asb_package_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsbPackage, asb_package, ASB, PACKAGE, GObject)
 
 typedef enum {
 	ASB_PACKAGE_ENSURE_NONE		= 0,
@@ -98,8 +86,6 @@ typedef enum {
 	ASB_PACKAGE_KIND_FIRMWARE,
 	ASB_PACKAGE_KIND_LAST
 } AsbPackageKind;
-
-GType		 asb_package_get_type		(void);
 
 void		 asb_package_log_start		(AsbPackage	*pkg);
 void		 asb_package_log		(AsbPackage	*pkg,

@@ -35,8 +35,7 @@
 #include "asb-package.h"
 #include "asb-plugin.h"
 
-typedef struct _AsbPackagePrivate	AsbPackagePrivate;
-struct _AsbPackagePrivate
+typedef struct
 {
 	AsbPackageKind	 kind;
 	gboolean	 enabled;
@@ -68,7 +67,7 @@ struct _AsbPackagePrivate
 	GPtrArray	*releases;
 	GHashTable	*releases_hash;
 	GMutex		 mutex_log;
-};
+} AsbPackagePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbPackage, asb_package, G_TYPE_OBJECT)
 

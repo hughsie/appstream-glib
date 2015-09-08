@@ -27,22 +27,10 @@
 #include "asb-app.h"
 #include "asb-package.h"
 
-#define ASB_TYPE_CONTEXT		(asb_context_get_type())
-#define ASB_CONTEXT(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), ASB_TYPE_CONTEXT, AsbContext))
-#define ASB_CONTEXT_CLASS(cls)		(G_TYPE_CHECK_CLASS_CAST((cls), ASB_TYPE_CONTEXT, AsbContextClass))
-#define ASB_IS_CONTEXT(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), ASB_TYPE_CONTEXT))
-#define ASB_IS_CONTEXT_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), ASB_TYPE_CONTEXT))
-#define ASB_CONTEXT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), ASB_TYPE_CONTEXT, AsbContextClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsbContext		AsbContext;
-typedef struct _AsbContextClass	AsbContextClass;
-
-struct _AsbContext
-{
-	GObject			 parent;
-};
+#define ASB_TYPE_CONTEXT (asb_context_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsbContext, asb_context, ASB, CONTEXT, GObject)
 
 struct _AsbContextClass
 {
@@ -95,8 +83,6 @@ typedef enum {
 	/*< private >*/
 	ASB_CONTEXT_FLAG_LAST,
 } AsbContextFlags;
-
-GType		 asb_context_get_type		(void);
 
 AsbContext	*asb_context_new		(void);
 AsbPackage	*asb_context_find_by_pkgname	(AsbContext	*ctx,

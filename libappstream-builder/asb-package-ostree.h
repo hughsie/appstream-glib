@@ -29,29 +29,15 @@
 
 #include "asb-package.h"
 
-#define ASB_TYPE_PACKAGE_OSTREE			(asb_package_ostree_get_type())
-#define ASB_PACKAGE_OSTREE(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), ASB_TYPE_PACKAGE_OSTREE, AsbPackageOstree))
-#define ASB_PACKAGE_OSTREE_CLASS(cls)		(G_TYPE_CHECK_CLASS_CAST((cls), ASB_TYPE_PACKAGE_OSTREE, AsbPackageOstreeClass))
-#define ASB_IS_PACKAGE_OSTREE(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), ASB_TYPE_PACKAGE_OSTREE))
-#define ASB_IS_PACKAGE_OSTREE_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), ASB_TYPE_PACKAGE_OSTREE))
-#define ASB_PACKAGE_OSTREE_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), ASB_TYPE_PACKAGE_OSTREE, AsbPackageOstreeClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsbPackageOstree	AsbPackageOstree;
-typedef struct _AsbPackageOstreeClass	AsbPackageOstreeClass;
-
-struct _AsbPackageOstree
-{
-	AsbPackage			parent;
-};
+#define ASB_TYPE_PACKAGE_OSTREE (asb_package_ostree_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsbPackageOstree, asb_package_ostree, ASB, PACKAGE_OSTREE, GObject)
 
 struct _AsbPackageOstreeClass
 {
 	AsbPackageClass			parent_class;
 };
-
-GType		 asb_package_ostree_get_type	(void);
 
 AsbPackage	*asb_package_ostree_new		(void);
 void		 asb_package_ostree_set_repodir	(AsbPackageOstree	*pkg_ostree,

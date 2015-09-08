@@ -34,13 +34,12 @@
 #include "asb-plugin-loader.h"
 #include "asb-plugin.h"
 
-typedef struct _AsbPluginLoaderPrivate	AsbPluginLoaderPrivate;
-struct _AsbPluginLoaderPrivate
+typedef struct
 {
 	GPtrArray		*plugins;
 	AsbContext		*ctx;
 	gchar			*plugin_dir;
-};
+} AsbPluginLoaderPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbPluginLoader, asb_plugin_loader, G_TYPE_OBJECT)
 

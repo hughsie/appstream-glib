@@ -38,15 +38,14 @@
 #include "asb-plugin.h"
 #include "asb-plugin-loader.h"
 
-typedef struct _AsbTaskPrivate	AsbTaskPrivate;
-struct _AsbTaskPrivate
+typedef struct
 {
 	AsbContext		*ctx;
 	AsbPackage		*pkg;
 	GPtrArray		*plugins_to_run;
 	gchar			*filename;
 	gchar			*tmpdir;
-};
+} AsbTaskPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbTask, asb_task, G_TYPE_OBJECT)
 

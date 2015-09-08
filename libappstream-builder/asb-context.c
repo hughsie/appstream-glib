@@ -50,8 +50,7 @@
 #include "asb-package-cab.h"
 #include "asb-package-deb.h"
 
-typedef struct _AsbContextPrivate	AsbContextPrivate;
-struct _AsbContextPrivate
+typedef struct
 {
 	AsStore			*store_failed;
 	AsStore			*store_ignore;
@@ -73,7 +72,7 @@ struct _AsbContextPrivate
 	gchar			*icons_dir;
 	gchar			*basename;
 	gchar			*origin;
-};
+} AsbContextPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbContext, asb_context, G_TYPE_OBJECT)
 

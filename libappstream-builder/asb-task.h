@@ -27,22 +27,10 @@
 #include "asb-package.h"
 #include "asb-context.h"
 
-#define ASB_TYPE_TASK		(asb_task_get_type())
-#define ASB_TASK(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), ASB_TYPE_TASK, AsbTask))
-#define ASB_TASK_CLASS(cls)	(G_TYPE_CHECK_CLASS_CAST((cls), ASB_TYPE_TASK, AsbTaskClass))
-#define ASB_IS_TASK(obj)	(G_TYPE_CHECK_INSTANCE_TYPE((obj), ASB_TYPE_TASK))
-#define ASB_IS_TASK_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), ASB_TYPE_TASK))
-#define ASB_TASK_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), ASB_TYPE_TASK, AsbTaskClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsbTask		AsbTask;
-typedef struct _AsbTaskClass	AsbTaskClass;
-
-struct _AsbTask
-{
-	GObject			 parent;
-};
+#define ASB_TYPE_TASK (asb_task_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsbTask, asb_task, ASB, TASK, GObject)
 
 struct _AsbTaskClass
 {
@@ -57,9 +45,6 @@ struct _AsbTaskClass
 	void (*_asb_reserved7)	(void);
 	void (*_asb_reserved8)	(void);
 };
-
-GType		 asb_task_get_type		(void);
-
 
 AsbTask		*asb_task_new			(AsbContext	*ctx);
 gboolean	 asb_task_process		(AsbTask	*task,

@@ -35,12 +35,11 @@
 #include "asb-package-ostree.h"
 #include "asb-plugin.h"
 
-typedef struct _AsbPackageOstreePrivate	AsbPackageOstreePrivate;
-struct _AsbPackageOstreePrivate
+typedef struct
 {
 	OstreeRepo		*repo;
 	gchar			*repodir;
-};
+} AsbPackageOstreePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbPackageOstree, asb_package_ostree, ASB_TYPE_PACKAGE)
 

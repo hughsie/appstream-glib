@@ -29,29 +29,15 @@
 
 #include "asb-package.h"
 
-#define ASB_TYPE_PACKAGE_DEB		(asb_package_deb_get_type())
-#define ASB_PACKAGE_DEB(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), ASB_TYPE_PACKAGE_DEB, AsbPackageDeb))
-#define ASB_PACKAGE_DEB_CLASS(cls)	(G_TYPE_CHECK_CLASS_CAST((cls), ASB_TYPE_PACKAGE_DEB, AsbPackageDebClass))
-#define ASB_IS_PACKAGE_DEB(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), ASB_TYPE_PACKAGE_DEB))
-#define ASB_IS_PACKAGE_DEB_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), ASB_TYPE_PACKAGE_DEB))
-#define ASB_PACKAGE_DEB_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), ASB_TYPE_PACKAGE_DEB, AsbPackageDebClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsbPackageDeb		AsbPackageDeb;
-typedef struct _AsbPackageDebClass	AsbPackageDebClass;
-
-struct _AsbPackageDeb
-{
-	AsbPackage			parent;
-};
+#define ASB_TYPE_PACKAGE_DEB (asb_package_deb_get_type())
+G_DECLARE_DERIVABLE_TYPE (AsbPackageDeb, asb_package_deb, ASB, PACKAGE_DEB, GObject)
 
 struct _AsbPackageDebClass
 {
 	AsbPackageClass			parent_class;
 };
-
-GType		 asb_package_deb_get_type	(void);
 
 AsbPackage	*asb_package_deb_new		(void);
 

@@ -29,29 +29,15 @@
 
 #include "asb-package.h"
 
-#define ASB_TYPE_PACKAGE_RPM		(asb_package_rpm_get_type())
-#define ASB_PACKAGE_RPM(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), ASB_TYPE_PACKAGE_RPM, AsbPackageRpm))
-#define ASB_PACKAGE_RPM_CLASS(cls)	(G_TYPE_CHECK_CLASS_CAST((cls), ASB_TYPE_PACKAGE_RPM, AsbPackageRpmClass))
-#define ASB_IS_PACKAGE_RPM(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), ASB_TYPE_PACKAGE_RPM))
-#define ASB_IS_PACKAGE_RPM_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), ASB_TYPE_PACKAGE_RPM))
-#define ASB_PACKAGE_RPM_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), ASB_TYPE_PACKAGE_RPM, AsbPackageRpmClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsbPackageRpm		AsbPackageRpm;
-typedef struct _AsbPackageRpmClass	AsbPackageRpmClass;
-
-struct _AsbPackageRpm
-{
-	AsbPackage			parent;
-};
+#define ASB_TYPE_PACKAGE_RPM (asb_package_rpm_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsbPackageRpm, asb_package_rpm, ASB, PACKAGE_RPM, GObject)
 
 struct _AsbPackageRpmClass
 {
 	AsbPackageClass			parent_class;
 };
-
-GType		 asb_package_rpm_get_type	(void);
 
 AsbPackage	*asb_package_rpm_new		(void);
 

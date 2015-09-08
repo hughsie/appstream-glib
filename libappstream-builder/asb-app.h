@@ -29,22 +29,10 @@
 
 #include "asb-package.h"
 
-#define ASB_TYPE_APP		(asb_app_get_type())
-#define ASB_APP(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), ASB_TYPE_APP, AsbApp))
-#define ASB_APP_CLASS(cls)	(G_TYPE_CHECK_CLASS_CAST((cls), ASB_TYPE_APP, AsbAppClass))
-#define ASB_IS_APP(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), ASB_TYPE_APP))
-#define ASB_IS_APP_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), ASB_TYPE_APP))
-#define ASB_APP_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), ASB_TYPE_APP, AsbAppClass))
-
 G_BEGIN_DECLS
 
-typedef struct _AsbApp		AsbApp;
-typedef struct _AsbAppClass	AsbAppClass;
-
-struct _AsbApp
-{
-	AsApp			parent;
-};
+#define ASB_TYPE_APP (asb_app_get_type ())
+G_DECLARE_DERIVABLE_TYPE (AsbApp, asb_app, ASB, APP, GObject)
 
 struct _AsbAppClass
 {
@@ -75,9 +63,6 @@ typedef enum {
 	/*< private >*/
 	ASB_APP_SAVE_FLAG_LAST,
 } AsbAppSaveFlags;
-
-GType		 asb_app_get_type		(void);
-
 
 AsbApp		*asb_app_new			(AsbPackage	*pkg,
 						 const gchar	*id);

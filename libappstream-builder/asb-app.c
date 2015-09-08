@@ -35,14 +35,13 @@
 #include "asb-app.h"
 #include "as-cleanup.h"
 
-typedef struct _AsbAppPrivate	AsbAppPrivate;
-struct _AsbAppPrivate
+typedef struct
 {
 	GPtrArray	*requires_appdata;
 	AsbPackage	*pkg;
 	gboolean	 ignore_requires_appdata;
 	gboolean	 hidpi_enabled;
-};
+} AsbAppPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbApp, asb_app, AS_TYPE_APP)
 

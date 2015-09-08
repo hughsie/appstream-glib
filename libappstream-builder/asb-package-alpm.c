@@ -37,12 +37,11 @@
 #include "asb-package-alpm.h"
 #include "asb-plugin.h"
 
-typedef struct _AsbPackageAlpmPrivate	AsbPackageAlpmPrivate;
-struct _AsbPackageAlpmPrivate
+typedef struct
 {
 	alpm_handle_t	*handle;
 	alpm_pkg_t	*package;
-};
+} AsbPackageAlpmPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbPackageAlpm, asb_package_alpm, ASB_TYPE_PACKAGE)
 

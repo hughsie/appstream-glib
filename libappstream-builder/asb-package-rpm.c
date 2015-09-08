@@ -40,11 +40,10 @@
 #include "asb-package-rpm.h"
 #include "asb-plugin.h"
 
-typedef struct _AsbPackageRpmPrivate	AsbPackageRpmPrivate;
-struct _AsbPackageRpmPrivate
+typedef struct
 {
 	Header		 h;
-};
+} AsbPackageRpmPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbPackageRpm, asb_package_rpm, ASB_TYPE_PACKAGE)
 
