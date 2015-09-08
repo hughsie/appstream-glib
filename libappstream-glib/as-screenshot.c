@@ -401,7 +401,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node,
 	const gchar *tmp;
 	guint size;
 	gint priority;
-	_cleanup_hashtable_unref_ GHashTable *captions = NULL;
+	g_autoptr(GHashTable) captions = NULL;
 
 	tmp = as_node_get_attribute (node, "type");
 	if (tmp != NULL) {
@@ -415,7 +415,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node,
 	/* add captions */
 	captions = as_node_get_localized (node, "caption");
 	if (captions != NULL) {
-		_cleanup_list_free_ GList *keys = NULL;
+		g_autoptr(GList) keys = NULL;
 		keys = g_hash_table_get_keys (captions);
 		for (l = keys; l != NULL; l = l->next) {
 			tmp = l->data;
@@ -443,7 +443,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node,
 
 	/* add images */
 	for (c = node->children; c != NULL; c = c->next) {
-		_cleanup_object_unref_ AsImage *image = NULL;
+		g_autoptr(AsImage) image = NULL;
 		if (as_node_get_tag (c) != AS_TAG_IMAGE)
 			continue;
 		image = as_image_new ();
@@ -485,7 +485,7 @@ as_screenshot_node_parse_dep11 (AsScreenshot *ss, GNode *node,
 			continue;
 		}
 		if (g_strcmp0 (tmp, "source-image") == 0) {
-			_cleanup_object_unref_ AsImage *im = as_image_new ();
+			g_autoptr(AsImage) im = as_image_new ();
 			as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
 			if (!as_image_node_parse_dep11 (im, n, ctx, error))
 				return FALSE;
@@ -494,7 +494,7 @@ as_screenshot_node_parse_dep11 (AsScreenshot *ss, GNode *node,
 		}
 		if (g_strcmp0 (tmp, "thumbnails") == 0) {
 			for (c = n->children; c != NULL; c = c->next) {
-				_cleanup_object_unref_ AsImage *im = as_image_new ();
+				g_autoptr(AsImage) im = as_image_new ();
 				as_image_set_kind (im, AS_IMAGE_KIND_THUMBNAIL);
 				if (!as_image_node_parse_dep11 (im, c, ctx, error))
 					return FALSE;

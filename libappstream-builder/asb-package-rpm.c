@@ -80,8 +80,8 @@ asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 {
 	guint i;
 	guint j;
-	_cleanup_free_ gchar *new = NULL;
-	_cleanup_strv_free_ gchar **tokens = NULL;
+	g_autofree gchar *new = NULL;
+	g_auto(GStrv) tokens = NULL;
 	struct {
 		const gchar	*fedora;
 		const gchar	*spdx;
@@ -203,7 +203,7 @@ static void
 asb_package_rpm_set_source (AsbPackage *pkg, const gchar *source)
 {
 	gchar *tmp;
-	_cleanup_free_ gchar *srcrpm = NULL;
+	g_autofree gchar *srcrpm = NULL;
 
 	/* this isn't supposed to happen */
 	if (source == NULL) {
@@ -333,7 +333,7 @@ asb_package_rpm_add_release (AsbPackage *pkg,
 	const gchar *version;
 	gchar *tmp;
 	gchar *vr;
-	_cleanup_free_ gchar *name_dup = NULL;
+	g_autofree gchar *name_dup = NULL;
 
 	/* get last string chunk */
 	name_dup = g_strchomp (g_strdup (name));
@@ -440,7 +440,7 @@ asb_package_rpm_ensure_deps (AsbPackage *pkg, GError **error)
 		goto out;
 	}
 	while (rpmtdNext (td) != -1) {
-		_cleanup_free_ gchar *dep_no_qual = NULL;
+		g_autofree gchar *dep_no_qual = NULL;
 		dep = rpmtdGetString (td);
 		if (g_str_has_prefix (dep, "rpmlib"))
 			continue;
@@ -470,9 +470,9 @@ asb_package_rpm_ensure_filelists (AsbPackage *pkg, GError **error)
 	gint rc;
 	guint i;
 	rpmtd td[3] = { NULL, NULL, NULL };
-	_cleanup_free_ const gchar **dirnames = NULL;
-	_cleanup_free_ gint32 *dirindex = NULL;
-	_cleanup_strv_free_ gchar **filelist = NULL;
+	g_autofree const gchar **dirnames = NULL;
+	g_autofree gint32 *dirindex = NULL;
+	g_auto(GStrv) filelist = NULL;
 
 	/* is a virtual package with no files */
 	if (!headerIsEntry (priv->h, RPMTAG_DIRINDEXES))

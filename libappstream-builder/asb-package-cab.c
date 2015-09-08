@@ -50,7 +50,7 @@ asb_package_cab_init (AsbPackageCab *pkg)
 static gboolean
 asb_package_cab_ensure_simple (AsbPackage *pkg, GError **error)
 {
-	_cleanup_free_ gchar *basename;
+	g_autofree gchar *basename;
 	gchar *tmp;
 
 	/* get basename minus the .cab extension */
@@ -82,9 +82,9 @@ asb_package_cab_ensure_filelists (AsbPackage *pkg, GError **error)
 {
 	const gchar *argv[4] = { "gcab", "--list", "fn", NULL };
 	guint i;
-	_cleanup_free_ gchar *output = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *files = NULL;
-	_cleanup_strv_free_ gchar **lines = NULL;
+	g_autofree gchar *output = NULL;
+	g_autoptr(GPtrArray) files = NULL;
+	g_auto(GStrv) lines = NULL;
 
 	/* spawn sync */
 	argv[2] = asb_package_get_filename (pkg);

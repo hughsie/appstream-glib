@@ -103,13 +103,13 @@ as_inf_replace_variable (AsInfHelper *helper, const gchar *line, GError **error)
 	GString *new;
 	const gchar *tmp;
 	guint i;
-	_cleanup_strv_free_ gchar **split = NULL;
+	g_auto(GStrv) split = NULL;
 
 	/* split up into sections of the delimiter */
 	new = g_string_sized_new (strlen (line));
 	split = g_strsplit (line, "%", -1);
 	for (i = 0; split[i] != NULL; i++) {
-		_cleanup_free_ gchar *lower = NULL;
+		g_autofree gchar *lower = NULL;
 
 		/* the text between the substitutions */
 		if (i % 2 == 0) {
@@ -156,9 +156,9 @@ as_inf_get_dict (AsInfHelper *helper, GError **error)
 	GHashTable *dict = NULL;
 	gchar *val;
 	guint i;
-	_cleanup_free_ gchar *lower = NULL;
-	_cleanup_hashtable_unref_ GHashTable *dict_tmp = NULL;
-	_cleanup_strv_free_ gchar **keys = NULL;
+	g_autofree gchar *lower = NULL;
+	g_autoptr(GHashTable) dict_tmp = NULL;
+	g_auto(GStrv) keys = NULL;
 
 	dict_tmp = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	lower = as_inf_make_case_insensitive (helper, "Strings");
@@ -184,11 +184,11 @@ as_inf_replace_variables (AsInfHelper *helper, GError **error)
 {
 	guint i;
 	guint j;
-	_cleanup_strv_free_ gchar **groups = NULL;
+	g_auto(GStrv) groups = NULL;
 
 	groups = g_key_file_get_groups (helper->keyfile, NULL);
 	for (i = 0; groups[i] != NULL; i++) {
-		_cleanup_strv_free_ gchar **keys = NULL;
+		g_auto(GStrv) keys = NULL;
 
 		/* ignore the source */
 		if (g_strcmp0 (groups[i], "Strings") == 0)
@@ -199,8 +199,8 @@ as_inf_replace_variables (AsInfHelper *helper, GError **error)
 		if (keys == NULL)
 			continue;
 		for (j = 0; keys[j] != NULL; j++) {
-			_cleanup_free_ gchar *data_old = NULL;
-			_cleanup_free_ gchar *data_new = NULL;
+			g_autofree gchar *data_old = NULL;
+			g_autofree gchar *data_new = NULL;
 
 			/* get the old data for this [group] key */
 			data_old = g_key_file_get_string (helper->keyfile,
@@ -488,7 +488,7 @@ as_inf_parse_line (AsInfHelper *helper, gchar *line, GError **error)
 	guint len;
 	gboolean ret = TRUE;
 	gboolean continuation = FALSE;
-	_cleanup_free_ gchar *key = NULL;
+	g_autofree gchar *key = NULL;
 
 	/* line too long */
 	if ((helper->flags & AS_INF_LOAD_FLAG_STRICT) > 0 &&
@@ -568,7 +568,7 @@ as_inf_parse_line (AsInfHelper *helper, gchar *line, GError **error)
 	tmp = g_strstr_len (line, -1, "\"");
 	if ((tmp == NULL && kvsplit != NULL) ||
 	    (kvsplit != NULL && kvsplit < tmp)) {
-		_cleanup_free_ gchar *key_new = NULL;
+		g_autofree gchar *key_new = NULL;
 
 		/* key=value before [group] */
 		if (helper->group == NULL) {
@@ -589,7 +589,7 @@ as_inf_parse_line (AsInfHelper *helper, gchar *line, GError **error)
 
 		/* convert key names with variables */
 		if (key[0] == '%') {
-			_cleanup_free_ gchar *key_tmp = NULL;
+			g_autofree gchar *key_tmp = NULL;
 			if (helper->dict == NULL) {
 				helper->require_2nd_pass = TRUE;
 				helper->last_line_continuation_ignore = TRUE;
@@ -627,8 +627,8 @@ as_inf_parse_line (AsInfHelper *helper, gchar *line, GError **error)
 
 	/* last_line_continuation from the last line */
 	if (helper->last_line_continuation) {
-		_cleanup_free_ gchar *old = NULL;
-		_cleanup_free_ gchar *new = NULL;
+		g_autofree gchar *old = NULL;
+		g_autofree gchar *new = NULL;
 
 		/* this is the 1st pass, and we have no key */
 		if (helper->last_line_continuation_ignore)
@@ -695,7 +695,7 @@ as_inf_parse_line (AsInfHelper *helper, gchar *line, GError **error)
 	if (g_strcmp0 (helper->group, "Firmware_AddReg") == 0 &&
 	    g_str_has_prefix (line, "HK")) {
 		guint i;
-		_cleanup_strv_free_ gchar **reg_split = NULL;
+		g_auto(GStrv) reg_split = NULL;
 		_cleanup_string_free_ GString *str = NULL;
 		str = g_string_new ("");
 		reg_split = g_strsplit (line, ",", -1);
@@ -706,7 +706,7 @@ as_inf_parse_line (AsInfHelper *helper, gchar *line, GError **error)
 			g_string_append_printf (str, "%s_", reg_split[i]);
 		}
 		if (str->len > 0) {
-			_cleanup_free_ gchar *key_tmp = NULL;
+			g_autofree gchar *key_tmp = NULL;
 
 			/* remove trailing '_' */
 			g_string_truncate (str, str->len - 1);
@@ -790,7 +790,7 @@ as_inf_load_data (GKeyFile *keyfile,
 	AsInfHelper *helper;
 	gboolean ret = TRUE;
 	guint i;
-	_cleanup_strv_free_ gchar **lines = NULL;
+	g_auto(GStrv) lines = NULL;
 
 	/* initialize helper */
 	helper = as_inf_helper_new ();
@@ -818,7 +818,7 @@ as_inf_load_data (GKeyFile *keyfile,
 
 	/* lets do this all over again */
 	if (helper->require_2nd_pass) {
-		_cleanup_strv_free_ gchar **lines2 = NULL;
+		g_auto(GStrv) lines2 = NULL;
 		lines2 = g_strsplit (data, "\n", -1);
 		for (i = 0; lines2[i] != NULL; i++) {
 			if (!as_inf_parse_line (helper, lines2[i], error)) {
@@ -869,7 +869,7 @@ as_inf_load_file (GKeyFile *keyfile,
 	const gchar *data_no_bom;
 	gsize len;
 	guint i;
-	_cleanup_free_ gchar *data = NULL;
+	g_autofree gchar *data = NULL;
 	AsInfBOM boms[] = { { "\x00\x00\xfe\xff",	"UTF-32BE",	4 },
 			    { "\xff\xfe\x00\x00",	"UTF-32LE",	4 },
 			    { "\xfe\xff",		"UTF-16BE",	2 },
@@ -922,10 +922,10 @@ as_inf_load_file (GKeyFile *keyfile,
 gchar *
 as_inf_get_driver_version (GKeyFile *keyfile, guint64 *timestamp, GError **error)
 {
-	_cleanup_date_time_unref_ GDateTime *dt = NULL;
-	_cleanup_strv_free_ gchar **split = NULL;
-	_cleanup_strv_free_ gchar **dv_split = NULL;
-	_cleanup_free_ gchar *driver_ver = NULL;
+	g_autoptr(GDateTime) dt = NULL;
+	g_auto(GStrv) split = NULL;
+	g_auto(GStrv) dv_split = NULL;
+	g_autofree gchar *driver_ver = NULL;
 
 	/* get the release date and the version in case there's no metainfo */
 	driver_ver = g_key_file_get_string (keyfile, "Version", "DriverVer", NULL);

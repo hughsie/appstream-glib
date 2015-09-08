@@ -67,8 +67,8 @@ asb_plugin_process_gir (AsbApp *app,
 	const gchar *name;
 	const gchar *version;
 	gboolean ret = TRUE;
-	_cleanup_free_ gchar *filename_full = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autofree gchar *filename_full = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* load file */
 	filename_full = g_build_filename (tmpdir, filename, NULL);

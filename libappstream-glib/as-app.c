@@ -1564,7 +1564,7 @@ void
 as_app_set_metadata_license (AsApp *app, const gchar *metadata_license)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	_cleanup_strv_free_ gchar **tokens = NULL;
+	g_auto(GStrv) tokens = NULL;
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
@@ -1982,7 +1982,7 @@ as_app_add_keyword (AsApp *app,
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	GPtrArray *tmp;
-	_cleanup_free_ gchar *tmp_locale = NULL;
+	g_autofree gchar *tmp_locale = NULL;
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
@@ -2580,7 +2580,7 @@ as_app_subsume_dict (GHashTable *dest, GHashTable *src, gboolean overwrite)
 	const gchar *tmp;
 	const gchar *key;
 	const gchar *value;
-	_cleanup_list_free_ GList *keys = NULL;
+	g_autoptr(GList) keys = NULL;
 
 	keys = g_hash_table_get_keys (src);
 	for (l = keys; l != NULL; l = l->next) {
@@ -2607,7 +2607,7 @@ as_app_subsume_keywords (AsApp *app, AsApp *donor, gboolean overwrite)
 	const gchar *key;
 	const gchar *tmp;
 	guint i;
-	_cleanup_list_free_ GList *keys = NULL;
+	g_autoptr(GList) keys = NULL;
 
 	/* get all locales in the keywords dict */
 	keys = g_hash_table_get_keys (priv->keywords);
@@ -2676,7 +2676,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	guint i;
 	gint percentage;
 	GList *l;
-	_cleanup_list_free_ GList *keys = NULL;
+	g_autoptr(GList) keys = NULL;
 
 	/* stop us shooting ourselves in the foot */
 	papp->trust_flags |= AS_APP_TRUST_FLAG_CHECK_DUPLICATES;
@@ -2880,7 +2880,7 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
 	const gchar *locale;
 	gchar tmp[4];
 	gint percentage;
-	_cleanup_list_free_ GList *langs = NULL;
+	g_autoptr(GList) langs = NULL;
 
 	node_tmp = as_node_insert (parent, "languages", NULL, 0, NULL);
 	langs = as_app_get_languages (app);
@@ -2953,7 +2953,7 @@ as_app_node_insert_keywords (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	const gchar *lang;
 	const gchar *tmp;
 	guint i;
-	_cleanup_hashtable_unref_ GHashTable *already_in_c = NULL;
+	g_autoptr(GHashTable) already_in_c = NULL;
 
 	/* don't add localized keywords that already exist in C, e.g.
 	 * there's no point adding "c++" in 14 different languages */
@@ -3281,7 +3281,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 	/* <bundle> */
 	case AS_TAG_BUNDLE:
 	{
-		_cleanup_object_unref_ AsBundle *ic = NULL;
+		g_autoptr(AsBundle) ic = NULL;
 		ic = as_bundle_new ();
 		if (!as_bundle_node_parse (ic, n, ctx, error))
 			return FALSE;
@@ -3325,7 +3325,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		/* unwrap appdata inline */
 		if (priv->source_kind == AS_APP_SOURCE_KIND_APPDATA) {
 			GError *error_local = NULL;
-			_cleanup_hashtable_unref_ GHashTable *unwrapped = NULL;
+			g_autoptr(GHashTable) unwrapped = NULL;
 			unwrapped = as_node_get_localized_unwrap (n, &error_local);
 			if (unwrapped == NULL) {
 				if (g_error_matches (error_local,
@@ -3366,7 +3366,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 	/* <icon> */
 	case AS_TAG_ICON:
 	{
-		_cleanup_object_unref_ AsIcon *ic = NULL;
+		g_autoptr(AsIcon) ic = NULL;
 		ic = as_icon_new ();
 		as_icon_set_prefix (ic, priv->icon_path);
 		if (!as_icon_node_parse (ic, n, ctx, error))
@@ -3540,7 +3540,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
 			g_ptr_array_set_size (priv->screenshots, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			_cleanup_object_unref_ AsScreenshot *ss = NULL;
+			g_autoptr(AsScreenshot) ss = NULL;
 			if (as_node_get_tag (c) != AS_TAG_SCREENSHOT)
 				continue;
 			/* we don't yet support localised screenshots */
@@ -3558,7 +3558,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
 			g_ptr_array_set_size (priv->releases, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			_cleanup_object_unref_ AsRelease *r = NULL;
+			g_autoptr(AsRelease) r = NULL;
 			if (as_node_get_tag (c) != AS_TAG_RELEASE)
 				continue;
 			r = as_release_new ();
@@ -3573,7 +3573,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
 			g_ptr_array_set_size (priv->provides, 0);
 		for (c = n->children; c != NULL; c = c->next) {
-			_cleanup_object_unref_ AsProvide *p = NULL;
+			g_autoptr(AsProvide) p = NULL;
 			p = as_provide_new ();
 			if (!as_provide_node_parse (p, c, ctx, error))
 				return FALSE;
@@ -3626,8 +3626,8 @@ as_app_check_for_hidpi_icons (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsIcon *icon_tmp;
-	_cleanup_free_ gchar *fn_size = NULL;
-	_cleanup_object_unref_ AsIcon *icon_hidpi = NULL;
+	g_autofree gchar *fn_size = NULL;
+	g_autoptr(AsIcon) icon_hidpi = NULL;
 
 	/* does the file exist */
 	icon_tmp = as_app_get_icon_default (app);
@@ -3721,7 +3721,7 @@ as_app_node_parse_dep11_icons (AsApp *app, GNode *node,
 	const gchar *sizes[] = { "128x128", "64x64", "", NULL };
 	guint i;
 	guint size;
-	_cleanup_object_unref_ AsIcon *ic_tmp = NULL;
+	g_autoptr(AsIcon) ic_tmp = NULL;
 
 	/* YAML files only specify one icon for various sizes */
 	ic_tmp = as_icon_new ();
@@ -3730,9 +3730,9 @@ as_app_node_parse_dep11_icons (AsApp *app, GNode *node,
 
 	/* find each size */
 	for (i = 0; sizes[i] != NULL; i++) {
-		_cleanup_free_ gchar *path = NULL;
-		_cleanup_free_ gchar *size_name = NULL;
-		_cleanup_object_unref_ AsIcon *ic = NULL;
+		g_autofree gchar *path = NULL;
+		g_autofree gchar *size_name = NULL;
+		g_autoptr(AsIcon) ic = NULL;
 
 		size_name = g_build_filename (sizes[i],
 					      as_icon_get_name (ic_tmp),
@@ -3846,7 +3846,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 		}
 		if (g_strcmp0 (tmp, "Bundle") == 0) {
 			for (c = n->children; c != NULL; c = c->next) {
-				_cleanup_object_unref_ AsBundle *bu = NULL;
+				g_autoptr(AsBundle) bu = NULL;
 				bu = as_bundle_new ();
 				if (!as_bundle_node_parse_dep11 (bu, c, ctx, error))
 					return FALSE;
@@ -3874,7 +3874,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 					}
 					continue;
 				} else {
-					_cleanup_object_unref_ AsProvide *pr = NULL;
+					g_autoptr(AsProvide) pr = NULL;
 					pr = as_provide_new ();
 					if (!as_provide_node_parse_dep11 (pr, c, ctx, error))
 						return FALSE;
@@ -3885,7 +3885,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 		}
 		if (g_strcmp0 (tmp, "Screenshots") == 0) {
 			for (c = n->children; c != NULL; c = c->next) {
-				_cleanup_object_unref_ AsScreenshot *ss = NULL;
+				g_autoptr(AsScreenshot) ss = NULL;
 				ss = as_screenshot_new ();
 				if (!as_screenshot_node_parse_dep11 (ss, c, ctx, error))
 					return FALSE;
@@ -3905,8 +3905,8 @@ as_app_value_tokenize (const gchar *value)
 {
 	gchar **values;
 	guint i;
-	_cleanup_free_ gchar *delim = NULL;
-	_cleanup_strv_free_ gchar **tmp = NULL;
+	g_autofree gchar *delim = NULL;
+	g_auto(GStrv) tmp = NULL;
 
 	delim = g_strdup (value);
 	g_strdelimit (delim, "/,.;:", ' ');
@@ -4231,9 +4231,9 @@ as_app_parse_appdata_file (AsApp *app,
 	gboolean seen_application = FALSE;
 	gchar *tmp;
 	gsize len;
-	_cleanup_error_free_ GError *error_local = NULL;
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_free_ gchar *data = NULL;
+	g_autoptr(GError) error_local = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autofree gchar *data = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
 
 	/* open file */
@@ -4420,7 +4420,7 @@ as_app_to_file (AsApp *app,
 		GCancellable *cancellable,
 		GError **error)
 {
-	_cleanup_free_ AsNodeContext *ctx = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
 

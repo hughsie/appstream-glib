@@ -50,7 +50,7 @@
 static gboolean
 as_test_compare_lines (const gchar *txt1, const gchar *txt2, GError **error)
 {
-	_cleanup_free_ gchar *output = NULL;
+	g_autofree gchar *output = NULL;
 
 	/* exactly the same */
 	if (g_strcmp0 (txt1, txt2) == 0)
@@ -77,7 +77,7 @@ static gchar *
 as_test_get_filename (const gchar *filename)
 {
 	_cleanup_free_libc_ gchar *tmp = NULL;
-	_cleanup_free_ gchar *path = NULL;
+	g_autofree gchar *path = NULL;
 
 	path = g_build_filename (TESTDATADIR, filename, NULL);
 	/* glibc allocates a buffer */
@@ -142,12 +142,12 @@ as_test_monitor_dir_func (void)
 	guint cnt_added = 0;
 	guint cnt_removed = 0;
 	guint cnt_changed = 0;
-	_cleanup_object_unref_ AsMonitor *mon = NULL;
-	_cleanup_error_free_ GError *error = NULL;
+	g_autoptr(AsMonitor) mon = NULL;
+	g_autoptr(GError) error = NULL;
 	const gchar *tmpdir = "/tmp/monitor-test/usr/share/app-info/xmls";
-	_cleanup_free_ gchar *tmpfile = NULL;
-	_cleanup_free_ gchar *tmpfile_new = NULL;
-	_cleanup_free_ gchar *cmd_touch = NULL;
+	g_autofree gchar *tmpfile = NULL;
+	g_autofree gchar *tmpfile_new = NULL;
+	g_autofree gchar *cmd_touch = NULL;
 
 	tmpfile = g_build_filename (tmpdir, "test.txt", NULL);
 	tmpfile_new = g_build_filename (tmpdir, "newtest.txt", NULL);
@@ -241,11 +241,11 @@ as_test_monitor_file_func (void)
 	guint cnt_added = 0;
 	guint cnt_removed = 0;
 	guint cnt_changed = 0;
-	_cleanup_object_unref_ AsMonitor *mon = NULL;
-	_cleanup_error_free_ GError *error = NULL;
+	g_autoptr(AsMonitor) mon = NULL;
+	g_autoptr(GError) error = NULL;
 	const gchar *tmpfile = "/tmp/one.txt";
 	const gchar *tmpfile_new = "/tmp/two.txt";
-	_cleanup_free_ gchar *cmd_touch = NULL;
+	g_autofree gchar *cmd_touch = NULL;
 
 	g_unlink (tmpfile);
 	g_unlink (tmpfile_new);
@@ -349,8 +349,8 @@ as_test_release_func (void)
 	GString *xml;
 	const gchar *src = "<release version=\"0.1.2\" timestamp=\"123\"/>";
 	gboolean ret;
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_object_unref_ AsRelease *release = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsRelease) release = NULL;
 
 	release = as_release_new ();
 
@@ -391,8 +391,8 @@ as_test_provide_func (void)
 	GString *xml;
 	const gchar *src = "<binary>/usr/bin/gnome-shell</binary>";
 	gboolean ret;
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_object_unref_ AsProvide *provide = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsProvide) provide = NULL;
 
 	provide = as_provide_new ();
 
@@ -442,8 +442,8 @@ as_test_release_appstream_func (void)
 		"<description><p>This is a new release</p><ul><li>Point</li></ul></description>\n"
 		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>\n"
 		"</release>\n";
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_object_unref_ AsRelease *release = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsRelease) release = NULL;
 
 	release = as_release_new ();
 
@@ -514,8 +514,8 @@ as_test_release_appdata_func (void)
 		"<p xml:lang=\"pl\">Oprogramowanie</p>\n"
 		"</description>\n"
 		"</release>\n";
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_object_unref_ AsRelease *release = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsRelease) release = NULL;
 
 	release = as_release_new ();
 
@@ -573,8 +573,8 @@ static void
 as_test_image_resize_filename (AsTestResize rz, const gchar *in, const gchar *out)
 {
 	gboolean ret;
-	_cleanup_object_unref_ GdkPixbuf *pb = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pb2 = NULL;
+	g_autoptr(GdkPixbuf) pb = NULL;
+	g_autoptr(GdkPixbuf) pb2 = NULL;
 
 	pb = gdk_pixbuf_new_from_file (in, NULL);
 	g_assert (pb != NULL);
@@ -630,14 +630,14 @@ static void
 as_test_image_alpha_func (void)
 {
 	gboolean ret;
-	_cleanup_error_free_ GError *error = NULL;
-	_cleanup_free_ gchar *fn_both = NULL;
-	_cleanup_free_ gchar *fn_horiz = NULL;
-	_cleanup_free_ gchar *fn_internal1 = NULL;
-	_cleanup_free_ gchar *fn_internal2 = NULL;
-	_cleanup_free_ gchar *fn_none = NULL;
-	_cleanup_free_ gchar *fn_vert = NULL;
-	_cleanup_object_unref_ AsImage *im = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autofree gchar *fn_both = NULL;
+	g_autofree gchar *fn_horiz = NULL;
+	g_autofree gchar *fn_internal1 = NULL;
+	g_autofree gchar *fn_internal2 = NULL;
+	g_autofree gchar *fn_none = NULL;
+	g_autofree gchar *fn_vert = NULL;
+	g_autoptr(AsImage) im = NULL;
 
 	/* horiz */
 	fn_horiz = as_test_get_filename ("alpha-horiz.png");
@@ -697,8 +697,8 @@ as_test_image_resize_func (void)
 {
 	GError *error = NULL;
 	const gchar *tmp;
-	_cleanup_dir_close_ GDir *dir = NULL;
-	_cleanup_free_ gchar *output_dir = NULL;
+	g_autoptr(GDir) dir = NULL;
+	g_autofree gchar *output_dir = NULL;
 
 	/* only do this test if an "output" directory exists */
 	output_dir = g_build_filename (TESTDATADIR, "output", NULL);
@@ -711,14 +711,14 @@ as_test_image_resize_func (void)
 	g_assert (dir != NULL);
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
 		guint i;
-		_cleanup_free_ gchar *path = NULL;
+		g_autofree gchar *path = NULL;
 
 		if (!g_str_has_prefix (tmp, "ss-"))
 			continue;
 		path = g_build_filename (TESTDATADIR, tmp, NULL);
 
 		for (i = 0; i < AS_TEST_RESIZE_LAST; i++) {
-			_cleanup_free_ gchar *new_path = NULL;
+			g_autofree gchar *new_path = NULL;
 			_cleanup_string_free_ GString *basename = NULL;
 
 			basename = g_string_new (tmp);
@@ -740,10 +740,10 @@ as_test_icon_func (void)
 	GString *xml;
 	const gchar *src = "<icon type=\"cached\">app.png</icon>";
 	gboolean ret;
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_free_ gchar *prefix = NULL;
-	_cleanup_object_unref_ AsIcon *icon = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autofree gchar *prefix = NULL;
+	g_autoptr(AsIcon) icon = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	icon = as_icon_new ();
 
@@ -803,8 +803,8 @@ as_test_checksum_func (void)
 	GString *xml;
 	const gchar *src = "<checksum filename=\"fn.cab\" target=\"container\" type=\"sha1\">12345</checksum>";
 	gboolean ret;
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_object_unref_ AsChecksum *csum = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsChecksum) csum = NULL;
 
 	/* helpers */
 	g_assert_cmpint (as_checksum_target_from_string ("container"), ==, AS_CHECKSUM_TARGET_CONTAINER);
@@ -900,9 +900,9 @@ as_test_icon_embedded_func (void)
 "</filecontent>"
 "</icon>";
 	gboolean ret;
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_object_unref_ AsIcon *icon = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsIcon) icon = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	icon = as_icon_new ();
 
@@ -963,10 +963,10 @@ as_test_image_func (void)
 		"<image type=\"thumbnail\" height=\"12\" width=\"34\">"
 		"http://www.hughsie.com/a.jpg</image>";
 	gboolean ret;
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsImage *image = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsImage) image = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	image = as_image_new ();
 
@@ -1036,8 +1036,8 @@ as_test_bundle_func (void)
 	const gchar *src =
 		"<bundle type=\"limba\">gnome-3-16</bundle>";
 	gboolean ret;
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_object_unref_ AsBundle *bundle = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsBundle) bundle = NULL;
 
 	bundle = as_bundle_new ();
 
@@ -1085,8 +1085,8 @@ as_test_screenshot_func (void)
 		"<image type=\"thumbnail\" height=\"100\" width=\"100\">http://2.png</image>\n"
 		"</screenshot>\n";
 	gboolean ret;
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_object_unref_ AsScreenshot *screenshot = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsScreenshot) screenshot = NULL;
 
 	screenshot = as_screenshot_new ();
 
@@ -1208,8 +1208,8 @@ as_test_app_func (void)
 		"<value key=\"SomethingRandom\"/>\n"
 		"</metadata>\n"
 		"</component>\n";
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsApp) app = NULL;
 
 	app = as_app_new ();
 
@@ -1308,7 +1308,7 @@ as_test_app_validate_check (GPtrArray *array,
 	guint i;
 
 	for (i = 0; i < array->len; i++) {
-		_cleanup_free_ gchar *message_no_data = NULL;
+		g_autofree gchar *message_no_data = NULL;
 		problem = g_ptr_array_index (array, i);
 		if (as_problem_get_kind (problem) != kind)
 			continue;
@@ -1341,8 +1341,8 @@ as_test_app_validate_appdata_good_func (void)
 	GPtrArray *screenshots;
 	gboolean ret;
 	guint i;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsApp) app = NULL;
 
 	/* open file */
 	app = as_app_new ();
@@ -1395,8 +1395,8 @@ as_test_app_validate_metainfo_good_func (void)
 	GPtrArray *probs;
 	gboolean ret;
 	guint i;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsApp) app = NULL;
 
 	/* open file */
 	app = as_app_new ();
@@ -1437,8 +1437,8 @@ as_test_app_validate_intltool_func (void)
 	GPtrArray *probs;
 	gboolean ret;
 	guint i;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsApp) app = NULL;
 
 	/* open file */
 	app = as_app_new ();
@@ -1468,8 +1468,8 @@ as_test_app_translated_func (void)
 {
 	GError *error = NULL;
 	gboolean ret;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsApp) app = NULL;
 
 	/* open file */
 	app = as_app_new ();
@@ -1491,9 +1491,9 @@ as_test_app_validate_file_bad_func (void)
 	GError *error = NULL;
 	gboolean ret;
 	guint i;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *probs = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GPtrArray) probs = NULL;
 
 	/* open file */
 	app = as_app_new ();
@@ -1572,9 +1572,9 @@ as_test_app_validate_meta_bad_func (void)
 	GError *error = NULL;
 	gboolean ret;
 	guint i;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *probs = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GPtrArray) probs = NULL;
 
 	/* open file */
 	app = as_app_new ();
@@ -1614,9 +1614,9 @@ as_test_store_local_app_install_func (void)
 	AsIcon *ic;
 	GError *error = NULL;
 	gboolean ret;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_free_ gchar *source_file = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autofree gchar *source_file = NULL;
+	g_autoptr(AsStore) store = NULL;
 
 	/* open test store */
 	store = as_store_new ();
@@ -1659,8 +1659,8 @@ as_test_store_local_appdata_func (void)
 	AsApp *app;
 	GError *error = NULL;
 	gboolean ret;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsStore) store = NULL;
 
 	/* this are the warnings expected */
 	g_test_expect_message (G_LOG_DOMAIN,
@@ -1688,10 +1688,10 @@ as_test_store_validate_func (void)
 {
 	GError *error = NULL;
 	gboolean ret;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *probs = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GFile) file = NULL;
+	g_autoptr(GPtrArray) probs = NULL;
 
 	/* open file */
 	store = as_store_new ();
@@ -1726,8 +1726,8 @@ as_test_app_validate_style_func (void)
 	AsProblem *problem;
 	GError *error = NULL;
 	guint i;
-	_cleanup_object_unref_ AsApp *app = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *probs = NULL;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GPtrArray) probs = NULL;
 
 	app = as_app_new ();
 	as_app_add_url (app, AS_URL_KIND_UNKNOWN, "dave.com");
@@ -1778,8 +1778,8 @@ as_test_app_parse_file_desktop_func (void)
 	AsIcon *ic;
 	GError *error = NULL;
 	gboolean ret;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsApp) app = NULL;
 
 	/* create an AsApp from a desktop file */
 	app = as_app_new ();
@@ -1843,8 +1843,8 @@ as_test_app_parse_file_inf_func (void)
 	GError *error = NULL;
 	GPtrArray *releases;
 	gboolean ret;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsApp) app = NULL;
 
 	/* create an AsApp from a desktop file */
 	app = as_app_new ();
@@ -1894,8 +1894,8 @@ as_test_app_no_markup_func (void)
 		"<id>org.gnome.Software.desktop</id>\n"
 		"<description>Software is awesome:\n\n * Bada\n * Boom!</description>\n"
 		"</component>\n";
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsApp) app = NULL;
 
 	app = as_app_new ();
 
@@ -1964,7 +1964,7 @@ as_test_node_reflow_text_func (void)
 static void
 as_test_node_sort_func (void)
 {
-	_cleanup_error_free_ GError *error = NULL;
+	g_autoptr(GError) error = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
 	_cleanup_string_free_ GString *str = NULL;
 
@@ -2246,7 +2246,7 @@ as_test_node_localized_wrap_func (void)
 		"  <li xml:lang=\"en_GB\">Hi</li>"
 		" </ul>"
 		"</description>";
-	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
+	g_autoptr(GHashTable) hash = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
 
 	root = as_node_from_xml (xml, 0, &error);
@@ -2303,7 +2303,7 @@ as_test_node_localized_wrap2_func (void)
 		"  <li>Secondski</li>"
 		" </ul>"
 		"</description>";
-	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
+	g_autoptr(GHashTable) hash = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
 
 	root = as_node_from_xml (xml, 0, &error);
@@ -2333,10 +2333,10 @@ as_test_app_subsume_func (void)
 {
 	AsIcon *ic;
 	GList *list;
-	_cleanup_object_unref_ AsApp *app = NULL;
-	_cleanup_object_unref_ AsApp *donor = NULL;
-	_cleanup_object_unref_ AsIcon *icon = NULL;
-	_cleanup_object_unref_ AsScreenshot *ss = NULL;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(AsApp) donor = NULL;
+	g_autoptr(AsIcon) icon = NULL;
+	g_autoptr(AsScreenshot) ss = NULL;
 
 	donor = as_app_new ();
 	icon = as_icon_new ();
@@ -2395,7 +2395,7 @@ as_test_app_search_func (void)
 	const gchar *all[] = { "gnome", "install", "software", NULL };
 	const gchar *none[] = { "gnome", "xxx", "software", NULL };
 	const gchar *mime[] = { "vnd", "oasis", "opendocument","text", NULL };
-	_cleanup_object_unref_ AsApp *app = NULL;
+	g_autoptr(AsApp) app = NULL;
 
 	app = as_app_new ();
 	as_app_set_name (app, NULL, "GNOME Software");
@@ -2426,8 +2426,8 @@ as_test_store_embedded_func (void)
 	AsApp *app;
 	AsIcon *icon;
 	gboolean ret;
-	_cleanup_error_free_ GError *error = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(AsStore) store = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
 	const gchar *xml_src =
 "<components version=\"0.6\" origin=\"origin\">"
@@ -2530,8 +2530,8 @@ as_test_store_auto_reload_dir_func (void)
 	AsApp *app;
 	gboolean ret;
 	guint cnt = 0;
-	_cleanup_error_free_ GError *error = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(AsStore) store = NULL;
 
 	/* add this file to a store */
 	store = as_store_new ();
@@ -2584,9 +2584,9 @@ as_test_store_auto_reload_file_func (void)
 	AsRelease *rel;
 	gboolean ret;
 	guint cnt = 0;
-	_cleanup_error_free_ GError *error = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* set initial file */
 	ret = g_file_set_contents ("/tmp/foo.xml",
@@ -2668,11 +2668,11 @@ as_test_store_demote_func (void)
 	AsApp *app;
 	GError *error = NULL;
 	gboolean ret;
-	_cleanup_free_ gchar *filename1 = NULL;
-	_cleanup_free_ gchar *filename2 = NULL;
-	_cleanup_object_unref_ AsApp *app_appdata = NULL;
-	_cleanup_object_unref_ AsApp *app_desktop = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autofree gchar *filename1 = NULL;
+	g_autofree gchar *filename2 = NULL;
+	g_autoptr(AsApp) app_appdata = NULL;
+	g_autoptr(AsApp) app_desktop = NULL;
+	g_autoptr(AsStore) store = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
 
 	/* load example desktop file */
@@ -2717,11 +2717,11 @@ static void
 as_test_store_merges_func (void)
 {
 	AsApp *app_tmp;
-	_cleanup_object_unref_ AsApp *app_appdata = NULL;
-	_cleanup_object_unref_ AsApp *app_appinfo = NULL;
-	_cleanup_object_unref_ AsApp *app_desktop = NULL;
-	_cleanup_object_unref_ AsStore *store_all = NULL;
-	_cleanup_object_unref_ AsStore *store_desktop_appdata = NULL;
+	g_autoptr(AsApp) app_appdata = NULL;
+	g_autoptr(AsApp) app_appinfo = NULL;
+	g_autoptr(AsApp) app_desktop = NULL;
+	g_autoptr(AsStore) store_all = NULL;
+	g_autoptr(AsStore) store_desktop_appdata = NULL;
 
 	/* test desktop + appdata */
 	store_desktop_appdata = as_store_new ();
@@ -2785,10 +2785,10 @@ static void
 as_test_store_merges_local_func (void)
 {
 	AsApp *app_tmp;
-	_cleanup_object_unref_ AsApp *app_appdata = NULL;
-	_cleanup_object_unref_ AsApp *app_appinfo = NULL;
-	_cleanup_object_unref_ AsApp *app_desktop = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autoptr(AsApp) app_appdata = NULL;
+	g_autoptr(AsApp) app_appinfo = NULL;
+	g_autoptr(AsApp) app_desktop = NULL;
+	g_autoptr(AsStore) store = NULL;
 
 	/* test desktop + appdata + appstream */
 	store = as_store_new ();
@@ -2839,8 +2839,8 @@ static void
 as_test_store_empty_func (void)
 {
 	gboolean ret;
-	_cleanup_error_free_ GError *error = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(AsStore) store = NULL;
 
 	store = as_store_new ();
 	ret = as_store_from_xml (store, "", NULL, &error);
@@ -2853,7 +2853,7 @@ as_test_store_func (void)
 {
 	AsApp *app;
 	GString *xml;
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autoptr(AsStore) store = NULL;
 
 	/* create a store and add a single app */
 	store = as_store_new ();
@@ -2919,8 +2919,8 @@ as_test_store_provides_func (void)
 {
 	AsApp *app;
 	gboolean ret;
-	_cleanup_error_free_ GError *error = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(AsStore) store = NULL;
 
 	/* create a store and add a single app */
 	store = as_store_new ();
@@ -3068,7 +3068,7 @@ as_test_store_addons_func (void)
 		"<id>eclipse.desktop</id>"
 		"</component>"
 		"</components>";
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autoptr(AsStore) store = NULL;
 	_cleanup_string_free_ GString *str = NULL;
 
 	/* load a file to the store */
@@ -3119,8 +3119,8 @@ as_test_node_no_dup_c_func (void)
 		"<name>Krita</name>"
 		"<name xml:lang=\"pl\">Krita</name>"
 		"</component>";
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsApp) app = NULL;
 
 	/* to object */
 	app = as_app_new ();
@@ -3159,9 +3159,9 @@ as_test_store_origin_func (void)
 	AsApp *app;
 	GError *error = NULL;
 	gboolean ret;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* load a file to the store */
 	store = as_store_new ();
@@ -3189,15 +3189,15 @@ as_test_store_speed_appstream_func (void)
 	gboolean ret;
 	guint i;
 	guint loops = 10;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
-	_cleanup_timer_destroy_ GTimer *timer = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(GFile) file = NULL;
+	g_autoptr(GTimer) timer = NULL;
 
 	filename = as_test_get_filename ("example-v04.xml.gz");
 	file = g_file_new_for_path (filename);
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
-		_cleanup_object_unref_ AsStore *store = NULL;
+		g_autoptr(AsStore) store = NULL;
 		store = as_store_new ();
 		ret = as_store_from_file (store, file, NULL, NULL, &error);
 		g_assert_no_error (error);
@@ -3216,13 +3216,13 @@ as_test_store_speed_appdata_func (void)
 	gboolean ret;
 	guint i;
 	guint loops = 10;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_timer_destroy_ GTimer *timer = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(GTimer) timer = NULL;
 
 	filename = as_test_get_filename (".");
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
-		_cleanup_object_unref_ AsStore *store = NULL;
+		g_autoptr(AsStore) store = NULL;
 		store = as_store_new ();
 		as_store_set_destdir (store, filename);
 		g_test_expect_message (G_LOG_DOMAIN,
@@ -3243,13 +3243,13 @@ as_test_store_speed_desktop_func (void)
 	gboolean ret;
 	guint i;
 	guint loops = 10;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_timer_destroy_ GTimer *timer = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(GTimer) timer = NULL;
 
 	filename = as_test_get_filename (".");
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
-		_cleanup_object_unref_ AsStore *store = NULL;
+		g_autoptr(AsStore) store = NULL;
 		store = as_store_new ();
 		as_store_set_destdir (store, filename);
 		ret = as_store_load (store, AS_STORE_LOAD_FLAG_DESKTOP, NULL, &error);
@@ -3263,7 +3263,7 @@ as_test_store_speed_desktop_func (void)
 static void
 as_test_utils_guid_func (void)
 {
-	_cleanup_free_ gchar *guid = NULL;
+	g_autofree gchar *guid = NULL;
 
 	/* invalid */
 	g_assert (!as_utils_guid_is_valid (NULL));
@@ -3285,7 +3285,7 @@ as_test_utils_icons_func (void)
 {
 	gchar *tmp;
 	GError *error = NULL;
-	_cleanup_free_ gchar *destdir = NULL;
+	g_autofree gchar *destdir = NULL;
 
 	destdir = as_test_get_filename (".");
 
@@ -3527,7 +3527,7 @@ as_test_store_app_install_func (void)
 {
 	GError *error = NULL;
 	gboolean ret;
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autoptr(AsStore) store = NULL;
 
 	store = as_store_new ();
 	ret = as_store_load (store,
@@ -3559,7 +3559,7 @@ as_test_store_metadata_func (void)
 		"</metadata>"
 		"</component>"
 		"</components>";
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autoptr(AsStore) store = NULL;
 
 	store = as_store_new ();
 	ret = as_store_from_xml (store, xml, NULL, &error);
@@ -3577,15 +3577,15 @@ as_test_store_metadata_index_func (void)
 	GPtrArray *apps;
 	const guint repeats = 10000;
 	guint i;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_timer_destroy_ GTimer *timer = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GTimer) timer = NULL;
 
 	/* create lots of applications in the store */
 	store = as_store_new ();
 	as_store_add_metadata_index (store, "X-CacheID");
 	for (i = 0; i < repeats; i++) {
-		_cleanup_free_ gchar *id = g_strdup_printf ("app-%05i", i);
-		_cleanup_object_unref_ AsApp *app = as_app_new ();
+		g_autofree gchar *id = g_strdup_printf ("app-%05i", i);
+		g_autoptr(AsApp) app = as_app_new ();
 		as_app_set_id (app, id);
 		as_app_add_metadata (app, "X-CacheID", "dave.i386");
 		as_app_add_metadata (app, "baz", "dave");
@@ -3613,8 +3613,8 @@ as_test_yaml_func (void)
 	GError *error = NULL;
 	GString *str;
 	const gchar *expected;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* simple header */
 	node = as_yaml_from_data (
@@ -3722,10 +3722,10 @@ as_test_store_yaml_func (void)
 	AsApp *app;
 	GError *error = NULL;
 	gboolean ret;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_free_ gchar *icon_root = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autofree gchar *icon_root = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GFile) file = NULL;
 	_cleanup_string_free_ GString *str = NULL;
 	const gchar *xml =
 		"<components version=\"0.6\" origin=\"aequorea\">\n"
@@ -3788,16 +3788,16 @@ as_test_store_speed_yaml_func (void)
 	gboolean ret;
 	guint i;
 	guint loops = 10;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
-	_cleanup_timer_destroy_ GTimer *timer = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(GFile) file = NULL;
+	g_autoptr(GTimer) timer = NULL;
 
 	filename = as_test_get_filename ("example-v06.yml.gz");
 	g_assert (filename != NULL);
 	file = g_file_new_for_path (filename);
 	timer = g_timer_new ();
 	for (i = 0; i < loops; i++) {
-		_cleanup_object_unref_ AsStore *store = NULL;
+		g_autoptr(AsStore) store = NULL;
 		store = as_store_new ();
 		ret = as_store_from_file (store, file, NULL, NULL, &error);
 		g_assert_no_error (error);
@@ -3848,9 +3848,9 @@ as_test_inf_func (void)
 	gboolean ret;
 	gchar *tmp;
 	guint64 ts;
-	_cleanup_dir_close_ GDir *dir = NULL;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_free_ gchar *infs = NULL;
+	g_autoptr(GDir) dir = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autofree gchar *infs = NULL;
 
 	/* case insensitive */
 	kf = g_key_file_new ();
@@ -4124,7 +4124,7 @@ as_test_inf_func (void)
 	if (infs != NULL) {
 		dir = g_dir_open (infs, 0, NULL);
 		while ((data = g_dir_read_name (dir)) != NULL) {
-			_cleanup_free_ gchar *path = NULL;
+			g_autofree gchar *path = NULL;
 			path = g_build_filename (infs, data, NULL);
 			kf = g_key_file_new ();
 			ret = as_inf_load_file (kf, path,
@@ -4151,10 +4151,10 @@ as_test_utils_install_filename_func (void)
 {
 	gboolean ret;
 	GError *error = NULL;
-	_cleanup_free_ gchar *filename1 = NULL;
-	_cleanup_free_ gchar *filename2 = NULL;
-	_cleanup_free_ gchar *filename3 = NULL;
-	_cleanup_free_ gchar *filename4 = NULL;
+	g_autofree gchar *filename1 = NULL;
+	g_autofree gchar *filename2 = NULL;
+	g_autofree gchar *filename3 = NULL;
+	g_autofree gchar *filename4 = NULL;
 
 	/* appdata to shared */
 	filename1 = as_test_get_filename ("broken.appdata.xml");

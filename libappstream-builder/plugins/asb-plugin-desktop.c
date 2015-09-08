@@ -90,8 +90,8 @@ asb_app_load_icon (AsbApp *app,
 	guint pixbuf_width;
 	guint tmp_height;
 	guint tmp_width;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf_src = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf_tmp = NULL;
+	g_autoptr(GdkPixbuf) pixbuf_src = NULL;
+	g_autoptr(GdkPixbuf) pixbuf_tmp = NULL;
 
 	/* open file in native size */
 	if (g_str_has_suffix (filename, ".svg")) {
@@ -134,7 +134,7 @@ asb_app_load_icon (AsbApp *app,
 
 	/* never scale up, just pad */
 	if (pixbuf_width < icon_size && pixbuf_height < icon_size) {
-		_cleanup_free_ gchar *size_str = NULL;
+		g_autofree gchar *size_str = NULL;
 		size_str = g_strdup_printf ("%ix%i",
 					    pixbuf_width,
 					    pixbuf_height);
@@ -197,14 +197,14 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 			      GError **error)
 {
 	guint min_icon_size;
-	_cleanup_free_ gchar *fn_hidpi = NULL;
-	_cleanup_free_ gchar *fn = NULL;
-	_cleanup_free_ gchar *name_hidpi = NULL;
-	_cleanup_free_ gchar *name = NULL;
-	_cleanup_object_unref_ AsIcon *icon_hidpi = NULL;
-	_cleanup_object_unref_ AsIcon *icon = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf_hidpi = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+	g_autofree gchar *fn_hidpi = NULL;
+	g_autofree gchar *fn = NULL;
+	g_autofree gchar *name_hidpi = NULL;
+	g_autofree gchar *name = NULL;
+	g_autoptr(AsIcon) icon_hidpi = NULL;
+	g_autoptr(AsIcon) icon = NULL;
+	g_autoptr(GdkPixbuf) pixbuf_hidpi = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	/* find 64x64 icon */
 	fn = as_utils_find_icon_filename_full (tmpdir, key,
@@ -314,10 +314,10 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	AsIcon *icon;
 	AsAppParseFlags parse_flags = AS_APP_PARSE_FLAG_USE_HEURISTICS;
 	gboolean ret;
-	_cleanup_free_ gchar *app_id = NULL;
-	_cleanup_free_ gchar *full_filename = NULL;
-	_cleanup_object_unref_ AsbApp *app = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+	g_autofree gchar *app_id = NULL;
+	g_autofree gchar *full_filename = NULL;
+	g_autoptr(AsbApp) app = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	/* use GenericName fallback */
 	if (asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_USE_FALLBACKS))
@@ -346,14 +346,14 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	/* is the icon a stock-icon-name? */
 	icon = as_app_get_icon_default (AS_APP (app));
 	if (icon != NULL) {
-		_cleanup_free_ gchar *key = NULL;
+		g_autofree gchar *key = NULL;
 		key = g_strdup (as_icon_get_name (icon));
 		if (as_icon_get_kind (icon) == AS_ICON_KIND_STOCK) {
 			asb_package_log (pkg,
 					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
 					 "using stock icon %s", key);
 		} else {
-			_cleanup_error_free_ GError *error_local = NULL;
+			g_autoptr(GError) error_local = NULL;
 			g_ptr_array_set_size (as_app_get_icons (AS_APP (app)), 0);
 			ret = asb_plugin_desktop_add_icons (plugin,
 							    app,

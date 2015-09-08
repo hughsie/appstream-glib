@@ -355,8 +355,8 @@ as_monitor_file_changed_cb (GFileMonitor *mon,
 	AsMonitorPrivate *priv = GET_PRIVATE (monitor);
 	const gchar *tmp;
 	gboolean is_temp;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_free_ gchar *filename_other = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autofree gchar *filename_other = NULL;
 
 	/* get both filenames */
 	filename = g_file_get_path (file);
@@ -432,16 +432,16 @@ as_monitor_add_directory (AsMonitor *monitor,
 {
 	AsMonitorPrivate *priv = GET_PRIVATE (monitor);
 	const gchar *tmp;
-	_cleanup_object_unref_ GFileMonitor *mon = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
-	_cleanup_dir_close_ GDir *dir = NULL;
+	g_autoptr(GFileMonitor) mon = NULL;
+	g_autoptr(GFile) file = NULL;
+	g_autoptr(GDir) dir = NULL;
 
 	/* find the files already in the directory */
 	dir = g_dir_open (filename, 0, error);
 	if (dir == NULL)
 		return FALSE;
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free_ gchar *fn = NULL;
+		g_autofree gchar *fn = NULL;
 		fn = g_build_filename (filename, tmp, NULL);
 		g_debug ("adding existing file: %s", fn);
 		_g_ptr_array_str_add (priv->files, fn);
@@ -480,8 +480,8 @@ as_monitor_add_file (AsMonitor *monitor,
 		     GError **error)
 {
 	AsMonitorPrivate *priv = GET_PRIVATE (monitor);
-	_cleanup_object_unref_ GFile *file = NULL;
-	_cleanup_object_unref_ GFileMonitor *mon = NULL;
+	g_autoptr(GFile) file = NULL;
+	g_autoptr(GFileMonitor) mon = NULL;
 
 	/* already watched */
 	if (_g_ptr_array_str_find (priv->files, filename) != NULL)

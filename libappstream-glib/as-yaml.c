@@ -330,11 +330,11 @@ as_yaml_from_file (GFile *file, GCancellable *cancellable, GError **error)
 #if AS_BUILD_DEP11
 	const gchar *content_type = NULL;
 	yaml_parser_t parser;
-	_cleanup_free_ gchar *data = NULL;
-	_cleanup_object_unref_ GConverter *conv = NULL;
-	_cleanup_object_unref_ GFileInfo *info = NULL;
-	_cleanup_object_unref_ GInputStream *file_stream = NULL;
-	_cleanup_object_unref_ GInputStream *stream_data = NULL;
+	g_autofree gchar *data = NULL;
+	g_autoptr(GConverter) conv = NULL;
+	g_autoptr(GFileInfo) info = NULL;
+	g_autoptr(GInputStream) file_stream = NULL;
+	g_autoptr(GInputStream) stream_data = NULL;
 
 	/* what kind of file is this */
 	info = g_file_query_info (file,

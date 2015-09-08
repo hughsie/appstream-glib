@@ -43,13 +43,13 @@ static gboolean
 as_builder_search_path (GPtrArray *array, const gchar *path, GError **error)
 {
 	const gchar *filename;
-	_cleanup_dir_close_ GDir *dir = NULL;
+	g_autoptr(GDir) dir = NULL;
 
 	dir = g_dir_open (path, 0, error);
 	if (dir == NULL)
 		return FALSE;
 	while ((filename = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free_ gchar *tmp = NULL;
+		g_autofree gchar *tmp = NULL;
 		tmp = g_build_filename (path, filename, NULL);
 		if (g_file_test (tmp, G_FILE_TEST_IS_DIR)) {
 			if (!as_builder_search_path (array, tmp, error))
@@ -71,9 +71,9 @@ as_builder_setup_ostree (AsbContext *ctx, const gchar *ostree_repo, GError **err
 	GHashTableIter iter;
 	gpointer key;
 	gpointer value;
-	_cleanup_hashtable_unref_ GHashTable *refs = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
-	_cleanup_object_unref_ OstreeRepo *repo = NULL;
+	g_autoptr(GHashTable) refs = NULL;
+	g_autoptr(GFile) file = NULL;
+	g_autoptr(OstreeRepo) repo = NULL;
 
 	/* load repo */
 	file = g_file_new_for_path (ostree_repo);
@@ -85,11 +85,11 @@ as_builder_setup_ostree (AsbContext *ctx, const gchar *ostree_repo, GError **err
 	g_hash_table_iter_init (&iter, refs);
 	while (g_hash_table_iter_next (&iter, &key, &value)) {
 		const gchar *refspec = key;
-		_cleanup_free_ gchar *remote = NULL;
-		_cleanup_free_ gchar *name = NULL;
-		_cleanup_free_ gchar *filename = NULL;
-		_cleanup_free_ gchar *ref = NULL;
-		_cleanup_object_unref_ AsbPackage *pkg = NULL;
+		g_autofree gchar *remote = NULL;
+		g_autofree gchar *name = NULL;
+		g_autofree gchar *filename = NULL;
+		g_autofree gchar *ref = NULL;
+		g_autoptr(AsbPackage) pkg = NULL;
 
 		if (!ostree_parse_refspec (refspec, &remote, &ref, error))
 			return FALSE;
@@ -140,21 +140,21 @@ main (int argc, char **argv)
 	gint min_icon_size = 32;
 	guint i;
 	int retval = EXIT_SUCCESS;
-	_cleanup_dir_close_ GDir *dir = NULL;
-	_cleanup_error_free_ GError *error = NULL;
-	_cleanup_free_ gchar *basename = NULL;
-	_cleanup_free_ gchar *cache_dir = NULL;
-	_cleanup_free_ gchar *log_dir = NULL;
-	_cleanup_free_ gchar *icons_dir = NULL;
-	_cleanup_free_ gchar *old_metadata = NULL;
-	_cleanup_free_ gchar *origin = NULL;
-	_cleanup_free_ gchar *ostree_repo = NULL;
-	_cleanup_free_ gchar *output_dir = NULL;
-	_cleanup_free_ gchar *temp_dir = NULL;
-	_cleanup_free_ gchar **veto_ignore = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *packages = NULL;
-	_cleanup_strv_free_ gchar **packages_dirs = NULL;
-	_cleanup_timer_destroy_ GTimer *timer = NULL;
+	g_autoptr(GDir) dir = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *cache_dir = NULL;
+	g_autofree gchar *log_dir = NULL;
+	g_autofree gchar *icons_dir = NULL;
+	g_autofree gchar *old_metadata = NULL;
+	g_autofree gchar *origin = NULL;
+	g_autofree gchar *ostree_repo = NULL;
+	g_autofree gchar *output_dir = NULL;
+	g_autofree gchar *temp_dir = NULL;
+	g_autofree gchar **veto_ignore = NULL;
+	g_autoptr(GPtrArray) packages = NULL;
+	g_auto(GStrv) packages_dirs = NULL;
+	g_autoptr(GTimer) timer = NULL;
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
 			/* TRANSLATORS: command line option */
@@ -353,7 +353,7 @@ main (int argc, char **argv)
 	if (argc == 1 && ostree_repo == NULL) {
 		/* if the user launches the tool with no arguments */
 		if (packages_dirs == NULL) {
-			_cleanup_free_ gchar *tmp = NULL;
+			g_autofree gchar *tmp = NULL;
 			tmp = g_option_context_get_help (option_context, TRUE, NULL);
 			g_print ("%s", tmp);
 			retval = EXIT_FAILURE;
@@ -375,7 +375,7 @@ main (int argc, char **argv)
 	g_print ("%s\n", _("Scanning packages..."));
 	timer = g_timer_new ();
 	for (i = 0; i < packages->len; i++) {
-		_cleanup_error_free_ GError *error_local = NULL;
+		g_autoptr(GError) error_local = NULL;
 
 		filename = g_ptr_array_index (packages, i);
 

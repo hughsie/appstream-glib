@@ -211,8 +211,8 @@ asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 		icons = as_app_get_icons (AS_APP (app));
 	for (i = 0; icons != NULL && i < icons->len; i++) {
 		const gchar *tmpdir;
-		_cleanup_free_ gchar *filename = NULL;
-		_cleanup_free_ gchar *size_str = NULL;
+		g_autofree gchar *filename = NULL;
+		g_autofree gchar *size_str = NULL;
 
 		/* don't save some types of icons */
 		icon = g_ptr_array_index (icons, i);
@@ -275,7 +275,7 @@ asb_app_new (AsbPackage *pkg, const gchar *id)
 			break;
 		case ASB_PACKAGE_KIND_BUNDLE:
 		{
-			_cleanup_object_unref_ AsBundle *bundle = NULL;
+			g_autoptr(AsBundle) bundle = NULL;
 			bundle = as_bundle_new ();
 			as_bundle_set_id (bundle, asb_package_get_source (pkg));
 			as_bundle_set_kind (bundle, AS_BUNDLE_KIND_XDG_APP);

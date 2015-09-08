@@ -123,7 +123,7 @@ asb_gettext_parse_file (AsbGettextContext *ctx,
 {
 	AsbGettextEntry *entry;
 	AsbGettextHeader *h;
-	_cleanup_free_ gchar *data = NULL;
+	g_autofree gchar *data = NULL;
 	gboolean swapped;
 
 	/* read data, although we only strictly need the header */
@@ -160,8 +160,8 @@ asb_gettext_ctx_search_locale (AsbGettextContext *ctx,
 {
 	const gchar *filename;
 	guint i;
-	_cleanup_dir_close_ GDir *dir = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *mo_paths = NULL;
+	g_autoptr(GDir) dir = NULL;
+	g_autoptr(GPtrArray) mo_paths = NULL;
 
 	dir = g_dir_open (messages_path, 0, error);
 	if (dir == NULL)
@@ -170,7 +170,7 @@ asb_gettext_ctx_search_locale (AsbGettextContext *ctx,
 	/* do a first pass at this, trying to find the prefered .mo */
 	mo_paths = g_ptr_array_new_with_free_func (g_free);
 	while ((filename = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free_ gchar *path = NULL;
+		g_autofree gchar *path = NULL;
 		path = g_build_filename (messages_path, filename, NULL);
 		if (!g_file_test (path, G_FILE_TEST_EXISTS))
 			continue;
@@ -210,8 +210,8 @@ asb_gettext_ctx_search_path (AsbGettextContext *ctx,
 	const gchar *filename;
 	AsbGettextEntry *e;
 	GList *l;
-	_cleanup_dir_close_ GDir *dir = NULL;
-	_cleanup_free_ gchar *root = NULL;
+	g_autoptr(GDir) dir = NULL;
+	g_autofree gchar *root = NULL;
 
 	/* search for .mo files in the prefix */
 	root = g_build_filename (prefix, "/usr/share/locale", NULL);
@@ -225,7 +225,7 @@ asb_gettext_ctx_search_path (AsbGettextContext *ctx,
 	if (dir == NULL)
 		return FALSE;
 	while ((filename = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free_ gchar *path = NULL;
+		g_autofree gchar *path = NULL;
 		path = g_build_filename (root, filename, "LC_MESSAGES", NULL);
 		if (g_file_test (path, G_FILE_TEST_EXISTS)) {
 			if (!asb_gettext_ctx_search_locale (ctx, filename, path, error))

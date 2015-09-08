@@ -75,10 +75,10 @@ asb_plugin_process_dbus (AsbApp *app,
 			 gboolean is_system,
 			 GError **error)
 {
-	_cleanup_free_ gchar *filename_full = NULL;
-	_cleanup_free_ gchar *name = NULL;
-	_cleanup_keyfile_unref_ GKeyFile *kf = NULL;
-	_cleanup_object_unref_ AsProvide *provide = NULL;
+	g_autofree gchar *filename_full = NULL;
+	g_autofree gchar *name = NULL;
+	g_autoptr(GKeyFile) kf = NULL;
+	g_autoptr(AsProvide) provide = NULL;
 
 	/* load file */
 	filename_full = g_build_filename (tmpdir, filename, NULL);

@@ -104,7 +104,7 @@ asb_plugin_add_glob (GPtrArray *array, const gchar *glob)
 {
 	/* handle bundles automatically */
 	if (g_str_has_prefix (glob, "/usr/")) {
-		_cleanup_free_ gchar *glob_bundle = NULL;
+		g_autofree gchar *glob_bundle = NULL;
 		glob_bundle = g_strdup_printf ("/files/%s", glob + 5);
 		g_ptr_array_add (array, asb_glob_value_new (glob_bundle, ""));
 	}
@@ -125,7 +125,7 @@ asb_plugin_match_glob (const gchar *glob, const gchar *value)
 {
 	/* handle bundles automatically */
 	if (g_str_has_prefix (glob, "/usr/")) {
-		_cleanup_free_ gchar *glob_bundle = NULL;
+		g_autofree gchar *glob_bundle = NULL;
 		glob_bundle = g_strdup_printf ("/files/%s", glob + 5);
 		if (fnmatch (glob_bundle, value, 0) == 0)
 			return TRUE;

@@ -91,7 +91,7 @@ as_util_add (GPtrArray *array,
 {
 	AsUtilItem *item;
 	guint i;
-	_cleanup_strv_free_ gchar **names = NULL;
+	g_auto(GStrv) names = NULL;
 
 	g_return_if_fail (name != NULL);
 	g_return_if_fail (description != NULL);
@@ -482,7 +482,7 @@ as_util_convert_appstream (GFile *file_input,
 			   gdouble new_version,
 			   GError **error)
 {
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autoptr(AsStore) store = NULL;
 
 	store = as_store_new ();
 	if (!as_store_from_file (store, file_input, NULL, NULL, error))
@@ -512,8 +512,8 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 	AsAppSourceKind input_kind;
 	AsAppSourceKind output_kind;
 	gdouble new_version;
-	_cleanup_object_unref_ GFile *file_input = NULL;
-	_cleanup_object_unref_ GFile *file_output = NULL;
+	g_autoptr(GFile) file_input = NULL;
+	g_autoptr(GFile) file_output = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 3) {
@@ -582,7 +582,7 @@ as_util_upgrade (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* process each file */
 	for (i = 0; values[i] != NULL; i++) {
-		_cleanup_object_unref_ GFile *file = NULL;
+		g_autoptr(GFile) file = NULL;
 		AsAppSourceKind source_kind;
 		source_kind = as_app_guess_source_kind (values[i]);
 		switch (source_kind) {
@@ -632,7 +632,7 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 	/* convert all the AppData files */
 	for (f = 0; values[f] != NULL; f++) {
 
-		_cleanup_object_unref_ AsApp *app = NULL;
+		g_autoptr(AsApp) app = NULL;
 		_cleanup_string_free_ GString *str = NULL;
 
 		/* add separator */
@@ -658,9 +658,9 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 		for (i = 0; i < releases->len; i++) {
 			AsRelease *rel;
 			const gchar *tmp;
-			_cleanup_free_ gchar *version = NULL;
-			_cleanup_free_ gchar *date = NULL;
-			_cleanup_date_time_unref_ GDateTime *dt = NULL;
+			g_autofree gchar *version = NULL;
+			g_autofree gchar *date = NULL;
+			g_autoptr(GDateTime) dt = NULL;
 
 			rel = g_ptr_array_index (releases, i);
 
@@ -681,7 +681,7 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 			/* print description */
 			tmp = as_release_get_description (rel, NULL);
 			if (tmp != NULL) {
-				_cleanup_free_ gchar *md = NULL;
+				g_autofree gchar *md = NULL;
 				md = as_markup_convert (tmp,
 							AS_MARKUP_CONVERT_FORMAT_MARKDOWN,
 							error);
@@ -796,7 +796,7 @@ as_util_news_add_markup (GString *desc, const gchar *tag, const gchar *line)
 {
 	guint i;
 	guint indent = 0;
-	_cleanup_free_ gchar *escaped = NULL;
+	g_autofree gchar *escaped = NULL;
 
 	/* empty line means do nothing */
 	if (line != NULL && line[0] == '\0')
@@ -826,7 +826,7 @@ as_util_news_add_markup (GString *desc, const gchar *tag, const gchar *line)
 		g_string_append_printf (desc, "<%s>\n", tag);
 	} else {
 		gchar *tmp;
-		_cleanup_strv_free_ gchar **lines = NULL;
+		g_auto(GStrv) lines = NULL;
 		escaped = g_markup_escape_text (line, -1);
 		tmp = g_strrstr (escaped, " (");
 		if (tmp != NULL)
@@ -863,9 +863,9 @@ as_util_news_to_appdata_hdr (GString *desc, const gchar *txt, GError **error)
 	guint i;
 	const gchar *version = NULL;
 	const gchar *release = NULL;
-	_cleanup_strv_free_ gchar **release_split = NULL;
-	_cleanup_date_time_unref_ GDateTime *dt = NULL;
-	_cleanup_strv_free_ gchar **lines = NULL;
+	g_auto(GStrv) release_split = NULL;
+	g_autoptr(GDateTime) dt = NULL;
+	g_auto(GStrv) lines = NULL;
 
 	/* get info */
 	lines = g_strsplit (txt, "\n", -1);
@@ -955,7 +955,7 @@ static gboolean
 as_util_news_to_appdata_para (GString *desc, const gchar *txt, GError **error)
 {
 	guint i;
-	_cleanup_strv_free_ gchar **lines = NULL;
+	g_auto(GStrv) lines = NULL;
 
 	lines = g_strsplit (txt, "\n", -1);
 	for (i = 1; lines[i] != NULL; i++) {
@@ -974,10 +974,10 @@ static gboolean
 as_util_news_to_appdata (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	guint i;
-	_cleanup_free_ gchar *data = NULL;
+	g_autofree gchar *data = NULL;
 	_cleanup_string_free_ GString *data_str = NULL;
 	_cleanup_string_free_ GString *desc = NULL;
-	_cleanup_strv_free_ gchar **split = NULL;
+	g_auto(GStrv) split = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 1) {
@@ -1001,7 +1001,7 @@ as_util_news_to_appdata (AsUtilPrivate *priv, gchar **values, GError **error)
 	desc = g_string_new ("");
 	split = g_strsplit (data_str->str, "\n\n", -1);
 	for (i = 0; split[i] != NULL; i++) {
-		_cleanup_strv_free_ gchar **lines = NULL;
+		g_auto(GStrv) lines = NULL;
 
 		/* ignore empty sections */
 		if (split[i][0] == '\0')
@@ -1081,13 +1081,13 @@ static gboolean
 as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	gchar *instr = NULL;
-	_cleanup_free_ gchar *id_new = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
-	_cleanup_object_unref_ AsImage *im1 = NULL;
-	_cleanup_object_unref_ AsImage *im2 = NULL;
-	_cleanup_object_unref_ AsScreenshot *ss1 = NULL;
-	_cleanup_object_unref_ AsScreenshot *ss2 = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autofree gchar *id_new = NULL;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(AsImage) im1 = NULL;
+	g_autoptr(AsImage) im2 = NULL;
+	g_autoptr(AsScreenshot) ss1 = NULL;
+	g_autoptr(AsScreenshot) ss2 = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 2) {
@@ -1184,8 +1184,8 @@ as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **erro
 static gboolean
 as_util_add_file_to_store (AsStore *store, const gchar *filename, GError **error)
 {
-	_cleanup_object_unref_ AsApp *app = NULL;
-	_cleanup_object_unref_ GFile *file_input = NULL;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GFile) file_input = NULL;
 
 	switch (as_app_guess_source_kind (filename)) {
 	case AS_APP_SOURCE_KIND_APPDATA:
@@ -1221,7 +1221,7 @@ as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	guint i;
 	_cleanup_string_free_ GString *xml = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autoptr(AsStore) store = NULL;
 
 	/* check args */
 	if (g_strv_length (values) < 1) {
@@ -1267,7 +1267,7 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	GPtrArray *apps;
 	guint i;
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autoptr(AsStore) store = NULL;
 
 	/* check args */
 	if (g_strv_length (values) < 1) {
@@ -1323,9 +1323,9 @@ as_util_show_search_tokens (AsUtilPrivate *priv, gchar **values, GError **error)
 	guint j;
 	const gchar *tmp;
 	guint *cnt;
-	_cleanup_hashtable_unref_ GHashTable *dict = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_list_free_ GList *keys = NULL;
+	g_autoptr(GHashTable) dict = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GList) keys = NULL;
 
 	/* load system database */
 	store = as_store_new ();
@@ -1335,7 +1335,7 @@ as_util_show_search_tokens (AsUtilPrivate *priv, gchar **values, GError **error)
 	apps = as_store_get_apps (store);
 	for (i = 0; i < apps->len; i++) {
 		AsApp *app;
-		_cleanup_ptrarray_unref_ GPtrArray *tokens = NULL;
+		g_autoptr(GPtrArray) tokens = NULL;
 		app = g_ptr_array_index (apps, i);
 		tokens = as_app_get_search_tokens (app);
 		for (j = 0; j < tokens->len; j++) {
@@ -1433,7 +1433,7 @@ static gboolean
 as_util_rmtree (const gchar *directory, GError **error)
 {
 	const gchar *filename;
-	_cleanup_dir_close_ GDir *dir = NULL;
+	g_autoptr(GDir) dir = NULL;
 
 	/* try to open */
 	dir = g_dir_open (directory, 0, error);
@@ -1442,7 +1442,7 @@ as_util_rmtree (const gchar *directory, GError **error)
 
 	/* find each */
 	while ((filename = g_dir_read_name (dir))) {
-		_cleanup_free_ gchar *src = NULL;
+		g_autofree gchar *src = NULL;
 		src = g_build_filename (directory, filename, NULL);
 		if (g_file_test (src, G_FILE_TEST_IS_DIR)) {
 			if (!as_util_rmtree (src, error))
@@ -1492,12 +1492,12 @@ as_util_uninstall (AsUtilPrivate *priv, gchar **values, GError **error)
 	/* remove XML file */
 	destdir = g_getenv ("DESTDIR");
 	for (i = 0; locations[i] != NULL; i++) {
-		_cleanup_free_ gchar *path_xml = NULL;
+		g_autofree gchar *path_xml = NULL;
 		path_xml = g_strdup_printf ("%s%s/app-info/xmls/%s.xml.gz",
 					    destdir != NULL ? destdir : "",
 					    locations[i], values[0]);
 		if (g_file_test (path_xml, G_FILE_TEST_EXISTS)) {
-			_cleanup_object_unref_ GFile *file = NULL;
+			g_autoptr(GFile) file = NULL;
 			file = g_file_new_for_path (path_xml);
 			if (!g_file_delete (file, NULL, error))
 				return FALSE;
@@ -1506,7 +1506,7 @@ as_util_uninstall (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* remove icons */
 	for (i = 0; locations[i] != NULL; i++) {
-		_cleanup_free_ gchar *path_icons = NULL;
+		g_autofree gchar *path_icons = NULL;
 		path_icons = g_strdup_printf ("%s%s/app-info/icons/%s",
 					      destdir != NULL ? destdir : "",
 					      locations[i], values[0]);
@@ -2068,8 +2068,8 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	AsUtilDistro distro = AS_UTIL_DISTRO_UNKNOWN;
 	GPtrArray *apps = NULL;
 	guint i;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GFile) file = NULL;
 	_cleanup_string_free_ GString *html = NULL;
 
 	/* check args */
@@ -2287,7 +2287,7 @@ as_util_matrix_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 	if (arr == NULL || arr->len == 0) {
 		as_util_matrix_html_write_item (NULL, AS_UTIL_PKG_STATE_OK, str, NULL);
 	} else {
-		_cleanup_free_ gchar *tmp = NULL;
+		g_autofree gchar *tmp = NULL;
 		tmp = as_util_status_html_join (arr);
 		if (g_strstr_len (tmp, -1, "Dead upstream") != NULL) {
 			as_util_matrix_html_write_item (&state_app,
@@ -2348,7 +2348,7 @@ as_util_matrix_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	AsUtilDistro distro = AS_UTIL_DISTRO_UNKNOWN;
 	GPtrArray *apps = NULL;
 	guint i;
-	_cleanup_object_unref_ AsStore *store = NULL;
+	g_autoptr(AsStore) store = NULL;
 	_cleanup_string_free_ GString *html = NULL;
 
 	/* check args */
@@ -2364,7 +2364,7 @@ as_util_matrix_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	/* load file */
 	store = as_store_new ();
 	for (i = 1; values[i] != NULL; i++) {
-		_cleanup_object_unref_ GFile *file = NULL;
+		g_autoptr(GFile) file = NULL;
 		file = g_file_new_for_path (values[i]);
 		if (!as_store_from_file (store, file, NULL, NULL, error))
 			return FALSE;
@@ -2438,7 +2438,7 @@ as_util_status_csv_filter_func (AsApp *app, gchar **filters)
 	AsIdKind id_kind = AS_ID_KIND_DESKTOP;
 
 	for (i = 0; filters[i] != NULL; i++) {
-		_cleanup_strv_free_ gchar **split = NULL;
+		g_auto(GStrv) split = NULL;
 		split = g_strsplit (filters[i], "=", 2);
 		if (g_strv_length (split) != 2)
 			continue;
@@ -2469,8 +2469,8 @@ as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 	GPtrArray *apps = NULL;
 	const gchar *tmp;
 	guint i;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GFile) file = NULL;
 	_cleanup_string_free_ GString *data = NULL;
 
 	/* check args */
@@ -2493,7 +2493,7 @@ as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 	/* write applications */
 	data = g_string_new ("id,pkgname,name,comment,description,url\n");
 	for (i = 0; i < apps->len; i++) {
-		_cleanup_free_ gchar *description = NULL;
+		g_autofree gchar *description = NULL;
 		app = g_ptr_array_index (apps, i);
 
 		/* process filters */
@@ -2530,8 +2530,8 @@ as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
 	AsApp *app;
 	GPtrArray *apps = NULL;
 	guint i;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GFile) file = NULL;
 	_cleanup_string_free_ GString *yaml = NULL;
 
 	/* check args */
@@ -2633,7 +2633,7 @@ as_util_validate_output_html (const gchar *filename, GPtrArray *probs)
 		g_print ("<ul>\n");
 		for (i = 0; i < probs->len; i++) {
 			AsProblem *problem;
-			_cleanup_free_ gchar *tmp = NULL;
+			g_autofree gchar *tmp = NULL;
 			problem = g_ptr_array_index (probs, i);
 			tmp = g_markup_escape_text (as_problem_get_message (problem), -1);
 			g_print ("<li>");
@@ -2658,15 +2658,15 @@ as_util_validate_file (const gchar *filename,
 		       AsAppValidateFlags flags,
 		       GError **error)
 {
-	_cleanup_object_unref_ AsApp *app = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *probs = NULL;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GPtrArray) probs = NULL;
 
 	/* is AppStream */
 	g_print ("%s: ", filename);
 	if (as_app_guess_source_kind (filename) == AS_APP_SOURCE_KIND_APPSTREAM) {
 		gboolean ret;
-		_cleanup_object_unref_ AsStore *store = NULL;
-		_cleanup_object_unref_ GFile *file = NULL;
+		g_autoptr(AsStore) store = NULL;
+		g_autoptr(GFile) file = NULL;
 		file = g_file_new_for_path (filename);
 		store = as_store_new ();
 		ret = as_store_from_file (store, file, NULL, NULL, error);
@@ -2789,8 +2789,8 @@ static gboolean
 as_util_check_root_app_icon (AsApp *app, GError **error)
 {
 	AsIcon *icon_default;
-	_cleanup_free_ gchar *icon = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pb = NULL;
+	g_autofree gchar *icon = NULL;
+	g_autoptr(GdkPixbuf) pb = NULL;
 
 	/* nothing found */
 	icon_default = as_app_get_icon_default (app);
@@ -2886,7 +2886,7 @@ as_util_app_log (AsApp *app, const gchar *fmt, ...)
 	const gchar *id;
 	guint i;
 	va_list args;
-	_cleanup_free_ gchar *tmp = NULL;
+	g_autofree gchar *tmp = NULL;
 
 	va_start (args, fmt);
 	tmp = g_strdup_vprintf (fmt, args);
@@ -2910,10 +2910,10 @@ as_util_mirror_screenshots_thumb (AsScreenshot *ss, AsImage *im_src,
 				  const gchar *output_dir,
 				  GError **error)
 {
-	_cleanup_free_ gchar *fn = NULL;
-	_cleanup_free_ gchar *size_str = NULL;
-	_cleanup_free_ gchar *url_tmp = NULL;
-	_cleanup_object_unref_ AsImage *im_tmp = NULL;
+	g_autofree gchar *fn = NULL;
+	g_autofree gchar *size_str = NULL;
+	g_autofree gchar *url_tmp = NULL;
+	g_autoptr(AsImage) im_tmp = NULL;
 
 	/* only save the HiDPI screenshot if it's not padded */
 	if (scale > 1) {
@@ -2965,10 +2965,10 @@ as_util_mirror_screenshots_app_file (AsApp *app,
 {
 	AsImageAlphaFlags alpha_flags;
 	guint i;
-	_cleanup_free_ gchar *basename = NULL;
-	_cleanup_free_ gchar *filename_no_path = NULL;
-	_cleanup_free_ gchar *url_src = NULL;
-	_cleanup_object_unref_ AsImage *im_src = NULL;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *filename_no_path = NULL;
+	g_autofree gchar *url_src = NULL;
+	g_autoptr(AsImage) im_src = NULL;
 	guint sizes[] = { AS_IMAGE_NORMAL_WIDTH,    AS_IMAGE_NORMAL_HEIGHT,
 			  AS_IMAGE_THUMBNAIL_WIDTH, AS_IMAGE_THUMBNAIL_HEIGHT,
 			  AS_IMAGE_LARGE_WIDTH,     AS_IMAGE_LARGE_HEIGHT,
@@ -3066,16 +3066,16 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	gboolean ret = TRUE;
 	SoupStatus status;
 	SoupURI *uri = NULL;
-	_cleanup_free_ gchar *basename = NULL;
-	_cleanup_free_ gchar *cache_filename = NULL;
-	_cleanup_object_unref_ AsImage *im = NULL;
-	_cleanup_object_unref_ AsScreenshot *ss = NULL;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *cache_filename = NULL;
+	g_autoptr(AsImage) im = NULL;
+	g_autoptr(AsScreenshot) ss = NULL;
 	_cleanup_object_unref_ SoupMessage *msg = NULL;
-	_cleanup_object_unref_ SoupSession *session = NULL;
+	g_autoptr(SoupSession) session = NULL;
 
 	/* fonts screenshots are auto-generated */
 	if (as_app_get_id_kind (app) == AS_ID_KIND_FONT) {
-		_cleanup_free_ gchar *url_new = NULL;
+		g_autofree gchar *url_new = NULL;
 		basename = g_path_get_basename (url);
 		url_new = g_build_filename (mirror_uri, "source", basename, NULL);
 		im = as_image_new ();
@@ -3180,7 +3180,7 @@ as_util_mirror_screenshots_app (AsUtilPrivate *priv,
 	const gchar *url;
 
 	for (i = 0; i < urls->len; i++) {
-		_cleanup_error_free_ GError *error_local = NULL;
+		g_autoptr(GError) error_local = NULL;
 
 		/* download URL or get from cache */
 		url = g_ptr_array_index (urls, i);
@@ -3216,8 +3216,8 @@ as_util_mirror_screenshots (AsUtilPrivate *priv, gchar **values, GError **error)
 	guint k;
 	const gchar *cache_dir = "./cache/";
 	const gchar *output_dir = "./screenshots/";
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GFile) file = NULL;
 	guint sizes[] = { AS_IMAGE_NORMAL_WIDTH,    AS_IMAGE_NORMAL_HEIGHT,
 			  AS_IMAGE_THUMBNAIL_WIDTH, AS_IMAGE_THUMBNAIL_HEIGHT,
 			  AS_IMAGE_LARGE_WIDTH,     AS_IMAGE_LARGE_HEIGHT,
@@ -3251,8 +3251,8 @@ as_util_mirror_screenshots (AsUtilPrivate *priv, gchar **values, GError **error)
 	/* create the tree of screenshot directories */
 	for (j = 1; j <= 2; j++) {
 		for (i = 0; sizes[i] != 0; i += 2) {
-			_cleanup_free_ gchar *size_str = NULL;
-			_cleanup_free_ gchar *fn = NULL;
+			g_autofree gchar *size_str = NULL;
+			g_autofree gchar *fn = NULL;
 			size_str = g_strdup_printf ("%ix%i",
 						    sizes[i+0] * j,
 						    sizes[i+1] * j);
@@ -3276,7 +3276,7 @@ as_util_mirror_screenshots (AsUtilPrivate *priv, gchar **values, GError **error)
 	/* convert all the screenshots */
 	apps = as_store_get_apps (store);
 	for (i = 0; i < apps->len; i++) {
-		_cleanup_ptrarray_unref_ GPtrArray *urls = NULL;
+		g_autoptr(GPtrArray) urls = NULL;
 
 		/* get app */
 		app = g_ptr_array_index (apps, i);
@@ -3332,8 +3332,8 @@ as_util_mirror_local_firmware (AsUtilPrivate *priv, gchar **values, GError **err
 	GPtrArray *apps;
 	guint i;
 	guint j;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 2) {
@@ -3367,8 +3367,8 @@ as_util_mirror_local_firmware (AsUtilPrivate *priv, gchar **values, GError **err
 		for (j = 0; j < releases->len; j++) {
 			AsChecksum *csum;
 			const gchar *tmp;
-			_cleanup_free_ gchar *loc = NULL;
-			_cleanup_free_ gchar *fn = NULL;
+			g_autofree gchar *loc = NULL;
+			g_autofree gchar *fn = NULL;
 			rel = g_ptr_array_index (releases, j);
 
 			/* get the release filename, but fall back to
@@ -3411,8 +3411,8 @@ as_util_replace_screenshots (AsUtilPrivate *priv, gchar **values, GError **error
 {
 	GPtrArray *screenshots;
 	guint i;
-	_cleanup_object_unref_ AsApp *app = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* check args */
 	if (g_strv_length (values) < 2) {
@@ -3433,8 +3433,8 @@ as_util_replace_screenshots (AsUtilPrivate *priv, gchar **values, GError **error
 	screenshots = as_app_get_screenshots (app);
 	g_ptr_array_set_size (screenshots, 0);
 	for (i = 1; values[i] != NULL; i++) {
-		_cleanup_object_unref_ AsImage *im = NULL;
-		_cleanup_object_unref_ AsScreenshot *ss = NULL;
+		g_autoptr(AsImage) im = NULL;
+		g_autoptr(AsScreenshot) ss = NULL;
 		im = as_image_new ();
 		as_image_set_url (im, values[i]);
 		as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
@@ -3477,10 +3477,10 @@ as_util_compare (AsUtilPrivate *priv, gchar **values, GError **error)
 	const gchar *id;
 	const guint align = 50;
 	guint i;
-	_cleanup_object_unref_ GFile *file_new = NULL;
-	_cleanup_object_unref_ GFile *file_old= NULL;
-	_cleanup_object_unref_ AsStore *store_new = NULL;
-	_cleanup_object_unref_ AsStore *store_old = NULL;
+	g_autoptr(GFile) file_new = NULL;
+	g_autoptr(GFile) file_old= NULL;
+	g_autoptr(AsStore) store_new = NULL;
+	g_autoptr(AsStore) store_old = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 2) {
@@ -3543,11 +3543,11 @@ as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 	const guint align = 50;
 	guint i;
 	guint j;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ AsStore *helper = NULL;
-	_cleanup_object_unref_ GFile *file_new = NULL;
-	_cleanup_object_unref_ GFile *file_old= NULL;
-	_cleanup_object_unref_ GFile *file_helper = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(AsStore) helper = NULL;
+	g_autoptr(GFile) file_new = NULL;
+	g_autoptr(GFile) file_old= NULL;
+	g_autoptr(GFile) file_helper = NULL;
 
 	/* check args */
 	if (g_strv_length (values) < 3) {
@@ -3600,7 +3600,7 @@ as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 	apps = as_store_get_apps (store);
 	for (i = 0; i < apps->len; i++) {
 		GPtrArray *pkgnames;
-		_cleanup_strv_free_ gchar **tmp = NULL;
+		g_auto(GStrv) tmp = NULL;
 
 		app = g_ptr_array_index (apps, i);
 		id = as_app_get_id (app);
@@ -3661,8 +3661,8 @@ as_util_check_root (AsUtilPrivate *priv, gchar **values, GError **error)
 	GPtrArray *apps;
 	const gchar *tmp;
 	guint i;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *problems = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GPtrArray) problems = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 0) {
@@ -3742,7 +3742,7 @@ main (int argc, char *argv[])
 	gboolean version = FALSE;
 	GError *error = NULL;
 	guint retval = 1;
-	_cleanup_free_ gchar *cmd_descriptions = NULL;
+	g_autofree gchar *cmd_descriptions = NULL;
 	const GOptionEntry options[] = {
 		{ "nonet", '\0', 0, G_OPTION_ARG_NONE, &nonet,
 			/* TRANSLATORS: this is the --nonet argument */

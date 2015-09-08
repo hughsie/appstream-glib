@@ -45,8 +45,8 @@ static gboolean
 asb_plugin_gresource_app (AsbApp *app, const gchar *filename, GError **error)
 {
 	gboolean ret;
-	_cleanup_free_ gchar *data_err = NULL;
-	_cleanup_free_ gchar *data_out = NULL;
+	g_autofree gchar *data_err = NULL;
+	g_autofree gchar *data_out = NULL;
 	const gchar *argv[] = { "/usr/bin/gresource",
 				"list",
 				filename,
@@ -85,7 +85,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	filelist = asb_package_get_filelist (pkg);
 	for (i = 0; filelist[i] != NULL; i++) {
 		GError *error_local = NULL;
-		_cleanup_free_ gchar *filename = NULL;
+		g_autofree gchar *filename = NULL;
 
 		if (!asb_plugin_match_glob ("/usr/bin/*", filelist[i]))
 			continue;

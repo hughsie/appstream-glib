@@ -44,7 +44,7 @@ static gchar *
 asb_test_get_filename (const gchar *filename)
 {
 	_cleanup_free_libc_ gchar *tmp = NULL;
-	_cleanup_free_ gchar *path = NULL;
+	g_autofree gchar *path = NULL;
 
 	/* try the source then the destdir */
 	path = g_build_filename (TESTDIRSRC, filename, NULL);
@@ -65,7 +65,7 @@ asb_test_get_filename (const gchar *filename)
 static gboolean
 asb_test_compare_lines (const gchar *txt1, const gchar *txt2, GError **error)
 {
-	_cleanup_free_ gchar *output = NULL;
+	g_autofree gchar *output = NULL;
 
 	/* exactly the same */
 	if (g_strcmp0 (txt1, txt2) == 0)
@@ -95,9 +95,9 @@ asb_test_package_rpm_func (void)
 	GPtrArray *releases;
 	gboolean ret;
 	gchar *tmp;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsbPackage *pkg = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *glob = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsbPackage) pkg = NULL;
+	g_autoptr(GPtrArray) glob = NULL;
 
 	/* open file */
 	filename = asb_test_get_filename ("test-0.1-1.fc21.noarch.rpm");
@@ -211,7 +211,7 @@ asb_test_package_rpm_func (void)
 static void
 asb_test_package_func (void)
 {
-	_cleanup_object_unref_ AsbPackage *pkg = NULL;
+	g_autoptr(AsbPackage) pkg = NULL;
 	pkg = asb_package_new ();
 	asb_package_set_filename (pkg, "/tmp/gambit-c-doc-4.7.3-2.fc22.noarch.rpm");
 	g_assert_cmpstr (asb_package_get_nevra (pkg), ==, "gambit-c-doc-4.7.3-2.fc22.noarch");
@@ -223,7 +223,7 @@ asb_test_package_func (void)
 static void
 asb_test_utils_glob_func (void)
 {
-	_cleanup_ptrarray_unref_ GPtrArray *array = NULL;
+	g_autoptr(GPtrArray) array = NULL;
 
 	array = asb_glob_value_array_new ();
 	g_ptr_array_add (array, asb_glob_value_new ("*.desktop", "DESKTOP"));
@@ -254,8 +254,8 @@ asb_test_plugin_loader_func (void)
 	GError *error = NULL;
 	GPtrArray *plugins;
 	gboolean ret;
-	_cleanup_object_unref_ AsbContext *ctx = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *globs = NULL;
+	g_autoptr(AsbContext) ctx = NULL;
+	g_autoptr(GPtrArray) globs = NULL;
 
 	/* set up loader */
 	ctx = asb_context_new ();
@@ -305,13 +305,13 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	const gchar *expected_xml;
 	gboolean ret;
 	guint i;
-	_cleanup_object_unref_ AsbContext *ctx = NULL;
-	_cleanup_object_unref_ AsStore *store_failed = NULL;
-	_cleanup_object_unref_ AsStore *store_ignore = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ GFile *file_failed = NULL;
-	_cleanup_object_unref_ GFile *file_ignore = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autoptr(AsbContext) ctx = NULL;
+	g_autoptr(AsStore) store_failed = NULL;
+	g_autoptr(AsStore) store_ignore = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GFile) file_failed = NULL;
+	g_autoptr(GFile) file_ignore = NULL;
+	g_autoptr(GFile) file = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
 	_cleanup_string_free_ GString *xml_failed = NULL;
 	_cleanup_string_free_ GString *xml_ignore = NULL;
@@ -348,7 +348,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		break;
 	case ASB_TEST_CONTEXT_MODE_WITH_OLD_CACHE:
 		{
-			_cleanup_free_ gchar *old_cache_dir = NULL;
+			g_autofree gchar *old_cache_dir = NULL;
 			old_cache_dir = asb_test_get_filename (".");
 			asb_context_set_old_metadata (ctx, old_cache_dir);
 		}
@@ -366,7 +366,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 
 	/* add packages */
 	for (i = 0; filenames[i] != NULL; i++) {
-		_cleanup_free_ gchar *filename = NULL;
+		g_autofree gchar *filename = NULL;
 		filename = asb_test_get_filename (filenames[i]);
 		if (filename == NULL)
 			g_warning ("%s not found", filenames[i]);
@@ -857,10 +857,10 @@ asb_test_firmware_func (void)
 	const gchar *expected_xml;
 	gboolean ret;
 	guint i;
-	_cleanup_error_free_ GError *error = NULL;
-	_cleanup_object_unref_ AsbContext *ctx = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(AsbContext) ctx = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GFile) file = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
 	const gchar *filenames[] = {
 		"colorhug-als-2.0.1.cab",
@@ -887,7 +887,7 @@ asb_test_firmware_func (void)
 
 	/* add packages */
 	for (i = 0; filenames[i] != NULL; i++) {
-		_cleanup_free_ gchar *filename = NULL;
+		g_autofree gchar *filename = NULL;
 		filename = asb_test_get_filename (filenames[i]);
 		if (filename == NULL)
 			g_warning ("%s not found", filenames[i]);

@@ -277,7 +277,7 @@ asb_plugin_loader_merge (AsbPluginLoader *plugin_loader, GList *apps)
 	const gchar *tmp;
 	gboolean ret;
 	guint i;
-	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
+	g_autoptr(GHashTable) hash = NULL;
 
 	/* run each plugin */
 	for (i = 0; i < priv->plugins->len; i++) {
@@ -437,7 +437,7 @@ asb_plugin_loader_setup (AsbPluginLoader *plugin_loader, GError **error)
 {
 	AsbPluginLoaderPrivate *priv = GET_PRIVATE (plugin_loader);
 	const gchar *filename_tmp;
-	_cleanup_dir_close_ GDir *dir = NULL;
+	g_autoptr(GDir) dir = NULL;
 
 	/* never set */
 	if (priv->plugin_dir == NULL)
@@ -451,7 +451,7 @@ asb_plugin_loader_setup (AsbPluginLoader *plugin_loader, GError **error)
 	/* try to open each plugin */
 	g_debug ("searching for plugins in %s", priv->plugin_dir);
 	do {
-		_cleanup_free_ gchar *filename_plugin = NULL;
+		g_autofree gchar *filename_plugin = NULL;
 		filename_tmp = g_dir_read_name (dir);
 		if (filename_tmp == NULL)
 			break;

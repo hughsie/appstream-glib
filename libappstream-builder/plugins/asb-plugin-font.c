@@ -82,7 +82,7 @@ asb_font_fix_metadata (AsbApp *app)
 	const gchar *value;
 	gint percentage;
 	guint j;
-	_cleanup_list_free_ GList *langs = NULL;
+	g_autoptr(GList) langs = NULL;
 	_cleanup_string_free_ GString *str = NULL;
 	struct {
 		const gchar	*lang;
@@ -203,7 +203,7 @@ asb_font_fix_metadata (AsbApp *app)
 						      "FontIconText",
 						      "Aa");
 			} else {
-				_cleanup_free_ gchar *icon_tmp = NULL;
+				g_autofree gchar *icon_tmp = NULL;
 				icon_tmp = g_utf8_substring (value, 0, 2);
 				as_app_add_metadata (AS_APP (app),
 						      "FontIconText",
@@ -273,7 +273,7 @@ asb_font_add_metadata (AsbApp *app, FT_Face ft_face)
 	for (i = 0; i < len; i++) {
 		FT_Get_Sfnt_Name (ft_face, i, &sfname);
 		for (j = 0; tt_idx_to_md_name[j].key != NULL; j++) {
-			_cleanup_free_ gchar *val = NULL;
+			g_autofree gchar *val = NULL;
 			if (sfname.name_id != tt_idx_to_md_name[j].idx)
 				continue;
 			val = g_locale_to_utf8 ((gchar *) sfname.string,
@@ -415,14 +415,14 @@ asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
 	const gchar *temp_dir;
 	const gchar *tmp;
 	guint i;
-	_cleanup_free_ gchar *basename = NULL;
-	_cleanup_free_ gchar *cache_fn = NULL;
-	_cleanup_free_ gchar *output_fn = NULL;
-	_cleanup_free_ gchar *caption = NULL;
-	_cleanup_free_ gchar *url_tmp = NULL;
-	_cleanup_object_unref_ AsImage *im = NULL;
-	_cleanup_object_unref_ AsScreenshot *ss = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *cache_fn = NULL;
+	g_autofree gchar *output_fn = NULL;
+	g_autofree gchar *caption = NULL;
+	g_autofree gchar *url_tmp = NULL;
+	g_autoptr(AsImage) im = NULL;
+	g_autoptr(AsScreenshot) ss = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	tmp = as_app_get_metadata_item (AS_APP (app), "FontSampleText");
 	if (tmp == NULL)
@@ -588,7 +588,7 @@ asb_plugin_font_set_name (AsbApp *app, const gchar *name)
 				    " GPL&GNU",
 				    " SC",
 				    NULL };
-	_cleanup_free_ gchar *tmp = NULL;
+	g_autofree gchar *tmp = NULL;
 
 	/* remove font foundary suffix */
 	tmp = g_strdup (name);
@@ -624,10 +624,10 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	gboolean ret = TRUE;
 	guint i;
 	const FcPattern *pattern;
-	_cleanup_free_ gchar *cache_id = NULL;
-	_cleanup_free_ gchar *comment = NULL;
-	_cleanup_free_ gchar *icon_filename = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+	g_autofree gchar *cache_id = NULL;
+	g_autofree gchar *comment = NULL;
+	g_autofree gchar *icon_filename = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	/* create a new fontconfig configuration */
 	config = FcConfigCreate ();
@@ -695,7 +695,7 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	/* generate icon */
 	tmp = as_app_get_metadata_item (AS_APP (app), "FontIconText");
 	if (tmp != NULL) {
-		_cleanup_object_unref_ AsIcon *icon = NULL;
+		g_autoptr(AsIcon) icon = NULL;
 		pixbuf = asb_font_get_pixbuf (ft_face, 64, 64, tmp, error);
 		if (pixbuf == NULL) {
 			ret = FALSE;
@@ -753,7 +753,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	filelist = asb_package_get_filelist (pkg);
 	for (i = 0; filelist[i] != NULL; i++) {
 		GError *error_local = NULL;
-		_cleanup_free_ gchar *filename = NULL;
+		g_autofree gchar *filename = NULL;
 
 		if (!_asb_plugin_check_filename (filelist[i]))
 			continue;
@@ -781,7 +781,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 	GList *l;
 	GPtrArray *extends_tmp;
 	const gchar *tmp;
-	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
+	g_autoptr(GHashTable) hash = NULL;
 
 	/* add all the fonts to a hash */
 	hash = g_hash_table_new_full (g_str_hash, g_str_equal,

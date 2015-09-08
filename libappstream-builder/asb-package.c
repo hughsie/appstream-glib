@@ -194,7 +194,7 @@ asb_package_log (AsbPackage *pkg,
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 	va_list args;
 	gdouble now;
-	_cleanup_free_ gchar *tmp = NULL;
+	g_autofree gchar *tmp = NULL;
 
 	g_mutex_lock (&priv->mutex_log);
 
@@ -245,8 +245,8 @@ gboolean
 asb_package_log_flush (AsbPackage *pkg, GError **error)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
-	_cleanup_free_ gchar *logfile = NULL;
-	_cleanup_free_ gchar *logdir_char = NULL;
+	g_autofree gchar *logfile = NULL;
+	g_autofree gchar *logdir_char = NULL;
 
 	/* needs no update */
 	if (priv->log_written_len == priv->log->len)
@@ -818,7 +818,7 @@ static void
 asb_package_guess_from_filename (AsbPackage *pkg)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
-	_cleanup_free_ gchar *tmp = NULL;
+	g_autofree gchar *tmp = NULL;
 	gchar *at;
 
 	/* remove .rpm extension */

@@ -158,9 +158,9 @@ asb_task_explode_extra_packages (AsbTask *task, GError **error)
 	const gchar *ignore[] = { "rtld", NULL };
 	const gchar *tmp;
 	guint i;
-	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *array = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *icon_themes = NULL;
+	g_autoptr(GHashTable) hash = NULL;
+	g_autoptr(GPtrArray) array = NULL;
+	g_autoptr(GPtrArray) icon_themes = NULL;
 
 	/* anything the package requires */
 	hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
@@ -240,8 +240,8 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	gchar *tmp;
 	guint i;
 	guint nr_added = 0;
-	_cleanup_error_free_ GError *error = NULL;
-	_cleanup_free_ gchar *basename = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autofree gchar *basename = NULL;
 
 	/* reset the profile timer */
 	asb_package_log_start (priv->pkg);

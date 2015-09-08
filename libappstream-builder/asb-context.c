@@ -466,7 +466,7 @@ asb_context_add_package (AsbContext *ctx, AsbPackage *pkg)
 gboolean
 asb_context_add_filename (AsbContext *ctx, const gchar *filename, GError **error)
 {
-	_cleanup_object_unref_ AsbPackage *pkg = NULL;
+	g_autoptr(AsbPackage) pkg = NULL;
 
 	/* can find in existing metadata */
 	if (asb_context_find_in_cache (ctx, filename)) {
@@ -541,9 +541,9 @@ gboolean
 asb_context_setup (AsbContext *ctx, GError **error)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	_cleanup_free_ gchar *icons_dir = NULL;
-	_cleanup_free_ gchar *screenshot_dir1 = NULL;
-	_cleanup_free_ gchar *screenshot_dir2 = NULL;
+	g_autofree gchar *icons_dir = NULL;
+	g_autofree gchar *screenshot_dir1 = NULL;
+	g_autofree gchar *screenshot_dir2 = NULL;
 
 	/* required stuff set */
 	if (priv->origin == NULL) {
@@ -600,8 +600,8 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	if (!asb_utils_ensure_exists (priv->icons_dir, error))
 		return FALSE;
 	if (priv->flags & ASB_CONTEXT_FLAG_HIDPI_ICONS) {
-		_cleanup_free_ gchar *icons_dir_hidpi = NULL;
-		_cleanup_free_ gchar *icons_dir_lodpi = NULL;
+		g_autofree gchar *icons_dir_hidpi = NULL;
+		g_autofree gchar *icons_dir_lodpi = NULL;
 		icons_dir_lodpi = g_build_filename (priv->icons_dir, "64x64", NULL);
 		if (!asb_utils_ensure_exists (icons_dir_lodpi, error))
 			return FALSE;
@@ -612,7 +612,7 @@ asb_context_setup (AsbContext *ctx, GError **error)
 
 	/* decompress the icons */
 	if (priv->old_metadata != NULL) {
-		_cleanup_free_ gchar *icons_fn = NULL;
+		g_autofree gchar *icons_fn = NULL;
 		icons_fn = g_strdup_printf ("%s/%s-icons.tar.gz",
 					    priv->old_metadata,
 					    priv->basename);
@@ -634,13 +634,13 @@ asb_context_setup (AsbContext *ctx, GError **error)
 
 	/* add old metadata */
 	if (priv->old_metadata != NULL) {
-		_cleanup_free_ gchar *builder_id = NULL;
-		_cleanup_free_ gchar *fn_failed = NULL;
-		_cleanup_free_ gchar *fn_ignore = NULL;
-		_cleanup_free_ gchar *fn_old = NULL;
-		_cleanup_object_unref_ GFile *file_failed = NULL;
-		_cleanup_object_unref_ GFile *file_ignore = NULL;
-		_cleanup_object_unref_ GFile *file_old = NULL;
+		g_autofree gchar *builder_id = NULL;
+		g_autofree gchar *fn_failed = NULL;
+		g_autofree gchar *fn_ignore = NULL;
+		g_autofree gchar *fn_old = NULL;
+		g_autoptr(GFile) file_failed = NULL;
+		g_autoptr(GFile) file_ignore = NULL;
+		g_autoptr(GFile) file_old = NULL;
 
 		builder_id = asb_utils_get_builder_id ();
 		fn_old = g_strdup_printf ("%s/%s.xml.gz",
@@ -706,7 +706,7 @@ static void
 asb_task_process_func (gpointer data, gpointer user_data)
 {
 	AsbTask *task = (AsbTask *) data;
-	_cleanup_error_free_ GError *error = NULL;
+	g_autoptr(GError) error = NULL;
 
 	/* just run the task */
 	if (!asb_task_process (task, &error))
@@ -722,7 +722,7 @@ asb_context_write_icons (AsbContext *ctx,
 			 GError **error)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	_cleanup_free_ gchar *filename = NULL;
+	g_autofree gchar *filename = NULL;
 
 	/* not enabled */
 	if (priv->flags & ASB_CONTEXT_FLAG_UNCOMPRESSED_ICONS)
@@ -745,8 +745,8 @@ asb_context_write_screenshots (AsbContext *ctx,
 			       GError **error)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_free_ gchar *screenshot_dir = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autofree gchar *screenshot_dir = NULL;
 
 	/* not enabled */
 	if (priv->flags & ASB_CONTEXT_FLAG_UNCOMPRESSED_ICONS)
@@ -770,9 +770,9 @@ asb_context_write_xml (AsbContext *ctx, GError **error)
 	AsApp *app;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	GList *l;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ AsStore *store = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* convert any vetod applications into dummy components */
 	for (l = priv->apps; l != NULL; l = l->next) {
@@ -796,7 +796,7 @@ asb_context_write_xml (AsbContext *ctx, GError **error)
 		/* remove from the ignore list if the application was useful */
 		if (ASB_IS_APP (app)) {
 			AsbPackage *pkg = asb_app_get_package (ASB_APP (app));
-			_cleanup_free_ gchar *name_arch = NULL;
+			g_autofree gchar *name_arch = NULL;
 			name_arch = g_strdup_printf ("%s.%s",
 						     asb_package_get_name (pkg),
 						     asb_package_get_arch (pkg));
@@ -813,7 +813,7 @@ asb_context_write_xml (AsbContext *ctx, GError **error)
 	as_store_set_origin (store, priv->origin);
 	as_store_set_api_version (store, priv->api_version);
 	if (priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) {
-		_cleanup_free_ gchar *builder_id = asb_utils_get_builder_id ();
+		g_autofree gchar *builder_id = asb_utils_get_builder_id ();
 		as_store_set_builder_id (store, builder_id);
 	}
 	return as_store_to_file (store,
@@ -886,7 +886,7 @@ asb_context_detect_pkgname_dups (AsbContext *ctx, GError **error)
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	GList *l;
 	const gchar *pkgname;
-	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
+	g_autoptr(GHashTable) hash = NULL;
 
 	hash = g_hash_table_new (g_str_hash, g_str_equal);
 	for (l = priv->apps; l != NULL; l = l->next) {
@@ -921,7 +921,7 @@ asb_context_write_app_xml (AsbContext *ctx)
 	/* log the XML in the log file */
 	for (l = priv->apps; l != NULL; l = l->next) {
 		_cleanup_string_free_ GString *xml = NULL;
-		_cleanup_object_unref_ AsStore *store = NULL;
+		g_autoptr(AsStore) store = NULL;
 
 		/* we have an open log file? */
 		if (!ASB_IS_APP (l->data))
@@ -976,7 +976,7 @@ asb_context_detect_missing_parents (AsbContext *ctx, GError **error)
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	GList *l;
 	const gchar *tmp;
-	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
+	g_autoptr(GHashTable) hash = NULL;
 
 	/* add all desktop apps to the hash */
 	hash = g_hash_table_new (g_str_hash, g_str_equal);
@@ -1030,9 +1030,9 @@ asb_context_write_xml_fail (AsbContext *ctx, GError **error)
 	AsApp *app;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	GList *l;
-	_cleanup_free_ gchar *basename_failed = NULL;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autofree gchar *basename_failed = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* no need to create */
 	if ((priv->flags & ASB_CONTEXT_FLAG_INCLUDE_FAILED) == 0)
@@ -1060,7 +1060,7 @@ asb_context_write_xml_fail (AsbContext *ctx, GError **error)
 	as_store_set_origin (priv->store_failed, basename_failed);
 	as_store_set_api_version (priv->store_failed, priv->api_version);
 	if (priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) {
-		_cleanup_free_ gchar *builder_id = asb_utils_get_builder_id ();
+		g_autofree gchar *builder_id = asb_utils_get_builder_id ();
 		as_store_set_builder_id (priv->store_failed, builder_id);
 	}
 	return as_store_to_file (priv->store_failed,
@@ -1078,9 +1078,9 @@ static gboolean
 asb_context_write_xml_ignore (AsbContext *ctx, GError **error)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	_cleanup_free_ gchar *basename_cache = NULL;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autofree gchar *basename_cache = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* no need to create */
 	if ((priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) == 0)
@@ -1096,7 +1096,7 @@ asb_context_write_xml_ignore (AsbContext *ctx, GError **error)
 	as_store_set_origin (priv->store_ignore, basename_cache);
 	as_store_set_api_version (priv->store_ignore, priv->api_version);
 	if (priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) {
-		_cleanup_free_ gchar *builder_id = asb_utils_get_builder_id ();
+		g_autofree gchar *builder_id = asb_utils_get_builder_id ();
 		as_store_set_builder_id (priv->store_ignore, builder_id);
 	}
 	return as_store_to_file (priv->store_ignore,
@@ -1118,7 +1118,7 @@ asb_context_disable_older_pkgs (AsbContext *ctx)
 	AsbPackage *pkg;
 	const gchar *key;
 	guint i;
-	_cleanup_hashtable_unref_ GHashTable *newest = NULL;
+	g_autoptr(GHashTable) newest = NULL;
 
 	newest = g_hash_table_new_full (g_str_hash, g_str_equal,
 					g_free, (GDestroyNotify) g_object_unref);
@@ -1207,7 +1207,7 @@ asb_context_process (AsbContext *ctx, GError **error)
 	GThreadPool *pool;
 	gboolean ret;
 	guint i;
-	_cleanup_ptrarray_unref_ GPtrArray *tasks = NULL;
+	g_autoptr(GPtrArray) tasks = NULL;
 
 	/* only process the newest packages */
 	asb_context_disable_multiarch_pkgs (ctx);
@@ -1340,10 +1340,10 @@ asb_context_find_in_cache (AsbContext *ctx, const gchar *filename)
 	AsApp *app;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	guint i;
-	_cleanup_free_ gchar *cache_id = NULL;
-	_cleanup_free_ gchar *builder_id = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *apps = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *apps_ignore = NULL;
+	g_autofree gchar *cache_id = NULL;
+	g_autofree gchar *builder_id = NULL;
+	g_autoptr(GPtrArray) apps = NULL;
+	g_autoptr(GPtrArray) apps_ignore = NULL;
 
 	/* the package was successfully parsed last time */
 	cache_id = asb_utils_get_cache_id_for_filename (filename);
@@ -1420,9 +1420,9 @@ asb_context_add_app_ignore (AsbContext *ctx, AsbPackage *pkg)
 {
 	AsApp *app_tmp;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	_cleanup_free_ gchar *name_arch = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *apps = NULL;
+	g_autofree gchar *name_arch = NULL;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GPtrArray) apps = NULL;
 
 	/* only do this when we are using a cache-id */
 	if ((priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) == 0)

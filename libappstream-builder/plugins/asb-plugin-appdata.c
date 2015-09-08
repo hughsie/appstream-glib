@@ -86,8 +86,8 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	GList *l;
 	GList *list;
 	guint i;
-	_cleanup_object_unref_ AsApp *appdata = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *problems = NULL;
+	g_autoptr(AsApp) appdata = NULL;
+	g_autoptr(GPtrArray) problems = NULL;
 
 	/* validate */
 	appdata = as_app_new ();
@@ -141,7 +141,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	/* add provide if missing */
 	if (as_app_get_id_kind (appdata) == AS_ID_KIND_FIRMWARE &&
 	    as_utils_guid_is_valid (tmp)) {
-		_cleanup_object_unref_ AsProvide *provide = NULL;
+		g_autoptr(AsProvide) provide = NULL;
 		provide = as_provide_new ();
 		as_provide_set_kind (provide, AS_PROVIDE_KIND_FIRMWARE_FLASHED);
 		as_provide_set_value (provide, tmp);
@@ -333,7 +333,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			GError **error)
 {
 	GError *error_local = NULL;
-	_cleanup_free_ gchar *appdata_filename = NULL;
+	g_autofree gchar *appdata_filename = NULL;
 
 	/* get possible sources */
 	if (asb_package_get_kind (pkg) == ASB_PACKAGE_KIND_FIRMWARE) {
@@ -341,7 +341,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 						     as_app_get_metadata_item (AS_APP (app), "MetainfoBasename"),
 						     NULL);
 	} else {
-		_cleanup_free_ gchar *appdata_basename = NULL;
+		g_autofree gchar *appdata_basename = NULL;
 		appdata_basename = asb_plugin_appdata_get_fn_for_app (AS_APP (app));
 		appdata_filename = g_strdup_printf ("%s/files/share/appdata/%s.appdata.xml",
 						    tmpdir, appdata_basename);

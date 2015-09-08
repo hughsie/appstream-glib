@@ -87,7 +87,7 @@ asb_package_ostree_open (AsbPackage *pkg, const gchar *filename, GError **error)
 {
 	AsbPackageOstree *pkg_ostree = ASB_PACKAGE_OSTREE (pkg);
 	AsbPackageOstreePrivate *priv = GET_PRIVATE (pkg_ostree);
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* create the OstreeRepo */
 	file = g_file_new_for_path (priv->repodir);
@@ -102,7 +102,7 @@ asb_package_ostree_open (AsbPackage *pkg, const gchar *filename, GError **error)
 static gboolean
 asb_package_ostree_build_filelist (GPtrArray *array, GFile *file, GError **error)
 {
-	_cleanup_object_unref_ GFileEnumerator *enumerator = NULL;
+	g_autoptr(GFileEnumerator) enumerator = NULL;
 
 	/* iter on children */
 	enumerator = g_file_enumerate_children (file, "standard::*",
@@ -111,8 +111,8 @@ asb_package_ostree_build_filelist (GPtrArray *array, GFile *file, GError **error
 	if (enumerator == NULL)
 		return FALSE;
 	do {
-		_cleanup_free_ gchar *path = NULL;
-		_cleanup_object_unref_ GFileInfo *info = NULL;
+		g_autofree gchar *path = NULL;
+		g_autoptr(GFileInfo) info = NULL;
 
 		info = g_file_enumerator_next_file (enumerator, NULL, error);
 		if (info == NULL) {
@@ -125,7 +125,7 @@ asb_package_ostree_build_filelist (GPtrArray *array, GFile *file, GError **error
 		path = g_file_get_path (file);
 		g_ptr_array_add (array, g_build_filename (path, g_file_info_get_name (info), NULL));
 		if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY) {
-			_cleanup_object_unref_ GFile *child = NULL;
+			g_autoptr(GFile) child = NULL;
 			child = g_file_get_child (g_file_enumerator_get_container (enumerator),
 						  g_file_info_get_name (info));
 			if (!asb_package_ostree_build_filelist (array, child, error))
@@ -144,8 +144,8 @@ asb_package_ostree_ensure_files (AsbPackage *pkg, GError **error)
 	AsbPackageOstree *pkg_ostree = ASB_PACKAGE_OSTREE (pkg);
 	AsbPackageOstreePrivate *priv = GET_PRIVATE (pkg_ostree);
 	const gchar *rev;
-	_cleanup_object_unref_ GFile *root = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *array = NULL;
+	g_autoptr(GFile) root = NULL;
+	g_autoptr(GPtrArray) array = NULL;
 
 	/* get the filelist */
 	if (!ostree_repo_open (priv->repo, NULL, error))
@@ -171,7 +171,7 @@ asb_package_ostree_ensure_files (AsbPackage *pkg, GError **error)
 static gboolean
 asb_package_ostree_ensure_nevra (AsbPackage *pkg, GError **error)
 {
-	_cleanup_strv_free_ gchar **split = NULL;
+	g_auto(GStrv) split = NULL;
 
 	/* split up 'app/org.gnome.GEdit/x86_64/master' */
 	split = g_strsplit (asb_package_get_source (pkg), "/", -1);
@@ -231,10 +231,10 @@ asb_package_ostree_explode (AsbPackage *pkg, const gchar *dir,
 	AsbPackageOstree *pkg_ostree = ASB_PACKAGE_OSTREE (pkg);
 	AsbPackageOstreePrivate *priv = GET_PRIVATE (pkg_ostree);
 	const gchar *commit;
-	_cleanup_free_ gchar *resolved_commit = NULL;
-	_cleanup_object_unref_ GFileInfo *file_info = NULL;
-	_cleanup_object_unref_ GFile *root = NULL;
-	_cleanup_object_unref_ GFile *target = NULL;
+	g_autofree gchar *resolved_commit = NULL;
+	g_autoptr(GFileInfo) file_info = NULL;
+	g_autoptr(GFile) root = NULL;
+	g_autoptr(GFile) target = NULL;
 
 	/* extract root */
 	commit = asb_package_get_source (pkg);

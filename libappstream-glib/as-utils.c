@@ -81,7 +81,7 @@ as_markup_strsplit_words (const gchar *text, guint line_len)
 	GPtrArray *lines;
 	guint i;
 	_cleanup_string_free_ GString *curline = NULL;
-	_cleanup_strv_free_ gchar **tokens = NULL;
+	g_auto(GStrv) tokens = NULL;
 
 	/* sanity check */
 	if (text == NULL || text[0] == '\0')
@@ -130,7 +130,7 @@ static void
 as_markup_render_para (GString *str, AsMarkupConvertFormat format, const gchar *data)
 {
 	guint i;
-	_cleanup_strv_free_ gchar **spl = NULL;
+	g_auto(GStrv) spl = NULL;
 
 	if (str->len > 0)
 		g_string_append (str, "\n");
@@ -156,7 +156,7 @@ static void
 as_markup_render_li (GString *str, AsMarkupConvertFormat format, const gchar *data)
 {
 	guint i;
-	_cleanup_strv_free_ gchar **spl = NULL;
+	g_auto(GStrv) spl = NULL;
 
 	switch (format) {
 	case AS_MARKUP_CONVERT_FORMAT_SIMPLE:
@@ -319,8 +319,8 @@ as_hash_lookup_by_locale (GHashTable *hash, const gchar *locale)
 gboolean
 as_utils_is_stock_icon_name (const gchar *name)
 {
-	_cleanup_bytes_unref_ GBytes *data = NULL;
-	_cleanup_free_ gchar *key = NULL;
+	g_autoptr(GBytes) data = NULL;
+	g_autofree gchar *key = NULL;
 
 	/* load the readonly data section and look for the icon name */
 	data = g_resource_lookup_data (as_get_resource (),
@@ -346,8 +346,8 @@ as_utils_is_stock_icon_name (const gchar *name)
 gboolean
 as_utils_is_spdx_license_id (const gchar *license_id)
 {
-	_cleanup_bytes_unref_ GBytes *data = NULL;
-	_cleanup_free_ gchar *key = NULL;
+	g_autoptr(GBytes) data = NULL;
+	g_autofree gchar *key = NULL;
 
 	/* this is used to map non-SPDX licence-ids to legitimate values */
 	if (g_str_has_prefix (license_id, "LicenseRef-"))
@@ -378,9 +378,9 @@ gboolean
 as_utils_is_blacklisted_id (const gchar *desktop_id)
 {
 	guint i;
-	_cleanup_bytes_unref_ GBytes *data = NULL;
-	_cleanup_free_ gchar *key = NULL;
-	_cleanup_strv_free_ gchar **split = NULL;
+	g_autoptr(GBytes) data = NULL;
+	g_autofree gchar *key = NULL;
+	g_auto(GStrv) split = NULL;
 
 	/* load the readonly data section and look for the icon name */
 	data = g_resource_lookup_data (as_get_resource (),
@@ -410,8 +410,8 @@ as_utils_is_blacklisted_id (const gchar *desktop_id)
 gboolean
 as_utils_is_environment_id (const gchar *environment_id)
 {
-	_cleanup_bytes_unref_ GBytes *data = NULL;
-	_cleanup_free_ gchar *key = NULL;
+	g_autoptr(GBytes) data = NULL;
+	g_autofree gchar *key = NULL;
 
 	/* load the readonly data section and look for the icon name */
 	data = g_resource_lookup_data (as_get_resource (),
@@ -437,8 +437,8 @@ as_utils_is_environment_id (const gchar *environment_id)
 gboolean
 as_utils_is_category_id (const gchar *category_id)
 {
-	_cleanup_bytes_unref_ GBytes *data = NULL;
-	_cleanup_free_ gchar *key = NULL;
+	g_autoptr(GBytes) data = NULL;
+	g_autofree gchar *key = NULL;
 
 	/* load the readonly data section and look for the icon name */
 	data = g_resource_lookup_data (as_get_resource (),
@@ -468,7 +468,7 @@ as_utils_spdx_license_tokenize_drop (AsUtilsSpdxHelper *helper)
 {
 	const gchar *tmp = helper->collect->str;
 	guint i;
-	_cleanup_free_ gchar *last_literal = NULL;
+	g_autofree gchar *last_literal = NULL;
 	struct {
 		const gchar	*old;
 		const gchar	*new;
@@ -634,7 +634,7 @@ gboolean
 as_utils_is_spdx_license (const gchar *license)
 {
 	guint i;
-	_cleanup_strv_free_ gchar **tokens = NULL;
+	g_auto(GStrv) tokens = NULL;
 
 	/* no license information whatsoever */
 	if (g_strcmp0 (license, "NONE") == 0)
@@ -789,8 +789,8 @@ as_pixbuf_blur (GdkPixbuf *src, gint radius, gint iterations)
 {
 	gint kernel_size;
 	gint i;
-	_cleanup_free_ guchar *div_kernel_size = NULL;
-	_cleanup_object_unref_ GdkPixbuf *tmp = NULL;
+	g_autofree guchar *div_kernel_size = NULL;
+	g_autoptr(GdkPixbuf) tmp = NULL;
 
 	tmp = gdk_pixbuf_new (gdk_pixbuf_get_colorspace (src),
 			      gdk_pixbuf_get_has_alpha (src),
@@ -829,7 +829,7 @@ as_pixbuf_sharpen (GdkPixbuf *src, gint radius, gdouble amount)
 	guchar *p_blurred_row;
 	guchar *p_src;
 	guchar *p_src_row;
-	_cleanup_object_unref_ GdkPixbuf *blurred = NULL;
+	g_autoptr(GdkPixbuf) blurred = NULL;
 
 	blurred = gdk_pixbuf_copy (src);
 	as_pixbuf_blur (blurred, radius, 3);
@@ -923,7 +923,7 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 				 "status",
 				 "stock",
 				 NULL };
-	_cleanup_free_ gchar *prefix = NULL;
+	g_autofree gchar *prefix = NULL;
 
 	/* fallback */
 	if (destdir == NULL)
@@ -931,7 +931,7 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 
 	/* is this an absolute path */
 	if (search[0] == '/') {
-		_cleanup_free_ gchar *tmp = NULL;
+		g_autofree gchar *tmp = NULL;
 		tmp = g_build_filename (destdir, search, NULL);
 		if (!g_file_test (tmp, G_FILE_TEST_EXISTS)) {
 			g_set_error (error,
@@ -964,7 +964,7 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 		for (i = 0; sizes[i] != NULL; i++) {
 			for (m = 0; types[m] != NULL; m++) {
 				for (j = 0; supported_ext[j] != NULL; j++) {
-					_cleanup_free_ gchar *tmp = NULL;
+					g_autofree gchar *tmp = NULL;
 					tmp = g_strdup_printf ("%s/share/icons/"
 							       "%s/%s/%s/%s%s",
 							       prefix,
@@ -983,7 +983,7 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 	/* pixmap */
 	for (i = 0; pixmap_dirs[i] != NULL; i++) {
 		for (j = 0; supported_ext[j] != NULL; j++) {
-			_cleanup_free_ gchar *tmp = NULL;
+			g_autofree gchar *tmp = NULL;
 			tmp = g_strdup_printf ("%s/share/%s/%s%s",
 					       prefix,
 					       pixmap_dirs[i],
@@ -1056,8 +1056,8 @@ as_utils_install_icon (AsUtilsLocation location,
 	int r;
 	struct archive *arch = NULL;
 	struct archive_entry *entry;
-	_cleanup_free_ gchar *data = NULL;
-	_cleanup_free_ gchar *dir = NULL;
+	g_autofree gchar *data = NULL;
+	g_autofree gchar *dir = NULL;
 
 	dir = g_strdup_printf ("%s%s/app-info/icons/%s",
 			       destdir,
@@ -1086,7 +1086,7 @@ as_utils_install_icon (AsUtilsLocation location,
 
 	/* decompress each file */
 	for (;;) {
-		_cleanup_free_ gchar *buf = NULL;
+		g_autofree gchar *buf = NULL;
 
 		r = archive_read_next_header (arch, &entry);
 		if (r == ARCHIVE_EOF)
@@ -1113,7 +1113,7 @@ as_utils_install_icon (AsUtilsLocation location,
 		/* update hardlinks */
 		tmp = archive_entry_hardlink (entry);
 		if (tmp != NULL) {
-			_cleanup_free_ gchar *buf_link = NULL;
+			g_autofree gchar *buf_link = NULL;
 			buf_link = g_build_filename (dir, tmp, NULL);
 			archive_entry_update_hardlink_utf8 (entry, buf_link);
 		}
@@ -1121,7 +1121,7 @@ as_utils_install_icon (AsUtilsLocation location,
 		/* update symlinks */
 		tmp = archive_entry_symlink (entry);
 		if (tmp != NULL) {
-			_cleanup_free_ gchar *buf_link = NULL;
+			g_autofree gchar *buf_link = NULL;
 			buf_link = g_build_filename (dir, tmp, NULL);
 			archive_entry_update_symlink_utf8 (entry, buf_link);
 		}
@@ -1156,11 +1156,11 @@ as_utils_install_xml (const gchar *filename,
 		      GError **error)
 {
 	gchar *tmp;
-	_cleanup_free_ gchar *basename = NULL;
-	_cleanup_free_ gchar *path_dest = NULL;
-	_cleanup_free_ gchar *path_parent = NULL;
-	_cleanup_object_unref_ GFile *file_dest = NULL;
-	_cleanup_object_unref_ GFile *file_src = NULL;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *path_dest = NULL;
+	g_autofree gchar *path_parent = NULL;
+	g_autoptr(GFile) file_dest = NULL;
+	g_autoptr(GFile) file_src = NULL;
 
 	/* create directory structure */
 	path_parent = g_strdup_printf ("%s%s", destdir, dir);
@@ -1176,7 +1176,7 @@ as_utils_install_xml (const gchar *filename,
 	file_src = g_file_new_for_path (filename);
 	basename = g_path_get_basename (filename);
 	if (origin != NULL) {
-		_cleanup_free_ gchar *basename_new = NULL;
+		g_autofree gchar *basename_new = NULL;
 		tmp = g_strstr_len (basename, -1, ".");
 		if (tmp == NULL) {
 			g_set_error (error,
@@ -1203,7 +1203,7 @@ as_utils_install_xml (const gchar *filename,
 
 	/* fix the origin */
 	if (origin != NULL) {
-		_cleanup_object_unref_ AsStore *store = NULL;
+		g_autoptr(AsStore) store = NULL;
 		store = as_store_new ();
 		if (!as_store_from_file (store, file_dest, NULL, NULL, error))
 			return FALSE;
@@ -1240,8 +1240,8 @@ as_utils_install_filename (AsUtilsLocation location,
 {
 	gboolean ret = FALSE;
 	gchar *tmp;
-	_cleanup_free_ gchar *basename = NULL;
-	_cleanup_free_ gchar *path = NULL;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *path = NULL;
 
 	/* default value */
 	if (destdir == NULL)
@@ -1354,7 +1354,7 @@ as_utils_search_tokenize (const gchar *search)
 	gchar **values = NULL;
 	guint i;
 	guint idx = 0;
-	_cleanup_strv_free_ gchar **tmp = NULL;
+	g_auto(GStrv) tmp = NULL;
 
 	/* only add keywords that are long enough */
 	tmp = g_strsplit (search, " ", -1);
@@ -1391,8 +1391,8 @@ as_utils_vercmp (const gchar *version_a, const gchar *version_b)
 	gint64 ver_b;
 	guint i;
 	guint longest_split;
-	_cleanup_strv_free_ gchar **split_a = NULL;
-	_cleanup_strv_free_ gchar **split_b = NULL;
+	g_auto(GStrv) split_a = NULL;
+	g_auto(GStrv) split_b = NULL;
 
 	/* sanity check */
 	if (version_a == NULL || version_b == NULL)
@@ -1484,7 +1484,7 @@ as_utils_guid_is_xdigit (const gchar *str)
 gboolean
 as_utils_guid_is_valid (const gchar *guid)
 {
-	_cleanup_strv_free_ gchar **split = NULL;
+	g_auto(GStrv) split = NULL;
 	if (guid == NULL)
 		return FALSE;
 	split = g_strsplit (guid, "-", -1);

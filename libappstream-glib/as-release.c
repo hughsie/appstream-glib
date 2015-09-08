@@ -410,7 +410,7 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 			    AS_NODE_INSERT_FLAG_NONE,
 			    NULL);
 	if (priv->timestamp > 0) {
-		_cleanup_free_ gchar *timestamp_str = NULL;
+		g_autofree gchar *timestamp_str = NULL;
 		timestamp_str = g_strdup_printf ("%" G_GUINT64_FORMAT,
 						 priv->timestamp);
 		as_node_add_attribute (n, "timestamp", timestamp_str);
@@ -479,7 +479,7 @@ as_release_node_parse (AsRelease *release, GNode *node,
 
 	/* get optional checksums */
 	for (n = node->children; n != NULL; n = n->next) {
-		_cleanup_object_unref_ AsChecksum *csum = NULL;
+		g_autoptr(AsChecksum) csum = NULL;
 		if (as_node_get_tag (n) != AS_TAG_CHECKSUM)
 			continue;
 		csum = as_checksum_new ();

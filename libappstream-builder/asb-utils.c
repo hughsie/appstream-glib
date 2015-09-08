@@ -144,7 +144,7 @@ gboolean
 asb_utils_ensure_exists_and_empty (const gchar *directory, GError **error)
 {
 	const gchar *filename;
-	_cleanup_dir_close_ GDir *dir = NULL;
+	g_autoptr(GDir) dir = NULL;
 
 	/* does directory exist */
 	if (!asb_utils_ensure_exists (directory, error))
@@ -157,7 +157,7 @@ asb_utils_ensure_exists_and_empty (const gchar *directory, GError **error)
 
 	/* find each */
 	while ((filename = g_dir_read_name (dir))) {
-		_cleanup_free_ gchar *src = NULL;
+		g_autofree gchar *src = NULL;
 		src = g_build_filename (directory, filename, NULL);
 		if (g_file_test (src, G_FILE_TEST_IS_DIR)) {
 			if (!asb_utils_rmtree (src, error))
@@ -235,9 +235,9 @@ asb_utils_explode_file (struct archive_entry *entry, const gchar *dir)
 {
 	const gchar *tmp;
 	guint symlink_depth;
-	_cleanup_free_ gchar *back_up = NULL;
-	_cleanup_free_ gchar *path = NULL;
-	_cleanup_free_ gchar *buf = NULL;
+	g_autofree gchar *back_up = NULL;
+	g_autofree gchar *path = NULL;
+	g_autofree gchar *buf = NULL;
 
 	/* no output file */
 	if (archive_entry_pathname (entry) == NULL)
@@ -252,8 +252,8 @@ asb_utils_explode_file (struct archive_entry *entry, const gchar *dir)
 	/* update hardlinks */
 	tmp = archive_entry_hardlink (entry);
 	if (tmp != NULL) {
-		_cleanup_free_ gchar *buf_link = NULL;
-		_cleanup_free_ gchar *path_link = NULL;
+		g_autofree gchar *buf_link = NULL;
+		g_autofree gchar *path_link = NULL;
 		path_link = asb_utils_sanitise_path (tmp);
 		buf_link = g_build_filename (dir, path_link, NULL);
 		if (!g_file_test (buf_link, G_FILE_TEST_EXISTS)) {
@@ -266,7 +266,7 @@ asb_utils_explode_file (struct archive_entry *entry, const gchar *dir)
 	/* update symlinks */
 	tmp = archive_entry_symlink (entry);
 	if (tmp != NULL) {
-		_cleanup_free_ gchar *buf_link = NULL;
+		g_autofree gchar *buf_link = NULL;
 		symlink_depth = asb_utils_count_directories_deep (path) - 1;
 		back_up = asb_utils_get_back_to_root (symlink_depth);
 		if (tmp[0] == '/')
@@ -303,7 +303,7 @@ asb_utils_explode (const gchar *filename,
 	struct archive *arch = NULL;
 	struct archive *arch_preview = NULL;
 	struct archive_entry *entry;
-	_cleanup_hashtable_unref_ GHashTable *matches = NULL;
+	g_autoptr(GHashTable) matches = NULL;
 
 	/* populate a hash with all the files, symlinks and hardlinks that
 	 * actually need decompressing */
@@ -322,7 +322,7 @@ asb_utils_explode (const gchar *filename,
 	}
 	matches = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 	for (;;) {
-		_cleanup_free_ gchar *path = NULL;
+		g_autofree gchar *path = NULL;
 		r = archive_read_next_header (arch_preview, &entry);
 		if (r == ARCHIVE_EOF)
 			break;
@@ -379,7 +379,7 @@ asb_utils_explode (const gchar *filename,
 		goto out;
 	}
 	for (;;) {
-		_cleanup_free_ gchar *path = NULL;
+		g_autofree gchar *path = NULL;
 		r = archive_read_next_header (arch, &entry);
 		if (r == ARCHIVE_EOF)
 			break;
@@ -451,8 +451,8 @@ asb_utils_write_archive (const gchar *filename,
 	archive_write_set_format_pax_restricted (a);
 	archive_write_open_filename (a, filename);
 	for (i = 0; i < files->len; i++) {
-		_cleanup_free_ gchar *data = NULL;
-		_cleanup_free_ gchar *filename_full = NULL;
+		g_autofree gchar *data = NULL;
+		g_autofree gchar *filename_full = NULL;
 
 		tmp = g_ptr_array_index (files, i);
 		filename_full = g_build_filename (path_orig, tmp, NULL);
@@ -487,14 +487,14 @@ asb_utils_add_files_recursive (GPtrArray *files,
 	const gchar *path_trailing;
 	const gchar *tmp;
 	guint path_orig_len;
-	_cleanup_dir_close_ GDir *dir = NULL;
+	g_autoptr(GDir) dir = NULL;
 
 	dir = g_dir_open (path, 0, error);
 	if (dir == NULL)
 		return FALSE;
 	path_orig_len = strlen (path_orig);
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free_ gchar *path_new = NULL;
+		g_autofree gchar *path_new = NULL;
 		path_new = g_build_filename (path, tmp, NULL);
 		if (g_file_test (path_new, G_FILE_TEST_IS_DIR)) {
 			if (!asb_utils_add_files_recursive (files, path_orig, path_new, error))
@@ -524,7 +524,7 @@ asb_utils_write_archive_dir (const gchar *filename,
 			     const gchar *directory,
 			     GError **error)
 {
-	_cleanup_ptrarray_unref_ GPtrArray *files = NULL;
+	g_autoptr(GPtrArray) files = NULL;
 
 	/* add all files in the directory to the archive */
 	files = g_ptr_array_new_with_free_func (g_free);
@@ -552,8 +552,8 @@ asb_utils_write_archive_dir (const gchar *filename,
 guint
 asb_string_replace (GString *string, const gchar *search, const gchar *replace)
 {
-	_cleanup_free_ gchar *tmp = NULL;
-	_cleanup_strv_free_ gchar **split = NULL;
+	g_autofree gchar *tmp = NULL;
+	g_auto(GStrv) split = NULL;
 
 	/* quick search */
 	if (g_strstr_len (string->str, -1, search) == NULL)

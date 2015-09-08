@@ -54,7 +54,7 @@ ai_app_validate_add (AsAppValidateHelper *helper,
 	AsProblem *problem;
 	guint i;
 	va_list args;
-	_cleanup_free_ gchar *str = NULL;
+	g_autofree gchar *str = NULL;
 
 	va_start (args, fmt);
 	str = g_strdup_vprintf (fmt, args);
@@ -139,7 +139,7 @@ as_app_validate_has_email (const gchar *text)
 static gboolean
 as_app_validate_has_first_word_capital (AsAppValidateHelper *helper, const gchar *text)
 {
-	_cleanup_free_ gchar *first_word = NULL;
+	g_autofree gchar *first_word = NULL;
 	gchar *tmp;
 	guint i;
 
@@ -443,8 +443,8 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	guint ss_size_height_min = 351;
 	guint ss_size_width_max = 1600;
 	guint ss_size_width_min = 624;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
-	_cleanup_object_unref_ GInputStream *stream = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
+	g_autoptr(GInputStream) stream = NULL;
 	_cleanup_object_unref_ SoupMessage *msg = NULL;
 	_cleanup_uri_unref_ SoupURI *base_uri = NULL;
 
@@ -932,7 +932,7 @@ static gboolean
 as_app_validate_license (const gchar *license_text, GError **error)
 {
 	guint i;
-	_cleanup_strv_free_ gchar **licenses = NULL;
+	g_auto(GStrv) licenses = NULL;
 
 	licenses = as_utils_spdx_license_tokenize (license_text);
 	for (i = 0; licenses[i] != NULL; i++) {
@@ -961,7 +961,7 @@ static gboolean
 as_app_validate_is_content_license (const gchar *license)
 {
 	guint i;
-	_cleanup_strv_free_ gchar **tokens = NULL;
+	g_auto(GStrv) tokens = NULL;
 	tokens = as_utils_spdx_license_tokenize (license);
 	for (i = 0; tokens[i] != NULL; i++) {
 		if (g_strcmp0 (tokens[i], "@CC0-1.0") == 0)
@@ -1034,7 +1034,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	guint number_para_max = 4;
 	guint number_para_min = 2;
 	guint str_len;
-	_cleanup_list_free_ GList *keys = NULL;
+	g_autoptr(GList) keys = NULL;
 
 	/* relax the requirements a bit */
 	if ((flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {

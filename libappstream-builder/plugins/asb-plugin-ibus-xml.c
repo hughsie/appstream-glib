@@ -82,13 +82,13 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	gboolean found_header = FALSE;
 	gboolean ret;
 	guint i;
-	_cleanup_free_ gchar *basename = NULL;
-	_cleanup_free_ gchar *data = NULL;
-	_cleanup_free_ gchar *filename_tmp = NULL;
-	_cleanup_object_unref_ AsbApp *app = NULL;
-	_cleanup_object_unref_ AsIcon *icon = NULL;
-	_cleanup_strv_free_ gchar **languages = NULL;
-	_cleanup_strv_free_ gchar **lines = NULL;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *data = NULL;
+	g_autofree gchar *filename_tmp = NULL;
+	g_autoptr(AsbApp) app = NULL;
+	g_autoptr(AsIcon) icon = NULL;
+	g_auto(GStrv) languages = NULL;
+	g_auto(GStrv) lines = NULL;
 
 	/* open file */
 	filename_tmp = g_build_filename (tmpdir, filename, NULL);

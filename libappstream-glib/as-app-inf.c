@@ -56,27 +56,27 @@ as_app_parse_inf_file (AsApp *app,
 		       GError **error)
 {
 	guint64 timestamp;
-	_cleanup_error_free_ GError *error_local = NULL;
-	_cleanup_free_ gchar *appstream_id = NULL;
-	_cleanup_free_ gchar *catalog_basename = NULL;
-	_cleanup_free_ gchar *class_guid = NULL;
-	_cleanup_free_ gchar *class_guid_unsafe = NULL;
-	_cleanup_free_ gchar *class = NULL;
-	_cleanup_free_ gchar *comment = NULL;
-	_cleanup_free_ gchar *filename_full = NULL;
-	_cleanup_free_ gchar *firmware_basename = NULL;
-	_cleanup_free_ gchar *guid = NULL;
-	_cleanup_free_ gchar *provide_guid = NULL;
-	_cleanup_free_ gchar *location_checksum = NULL;
-	_cleanup_free_ gchar *name = NULL;
-	_cleanup_free_ gchar *srcpkg = NULL;
-	_cleanup_free_ gchar *vendor = NULL;
-	_cleanup_free_ gchar *version = NULL;
-	_cleanup_keyfile_unref_ GKeyFile *kf = NULL;
-	_cleanup_object_unref_ AsIcon *icon = NULL;
-	_cleanup_object_unref_ AsProvide *provide = NULL;
-	_cleanup_object_unref_ AsRelease *release = NULL;
-	_cleanup_strv_free_ gchar **source_keys = NULL;
+	g_autoptr(GError) error_local = NULL;
+	g_autofree gchar *appstream_id = NULL;
+	g_autofree gchar *catalog_basename = NULL;
+	g_autofree gchar *class_guid = NULL;
+	g_autofree gchar *class_guid_unsafe = NULL;
+	g_autofree gchar *class = NULL;
+	g_autofree gchar *comment = NULL;
+	g_autofree gchar *filename_full = NULL;
+	g_autofree gchar *firmware_basename = NULL;
+	g_autofree gchar *guid = NULL;
+	g_autofree gchar *provide_guid = NULL;
+	g_autofree gchar *location_checksum = NULL;
+	g_autofree gchar *name = NULL;
+	g_autofree gchar *srcpkg = NULL;
+	g_autofree gchar *vendor = NULL;
+	g_autofree gchar *version = NULL;
+	g_autoptr(GKeyFile) kf = NULL;
+	g_autoptr(AsIcon) icon = NULL;
+	g_autoptr(AsProvide) provide = NULL;
+	g_autoptr(AsRelease) release = NULL;
+	g_auto(GStrv) source_keys = NULL;
 
 	/* load file */
 	kf = g_key_file_new ();

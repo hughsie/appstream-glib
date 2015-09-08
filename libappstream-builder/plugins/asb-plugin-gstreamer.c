@@ -111,7 +111,7 @@ static const AsbGstreamerDescData data[] = {
 static gboolean
 asb_utils_is_file_in_tmpdir (const gchar *tmpdir, const gchar *filename)
 {
-	_cleanup_free_ gchar *tmp = NULL;
+	g_autofree gchar *tmp = NULL;
 	tmp = g_build_filename (tmpdir, filename, NULL);
 	return g_file_test (tmp, G_FILE_TEST_EXISTS);
 }
@@ -140,9 +140,9 @@ asb_plugin_process (AsbPlugin *plugin,
 	GPtrArray *keywords;
 	guint i;
 	guint j;
-	_cleanup_free_ gchar *app_id = NULL;
-	_cleanup_object_unref_ AsbApp *app = NULL;
-	_cleanup_object_unref_ AsIcon *icon = NULL;
+	g_autofree gchar *app_id = NULL;
+	g_autoptr(AsbApp) app = NULL;
+	g_autoptr(AsIcon) icon = NULL;
 	_cleanup_string_free_ GString *str = NULL;
 
 	/* use the pkgname suffix as the app-id */

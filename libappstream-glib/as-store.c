@@ -861,8 +861,8 @@ as_store_from_root (AsStore *store,
 	GNode *apps;
 	GNode *n;
 	const gchar *tmp;
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_free_ gchar *icon_path = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autofree gchar *icon_path = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
@@ -908,8 +908,8 @@ as_store_from_root (AsStore *store,
 	}
 	ctx = as_node_context_new ();
 	for (n = apps->children; n != NULL; n = n->next) {
-		_cleanup_error_free_ GError *error_local = NULL;
-		_cleanup_object_unref_ AsApp *app = NULL;
+		g_autoptr(GError) error_local = NULL;
+		g_autoptr(AsApp) app = NULL;
 		if (as_node_get_tag (n) != AS_TAG_COMPONENT)
 			continue;
 
@@ -966,8 +966,8 @@ as_store_load_yaml_file (AsStore *store,
 	GNode *app_n;
 	GNode *n;
 	const gchar *tmp;
-	_cleanup_free_ AsNodeContext *ctx = NULL;
-	_cleanup_free_ gchar *icon_path = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autofree gchar *icon_path = NULL;
 	_cleanup_yaml_unref_ GNode *root = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
@@ -1005,7 +1005,7 @@ as_store_load_yaml_file (AsStore *store,
 	/* parse applications */
 	ctx = as_node_context_new ();
 	for (app_n = root->children->next; app_n != NULL; app_n = app_n->next) {
-		_cleanup_object_unref_ AsApp *app = NULL;
+		g_autoptr(AsApp) app = NULL;
 		if (app_n->children == NULL)
 			continue;
 		app = as_app_new ();
@@ -1036,7 +1036,7 @@ as_store_remove_by_source_file (AsStore *store, const gchar *filename)
 	GPtrArray *apps;
 	guint i;
 	const gchar *tmp;
-	_cleanup_ptrarray_unref_ GPtrArray *ids = NULL;
+	g_autoptr(GPtrArray) ids = NULL;
 
 	/* find any applications in the store with this source file */
 	ids = g_ptr_array_new_with_free_func (g_free);
@@ -1071,8 +1071,8 @@ as_store_monitor_changed_cb (AsMonitor *monitor,
 
 	/* reload, or emit a signal */
 	if (priv->watch_flags & AS_STORE_WATCH_FLAG_ADDED) {
-		_cleanup_error_free_ GError *error = NULL;
-		_cleanup_object_unref_ GFile *file = NULL;
+		g_autoptr(GError) error = NULL;
+		g_autoptr(GFile) file = NULL;
 		_cleanup_uninhibit_ guint32 *tok = NULL;
 		tok = as_store_changed_inhibit (store);
 		as_store_remove_by_source_file (store, filename);
@@ -1096,8 +1096,8 @@ as_store_monitor_added_cb (AsMonitor *monitor,
 
 	/* reload, or emit a signal */
 	if (priv->watch_flags & AS_STORE_WATCH_FLAG_ADDED) {
-		_cleanup_error_free_ GError *error = NULL;
-		_cleanup_object_unref_ GFile *file = NULL;
+		g_autoptr(GError) error = NULL;
+		g_autoptr(GFile) file = NULL;
 		g_debug ("scanning %s", filename);
 		file = g_file_new_for_path (filename);
 		if (!as_store_from_file (store, file, NULL, NULL, &error))
@@ -1151,8 +1151,8 @@ as_store_from_file (AsStore *store,
 		    GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_error_free_ GError *error_local = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(GError) error_local = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
@@ -1212,7 +1212,7 @@ as_store_from_xml (AsStore *store,
 		   const gchar *icon_root,
 		   GError **error)
 {
-	_cleanup_error_free_ GError *error_local = NULL;
+	g_autoptr(GError) error_local = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
@@ -1267,7 +1267,7 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 	GString *xml;
 	guint i;
 	gchar version[6];
-	_cleanup_free_ AsNodeContext *ctx = NULL;
+	g_autofree AsNodeContext *ctx = NULL;
 
 	/* get XML text */
 	node_root = as_node_new ();
@@ -1353,12 +1353,12 @@ as_store_to_file (AsStore *store,
 		  GCancellable *cancellable,
 		  GError **error)
 {
-	_cleanup_error_free_ GError *error_local = NULL;
-	_cleanup_object_unref_ GOutputStream *out2 = NULL;
-	_cleanup_object_unref_ GOutputStream *out = NULL;
-	_cleanup_object_unref_ GZlibCompressor *compressor = NULL;
+	g_autoptr(GError) error_local = NULL;
+	g_autoptr(GOutputStream) out2 = NULL;
+	g_autoptr(GOutputStream) out = NULL;
+	g_autoptr(GZlibCompressor) compressor = NULL;
 	_cleanup_string_free_ GString *xml = NULL;
-	_cleanup_free_ gchar *basename = NULL;
+	g_autofree gchar *basename = NULL;
 
 	/* check if compressed */
 	basename = g_file_get_basename (file);
@@ -1639,7 +1639,7 @@ as_store_guess_origin_fallback (AsStore *store,
 				GError **error)
 {
 	gchar *tmp;
-	_cleanup_free_ gchar *origin_fallback = NULL;
+	g_autofree gchar *origin_fallback = NULL;
 
 	/* the first component of the file (e.g. "fedora-20.xml.gz)
 	 * is used for the icon directory as we might want to clean up
@@ -1674,7 +1674,7 @@ as_store_load_app_info_file (AsStore *store,
 			     GCancellable *cancellable,
 			     GError **error)
 {
-	_cleanup_object_unref_ GFile *file = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* guess this based on the name */
 	if (!as_store_guess_origin_fallback (store, path_xml, error))
@@ -1703,10 +1703,10 @@ as_store_load_app_info (AsStore *store,
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	const gchar *tmp;
-	_cleanup_dir_close_ GDir *dir = NULL;
-	_cleanup_error_free_ GError *error_local = NULL;
-	_cleanup_free_ gchar *icon_root = NULL;
-	_cleanup_free_ gchar *path_md = NULL;
+	g_autoptr(GDir) dir = NULL;
+	g_autoptr(GError) error_local = NULL;
+	g_autofree gchar *icon_root = NULL;
+	g_autofree gchar *path_md = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
 	/* emit once when finished */
@@ -1727,7 +1727,7 @@ as_store_load_app_info (AsStore *store,
 	}
 	icon_root = g_build_filename (path, "icons", NULL);
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free_ gchar *filename_md = NULL;
+		g_autofree gchar *filename_md = NULL;
 		filename_md = g_build_filename (path_md, tmp, NULL);
 		if (!as_store_load_app_info_file (store,
 						  filename_md,
@@ -1759,9 +1759,9 @@ as_store_add_app_install_screenshot (AsApp *app)
 {
 	GPtrArray *pkgnames;
 	const gchar *pkgname;
-	_cleanup_free_ gchar *url = NULL;
-	_cleanup_object_unref_ AsImage *im = NULL;
-	_cleanup_object_unref_ AsScreenshot *ss = NULL;
+	g_autofree gchar *url = NULL;
+	g_autoptr(AsImage) im = NULL;
+	g_autoptr(AsScreenshot) ss = NULL;
 
 	/* get the default package name */
 	pkgnames = as_app_get_pkgnames (app);
@@ -1795,8 +1795,8 @@ as_store_load_app_install_file (AsStore *store,
 	AsIcon *icon;
 	GPtrArray *icons;
 	guint i;
-	_cleanup_error_free_ GError *error_local = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
+	g_autoptr(GError) error_local = NULL;
+	g_autoptr(AsApp) app = NULL;
 
 	app = as_app_new ();
 	as_app_set_icon_path (app, path_icons);
@@ -1846,10 +1846,10 @@ as_store_load_app_install (AsStore *store,
 			   GError **error)
 {
 	const gchar *tmp;
-	_cleanup_dir_close_ GDir *dir = NULL;
-	_cleanup_error_free_ GError *error_local = NULL;
-	_cleanup_free_ gchar *path_desktop = NULL;
-	_cleanup_free_ gchar *path_icons = NULL;
+	g_autoptr(GDir) dir = NULL;
+	g_autoptr(GError) error_local = NULL;
+	g_autofree gchar *path_desktop = NULL;
+	g_autofree gchar *path_icons = NULL;
 
 	path_desktop = g_build_filename (path, "desktop", NULL);
 	if (!g_file_test (path_desktop, G_FILE_TEST_EXISTS))
@@ -1867,7 +1867,7 @@ as_store_load_app_install (AsStore *store,
 
 	path_icons = g_build_filename (path, "icons", NULL);
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		_cleanup_free_ gchar *filename = NULL;
+		g_autofree gchar *filename = NULL;
 		if (!g_str_has_suffix (tmp, ".desktop"))
 			continue;
 		filename = g_build_filename (path_desktop, tmp, NULL);
@@ -1894,7 +1894,7 @@ as_store_load_installed (AsStore *store,
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	GError *error_local = NULL;
 	const gchar *tmp;
-	_cleanup_dir_close_ GDir *dir = NULL;
+	g_autoptr(GDir) dir = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
 	dir = g_dir_open (path, 0, error);
@@ -1910,8 +1910,8 @@ as_store_load_installed (AsStore *store,
 
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
 		AsApp *app_tmp;
-		_cleanup_free_ gchar *filename = NULL;
-		_cleanup_object_unref_ AsApp *app = NULL;
+		g_autofree gchar *filename = NULL;
+		g_autoptr(AsApp) app = NULL;
 		filename = g_build_filename (path, tmp, NULL);
 		if (!g_file_test (filename, G_FILE_TEST_IS_REGULAR))
 			continue;
@@ -2003,8 +2003,8 @@ as_store_load (AsStore *store,
 	const gchar *tmp;
 	gchar *path;
 	guint i;
-	_cleanup_ptrarray_unref_ GPtrArray *app_info = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *installed = NULL;
+	g_autoptr(GPtrArray) app_info = NULL;
+	g_autoptr(GPtrArray) installed = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
 	/* system locations */
@@ -2057,7 +2057,7 @@ as_store_load (AsStore *store,
 	/* load each app-info path if it exists */
 	tok = as_store_changed_inhibit (store);
 	for (i = 0; i < app_info->len; i++) {
-		_cleanup_free_ gchar *dest = NULL;
+		g_autofree gchar *dest = NULL;
 		tmp = g_ptr_array_index (app_info, i);
 		dest = g_build_filename (priv->destdir ? priv->destdir : "/", tmp, NULL);
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
@@ -2070,7 +2070,7 @@ as_store_load (AsStore *store,
 
 	/* load each appdata and desktop path if it exists */
 	for (i = 0; i < installed->len; i++) {
-		_cleanup_free_ gchar *dest = NULL;
+		g_autofree gchar *dest = NULL;
 		tmp = g_ptr_array_index (installed, i);
 		dest = g_build_filename (priv->destdir ? priv->destdir : "/", tmp, NULL);
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
@@ -2081,7 +2081,7 @@ as_store_load (AsStore *store,
 
 	/* ubuntu specific */
 	if ((flags & AS_STORE_LOAD_FLAG_APP_INSTALL) > 0) {
-		_cleanup_free_ gchar *dest = NULL;
+		g_autofree gchar *dest = NULL;
 		dest = g_build_filename (priv->destdir ? priv->destdir : "/",
 					 "/usr/share/app-install", NULL);
 		if (!as_store_load_app_install (store, dest, cancellable, error))
@@ -2106,7 +2106,7 @@ as_store_validate_add (GPtrArray *problems, AsProblemKind kind, const gchar *fmt
 	AsProblem *problem;
 	guint i;
 	va_list args;
-	_cleanup_free_ gchar *str = NULL;
+	g_autofree gchar *str = NULL;
 
 	va_start (args, fmt);
 	str = g_strdup_vprintf (fmt, args);
@@ -2181,7 +2181,7 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 	for (i = 0; i < priv->array->len; i++) {
 		AsProblem *prob;
 		guint j;
-		_cleanup_ptrarray_unref_ GPtrArray *probs_app = NULL;
+		g_autoptr(GPtrArray) probs_app = NULL;
 
 		app = g_ptr_array_index (priv->array, i);
 		if (priv->api_version < 0.3) {

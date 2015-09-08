@@ -64,7 +64,7 @@ appdata_validate_format_html (const gchar *filename, GPtrArray *probs)
 		g_print ("<p>%s did not validate:</p>\n", filename);
 		g_print ("<ul>\n");
 		for (i = 0; i < probs->len; i++) {
-			_cleanup_free_ gchar *tmp = NULL;
+			g_autofree gchar *tmp = NULL;
 			problem = g_ptr_array_index (probs, i);
 			tmp = g_markup_escape_text (as_problem_get_message (problem), -1);
 			g_print ("<li>");
@@ -95,7 +95,7 @@ appdata_validate_format_xml (const gchar *filename, GPtrArray *probs)
 	if (probs->len > 0) {
 		g_print ("  <problems>\n");
 		for (i = 0; i < probs->len; i++) {
-			_cleanup_free_ gchar *tmp = NULL;
+			g_autofree gchar *tmp = NULL;
 			problem = g_ptr_array_index (probs, i);
 			tmp = g_markup_escape_text (as_problem_get_message (problem), -1);
 			if (as_problem_get_line_number (problem) > 0) {
@@ -161,9 +161,9 @@ appdata_validate_and_show_results (const gchar *filename_original,
 	const gchar *tmp;
 	gboolean ret;
 	gint retval = EXIT_CODE_SUCCESS;
-	_cleanup_error_free_ GError *error = NULL;
-	_cleanup_object_unref_ AsApp *app = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *problems = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GPtrArray) problems = NULL;
 
 	/* scan file for problems */
 	app = as_app_new ();
@@ -220,8 +220,8 @@ main (int argc, char *argv[])
 	gint retval = EXIT_CODE_SUCCESS;
 	gint retval_tmp;
 	GOptionContext *context;
-	_cleanup_free_ gchar *filename = NULL;
-	_cleanup_free_ gchar *output_format = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autofree gchar *output_format = NULL;
 	const GOptionEntry options[] = {
 		{ "relax", 'r', 0, G_OPTION_ARG_NONE, &relax,
 			/* TRANSLATORS: this is the --relax argument */

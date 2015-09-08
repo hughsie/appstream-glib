@@ -55,8 +55,8 @@ asb_package_deb_ensure_simple (AsbPackage *pkg, GError **error)
 	gchar **vr;
 	guint i;
 	guint j;
-	_cleanup_free_ gchar *output = NULL;
-	_cleanup_strv_free_ gchar **lines = NULL;
+	g_autofree gchar *output = NULL;
+	g_auto(GStrv) lines = NULL;
 
 	/* spawn sync */
 	argv[2] = asb_package_get_filename (pkg);
@@ -115,9 +115,9 @@ asb_package_deb_ensure_filelists (AsbPackage *pkg, GError **error)
 	const gchar *argv[4] = { "dpkg", "--contents", "fn", NULL };
 	const gchar *fn;
 	guint i;
-	_cleanup_free_ gchar *output = NULL;
-	_cleanup_ptrarray_unref_ GPtrArray *files = NULL;
-	_cleanup_strv_free_ gchar **lines = NULL;
+	g_autofree gchar *output = NULL;
+	g_autoptr(GPtrArray) files = NULL;
+	g_auto(GStrv) lines = NULL;
 
 	/* spawn sync */
 	argv[2] = asb_package_get_filename (pkg);
@@ -184,7 +184,7 @@ asb_package_deb_explode (AsbPackage *pkg,
 
 	/* then decompress the data file */
 	for (i = 0; data_names[i] != NULL; i++) {
-		_cleanup_free_ gchar *data_fn = NULL;
+		g_autofree gchar *data_fn = NULL;
 		data_fn = g_build_filename (dir, data_names[i], NULL);
 		if (g_file_test (data_fn, G_FILE_TEST_EXISTS)) {
 			if (!asb_utils_explode (data_fn, dir, glob, error))

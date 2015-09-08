@@ -496,7 +496,7 @@ as_icon_node_insert_embedded (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	GNode *n;
-	_cleanup_free_ gchar *data = NULL;
+	g_autofree gchar *data = NULL;
 
 	/* embedded icon */
 	n = as_node_insert (parent, "icon", NULL, 0,
@@ -573,9 +573,9 @@ as_icon_node_parse_embedded (AsIcon *icon, GNode *n, GError **error)
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	GNode *c;
 	gsize size;
-	_cleanup_free_ guchar *data = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
-	_cleanup_object_unref_ GInputStream *stream = NULL;
+	g_autofree guchar *data = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
+	g_autoptr(GInputStream) stream = NULL;
 
 	/* get the icon name */
 	c = as_node_find (n, "name");
@@ -664,7 +664,7 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 		if (g_strstr_len (tmp, -1, "/") == NULL) {
 			as_icon_set_name (icon, tmp);
 		} else {
-			_cleanup_free_ gchar *basename = NULL;
+			g_autofree gchar *basename = NULL;
 			basename = g_path_get_basename (tmp);
 			as_icon_set_name (icon, basename);
 		}
@@ -739,8 +739,8 @@ gboolean
 as_icon_load (AsIcon *icon, AsIconLoadFlags flags, GError **error)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
-	_cleanup_free_ gchar *fn_fallback = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+	g_autofree gchar *fn_fallback = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	/* absolute filename */
 	if (priv->kind == AS_ICON_KIND_LOCAL) {
@@ -778,8 +778,8 @@ as_icon_load (AsIcon *icon, AsIconLoadFlags flags, GError **error)
 		guint height[] = { priv->height, 64, 128, 0 };
 		guint i;
 		for (i = 0; widths[i] != 0; i++) {
-			_cleanup_free_ gchar *fn_size = NULL;
-			_cleanup_free_ gchar *size_str = NULL;
+			g_autofree gchar *fn_size = NULL;
+			g_autofree gchar *size_str = NULL;
 			size_str = g_strdup_printf ("%ix%i", widths[i], height[i]);
 			fn_size = g_build_filename (priv->prefix, size_str, priv->name, NULL);
 			if (g_file_test (fn_size, G_FILE_TEST_EXISTS)) {
@@ -830,8 +830,8 @@ as_icon_convert_to_kind (AsIcon *icon, AsIconKind kind, GError **error)
 	/* cached -> embedded */
 	if (priv->kind == AS_ICON_KIND_CACHED && kind == AS_ICON_KIND_EMBEDDED) {
 		gsize data_size;
-		_cleanup_bytes_unref_ GBytes *tmp = NULL;
-		_cleanup_free_ gchar *data = NULL;
+		g_autoptr(GBytes) tmp = NULL;
+		g_autofree gchar *data = NULL;
 
 		/* load the pixbuf and save it to a PNG buffer */
 		if (priv->pixbuf == NULL) {
@@ -851,9 +851,9 @@ as_icon_convert_to_kind (AsIcon *icon, AsIconKind kind, GError **error)
 
 	/* cached -> embedded */
 	if (priv->kind == AS_ICON_KIND_EMBEDDED && kind == AS_ICON_KIND_CACHED) {
-		_cleanup_free_ gchar *size_str = NULL;
-		_cleanup_free_ gchar *path = NULL;
-		_cleanup_free_ gchar *fn = NULL;
+		g_autofree gchar *size_str = NULL;
+		g_autofree gchar *path = NULL;
+		g_autofree gchar *fn = NULL;
 
 		/* ensure the parent path exists */
 		size_str = g_strdup_printf ("%ix%i", priv->width, priv->height);

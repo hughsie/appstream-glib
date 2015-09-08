@@ -56,7 +56,7 @@ as_app_infer_file_key (AsApp *app,
 		       const gchar *key,
 		       GError **error)
 {
-	_cleanup_free_ gchar *tmp = NULL;
+	g_autofree gchar *tmp = NULL;
 
 	if (g_strcmp0 (key, "X-GNOME-UsesNotifications") == 0) {
 		as_app_add_kudo_kind (AS_APP (app),
@@ -131,9 +131,9 @@ as_app_parse_file_key (AsApp *app,
 	gchar *dot = NULL;
 	guint i;
 	guint j;
-	_cleanup_free_ gchar *locale = NULL;
-	_cleanup_free_ gchar *tmp = NULL;
-	_cleanup_strv_free_ gchar **list = NULL;
+	g_autofree gchar *locale = NULL;
+	g_autofree gchar *tmp = NULL;
+	g_auto(GStrv) list = NULL;
 
 	/* NoDisplay */
 	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_NO_DISPLAY) == 0) {
@@ -165,7 +165,7 @@ as_app_parse_file_key (AsApp *app,
 					     key,
 					     NULL);
 		if (tmp != NULL && tmp[0] != '\0') {
-			_cleanup_object_unref_ AsIcon *icon = NULL;
+			g_autoptr(AsIcon) icon = NULL;
 			icon = as_icon_new ();
 			as_icon_set_name (icon, tmp);
 			dot = g_strstr_len (tmp, -1, ".");
@@ -227,7 +227,7 @@ as_app_parse_file_key (AsApp *app,
 						   key,
 						   NULL, NULL);
 		for (i = 0; list[i] != NULL; i++) {
-			_cleanup_strv_free_ gchar **kw_split = NULL;
+			g_auto(GStrv) kw_split = NULL;
 			kw_split = g_strsplit (list[i], ",", -1);
 			for (j = 0; kw_split[j] != NULL; j++) {
 				if (kw_split[j][0] == '\0')
@@ -244,7 +244,7 @@ as_app_parse_file_key (AsApp *app,
 							  locale,
 							  NULL, NULL);
 		for (i = 0; list[i] != NULL; i++) {
-			_cleanup_strv_free_ gchar **kw_split = NULL;
+			g_auto(GStrv) kw_split = NULL;
 			kw_split = g_strsplit (list[i], ",", -1);
 			for (j = 0; kw_split[j] != NULL; j++) {
 				if (kw_split[j][0] == '\0')
@@ -352,8 +352,8 @@ as_app_parse_file_key_fallback_comment (AsApp *app,
 					const gchar *key,
 					GError **error)
 {
-	_cleanup_free_ gchar *locale = NULL;
-	_cleanup_free_ gchar *tmp = NULL;
+	g_autofree gchar *locale = NULL;
+	g_autofree gchar *tmp = NULL;
 
 	/* GenericName */
 	if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME) == 0 ||
@@ -392,10 +392,10 @@ as_app_parse_desktop_file (AsApp *app,
 	GKeyFileFlags kf_flags = G_KEY_FILE_KEEP_TRANSLATIONS;
 	gchar *tmp;
 	guint i;
-	_cleanup_error_free_ GError *error_local = NULL;
-	_cleanup_free_ gchar *app_id = NULL;
-	_cleanup_keyfile_unref_ GKeyFile *kf = NULL;
-	_cleanup_strv_free_ gchar **keys = NULL;
+	g_autoptr(GError) error_local = NULL;
+	g_autofree gchar *app_id = NULL;
+	g_autoptr(GKeyFile) kf = NULL;
+	g_auto(GStrv) keys = NULL;
 
 	/* load file */
 	kf = g_key_file_new ();

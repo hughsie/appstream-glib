@@ -122,7 +122,7 @@ asb_package_alpm_ensure_version (AsbPackage *pkg, GError **error)
 	AsbPackageAlpm *pkg_alpm = ASB_PACKAGE_ALPM (pkg);
 	AsbPackageAlpmPrivate *priv = GET_PRIVATE (pkg_alpm);
 
-	gchar _cleanup_strv_free_ **split = NULL;
+	g_auto(GStrv) split = NULL;
 
 	split = g_strsplit (alpm_pkg_get_version (priv->package), ":-", 3);
 

@@ -90,7 +90,7 @@ asb_plugin_firmware_get_checksum (const gchar *filename,
 				  GError **error)
 {
 	gsize len;
-	_cleanup_free_ gchar *data = NULL;
+	g_autofree gchar *data = NULL;
 
 	if (!g_file_get_contents (filename, &data, &len, error))
 		return NULL;
@@ -111,12 +111,12 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	AsRelease *release;
 	GError *error_local = NULL;
 	const gchar *fw_basename = NULL;
-	_cleanup_free_ gchar *checksum = NULL;
-	_cleanup_free_ gchar *filename_full = NULL;
-	_cleanup_free_ gchar *location_checksum = NULL;
-	_cleanup_free_ gchar *metainfo_fn = NULL;
-	_cleanup_object_unref_ AsbApp *app = NULL;
-	_cleanup_object_unref_ AsChecksum *csum = NULL;
+	g_autofree gchar *checksum = NULL;
+	g_autofree gchar *filename_full = NULL;
+	g_autofree gchar *location_checksum = NULL;
+	g_autofree gchar *metainfo_fn = NULL;
+	g_autoptr(AsbApp) app = NULL;
+	g_autoptr(AsChecksum) csum = NULL;
 
 	/* parse */
 	filename_full = g_build_filename (tmpdir, filename, NULL);
@@ -160,9 +160,9 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	/* set the internal checksum */
 	fw_basename = as_app_get_metadata_item (AS_APP (app), "FirmwareBasename");
 	if (fw_basename != NULL) {
-		_cleanup_free_ gchar *checksum_bin = NULL;
-		_cleanup_free_ gchar *fn_bin = NULL;
-		_cleanup_object_unref_ AsChecksum *csum_bin = NULL;
+		g_autofree gchar *checksum_bin = NULL;
+		g_autofree gchar *fn_bin = NULL;
+		g_autoptr(AsChecksum) csum_bin = NULL;
 
 		/* add the checksum for the .bin file */
 		fn_bin = g_build_filename (tmpdir, fw_basename, NULL);

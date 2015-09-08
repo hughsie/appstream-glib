@@ -498,9 +498,9 @@ as_image_load_filename (AsImage *image,
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	gsize len;
-	_cleanup_free_ gchar *basename = NULL;
-	_cleanup_free_ gchar *data = NULL;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *data = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	/* get the contents so we can hash the predictable file data,
 	 * rather than the unpredicatable (for JPEG) pixel data */
@@ -547,7 +547,7 @@ as_image_save_pixbuf (AsImage *image,
 	guint tmp_width;
 	guint pixbuf_height;
 	guint pixbuf_width;
-	_cleanup_object_unref_ GdkPixbuf *pixbuf_tmp = NULL;
+	g_autoptr(GdkPixbuf) pixbuf_tmp = NULL;
 
 	/* never set */
 	if (priv->pixbuf == NULL)
@@ -630,7 +630,7 @@ as_image_save_filename (AsImage *image,
 		        AsImageSaveFlags flags,
 		        GError **error)
 {
-	_cleanup_object_unref_ GdkPixbuf *pixbuf = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	/* save source file */
 	pixbuf = as_image_save_pixbuf (image, width, height, flags);

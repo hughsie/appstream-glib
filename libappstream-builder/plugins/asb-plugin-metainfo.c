@@ -72,7 +72,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 			     GList **apps,
 			     GError **error)
 {
-	_cleanup_object_unref_ AsbApp *app = NULL;
+	g_autoptr(AsbApp) app = NULL;
 
 	app = asb_app_new (pkg, NULL);
 	if (!as_app_parse_file (AS_APP (app), filename,
@@ -110,7 +110,7 @@ asb_plugin_process (AsbPlugin *plugin,
 
 	filelist = asb_package_get_filelist (pkg);
 	for (i = 0; filelist[i] != NULL; i++) {
-		_cleanup_free_ gchar *filename_tmp = NULL;
+		g_autofree gchar *filename_tmp = NULL;
 		if (!_asb_plugin_check_filename (filelist[i]))
 			continue;
 		filename_tmp = g_build_filename (tmpdir, filelist[i], NULL);
@@ -146,7 +146,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 	AsApp *app;
 	AsApp *found;
 	GList *l;
-	_cleanup_hashtable_unref_ GHashTable *hash = NULL;
+	g_autoptr(GHashTable) hash = NULL;
 
 	/* make a hash table of ID->AsApp */
 	hash = g_hash_table_new_full (g_str_hash, g_str_equal,

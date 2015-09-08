@@ -91,14 +91,14 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	gint rc;
 	guint i;
 	sqlite3 *db = NULL;
-	_cleanup_free_ gchar *basename = NULL;
-	_cleanup_free_ gchar *description = NULL;
-	_cleanup_free_ gchar *language_string = NULL;
-	_cleanup_free_ gchar *name = NULL;
-	_cleanup_free_ gchar *symbol = NULL;
-	_cleanup_object_unref_ AsbApp *app = NULL;
-	_cleanup_object_unref_ AsIcon *icon = NULL;
-	_cleanup_strv_free_ gchar **languages = NULL;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *description = NULL;
+	g_autofree gchar *language_string = NULL;
+	g_autofree gchar *name = NULL;
+	g_autofree gchar *symbol = NULL;
+	g_autoptr(AsbApp) app = NULL;
+	g_autoptr(AsIcon) icon = NULL;
+	g_auto(GStrv) languages = NULL;
 
 	/* open IME database */
 	filename_tmp = g_build_filename (tmpdir, filename, NULL);
