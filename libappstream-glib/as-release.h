@@ -65,6 +65,7 @@ AsChecksum	*as_release_get_checksum_by_fn	(AsRelease	*release,
 AsChecksum	*as_release_get_checksum_by_target (AsRelease	*release,
 						 AsChecksumTarget target);
 GPtrArray	*as_release_get_checksums	(AsRelease	*release);
+AsUrgencyKind	 as_release_get_urgency		(AsRelease	*release);
 
 /* setters */
 void		 as_release_set_version		(AsRelease	*release,
@@ -80,6 +81,8 @@ void		 as_release_add_location	(AsRelease	*release,
 						 const gchar	*location);
 void		 as_release_add_checksum	(AsRelease	*release,
 						 AsChecksum	*checksum);
+void		 as_release_set_urgency		(AsRelease	*release,
+						 AsUrgencyKind urgency);
 
 G_END_DECLS
 

@@ -108,6 +108,29 @@ typedef enum {
 	AS_KUDO_KIND_LAST
 } AsKudoKind;
 
+/**
+ * AsUrgencyKind:
+ * @AS_URGENCY_KIND_UNKNOWN:		Urgency invalid or not known
+ * @AS_URGENCY_KIND_LOW:		Low urgency release
+ * @AS_URGENCY_KIND_MEDIUM:		Medium urgency release
+ * @AS_URGENCY_KIND_HIGH:		High urgency release
+ * @AS_URGENCY_KIND_CRITICAL:		Critically urgent release
+ *
+ * The urgency of a release.
+ **/
+typedef enum {
+	AS_URGENCY_KIND_UNKNOWN,	/* Since: 0.5.1 */
+	AS_URGENCY_KIND_LOW,		/* Since: 0.5.1 */
+	AS_URGENCY_KIND_MEDIUM,		/* Since: 0.5.1 */
+	AS_URGENCY_KIND_HIGH,		/* Since: 0.5.1 */
+	AS_URGENCY_KIND_CRITICAL,	/* Since: 0.5.1 */
+	/*< private >*/
+	AS_URGENCY_KIND_LAST
+} AsUrgencyKind;
+
+const gchar	*as_urgency_kind_to_string	(AsUrgencyKind	 urgency_kind);
+AsUrgencyKind	 as_urgency_kind_from_string	(const gchar	*urgency_kind);
+
 const gchar	*as_id_kind_to_string		(AsIdKind	 id_kind);
 AsIdKind	 as_id_kind_from_string		(const gchar	*id_kind);
 

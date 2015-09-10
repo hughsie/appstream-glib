@@ -824,7 +824,10 @@ as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
  * as_app_validate_release:
  **/
 static gboolean
-as_app_validate_release (AsRelease *release, AsAppValidateHelper *helper, GError **error)
+as_app_validate_release (AsApp *app,
+			 AsRelease *release,
+			 AsAppValidateHelper *helper,
+			 GError **error)
 {
 	const gchar *tmp;
 	guint64 timestamp;
@@ -855,6 +858,14 @@ as_app_validate_release (AsRelease *release, AsAppValidateHelper *helper, GError
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				     "<release> timestamp should be a UNIX time");
+	}
+
+	/* for firmware, check urgency */
+	if (as_app_get_id_kind (app) == AS_ID_KIND_FIRMWARE &&
+	    as_release_get_urgency (release) == AS_URGENCY_KIND_UNKNOWN) {
+		ai_app_validate_add (helper,
+				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
+				     "<release> urgency is required for firmware");
 	}
 
 	/* check description */
@@ -889,7 +900,8 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 	guint i;
 
 	/* only for AppData */
-	if (as_app_get_source_kind (app) != AS_APP_SOURCE_KIND_APPDATA)
+	if (as_app_get_source_kind (app) != AS_APP_SOURCE_KIND_APPDATA &&
+	    as_app_get_source_kind (app) != AS_APP_SOURCE_KIND_METAINFO)
 		return TRUE;
 
 	releases = as_app_get_releases (app);
@@ -900,7 +912,7 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 	}
 	for (i = 0; i < releases->len; i++) {
 		release = g_ptr_array_index (releases, i);
-		if (!as_app_validate_release (release, helper, error))
+		if (!as_app_validate_release (app, release, helper, error))
 			return FALSE;
 	}
 	return TRUE;

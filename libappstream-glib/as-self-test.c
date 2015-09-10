@@ -347,7 +347,7 @@ as_test_release_func (void)
 	GNode *n;
 	GNode *root;
 	GString *xml;
-	const gchar *src = "<release version=\"0.1.2\" timestamp=\"123\"/>";
+	const gchar *src = "<release version=\"0.1.2\" urgency=\"critical\" timestamp=\"123\"/>";
 	gboolean ret;
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autoptr(AsRelease) release = NULL;
@@ -368,6 +368,7 @@ as_test_release_func (void)
 
 	/* verify */
 	g_assert_cmpint (as_release_get_timestamp (release), ==, 123);
+	g_assert_cmpint (as_release_get_urgency (release), ==, AS_URGENCY_KIND_CRITICAL);
 	g_assert_cmpstr (as_release_get_version (release), ==, "0.1.2");
 
 	/* back to node */

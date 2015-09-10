@@ -47,6 +47,7 @@
 
 typedef struct
 {
+	AsUrgencyKind		 urgency;
 	gchar			*version;
 	GHashTable		*descriptions;
 	guint64			 timestamp;
@@ -83,6 +84,7 @@ static void
 as_release_init (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	priv->urgency = AS_URGENCY_KIND_UNKNOWN;
 	priv->locations = g_ptr_array_new_with_free_func (g_free);
 	priv->checksums = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 }
@@ -126,6 +128,23 @@ as_release_vercmp (AsRelease *rel1, AsRelease *rel2)
 	if (priv1->timestamp < priv2->timestamp)
 		return 1;
 	return 0;
+}
+
+/**
+ * as_release_get_urgency:
+ * @release: a #AsRelease instance.
+ *
+ * Gets the release urgency.
+ *
+ * Returns: enumberated value, or %AS_URGENCY_KIND_UNKNOWN for not set or invalid
+ *
+ * Since: 0.5.1
+ **/
+AsUrgencyKind
+as_release_get_urgency (AsRelease *release)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	return priv->urgency;
 }
 
 /**
@@ -305,6 +324,22 @@ as_release_set_version (AsRelease *release, const gchar *version)
 }
 
 /**
+ * as_release_set_urgency:
+ * @release: a #AsRelease instance.
+ * @urgency: the release urgency, e.g. %AS_URGENCY_KIND_CRITICAL
+ *
+ * Sets the release urgency.
+ *
+ * Since: 0.5.1
+ **/
+void
+as_release_set_urgency (AsRelease *release, AsUrgencyKind urgency)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	priv->urgency = urgency;
+}
+
+/**
  * as_release_add_location:
  * @release: a #AsRelease instance.
  * @location: the location string.
@@ -414,6 +449,10 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 						 priv->timestamp);
 		as_node_add_attribute (n, "timestamp", timestamp_str);
 	}
+	if (priv->urgency != AS_URGENCY_KIND_UNKNOWN) {
+		as_node_add_attribute (n, "urgency",
+				       as_urgency_kind_to_string (priv->urgency));
+	}
 	if (priv->version != NULL)
 		as_node_add_attribute (n, "version", priv->version);
 	if (as_node_context_get_version (ctx) >= 0.9) {
@@ -462,6 +501,9 @@ as_release_node_parse (AsRelease *release, GNode *node,
 	tmp = as_node_get_attribute (node, "timestamp");
 	if (tmp != NULL)
 		as_release_set_timestamp (release, atol (tmp));
+	tmp = as_node_get_attribute (node, "urgency");
+	if (tmp != NULL)
+		as_release_set_urgency (release, as_urgency_kind_from_string (tmp));
 	taken = as_node_take_attribute (node, "version");
 	if (taken != NULL) {
 		g_free (priv->version);
