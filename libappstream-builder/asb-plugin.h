@@ -27,8 +27,6 @@
 #include <gio/gio.h>
 #include <appstream-glib.h>
 
-#include "as-cleanup.h"
-
 #include "asb-app.h"
 #include "asb-context.h"
 #include "asb-package.h"

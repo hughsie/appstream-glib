@@ -33,7 +33,6 @@
 #include <stdlib.h>
 #include <appstream-glib.h>
 
-#include "as-cleanup.h"
 #include "asb-context.h"
 #include "asb-context-private.h"
 #include "asb-plugin.h"
@@ -920,7 +919,7 @@ asb_context_write_app_xml (AsbContext *ctx)
 
 	/* log the XML in the log file */
 	for (l = priv->apps; l != NULL; l = l->next) {
-		_cleanup_string_free_ GString *xml = NULL;
+		g_autoptr(GString) xml = NULL;
 		g_autoptr(AsStore) store = NULL;
 
 		/* we have an open log file? */

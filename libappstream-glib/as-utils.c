@@ -81,7 +81,7 @@ as_markup_strsplit_words (const gchar *text, guint line_len)
 {
 	GPtrArray *lines;
 	guint i;
-	_cleanup_string_free_ GString *curline = NULL;
+	g_autoptr(GString) curline = NULL;
 	g_auto(GStrv) tokens = NULL;
 
 	/* sanity check */
@@ -196,7 +196,7 @@ as_markup_convert (const gchar *markup,
 	const gchar *tag;
 	const gchar *tag_c;
 	_cleanup_node_unref_ GNode *root = NULL;
-	_cleanup_string_free_ GString *str = NULL;
+	g_autoptr(GString) str = NULL;
 
 	/* is this actually markup */
 	if (g_strstr_len (markup, -1, "<") == NULL)

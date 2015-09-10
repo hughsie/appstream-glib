@@ -719,7 +719,7 @@ as_test_image_resize_func (void)
 
 		for (i = 0; i < AS_TEST_RESIZE_LAST; i++) {
 			g_autofree gchar *new_path = NULL;
-			_cleanup_string_free_ GString *basename = NULL;
+			g_autoptr(GString) basename = NULL;
 
 			basename = g_string_new (tmp);
 			g_string_truncate (basename, basename->len - 4);
@@ -1966,7 +1966,7 @@ as_test_node_sort_func (void)
 {
 	g_autoptr(GError) error = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
-	_cleanup_string_free_ GString *str = NULL;
+	g_autoptr(GString) str = NULL;
 
 	root = as_node_from_xml ("<d>ddd</d><c>ccc</c><b>bbb</b><a>aaa</a>", 0, &error);
 	g_assert_no_error (error);
@@ -2273,7 +2273,7 @@ as_test_node_intltool_func (void)
 {
 	GNode *n;
 	_cleanup_node_unref_ GNode *root = NULL;
-	_cleanup_string_free_ GString *str = NULL;
+	g_autoptr(GString) str = NULL;
 
 	root = as_node_new ();
 	n = as_node_insert (root, "description", NULL, AS_NODE_INSERT_FLAG_NONE, NULL);
@@ -2428,7 +2428,7 @@ as_test_store_embedded_func (void)
 	gboolean ret;
 	g_autoptr(GError) error = NULL;
 	g_autoptr(AsStore) store = NULL;
-	_cleanup_string_free_ GString *xml = NULL;
+	g_autoptr(GString) xml = NULL;
 	const gchar *xml_src =
 "<components version=\"0.6\" origin=\"origin\">"
 "<component type=\"desktop\">"
@@ -2673,7 +2673,7 @@ as_test_store_demote_func (void)
 	g_autoptr(AsApp) app_appdata = NULL;
 	g_autoptr(AsApp) app_desktop = NULL;
 	g_autoptr(AsStore) store = NULL;
-	_cleanup_string_free_ GString *xml = NULL;
+	g_autoptr(GString) xml = NULL;
 
 	/* load example desktop file */
 	app_desktop = as_app_new ();
@@ -3069,7 +3069,7 @@ as_test_store_addons_func (void)
 		"</component>"
 		"</components>";
 	g_autoptr(AsStore) store = NULL;
-	_cleanup_string_free_ GString *str = NULL;
+	g_autoptr(GString) str = NULL;
 
 	/* load a file to the store */
 	store = as_store_new ();
@@ -3726,7 +3726,7 @@ as_test_store_yaml_func (void)
 	g_autofree gchar *icon_root = NULL;
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GFile) file = NULL;
-	_cleanup_string_free_ GString *str = NULL;
+	g_autoptr(GString) str = NULL;
 	const gchar *xml =
 		"<components version=\"0.6\" origin=\"aequorea\">\n"
 		"<component type=\"desktop\">\n"

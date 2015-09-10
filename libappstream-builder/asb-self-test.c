@@ -238,7 +238,7 @@ static void
 asb_test_utils_replace_func (void)
 {
 	guint n;
-	_cleanup_string_free_ GString *str = NULL;
+	g_autoptr(GString) str = NULL;
 
 	str = g_string_new ("I want to have searched for search");
 	n = asb_string_replace (str, "search", "replace");
@@ -312,9 +312,9 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	g_autoptr(GFile) file_failed = NULL;
 	g_autoptr(GFile) file_ignore = NULL;
 	g_autoptr(GFile) file = NULL;
-	_cleanup_string_free_ GString *xml = NULL;
-	_cleanup_string_free_ GString *xml_failed = NULL;
-	_cleanup_string_free_ GString *xml_ignore = NULL;
+	g_autoptr(GString) xml = NULL;
+	g_autoptr(GString) xml_failed = NULL;
+	g_autoptr(GString) xml_ignore = NULL;
 	const gchar *filenames[] = {
 		"test-0.1-1.fc21.noarch.rpm",		/* a console app */
 		"app-1-1.fc21.x86_64.rpm",		/* a GUI app */
@@ -861,7 +861,7 @@ asb_test_firmware_func (void)
 	g_autoptr(AsbContext) ctx = NULL;
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GFile) file = NULL;
-	_cleanup_string_free_ GString *xml = NULL;
+	g_autoptr(GString) xml = NULL;
 	const gchar *filenames[] = {
 		"colorhug-als-2.0.1.cab",
 		"colorhug-als-2.0.0.cab",

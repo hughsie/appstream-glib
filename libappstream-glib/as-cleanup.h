@@ -45,22 +45,12 @@ G_BEGIN_DECLS
       func (*(Type*)v); \
   }
 
-#define GS_DEFINE_CLEANUP_FUNCTIONt(Type, name, func) \
-  static inline void name (void *v) \
-  { \
-    if (*(Type*)v) \
-      func (*(Type*)v, TRUE); \
-  }
-
 GS_DEFINE_CLEANUP_FUNCTION0(GNode*, gs_local_node_unref, as_node_unref)
 GS_DEFINE_CLEANUP_FUNCTION0(GNode*, gs_local_yaml_unref, as_yaml_unref)
-
-GS_DEFINE_CLEANUP_FUNCTIONt(GString*, gs_local_free_string, g_string_free)
 
 GS_DEFINE_CLEANUP_FUNCTION(void*, gs_local_free_libc, free)
 
 #define _cleanup_free_libc_ __attribute__ ((cleanup(gs_local_free_libc)))
-#define _cleanup_string_free_ __attribute__ ((cleanup(gs_local_free_string)))
 #define _cleanup_node_unref_ __attribute__ ((cleanup(gs_local_node_unref)))
 #define _cleanup_yaml_unref_ __attribute__ ((cleanup(gs_local_yaml_unref)))
 

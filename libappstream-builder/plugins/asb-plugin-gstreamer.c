@@ -143,7 +143,7 @@ asb_plugin_process (AsbPlugin *plugin,
 	g_autofree gchar *app_id = NULL;
 	g_autoptr(AsbApp) app = NULL;
 	g_autoptr(AsIcon) icon = NULL;
-	_cleanup_string_free_ GString *str = NULL;
+	g_autoptr(GString) str = NULL;
 
 	/* use the pkgname suffix as the app-id */
 	tmp = asb_package_get_name (pkg);

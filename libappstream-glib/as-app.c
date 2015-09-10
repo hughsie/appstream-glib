@@ -3331,7 +3331,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 				if (g_error_matches (error_local,
 						     AS_NODE_ERROR,
 						     AS_NODE_ERROR_INVALID_MARKUP)) {
-					_cleanup_string_free_ GString *debug = NULL;
+					g_autoptr(GString) debug = NULL;
 					debug = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 					g_warning ("ignoring description '%s' from %s: %s",
 						   debug->str,
@@ -3354,7 +3354,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 						as_node_get_attribute (n, "xml:lang"),
 						as_node_get_data (n));
 		} else {
-			_cleanup_string_free_ GString *xml = NULL;
+			g_autoptr(GString) xml = NULL;
 			xml = as_node_to_xml (n->children,
 					      AS_NODE_TO_XML_FLAG_INCLUDE_SIBLINGS);
 			as_app_set_description (app,
@@ -4422,7 +4422,7 @@ as_app_to_file (AsApp *app,
 {
 	g_autofree AsNodeContext *ctx = NULL;
 	_cleanup_node_unref_ GNode *root = NULL;
-	_cleanup_string_free_ GString *xml = NULL;
+	g_autoptr(GString) xml = NULL;
 
 	root = as_node_new ();
 	ctx = as_node_context_new ();

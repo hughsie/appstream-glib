@@ -31,10 +31,10 @@
 
 #include "config.h"
 
+#include <gio/gio.h>
 #include <string.h>
 #include <stdlib.h>
 
-#include "as-cleanup.h"
 #include "as-inf.h"
 
 /**
@@ -696,7 +696,7 @@ as_inf_parse_line (AsInfHelper *helper, gchar *line, GError **error)
 	    g_str_has_prefix (line, "HK")) {
 		guint i;
 		g_auto(GStrv) reg_split = NULL;
-		_cleanup_string_free_ GString *str = NULL;
+		g_autoptr(GString) str = NULL;
 		str = g_string_new ("");
 		reg_split = g_strsplit (line, ",", -1);
 		for (i = 0; reg_split[i+1] != NULL; i++) {

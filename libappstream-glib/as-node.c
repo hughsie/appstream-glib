@@ -37,7 +37,6 @@
 #include <glib.h>
 #include <string.h>
 
-#include "as-cleanup.h"
 #include "as-node-private.h"
 #include "as-utils-private.h"
 
@@ -759,7 +758,7 @@ as_node_to_file (const GNode *root,
 		 GCancellable *cancellable,
 		 GError **error)
 {
-	_cleanup_string_free_ GString *xml = NULL;
+	g_autoptr(GString) xml = NULL;
 	xml = as_node_to_xml (root, flags);
 	return g_file_replace_contents (file,
 					xml->str,

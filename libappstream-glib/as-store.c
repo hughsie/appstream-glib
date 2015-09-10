@@ -1357,7 +1357,7 @@ as_store_to_file (AsStore *store,
 	g_autoptr(GOutputStream) out2 = NULL;
 	g_autoptr(GOutputStream) out = NULL;
 	g_autoptr(GZlibCompressor) compressor = NULL;
-	_cleanup_string_free_ GString *xml = NULL;
+	g_autoptr(GString) xml = NULL;
 	g_autofree gchar *basename = NULL;
 
 	/* check if compressed */

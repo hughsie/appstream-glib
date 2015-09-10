@@ -83,7 +83,7 @@ asb_font_fix_metadata (AsbApp *app)
 	gint percentage;
 	guint j;
 	g_autoptr(GList) langs = NULL;
-	_cleanup_string_free_ GString *str = NULL;
+	g_autoptr(GString) str = NULL;
 	struct {
 		const gchar	*lang;
 		const gchar	*value;

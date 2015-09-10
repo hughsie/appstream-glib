@@ -170,7 +170,7 @@ as_util_run (AsUtilPrivate *priv, const gchar *command, gchar **values, GError *
 {
 	AsUtilItem *item;
 	guint i;
-	_cleanup_string_free_ GString *string = NULL;
+	g_autoptr(GString) string = NULL;
 
 	/* for bash completion */
 	if (g_strcmp0 (command, "list-commands") == 0) {
@@ -634,7 +634,7 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 	for (f = 0; values[f] != NULL; f++) {
 
 		g_autoptr(AsApp) app = NULL;
-		_cleanup_string_free_ GString *str = NULL;
+		g_autoptr(GString) str = NULL;
 
 		/* add separator */
 		if (f > 0)
@@ -976,8 +976,8 @@ as_util_news_to_appdata (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	guint i;
 	g_autofree gchar *data = NULL;
-	_cleanup_string_free_ GString *data_str = NULL;
-	_cleanup_string_free_ GString *desc = NULL;
+	g_autoptr(GString) data_str = NULL;
+	g_autoptr(GString) desc = NULL;
 	g_auto(GStrv) split = NULL;
 
 	/* check args */
@@ -1221,7 +1221,7 @@ static gboolean
 as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	guint i;
-	_cleanup_string_free_ GString *xml = NULL;
+	g_autoptr(GString) xml = NULL;
 	g_autoptr(AsStore) store = NULL;
 
 	/* check args */
@@ -1570,7 +1570,7 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 	const gchar *important_md[] = { "DistroMetadata",
 					"DistroScreenshots",
 					NULL };
-	_cleanup_string_free_ GString *classes = NULL;
+	g_autoptr(GString) classes = NULL;
 
 	/* generate class list */
 	classes = g_string_new ("");
@@ -2071,7 +2071,7 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	guint i;
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GFile) file = NULL;
-	_cleanup_string_free_ GString *html = NULL;
+	g_autoptr(GString) html = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 2) {
@@ -2207,7 +2207,7 @@ as_util_matrix_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 	AsIcon *ic;
 	AsUtilPkgState state_app = AS_UTIL_PKG_STATE_OK;
 	GPtrArray *arr;
-	_cleanup_string_free_ GString *str = NULL;
+	g_autoptr(GString) str = NULL;
 
 	str = g_string_new ("");
 	g_string_append_printf (str, "<td>%s</td>\n", as_app_get_id_filename (app));
@@ -2350,7 +2350,7 @@ as_util_matrix_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	GPtrArray *apps = NULL;
 	guint i;
 	g_autoptr(AsStore) store = NULL;
-	_cleanup_string_free_ GString *html = NULL;
+	g_autoptr(GString) html = NULL;
 
 	/* check args */
 	if (g_strv_length (values) < 2) {
@@ -2472,7 +2472,7 @@ as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 	guint i;
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GFile) file = NULL;
-	_cleanup_string_free_ GString *data = NULL;
+	g_autoptr(GString) data = NULL;
 
 	/* check args */
 	if (g_strv_length (values) < 2) {
@@ -2533,7 +2533,7 @@ as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
 	guint i;
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GFile) file = NULL;
-	_cleanup_string_free_ GString *yaml = NULL;
+	g_autoptr(GString) yaml = NULL;
 
 	/* check args */
 	if (g_strv_length (values) != 2) {
