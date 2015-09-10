@@ -36,6 +36,7 @@
 #include <string.h>
 #include <archive_entry.h>
 #include <archive.h>
+#include <libsoup/soup.h>
 #include <stdlib.h>
 
 #include "as-app.h"

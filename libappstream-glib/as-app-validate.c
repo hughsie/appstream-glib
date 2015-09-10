@@ -445,8 +445,8 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	guint ss_size_width_min = 624;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
 	g_autoptr(GInputStream) stream = NULL;
-	_cleanup_object_unref_ SoupMessage *msg = NULL;
-	_cleanup_uri_unref_ SoupURI *base_uri = NULL;
+	g_autoptr(SoupMessage) msg = NULL;
+	g_autoptr(SoupURI) base_uri = NULL;
 
 	/* make the requirements more strict */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_STRICT) > 0) {

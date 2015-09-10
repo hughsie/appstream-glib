@@ -28,6 +28,7 @@
 #include <appstream-glib.h>
 #include <archive_entry.h>
 #include <archive.h>
+#include <libsoup/soup.h>
 #include <locale.h>
 #include <stdlib.h>
 
@@ -3070,8 +3071,8 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	g_autofree gchar *cache_filename = NULL;
 	g_autoptr(AsImage) im = NULL;
 	g_autoptr(AsScreenshot) ss = NULL;
-	_cleanup_object_unref_ SoupMessage *msg = NULL;
-	_cleanup_object_unref_ SoupSession *session = NULL;
+	g_autoptr(SoupMessage) msg = NULL;
+	g_autoptr(SoupSession) session = NULL;
 
 	/* fonts screenshots are auto-generated */
 	if (as_app_get_id_kind (app) == AS_ID_KIND_FONT) {

@@ -24,7 +24,6 @@
 #define __AS_CLEANUP_H__
 
 #include <gio/gio.h>
-#include <libsoup/soup.h>
 
 #include "as-node.h"
 #include "as-yaml.h"
@@ -55,8 +54,6 @@ G_BEGIN_DECLS
 
 GS_DEFINE_CLEANUP_FUNCTION0(GNode*, gs_local_node_unref, as_node_unref)
 GS_DEFINE_CLEANUP_FUNCTION0(GNode*, gs_local_yaml_unref, as_yaml_unref)
-GS_DEFINE_CLEANUP_FUNCTION0(GObject*, gs_local_obj_unref, g_object_unref)
-GS_DEFINE_CLEANUP_FUNCTION0(SoupURI*, gs_local_uri_unref, soup_uri_free)
 
 GS_DEFINE_CLEANUP_FUNCTIONt(GString*, gs_local_free_string, g_string_free)
 
@@ -66,8 +63,6 @@ GS_DEFINE_CLEANUP_FUNCTION(void*, gs_local_free_libc, free)
 #define _cleanup_string_free_ __attribute__ ((cleanup(gs_local_free_string)))
 #define _cleanup_node_unref_ __attribute__ ((cleanup(gs_local_node_unref)))
 #define _cleanup_yaml_unref_ __attribute__ ((cleanup(gs_local_yaml_unref)))
-#define _cleanup_object_unref_ __attribute__ ((cleanup(gs_local_obj_unref)))
-#define _cleanup_uri_unref_ __attribute__ ((cleanup(gs_local_uri_unref)))
 
 G_END_DECLS
 
