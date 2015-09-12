@@ -25,8 +25,6 @@
 #include <stdlib.h>
 #include <locale.h>
 
-#include "as-cleanup.h"
-
 #include "asb-context-private.h"
 #include "asb-plugin.h"
 #include "asb-plugin-loader.h"
@@ -43,7 +41,6 @@
 static gchar *
 asb_test_get_filename (const gchar *filename)
 {
-	_cleanup_free_libc_ gchar *tmp = NULL;
 	g_autofree gchar *path = NULL;
 
 	/* try the source then the destdir */
@@ -52,11 +49,7 @@ asb_test_get_filename (const gchar *filename)
 		g_free (path);
 		path = g_build_filename (TESTDIRBUILD, filename, NULL);
 	}
-	/* glibc allocates a buffer */
-	tmp = realpath (path, NULL);
-	if (tmp == NULL)
-		return NULL;
-	return g_strdup (tmp);
+	return realpath (path, NULL);
 }
 
 /**
