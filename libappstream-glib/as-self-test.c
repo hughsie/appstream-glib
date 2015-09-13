@@ -76,15 +76,10 @@ as_test_compare_lines (const gchar *txt1, const gchar *txt2, GError **error)
 static gchar *
 as_test_get_filename (const gchar *filename)
 {
-	_cleanup_free_libc_ gchar *tmp = NULL;
 	g_autofree gchar *path = NULL;
 
 	path = g_build_filename (TESTDATADIR, filename, NULL);
-	/* glibc allocates a buffer */
-	tmp = realpath (path, NULL);
-	if (tmp == NULL)
-		return NULL;
-	return g_strdup (tmp);
+	return realpath (path, NULL);
 }
 
 static GMainLoop *_test_loop = NULL;
