@@ -47,7 +47,7 @@ typedef struct {
  * as_yaml_node_get_key:
  **/
 const gchar *
-as_yaml_node_get_key (const GNode *node)
+as_yaml_node_get_key (const AsNode *node)
 {
 	AsYamlNode *ym;
 	if (node == NULL)
@@ -64,7 +64,7 @@ as_yaml_node_get_key (const GNode *node)
  * as_yaml_node_get_value:
  **/
 const gchar *
-as_yaml_node_get_value (const GNode *node)
+as_yaml_node_get_value (const AsNode *node)
 {
 	AsYamlNode *ym;
 	if (node == NULL)
@@ -81,7 +81,7 @@ as_yaml_node_get_value (const GNode *node)
  * as_yaml_node_get_value_as_int:
  **/
 gint
-as_yaml_node_get_value_as_int (const GNode *node)
+as_yaml_node_get_value_as_int (const AsNode *node)
 {
 	const gchar *tmp;
 	gchar *endptr = NULL;
@@ -102,7 +102,7 @@ as_yaml_node_get_value_as_int (const GNode *node)
  * as_node_yaml_destroy_node_cb:
  **/
 static gboolean
-as_node_yaml_destroy_node_cb (GNode *node, gpointer data)
+as_node_yaml_destroy_node_cb (AsNode *node, gpointer data)
 {
 	AsYamlNode *ym = node->data;
 	if (ym == NULL)
@@ -117,7 +117,7 @@ as_node_yaml_destroy_node_cb (GNode *node, gpointer data)
  * as_yaml_unref:
  **/
 void
-as_yaml_unref (GNode *node)
+as_yaml_unref (AsNode *node)
 {
 	g_node_traverse (node, G_PRE_ORDER, G_TRAVERSE_ALL, -1,
 			 as_node_yaml_destroy_node_cb, NULL);
@@ -128,7 +128,7 @@ as_yaml_unref (GNode *node)
  * as_yaml_to_string_cb:
  **/
 static gboolean
-as_yaml_to_string_cb (GNode *node, gpointer data)
+as_yaml_to_string_cb (AsNode *node, gpointer data)
 {
 	AsYamlNode *ym = node->data;
 	GString *str = (GString *) data;
@@ -171,7 +171,7 @@ as_yaml_to_string_cb (GNode *node, gpointer data)
  * as_yaml_to_string:
  **/
 GString *
-as_yaml_to_string (GNode *node)
+as_yaml_to_string (AsNode *node)
 {
 	GString *str = g_string_new ("");
 	g_node_traverse (node, G_PRE_ORDER, G_TRAVERSE_ALL, -1,
@@ -184,7 +184,7 @@ as_yaml_to_string (GNode *node)
  * as_yaml_node_get_kind:
  **/
 static AsYamlNodeKind
-as_yaml_node_get_kind (GNode *node)
+as_yaml_node_get_kind (AsNode *node)
 {
 	AsYamlNode *ym;
 	if (node == NULL)
@@ -212,11 +212,11 @@ as_yaml_node_new (AsYamlNodeKind kind, const gchar *id)
  * as_node_yaml_process_layer:
  **/
 static void
-as_node_yaml_process_layer (yaml_parser_t *parser, GNode *parent)
+as_node_yaml_process_layer (yaml_parser_t *parser, AsNode *parent)
 {
 	AsYamlNode *ym;
-	GNode *last_scalar = NULL;
-	GNode *new;
+	AsNode *last_scalar = NULL;
+	AsNode *new;
 	const gchar *tmp;
 	gboolean valid = TRUE;
 	yaml_event_t event;
@@ -279,10 +279,10 @@ as_node_yaml_process_layer (yaml_parser_t *parser, GNode *parent)
 /**
  * as_yaml_from_data:
  **/
-GNode *
+AsNode *
 as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 {
-	GNode *node = NULL;
+	AsNode *node = NULL;
 #if AS_BUILD_DEP11
 	yaml_parser_t parser;
 
@@ -322,10 +322,10 @@ as_yaml_read_handler_cb (void *data,
 /**
  * as_yaml_from_file:
  **/
-GNode *
+AsNode *
 as_yaml_from_file (GFile *file, GCancellable *cancellable, GError **error)
 {
-	GNode *node = NULL;
+	AsNode *node = NULL;
 #if AS_BUILD_DEP11
 	const gchar *content_type = NULL;
 	yaml_parser_t parser;

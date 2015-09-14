@@ -338,8 +338,8 @@ static void
 as_test_release_func (void)
 {
 	GError *error = NULL;
-	GNode *n;
-	GNode *root;
+	AsNode *n;
+	AsNode *root;
 	GString *xml;
 	const gchar *src = "<release version=\"0.1.2\" urgency=\"critical\" timestamp=\"123\"/>";
 	gboolean ret;
@@ -381,8 +381,8 @@ static void
 as_test_provide_func (void)
 {
 	GError *error = NULL;
-	GNode *n;
-	GNode *root;
+	AsNode *n;
+	AsNode *root;
 	GString *xml;
 	const gchar *src = "<binary>/usr/bin/gnome-shell</binary>";
 	gboolean ret;
@@ -424,8 +424,8 @@ as_test_release_appstream_func (void)
 {
 	AsChecksum *csum;
 	GError *error = NULL;
-	GNode *n;
-	GNode *root;
+	AsNode *n;
+	AsNode *root;
 	GString *xml;
 	gboolean ret;
 	const gchar *src =
@@ -499,8 +499,8 @@ static void
 as_test_release_appdata_func (void)
 {
 	GError *error = NULL;
-	GNode *n;
-	GNode *root;
+	AsNode *n;
+	AsNode *root;
 	gboolean ret;
 	const gchar *src =
 		"<release version=\"0.1.2\" timestamp=\"123\">\n"
@@ -730,8 +730,8 @@ static void
 as_test_icon_func (void)
 {
 	GError *error = NULL;
-	GNode *n;
-	GNode *root;
+	AsNode *n;
+	AsNode *root;
 	GString *xml;
 	const gchar *src = "<icon type=\"cached\">app.png</icon>";
 	gboolean ret;
@@ -793,8 +793,8 @@ static void
 as_test_checksum_func (void)
 {
 	GError *error = NULL;
-	GNode *n;
-	GNode *root;
+	AsNode *n;
+	AsNode *root;
 	GString *xml;
 	const gchar *src = "<checksum filename=\"fn.cab\" target=\"container\" type=\"sha1\">12345</checksum>";
 	gboolean ret;
@@ -845,8 +845,8 @@ static void
 as_test_icon_embedded_func (void)
 {
 	GError *error = NULL;
-	GNode *n;
-	GNode *root;
+	AsNode *n;
+	AsNode *root;
 	GString *xml;
 	const gchar *src =
 "<icon type=\"embedded\"><name>app.png</name>"
@@ -951,8 +951,8 @@ static void
 as_test_image_func (void)
 {
 	GError *error = NULL;
-	GNode *n;
-	GNode *root;
+	AsNode *n;
+	AsNode *root;
 	GString *xml;
 	const gchar *src =
 		"<image type=\"thumbnail\" height=\"12\" width=\"34\">"
@@ -1025,8 +1025,8 @@ static void
 as_test_bundle_func (void)
 {
 	GError *error = NULL;
-	GNode *n;
-	GNode *root;
+	AsNode *n;
+	AsNode *root;
 	GString *xml;
 	const gchar *src =
 		"<bundle type=\"limba\">gnome-3-16</bundle>";
@@ -1070,8 +1070,8 @@ as_test_screenshot_func (void)
 	GPtrArray *images;
 	AsImage *im;
 	GError *error = NULL;
-	GNode *n;
-	GNode *root;
+	AsNode *n;
+	AsNode *root;
 	GString *xml;
 	const gchar *src =
 		"<screenshot priority=\"-64\">\n"
@@ -1134,8 +1134,8 @@ as_test_app_func (void)
 	AsBundle *bu;
 	AsRelease *rel;
 	GError *error = NULL;
-	GNode *n;
-	GNode *root;
+	AsNode *n;
+	AsNode *root;
 	GPtrArray *icons;
 	GString *xml;
 	gboolean ret;
@@ -1880,8 +1880,8 @@ static void
 as_test_app_no_markup_func (void)
 {
 	GError *error = NULL;
-	GNode *n;
-	GNode *root;
+	AsNode *n;
+	AsNode *root;
 	GString *xml;
 	gboolean ret;
 	const gchar *src =
@@ -1975,8 +1975,8 @@ as_test_node_sort_func (void)
 static void
 as_test_node_func (void)
 {
-	GNode *n1;
-	GNode *n2;
+	AsNode *n1;
+	AsNode *n2;
 	g_autoptr(AsNode) root = NULL;
 
 	/* create a simple tree */
@@ -2031,8 +2031,8 @@ as_test_node_xml_func (void)
 			     "<bar key=\"value\">baz</bar>"
 			     "</foo>";
 	GError *error = NULL;
-	GNode *n2;
-	GNode *root;
+	AsNode *n2;
+	AsNode *root;
 	GString *xml;
 
 	/* invalid XML */
@@ -2150,8 +2150,8 @@ static void
 as_test_node_hash_func (void)
 {
 	GHashTable *hash;
-	GNode *n1;
-	GNode *root;
+	AsNode *n1;
+	AsNode *root;
 	GString *xml;
 
 	/* test un-swapped hash */
@@ -2189,8 +2189,8 @@ static void
 as_test_node_localized_func (void)
 {
 	GHashTable *hash;
-	GNode *n1;
-	GNode *root;
+	AsNode *n1;
+	AsNode *root;
 	GString *xml;
 
 	/* writing localized values */
@@ -2230,7 +2230,7 @@ static void
 as_test_node_localized_wrap_func (void)
 {
 	GError *error = NULL;
-	GNode *n1;
+	AsNode *n1;
 	const gchar *xml =
 		"<description>"
 		" <p>Hi</p>"
@@ -2266,7 +2266,7 @@ as_test_node_localized_wrap_func (void)
 static void
 as_test_node_intltool_func (void)
 {
-	GNode *n;
+	AsNode *n;
 	g_autoptr(AsNode) root = NULL;
 	g_autoptr(GString) str = NULL;
 
@@ -2284,7 +2284,7 @@ static void
 as_test_node_localized_wrap2_func (void)
 {
 	GError *error = NULL;
-	GNode *n1;
+	AsNode *n1;
 	const gchar *xml =
 		"<description>"
 		" <p>Hi</p>"
@@ -3104,8 +3104,8 @@ static void
 as_test_node_no_dup_c_func (void)
 {
 	GError *error = NULL;
-	GNode *n;
-	GNode *root;
+	AsNode *n;
+	AsNode *root;
 	GString *xml;
 	gboolean ret;
 	const gchar *src =
@@ -3604,7 +3604,7 @@ as_test_store_metadata_index_func (void)
 static void
 as_test_yaml_func (void)
 {
-	GNode *node;
+	AsYaml *node;
 	GError *error = NULL;
 	GString *str;
 	const gchar *expected;

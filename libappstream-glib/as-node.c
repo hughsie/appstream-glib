@@ -63,7 +63,7 @@ typedef struct {
  *
  * Since: 0.1.0
  **/
-GNode *
+AsNode *
 as_node_new (void)
 {
 	AsNodeData *data;
@@ -130,7 +130,7 @@ as_node_attr_lookup (AsNodeData *data, const gchar *key)
  * as_node_destroy_node_cb:
  **/
 static gboolean
-as_node_destroy_node_cb (GNode *node, gpointer user_data)
+as_node_destroy_node_cb (AsNode *node, gpointer user_data)
 {
 	AsNodeData *data = node->data;
 	if (data == NULL)
@@ -144,14 +144,14 @@ as_node_destroy_node_cb (GNode *node, gpointer user_data)
 
 /**
  * as_node_unref:
- * @node: a #GNode.
+ * @node: a #AsNode.
  *
  * Deallocates all notes in the tree.
  *
  * Since: 0.1.0
  **/
 void
-as_node_unref (GNode *node)
+as_node_unref (AsNode *node)
 {
 	g_node_traverse (node,
 			 G_PRE_ORDER,
@@ -319,11 +319,11 @@ as_node_data_set_name (AsNodeData *data, const gchar *name, AsNodeInsertFlags fl
  * as_node_sort_children:
  **/
 static void
-as_node_sort_children (GNode *first)
+as_node_sort_children (AsNode *first)
 {
 	AsNodeData *d1;
 	AsNodeData *d2;
-	GNode *child;
+	AsNode *child;
 	gpointer tmp;
 
 	d1 = (AsNodeData *) first->data;
@@ -350,11 +350,11 @@ as_node_sort_children (GNode *first)
 static void
 as_node_to_xml_string (GString *xml,
 		       guint depth_offset,
-		       const GNode *n,
+		       const AsNode *n,
 		       AsNodeToXmlFlags flags)
 {
 	AsNodeData *data = n->data;
-	GNode *c;
+	AsNode *c;
 	const gchar *tag_str;
 	const gchar *comment;
 	guint depth = g_node_depth ((GNode *) n);
@@ -490,13 +490,13 @@ as_node_reflow_text (const gchar *text, gssize text_len)
 }
 
 typedef struct {
-	GNode			*current;
+	AsNode			*current;
 	AsNodeFromXmlFlags	 flags;
 } AsNodeToXmlHelper;
 
 /**
  * as_node_to_xml:
- * @node: a #GNode.
+ * @node: a #AsNode.
  * @flags: the AsNodeToXmlFlags, e.g. %AS_NODE_INSERT_FLAG_PRE_ESCAPED.
  *
  * Converts a node and it's children to XML.
@@ -506,10 +506,10 @@ typedef struct {
  * Since: 0.1.0
  **/
 GString *
-as_node_to_xml (const GNode *node, AsNodeToXmlFlags flags)
+as_node_to_xml (const AsNode *node, AsNodeToXmlFlags flags)
 {
 	GString *xml;
-	const GNode *l;
+	const AsNode *l;
 	guint depth_offset;
 
 	g_return_val_if_fail (node != NULL, NULL);
@@ -540,7 +540,7 @@ as_node_start_element_cb (GMarkupParseContext *context,
 {
 	AsNodeToXmlHelper *helper = (AsNodeToXmlHelper *) user_data;
 	AsNodeData *data;
-	GNode *current;
+	AsNode *current;
 	gchar *tmp;
 	guint i;
 
@@ -682,17 +682,17 @@ as_node_passthrough_cb (GMarkupParseContext *context,
  *
  * Parses XML data into a DOM tree.
  *
- * Returns: (transfer none): A populated #GNode tree
+ * Returns: (transfer none): A populated #AsNode tree
  *
  * Since: 0.1.0
  **/
-GNode *
+AsNode *
 as_node_from_xml (const gchar *data,
 		  AsNodeFromXmlFlags flags,
 		  GError **error)
 {
 	AsNodeToXmlHelper helper;
-	GNode *root = NULL;
+	AsNode *root = NULL;
 	gboolean ret;
 	g_autoptr(GError) error_local = NULL;
 	g_autoptr(GMarkupParseContext) ctx = NULL;
@@ -739,7 +739,7 @@ as_node_from_xml (const gchar *data,
 
 /**
  * as_node_to_file: (skip)
- * @root: A populated #GNode tree
+ * @root: A populated #AsNode tree
  * @file: a #GFile
  * @flags: #AsNodeToXmlFlags, e.g. %AS_NODE_TO_XML_FLAG_NONE
  * @cancellable: A #GCancellable, or %NULL
@@ -752,7 +752,7 @@ as_node_from_xml (const gchar *data,
  * Since: 0.2.0
  **/
 gboolean
-as_node_to_file (const GNode *root,
+as_node_to_file (const AsNode *root,
 		 GFile *file,
 		 AsNodeToXmlFlags flags,
 		 GCancellable *cancellable,
@@ -780,11 +780,11 @@ as_node_to_file (const GNode *root,
  *
  * Parses an XML file into a DOM tree.
  *
- * Returns: (transfer none): A populated #GNode tree
+ * Returns: (transfer none): A populated #AsNode tree
  *
  * Since: 0.1.0
  **/
-GNode *
+AsNode *
 as_node_from_file (GFile *file,
 		   AsNodeFromXmlFlags flags,
 		   GCancellable *cancellable,
@@ -792,7 +792,7 @@ as_node_from_file (GFile *file,
 {
 	AsNodeToXmlHelper helper;
 	GError *error_local = NULL;
-	GNode *root = NULL;
+	AsNode *root = NULL;
 	const gchar *content_type = NULL;
 	gboolean ret = TRUE;
 	gsize chunk_size = 32 * 1024;
@@ -888,12 +888,12 @@ as_node_from_file (GFile *file,
 /**
  * as_node_get_child_node:
  **/
-static GNode *
-as_node_get_child_node (const GNode *root, const gchar *name,
+static AsNode *
+as_node_get_child_node (const AsNode *root, const gchar *name,
 			const gchar *attr_key, const gchar *attr_value)
 {
 	AsNodeData *data;
-	GNode *node;
+	AsNode *node;
 
 	/* invalid */
 	if (root == NULL)
@@ -921,7 +921,7 @@ as_node_get_child_node (const GNode *root, const gchar *name,
 
 /**
  * as_node_get_name:
- * @node: a #GNode
+ * @node: a #AsNode
  *
  * Gets the node name, e.g. "body"
  *
@@ -930,7 +930,7 @@ as_node_get_child_node (const GNode *root, const gchar *name,
  * Since: 0.1.0
  **/
 const gchar *
-as_node_get_name (const GNode *node)
+as_node_get_name (const AsNode *node)
 {
 	g_return_val_if_fail (node != NULL, NULL);
 	if (node->data == NULL)
@@ -940,7 +940,7 @@ as_node_get_name (const GNode *node)
 
 /**
  * as_node_set_name: (skip)
- * @node: a #GNode
+ * @node: a #AsNode
  * @name: the new name
  *
  * Sets the node name, e.g. "body"
@@ -948,7 +948,7 @@ as_node_get_name (const GNode *node)
  * Since: 0.1.4
  **/
 void
-as_node_set_name (GNode *node, const gchar *name)
+as_node_set_name (AsNode *node, const gchar *name)
 {
 	AsNodeData *data;
 
@@ -968,7 +968,7 @@ as_node_set_name (GNode *node, const gchar *name)
 
 /**
  * as_node_get_data:
- * @node: a #GNode
+ * @node: a #AsNode
  *
  * Gets the node data, e.g. "paragraph text"
  *
@@ -977,7 +977,7 @@ as_node_set_name (GNode *node, const gchar *name)
  * Since: 0.1.0
  **/
 const gchar *
-as_node_get_data (const GNode *node)
+as_node_get_data (const AsNode *node)
 {
 	AsNodeData *data;
 	g_return_val_if_fail (node != NULL, NULL);
@@ -992,7 +992,7 @@ as_node_get_data (const GNode *node)
 
 /**
  * as_node_get_comment:
- * @node: a #GNode
+ * @node: a #AsNode
  *
  * Gets the node data, e.g. "Copyright 2014 Richard Hughes"
  *
@@ -1001,14 +1001,14 @@ as_node_get_data (const GNode *node)
  * Since: 0.1.6
  **/
 const gchar *
-as_node_get_comment (const GNode *node)
+as_node_get_comment (const AsNode *node)
 {
 	return as_node_get_attribute (node, "@comment");
 }
 
 /**
  * as_node_get_tag:
- * @node: a #GNode
+ * @node: a #AsNode
  *
  * Gets the node tag enum.
  *
@@ -1017,7 +1017,7 @@ as_node_get_comment (const GNode *node)
  * Since: 0.1.2
  **/
 AsTag
-as_node_get_tag (const GNode *node)
+as_node_get_tag (const AsNode *node)
 {
 	AsNodeData *data;
 	const gchar *tmp;
@@ -1039,7 +1039,7 @@ as_node_get_tag (const GNode *node)
 
 /**
  * as_node_set_data: (skip)
- * @node: a #GNode
+ * @node: a #AsNode
  * @cdata: new data
  * @insert_flags: any %AsNodeInsertFlags.
  *
@@ -1048,7 +1048,7 @@ as_node_get_tag (const GNode *node)
  * Since: 0.1.1
  **/
 void
-as_node_set_data (GNode *node,
+as_node_set_data (AsNode *node,
 		  const gchar *cdata,
 		  AsNodeInsertFlags insert_flags)
 {
@@ -1067,7 +1067,7 @@ as_node_set_data (GNode *node,
 
 /**
  * as_node_set_comment: (skip)
- * @node: a #GNode
+ * @node: a #AsNode
  * @comment: new comment
  *
  * Sets new comment for the node.
@@ -1075,14 +1075,14 @@ as_node_set_data (GNode *node,
  * Since: 0.1.6
  **/
 void
-as_node_set_comment (GNode *node, const gchar *comment)
+as_node_set_comment (AsNode *node, const gchar *comment)
 {
 	as_node_add_attribute (node, "@comment", comment);
 }
 
 /**
  * as_node_take_data:
- * @node: a #GNode
+ * @node: a #AsNode
  *
  * Gets the node data, e.g. "paragraph text"
  *
@@ -1091,7 +1091,7 @@ as_node_set_comment (GNode *node, const gchar *comment)
  * Since: 0.1.0
  **/
 gchar *
-as_node_take_data (const GNode *node)
+as_node_take_data (const AsNode *node)
 {
 	AsNodeData *data;
 	gchar *tmp;
@@ -1109,7 +1109,7 @@ as_node_take_data (const GNode *node)
 
 /**
  * as_node_get_attribute_as_int:
- * @node: a #GNode
+ * @node: a #AsNode
  * @key: the attribute key
  *
  * Gets a node attribute, e.g. 34
@@ -1119,7 +1119,7 @@ as_node_take_data (const GNode *node)
  * Since: 0.1.0
  **/
 gint
-as_node_get_attribute_as_int (const GNode *node, const gchar *key)
+as_node_get_attribute_as_int (const AsNode *node, const gchar *key)
 {
 	const gchar *tmp;
 	gchar *endptr = NULL;
@@ -1138,7 +1138,7 @@ as_node_get_attribute_as_int (const GNode *node, const gchar *key)
 
 /**
  * as_node_get_attribute:
- * @node: a #GNode
+ * @node: a #AsNode
  * @key: the attribute key
  *
  * Gets a node attribute, e.g. "false"
@@ -1148,7 +1148,7 @@ as_node_get_attribute_as_int (const GNode *node, const gchar *key)
  * Since: 0.1.0
  **/
 const gchar *
-as_node_get_attribute (const GNode *node, const gchar *key)
+as_node_get_attribute (const AsNode *node, const gchar *key)
 {
 	AsNodeData *data;
 
@@ -1163,7 +1163,7 @@ as_node_get_attribute (const GNode *node, const gchar *key)
 
 /**
  * as_node_take_attribute: (skip)
- * @node: a #GNode
+ * @node: a #AsNode
  * @key: the attribute key
  *
  * Gets a node attribute, e.g. "false"
@@ -1173,7 +1173,7 @@ as_node_get_attribute (const GNode *node, const gchar *key)
  * Since: 0.1.2
  **/
 gchar *
-as_node_take_attribute (const GNode *node, const gchar *key)
+as_node_take_attribute (const AsNode *node, const gchar *key)
 {
 	AsNodeAttr *attr;
 	AsNodeData *data;
@@ -1195,7 +1195,7 @@ as_node_take_attribute (const GNode *node, const gchar *key)
 
 /**
  * as_node_remove_attribute: (skip)
- * @node: a #GNode
+ * @node: a #AsNode
  * @key: the attribute key
  *
  * Removes a node attribute, e.g. "type"
@@ -1203,7 +1203,7 @@ as_node_take_attribute (const GNode *node, const gchar *key)
  * Since: 0.2.0
  **/
 void
-as_node_remove_attribute (GNode *node, const gchar *key)
+as_node_remove_attribute (AsNode *node, const gchar *key)
 {
 	AsNodeAttr *attr;
 	AsNodeData *data;
@@ -1223,7 +1223,7 @@ as_node_remove_attribute (GNode *node, const gchar *key)
 
 /**
  * as_node_add_attribute: (skip)
- * @node: a #GNode
+ * @node: a #AsNode
  * @key: the attribute key
  * @value: new data
  *
@@ -1232,7 +1232,7 @@ as_node_remove_attribute (GNode *node, const gchar *key)
  * Since: 0.1.1
  **/
 void
-as_node_add_attribute (GNode *node,
+as_node_add_attribute (AsNode *node,
 		       const gchar *key,
 		       const gchar *value)
 {
@@ -1251,7 +1251,7 @@ as_node_add_attribute (GNode *node,
 
 /**
  * as_node_add_attribute_as_int: (skip)
- * @node: a #GNode
+ * @node: a #AsNode
  * @key: the attribute key
  * @value: new data
  *
@@ -1260,7 +1260,7 @@ as_node_add_attribute (GNode *node,
  * Since: 0.3.1
  **/
 void
-as_node_add_attribute_as_int (GNode *node, const gchar *key, gint value)
+as_node_add_attribute_as_int (AsNode *node, const gchar *key, gint value)
 {
 	g_autofree gchar *tmp = g_strdup_printf ("%i", value);
 	as_node_add_attribute (node, key, tmp);
@@ -1273,14 +1273,14 @@ as_node_add_attribute_as_int (GNode *node, const gchar *key, gint value)
  *
  * Gets a node from the DOM tree.
  *
- * Return value: A #GNode, or %NULL if not found
+ * Return value: A #AsNode, or %NULL if not found
  *
  * Since: 0.1.0
  **/
-GNode *
-as_node_find (GNode *root, const gchar *path)
+AsNode *
+as_node_find (AsNode *root, const gchar *path)
 {
-	GNode *node = root;
+	AsNode *node = root;
 	guint i;
 	g_auto(GStrv) split = NULL;
 
@@ -1304,15 +1304,15 @@ as_node_find (GNode *root, const gchar *path)
  *
  * Gets a node from the DOM tree with a specified attribute.
  *
- * Return value: A #GNode, or %NULL if not found
+ * Return value: A #AsNode, or %NULL if not found
  *
  * Since: 0.1.0
  **/
-GNode *
-as_node_find_with_attribute (GNode *root, const gchar *path,
+AsNode *
+as_node_find_with_attribute (AsNode *root, const gchar *path,
 			     const gchar *attr_key, const gchar *attr_value)
 {
-	GNode *node = root;
+	AsNode *node = root;
 	guint i;
 	g_auto(GStrv) split = NULL;
 
@@ -1360,7 +1360,7 @@ as_node_insert_line_breaks (const gchar *text, guint break_len)
 
 /**
  * as_node_insert: (skip)
- * @parent: a parent #GNode.
+ * @parent: a parent #AsNode.
  * @name: the tag name, e.g. "id".
  * @cdata: the tag data, or %NULL, e.g. "org.gnome.Software.desktop".
  * @insert_flags: any %AsNodeInsertFlags.
@@ -1368,12 +1368,12 @@ as_node_insert_line_breaks (const gchar *text, guint break_len)
  *
  * Inserts a node into the DOM.
  *
- * Returns: (transfer none): A populated #GNode
+ * Returns: (transfer none): A populated #AsNode
  *
  * Since: 0.1.0
  **/
-GNode *
-as_node_insert (GNode *parent,
+AsNode *
+as_node_insert (AsNode *parent,
 		const gchar *name,
 		const gchar *cdata,
 		AsNodeInsertFlags insert_flags,
@@ -1424,7 +1424,7 @@ as_node_list_sort_cb (gconstpointer a, gconstpointer b)
 
 /**
  * as_node_insert_localized:
- * @parent: a parent #GNode.
+ * @parent: a parent #AsNode.
  * @name: the tag name, e.g. "id".
  * @localized: the hash table of data, with the locale as the key.
  * @insert_flags: any %AsNodeInsertFlags.
@@ -1434,7 +1434,7 @@ as_node_list_sort_cb (gconstpointer a, gconstpointer b)
  * Since: 0.1.0
  **/
 void
-as_node_insert_localized (GNode *parent,
+as_node_insert_localized (AsNode *parent,
 			  const gchar *name,
 			  GHashTable *localized,
 			  AsNodeInsertFlags insert_flags)
@@ -1490,7 +1490,7 @@ as_node_insert_localized (GNode *parent,
 
 /**
  * as_node_insert_hash:
- * @parent: a parent #GNode.
+ * @parent: a parent #AsNode.
  * @name: the tag name, e.g. "id".
  * @attr_key: the key to use as the attribute in the XML, e.g. "key".
  * @hash: the hash table with the key as the key to use in the XML.
@@ -1501,7 +1501,7 @@ as_node_insert_localized (GNode *parent,
  * Since: 0.1.0
  **/
 void
-as_node_insert_hash (GNode *parent,
+as_node_insert_hash (AsNode *parent,
 		     const gchar *name,
 		     const gchar *attr_key,
 		     GHashTable *hash,
@@ -1539,7 +1539,7 @@ as_node_insert_hash (GNode *parent,
 
 /**
  * as_node_get_localized:
- * @node: a #GNode
+ * @node: a #AsNode
  * @key: the key to use, e.g. "copyright"
  *
  * Extracts localized values from the DOM tree
@@ -1549,14 +1549,14 @@ as_node_insert_hash (GNode *parent,
  * Since: 0.1.0
  **/
 GHashTable *
-as_node_get_localized (const GNode *node, const gchar *key)
+as_node_get_localized (const AsNode *node, const gchar *key)
 {
 	AsNodeData *data;
 	const gchar *xml_lang;
 	const gchar *data_unlocalized;
 	const gchar *data_localized;
 	GHashTable *hash = NULL;
-	GNode *tmp;
+	AsNode *tmp;
 
 	/* does it exist? */
 	tmp = as_node_get_child_node (node, key, NULL, NULL);
@@ -1589,7 +1589,7 @@ as_node_get_localized (const GNode *node, const gchar *key)
 
 /**
  * as_node_get_localized_best:
- * @node: a #GNode.
+ * @node: a #AsNode.
  * @key: the tag name.
  *
  * Gets the 'best' locale version of a specific data value.
@@ -1599,7 +1599,7 @@ as_node_get_localized (const GNode *node, const gchar *key)
  * Since: 0.1.0
  **/
 const gchar *
-as_node_get_localized_best (const GNode *node, const gchar *key)
+as_node_get_localized_best (const AsNode *node, const gchar *key)
 {
 	g_autoptr(GHashTable) hash = NULL;
 	hash = as_node_get_localized (node, key);
@@ -1681,12 +1681,12 @@ as_node_denorm_get_str_for_lang (GHashTable *hash,
  * ]|
  **/
 static gboolean
-as_node_get_localized_unwrap_type_li (const GNode *node,
+as_node_get_localized_unwrap_type_li (const AsNode *node,
 				      GHashTable *hash,
 				      GError **error)
 {
-	GNode *tmp;
-	GNode *tmp_c;
+	AsNode *tmp;
+	AsNode *tmp_c;
 	AsNodeData *data;
 	AsNodeData *data_c;
 	GString *str;
@@ -1769,12 +1769,12 @@ as_node_get_localized_unwrap_type_li (const GNode *node,
  * ]|
  **/
 static gboolean
-as_node_get_localized_unwrap_type_ul (const GNode *node,
+as_node_get_localized_unwrap_type_ul (const AsNode *node,
 				      GHashTable *hash,
 				      GError **error)
 {
-	GNode *tmp;
-	GNode *tmp_c;
+	AsNode *tmp;
+	AsNode *tmp_c;
 	AsNodeData *data;
 	AsNodeData *data_c;
 	GString *str;
@@ -1828,7 +1828,7 @@ as_node_get_localized_unwrap_type_ul (const GNode *node,
 
 /**
  * as_node_get_localized_unwrap:
- * @node: a #GNode.
+ * @node: a #AsNode.
  * @error: A #GError or %NULL.
  *
  * Denormalize AppData data like this:
@@ -1856,12 +1856,12 @@ as_node_get_localized_unwrap_type_ul (const GNode *node,
  * Since: 0.1.0
  **/
 GHashTable *
-as_node_get_localized_unwrap (const GNode *node, GError **error)
+as_node_get_localized_unwrap (const AsNode *node, GError **error)
 {
 	AsNodeData *data;
 	GHashTable *results;
 	GList *l;
-	GNode *tmp;
+	AsNode *tmp;
 	GString *str;
 	const gchar *xml_lang;
 	gboolean is_li_translated = TRUE;

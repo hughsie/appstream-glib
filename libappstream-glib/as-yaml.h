@@ -33,17 +33,17 @@ G_BEGIN_DECLS
 
 typedef GNode AsYaml;
 
-void		 as_yaml_unref			(GNode		*node);
-GString		*as_yaml_to_string		(GNode		*node);
-GNode		*as_yaml_from_data		(const gchar	*data,
+void		 as_yaml_unref			(AsYaml		*node);
+GString		*as_yaml_to_string		(AsYaml		*node);
+AsYaml		*as_yaml_from_data		(const gchar	*data,
 						 gssize		 data_len,
 						 GError		**error);
-GNode		*as_yaml_from_file		(GFile		*file,
+AsYaml		*as_yaml_from_file		(GFile		*file,
 						 GCancellable	*cancellable,
 						 GError		**error);
-const gchar	*as_yaml_node_get_key		(const GNode	*node);
-const gchar	*as_yaml_node_get_value		(const GNode	*node);
-gint		 as_yaml_node_get_value_as_int	(const GNode	*node);
+const gchar	*as_yaml_node_get_key		(const AsYaml	*node);
+const gchar	*as_yaml_node_get_value		(const AsYaml	*node);
+gint		 as_yaml_node_get_value_as_int	(const AsYaml	*node);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsYaml, as_yaml_unref)
 

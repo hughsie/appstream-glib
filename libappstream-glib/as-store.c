@@ -851,14 +851,14 @@ as_store_match_addons (AsStore *store)
  **/
 static gboolean
 as_store_from_root (AsStore *store,
-		    GNode *root,
+		    AsNode *root,
 		    const gchar *icon_root,
 		    const gchar *source_filename,
 		    GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	GNode *apps;
-	GNode *n;
+	AsNode *apps;
+	AsNode *n;
 	const gchar *tmp;
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autofree gchar *icon_path = NULL;
@@ -962,8 +962,8 @@ as_store_load_yaml_file (AsStore *store,
 			 GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	GNode *app_n;
-	GNode *n;
+	AsNode *app_n;
+	AsNode *n;
 	const gchar *tmp;
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autofree gchar *icon_path = NULL;
@@ -1261,8 +1261,8 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 {
 	AsApp *app;
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	GNode *node_apps;
-	GNode *node_root;
+	AsNode *node_apps;
+	AsNode *node_root;
 	GString *xml;
 	guint i;
 	gchar version[6];

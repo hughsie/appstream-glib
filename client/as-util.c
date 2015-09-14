@@ -214,15 +214,15 @@ as_util_convert_appdata (GFile *file_input,
 			 GError **error)
 {
 	AsNodeInsertFlags flags_translate = AS_NODE_INSERT_FLAG_NONE;
-	GNode *n;
-	GNode *n2;
-	GNode *n3;
+	AsNode *n;
+	AsNode *n2;
+	AsNode *n3;
 	const gchar *tmp;
 	const gchar *project_group = NULL;
 	gboolean action_required = FALSE;
 	g_autoptr(AsNode) root = NULL;
 
-	/* load to GNode */
+	/* load to AsNode */
 	root = as_node_from_file (file_input,
 				  AS_NODE_FROM_XML_FLAG_LITERAL_TEXT |
 				  AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS,
