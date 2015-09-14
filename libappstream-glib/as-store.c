@@ -37,7 +37,6 @@
 #include "config.h"
 
 #include "as-app-private.h"
-#include "as-cleanup.h"
 #include "as-node-private.h"
 #include "as-problem.h"
 #include "as-monitor.h"
@@ -968,7 +967,7 @@ as_store_load_yaml_file (AsStore *store,
 	const gchar *tmp;
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autofree gchar *icon_path = NULL;
-	_cleanup_yaml_unref_ GNode *root = NULL;
+	g_autoptr(AsYaml) root = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
 	/* load file */
@@ -1153,7 +1152,7 @@ as_store_from_file (AsStore *store,
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_autofree gchar *filename = NULL;
 	g_autoptr(GError) error_local = NULL;
-	_cleanup_node_unref_ GNode *root = NULL;
+	g_autoptr(AsNode) root = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
@@ -1213,7 +1212,7 @@ as_store_from_xml (AsStore *store,
 		   GError **error)
 {
 	g_autoptr(GError) error_local = NULL;
-	_cleanup_node_unref_ GNode *root = NULL;
+	g_autoptr(AsNode) root = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);

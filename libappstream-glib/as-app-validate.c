@@ -27,7 +27,6 @@
 #include <string.h>
 
 #include "as-app-private.h"
-#include "as-cleanup.h"
 #include "as-node-private.h"
 #include "as-problem.h"
 #include "as-utils.h"
@@ -341,7 +340,7 @@ as_app_validate_description (const gchar *xml,
 {
 	GNode *l;
 	GNode *l2;
-	_cleanup_node_unref_ GNode *node = NULL;
+	g_autoptr(AsNode) node = NULL;
 
 	/* parse xml */
 	node = as_node_from_xml (xml, AS_NODE_FROM_XML_FLAG_NONE, error);

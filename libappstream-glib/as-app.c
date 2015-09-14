@@ -38,7 +38,6 @@
 
 #include "as-app-private.h"
 #include "as-bundle-private.h"
-#include "as-cleanup.h"
 #include "as-enums.h"
 #include "as-icon-private.h"
 #include "as-node-private.h"
@@ -4234,7 +4233,7 @@ as_app_parse_appdata_file (AsApp *app,
 	g_autoptr(GError) error_local = NULL;
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autofree gchar *data = NULL;
-	_cleanup_node_unref_ GNode *root = NULL;
+	g_autoptr(AsNode) root = NULL;
 
 	/* open file */
 	if (!g_file_get_contents (filename, &data, &len, &error_local)) {
@@ -4421,7 +4420,7 @@ as_app_to_file (AsApp *app,
 		GError **error)
 {
 	g_autofree AsNodeContext *ctx = NULL;
-	_cleanup_node_unref_ GNode *root = NULL;
+	g_autoptr(AsNode) root = NULL;
 	g_autoptr(GString) xml = NULL;
 
 	root = as_node_new ();

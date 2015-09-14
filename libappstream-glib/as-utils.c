@@ -40,7 +40,6 @@
 #include <stdlib.h>
 
 #include "as-app.h"
-#include "as-cleanup.h"
 #include "as-enums.h"
 #include "as-node.h"
 #include "as-resources.h"
@@ -195,7 +194,7 @@ as_markup_convert (const gchar *markup,
 	GNode *tmp_c;
 	const gchar *tag;
 	const gchar *tag_c;
-	_cleanup_node_unref_ GNode *root = NULL;
+	g_autoptr(AsNode) root = NULL;
 	g_autoptr(GString) str = NULL;
 
 	/* is this actually markup */

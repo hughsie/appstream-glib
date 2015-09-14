@@ -35,8 +35,6 @@
 #define __APPSTREAM_GLIB_PRIVATE_H
 #include <as-app-private.h>
 
-#include "as-cleanup.h"
-
 #define AS_ERROR			1
 #define AS_ERROR_INVALID_ARGUMENTS	0
 #define AS_ERROR_NO_SUCH_CMD		1
@@ -222,7 +220,7 @@ as_util_convert_appdata (GFile *file_input,
 	const gchar *tmp;
 	const gchar *project_group = NULL;
 	gboolean action_required = FALSE;
-	_cleanup_node_unref_ GNode *root = NULL;
+	g_autoptr(AsNode) root = NULL;
 
 	/* load to GNode */
 	root = as_node_from_file (file_input,

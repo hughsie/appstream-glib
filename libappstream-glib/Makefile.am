@@ -92,7 +92,6 @@ libappstream_glib_la_SOURCES =					\
 	as-app-validate.c					\
 	as-bundle.c						\
 	as-bundle-private.h					\
-	as-cleanup.h						\
 	as-checksum.c						\
 	as-checksum-private.h					\
 	as-enums.c						\

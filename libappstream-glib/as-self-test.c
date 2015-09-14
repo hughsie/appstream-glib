@@ -28,7 +28,6 @@
 #include "as-app-private.h"
 #include "as-bundle-private.h"
 #include "as-checksum-private.h"
-#include "as-cleanup.h"
 #include "as-enums.h"
 #include "as-icon-private.h"
 #include "as-image-private.h"
@@ -1961,7 +1960,7 @@ static void
 as_test_node_sort_func (void)
 {
 	g_autoptr(GError) error = NULL;
-	_cleanup_node_unref_ GNode *root = NULL;
+	g_autoptr(AsNode) root = NULL;
 	g_autoptr(GString) str = NULL;
 
 	root = as_node_from_xml ("<d>ddd</d><c>ccc</c><b>bbb</b><a>aaa</a>", 0, &error);
@@ -1978,7 +1977,7 @@ as_test_node_func (void)
 {
 	GNode *n1;
 	GNode *n2;
-	_cleanup_node_unref_ GNode *root = NULL;
+	g_autoptr(AsNode) root = NULL;
 
 	/* create a simple tree */
 	root = as_node_new ();
@@ -2243,7 +2242,7 @@ as_test_node_localized_wrap_func (void)
 		" </ul>"
 		"</description>";
 	g_autoptr(GHashTable) hash = NULL;
-	_cleanup_node_unref_ GNode *root = NULL;
+	g_autoptr(AsNode) root = NULL;
 
 	root = as_node_from_xml (xml, 0, &error);
 	g_assert_no_error (error);
@@ -2268,7 +2267,7 @@ static void
 as_test_node_intltool_func (void)
 {
 	GNode *n;
-	_cleanup_node_unref_ GNode *root = NULL;
+	g_autoptr(AsNode) root = NULL;
 	g_autoptr(GString) str = NULL;
 
 	root = as_node_new ();
@@ -2300,7 +2299,7 @@ as_test_node_localized_wrap2_func (void)
 		" </ul>"
 		"</description>";
 	g_autoptr(GHashTable) hash = NULL;
-	_cleanup_node_unref_ GNode *root = NULL;
+	g_autoptr(AsNode) root = NULL;
 
 	root = as_node_from_xml (xml, 0, &error);
 	g_assert_no_error (error);

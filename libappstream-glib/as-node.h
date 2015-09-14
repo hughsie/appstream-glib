@@ -114,6 +114,8 @@ typedef enum {
 
 #define	AS_NODE_ERROR				as_node_error_quark ()
 
+typedef GNode AsNode;
+
 GNode		*as_node_new			(void);
 GQuark		 as_node_error_quark		(void);
 void		 as_node_unref			(GNode		*node);
@@ -191,6 +193,8 @@ void		 as_node_insert_hash		(GNode		*parent,
 						 const gchar	*attr_key,
 						 GHashTable	*hash,
 						 AsNodeInsertFlags insert_flags);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsNode, as_node_unref)
 
 G_END_DECLS
 
