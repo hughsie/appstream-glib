@@ -8,15 +8,15 @@ License:   LGPLv2+
 URL:       http://people.freedesktop.org/~hughsient/appstream-glib/
 Source0:   http://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-%{version}.tar.xz
 
-BuildRequires: glib2-devel >= 2.16.1
+BuildRequires: glib2-devel >= 2.45.8
 BuildRequires: libtool
 BuildRequires: docbook-utils
 BuildRequires: gtk-doc
 BuildRequires: gobject-introspection-devel
 BuildRequires: gperf
 BuildRequires: libarchive-devel
-BuildRequires: libsoup-devel
-BuildRequires: gdk-pixbuf2-devel
+BuildRequires: libsoup-devel >= 2.51.92
+BuildRequires: gdk-pixbuf2-devel >= 2.31.5
 BuildRequires: gtk3-devel
 BuildRequires: gettext
 BuildRequires: intltool

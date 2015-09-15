@@ -1,3 +1,26 @@
+Version 0.5.1
+~~~~~~~~~~~~~
+Released: 2015-09-15
+
+Notes:
+ - This raises the GLib required version to 2.45.8 and libsoup to 2.51.92
+
+New Features:
+ - Add support for release urgency (Richard Hughes)
+
+Bugfixes:
+ - Add a few applications that have changed desktop ID (Richard Hughes)
+ - Avoid using PATH_MAX (Pino Toscano)
+ - Do not blacklist the 'desktop' token (Richard Hughes)
+ - Do not fail to validate firmware in AppStream with no screenshots (Richard Hughes)
+ - Don't reallocate malloc'd memory with g_malloc (Kalev Lember)
+ - Don't show mangled version numbers as negatives (Richard Hughes)
+ - Ignore empty AppStream XML files (Richard Hughes)
+ - Support SPDX IDs with the LicenseRef prefix (Richard Hughes)
+ - Support the SPDX 'NONE' and 'NOASSERTION' keywords (Richard Hughes)
+ - Use GLib's cleanup functions instead of libgsystem's (Kalev Lember, Richard Hughes)
+ - Port to G_DECLARE_DERIVABLE_TYPE macro (Kalev Lember)
+
 Version 0.5.0
 ~~~~~~~~~~~~~
 Released: 2015-08-12
