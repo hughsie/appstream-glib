@@ -72,7 +72,7 @@ as_builder_setup_ostree (AsbContext *ctx, const gchar *ostree_repo, GError **err
 	gpointer value;
 	g_autoptr(GHashTable) refs = NULL;
 	g_autoptr(GFile) file = NULL;
-	g_autoptr(OstreeRepo) repo = NULL;
+	OstreeRepo *repo = NULL;
 
 	/* load repo */
 	file = g_file_new_for_path (ostree_repo);
@@ -107,6 +107,7 @@ as_builder_setup_ostree (AsbContext *ctx, const gchar *ostree_repo, GError **err
 			return FALSE;
 		asb_context_add_package (ctx, pkg);
 	}
+	g_object_unref (repo);
 	return TRUE;
 #else
 	g_set_error_literal (error,
