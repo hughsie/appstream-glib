@@ -19,8 +19,6 @@ test_files =						\
 	example-v04.xml.gz				\
 	example-v06.yml.gz				\
 	example.yml					\
-	extra-appdata/test.xml				\
-	extra-appdata/local.xml				\
 	firmware/2_0_0/firmware.bin			\
 	firmware/2_0_0/firmware.inf			\
 	firmware/2_0_1/firmware.bin			\
