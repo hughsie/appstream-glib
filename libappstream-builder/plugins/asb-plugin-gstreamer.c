@@ -42,17 +42,6 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 	asb_plugin_add_glob (globs, "/usr/lib64/gstreamer-1.0/libgst*.so");
 }
 
-/**
- * asb_plugin_check_filename:
- */
-gboolean
-asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
-{
-	if (asb_plugin_match_glob ("/usr/lib64/gstreamer-1.0/libgst*.so", filename))
-		return TRUE;
-	return FALSE;
-}
-
 typedef struct {
 	const gchar *path;
 	const gchar *text;
@@ -117,98 +106,26 @@ asb_utils_is_file_in_tmpdir (const gchar *tmpdir, const gchar *filename)
 }
 
 /**
- * asb_utils_string_sort_cb:
+ * asb_plugin_process_app:
  */
-static gint
-asb_utils_string_sort_cb (gconstpointer a, gconstpointer b)
+gboolean
+asb_plugin_process_app (AsbPlugin *plugin,
+			AsbPackage *pkg,
+			AsbApp *app,
+			const gchar *tmpdir,
+			GError **error)
 {
-	return g_strcmp0 (*((const gchar **) a), *((const gchar **) b));
-}
-
-/**
- * asb_plugin_process:
- */
-GList *
-asb_plugin_process (AsbPlugin *plugin,
-		    AsbPackage *pkg,
-		    const gchar *tmpdir,
-		    GError **error)
-{
-	const gchar *tmp;
-	gchar **split;
-	GList *apps = NULL;
-	GPtrArray *keywords;
 	guint i;
 	guint j;
-	g_autofree gchar *app_id = NULL;
-	g_autoptr(AsbApp) app = NULL;
-	g_autoptr(AsIcon) icon = NULL;
-	g_autoptr(GString) str = NULL;
-
-	/* use the pkgname suffix as the app-id */
-	tmp = asb_package_get_name (pkg);
-	if (g_str_has_prefix (tmp, "gstreamer1-"))
-		tmp += 11;
-	if (g_str_has_prefix (tmp, "gstreamer-"))
-		tmp += 10;
-	if (g_str_has_prefix (tmp, "plugins-"))
-		tmp += 8;
-	app_id = g_strdup_printf ("gstreamer-%s", tmp);
-
-	/* create app */
-	app = asb_app_new (pkg, app_id);
-	as_app_set_id_kind (AS_APP (app), AS_ID_KIND_CODEC);
-	as_app_set_name (AS_APP (app), "C", "GStreamer Multimedia Codecs");
-	asb_app_set_requires_appdata (app, TRUE);
-	asb_app_set_hidpi_enabled (app, asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS));
-	as_app_add_category (AS_APP (app), "Addons");
-	as_app_add_category (AS_APP (app), "Codecs");
-
-	/* add icon */
-	icon = as_icon_new ();
-	as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
-	as_icon_set_name (icon, "application-x-executable");
-	as_app_add_icon (AS_APP (app), icon);
 
 	for (i = 0; data[i].path != NULL; i++) {
+		g_auto(GStrv) split = NULL;
 		if (!asb_utils_is_file_in_tmpdir (tmpdir, data[i].path))
 			continue;
 		split = g_strsplit (data[i].text, "|", -1);
 		for (j = 0; split[j] != NULL; j++)
 			as_app_add_keyword (AS_APP (app), NULL, split[j]);
-		g_strfreev (split);
 	}
 
-	/* no codecs we care about */
-	keywords = as_app_get_keywords (AS_APP (app), NULL);
-	if (keywords == NULL) {
-		g_set_error (error,
-			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_FAILED,
-			     "nothing interesting in %s",
-			     asb_package_get_basename (pkg));
-		return NULL;
-	}
-
-	/* sort categories by name */
-	g_ptr_array_sort (keywords, asb_utils_string_sort_cb);
-
-	/* create a description */
-	str = g_string_new ("Multimedia playback for ");
-	if (keywords->len > 1) {
-		for (i = 0; i < keywords->len - 1; i++) {
-			tmp = g_ptr_array_index (keywords, i);
-			g_string_append_printf (str, "%s, ", tmp);
-		}
-		g_string_truncate (str, str->len - 2);
-		tmp = g_ptr_array_index (keywords, keywords->len - 1);
-		g_string_append_printf (str, " and %s", tmp);
-	} else {
-		g_string_append (str, g_ptr_array_index (keywords, 0));
-	}
-	as_app_set_comment (AS_APP (app), "C", str->str);
-
-	/* add */
-	asb_plugin_add_app (&apps, AS_APP (app));
-	return apps;
+	return TRUE;
 }

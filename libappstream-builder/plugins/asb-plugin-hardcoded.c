@@ -222,18 +222,6 @@ asb_plugin_process_app (AsbPlugin *plugin,
 				as_app_add_veto (AS_APP (app), "Uses obsolete Elektra library");
 				break;
 			}
-			if (g_strcmp0 (tmp, "libXt.so.6") == 0) {
-				asb_app_add_requires_appdata (app, "Uses obsolete X11 toolkit");
-				break;
-			}
-			if (g_strcmp0 (tmp, "Xvfb") == 0) {
-				asb_app_add_requires_appdata (app, "Uses obsolete Xvfb");
-				break;
-			}
-			if (g_strcmp0 (tmp, "wine-core") == 0) {
-				asb_app_add_requires_appdata (app, "Uses wine");
-				break;
-			}
 		}
 	}
 
@@ -261,21 +249,21 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		secs = (g_get_real_time () / G_USEC_PER_SEC) -
 			as_release_get_timestamp (release);
 		days = secs / (60 * 60 * 24);
-		/* we need AppData if the app needs saving */
 		if (secs > 0 && days > 365 * 5) {
-			asb_app_add_requires_appdata (app,
-				"Dead upstream for > %i years", 5);
+			asb_package_log (asb_app_get_package (app),
+					 ASB_PACKAGE_LOG_LEVEL_WARNING,
+					 "Dead upstream for > %i years", 5);
 		}
 	}
 
 	/* a ConsoleOnly category means we require AppData */
 	if (as_app_has_category (AS_APP(app), "ConsoleOnly"))
-		asb_app_add_requires_appdata (app, "ConsoleOnly");
+		as_app_add_veto (AS_APP (app), "ConsoleOnly");
 
-	/* no categories means we require AppData */
-	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_DESKTOP &&
-	    as_app_get_categories(AS_APP(app))->len == 0)
-		asb_app_add_requires_appdata (app, "no Categories");
+	/* no categories means veto */
+//	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_DESKTOP &&
+//	    as_app_get_categories(AS_APP(app))->len == 0)
+//		as_app_add_veto (AS_APP (app), "no Categories");
 
 	return TRUE;
 }

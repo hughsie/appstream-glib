@@ -20,8 +20,7 @@
  */
 
 #include <config.h>
-
-#include <appstream-glib.h>
+#include <fnmatch.h>
 
 #include <asb-plugin.h>
 
@@ -40,8 +39,31 @@ asb_plugin_get_name (void)
 void
 asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
+	asb_plugin_add_glob (globs, "/usr/share/appdata/*.metainfo.xml");
 	asb_plugin_add_glob (globs, "/usr/share/appdata/*.appdata.xml");
 	asb_plugin_add_glob (globs, "*.metainfo.xml");
+}
+
+/**
+ * _asb_plugin_check_filename:
+ */
+static gboolean
+_asb_plugin_check_filename (const gchar *filename)
+{
+	if (asb_plugin_match_glob ("*.metainfo.xml", filename) ||
+	    asb_plugin_match_glob ("/usr/share/appdata/*.metainfo.xml", filename) ||
+	    asb_plugin_match_glob ("/usr/share/appdata/*.appdata.xml", filename))
+		return TRUE;
+	return FALSE;
+}
+
+/**
+ * asb_plugin_check_filename:
+ */
+gboolean
+asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
+{
+	return _asb_plugin_check_filename (filename);
 }
 
 /**
@@ -49,37 +71,41 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
  */
 static gboolean
 asb_plugin_process_filename (AsbPlugin *plugin,
-			     AsbApp *app,
+			     AsbPackage *pkg,
 			     const gchar *filename,
+			     GList **apps,
 			     GError **error)
 {
 	AsProblemKind problem_kind;
 	AsProblem *problem;
-	const gchar *key;
-	const gchar *old;
+	GPtrArray *icons;
 	const gchar *tmp;
-	gboolean ret;
-	GHashTable *hash;
-	GPtrArray *array;
-	GList *l;
-	GList *list;
 	guint i;
-	g_autoptr(AsApp) appdata = NULL;
+	g_autoptr(AsbApp) app = NULL;
 	g_autoptr(GPtrArray) problems = NULL;
 
-	/* validate */
-	appdata = as_app_new ();
-	ret = as_app_parse_file (appdata, filename,
-				 AS_APP_PARSE_FLAG_NONE,
-				 error);
-	if (!ret)
+	app = asb_app_new (NULL, NULL);
+	if (!as_app_parse_file (AS_APP (app), filename,
+				AS_APP_PARSE_FLAG_NONE,
+				error))
 		return FALSE;
-	problems = as_app_validate (appdata,
+	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_UNKNOWN) {
+		g_set_error (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_FAILED,
+			     "%s has no recognised type",
+			     as_app_get_id (AS_APP (app)));
+		return FALSE;
+	}
+
+	/* validate */
+	problems = as_app_validate (AS_APP (app),
 				    AS_APP_VALIDATE_FLAG_NO_NETWORK |
 				    AS_APP_VALIDATE_FLAG_RELAX,
 				    error);
 	if (problems == NULL)
 		return FALSE;
+	asb_app_set_package (app, pkg);
 	for (i = 0; i < problems->len; i++) {
 		problem = g_ptr_array_index (problems, i);
 		problem_kind = as_problem_get_kind (problem);
@@ -90,34 +116,14 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				 as_problem_get_message (problem));
 	}
 
-	/* check <id> matches, but still accept if missing or incorrect */
-	tmp = as_app_get_id (appdata);
-	if (tmp == NULL) {
-		asb_package_log (asb_app_get_package (app),
-				 ASB_PACKAGE_LOG_LEVEL_WARNING,
-				 "AppData %s has no ID", filename);
-	} else if (g_strcmp0 (tmp, as_app_get_id (AS_APP (app))) != 0) {
-		asb_package_log (asb_app_get_package (app),
-				 ASB_PACKAGE_LOG_LEVEL_WARNING,
-				 "AppData %s does not match '%s':'%s'",
-				 filename, tmp,
-				 as_app_get_id (AS_APP (app)));
-	}
-
-	/* overwrite the app ID with the metadata one for firmware */
-	if (as_app_get_id_kind (appdata) == AS_ID_KIND_FIRMWARE) {
-		old = as_app_get_id (AS_APP (app));
-		if (old != NULL) {
-			asb_package_log (asb_app_get_package (app),
-					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
-					 "renaming ID %s -> %s",
-					 old, as_app_get_id (AS_APP (appdata)));
-		}
-		as_app_set_id (AS_APP (app), as_app_get_id (AS_APP (appdata)));
-	}
+	/* nuke things that do not belong */
+	icons = as_app_get_icons (AS_APP (app));
+	if (icons->len > 0)
+		g_ptr_array_set_size (icons, 0);
 
 	/* add provide if missing */
-	if (as_app_get_id_kind (appdata) == AS_ID_KIND_FIRMWARE &&
+	tmp = as_app_get_id (AS_APP (app));
+	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_FIRMWARE &&
 	    as_utils_guid_is_valid (tmp)) {
 		g_autoptr(AsProvide) provide = NULL;
 		provide = as_provide_new ();
@@ -127,7 +133,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	}
 
 	/* check license */
-	tmp = as_app_get_metadata_license (appdata);
+	tmp = as_app_get_metadata_license (AS_APP (app));
 	if (tmp == NULL) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
@@ -145,189 +151,149 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		return FALSE;
 	}
 
-	/* other optional data */
-	tmp = as_app_get_url_item (appdata, AS_URL_KIND_HOMEPAGE);
-	if (tmp != NULL)
-		as_app_add_url (AS_APP (app), AS_URL_KIND_HOMEPAGE, tmp);
-	tmp = as_app_get_project_group (appdata);
+	/* check project group */
+	tmp = as_app_get_project_group (AS_APP (app));
 	if (tmp != NULL) {
-		/* check the category is valid */
 		if (!as_utils_is_environment_id (tmp)) {
 			asb_package_log (asb_app_get_package (app),
 					 ASB_PACKAGE_LOG_LEVEL_WARNING,
 					 "AppData project group invalid, "
 					 "so ignoring: %s", tmp);
-		} else {
-			as_app_set_project_group (AS_APP (app), tmp);
+			as_app_set_project_group (AS_APP (app), NULL);
 		}
-	}
-	array = as_app_get_compulsory_for_desktops (appdata);
-	if (array->len > 0) {
-		tmp = g_ptr_array_index (array, 0);
-		as_app_add_compulsory_for_desktop (AS_APP (app), tmp);
-	}
-
-	/* perhaps get name */
-	hash = as_app_get_names (appdata);
-	list = g_hash_table_get_keys (hash);
-	for (l = list; l != NULL; l = l->next) {
-		key = l->data;
-		tmp = g_hash_table_lookup (hash, key);
-		as_app_set_name (AS_APP (app), key, tmp);
-	}
-	g_list_free (list);
-
-	/* perhaps get summary */
-	hash = as_app_get_comments (appdata);
-	list = g_hash_table_get_keys (hash);
-	for (l = list; l != NULL; l = l->next) {
-		key = l->data;
-		tmp = g_hash_table_lookup (hash, key);
-		as_app_set_comment (AS_APP (app), key, tmp);
-	}
-	g_list_free (list);
-
-	/* get descriptions */
-	hash = as_app_get_descriptions (appdata);
-	list = g_hash_table_get_keys (hash);
-	for (l = list; l != NULL; l = l->next) {
-		key = l->data;
-		tmp = g_hash_table_lookup (hash, key);
-		as_app_set_description (AS_APP (app), key, tmp);
-	}
-	g_list_free (list);
-
-	/* add screenshots if not already added */
-	array = as_app_get_screenshots (AS_APP (app));
-	if (array->len == 0) {
-		/* just use the upstream locations */
-		array = as_app_get_screenshots (appdata);
-		for (i = 0; i < array->len; i++) {
-			AsScreenshot *ss;
-			ss = g_ptr_array_index (array, i);
-			as_app_add_screenshot (AS_APP (app), ss);
-		}
-	} else {
-		array = as_app_get_screenshots (appdata);
-		if (array->len > 0) {
-			asb_package_log (asb_app_get_package (app),
-					 ASB_PACKAGE_LOG_LEVEL_INFO,
-					 "AppData screenshots ignored");
-		}
-	}
-
-	/* add metadata */
-	hash = as_app_get_metadata (appdata);
-	list = g_hash_table_get_keys (hash);
-	for (l = list; l != NULL; l = l->next) {
-		key = l->data;
-		tmp = g_hash_table_lookup (hash, key);
-		as_app_add_metadata (AS_APP (app), key, tmp);
-	}
-
-	/* add developer name */
-	tmp = as_app_get_developer_name (AS_APP (appdata), NULL);
-	if (tmp != NULL)
-		as_app_set_developer_name (AS_APP (app), NULL, tmp);
-
-	/* add releases */
-	array = as_app_get_releases (appdata);
-	for (i = 0; i < array->len; i++) {
-		AsRelease *rel = g_ptr_array_index (array, i);
-		as_app_add_release (AS_APP (app), rel);
-	}
-
-	/* add provides */
-	array = as_app_get_provides (appdata);
-	for (i = 0; i < array->len; i++) {
-		AsProvide *pr = g_ptr_array_index (array, i);
-		as_app_add_provide (AS_APP (app), pr);
 	}
 
 	/* log updateinfo */
-	tmp = as_app_get_update_contact (AS_APP (appdata));
+	tmp = as_app_get_update_contact (AS_APP (app));
 	if (tmp != NULL) {
 		asb_package_log (asb_app_get_package (app),
 				 ASB_PACKAGE_LOG_LEVEL_INFO,
 				 "Upstream contact <%s>", tmp);
 	}
 
+	/* add icon for firmware */
+	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_FIRMWARE) {
+		g_autoptr(AsIcon) icon = NULL;
+		icon = as_icon_new ();
+		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+		as_icon_set_name (icon, "application-x-executable");
+		as_app_add_icon (AS_APP (app), icon);
+	}
+
+	/* fix up input methods */
+	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_INPUT_METHOD) {
+		g_autoptr(AsIcon) icon = NULL;
+		icon = as_icon_new ();
+		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+		as_icon_set_name (icon, "system-run-symbolic");
+		as_app_add_icon (AS_APP (app), icon);
+		as_app_add_category (AS_APP (app), "Addons");
+		as_app_add_category (AS_APP (app), "InputSources");
+	}
+
+	/* fix up codecs */
+	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_CODEC) {
+		g_autoptr(AsIcon) icon = NULL;
+		icon = as_icon_new ();
+		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+		as_icon_set_name (icon, "application-x-executable");
+		as_app_add_icon (AS_APP (app), icon);
+		as_app_add_category (AS_APP (app), "Addons");
+		as_app_add_category (AS_APP (app), "Codecs");
+	}
+
 	/* success */
-	asb_app_set_requires_appdata (app, FALSE);
+	asb_app_set_hidpi_enabled (app, asb_context_get_flag (plugin->ctx,
+							      ASB_CONTEXT_FLAG_HIDPI_ICONS));
+	asb_plugin_add_app (apps, AS_APP (app));
 	return TRUE;
 }
 
 /**
- * asb_plugin_appdata_get_fn_for_app:
+ * asb_plugin_process:
  */
-static gchar *
-asb_plugin_appdata_get_fn_for_app (AsApp *app)
+GList *
+asb_plugin_process (AsbPlugin *plugin,
+		    AsbPackage *pkg,
+		    const gchar *tmpdir,
+		    GError **error)
 {
-	gchar *fn = g_strdup (as_app_get_id (app));
-	gchar *tmp;
+	gboolean ret;
+	GList *apps = NULL;
+	guint i;
+	gchar **filelist;
 
-	/* just cut off the last section without munging the name */
-	tmp = g_strrstr (fn, ".");
-	if (tmp != NULL)
-		*tmp = '\0';
-	return fn;
+	filelist = asb_package_get_filelist (pkg);
+	for (i = 0; filelist[i] != NULL; i++) {
+		g_autofree gchar *filename_tmp = NULL;
+		if (!_asb_plugin_check_filename (filelist[i]))
+			continue;
+		filename_tmp = g_build_filename (tmpdir, filelist[i], NULL);
+		ret = asb_plugin_process_filename (plugin,
+						   pkg,
+						   filename_tmp,
+						   &apps,
+						   error);
+		if (!ret) {
+			g_list_free_full (apps, (GDestroyNotify) g_object_unref);
+			return NULL;
+		}
+	}
+
+	/* no desktop files we care about */
+	if (apps == NULL) {
+		g_set_error (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_FAILED,
+			     "nothing interesting in %s",
+			     asb_package_get_basename (pkg));
+		return NULL;
+	}
+	return apps;
 }
 
 /**
- * asb_plugin_process_app:
+ * asb_plugin_merge:
  */
-gboolean
-asb_plugin_process_app (AsbPlugin *plugin,
-			AsbPackage *pkg,
-			AsbApp *app,
-			const gchar *tmpdir,
-			GError **error)
+void
+asb_plugin_merge (AsbPlugin *plugin, GList *list)
 {
-	GError *error_local = NULL;
-	g_autofree gchar *appdata_filename = NULL;
+	AsApp *app;
+	AsApp *found;
+	GList *l;
+	g_autoptr(GHashTable) hash = NULL;
 
-	/* get possible sources */
-	if (asb_package_get_kind (pkg) == ASB_PACKAGE_KIND_FIRMWARE) {
-		appdata_filename = g_build_filename (tmpdir,
-						     as_app_get_metadata_item (AS_APP (app), "MetainfoBasename"),
-						     NULL);
-	} else {
-		g_autofree gchar *appdata_basename = NULL;
-		appdata_basename = asb_plugin_appdata_get_fn_for_app (AS_APP (app));
-		appdata_filename = g_strdup_printf ("%s/files/share/appdata/%s.appdata.xml",
-						    tmpdir, appdata_basename);
-		if (!g_file_test (appdata_filename, G_FILE_TEST_EXISTS)) {
-			g_free (appdata_filename);
-			appdata_filename = g_strdup_printf ("%s/usr/share/appdata/%s.appdata.xml",
-							    tmpdir, appdata_basename);
-		}
+	/* make a hash table of ID->AsApp */
+	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
+				      g_free, (GDestroyNotify) g_object_unref);
+	for (l = list; l != NULL; l = l->next) {
+		app = AS_APP (l->data);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+			continue;
+		g_hash_table_insert (hash,
+				     g_strdup (as_app_get_id (app)),
+				     g_object_ref (app));
 	}
 
-	/* any installed appdata file */
-	if (g_file_test (appdata_filename, G_FILE_TEST_EXISTS)) {
-		/* be understanding if upstream gets the AppData file
-		 * wrong -- just fall back to the desktop file data */
-		if (!asb_plugin_process_filename (plugin,
-						  app,
-						  appdata_filename,
-						  &error_local)) {
-			error_local->code = ASB_PLUGIN_ERROR_IGNORE;
-			g_propagate_error (error, error_local);
-			g_prefix_error (error,
-					"AppData file '%s' invalid: ",
-					appdata_filename);
-			return FALSE;
-		}
-		return TRUE;
+	/* add addons where the pkgname is different from the
+	 * main package */
+	for (l = list; l != NULL; l = l->next) {
+		if (!ASB_IS_APP (l->data))
+			continue;
+		app = AS_APP (l->data);
+		if (as_app_get_id_kind (app) != AS_ID_KIND_ADDON)
+			continue;
+		found = g_hash_table_lookup (hash, as_app_get_id (app));
+		if (found == NULL)
+			continue;
+		if (g_strcmp0 (as_app_get_pkgname_default (app),
+			       as_app_get_pkgname_default (found)) != 0)
+			continue;
+		as_app_add_veto (app,
+				 "absorbing addon %s shipped in "
+				 "main package %s",
+				 as_app_get_id (app),
+				 as_app_get_pkgname_default (app));
+		as_app_subsume_full (found, app, AS_APP_SUBSUME_FLAG_PARTIAL);
 	}
-
-	/* we're going to require this soon */
-	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_DESKTOP &&
-	    as_app_get_metadata_item (AS_APP (app), "NoDisplay") == NULL) {
-		asb_package_log (pkg,
-				 ASB_PACKAGE_LOG_LEVEL_WARNING,
-				 "desktop application %s has no AppData",
-				 as_app_get_id (AS_APP (app)));
-	}
-	return TRUE;
 }

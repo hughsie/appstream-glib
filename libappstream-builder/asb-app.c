@@ -88,70 +88,6 @@ asb_app_class_init (AsbAppClass *klass)
 }
 
 /**
- * asb_app_add_requires_appdata:
- * @app: A #AsbApp
- * @fmt: format string
- * @...: varargs
- *
- * Adds a reason that AppData is required.
- *
- * Since: 0.1.0
- **/
-void
-asb_app_add_requires_appdata (AsbApp *app, const gchar *fmt, ...)
-{
-	AsbAppPrivate *priv = GET_PRIVATE (app);
-	gchar *tmp;
-	va_list args;
-	if (priv->ignore_requires_appdata)
-		return;
-	va_start (args, fmt);
-	tmp = g_strdup_vprintf (fmt, args);
-	va_end (args);
-	g_ptr_array_add (priv->requires_appdata, tmp);
-}
-
-/**
- * asb_app_set_requires_appdata:
- * @app: A #AsbApp
- * @requires_appdata: boolean
- *
- * Sets (or clears) the requirement for AppData.
- *
- * Since: 0.1.0
- **/
-void
-asb_app_set_requires_appdata (AsbApp *app, gboolean requires_appdata)
-{
-	AsbAppPrivate *priv = GET_PRIVATE (app);
-	if (requires_appdata) {
-		if (priv->ignore_requires_appdata)
-			return;
-		g_ptr_array_add (priv->requires_appdata, NULL);
-	} else {
-		g_ptr_array_set_size (priv->requires_appdata, 0);
-		priv->ignore_requires_appdata = TRUE;
-	}
-}
-
-/**
- * asb_app_get_requires_appdata:
- * @app: A #AsbApp
- *
- * Gets if AppData is still required for the application.
- *
- * Returns: (transfer none) (element-type utf8): A list of reasons
- *
- * Since: 0.1.0
- **/
-GPtrArray *
-asb_app_get_requires_appdata (AsbApp *app)
-{
-	AsbAppPrivate *priv = GET_PRIVATE (app);
-	return priv->requires_appdata;
-}
-
-/**
  * asb_app_get_package:
  * @app: A #AsbApp
  *
@@ -166,6 +102,36 @@ asb_app_get_package (AsbApp *app)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 	return priv->pkg;
+}
+
+/**
+ * asb_app_set_package:
+ * @app: A #AsbApp
+ * @pkg: A #AsbPackage
+ *
+ * Sets the package that backs the application.
+ *
+ * Since: 0.5.1
+ **/
+void
+asb_app_set_package (AsbApp *app, AsbPackage *pkg)
+{
+	AsbAppPrivate *priv = GET_PRIVATE (app);
+
+	if (priv->pkg != NULL)
+		g_object_unref (priv->pkg);
+	priv->pkg = g_object_ref (pkg);
+
+	/* be helpful */
+	if (asb_package_get_kind (pkg) == ASB_PACKAGE_KIND_DEFAULT) {
+		as_app_add_pkgname (AS_APP (app), asb_package_get_name (pkg));
+	} else if (asb_package_get_kind (pkg) == ASB_PACKAGE_KIND_BUNDLE) {
+		g_autoptr(AsBundle) bundle = NULL;
+		bundle = as_bundle_new ();
+		as_bundle_set_id (bundle, asb_package_get_source (pkg));
+		as_bundle_set_kind (bundle, AS_BUNDLE_KIND_XDG_APP);
+		as_app_add_bundle (AS_APP (app), bundle);
+	}
 }
 
 /**
@@ -215,7 +181,8 @@ asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 
 		/* don't save some types of icons */
 		icon = g_ptr_array_index (icons, i);
-		if (as_icon_get_kind (icon) == AS_ICON_KIND_STOCK ||
+		if (as_icon_get_kind (icon) == AS_ICON_KIND_UNKNOWN ||
+		    as_icon_get_kind (icon) == AS_ICON_KIND_STOCK ||
 		    as_icon_get_kind (icon) == AS_ICON_KIND_EMBEDDED ||
 		    as_icon_get_kind (icon) == AS_ICON_KIND_LOCAL ||
 		    as_icon_get_kind (icon) == AS_ICON_KIND_REMOTE)
@@ -231,8 +198,9 @@ asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 			g_set_error (error,
 				     AS_APP_ERROR,
 				     AS_APP_ERROR_FAILED,
-				     "No pixbuf for %s",
-				     as_icon_get_name (icon));
+				     "No pixbuf for %s in %s",
+				     as_icon_get_name (icon),
+				     as_app_get_id (AS_APP (app)));
 			return FALSE;
 		}
 		if (!gdk_pixbuf_save (pixbuf, filename, "png", error, NULL))
@@ -248,8 +216,8 @@ asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 
 /**
  * asb_app_new:
- * @pkg: A #AsbPackage
- * @id: The ID for the package
+ * @pkg: A #AsbPackage, or %NULL
+ * @id: The ID for the package, or %NULL
  *
  * Creates a new application object.
  *
@@ -261,29 +229,9 @@ AsbApp *
 asb_app_new (AsbPackage *pkg, const gchar *id)
 {
 	AsbApp *app;
-	AsbAppPrivate *priv;
-
 	app = g_object_new (ASB_TYPE_APP, NULL);
-	priv = GET_PRIVATE (app);
-	if (pkg != NULL) {
-		priv->pkg = g_object_ref (pkg);
-		switch (asb_package_get_kind (pkg)) {
-		case ASB_PACKAGE_KIND_DEFAULT:
-			as_app_add_pkgname (AS_APP (app),
-					    asb_package_get_name (pkg));
-			break;
-		case ASB_PACKAGE_KIND_BUNDLE:
-		{
-			g_autoptr(AsBundle) bundle = NULL;
-			bundle = as_bundle_new ();
-			as_bundle_set_id (bundle, asb_package_get_source (pkg));
-			as_bundle_set_kind (bundle, AS_BUNDLE_KIND_XDG_APP);
-			as_app_add_bundle (AS_APP (app), bundle);
-		};
-		default:
-			break;
-		}
-	}
+	if (pkg != NULL)
+		asb_app_set_package (app, pkg);
 	if (id != NULL)
 		as_app_set_id (AS_APP (app), id);
 	return ASB_APP (app);

@@ -53,28 +53,6 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 }
 
 /**
- * _asb_plugin_check_filename:
- */
-static gboolean
-_asb_plugin_check_filename (const gchar *filename)
-{
-	if (asb_plugin_match_glob ("/usr/share/applications/*.desktop", filename))
-		return TRUE;
-	if (asb_plugin_match_glob ("/usr/share/applications/kde4/*.desktop", filename))
-		return TRUE;
-	return FALSE;
-}
-
-/**
- * asb_plugin_check_filename:
- */
-gboolean
-asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
-{
-	return _asb_plugin_check_filename (filename);
-}
-
-/**
  * asb_app_load_icon:
  */
 static GdkPixbuf *
@@ -301,22 +279,21 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 }
 
 /**
- * asb_plugin_process_filename:
+ * asb_plugin_desktop_refine:
  */
 static gboolean
-asb_plugin_process_filename (AsbPlugin *plugin,
-			     AsbPackage *pkg,
-			     const gchar *filename,
-			     GList **apps,
-			     const gchar *tmpdir,
-			     GError **error)
+asb_plugin_desktop_refine (AsbPlugin *plugin,
+			   AsbPackage *pkg,
+			   const gchar *filename,
+			   AsbApp *app,
+			   const gchar *tmpdir,
+			   GError **error)
 {
 	AsIcon *icon;
 	AsAppParseFlags parse_flags = AS_APP_PARSE_FLAG_USE_HEURISTICS;
 	gboolean ret;
 	g_autofree gchar *app_id = NULL;
-	g_autofree gchar *full_filename = NULL;
-	g_autoptr(AsbApp) app = NULL;
+	g_autoptr(AsApp) desktop_app = NULL;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	/* use GenericName fallback */
@@ -325,23 +302,16 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 
 	/* create app */
 	app_id = g_path_get_basename (filename);
-	app = asb_app_new (pkg, app_id);
-	asb_app_set_hidpi_enabled (app, asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS));
-	full_filename = g_build_filename (tmpdir, filename, NULL);
-	if (!as_app_parse_file (AS_APP (app), full_filename, parse_flags, error))
+	desktop_app = as_app_new ();
+	if (!as_app_parse_file (desktop_app, filename, parse_flags, error))
 		return FALSE;
 
 	/* NoDisplay apps are never included */
-	if (as_app_get_metadata_item (AS_APP (app), "NoDisplay") != NULL)
-		asb_app_add_requires_appdata (app, "NoDisplay=true");
+	if (as_app_get_metadata_item (desktop_app, "NoDisplay") != NULL)
+		as_app_add_veto (AS_APP (app), "NoDisplay=true");
 
-	/* Settings or DesktopSettings requires AppData */
-	if (!asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_IGNORE_SETTINGS)) {
-		if (as_app_has_category (AS_APP (app), "Settings"))
-			asb_app_add_requires_appdata (app, "Category=Settings");
-		if (as_app_has_category (AS_APP (app), "DesktopSettings"))
-			asb_app_add_requires_appdata (app, "Category=DesktopSettings");
-	}
+	/* copy all metadata */
+	as_app_subsume_full (AS_APP (app), desktop_app, AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
 
 	/* is the icon a stock-icon-name? */
 	icon = as_app_get_icon_default (AS_APP (app));
@@ -367,54 +337,38 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		}
 	}
 
-	/* add */
-	asb_plugin_add_app (apps, AS_APP (app));
 	return TRUE;
 }
 
 /**
- * asb_plugin_process:
+ * asb_plugin_process_app:
  */
-GList *
-asb_plugin_process (AsbPlugin *plugin,
-		    AsbPackage *pkg,
-		    const gchar *tmpdir,
-		    GError **error)
+gboolean
+asb_plugin_process_app (AsbPlugin *plugin,
+			AsbPackage *pkg,
+			AsbApp *app,
+			const gchar *tmpdir,
+			GError **error)
 {
-	gboolean ret;
-	GError *error_local = NULL;
-	GList *apps = NULL;
 	guint i;
-	gchar **filelist;
+	const gchar *app_dirs[] = {
+		"/usr/share/applications",
+		"/usr/share/applications/kde4",
+		NULL };
 
-	filelist = asb_package_get_filelist (pkg);
-	for (i = 0; filelist[i] != NULL; i++) {
-		if (!_asb_plugin_check_filename (filelist[i]))
-			continue;
-		ret = asb_plugin_process_filename (plugin,
-						   pkg,
-						   filelist[i],
-						   &apps,
-						   tmpdir,
-						   &error_local);
-		if (!ret) {
-			asb_package_log (pkg,
-					 ASB_PACKAGE_LOG_LEVEL_INFO,
-					 "Failed to process %s: %s",
-					 filelist[i],
-					 error_local->message);
-			g_clear_error (&error_local);
+	/* use the .desktop file to refine the application */
+	for (i = 0; app_dirs[i] != NULL; i++) {
+		g_autofree gchar *fn = NULL;
+		fn = g_build_filename (tmpdir,
+				       app_dirs[i],
+				       as_app_get_id (AS_APP (app)),
+				       NULL);
+		if (g_file_test (fn, G_FILE_TEST_EXISTS)) {
+			if (!asb_plugin_desktop_refine (plugin, pkg, fn,
+							app, tmpdir, error))
+				return FALSE;
 		}
 	}
 
-	/* no desktop files we care about */
-	if (apps == NULL) {
-		g_set_error (error,
-			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_FAILED,
-			     "nothing interesting in %s",
-			     asb_package_get_basename (pkg));
-		return NULL;
-	}
-	return apps;
+	return TRUE;
 }

@@ -133,6 +133,6 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	tmp = asb_glob_value_search (plugin->priv->vetos,
 				     as_app_get_id (AS_APP (app)));
 	if (tmp != NULL)
-		asb_app_add_requires_appdata (app, "%s", tmp);
+		as_app_add_veto (AS_APP (app), "%s", tmp);
 	return TRUE;
 }

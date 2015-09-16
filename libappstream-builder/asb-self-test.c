@@ -267,7 +267,7 @@ asb_test_plugin_loader_func (void)
 
 	/* get the list of plugins */
 	plugins = asb_plugin_loader_get_plugins (loader);
-	g_assert_cmpint (plugins->len, >=, 17);
+	g_assert_cmpint (plugins->len, >=, 16);
 	plugin = g_ptr_array_index (plugins, 0);
 	g_assert (plugin != NULL);
 	g_assert (plugin->module != NULL);
@@ -275,9 +275,9 @@ asb_test_plugin_loader_func (void)
 	g_assert (plugin->ctx == ctx);
 
 	/* match the correct one */
-	plugin = asb_plugin_loader_match_fn (loader, "/usr/share/applications/gimp.desktop");
+	plugin = asb_plugin_loader_match_fn (loader, "/usr/share/appdata/gimp.appdata.xml");
 	g_assert (plugin != NULL);
-	g_assert_cmpstr (plugin->name, ==, "desktop");
+	g_assert_cmpstr (plugin->name, ==, "appdata");
 }
 
 #ifdef HAVE_RPM
@@ -399,7 +399,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store), ==, 6);
+	g_assert_cmpint (as_store_get_size (store), ==, 4);
 	app = as_store_get_app_by_pkgname (store, "app");
 	g_assert (app != NULL);
 	app = as_store_get_app_by_id (store, "app.desktop");
@@ -518,6 +518,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<description><p>Updating the firmware on your ColorHug device "
 		"improves performance and adds new features.</p></description>\n"
 		"<icon type=\"stock\">application-x-executable</icon>\n"
+		"<project_license>GPL-2.0+</project_license>\n"
 		"<url type=\"homepage\">http://www.hughski.com/</url>\n"
 		"<releases>\n"
 		"<release version=\"2.0.2\" timestamp=\"1424116753\">\n"
@@ -537,48 +538,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<value key=\"X-CacheID\">colorhug-als-2.0.2.cab</value>\n"
 		"</metadata>\n"
 		"</component>\n"
-		"<component type=\"desktop\">\n"
-		"<id>valid1.desktop</id>\n"
-		"<pkgname>composite</pkgname>\n"
-		"<name>Frobnicator</name>\n"
-		"<summary>Frobnicator</summary>\n"
-		"<icon type=\"stock\">computer</icon>\n"
-		"<categories>\n"
-		"<category>Profiling</category>\n"
-		"</categories>\n"
-		"<kudos>\n"
-		"<kudo>HiDpiIcon</kudo>\n"
-		"</kudos>\n"
-		"<project_license>GPL-2.0+</project_license>\n"
-		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
-		"<releases>\n"
-		"<release version=\"1\" timestamp=\"1407844800\"/>\n"
-		"</releases>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">composite-1-1.fc21.x86_64.rpm</value>\n"
-		"</metadata>\n"
-		"</component>\n"
-		"<component type=\"desktop\">\n"
-		"<id>valid2.desktop</id>\n"
-		"<pkgname>composite</pkgname>\n"
-		"<name>Frobnicator Example</name>\n"
-		"<summary>Frobnicator Example Program</summary>\n"
-		"<icon type=\"stock\">computer</icon>\n"
-		"<categories>\n"
-		"<category>Profiling</category>\n"
-		"</categories>\n"
-		"<kudos>\n"
-		"<kudo>HiDpiIcon</kudo>\n"
-		"</kudos>\n"
-		"<project_license>GPL-2.0+</project_license>\n"
-		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
-		"<releases>\n"
-		"<release version=\"1\" timestamp=\"1407844800\"/>\n"
-		"</releases>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">composite-1-1.fc21.x86_64.rpm</value>\n"
-		"</metadata>\n"
-		"</component>\n"
 		"</components>\n";
 	ret = asb_test_compare_lines (xml->str, expected_xml, &error);
 	g_assert_no_error (error);
@@ -590,11 +549,11 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store_failed, file_failed, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store_failed), ==, 4);
-	app = as_store_get_app_by_id (store_failed, "console1.desktop");
-	g_assert (app != NULL);
-	app = as_store_get_app_by_id (store_failed, "console2.desktop");
-	g_assert (app != NULL);
+	g_assert_cmpint (as_store_get_size (store_failed), ==, 2);
+//	app = as_store_get_app_by_id (store_failed, "console1.desktop");
+//	g_assert (app != NULL);
+//	app = as_store_get_app_by_id (store_failed, "console2.desktop");
+//	g_assert (app != NULL);
 
 	/* check output */
 	xml_failed = as_store_to_xml (store_failed, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
@@ -670,64 +629,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<value key=\"X-Merge-With-Parent\">app.desktop</value>\n"
 		"</metadata>\n"
 		"</component>\n"
-		"<component type=\"desktop\">\n"
-		"<id>console1.desktop</id>\n"
-		"<pkgname>app-console</pkgname>\n"
-		"<source_pkgname>app</source_pkgname>\n"
-		"<name>Console1</name>\n"
-		"<summary>A console1 test application</summary>\n"
-		"<icon height=\"64\" width=\"64\" type=\"cached\">console1.png</icon>\n"
-		"<categories>\n"
-		"<category>ConsoleOnly</category>\n"
-		"</categories>\n"
-		"<kudos>\n"
-		"<kudo>ModernToolkit</kudo>\n"
-		"</kudos>\n"
-		"<vetos>\n"
-		"<veto>Required AppData: ConsoleOnly</veto>\n"
-		"</vetos>\n"
-		"<project_license>GPL-2.0+</project_license>\n"
-		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
-		"<releases>\n"
-		"<release version=\"1\" timestamp=\"1407844800\"/>\n"
-		"</releases>\n"
-		"<languages>\n"
-		"<lang percentage=\"100\">en_GB</lang>\n"
-		"<lang percentage=\"33\">ru</lang>\n"
-		"</languages>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-console-1-1.fc21.noarch.rpm</value>\n"
-		"</metadata>\n"
-		"</component>\n"
-		"<component type=\"desktop\">\n"
-		"<id>console2.desktop</id>\n"
-		"<pkgname>app-console</pkgname>\n"
-		"<source_pkgname>app</source_pkgname>\n"
-		"<name>Console2</name>\n"
-		"<summary>A console2 test application</summary>\n"
-		"<icon height=\"64\" width=\"64\" type=\"cached\">console2.png</icon>\n"
-		"<categories>\n"
-		"<category>ConsoleOnly</category>\n"
-		"</categories>\n"
-		"<kudos>\n"
-		"<kudo>ModernToolkit</kudo>\n"
-		"</kudos>\n"
-		"<vetos>\n"
-		"<veto>Required AppData: ConsoleOnly</veto>\n"
-		"</vetos>\n"
-		"<project_license>GPL-2.0+</project_license>\n"
-		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
-		"<releases>\n"
-		"<release version=\"1\" timestamp=\"1407844800\"/>\n"
-		"</releases>\n"
-		"<languages>\n"
-		"<lang percentage=\"100\">en_GB</lang>\n"
-		"<lang percentage=\"33\">ru</lang>\n"
-		"</languages>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-console-1-1.fc21.noarch.rpm</value>\n"
-		"</metadata>\n"
-		"</component>\n"
 		"</components>\n";
 	ret = asb_test_compare_lines (xml_failed->str, expected_xml, &error);
 	g_assert_no_error (error);
@@ -756,6 +657,13 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<pkgname>app</pkgname>\n"
 		"<metadata>\n"
 		"<value key=\"X-CacheID\">app-1-1.fc21.i686.rpm</value>\n"
+		"</metadata>\n"
+		"</component>\n"
+		"<component>\n"
+		"<id>composite.x86_64</id>\n"
+		"<pkgname>composite</pkgname>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">composite-1-1.fc21.x86_64.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
 		"<component>\n"
@@ -923,6 +831,7 @@ asb_test_firmware_func (void)
 		"<description><p>Updating the firmware on your ColorHug device "
 		"improves performance and adds new features.</p></description>\n"
 		"<icon type=\"stock\">application-x-executable</icon>\n"
+		"<project_license>GPL-2.0+</project_license>\n"
 		"<url type=\"homepage\">http://www.hughski.com/</url>\n"
 		"<releases>\n"
 		"<release version=\"2.0.2\" timestamp=\"1424116753\">\n"
@@ -942,10 +851,6 @@ asb_test_firmware_func (void)
 		"<ul><li>Use TakeReadings() to do a quick non-adaptive measurement</li>"
 		"<li>Scale XYZ measurement with a constant factor to make the CCMX more "
 		"sane</li></ul></description>\n"
-		"</release>\n"
-		"<release version=\"2.0.0\" timestamp=\"1425168000\">\n"
-		"<checksum filename=\"colorhug-als-2.0.0.cab\" target=\"container\" type=\"sha1\">abcedb24d0a2fa8c9cab065d6751e1b89b4c79c1</checksum>\n"
-		"<checksum filename=\"firmware.bin\" target=\"content\" type=\"sha1\">767a8a7b8a7b350b513f57761204b4aaa657aa44</checksum>\n"
 		"</release>\n"
 		"</releases>\n"
 		"<provides>\n"

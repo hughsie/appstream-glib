@@ -46,39 +46,19 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 }
 
 /**
- * _asb_plugin_check_filename:
- */
-static gboolean
-_asb_plugin_check_filename (const gchar *filename)
-{
-	if (asb_plugin_match_glob ("*.inf", filename))
-		return TRUE;
-	return FALSE;
-}
-
-/**
- * asb_plugin_check_filename:
- */
-gboolean
-asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
-{
-	return _asb_plugin_check_filename (filename);
-}
-
-/**
- * asb_plugin_firmware_get_metainfo_fn:
+ * asb_plugin_firmware_get_inf_fn:
  */
 static gchar *
-asb_plugin_firmware_get_metainfo_fn (const gchar *filename)
+asb_plugin_firmware_get_inf_fn (const gchar *filename)
 {
 	gchar *basename;
 	gchar *tmp;
 
 	basename = g_path_get_basename (filename);
-	tmp = g_strrstr (basename, ".inf");
+	tmp = g_strrstr (basename, ".metainfo.xml");
 	if (tmp != NULL)
 		*tmp = '\0';
-	return g_strdup_printf ("%s.metainfo.xml", basename);
+	return g_strdup_printf ("%s.inf", basename);
 }
 
 /**
@@ -98,30 +78,28 @@ asb_plugin_firmware_get_checksum (const gchar *filename,
 }
 
 /**
- * asb_plugin_process_filename:
+ * asb_plugin_firmware_refine:
  */
 static gboolean
-asb_plugin_process_filename (AsbPlugin *plugin,
-			     AsbPackage *pkg,
-			     const gchar *filename,
-			     GList **apps,
-			     const gchar *tmpdir,
-			     GError **error)
+asb_plugin_firmware_refine (AsbPlugin *plugin,
+			    AsbPackage *pkg,
+			    const gchar *filename,
+			    AsbApp *app,
+			    const gchar *tmpdir,
+			    GError **error)
 {
 	AsRelease *release;
 	GError *error_local = NULL;
 	const gchar *fw_basename = NULL;
 	g_autofree gchar *checksum = NULL;
-	g_autofree gchar *filename_full = NULL;
 	g_autofree gchar *location_checksum = NULL;
 	g_autofree gchar *metainfo_fn = NULL;
-	g_autoptr(AsbApp) app = NULL;
+	g_autoptr(AsApp) inf = NULL;
 	g_autoptr(AsChecksum) csum = NULL;
 
 	/* parse */
-	filename_full = g_build_filename (tmpdir, filename, NULL);
-	app = asb_app_new (pkg, NULL);
-	if (!as_app_parse_file (AS_APP (app), filename_full,
+	inf = as_app_new ();
+	if (!as_app_parse_file (inf, filename,
 				AS_APP_PARSE_FLAG_NONE, &error_local)) {
 		g_set_error_literal (error,
 				     ASB_PLUGIN_ERROR,
@@ -130,7 +108,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		return FALSE;
 	}
 
-	/* get the default release, creating if required */
+	/* get the correct release, creating if required */
 	release = as_app_get_release_default (AS_APP (app));
 	if (release == NULL) {
 		release = as_release_new ();
@@ -152,13 +130,8 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	as_checksum_set_filename (csum, asb_package_get_basename (pkg));
 	as_release_add_checksum (release, csum);
 
-	/* for the adddata plugin; removed in asb_plugin_merge() */
-	metainfo_fn = asb_plugin_firmware_get_metainfo_fn (filename);
-	if (metainfo_fn != NULL)
-		as_app_add_metadata (AS_APP (app), "MetainfoBasename", metainfo_fn);
-
 	/* set the internal checksum */
-	fw_basename = as_app_get_metadata_item (AS_APP (app), "FirmwareBasename");
+	fw_basename = as_app_get_metadata_item (inf, "FirmwareBasename");
 	if (fw_basename != NULL) {
 		g_autofree gchar *checksum_bin = NULL;
 		g_autofree gchar *fn_bin = NULL;
@@ -181,72 +154,40 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		as_release_add_checksum (release, csum_bin);
 	}
 
-	asb_plugin_add_app (apps, AS_APP (app));
 	return TRUE;
 }
 
 /**
- * asb_plugin_process:
+ * asb_plugin_process_app:
  */
-GList *
-asb_plugin_process (AsbPlugin *plugin,
-		    AsbPackage *pkg,
-		    const gchar *tmpdir,
-		    GError **error)
+gboolean
+asb_plugin_process_app (AsbPlugin *plugin,
+			AsbPackage *pkg,
+			AsbApp *app,
+			const gchar *tmpdir,
+			GError **error)
 {
-	gboolean ret;
-	GError *error_local = NULL;
-	GList *apps = NULL;
-	guint i;
-	gchar **filelist;
+	const gchar *tmp;
+	g_autofree gchar *fn = NULL;
+	g_autofree gchar *inf_fn = NULL;
 
-	filelist = asb_package_get_filelist (pkg);
-	for (i = 0; filelist[i] != NULL; i++) {
-		if (!_asb_plugin_check_filename (filelist[i]))
-			continue;
-		ret = asb_plugin_process_filename (plugin,
-						   pkg,
-						   filelist[i],
-						   &apps,
-						   tmpdir,
-						   &error_local);
-		if (!ret) {
-			asb_package_log (pkg,
-					 ASB_PACKAGE_LOG_LEVEL_INFO,
-					 "Failed to process %s: %s",
-					 filelist[i],
-					 error_local->message);
-			g_clear_error (&error_local);
-		}
-	}
-
-	/* no desktop files we care about */
-	if (apps == NULL) {
+	/* use metainfo basename */
+	tmp = as_app_get_source_file (AS_APP (app));
+	if (tmp == NULL) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_FAILED,
-			     "nothing interesting in %s",
-			     asb_package_get_basename (pkg));
-		return NULL;
+			     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
+			     "no source_file set for %s",
+			     as_app_get_id (AS_APP (app)));
+		return FALSE;
 	}
-	return apps;
-}
 
-/**
- * asb_plugin_merge:
- */
-void
-asb_plugin_merge (AsbPlugin *plugin, GList *list)
-{
-	AsApp *app;
-	GList *l;
-
-	/* remove the MetainfoBasename metadata */
-	for (l = list; l != NULL; l = l->next) {
-		app = AS_APP (l->data);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_FIRMWARE)
-			continue;
-		as_app_remove_metadata (app, "MetainfoBasename");
-		as_app_remove_metadata (app, "FirmwareBasename");
+	/* use the .inf file to refine the application */
+	inf_fn = asb_plugin_firmware_get_inf_fn (tmp);
+	fn = g_build_filename (tmpdir, inf_fn, NULL);
+	if (g_file_test (fn, G_FILE_TEST_EXISTS)) {
+		if (!asb_plugin_firmware_refine (plugin, pkg, fn, app, tmpdir, error))
+			return FALSE;
 	}
+	return TRUE;
 }

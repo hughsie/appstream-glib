@@ -27,9 +27,6 @@ plugin_LTLIBRARIES =					\
 	libasb_plugin_gettext.la			\
 	libasb_plugin_gstreamer.la			\
 	libasb_plugin_hardcoded.la			\
-	libasb_plugin_ibus_sql.la			\
-	libasb_plugin_ibus_xml.la			\
-	libasb_plugin_metainfo.la			\
 	libasb_plugin_kde_services.la			\
 	libasb_plugin_kde_notifyrc.la			\
 	libasb_plugin_nm.la
@@ -68,11 +65,6 @@ libasb_plugin_gstreamer_la_SOURCES = asb-plugin-gstreamer.c
 libasb_plugin_gstreamer_la_LIBADD = $(GLIB_LIBS)
 libasb_plugin_gstreamer_la_LDFLAGS = -module -avoid-version
 libasb_plugin_gstreamer_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
-
-libasb_plugin_metainfo_la_SOURCES = asb-plugin-metainfo.c
-libasb_plugin_metainfo_la_LIBADD = $(GLIB_LIBS)
-libasb_plugin_metainfo_la_LDFLAGS = -module -avoid-version
-libasb_plugin_metainfo_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
 libasb_plugin_gettext_la_SOURCES = asb-plugin-gettext.c
 libasb_plugin_gettext_la_LIBADD = $(GLIB_LIBS)
@@ -113,16 +105,6 @@ libasb_plugin_nm_la_SOURCES = asb-plugin-nm.c
 libasb_plugin_nm_la_LIBADD = $(GLIB_LIBS)
 libasb_plugin_nm_la_LDFLAGS = -module -avoid-version
 libasb_plugin_nm_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
-
-libasb_plugin_ibus_sql_la_SOURCES = asb-plugin-ibus-sql.c
-libasb_plugin_ibus_sql_la_LIBADD = $(GLIB_LIBS) $(SQLITE_LIBS)
-libasb_plugin_ibus_sql_la_LDFLAGS = -module -avoid-version
-libasb_plugin_ibus_sql_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
-
-libasb_plugin_ibus_xml_la_SOURCES = asb-plugin-ibus-xml.c
-libasb_plugin_ibus_xml_la_LIBADD = $(GLIB_LIBS) $(SQLITE_LIBS)
-libasb_plugin_ibus_xml_la_LDFLAGS = -module -avoid-version
-libasb_plugin_ibus_xml_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
 libasb_plugin_font_la_SOURCES = asb-plugin-font.c
 libasb_plugin_font_la_LIBADD = $(GLIB_LIBS) $(FREETYPE_LIBS) $(GDKPIXBUF_LIBS) $(GTK_LIBS)

@@ -236,7 +236,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	GPtrArray *array;
 	gboolean ret;
 	gchar *cache_id;
-	gchar *tmp;
 	guint i;
 	guint nr_added = 0;
 	g_autoptr(GError) error = NULL;
@@ -401,17 +400,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 					 error->message);
 			g_clear_error (&error);
 			goto skip;
-		}
-
-		/* veto apps that *still* require appdata */
-		array = asb_app_get_requires_appdata (app);
-		for (i = 0; i < array->len; i++) {
-			tmp = g_ptr_array_index (array, i);
-			if (tmp == NULL) {
-				as_app_add_veto (AS_APP (app), "Required AppData");
-				continue;
-			}
-			as_app_add_veto (AS_APP (app), "Required AppData: %s", tmp);
 		}
 
 		/* set cache-id in case we want to use the metadata directly */

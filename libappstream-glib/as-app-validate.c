@@ -1209,6 +1209,14 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 				     "<pkgname> not allowed in metainfo");
 	}
 
+	/* appdata */
+	if (as_app_get_icon_default (app) != NULL &&
+	    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA) {
+		ai_app_validate_add (&helper,
+				     AS_PROBLEM_KIND_TAG_INVALID,
+				     "<icon> not allowed in appdata");
+	}
+
 	/* extends */
 	if (as_app_get_extends(app)->len == 0 &&
 	    as_app_get_id_kind (app) == AS_ID_KIND_ADDON &&

@@ -68,16 +68,9 @@ AsbApp		*asb_app_new			(AsbPackage	*pkg,
 						 const gchar	*id);
 void		 asb_app_set_hidpi_enabled	(AsbApp		*app,
 						 gboolean	 hidpi_enabled);
-void		 asb_app_add_requires_appdata	(AsbApp		*app,
-						 const gchar	*fmt,
-						 ...)
-						 G_GNUC_PRINTF(2,3);
-void		 asb_app_set_requires_appdata	(AsbApp		*app,
-						 gboolean	 requires_appdata);
-
-GPtrArray	*asb_app_get_requires_appdata	(AsbApp		*app);
+void		 asb_app_set_package		(AsbApp		*app,
+						 AsbPackage	*pkg);
 AsbPackage	*asb_app_get_package		(AsbApp		*app);
-
 gboolean	 asb_app_save_resources		(AsbApp		*app,
 						 AsbAppSaveFlags save_flags,
 						 GError		**error);
