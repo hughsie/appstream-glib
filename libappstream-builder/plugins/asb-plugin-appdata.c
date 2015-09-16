@@ -45,28 +45,6 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 }
 
 /**
- * asb_plugin_appdata_log_overwrite:
- */
-static void
-asb_plugin_appdata_log_overwrite (AsbApp *app,
-				  const gchar *property_name,
-				  const gchar *old,
-				  const gchar *new)
-{
-	/* does the value already exist with this value */
-	if (g_strcmp0 (old, new) == 0)
-		return;
-
-	/* does the metadata exist with any value */
-	if (old != NULL) {
-		asb_package_log (asb_app_get_package (app),
-				 ASB_PACKAGE_LOG_LEVEL_INFO,
-				 "AppData %s=%s->%s",
-				 property_name, old, new);
-	}
-}
-
-/**
  * asb_plugin_process_filename:
  */
 static gboolean
@@ -195,17 +173,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	for (l = list; l != NULL; l = l->next) {
 		key = l->data;
 		tmp = g_hash_table_lookup (hash, key);
-		if (g_strcmp0 (key, "C") == 0) {
-			old = as_app_get_name (AS_APP (app), key);
-			asb_plugin_appdata_log_overwrite (app, "name",
-							  old, tmp);
-		}
 		as_app_set_name (AS_APP (app), key, tmp);
-	}
-	if (g_list_length (list) == 1) {
-		asb_package_log (asb_app_get_package (app),
-				 ASB_PACKAGE_LOG_LEVEL_WARNING,
-				 "AppData 'name' has no translations");
 	}
 	g_list_free (list);
 
@@ -215,17 +183,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	for (l = list; l != NULL; l = l->next) {
 		key = l->data;
 		tmp = g_hash_table_lookup (hash, key);
-		if (g_strcmp0 (key, "C") == 0) {
-			old = as_app_get_comment (AS_APP (app), key);
-			asb_plugin_appdata_log_overwrite (app, "summary",
-							  old, tmp);
-		}
 		as_app_set_comment (AS_APP (app), key, tmp);
-	}
-	if (g_list_length (list) == 1) {
-		asb_package_log (asb_app_get_package (app),
-				 ASB_PACKAGE_LOG_LEVEL_WARNING,
-				 "AppData 'summary' has no translations");
 	}
 	g_list_free (list);
 
@@ -236,11 +194,6 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		key = l->data;
 		tmp = g_hash_table_lookup (hash, key);
 		as_app_set_description (AS_APP (app), key, tmp);
-	}
-	if (g_list_length (list) == 1) {
-		asb_package_log (asb_app_get_package (app),
-				 ASB_PACKAGE_LOG_LEVEL_WARNING,
-				 "AppData 'description' has no translations");
 	}
 	g_list_free (list);
 
@@ -269,8 +222,6 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	for (l = list; l != NULL; l = l->next) {
 		key = l->data;
 		tmp = g_hash_table_lookup (hash, key);
-		old = as_app_get_metadata_item (AS_APP (app), key);
-		asb_plugin_appdata_log_overwrite (app, "metadata", old, tmp);
 		as_app_add_metadata (AS_APP (app), key, tmp);
 	}
 
