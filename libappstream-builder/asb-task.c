@@ -362,7 +362,8 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 					 ASB_PACKAGE_ENSURE_URL,
 					 error_not_used))
 			return FALSE;
-		if (asb_package_get_url (priv->pkg) != NULL) {
+		if (asb_package_get_url (priv->pkg) != NULL &&
+		    as_app_get_url_item (AS_APP (app), AS_URL_KIND_HOMEPAGE) == NULL) {
 			as_app_add_url (AS_APP (app),
 					AS_URL_KIND_HOMEPAGE,
 					asb_package_get_url (priv->pkg));

@@ -423,7 +423,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<category>Fonts</category>\n"
 		"</categories>\n"
 		"<project_license>GPL-2.0+</project_license>\n"
-		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
+		"<url type=\"homepage\">http://fedorahosted.org/liberation-fonts/</url>\n"
 		"<screenshots>\n"
 		"<screenshot type=\"default\">\n"
 		"<caption>Liberation Serif – Regular</caption>\n"
