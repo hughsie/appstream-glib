@@ -48,6 +48,7 @@ gchar		*as_node_take_attribute		(const GNode	*node,
 						 const gchar	*key);
 gchar		*as_node_reflow_text		(const gchar	*text,
 						 gssize		 text_len);
+gchar		*as_node_fix_locale		(const gchar	*locale);
 
 G_END_DECLS
 

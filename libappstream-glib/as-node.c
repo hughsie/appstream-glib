@@ -1470,6 +1470,8 @@ as_node_insert_localized (AsNode *parent,
 		key = l->data;
 		if (g_strcmp0 (key, "C") == 0)
 			continue;
+		if (g_strcmp0 (key, "x-test") == 0)
+			continue;
 		value = g_hash_table_lookup (localized, key);
 		if ((insert_flags & AS_NODE_INSERT_FLAG_DEDUPE_LANG) > 0 &&
 		    g_strcmp0 (value_c, value) == 0)
@@ -1575,6 +1577,8 @@ as_node_get_localized (const AsNode *node, const gchar *key)
 		if (g_strcmp0 (as_tag_data_get_name (data), key) != 0)
 			continue;
 		xml_lang = as_node_attr_lookup (data, "xml:lang");
+		if (g_strcmp0 (xml_lang, "x-test") == 0)
+			continue;
 
 		/* avoid storing identical strings */
 		data_localized = data->cdata;
@@ -1827,6 +1831,31 @@ as_node_get_localized_unwrap_type_ul (const AsNode *node,
 }
 
 /**
+ * as_node_fix_locale: (skip)
+ *
+ * Fixes and filters incorrect locale strings.
+ *
+ * Returns: a newly allocated string
+ *
+ * Since: 0.5.2
+ **/
+gchar *
+as_node_fix_locale (const gchar *locale)
+{
+	gchar *tmp;
+
+	if (locale == NULL)
+		return g_strdup ("C");
+	if (g_strcmp0 (locale, "xx") == 0)
+		return NULL;
+	if (g_strcmp0 (locale, "x-test") == 0)
+		return NULL;
+	tmp = g_strdup (locale);
+	g_strdelimit (tmp, "-", '_');
+	return tmp;
+}
+
+/**
  * as_node_get_localized_unwrap:
  * @node: a #AsNode.
  * @error: A #GError or %NULL.
@@ -1907,10 +1936,14 @@ as_node_get_localized_unwrap (const AsNode *node, GError **error)
 	results = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	keys = g_hash_table_get_keys (hash);
 	for (l = keys; l != NULL; l = l->next) {
+		gchar *locale_fixed;
 		xml_lang = l->data;
+		locale_fixed = as_node_fix_locale (xml_lang);
+		if (locale_fixed == NULL)
+			continue;
 		str = g_hash_table_lookup (hash, xml_lang);
 		g_hash_table_insert (results,
-				     g_strdup (xml_lang),
+				     locale_fixed,
 				     g_strdup (str->str));
 	}
 	return results;
