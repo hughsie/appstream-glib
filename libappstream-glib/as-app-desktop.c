@@ -191,15 +191,6 @@ as_app_parse_file_key (AsApp *app,
 						   NULL, NULL);
 		for (i = 0; list[i] != NULL; i++) {
 
-			/* check categories that if present would blacklist
-			 * the application */
-			if (fnmatch ("X-*-Settings-Panel", list[i], 0) == 0 ||
-			    fnmatch ("X-*-Settings", list[i], 0) == 0 ||
-			    fnmatch ("X-*-SettingsDialog", list[i], 0) == 0) {
-				as_app_add_veto (app, "category '%s' blacklisted", list[i]);
-				continue;
-			}
-
 			/* not a standard category */
 			if (g_str_has_prefix (list[i], "X-"))
 				continue;
