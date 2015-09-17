@@ -17,7 +17,6 @@ plugindir = $(libdir)/asb-plugins-$(AS_PLUGIN_VERSION)
 plugin_LTLIBRARIES =					\
 	libasb_plugin_absorb.la				\
 	libasb_plugin_appdata.la			\
-	libasb_plugin_blacklist.la			\
 	libasb_plugin_dbus.la				\
 	libasb_plugin_firmware.la			\
 	libasb_plugin_desktop.la			\
@@ -70,11 +69,6 @@ libasb_plugin_gettext_la_SOURCES = asb-plugin-gettext.c
 libasb_plugin_gettext_la_LIBADD = $(GLIB_LIBS)
 libasb_plugin_gettext_la_LDFLAGS = -module -avoid-version
 libasb_plugin_gettext_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
-
-libasb_plugin_blacklist_la_SOURCES = asb-plugin-blacklist.c
-libasb_plugin_blacklist_la_LIBADD = $(GLIB_LIBS)
-libasb_plugin_blacklist_la_LDFLAGS = -module -avoid-version
-libasb_plugin_blacklist_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
 libasb_plugin_hardcoded_la_SOURCES = asb-plugin-hardcoded.c
 libasb_plugin_hardcoded_la_LIBADD = $(GLIB_LIBS)
