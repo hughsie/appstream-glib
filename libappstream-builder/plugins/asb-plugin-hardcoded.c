@@ -108,32 +108,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 	/* add extra categories */
 	tmp = as_app_get_id (AS_APP (app));
-	if (g_strcmp0 (tmp, "0install.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System");
-	if (g_strcmp0 (tmp, "alacarte.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System");
-	if (g_strcmp0 (tmp, "deja-dup.desktop") == 0)
-		as_app_add_category (AS_APP (app), "Utility");
-	if (g_strcmp0 (tmp, "gddccontrol.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System");
 	if (g_strcmp0 (tmp, "nautilus.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System");
-	if (g_strcmp0 (tmp, "pessulus.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System");
-	if (g_strcmp0 (tmp, "pmdefaults.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System");
-	if (g_strcmp0 (tmp, "fwfstab.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System");
-	if (g_strcmp0 (tmp, "bmpanel2cfg.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System");
-	if (g_strcmp0 (tmp, "wallpapoz.desktop") == 0)
-		as_app_add_category (AS_APP (app), "System");
-	if (g_strcmp0 (tmp, "superkaramba.desktop") == 0)
 		as_app_add_category (AS_APP (app), "System");
 
 	/* add extra project groups */
-	if (g_strcmp0 (tmp, "nemo.desktop") == 0)
-		as_app_set_project_group (AS_APP (app), "Cinnamon");
 	if (g_strcmp0 (tmp, "xfdashboard.desktop") == 0)
 		as_app_set_project_group (AS_APP (app), "XFCE");
 
@@ -195,33 +173,6 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			as_app_add_kudo_kind (AS_APP (app),
 					      AS_KUDO_KIND_MODERN_TOOLKIT);
 			break;
-		}
-	}
-
-	/* look for ancient toolkits */
-	if (!asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_IGNORE_OBSOLETE_DEPS)) {
-		for (i = 0; i < deps->len; i++) {
-			tmp = g_ptr_array_index (deps, i);
-			if (g_strcmp0 (tmp, "libgtk-1.2.so.0") == 0) {
-				as_app_add_veto (AS_APP (app), "Uses obsolete GTK1 toolkit");
-				break;
-			}
-			if (g_strcmp0 (tmp, "libglib-1.2.so.0") == 0) {
-				as_app_add_veto (AS_APP (app), "Uses obsolete GLib library");
-				break;
-			}
-			if (g_strcmp0 (tmp, "libqt-mt.so.3") == 0) {
-				as_app_add_veto (AS_APP (app), "Uses obsolete QT3 toolkit");
-				break;
-			}
-			if (g_strcmp0 (tmp, "liblcms.so.1") == 0) {
-				as_app_add_veto (AS_APP (app), "Uses obsolete LCMS library");
-				break;
-			}
-			if (g_strcmp0 (tmp, "libelektra.so.4") == 0) {
-				as_app_add_veto (AS_APP (app), "Uses obsolete Elektra library");
-				break;
-			}
 		}
 	}
 
