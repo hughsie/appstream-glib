@@ -1758,7 +1758,6 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 					GError **error)
 {
 	AsApp *app;
-	const gchar *project_groups[] = { "GNOME", "KDE", "XFCE", NULL };
 	gdouble perc;
 	guint cnt;
 	guint i;
@@ -1781,21 +1780,6 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 		return FALSE;
 	}
 	g_string_append (html, "<table class=\"summary\">\n");
-
-	/* long descriptions */
-	cnt = 0;
-	for (i = 0; i < apps->len; i++) {
-		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
-			continue;
-		if (as_app_get_description (app, "C") != NULL)
-			cnt++;
-	}
-	perc = 100.f * (gdouble) cnt / (gdouble) total;
-	g_string_append_printf (html, "<tr><td class=\"alt\">Descriptions</td>"
-				"<td>%i/%i</td>"
-				"<td class=\"thin\">%.1f%%</td></tr>\n",
-				cnt, total, perc);
 
 	/* keywords */
 	cnt = 0;
@@ -1824,32 +1808,6 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 	g_string_append_printf (html, "<tr><td class=\"alt\">Screenshots</td>"
 				"<td>%i/%i</td><td class=\"thin\">%.1f%%</td></tr>\n",
 				cnt, total, perc);
-
-	/* project apps with appdata */
-	for (j = 0; project_groups[j] != NULL; j++) {
-		cnt = 0;
-		total = 0;
-		for (i = 0; i < apps->len; i++) {
-			app = g_ptr_array_index (apps, i);
-			if (g_strcmp0 (as_app_get_project_group (app),
-				       project_groups[j]) != 0)
-				continue;
-			if (as_app_get_id_kind (app) == AS_ID_KIND_ADDON)
-				continue;
-			total += 1;
-			if (as_app_get_screenshots(app)->len > 0 ||
-			    as_app_get_description (app, "C") != NULL)
-				cnt++;
-		}
-		perc = 0;
-		if (total > 0)
-			perc = 100.f * (gdouble) cnt / (gdouble) total;
-		g_string_append_printf (html, "<tr><td class=\"alt\">%s "
-					"AppData</td><td>%i/%i</td>"
-					"<td class=\"thin\">%.1f%%</td></tr>\n",
-					project_groups[j], cnt,
-					total, perc);
-	}
 
 	/* specific kudos */
 	total = 0;
