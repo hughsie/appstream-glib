@@ -290,7 +290,8 @@ asb_plugin_desktop_refine (AsbPlugin *plugin,
 			   GError **error)
 {
 	AsIcon *icon;
-	AsAppParseFlags parse_flags = AS_APP_PARSE_FLAG_USE_HEURISTICS;
+	AsAppParseFlags parse_flags = AS_APP_PARSE_FLAG_USE_HEURISTICS |
+				      AS_APP_PARSE_FLAG_ALLOW_VETO;
 	gboolean ret;
 	g_autofree gchar *app_id = NULL;
 	g_autoptr(AsApp) desktop_app = NULL;
