@@ -1043,8 +1043,6 @@ asb_context_write_xml_fail (AsbContext *ctx, GError **error)
 			continue;
 		if (as_app_get_vetos(app)->len == 0)
 			continue;
-		if (as_app_get_metadata_item (app, "NoDisplay") != NULL)
-			continue;
 		if (as_store_get_app_by_id (priv->store_failed,
 					    as_app_get_id (app)) != NULL)
 			continue;

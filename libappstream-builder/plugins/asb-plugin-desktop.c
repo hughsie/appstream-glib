@@ -306,10 +306,6 @@ asb_plugin_desktop_refine (AsbPlugin *plugin,
 	if (!as_app_parse_file (desktop_app, filename, parse_flags, error))
 		return FALSE;
 
-	/* NoDisplay apps are never included */
-	if (as_app_get_metadata_item (desktop_app, "NoDisplay") != NULL)
-		as_app_add_veto (AS_APP (app), "NoDisplay=true");
-
 	/* copy all metadata */
 	as_app_subsume_full (AS_APP (app), desktop_app, AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
 

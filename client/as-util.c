@@ -2810,8 +2810,6 @@ as_util_check_root_app (AsApp *app, GPtrArray *problems)
 	GError *error_local = NULL;
 
 	/* skip */
-	if (as_app_get_metadata_item (app, "NoDisplay") != NULL)
-		return;
 	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO)
 		return;
 
