@@ -2185,7 +2185,7 @@ as_util_matrix_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 		as_util_matrix_html_write_item (&state_app,
 						AS_UTIL_PKG_STATE_FAIL,
 						str,
-						"No comment in .desktop or summary in AppData file");
+						"No summary in AppData file");
 	} else {
 		as_util_matrix_html_write_item (NULL, AS_UTIL_PKG_STATE_OK, str, NULL);
 	}
