@@ -1637,7 +1637,7 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 		if (tmp2 != NULL)
 			*tmp2 = '\0';
 		g_string_append_printf (html, "<tr><td class=\"alt\">%s</td>"
-					"<td><a href=\"#%s\">%s</a></td></tr>\n",
+					"<td><a href=\"#%s.desktop\">%s</a></td></tr>\n",
 					"Extends", tmp, tmp);
 	}
 	g_free (tmp);

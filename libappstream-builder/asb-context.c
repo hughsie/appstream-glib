@@ -1012,8 +1012,8 @@ asb_context_detect_missing_parents (AsbContext *ctx, GError **error)
 			continue;
 
 		/* do not add the addon */
-		as_app_add_veto (app, "%s has no parent of '%s'\n",
-				  as_app_get_id (app), tmp);
+		as_app_add_veto (app, "%s has no parent of '%s'",
+				 as_app_get_id (app), tmp);
 		g_print ("WARNING: %s has no parent of '%s'\n",
 			 as_app_get_id (app), tmp);
 	}
