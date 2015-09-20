@@ -241,7 +241,7 @@ main (int argc, char *argv[])
 
 	/* big fat warning */
 	g_print ("THIS TOOL IS *DEPRECATED* AND WILL BE REMOVED SOON.\n");
-	g_print ("Please use 'apstream-util validate' in appstream-glib.\n\n");
+	g_print ("Please use 'appstream-util validate' in appstream-glib.\n\n");
 
 	context = g_option_context_new ("AppData Validation Program");
 	g_option_context_add_main_entries (context, options, NULL);
