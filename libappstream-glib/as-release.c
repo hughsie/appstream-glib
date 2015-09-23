@@ -320,6 +320,16 @@ as_release_set_version (AsRelease *release, const gchar *version)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	g_free (priv->version);
+
+	/* convert 0x prefixed strings to base 10 */
+	if (g_str_has_prefix (version, "0x")) {
+		guint64 tmp;
+		tmp = g_ascii_strtoull (version + 2, NULL, 16);
+		priv->version = g_strdup_printf ("%" G_GUINT64_FORMAT, tmp);
+		return;
+	}
+
+	/* no special rule */
 	priv->version = g_strdup (version);
 }
 
@@ -496,7 +506,6 @@ as_release_node_parse (AsRelease *release, GNode *node,
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	GNode *n;
 	const gchar *tmp;
-	gchar *taken;
 
 	tmp = as_node_get_attribute (node, "timestamp");
 	if (tmp != NULL)
@@ -504,11 +513,9 @@ as_release_node_parse (AsRelease *release, GNode *node,
 	tmp = as_node_get_attribute (node, "urgency");
 	if (tmp != NULL)
 		as_release_set_urgency (release, as_urgency_kind_from_string (tmp));
-	taken = as_node_take_attribute (node, "version");
-	if (taken != NULL) {
-		g_free (priv->version);
-		priv->version = taken;
-	}
+	tmp = as_node_get_attribute (node, "version");
+	if (tmp != NULL)
+		as_release_set_version (release, tmp);
 
 	/* get optional locations */
 	g_ptr_array_set_size (priv->locations, 0);
