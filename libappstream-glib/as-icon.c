@@ -452,16 +452,11 @@ void
 as_icon_set_pixbuf (AsIcon *icon, GdkPixbuf *pixbuf)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
-
-	if (priv->pixbuf != NULL)
-		g_object_unref (priv->pixbuf);
-	if (pixbuf == NULL) {
-		priv->pixbuf = NULL;
-		return;
+	g_set_object (&priv->pixbuf, pixbuf);
+	if (pixbuf != NULL) {
+		priv->width = gdk_pixbuf_get_width (pixbuf);
+		priv->height = gdk_pixbuf_get_height (pixbuf);
 	}
-	priv->pixbuf = g_object_ref (pixbuf);
-	priv->width = gdk_pixbuf_get_width (pixbuf);
-	priv->height = gdk_pixbuf_get_height (pixbuf);
 }
 
 /**

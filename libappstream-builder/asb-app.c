@@ -118,9 +118,7 @@ asb_app_set_package (AsbApp *app, AsbPackage *pkg)
 {
 	AsbAppPrivate *priv = GET_PRIVATE (app);
 
-	if (priv->pkg != NULL)
-		g_object_unref (priv->pkg);
-	priv->pkg = g_object_ref (pkg);
+	g_set_object (&priv->pkg, pkg);
 
 	/* be helpful */
 	if (asb_package_get_kind (pkg) == ASB_PACKAGE_KIND_DEFAULT) {

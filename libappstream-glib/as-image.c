@@ -348,18 +348,14 @@ as_image_set_pixbuf (AsImage *image, GdkPixbuf *pixbuf)
 	guchar *data;
 	guint len;
 
-	if (priv->pixbuf != NULL)
-		g_object_unref (priv->pixbuf);
-	if (pixbuf == NULL) {
-		priv->pixbuf = NULL;
+	g_set_object (&priv->pixbuf, pixbuf);
+	if (pixbuf == NULL)
 		return;
-	}
 	if (priv->md5 == NULL) {
 		data = gdk_pixbuf_get_pixels_with_length (pixbuf, &len);
 		priv->md5 = g_compute_checksum_for_data (G_CHECKSUM_MD5,
 							 data, len);
 	}
-	priv->pixbuf = g_object_ref (pixbuf);
 	priv->width = gdk_pixbuf_get_width (pixbuf);
 	priv->height = gdk_pixbuf_get_height (pixbuf);
 }
