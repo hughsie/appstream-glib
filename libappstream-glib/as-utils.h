@@ -125,6 +125,8 @@ gint		 as_utils_vercmp		(const gchar	*version_a,
 						 const gchar	*version_b);
 gboolean	 as_utils_guid_is_valid		(const gchar	*guid);
 gchar		*as_utils_guid_from_string	(const gchar	*str);
+gchar		*as_utils_version_from_uint32	(guint32	 val);
+gchar		*as_utils_version_parse		(const gchar	*version);
 
 G_END_DECLS
 

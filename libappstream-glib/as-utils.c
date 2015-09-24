@@ -1393,6 +1393,8 @@ as_utils_vercmp (const gchar *version_a, const gchar *version_b)
 	gint64 ver_b;
 	guint i;
 	guint longest_split;
+	g_autofree gchar *str_a = NULL;
+	g_autofree gchar *str_b = NULL;
 	g_auto(GStrv) split_a = NULL;
 	g_auto(GStrv) split_b = NULL;
 
@@ -1405,8 +1407,10 @@ as_utils_vercmp (const gchar *version_a, const gchar *version_b)
 		return 0;
 
 	/* split into sections, and try to parse */
-	split_a = g_strsplit (version_a, ".", -1);
-	split_b = g_strsplit (version_b, ".", -1);
+	str_a = as_utils_version_parse (version_a);
+	str_b = as_utils_version_parse (version_b);
+	split_a = g_strsplit (str_a, ".", -1);
+	split_b = g_strsplit (str_b, ".", -1);
 	longest_split = MAX (g_strv_length (split_a), g_strv_length (split_b));
 	for (i = 0; i < longest_split; i++) {
 
@@ -1529,4 +1533,90 @@ as_utils_guid_from_string (const gchar *str)
 	tmp[36] = '\0';
 	g_assert (as_utils_guid_is_valid (tmp));
 	return tmp;
+}
+
+/**
+ * as_utils_version_from_uint32:
+ * @val: A uint32le version number
+ *
+ * Returns a dotted decimal version string from a 32 bit number.
+ *
+ * Returns: A version number, e.g. "1.0.3"
+ *
+ * Since: 0.5.2
+ **/
+gchar *
+as_utils_version_from_uint32 (guint32 val)
+{
+	GString *str;
+	gboolean valid = FALSE;
+	guint i;
+	guint8 *tmp = (guint8 *) &val;
+
+	/* create version string */
+	str = g_string_sized_new (13);
+	for (i = 0; i < 4; i++) {
+		if (tmp[3 - i] > 0 || i == 3)
+			valid = TRUE;
+		if (valid)
+			g_string_append_printf (str, "%i.", tmp[3 - i]);
+	}
+
+	/* delete trailing dot */
+	if (str->len > 0)
+		g_string_truncate (str, str->len - 1);
+
+	return g_string_free (str, FALSE);
+}
+
+/**
+ * as_utils_version_parse:
+ * @version: A version number
+ *
+ * Returns a dotted decimal version string from a version string. The supported
+ * formats are:
+ *
+ * - Dotted decimal, e.g. "1.2.3"
+ * - Base 16, a hex number *with* a 0x prefix, e.g. "0x10203"
+ * - Base 10, a string containing just [0-9], e.g. "66051"
+ *
+ * Anything with a '.' or that doesn't match [0-9] or 0x[a-f,0-9] is considered
+ * a string and returned without modification.
+ *
+ * Returns: A version number, e.g. "1.0.3"
+ *
+ * Since: 0.5.2
+ */
+gchar *
+as_utils_version_parse (const gchar *version)
+{
+	gchar *endptr = NULL;
+	guint64 tmp;
+	guint base;
+	guint i;
+
+	/* already dotted decimal */
+	if (g_strstr_len (version, -1, ".") != NULL)
+		return g_strdup (version);
+
+	/* convert 0x prefixed strings to dotted decimal */
+	if (g_str_has_prefix (version, "0x")) {
+		version += 2;
+		base = 16;
+	} else {
+		/* for non-numeric content, just return the string */
+		for (i = 0; version[i] != '\0'; i++) {
+			if (!g_ascii_isdigit (version[i]))
+				return g_strdup (version);
+		}
+		base = 10;
+	}
+
+	/* convert */
+	tmp = g_ascii_strtoull (version, &endptr, base);
+	if (endptr != NULL && endptr[0] != '\0')
+		return g_strdup (version);
+	if (tmp == 0 || tmp < 0xff)
+		return g_strdup (version);
+	return as_utils_version_from_uint32 (tmp);
 }

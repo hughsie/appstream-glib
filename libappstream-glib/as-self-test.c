@@ -378,7 +378,7 @@ as_test_release_func (void)
 
 	/* verify converting hex prefix */
 	as_release_set_version (release, "0x600100");
-	g_assert_cmpstr (as_release_get_version (release), ==, "6291712");
+	g_assert_cmpstr (as_release_get_version (release), ==, "96.1.0");
 }
 
 static void
@@ -3522,6 +3522,49 @@ as_test_utils_func (void)
 }
 
 static void
+as_test_utils_version_func (void)
+{
+	guint i;
+	struct {
+		guint32 val;
+		const gchar *ver;
+	} version_from_uint32[] = {
+		{ 0x0,		"0" },
+		{ 0xff,		"255" },
+		{ 0xff01,	"255.1" },
+		{ 0xff0001,	"255.0.1" },
+		{ 0xff000100,	"255.0.1.0" },
+		{ NULL,		NULL }
+	};
+	struct {
+		const gchar *old;
+		const gchar *new;
+	} version_parse[] = {
+		{ "0",		"0" },
+		{ "257",	"1.1" },
+		{ "1.2.3",	"1.2.3" },
+		{ "0xff0001",	"255.0.1" },
+		{ "16711681",	"255.0.1" },
+		{ "dave",	"dave" },
+		{ NULL,		NULL }
+	};
+
+	/* check version conversion */
+	for (i = 0; version_from_uint32[i].ver != NULL; i++) {
+		g_autofree gchar *ver = NULL;
+		ver = as_utils_version_from_uint32 (version_from_uint32[i].val);
+		g_assert_cmpstr (ver, ==, version_from_uint32[i].ver);
+	}
+
+	/* check version parsing */
+	for (i = 0; version_parse[i].old != NULL; i++) {
+		g_autofree gchar *ver = NULL;
+		ver = as_utils_version_parse (version_parse[i].old);
+		g_assert_cmpstr (ver, ==, version_parse[i].new);
+	}
+}
+
+static void
 as_test_store_app_install_func (void)
 {
 	GError *error = NULL;
@@ -3818,6 +3861,10 @@ as_test_utils_vercmp_func (void)
 {
 	/* same */
 	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.3"), ==, 0);
+
+	/* same, not dotted decimal */
+	g_assert_cmpint (as_utils_vercmp ("1.2.3", "0x10203"), ==, 0);
+	g_assert_cmpint (as_utils_vercmp ("0x10203", "0x10203"), ==, 0);
 
 	/* upgrade and downgrade */
 	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.4"), <, 0);
@@ -4253,6 +4300,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{intltool}", as_test_node_intltool_func);
 	g_test_add_func ("/AppStream/node{sort}", as_test_node_sort_func);
 	g_test_add_func ("/AppStream/utils", as_test_utils_func);
+	g_test_add_func ("/AppStream/utils{version}", as_test_utils_version_func);
 	g_test_add_func ("/AppStream/utils{guid}", as_test_utils_guid_func);
 	g_test_add_func ("/AppStream/utils{icons}", as_test_utils_icons_func);
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);

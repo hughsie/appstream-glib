@@ -320,17 +320,7 @@ as_release_set_version (AsRelease *release, const gchar *version)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	g_free (priv->version);
-
-	/* convert 0x prefixed strings to base 10 */
-	if (g_str_has_prefix (version, "0x")) {
-		guint64 tmp;
-		tmp = g_ascii_strtoull (version + 2, NULL, 16);
-		priv->version = g_strdup_printf ("%" G_GUINT64_FORMAT, tmp);
-		return;
-	}
-
-	/* no special rule */
-	priv->version = g_strdup (version);
+	priv->version = as_utils_version_parse (version);
 }
 
 /**
