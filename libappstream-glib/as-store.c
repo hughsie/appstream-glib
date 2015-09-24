@@ -39,6 +39,7 @@
 #include "as-app-private.h"
 #include "as-node-private.h"
 #include "as-problem.h"
+#include "as-profile.h"
 #include "as-monitor.h"
 #include "as-store.h"
 #include "as-utils-private.h"
@@ -69,6 +70,7 @@ typedef struct
 	guint32			 filter;
 	guint			 changed_block_refcnt;
 	gboolean		 is_pending_changed_signal;
+	AsProfile		*profile;
 } AsStorePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsStore, as_store, G_TYPE_OBJECT)
@@ -112,6 +114,7 @@ as_store_finalize (GObject *object)
 	g_free (priv->builder_id);
 	g_ptr_array_unref (priv->array);
 	g_object_unref (priv->monitor);
+	g_object_unref (priv->profile);
 	g_hash_table_unref (priv->hash_id);
 	g_hash_table_unref (priv->hash_pkgname);
 	g_hash_table_unref (priv->metadata_indexes);
@@ -825,6 +828,10 @@ as_store_match_addons (AsStore *store)
 	const gchar *tmp;
 	guint i;
 	guint j;
+	g_autoptr(AsProfileTask) ptask = NULL;
+
+	/* profile */
+	ptask = as_profile_start_literal (priv->profile, "AsStore:match-addons");
 
 	for (i = 0; i < priv->array->len; i++) {
 		app = g_ptr_array_index (priv->array, i);
@@ -863,8 +870,12 @@ as_store_from_root (AsStore *store,
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autofree gchar *icon_path = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
+	g_autoptr(AsProfileTask) ptask = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
+
+	/* profile */
+	ptask = as_profile_start_literal (priv->profile, "AsStore:store-from-root");
 
 	/* emit once when finished */
 	tok = as_store_changed_inhibit (store);
@@ -1153,8 +1164,12 @@ as_store_from_file (AsStore *store,
 	g_autofree gchar *filename = NULL;
 	g_autoptr(GError) error_local = NULL;
 	g_autoptr(AsNode) root = NULL;
+	g_autoptr(AsProfileTask) ptask = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
+
+	/* profile */
+	ptask = as_profile_start_literal (priv->profile, "AsStore:store-from-file");
 
 	/* a DEP-11 file */
 	filename = g_file_get_path (file);
@@ -1673,7 +1688,12 @@ as_store_load_app_info_file (AsStore *store,
 			     GCancellable *cancellable,
 			     GError **error)
 {
+	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_autoptr(GFile) file = NULL;
+	g_autoptr(AsProfileTask) ptask = NULL;
+
+	/* profile */
+	ptask = as_profile_start (priv->profile, "AsStore:app-info{%s}", path_xml);
 
 	/* guess this based on the name */
 	if (!as_store_guess_origin_fallback (store, path_xml, error))
@@ -1895,6 +1915,10 @@ as_store_load_installed (AsStore *store,
 	const gchar *tmp;
 	g_autoptr(GDir) dir = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
+	g_autoptr(AsProfileTask) ptask = NULL;
+
+	/* profile */
+	ptask = as_profile_start_literal (priv->profile, "AsStore:load-installed");
 
 	dir = g_dir_open (path, 0, error);
 	if (dir == NULL)
@@ -2004,7 +2028,11 @@ as_store_load (AsStore *store,
 	guint i;
 	g_autoptr(GPtrArray) app_info = NULL;
 	g_autoptr(GPtrArray) installed = NULL;
+	g_autoptr(AsProfileTask) ptask = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
+
+	/* profile */
+	ptask = as_profile_start_literal (priv->profile, "AsStore:load");
 
 	/* system locations */
 	app_info = g_ptr_array_new_with_free_func (g_free);
@@ -2342,6 +2370,7 @@ static void
 as_store_init (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	priv->profile = as_profile_new ();
 	priv->api_version = AS_API_VERSION_NEWEST;
 	priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->watch_flags = AS_STORE_WATCH_FLAG_NONE;

@@ -76,6 +76,7 @@ libappstream_glib_include_HEADERS =				\
 	as-inf.h						\
 	as-node.h						\
 	as-problem.h						\
+	as-profile.h						\
 	as-provide.h						\
 	as-release.h						\
 	as-screenshot.h						\
@@ -107,6 +108,8 @@ libappstream_glib_la_SOURCES =					\
 	as-node-private.h					\
 	as-problem.c						\
 	as-problem.h						\
+	as-profile.c						\
+	as-profile.h						\
 	as-provide.c						\
 	as-provide-private.h					\
 	as-release.c						\

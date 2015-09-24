@@ -33,6 +33,7 @@
 #include <as-inf.h>
 #include <as-node.h>
 #include <as-problem.h>
+#include <as-profile.h>
 #include <as-provide.h>
 #include <as-release.h>
 #include <as-screenshot.h>
