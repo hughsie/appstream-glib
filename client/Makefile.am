@@ -57,15 +57,4 @@ appstream_builder_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 endif
 
-# ship this obsolete binary
-bin_PROGRAMS +=						\
-	appdata-validate
-appdata_validate_SOURCES =				\
-	as-validate.c
-appdata_validate_LDADD =				\
-	$(AS_GLIB_LIBS)					\
-	$(GLIB_LIBS)
-appdata_validate_CFLAGS =				\
-	$(WARNINGFLAGS_C)
-
 -include $(top_srcdir)/git.mk
