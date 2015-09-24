@@ -321,6 +321,7 @@ as_utils_is_stock_icon_name (const gchar *name)
 {
 	g_autoptr(GBytes) data = NULL;
 	g_autofree gchar *key = NULL;
+	gchar *tmp;
 
 	/* load the readonly data section and look for the icon name */
 	data = g_resource_lookup_data (as_get_resource (),
@@ -330,6 +331,11 @@ as_utils_is_stock_icon_name (const gchar *name)
 	if (data == NULL)
 		return FALSE;
 	key = g_strdup_printf ("\n%s\n", name);
+	tmp = g_strstr_len (key, -1, "-symbolic");
+	if (tmp != NULL) {
+		tmp[0] = '\n';
+		tmp[1] = '\0';
+	}
 	return g_strstr_len (g_bytes_get_data (data, NULL), -1, key) != NULL;
 }
 
