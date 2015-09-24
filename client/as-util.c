@@ -44,6 +44,7 @@ typedef struct {
 	GOptionContext		*context;
 	GPtrArray		*cmd_array;
 	gboolean		 nonet;
+	AsProfile		*profile;
 } AsUtilPrivate;
 
 typedef gboolean (*AsUtilPrivateCb)	(AsUtilPrivate	*util,
@@ -3692,6 +3693,7 @@ main (int argc, char *argv[])
 {
 	AsUtilPrivate *priv = NULL;
 	gboolean ret;
+	gboolean enable_profiling = FALSE;
 	gboolean nonet = FALSE;
 	gboolean verbose = FALSE;
 	gboolean version = FALSE;
@@ -3708,6 +3710,9 @@ main (int argc, char *argv[])
 		{ "version", '\0', 0, G_OPTION_ARG_NONE, &version,
 			/* TRANSLATORS: command line option */
 			_("Show version"), NULL },
+		{ "profile", '\0', 0, G_OPTION_ARG_NONE, &enable_profiling,
+			/* TRANSLATORS: command line option */
+			_("Enable profiling"), NULL },
 		{ NULL}
 	};
 
@@ -3718,6 +3723,7 @@ main (int argc, char *argv[])
 
 	/* create helper object */
 	priv = g_new0 (AsUtilPrivate, 1);
+	priv->profile = as_profile_new ();
 
 	/* add commands */
 	priv->cmd_array = g_ptr_array_new_with_free_func ((GDestroyNotify) as_util_item_free);
@@ -3918,12 +3924,17 @@ main (int argc, char *argv[])
 		goto out;
 	}
 
+	/* profile */
+	if (enable_profiling)
+		as_profile_dump (priv->profile);
+
 	/* success */
 	retval = 0;
 out:
 	if (priv != NULL) {
 		if (priv->cmd_array != NULL)
 			g_ptr_array_unref (priv->cmd_array);
+		g_object_unref (priv->profile);
 		g_option_context_free (priv->context);
 		g_free (priv);
 	}
