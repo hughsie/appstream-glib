@@ -1918,7 +1918,7 @@ as_store_load_installed (AsStore *store,
 	g_autoptr(AsProfileTask) ptask = NULL;
 
 	/* profile */
-	ptask = as_profile_start_literal (priv->profile, "AsStore:load-installed");
+	ptask = as_profile_start (priv->profile, "AsStore:load-installed{%s}", path);
 
 	dir = g_dir_open (path, 0, error);
 	if (dir == NULL)
