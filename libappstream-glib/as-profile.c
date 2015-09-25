@@ -122,8 +122,8 @@ as_profile_start_literal (AsProfile *profile, const gchar *id)
 	g_autofree gchar *id_thr = NULL;
 	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&profile->mutex);
 
-	g_return_if_fail (AS_IS_PROFILE (profile));
-	g_return_if_fail (id != NULL);
+	g_return_val_if_fail (AS_IS_PROFILE (profile), NULL);
+	g_return_val_if_fail (id != NULL, NULL);
 
 	/* only use the thread ID when not using the main thread */
 	self = g_thread_self ();
