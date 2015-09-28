@@ -32,6 +32,7 @@ struct _AsProfile
 	GPtrArray	*archived;
 	GMutex		 mutex;
 	GThread		*unthreaded;
+	guint		 autodump_id;
 };
 
 typedef struct {
@@ -234,7 +235,26 @@ as_profile_sort_cb (gconstpointer a, gconstpointer b)
 }
 
 /**
+ * as_profile_clear:
+ * @profile: A #AsProfile
+ *
+ * Clears the list of profiled events.
+ *
+ * Since: 0.2.2
+ **/
+void
+as_profile_clear (AsProfile *profile)
+{
+	g_ptr_array_set_size (profile->archived, 0);
+}
+
+/**
  * as_profile_dump:
+ * @profile: A #AsProfile
+ *
+ * Dumps the current profiling table to stdout.
+ *
+ * Since: 0.2.2
  **/
 void
 as_profile_dump (AsProfile *profile)
@@ -307,6 +327,34 @@ as_profile_dump (AsProfile *profile)
 }
 
 /**
+ * as_profile_autodump_cb:
+ **/
+static gboolean
+as_profile_autodump_cb (gpointer user_data)
+{
+	AsProfile *profile = AS_PROFILE (user_data);
+	as_profile_dump (profile);
+	profile->autodump_id = 0;
+	return G_SOURCE_REMOVE;
+}
+
+/**
+ * as_profile_set_autodump:
+ * @profile: A #AsProfile
+ *
+ * Dumps the current profiling table to stdout on a set interval.
+ *
+ * Since: 0.2.2
+ **/
+void
+as_profile_set_autodump (AsProfile *profile, guint delay)
+{
+	if (profile->autodump_id != 0)
+		g_source_remove (profile->autodump_id);
+	profile->autodump_id = g_timeout_add (delay, as_profile_autodump_cb, profile);
+}
+
+/**
  * as_profile_finalize:
  **/
 static void
@@ -314,6 +362,8 @@ as_profile_finalize (GObject *object)
 {
 	AsProfile *profile = AS_PROFILE (object);
 
+	if (profile->autodump_id != 0)
+		g_source_remove (profile->autodump_id);
 	g_ptr_array_foreach (profile->current, (GFunc) as_profile_item_free, NULL);
 	g_ptr_array_unref (profile->current);
 	g_ptr_array_unref (profile->archived);
