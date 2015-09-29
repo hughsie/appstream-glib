@@ -1281,7 +1281,11 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* load system database */
 	store = as_store_new ();
-	if (!as_store_load (store, AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM, NULL, error))
+	if (!as_store_load (store,
+			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
+			    AS_STORE_LOAD_FLAG_APPDATA |
+			    AS_STORE_LOAD_FLAG_DESKTOP,
+			    NULL, error))
 		return FALSE;
 	apps = as_store_get_apps (store);
 	for (i = 0; i < apps->len; i++) {
