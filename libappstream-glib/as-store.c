@@ -1069,6 +1069,12 @@ as_store_remove_by_source_file (AsStore *store, const gchar *filename)
 	as_store_perhaps_emit_changed (store, "remove-by-source-file");
 }
 
+static gboolean
+as_store_load_app_install_file (AsStore *store,
+				const gchar *filename,
+				const gchar *path_icons,
+				GError **error);
+
 /**
  * as_store_monitor_changed_cb:
  */
@@ -1082,14 +1088,20 @@ as_store_monitor_changed_cb (AsMonitor *monitor,
 	/* reload, or emit a signal */
 	if (priv->watch_flags & AS_STORE_WATCH_FLAG_ADDED) {
 		g_autoptr(GError) error = NULL;
-		g_autoptr(GFile) file = NULL;
 		_cleanup_uninhibit_ guint32 *tok = NULL;
 		tok = as_store_changed_inhibit (store);
 		as_store_remove_by_source_file (store, filename);
 		g_debug ("rescanning %s", filename);
-		file = g_file_new_for_path (filename);
-		if (!as_store_from_file (store, file, NULL, NULL, &error))
-			g_warning ("failed to rescan: %s", error->message);
+		if (g_str_has_suffix (filename, ".desktop")) {
+			if (!as_store_load_app_install_file (store, filename,
+							     NULL, &error))
+				g_warning ("failed to rescan: %s", error->message);
+		} else {
+			g_autoptr(GFile) file = NULL;
+			file = g_file_new_for_path (filename);
+			if (!as_store_from_file (store, file, NULL, NULL, &error))
+				g_warning ("failed to rescan: %s", error->message);
+		}
 	}
 	as_store_perhaps_emit_changed (store, "file changed");
 }
@@ -1107,11 +1119,17 @@ as_store_monitor_added_cb (AsMonitor *monitor,
 	/* reload, or emit a signal */
 	if (priv->watch_flags & AS_STORE_WATCH_FLAG_ADDED) {
 		g_autoptr(GError) error = NULL;
-		g_autoptr(GFile) file = NULL;
 		g_debug ("scanning %s", filename);
-		file = g_file_new_for_path (filename);
-		if (!as_store_from_file (store, file, NULL, NULL, &error))
-			g_warning ("failed to rescan: %s", error->message);
+		if (g_str_has_suffix (filename, ".desktop")) {
+			if (!as_store_load_app_install_file (store, filename,
+							     NULL, &error))
+				g_warning ("failed to rescan: %s", error->message);
+		} else {
+			g_autoptr(GFile) file = NULL;
+			file = g_file_new_for_path (filename);
+			if (!as_store_from_file (store, file, NULL, NULL, &error))
+				g_warning ("failed to rescan: %s", error->message);
+		}
 	} else {
 		as_store_perhaps_emit_changed (store, "file added");
 	}
@@ -1922,6 +1940,13 @@ as_store_load_installed (AsStore *store,
 
 	dir = g_dir_open (path, 0, error);
 	if (dir == NULL)
+		return FALSE;
+
+	/* watch the directories for changes */
+	if (!as_monitor_add_directory (priv->monitor,
+				       path,
+				       cancellable,
+				       error))
 		return FALSE;
 
 	/* emit once when finished */
