@@ -2754,6 +2754,15 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 	g_autofree gchar *icon = NULL;
 	g_autoptr(GdkPixbuf) pb = NULL;
 
+	/* these are set by the software center */
+	switch (as_app_get_id_kind (app)) {
+	case AS_ID_KIND_INPUT_METHOD:
+	case AS_ID_KIND_CODEC:
+		return TRUE;
+	default:
+		break;
+	}
+
 	/* nothing found */
 	icon_default = as_app_get_icon_default (app);
 	if (icon_default == NULL) {
