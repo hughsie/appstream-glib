@@ -3523,6 +3523,22 @@ as_test_utils_func (void)
 	g_assert_cmpstr (tmp, ==, "<p>para</p><ol><li>one</li><li>two</li></ol>");
 	g_free (tmp);
 
+	/* ignore errors */
+	tmp = as_markup_convert_full ("<p>para</p><ol><li>one</li></ol><li>two</li>",
+				      AS_MARKUP_CONVERT_FORMAT_APPSTREAM,
+				      AS_MARKUP_CONVERT_FLAG_IGNORE_ERRORS,
+				      &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (tmp, ==, "<p>para</p><ol><li>one</li></ol>");
+	g_free (tmp);
+	tmp = as_markup_convert_full ("<p>para</p><ol><li>one</li><li>two</ol>",
+				      AS_MARKUP_CONVERT_FORMAT_APPSTREAM,
+				      AS_MARKUP_CONVERT_FLAG_IGNORE_ERRORS,
+				      &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (tmp, ==, "<p>para</p>");
+	g_free (tmp);
+
 	/* valid tokens */
 	g_assert (as_utils_search_token_valid ("battery"));
 	g_assert (!as_utils_search_token_valid ("and"));

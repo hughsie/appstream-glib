@@ -94,10 +94,28 @@ typedef enum {
 	AS_MARKUP_CONVERT_FORMAT_LAST
 } AsMarkupConvertFormat;
 
+/**
+ * AsMarkupConvertFlag:
+ * @AS_MARKUP_CONVERT_FLAG_NONE:		No flags set
+ * @AS_MARKUP_CONVERT_FLAG_IGNORE_ERRORS:	Ignore errors where possible
+ *
+ * The flags used when converting descriptions from AppStream-style.
+ **/
+typedef enum {
+	AS_MARKUP_CONVERT_FLAG_NONE		= 0,
+	AS_MARKUP_CONVERT_FLAG_IGNORE_ERRORS	= 1 << 0,
+	/*< private >*/
+	AS_MARKUP_CONVERT_FLAG_LAST
+} AsMarkupConvertFlag;
+
 gchar		*as_markup_convert_simple	(const gchar	*markup,
 						 GError		**error);
 gchar		*as_markup_convert		(const gchar	*markup,
 						 AsMarkupConvertFormat format,
+						 GError		**error);
+gchar		*as_markup_convert_full		(const gchar	*markup,
+						 AsMarkupConvertFormat format,
+						 AsMarkupConvertFlag flags,
 						 GError		**error);
 gboolean	 as_markup_validate		(const gchar	*markup,
 						 GError		**error);

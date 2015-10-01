@@ -230,9 +230,10 @@ as_markup_validate (const gchar *markup, GError **error)
 }
 
 /**
- * as_markup_convert:
+ * as_markup_convert_full:
  * @markup: the text to copy.
  * @format: the #AsMarkupConvertFormat, e.g. %AS_MARKUP_CONVERT_FORMAT_MARKDOWN
+ * @flags: the #AsMarkupConvertFlag, e.g. %AS_MARKUP_CONVERT_FLAG_IGNORE_ERRORS
  * @error: A #GError or %NULL
  *
  * Converts an XML description into a printable form.
@@ -242,14 +243,17 @@ as_markup_validate (const gchar *markup, GError **error)
  * Since: 0.3.5
  **/
 gchar *
-as_markup_convert (const gchar *markup,
-		   AsMarkupConvertFormat format, GError **error)
+as_markup_convert_full (const gchar *markup,
+			AsMarkupConvertFormat format,
+			AsMarkupConvertFlag flags,
+			GError **error)
 {
 	GNode *tmp;
 	GNode *tmp_c;
 	const gchar *tag;
 	const gchar *tag_c;
 	g_autoptr(AsNode) root = NULL;
+	g_autoptr(GError) error_local = NULL;
 	g_autoptr(GString) str = NULL;
 
 	/* is this actually markup */
@@ -257,9 +261,25 @@ as_markup_convert (const gchar *markup,
 		return g_strdup (markup);
 
 	/* load */
-	root = as_node_from_xml (markup, AS_NODE_FROM_XML_FLAG_NONE, error);
-	if (root == NULL)
+	root = as_node_from_xml (markup, AS_NODE_FROM_XML_FLAG_NONE, &error_local);
+	if (root == NULL) {
+
+		/* truncate to the last tag and try again */
+		if (flags & AS_MARKUP_CONVERT_FLAG_IGNORE_ERRORS) {
+			gchar *found;
+			g_autofree gchar *markup_new = NULL;
+			markup_new = g_strdup (markup);
+			found = g_strrstr (markup_new, "<");
+			g_assert (found != NULL);
+			*found = '\0';
+			return as_markup_convert_full (markup_new, format, flags, error);
+		}
+
+		/* just return error */
+		g_propagate_error (error, error_local);
+		error_local = NULL;
 		return NULL;
+	}
 
 	/* format */
 	str = g_string_new ("");
@@ -268,35 +288,47 @@ as_markup_convert (const gchar *markup,
 		tag = as_node_get_name (tmp);
 		if (g_strcmp0 (tag, "p") == 0) {
 			as_markup_render_para (str, format, as_node_get_data (tmp));
+			continue;
+		}
 
 		/* loop on the children */
-		} else if (g_strcmp0 (tag, "ul") == 0 ||
-			   g_strcmp0 (tag, "ol") == 0) {
+		if (g_strcmp0 (tag, "ul") == 0 ||
+		    g_strcmp0 (tag, "ol") == 0) {
 			as_markup_render_ol_start (str, format);
 			for (tmp_c = tmp->children; tmp_c != NULL; tmp_c = tmp_c->next) {
 				tag_c = as_node_get_name (tmp_c);
 				if (g_strcmp0 (tag_c, "li") == 0) {
 					as_markup_render_li (str, format,
 							     as_node_get_data (tmp_c));
-				} else {
-					/* only <li> is valid in lists */
-					g_set_error (error,
-						     AS_NODE_ERROR,
-						     AS_NODE_ERROR_FAILED,
-						     "Tag %s in %s invalid",
-						     tag_c, tag);
-					return FALSE;
+					continue;
 				}
+
+				/* just abort the list */
+				if (flags & AS_MARKUP_CONVERT_FLAG_IGNORE_ERRORS)
+					break;
+
+				/* only <li> is valid in lists */
+				g_set_error (error,
+					     AS_NODE_ERROR,
+					     AS_NODE_ERROR_FAILED,
+					     "Tag %s in %s invalid",
+					     tag_c, tag);
+				return NULL;
 			}
 			as_markup_render_ol_end (str, format);
-		} else {
-			/* only <p>, <ul> and <ol> is valid here */
-			g_set_error (error,
-				     AS_NODE_ERROR,
-				     AS_NODE_ERROR_FAILED,
-				     "Unknown tag '%s'", tag);
-			return NULL;
+			continue;
 		}
+
+		/* just try again */
+		if (flags & AS_MARKUP_CONVERT_FLAG_IGNORE_ERRORS)
+			continue;
+
+		/* only <p>, <ul> and <ol> is valid here */
+		g_set_error (error,
+			     AS_NODE_ERROR,
+			     AS_NODE_ERROR_FAILED,
+			     "Unknown tag '%s'", tag);
+		return NULL;
 	}
 
 	/* success */
@@ -313,6 +345,27 @@ as_markup_convert (const gchar *markup,
 }
 
 /**
+ * as_markup_convert:
+ * @markup: the text to copy.
+ * @format: the #AsMarkupConvertFormat, e.g. %AS_MARKUP_CONVERT_FORMAT_MARKDOWN
+ * @error: A #GError or %NULL
+ *
+ * Converts an XML description into a printable form.
+ *
+ * Returns: (transfer full): a newly allocated %NULL terminated string
+ *
+ * Since: 0.3.5
+ **/
+gchar *
+as_markup_convert (const gchar *markup,
+		   AsMarkupConvertFormat format, GError **error)
+{
+	return as_markup_convert_full (markup, format,
+				       AS_MARKUP_CONVERT_FLAG_NONE,
+				       error);
+}
+
+/**
  * as_markup_convert_simple:
  * @markup: the text to copy.
  * @error: A #GError or %NULL
@@ -326,9 +379,10 @@ as_markup_convert (const gchar *markup,
 gchar *
 as_markup_convert_simple (const gchar *markup, GError **error)
 {
-	return as_markup_convert (markup,
-				  AS_MARKUP_CONVERT_FORMAT_SIMPLE,
-				  error);
+	return as_markup_convert_full (markup,
+				       AS_MARKUP_CONVERT_FORMAT_SIMPLE,
+				       AS_MARKUP_CONVERT_FLAG_NONE,
+				       error);
 }
 
 /**
