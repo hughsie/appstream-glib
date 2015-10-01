@@ -80,12 +80,16 @@ typedef enum {
  * AsMarkupConvertFormat:
  * @AS_MARKUP_CONVERT_FORMAT_SIMPLE:		UTF-8 text
  * @AS_MARKUP_CONVERT_FORMAT_MARKDOWN:		Markdown format
+ * @AS_MARKUP_CONVERT_FORMAT_NULL:		No output
+ * @AS_MARKUP_CONVERT_FORMAT_APPSTREAM:		AppStream (passthrough)
  *
  * The output format used when converting AppStream descriptions.
  **/
 typedef enum {
 	AS_MARKUP_CONVERT_FORMAT_SIMPLE,
 	AS_MARKUP_CONVERT_FORMAT_MARKDOWN,
+	AS_MARKUP_CONVERT_FORMAT_NULL,		/* Since: 0.5.2 */
+	AS_MARKUP_CONVERT_FORMAT_APPSTREAM,	/* Since: 0.5.2 */
 	/*< private >*/
 	AS_MARKUP_CONVERT_FORMAT_LAST
 } AsMarkupConvertFormat;
@@ -94,6 +98,8 @@ gchar		*as_markup_convert_simple	(const gchar	*markup,
 						 GError		**error);
 gchar		*as_markup_convert		(const gchar	*markup,
 						 AsMarkupConvertFormat format,
+						 GError		**error);
+gboolean	 as_markup_validate		(const gchar	*markup,
 						 GError		**error);
 gchar		**as_markup_strsplit_words	(const gchar	*text,
 						 guint		 line_len);

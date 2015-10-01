@@ -3436,6 +3436,7 @@ as_test_utils_spdx_token_func (void)
 static void
 as_test_utils_func (void)
 {
+	gboolean ret;
 	gchar *tmp;
 	gchar **tokens;
 	GError *error = NULL;
@@ -3504,6 +3505,23 @@ as_test_utils_func (void)
 	g_assert_error (error, AS_NODE_ERROR, AS_NODE_ERROR_FAILED);
 	g_assert_cmpstr (tmp, ==, NULL);
 	g_clear_error (&error);
+
+	/* validate */
+	ret = as_markup_validate ("<p>hello</p>", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	ret = as_markup_validate ("<ol><li>hello</ol>", &error);
+	g_assert_error (error, AS_NODE_ERROR, AS_NODE_ERROR_FAILED);
+	g_assert (!ret);
+	g_clear_error (&error);
+
+	/* passthrough */
+	tmp = as_markup_convert ("<p>para</p><ol><li>one</li><li>two</li></ol>",
+				 AS_MARKUP_CONVERT_FORMAT_APPSTREAM,
+				 &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (tmp, ==, "<p>para</p><ol><li>one</li><li>two</li></ol>");
+	g_free (tmp);
 
 	/* valid tokens */
 	g_assert (as_utils_search_token_valid ("battery"));

@@ -138,6 +138,9 @@ as_markup_render_para (GString *str, AsMarkupConvertFormat format, const gchar *
 	case AS_MARKUP_CONVERT_FORMAT_SIMPLE:
 		g_string_append_printf (str, "%s\n", data);
 		break;
+	case AS_MARKUP_CONVERT_FORMAT_APPSTREAM:
+		g_string_append_printf (str, "<p>%s</p>", data);
+		break;
 	case AS_MARKUP_CONVERT_FORMAT_MARKDOWN:
 		/* break to 80 chars */
 		spl = as_markup_strsplit_words (data, 80);
@@ -162,6 +165,9 @@ as_markup_render_li (GString *str, AsMarkupConvertFormat format, const gchar *da
 	case AS_MARKUP_CONVERT_FORMAT_SIMPLE:
 		g_string_append_printf (str, " • %s\n", data);
 		break;
+	case AS_MARKUP_CONVERT_FORMAT_APPSTREAM:
+		g_string_append_printf (str, "<li>%s</li>", data);
+		break;
 	case AS_MARKUP_CONVERT_FORMAT_MARKDOWN:
 		/* break to 80 chars, leaving room for the dot/indent */
 		spl = as_markup_strsplit_words (data, 80 - 3);
@@ -172,6 +178,55 @@ as_markup_render_li (GString *str, AsMarkupConvertFormat format, const gchar *da
 	default:
 		break;
 	}
+}
+
+/**
+ * as_markup_render_ol_start:
+ **/
+static void
+as_markup_render_ol_start (GString *str, AsMarkupConvertFormat format)
+{
+	switch (format) {
+	case AS_MARKUP_CONVERT_FORMAT_APPSTREAM:
+		g_string_append (str, "<ol>");
+		break;
+	default:
+		break;
+	}
+}
+
+/**
+ * as_markup_render_ol_end:
+ **/
+static void
+as_markup_render_ol_end (GString *str, AsMarkupConvertFormat format)
+{
+	switch (format) {
+	case AS_MARKUP_CONVERT_FORMAT_APPSTREAM:
+		g_string_append (str, "</ol>");
+		break;
+	default:
+		break;
+	}
+}
+
+/**
+ * as_markup_validate:
+ * @markup: the text to validate
+ * @error: A #GError or %NULL
+ *
+ * Validates some markup.
+ *
+ * Returns: %TRUE if the appstream description was valid
+ *
+ * Since: 0.5.1
+ **/
+gboolean
+as_markup_validate (const gchar *markup, GError **error)
+{
+	g_autofree gchar *tmp = NULL;
+	tmp = as_markup_convert (markup, AS_MARKUP_CONVERT_FORMAT_NULL, error);
+	return tmp != NULL;
 }
 
 /**
@@ -217,6 +272,7 @@ as_markup_convert (const gchar *markup,
 		/* loop on the children */
 		} else if (g_strcmp0 (tag, "ul") == 0 ||
 			   g_strcmp0 (tag, "ol") == 0) {
+			as_markup_render_ol_start (str, format);
 			for (tmp_c = tmp->children; tmp_c != NULL; tmp_c = tmp_c->next) {
 				tag_c = as_node_get_name (tmp_c);
 				if (g_strcmp0 (tag_c, "li") == 0) {
@@ -232,6 +288,7 @@ as_markup_convert (const gchar *markup,
 					return FALSE;
 				}
 			}
+			as_markup_render_ol_end (str, format);
 		} else {
 			/* only <p>, <ul> and <ol> is valid here */
 			g_set_error (error,
@@ -243,8 +300,15 @@ as_markup_convert (const gchar *markup,
 	}
 
 	/* success */
-	if (str->len > 0)
-		g_string_truncate (str, str->len - 1);
+	switch (format) {
+	case AS_MARKUP_CONVERT_FORMAT_SIMPLE:
+	case AS_MARKUP_CONVERT_FORMAT_MARKDOWN:
+		if (str->len > 0)
+			g_string_truncate (str, str->len - 1);
+		break;
+	default:
+		break;
+	}
 	return g_strdup (str->str);
 }
 
