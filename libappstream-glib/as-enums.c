@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -210,6 +210,46 @@ as_kudo_kind_from_string (const gchar *kudo_kind)
 	if (g_strcmp0 (kudo_kind, "HiDpiIcon") == 0)
 		return AS_KUDO_KIND_HI_DPI_ICON;
 	return AS_KUDO_KIND_UNKNOWN;
+}
+
+/**
+ * as_size_kind_to_string:
+ * @size_kind: the #AsSizeKind.
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @size_kind
+ *
+ * Since: 0.5.2
+ **/
+const gchar *
+as_size_kind_to_string (AsSizeKind size_kind)
+{
+	if (size_kind == AS_SIZE_KIND_INSTALLED)
+		return "installed";
+	if (size_kind == AS_SIZE_KIND_DOWNLOAD)
+		return "download";
+	return "unknown";
+}
+
+/**
+ * as_size_kind_from_string:
+ * @size_kind: the string.
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Returns: a #AsSizeKind or %AS_SIZE_KIND_UNKNOWN for unknown
+ *
+ * Since: 0.5.2
+ **/
+AsSizeKind
+as_size_kind_from_string (const gchar *size_kind)
+{
+	if (g_strcmp0 (size_kind, "installed") == 0)
+		return AS_SIZE_KIND_INSTALLED;
+	if (g_strcmp0 (size_kind, "download") == 0)
+		return AS_SIZE_KIND_DOWNLOAD;
+	return AS_SIZE_KIND_UNKNOWN;
 }
 
 /**

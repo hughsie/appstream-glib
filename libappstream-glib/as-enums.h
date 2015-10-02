@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -127,6 +127,25 @@ typedef enum {
 	/*< private >*/
 	AS_URGENCY_KIND_LAST
 } AsUrgencyKind;
+
+/**
+ * AsSizeKind:
+ * @AS_SIZE_KIND_UNKNOWN:		Not known
+ * @AS_SIZE_KIND_INSTALLED:		Installed size
+ * @AS_SIZE_KIND_DOWNLOAD:		Download size
+ *
+ * The release size kind.
+ **/
+typedef enum {
+	AS_SIZE_KIND_UNKNOWN,		/* Since: 0.5.2 */
+	AS_SIZE_KIND_INSTALLED,		/* Since: 0.5.2 */
+	AS_SIZE_KIND_DOWNLOAD,		/* Since: 0.5.2 */
+	/*< private >*/
+	AS_SIZE_KIND_LAST
+} AsSizeKind;
+
+const gchar	*as_size_kind_to_string		(AsSizeKind	 size_kind);
+AsSizeKind	 as_size_kind_from_string	(const gchar	*size_kind);
 
 const gchar	*as_urgency_kind_to_string	(AsUrgencyKind	 urgency_kind);
 AsUrgencyKind	 as_urgency_kind_from_string	(const gchar	*urgency_kind);

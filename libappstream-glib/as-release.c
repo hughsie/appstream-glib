@@ -48,6 +48,7 @@
 typedef struct
 {
 	AsUrgencyKind		 urgency;
+	guint64			 size[AS_SIZE_KIND_LAST];
 	gchar			*version;
 	GHashTable		*descriptions;
 	guint64			 timestamp;
@@ -84,9 +85,13 @@ static void
 as_release_init (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	guint i;
+
 	priv->urgency = AS_URGENCY_KIND_UNKNOWN;
 	priv->locations = g_ptr_array_new_with_free_func (g_free);
 	priv->checksums = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	for (i = 0; i < AS_SIZE_KIND_LAST; i++)
+		priv->size[i] = 0;
 }
 
 /**
@@ -128,6 +133,45 @@ as_release_vercmp (AsRelease *rel1, AsRelease *rel2)
 	if (priv1->timestamp < priv2->timestamp)
 		return 1;
 	return 0;
+}
+
+/**
+ * as_release_get_size:
+ * @release: a #AsRelease instance
+ * @kind: a #AsSizeKind, e.g. #AS_SIZE_KIND_DOWNLOAD
+ *
+ * Gets the release size.
+ *
+ * Returns: The size in bytes, or 0 for unknown.
+ *
+ * Since: 0.5.2
+ **/
+guint64
+as_release_get_size (AsRelease *release, AsSizeKind kind)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	if (kind >= AS_SIZE_KIND_LAST)
+		return 0;
+	return priv->size[kind];
+}
+
+/**
+ * as_release_set_size:
+ * @release: a #AsRelease instance
+ * @kind: a #AsSizeKind, e.g. #AS_SIZE_KIND_DOWNLOAD
+ * @size: a size in bytes, or 0 for unknown
+ *
+ * Sets the release size.
+ *
+ * Since: 0.5.2
+ **/
+void
+as_release_set_size (AsRelease *release, AsSizeKind kind, guint64 size)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	if (kind >= AS_SIZE_KIND_LAST)
+		return;
+	priv->size[kind] = size;
 }
 
 /**
@@ -439,6 +483,7 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	AsChecksum *checksum;
 	GNode *n;
+	guint i;
 
 	n = as_node_insert (parent, "release", NULL,
 			    AS_NODE_INSERT_FLAG_NONE,
@@ -457,7 +502,6 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 		as_node_add_attribute (n, "version", priv->version);
 	if (as_node_context_get_version (ctx) >= 0.9) {
 		const gchar *tmp;
-		guint i;
 		for (i = 0; i < priv->locations->len; i++) {
 			tmp = g_ptr_array_index (priv->locations, i);
 			as_node_insert (n, "location", tmp,
@@ -472,6 +516,18 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 		as_node_insert_localized (n, "description", priv->descriptions,
 					  AS_NODE_INSERT_FLAG_PRE_ESCAPED |
 					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
+	}
+
+	/* add sizes */
+	for (i = 0; i < AS_SIZE_KIND_LAST; i++) {
+		g_autofree gchar *size_str = NULL;
+		if (priv->size[i] == 0)
+			continue;
+		size_str = g_strdup_printf ("%" G_GUINT64_FORMAT, priv->size[i]);
+		as_node_insert (n, "size", size_str,
+				AS_NODE_INSERT_FLAG_NONE,
+				"type", as_size_kind_to_string (i),
+				NULL);
 	}
 	return n;
 }
@@ -524,6 +580,23 @@ as_release_node_parse (AsRelease *release, GNode *node,
 		if (!as_checksum_node_parse (csum, n, ctx, error))
 			return FALSE;
 		as_release_add_checksum (release, csum);
+	}
+
+	/* get optional sizes */
+	for (n = node->children; n != NULL; n = n->next) {
+		AsSizeKind kind;
+		if (as_node_get_tag (n) != AS_TAG_SIZE)
+			continue;
+		tmp = as_node_get_attribute (n, "type");
+		if (tmp == NULL)
+			continue;
+		kind = as_size_kind_from_string (tmp);
+		if (kind == AS_SIZE_KIND_UNKNOWN)
+			continue;
+		tmp = as_node_get_data (n);
+		if (tmp == NULL)
+			continue;
+		priv->size[kind] = g_ascii_strtoull (tmp, NULL, 10);
 	}
 
 	/* AppStream: multiple <description> tags */

@@ -432,6 +432,7 @@ as_test_release_appstream_func (void)
 	AsNode *root;
 	GString *xml;
 	gboolean ret;
+	guint64 sz;
 	const gchar *src =
 		"<release version=\"0.1.2\" timestamp=\"123\">\n"
 		"<location>http://foo.com/bar.zip</location>\n"
@@ -440,6 +441,8 @@ as_test_release_appstream_func (void)
 		"<checksum filename=\"firmware.cab\" target=\"container\" type=\"md5\">deadbeef</checksum>\n"
 		"<description><p>This is a new release</p><ul><li>Point</li></ul></description>\n"
 		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>\n"
+		"<size type=\"installed\">123456</size>\n"
+		"<size type=\"download\">654321</size>\n"
 		"</release>\n";
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autoptr(AsRelease) release = NULL;
@@ -484,6 +487,12 @@ as_test_release_appstream_func (void)
 	csum = as_release_get_checksum_by_target (release, AS_CHECKSUM_TARGET_CONTAINER);
 	g_assert (csum != NULL);
 	g_assert_cmpstr (as_checksum_get_value (csum), ==, "12345");
+
+	/* test size */
+	sz = as_release_get_size (release, AS_SIZE_KIND_INSTALLED);
+	g_assert_cmpuint (sz, ==, 123456);
+	sz = as_release_get_size (release, AS_SIZE_KIND_DOWNLOAD);
+	g_assert_cmpuint (sz, ==, 654321);
 
 	/* back to node */
 	root = as_node_new ();
