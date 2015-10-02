@@ -130,6 +130,7 @@ static void
 as_markup_render_para (GString *str, AsMarkupConvertFormat format, const gchar *data)
 {
 	guint i;
+	g_autofree gchar *tmp = NULL;
 	g_auto(GStrv) spl = NULL;
 
 	if (str->len > 0)
@@ -139,7 +140,8 @@ as_markup_render_para (GString *str, AsMarkupConvertFormat format, const gchar *
 		g_string_append_printf (str, "%s\n", data);
 		break;
 	case AS_MARKUP_CONVERT_FORMAT_APPSTREAM:
-		g_string_append_printf (str, "<p>%s</p>", data);
+		tmp = g_markup_escape_text (data, -1);
+		g_string_append_printf (str, "<p>%s</p>", tmp);
 		break;
 	case AS_MARKUP_CONVERT_FORMAT_MARKDOWN:
 		/* break to 80 chars */
@@ -159,6 +161,7 @@ static void
 as_markup_render_li (GString *str, AsMarkupConvertFormat format, const gchar *data)
 {
 	guint i;
+	g_autofree gchar *tmp = NULL;
 	g_auto(GStrv) spl = NULL;
 
 	switch (format) {
@@ -166,7 +169,8 @@ as_markup_render_li (GString *str, AsMarkupConvertFormat format, const gchar *da
 		g_string_append_printf (str, " • %s\n", data);
 		break;
 	case AS_MARKUP_CONVERT_FORMAT_APPSTREAM:
-		g_string_append_printf (str, "<li>%s</li>", data);
+		tmp = g_markup_escape_text (data, -1);
+		g_string_append_printf (str, "<li>%s</li>", tmp);
 		break;
 	case AS_MARKUP_CONVERT_FORMAT_MARKDOWN:
 		/* break to 80 chars, leaving room for the dot/indent */

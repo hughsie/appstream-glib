@@ -3516,11 +3516,11 @@ as_test_utils_func (void)
 	g_clear_error (&error);
 
 	/* passthrough */
-	tmp = as_markup_convert ("<p>para</p><ol><li>one</li><li>two</li></ol>",
+	tmp = as_markup_convert ("<p>pa&amp;ra</p><ol><li>one</li><li>two</li></ol>",
 				 AS_MARKUP_CONVERT_FORMAT_APPSTREAM,
 				 &error);
 	g_assert_no_error (error);
-	g_assert_cmpstr (tmp, ==, "<p>para</p><ol><li>one</li><li>two</li></ol>");
+	g_assert_cmpstr (tmp, ==, "<p>pa&amp;ra</p><ol><li>one</li><li>two</li></ol>");
 	g_free (tmp);
 
 	/* ignore errors */
