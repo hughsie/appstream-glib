@@ -3777,9 +3777,8 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 			}
 			continue;
 		}
-		if (g_strcmp0 (tmp, "Packages") == 0) {
-			for (c = n->children; c != NULL; c = c->next)
-				as_app_add_pkgname (app, as_yaml_node_get_key (c));
+		if (g_strcmp0 (tmp, "Package") == 0) {
+			as_app_add_pkgname (app, as_yaml_node_get_value (n));
 			continue;
 		}
 		if (g_strcmp0 (tmp, "Name") == 0) {
