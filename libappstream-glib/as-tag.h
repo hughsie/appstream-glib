@@ -130,6 +130,7 @@ typedef enum {
 	AS_TAG_LOCATION,		/* Since: 0.3.5 */
 	AS_TAG_CHECKSUM,		/* Since: 0.3.5 */
 	AS_TAG_SIZE,			/* Since: 0.5.2 */
+	AS_TAG_FILENAME,		/* Since: 0.5.2 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;

@@ -50,6 +50,7 @@ typedef struct
 	AsUrgencyKind		 urgency;
 	guint64			 size[AS_SIZE_KIND_LAST];
 	gchar			*version;
+	gchar			*filename;
 	GHashTable		*descriptions;
 	guint64			 timestamp;
 	GPtrArray		*locations;
@@ -70,6 +71,7 @@ as_release_finalize (GObject *object)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 
 	g_free (priv->version);
+	g_free (priv->filename);
 	g_ptr_array_unref (priv->checksums);
 	g_ptr_array_unref (priv->locations);
 	if (priv->descriptions != NULL)
@@ -206,6 +208,23 @@ as_release_get_version (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	return priv->version;
+}
+
+/**
+ * as_release_get_filename:
+ * @release: a #AsRelease instance.
+ *
+ * Gets the release filename.
+ *
+ * Returns: string, or %NULL for not set or invalid
+ *
+ * Since: 0.5.2
+ **/
+const gchar *
+as_release_get_filename (AsRelease *release)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	return priv->filename;
 }
 
 /**
@@ -368,6 +387,23 @@ as_release_set_version (AsRelease *release, const gchar *version)
 }
 
 /**
+ * as_release_set_filename:
+ * @release: a #AsRelease instance.
+ * @filename: the filename string.
+ *
+ * Sets the release filename.
+ *
+ * Since: 0.5.2
+ **/
+void
+as_release_set_filename (AsRelease *release, const gchar *filename)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_free (priv->filename);
+	priv->filename = g_strdup (filename);
+}
+
+/**
  * as_release_set_urgency:
  * @release: a #AsRelease instance.
  * @urgency: the release urgency, e.g. %AS_URGENCY_KIND_CRITICAL
@@ -518,6 +554,12 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 	}
 
+	/* add opional filename */
+	if (as_node_context_get_version (ctx) >= 0.9 && priv->filename != NULL) {
+		as_node_insert (n, "filename", priv->filename,
+				AS_NODE_INSERT_FLAG_NONE, NULL);
+	}
+
 	/* add sizes */
 	for (i = 0; i < AS_SIZE_KIND_LAST; i++) {
 		g_autofree gchar *size_str = NULL;
@@ -597,6 +639,13 @@ as_release_node_parse (AsRelease *release, GNode *node,
 		if (tmp == NULL)
 			continue;
 		priv->size[kind] = g_ascii_strtoull (tmp, NULL, 10);
+	}
+
+	/* get optional filename */
+	for (n = node->children; n != NULL; n = n->next) {
+		if (as_node_get_tag (n) != AS_TAG_FILENAME)
+			continue;
+		priv->filename = as_node_take_data (n);
 	}
 
 	/* AppStream: multiple <description> tags */
