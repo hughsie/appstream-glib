@@ -7,8 +7,7 @@ Type: desktop-app
 ID: iceweasel.desktop
 Name:
   C: Iceweasel
-Packages:
-  - iceweasel
+Package: iceweasel
 Icon:
   cached: iceweasel.png
 Keywords:

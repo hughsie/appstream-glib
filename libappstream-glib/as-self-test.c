@@ -3700,6 +3700,7 @@ as_test_yaml_func (void)
 	const gchar *expected;
 	g_autofree gchar *filename = NULL;
 	g_autoptr(GFile) file = NULL;
+	gboolean ret;
 
 	/* simple header */
 	node = as_yaml_from_data (
@@ -3769,8 +3770,7 @@ as_test_yaml_func (void)
 		" [KVL]ID=iceweasel.desktop\n"
 		" [MAP]Name\n"
 		"  [KVL]C=Iceweasel\n"
-		" [SEQ]Packages\n"
-		"  [KEY]iceweasel\n"
+		" [KVL]Package=iceweasel\n"
 		" [MAP]Icon\n"
 		"  [KVL]cached=iceweasel.png\n"
 		" [MAP]Keywords\n"
@@ -3793,9 +3793,9 @@ as_test_yaml_func (void)
 		" [KVL]ID=dave.desktop\n"
 		" [MAP]Name\n"
 		"  [KVL]C=dave\n";
-	if (g_strcmp0 (str->str, expected) != 0)
-		g_warning ("Expected:\n%s\nGot:\n%s", expected, str->str);
-	g_assert_cmpstr (str->str, ==, expected);
+	ret = as_test_compare_lines (expected, str->str, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	g_string_free (str, TRUE);
 	as_yaml_unref (node);
 
