@@ -51,6 +51,7 @@ typedef struct
 	guint64			 size[AS_SIZE_KIND_LAST];
 	gchar			*version;
 	gchar			*filename;
+	GHashTable		*blobs; /* of gchar*:GBytes */
 	GHashTable		*descriptions;
 	guint64			 timestamp;
 	GPtrArray		*locations;
@@ -72,6 +73,7 @@ as_release_finalize (GObject *object)
 
 	g_free (priv->version);
 	g_free (priv->filename);
+	g_hash_table_unref (priv->blobs);
 	g_ptr_array_unref (priv->checksums);
 	g_ptr_array_unref (priv->locations);
 	if (priv->descriptions != NULL)
@@ -92,6 +94,8 @@ as_release_init (AsRelease *release)
 	priv->urgency = AS_URGENCY_KIND_UNKNOWN;
 	priv->locations = g_ptr_array_new_with_free_func (g_free);
 	priv->checksums = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	priv->blobs = g_hash_table_new_full (g_str_hash, g_str_equal,
+					     g_free, (GDestroyNotify) g_bytes_unref);
 	for (i = 0; i < AS_SIZE_KIND_LAST; i++)
 		priv->size[i] = 0;
 }
@@ -225,6 +229,25 @@ as_release_get_filename (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	return priv->filename;
+}
+
+/**
+ * as_release_get_blob:
+ * @release: a #AsRelease instance.
+ * @filename: a filename
+ *
+ * Gets the release blob, which is typically firmware file data.
+ *
+ * Returns: a #GBytes, or %NULL for not set
+ *
+ * Since: 0.5.2
+ **/
+GBytes *
+as_release_get_blob (AsRelease *release, const gchar *filename)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_val_if_fail (filename != NULL, NULL);
+	return g_hash_table_lookup (priv->blobs, filename);
 }
 
 /**
@@ -401,6 +424,27 @@ as_release_set_filename (AsRelease *release, const gchar *filename)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	g_free (priv->filename);
 	priv->filename = g_strdup (filename);
+}
+
+/**
+ * as_release_set_blob:
+ * @release: a #AsRelease instance.
+ * @filename: a filename
+ * @blob: the #GBytes data blob
+ *
+ * Sets a release blob, which is typically firmware data or a detached signature.
+ *
+ * NOTE: This is not stored in the XML file, and is only available in-memory.
+ *
+ * Since: 0.5.2
+ **/
+void
+as_release_set_blob (AsRelease *release, const gchar *filename, GBytes *blob)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_if_fail (filename != NULL);
+	g_return_if_fail (blob != NULL);
+	g_hash_table_insert (priv->blobs, g_strdup (filename), g_bytes_ref (blob));
 }
 
 /**
