@@ -260,7 +260,7 @@ asb_test_plugin_loader_func (void)
 
 	/* get the list of globs */
 	globs = asb_plugin_loader_get_globs (loader);\
-	g_assert_cmpint (globs->len, >=, 44);
+	g_assert_cmpint (globs->len, >=, 40);
 	g_assert_cmpstr (asb_glob_value_search (globs, "/usr/share/applications/gimp.desktop"), ==, "");
 	g_assert_cmpstr (asb_glob_value_search (globs, "/files/share/applications/gimp.desktop"), ==, "");
 	g_assert_cmpstr (asb_glob_value_search (globs, "/srv/dave.txt"), ==, NULL);
@@ -517,7 +517,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<developer_name>Hughski Limited</developer_name>\n"
 		"<description><p>Updating the firmware on your ColorHug device "
 		"improves performance and adds new features.</p></description>\n"
-		"<icon type=\"stock\">application-x-executable</icon>\n"
 		"<project_license>GPL-2.0+</project_license>\n"
 		"<url type=\"homepage\">http://www.hughski.com/</url>\n"
 		"<releases>\n"
@@ -529,6 +528,8 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<ul><li>Add TakeReadingArray to enable panel latency measurements</li>"
 		"<li>Speed up the auto-scaled measurements considerably, using 256ms "
 		"as the smallest sample duration</li></ul></description>\n"
+		"<size type=\"installed\">14</size>\n"
+		"<size type=\"download\">1983</size>\n"
 		"</release>\n"
 		"</releases>\n"
 		"<provides>\n"
@@ -830,7 +831,6 @@ asb_test_firmware_func (void)
 		"<developer_name>Hughski Limited</developer_name>\n"
 		"<description><p>Updating the firmware on your ColorHug device "
 		"improves performance and adds new features.</p></description>\n"
-		"<icon type=\"stock\">application-x-executable</icon>\n"
 		"<project_license>GPL-2.0+</project_license>\n"
 		"<url type=\"homepage\">http://www.hughski.com/</url>\n"
 		"<releases>\n"
@@ -842,15 +842,19 @@ asb_test_firmware_func (void)
 		"<ul><li>Add TakeReadingArray to enable panel latency measurements</li>"
 		"<li>Speed up the auto-scaled measurements considerably, using 256ms "
 		"as the smallest sample duration</li></ul></description>\n"
+		"<size type=\"installed\">14</size>\n"
+		"<size type=\"download\">1983</size>\n"
 		"</release>\n"
 		"<release version=\"2.0.1\" timestamp=\"1424116753\">\n"
 		"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.1.cab</location>\n"
-		"<checksum filename=\"colorhug-als-2.0.1.cab\" target=\"container\" type=\"sha1\">f98a3b7901ee606030b7eb003664a81d76ab1a53</checksum>\n"
+		"<checksum filename=\"colorhug-als-2.0.1.cab\" target=\"container\" type=\"sha1\">b7c4343885f51dab9e21d5c12ee243b2af3d236f</checksum>\n"
 		"<checksum filename=\"firmware.bin\" target=\"content\" type=\"sha1\">767a8a7b8a7b350b513f57761204b4aaa657aa44</checksum>\n"
 		"<description><p>This unstable release adds the following features:</p>"
 		"<ul><li>Use TakeReadings() to do a quick non-adaptive measurement</li>"
 		"<li>Scale XYZ measurement with a constant factor to make the CCMX more "
 		"sane</li></ul></description>\n"
+		"<size type=\"installed\">14</size>\n"
+		"<size type=\"download\">1922</size>\n"
 		"</release>\n"
 		"</releases>\n"
 		"<provides>\n"

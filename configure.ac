@@ -26,7 +26,7 @@ AC_SUBST(AS_VERSION)
 
 # this refers to the plugin API version
 # this is not in any way related to a package or soname version
-AS_PLUGIN_VERSION=3
+AS_PLUGIN_VERSION=4
 AC_SUBST(AS_PLUGIN_VERSION)
 AC_DEFINE_UNQUOTED([AS_PLUGIN_VERSION], "$AS_PLUGIN_VERSION", [plugin API version])
 

@@ -41,7 +41,6 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
 	asb_plugin_add_glob (globs, "/usr/share/appdata/*.metainfo.xml");
 	asb_plugin_add_glob (globs, "/usr/share/appdata/*.appdata.xml");
-	asb_plugin_add_glob (globs, "*.metainfo.xml");
 }
 
 /**

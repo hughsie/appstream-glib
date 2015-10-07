@@ -3,6 +3,7 @@
 [Version]
 Class=Firmware
 ClassGuid={f2e7dd72-6468-4e36-b6f1-6488f42c1b52}
+DriverVer=03/03/2015,2.0.1
 Provider=%Provider%
 
 [Firmware_CopyFiles]
@@ -10,7 +11,7 @@ firmware.bin
 
 [Firmware_AddReg]
 HKR,,FirmwareId,,{84f40464-9272-4ef7-9399-cd95f12da696}
-HKR,,FirmwareVersion,%REG_DWORD%,0x0000000
+HKR,,FirmwareVersion,%REG_DWORD%,0x20001
 HKR,,FirmwareFilename,,firmware.bin
 
 [Strings]

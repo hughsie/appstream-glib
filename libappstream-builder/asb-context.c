@@ -956,7 +956,8 @@ asb_context_detect_missing_data (AsbContext *ctx, GError **error)
 			as_app_add_veto (AS_APP (app), "No <name> in AppData");
 		if (as_app_get_comment (AS_APP (app), "C") == NULL)
 			as_app_add_veto (AS_APP (app), "No <summary> in AppData");
-		if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_ADDON) {
+		if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_ADDON &&
+		    as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_FIRMWARE) {
 			if (as_app_get_icon_default (AS_APP (app)) == NULL)
 				as_app_add_veto (AS_APP (app), "Has no Icon");
 		}

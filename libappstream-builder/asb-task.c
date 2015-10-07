@@ -252,6 +252,42 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 
 	g_debug ("starting: %s", asb_package_get_name (priv->pkg));
 
+	/* treat archive as a special case */
+	if (g_str_has_suffix (priv->filename, ".cab")) {
+		AsApp *app_tmp;
+		GPtrArray *apps_tmp;
+		g_autoptr(AsStore) store = as_store_new ();
+		g_autoptr(GFile) file = g_file_new_for_path (priv->filename);
+		if (!as_store_from_file (store, file, NULL, NULL, &error)) {
+			asb_package_log (priv->pkg,
+					 ASB_PACKAGE_LOG_LEVEL_WARNING,
+					 "Failed to parse %s: %s",
+					 asb_package_get_filename (priv->pkg),
+					 error->message);
+			return TRUE;
+		}
+		apps_tmp = as_store_get_apps (store);
+		for (i = 0; i < apps_tmp->len; i++) {
+			g_autoptr(AsbApp) app2 = NULL;
+			app_tmp = AS_APP (g_ptr_array_index (apps_tmp, i));
+			app2 = asb_app_new (priv->pkg, as_app_get_id (app_tmp));
+			as_app_subsume (AS_APP (app2), app_tmp);
+			asb_context_add_app (priv->ctx, app2);
+
+			/* set cache-id in case we want to use the metadata directly */
+			if (asb_context_get_flag (priv->ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID)) {
+				cache_id = asb_utils_get_cache_id_for_filename (priv->filename);
+				as_app_add_metadata (AS_APP (app2),
+						     "X-CacheID",
+						     cache_id);
+				g_free (cache_id);
+			}
+			nr_added++;
+		}
+		g_debug ("added %i apps from archive", apps_tmp->len);
+		goto skip;
+	}
+
 	/* ensure file list read */
 	if (!asb_package_ensure (priv->pkg,
 				 ASB_PACKAGE_ENSURE_FILES,
