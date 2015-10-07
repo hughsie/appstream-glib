@@ -49,6 +49,8 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsChecksum, as_checksum, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (as_checksum_get_instance_private (o))
 
+#define AS_CHECKSUM_UNKNOWN	((guint) -1)
+
 /**
  * as_checksum_finalize:
  **/
@@ -70,6 +72,8 @@ as_checksum_finalize (GObject *object)
 static void
 as_checksum_init (AsChecksum *checksum)
 {
+	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
+	priv->kind = AS_CHECKSUM_UNKNOWN;
 }
 
 /**
@@ -311,8 +315,11 @@ as_checksum_node_insert (AsChecksum *checksum, GNode *parent, AsNodeContext *ctx
 
 	n = as_node_insert (parent, "checksum", priv->value,
 			    AS_NODE_INSERT_FLAG_NONE,
-			    "type", _g_checksum_type_to_string (priv->kind),
 			    NULL);
+	if (priv->kind != AS_CHECKSUM_UNKNOWN) {
+		as_node_add_attribute (n, "type",
+				       _g_checksum_type_to_string (priv->kind));
+	}
 	if (priv->target != AS_CHECKSUM_TARGET_UNKNOWN) {
 		as_node_add_attribute (n, "target",
 				       as_checksum_target_to_string (priv->target));
