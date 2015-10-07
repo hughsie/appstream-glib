@@ -77,7 +77,12 @@ as_test_get_filename (const gchar *filename)
 {
 	g_autofree gchar *path = NULL;
 
-	path = g_build_filename (TESTDATADIR, filename, NULL);
+	/* try the source then the destdir */
+	path = g_build_filename (TESTDIRSRC, filename, NULL);
+	if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
+		g_free (path);
+		path = g_build_filename (TESTDIRBUILD, filename, NULL);
+	}
 	return realpath (path, NULL);
 }
 
@@ -709,12 +714,12 @@ as_test_image_resize_func (void)
 	g_autofree gchar *output_dir = NULL;
 
 	/* only do this test if an "output" directory exists */
-	output_dir = g_build_filename (TESTDATADIR, "output", NULL);
+	output_dir = g_build_filename (TESTDIRSRC, "output", NULL);
 	if (!g_file_test (output_dir, G_FILE_TEST_EXISTS))
 		return;
 
 	/* look for test screenshots */
-	dir = g_dir_open (TESTDATADIR, 0, &error);
+	dir = g_dir_open (TESTDIRSRC, 0, &error);
 	g_assert_no_error (error);
 	g_assert (dir != NULL);
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
@@ -723,7 +728,7 @@ as_test_image_resize_func (void)
 
 		if (!g_str_has_prefix (tmp, "ss-"))
 			continue;
-		path = g_build_filename (TESTDATADIR, tmp, NULL);
+		path = g_build_filename (TESTDIRSRC, tmp, NULL);
 
 		for (i = 0; i < AS_TEST_RESIZE_LAST; i++) {
 			g_autofree gchar *new_path = NULL;

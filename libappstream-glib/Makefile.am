@@ -15,7 +15,8 @@ AM_CPPFLAGS =							\
 	-I$(top_builddir)/libappstream-glib			\
 	-I.							\
 	-DAS_COMPILATION					\
-	-DTESTDATADIR=\""$(top_srcdir)/data/tests"\"		\
+	-DTESTDIRSRC=\""$(top_srcdir)/data/tests"\"		\
+	-DTESTDIRBUILD=\""$(top_builddir)/data/tests"\"		\
 	-DLOCALSTATEDIR=\""$(localstatedir)"\"			\
 	-DG_LOG_DOMAIN=\"As\"
 

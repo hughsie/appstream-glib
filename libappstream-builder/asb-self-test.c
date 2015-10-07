@@ -267,7 +267,7 @@ asb_test_plugin_loader_func (void)
 
 	/* get the list of plugins */
 	plugins = asb_plugin_loader_get_plugins (loader);
-	g_assert_cmpint (plugins->len, >=, 15);
+	g_assert_cmpint (plugins->len, >=, 14);
 	plugin = g_ptr_array_index (plugins, 0);
 	g_assert (plugin != NULL);
 	g_assert (plugin->module != NULL);
