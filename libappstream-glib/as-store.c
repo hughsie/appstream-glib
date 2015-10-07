@@ -1305,7 +1305,7 @@ as_store_from_xml (AsStore *store,
 			     AS_STORE_ERROR_FAILED,
 			     "Failed to parse XML: %s",
 			     error_local->message);
-		return TRUE;
+		return FALSE;
 	}
 	return as_store_from_root (store, root, icon_root, NULL, error);
 }
