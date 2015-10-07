@@ -55,4 +55,3 @@ permission, AS_TAG_PERMISSION
 location, AS_TAG_LOCATION
 checksum, AS_TAG_CHECKSUM
 size, AS_TAG_SIZE
-filename, AS_TAG_FILENAME

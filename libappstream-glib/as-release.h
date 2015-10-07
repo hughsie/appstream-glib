@@ -55,7 +55,6 @@ gint		 as_release_vercmp		(AsRelease	*rel1,
 
 /* getters */
 const gchar	*as_release_get_version		(AsRelease	*release);
-const gchar	*as_release_get_filename	(AsRelease	*release);
 GBytes		*as_release_get_blob		(AsRelease	*release,
 						 const gchar	*filename);
 guint64		 as_release_get_timestamp	(AsRelease	*release);
@@ -75,8 +74,6 @@ guint64		 as_release_get_size		(AsRelease	*release,
 /* setters */
 void		 as_release_set_version		(AsRelease	*release,
 						 const gchar	*version);
-void		 as_release_set_filename	(AsRelease	*release,
-						 const gchar	*filename);
 void		 as_release_set_blob		(AsRelease	*release,
 						 const gchar	*filename,
 						 GBytes		*blob);
