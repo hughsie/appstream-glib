@@ -74,6 +74,7 @@ ChangeLog:
 
 DISTCHECK_CONFIGURE_FLAGS =				\
 	--enable-dep11					\
+	--enable-firmware				\
 	--enable-builder				\
 	--with-bashcompletiondir=/${prefix}/share/bash-completion/completions
 

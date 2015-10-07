@@ -131,6 +131,17 @@ PKG_CHECK_MODULES(LIBARCHIVE, libarchive)
 PKG_CHECK_MODULES(SOUP, libsoup-2.4 >= 2.51.92)
 PKG_CHECK_MODULES(GDKPIXBUF, gdk-pixbuf-2.0 >= 2.31.5)
 
+# firmware support (default enabled)
+AC_ARG_ENABLE(firmware, AS_HELP_STRING([--disable-firmware],[Disable cabinet archive support]), enable_firmware=$enableval)
+if test x$enable_firmware != xno; then
+	PKG_CHECK_MODULES(GCAB, libgcab-1.0)
+	AC_DEFINE(HAVE_GCAB,[1], [Use gcab])
+	enable_firmware=yes
+else
+	enable_firmware=no
+fi
+AM_CONDITIONAL(HAVE_GCAB, test x$enable_firmware = xyes)
+
 # builder (default enabled)
 AC_ARG_ENABLE(builder, AS_HELP_STRING([--disable-builder],[Disable AppStream builder support]), enable_builder=$enableval)
 if test x$enable_builder != xno; then
@@ -258,5 +269,6 @@ AC_MSG_RESULT([
     lib dir:                 ${libdir}
     DEP-11 support:          ${enable_dep11}
     Builder support:         ${enable_builder}
+    Firmware support:        ${enable_firmware}
     Bash completion dir:     ${with_bashcompletiondir}
               ])

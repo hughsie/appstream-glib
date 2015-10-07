@@ -45,6 +45,10 @@
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
+#ifdef HAVE_GCAB
+#include "as-store-cab.h"
+#endif
+
 #define AS_API_VERSION_NEWEST	0.8
 
 typedef enum {
@@ -1195,6 +1199,12 @@ as_store_from_file (AsStore *store,
 		return as_store_load_yaml_file (store, file, icon_root,
 						cancellable, error);
 
+#ifdef HAVE_GCAB
+	/* a cab archive */
+	if (g_str_has_suffix (filename, ".cab"))
+		return as_store_cab_from_file (store, file, cancellable, error);
+#endif
+
 	/* an AppStream XML file */
 	root = as_node_from_file (file,
 				  AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
@@ -1219,6 +1229,38 @@ as_store_from_file (AsStore *store,
 	}
 
 	return as_store_from_root (store, root, icon_root, filename, error);
+}
+
+/**
+ * as_store_from_bytes:
+ * @store: a #AsStore instance.
+ * @bytes: a #GBytes.
+ * @cancellable: a #GCancellable.
+ * @error: A #GError or %NULL.
+ *
+ * Parses an appstream store presented as an archive. This is typically
+ * a .cab file containing firmware files.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.5.2
+ **/
+gboolean
+as_store_from_bytes (AsStore *store,
+		     GBytes *bytes,
+		     GCancellable *cancellable,
+		     GError **error)
+{
+#ifdef HAVE_GCAB
+	/* lets assume this is a .cab file for now */
+	return as_store_cab_from_bytes (store, bytes, cancellable, error);
+#else
+	g_set_error (error,
+		     AS_STORE_ERROR,
+		     AS_STORE_ERROR_FAILED,
+		     "no firmware support, compiled with --disable-firmware");
+	return FALSE;
+#endif
 }
 
 /**

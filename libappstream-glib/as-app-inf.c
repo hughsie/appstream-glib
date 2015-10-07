@@ -72,6 +72,7 @@ as_app_parse_inf_file (AsApp *app,
 	g_autofree gchar *vendor = NULL;
 	g_autofree gchar *version = NULL;
 	g_autoptr(GKeyFile) kf = NULL;
+	g_autoptr(AsChecksum) csum = NULL;
 	g_autoptr(AsIcon) icon = NULL;
 	g_autoptr(AsProvide) provide = NULL;
 	g_autoptr(AsRelease) release = NULL;
@@ -103,7 +104,7 @@ as_app_parse_inf_file (AsApp *app,
 			     AS_APP_ERROR_INVALID_TYPE,
 			     "Driver class is '%s', not 'Firmware'", class);
 		return FALSE;
-       }
+	}
 	as_app_set_id_kind (app, AS_ID_KIND_FIRMWARE);
 
 	/* get the Class GUID */
@@ -208,20 +209,17 @@ as_app_parse_inf_file (AsApp *app,
 			     "no SourceDisksFiles or Firmware_CopyFiles");
 		return FALSE;
 	}
-	as_app_add_metadata (app, "FirmwareBasename", firmware_basename);
-
-	/* optional */
-	catalog_basename = g_key_file_get_string (kf, "Version", "CatalogFile", NULL);
-	if (catalog_basename != NULL)
-		as_app_add_metadata (app, "CatalogBasename", catalog_basename);
 
 	/* add a release with no real description */
-	if (version != NULL) {
-		release = as_release_new ();
+	release = as_release_new ();
+	if (version != NULL)
 		as_release_set_version (release, version);
-		as_release_set_timestamp (release, timestamp);
-		as_app_add_release (app, release);
-	}
+	as_release_set_timestamp (release, timestamp);
+	csum = as_checksum_new ();
+	as_checksum_set_filename (csum, firmware_basename);
+	as_checksum_set_target (csum, AS_CHECKSUM_TARGET_CONTENT);
+	as_release_add_checksum (release, csum);
+	as_app_add_release (app, release);
 
 	/* add icon */
 	icon = as_icon_new ();

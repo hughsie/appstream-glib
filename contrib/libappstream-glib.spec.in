@@ -20,6 +20,7 @@ BuildRequires: gdk-pixbuf2-devel >= 2.31.5
 BuildRequires: gtk3-devel
 BuildRequires: gettext
 BuildRequires: intltool
+BuildRequires: libgcab1-devel
 
 # for the builder component
 BuildRequires: fontconfig-devel
