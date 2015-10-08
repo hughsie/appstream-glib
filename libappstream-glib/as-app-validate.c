@@ -186,6 +186,14 @@ as_app_validate_description_li (const gchar *text, AsAppValidateHelper *helper)
 		require_sentence_case = FALSE;
 	}
 
+	/* empty */
+	if (text == NULL) {
+		ai_app_validate_add (helper,
+				     AS_PROBLEM_KIND_STYLE_INCORRECT,
+				     "<li> is empty");
+		return;
+	}
+
 	str_len = strlen (text);
 	if (str_len < length_li_min) {
 		ai_app_validate_add (helper,
