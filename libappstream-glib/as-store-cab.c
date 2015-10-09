@@ -365,7 +365,8 @@ as_store_cab_from_bytes_with_origin (AsStore *store,
 		/* check the version matches */
 		rel_inf = as_app_get_release_default (app_inf);
 		rel_metainfo = as_app_get_release_default (app_tmp);
-		if (g_strcmp0 (as_release_get_version (rel_inf),
+		if (as_release_get_version (rel_inf) != NULL &&
+		    g_strcmp0 (as_release_get_version (rel_inf),
 			       as_release_get_version (rel_metainfo)) != 0) {
 			g_set_error (error,
 				     AS_STORE_ERROR,
