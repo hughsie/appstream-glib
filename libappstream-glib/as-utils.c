@@ -1667,8 +1667,7 @@ as_utils_guid_from_string (const gchar *str)
  * as_utils_version_from_uint32:
  * @val: A uint32le version number
  *
- * Returns a version string from a 32 bit LE number in the Microsoft-style
- * AA.BB.CCDD dotted-decimal notation, with leading sections and zeros ignored.
+ * Returns a dotted decimal version string from a 32 bit number.
  *
  * Returns: A version number, e.g. "1.0.3"
  *
@@ -1678,19 +1677,17 @@ gchar *
 as_utils_version_from_uint32 (guint32 val)
 {
 	GString *str;
+	gboolean valid = FALSE;
 	guint i;
-	guint16 tmp[3];
-
-	/* create version string using the MS format */
-	tmp[0] = (val >> 24) & 0xff;
-	tmp[1] = (val >> 16) & 0xff;
-	tmp[2] = val & 0xffff;
+	guint8 *tmp = (guint8 *) &val;
 
 	/* create version string */
 	str = g_string_sized_new (13);
-	for (i = 0; i < 3; i++) {
-		if (i == 2 || tmp[i] > 0 || str->len > 0)
-			g_string_append_printf (str, "%i.", tmp[i]);
+	for (i = 0; i < 4; i++) {
+		if (tmp[3 - i] > 0 || i == 3)
+			valid = TRUE;
+		if (valid)
+			g_string_append_printf (str, "%i.", tmp[3 - i]);
 	}
 
 	/* delete trailing dot */
