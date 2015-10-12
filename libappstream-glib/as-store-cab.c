@@ -26,6 +26,7 @@
 #include <gio/gunixinputstream.h>
 
 #include "as-store-cab.h"
+#include "as-utils.h"
 
 #ifndef GCabCabinet_autoptr
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(GCabCabinet, g_object_unref)
@@ -366,8 +367,8 @@ as_store_cab_from_bytes_with_origin (AsStore *store,
 		rel_inf = as_app_get_release_default (app_inf);
 		rel_metainfo = as_app_get_release_default (app_tmp);
 		if (as_release_get_version (rel_inf) != NULL &&
-		    g_strcmp0 (as_release_get_version (rel_inf),
-			       as_release_get_version (rel_metainfo)) != 0) {
+		    as_utils_vercmp (as_release_get_version (rel_inf),
+				     as_release_get_version (rel_metainfo)) != 0) {
 			g_set_error (error,
 				     AS_STORE_ERROR,
 				     AS_STORE_ERROR_FAILED,
