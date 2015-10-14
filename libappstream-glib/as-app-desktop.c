@@ -170,7 +170,7 @@ as_app_parse_file_key (AsApp *app,
 			if (g_path_is_absolute (tmp)) {
 				as_icon_set_filename (icon, tmp);
 			} else {
-				/* Work around a common mistake in desktop files */
+				/* work around a common mistake in desktop files */
 				dot = g_strstr_len (tmp, -1, ".");
 				if (dot != NULL &&
 				    (g_strcmp0 (dot, ".png") == 0 ||
