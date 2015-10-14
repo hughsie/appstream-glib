@@ -166,10 +166,21 @@ as_app_parse_file_key (AsApp *app,
 		if (tmp != NULL && tmp[0] != '\0') {
 			g_autoptr(AsIcon) icon = NULL;
 			icon = as_icon_new ();
+
+			if (g_path_is_absolute (tmp)) {
+				as_icon_set_filename (icon, tmp);
+			} else {
+				/* Work around a common mistake in desktop files */
+				dot = g_strstr_len (tmp, -1, ".");
+				if (dot != NULL &&
+				    (g_strcmp0 (dot, ".png") == 0 ||
+				     g_strcmp0 (dot, ".xpm") == 0 ||
+				     g_strcmp0 (dot, ".svg") == 0)) {
+					*dot = '\0';
+				}
+			}
 			as_icon_set_name (icon, tmp);
-			dot = g_strstr_len (tmp, -1, ".");
-			if (dot != NULL)
-				*dot = '\0';
+
 			if (as_utils_is_stock_icon_name (tmp)) {
 				as_icon_set_name (icon, tmp);
 				as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
