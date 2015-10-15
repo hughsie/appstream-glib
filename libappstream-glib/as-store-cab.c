@@ -39,7 +39,14 @@ static gboolean
 as_store_cab_cb (GCabFile *file, gpointer user_data)
 {
 	GPtrArray *filelist = (GPtrArray *) user_data;
-	g_ptr_array_add (filelist, g_strdup (gcab_file_get_name (file)));
+	gchar *fn;
+
+	/* only accept UNIX paths */
+	fn = g_strdup (gcab_file_get_name (file));
+	g_strdelimit (fn, "\\", '/');
+	gcab_file_set_extract_name (file, fn);
+
+	g_ptr_array_add (filelist, fn);
 	return TRUE;
 }
 
