@@ -2884,14 +2884,14 @@ as_test_store_cab_func (void)
 	"<releases>\n"
 	"<release version=\"2.0.2\" timestamp=\"1424116753\">\n"
 	"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.2.cab</location>\n"
-	"<checksum filename=\"colorhug-als-2.0.2.cab\" target=\"container\" type=\"sha1\">d184306a196f9a82bbeb92fc7373aa8ffd5bd96f</checksum>\n"
+	"<checksum filename=\"colorhug-als-2.0.2.cab\" target=\"container\" type=\"sha1\">0608b5e8169706f1351a6351630503de75939a86</checksum>\n"
 	"<checksum filename=\"firmware.bin\" target=\"content\" type=\"sha1\">767a8a7b8a7b350b513f57761204b4aaa657aa44</checksum>\n"
 	"<description><p>This unstable release adds the following features:</p>"
 	"<ul><li>Add TakeReadingArray to enable panel latency measurements</li>"
 	"<li>Speed up the auto-scaled measurements considerably, using 256ms as"
 	" the smallest sample duration</li></ul></description>\n"
 	"<size type=\"installed\">14</size>\n"
-	"<size type=\"download\">1983</size>\n"
+	"<size type=\"download\">2011</size>\n"
 	"</release>\n"
 	"</releases>\n"
 	"<provides>\n"
@@ -4213,7 +4213,7 @@ as_test_inf_func (void)
 	g_assert_cmpstr (tmp, ==, "{84f40464-9272-4ef7-9399-cd95f12da695}");
 	g_free (tmp);
 	tmp = g_key_file_get_string (kf, "Firmware_AddReg", "HKR_FirmwareVersion_0x00010001", NULL);
-	g_assert_cmpstr (tmp, ==, "0x0000000");
+	g_assert_cmpstr (tmp, ==, "0x00020002");
 	g_free (tmp);
 	tmp = g_key_file_get_string (kf, "Firmware_AddReg", "HKR_FirmwareFilename", NULL);
 	g_assert_cmpstr (tmp, ==, "firmware.bin");

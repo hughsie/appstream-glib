@@ -12,10 +12,11 @@ firmware.bin
 
 [Firmware_AddReg]
 HKR,,FirmwareId,,{84f40464-9272-4ef7-9399-cd95f12da696}
-HKR,,FirmwareVersion,%REG_DWORD%,0x0000000
+HKR,,FirmwareVersion,%REG_DWORD%,0x20000
 HKR,,FirmwareFilename,,firmware.bin
 
 [Strings]
 Provider     = "Hughski Limited"
 FirmwareDesc = "ColorHug Firmware"
 DiskName     = "Firmware for the ColorHug Colorimeter"
+REG_DWORD     = 0x00010001

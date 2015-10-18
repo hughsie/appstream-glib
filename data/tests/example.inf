@@ -26,7 +26,7 @@ AddReg = Firmware_AddReg
 
 [Firmware_AddReg]
 HKR,,FirmwareId,,{84f40464-9272-4ef7-9399-cd95f12da695}
-HKR,,FirmwareVersion,%REG_DWORD%, 0x0000000
+HKR,,FirmwareVersion,%REG_DWORD%, 0x00020002
 HKR , , FirmwareFilename , , "firmware.bin"
 
 [SourceDisksNames]

@@ -62,6 +62,7 @@ as_app_parse_inf_file (AsApp *app,
 	g_autofree gchar *class_guid_unsafe = NULL;
 	g_autofree gchar *class = NULL;
 	g_autofree gchar *comment = NULL;
+	g_autofree gchar *display_version = NULL;
 	g_autofree gchar *filename_full = NULL;
 	g_autofree gchar *firmware_basename = NULL;
 	g_autofree gchar *guid = NULL;
@@ -140,6 +141,19 @@ as_app_parse_inf_file (AsApp *app,
 		return FALSE;
 	}
 
+	/* get the version */
+	version = g_key_file_get_string (kf,
+					"Firmware_AddReg",
+					"HKR_FirmwareVersion_0x00010001",
+					NULL);
+	if (version == NULL) {
+		g_set_error_literal (error,
+				     AS_APP_ERROR,
+				     AS_APP_ERROR_INVALID_TYPE,
+				     "HKR->FirmwareVersion missing from [Firmware_AddReg]");
+		return FALSE;
+	}
+
 	/* add the GUID as a provide */
 	provide_guid = as_app_parse_inf_sanitize_guid (guid);
 	if (provide_guid != NULL) {
@@ -178,8 +192,8 @@ as_app_parse_inf_file (AsApp *app,
 		as_app_set_comment (app, NULL, comment);
 
 	/* parse the DriverVer */
-	version = as_inf_get_driver_version (kf, &timestamp, &error_local);
-	if (version == NULL) {
+	display_version = as_inf_get_driver_version (kf, &timestamp, &error_local);
+	if (display_version == NULL) {
 		if (g_error_matches (error_local,
 				     AS_INF_ERROR,
 				     AS_INF_ERROR_NOT_FOUND)) {
@@ -210,10 +224,13 @@ as_app_parse_inf_file (AsApp *app,
 		return FALSE;
 	}
 
+	/* this is for display only */
+	if (display_version != NULL)
+		as_app_add_metadata (app, "DisplayVersion", display_version);
+
 	/* add a release with no real description */
 	release = as_release_new ();
-	if (version != NULL)
-		as_release_set_version (release, version);
+	as_release_set_version (release, version);
 	as_release_set_timestamp (release, timestamp);
 	csum = as_checksum_new ();
 	as_checksum_set_filename (csum, firmware_basename);

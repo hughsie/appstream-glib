@@ -18,3 +18,4 @@ HKR,,FirmwareFilename,,firmware.bin
 Provider      = "Hughski Limited"
 FirmwareDesc = "ColorHug Firmware"
 DiskName     = "Firmware for the ColorHug Colorimeter"
+REG_DWORD     = 0x00010001
