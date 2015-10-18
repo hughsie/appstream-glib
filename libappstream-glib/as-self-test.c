@@ -383,7 +383,7 @@ as_test_release_func (void)
 
 	/* verify converting hex prefix */
 	as_release_set_version (release, "0x600100");
-	g_assert_cmpstr (as_release_get_version (release), ==, "96.1.0");
+	g_assert_cmpstr (as_release_get_version (release), ==, "0.96.256");
 }
 
 static void
@@ -1890,7 +1890,7 @@ as_test_app_parse_file_inf_func (void)
 	g_assert_cmpint (releases->len, ==, 1);
 	rel = g_ptr_array_index (releases, 0);
 	g_assert_cmpint (as_release_get_timestamp (rel), ==, 1425340800);
-	g_assert_cmpstr (as_release_get_version (rel), ==, "2.0.2");
+	g_assert_cmpstr (as_release_get_version (rel), ==, "0.2.2");
 	//g_assert_cmpstr (as_release_get_description (rel), ==, "XXX");
 }
 
@@ -2884,7 +2884,7 @@ as_test_store_cab_func (void)
 	"<releases>\n"
 	"<release version=\"2.0.2\" timestamp=\"1424116753\">\n"
 	"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.2.cab</location>\n"
-	"<checksum filename=\"colorhug-als-2.0.2.cab\" target=\"container\" type=\"sha1\">0608b5e8169706f1351a6351630503de75939a86</checksum>\n"
+	"<checksum filename=\"colorhug-als-2.0.2.cab\" target=\"container\" type=\"sha1\">7e179f45d2782c3c9744495dd4bbd91ad3d9e841</checksum>\n"
 	"<checksum filename=\"firmware.bin\" target=\"content\" type=\"sha1\">767a8a7b8a7b350b513f57761204b4aaa657aa44</checksum>\n"
 	"<description><p>This unstable release adds the following features:</p>"
 	"<ul><li>Add TakeReadingArray to enable panel latency measurements</li>"
@@ -3633,12 +3633,18 @@ as_test_utils_version_func (void)
 	struct {
 		guint32 val;
 		const gchar *ver;
+		AsVersionParseFlag flags;
 	} version_from_uint32[] = {
-		{ 0x0,		"0" },
-		{ 0xff,		"255" },
-		{ 0xff01,	"255.1" },
-		{ 0xff0001,	"255.0.1" },
-		{ 0xff000100,	"255.0.1.0" },
+		{ 0x0,		"0.0.0.0",	AS_VERSION_PARSE_FLAG_NONE },
+		{ 0xff,		"0.0.0.255",	AS_VERSION_PARSE_FLAG_NONE },
+		{ 0xff01,	"0.0.255.1",	AS_VERSION_PARSE_FLAG_NONE },
+		{ 0xff0001,	"0.255.0.1",	AS_VERSION_PARSE_FLAG_NONE },
+		{ 0xff000100,	"255.0.1.0",	AS_VERSION_PARSE_FLAG_NONE },
+		{ 0x0,		"0.0.0",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
+		{ 0xff,		"0.0.255",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
+		{ 0xff01,	"0.0.65281",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
+		{ 0xff0001,	"0.255.1",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
+		{ 0xff000100,	"255.0.256",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
 		{ NULL,		NULL }
 	};
 	struct {
@@ -3646,10 +3652,10 @@ as_test_utils_version_func (void)
 		const gchar *new;
 	} version_parse[] = {
 		{ "0",		"0" },
-		{ "257",	"1.1" },
+		{ "257",	"0.0.257" },
 		{ "1.2.3",	"1.2.3" },
-		{ "0xff0001",	"255.0.1" },
-		{ "16711681",	"255.0.1" },
+		{ "0xff0001",	"0.255.1" },
+		{ "16711681",	"0.255.1" },
 		{ "dave",	"dave" },
 		{ NULL,		NULL }
 	};
@@ -3657,7 +3663,8 @@ as_test_utils_version_func (void)
 	/* check version conversion */
 	for (i = 0; version_from_uint32[i].ver != NULL; i++) {
 		g_autofree gchar *ver = NULL;
-		ver = as_utils_version_from_uint32 (version_from_uint32[i].val);
+		ver = as_utils_version_from_uint32 (version_from_uint32[i].val,
+						    version_from_uint32[i].flags);
 		g_assert_cmpstr (ver, ==, version_from_uint32[i].ver);
 	}
 
@@ -3968,7 +3975,7 @@ as_test_utils_vercmp_func (void)
 	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.3"), ==, 0);
 
 	/* same, not dotted decimal */
-	g_assert_cmpint (as_utils_vercmp ("1.2.3", "0x10203"), ==, 0);
+	g_assert_cmpint (as_utils_vercmp ("1.2.3", "0x1020003"), ==, 0);
 	g_assert_cmpint (as_utils_vercmp ("0x10203", "0x10203"), ==, 0);
 
 	/* upgrade and downgrade */

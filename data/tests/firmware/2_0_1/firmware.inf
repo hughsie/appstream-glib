@@ -11,7 +11,7 @@ firmware.bin
 
 [Firmware_AddReg]
 HKR,,FirmwareId,,{84f40464-9272-4ef7-9399-cd95f12da696}
-HKR,,FirmwareVersion,%REG_DWORD%,0x20001
+HKR,,FirmwareVersion,%REG_DWORD%,0x2000001
 HKR,,FirmwareFilename,,firmware.bin
 
 [Strings]

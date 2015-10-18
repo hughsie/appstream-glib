@@ -1666,6 +1666,7 @@ as_utils_guid_from_string (const gchar *str)
 /**
  * as_utils_version_from_uint32:
  * @val: A uint32le version number
+ * @flags: flags used for formatting, e.g. %AS_VERSION_PARSE_FLAG_USE_TRIPLET
  *
  * Returns a dotted decimal version string from a 32 bit number.
  *
@@ -1674,27 +1675,19 @@ as_utils_guid_from_string (const gchar *str)
  * Since: 0.5.2
  **/
 gchar *
-as_utils_version_from_uint32 (guint32 val)
+as_utils_version_from_uint32 (guint32 val, AsVersionParseFlag flags)
 {
-	GString *str;
-	gboolean valid = FALSE;
-	guint i;
-	guint8 *tmp = (guint8 *) &val;
-
-	/* create version string */
-	str = g_string_sized_new (13);
-	for (i = 0; i < 4; i++) {
-		if (tmp[3 - i] > 0 || i == 3)
-			valid = TRUE;
-		if (valid)
-			g_string_append_printf (str, "%i.", tmp[3 - i]);
+	if (flags & AS_VERSION_PARSE_FLAG_USE_TRIPLET) {
+		return g_strdup_printf ("%i.%i.%i",
+					(val >> 24) & 0xff,
+					(val >> 16) & 0xff,
+					val & 0xffff);
 	}
-
-	/* delete trailing dot */
-	if (str->len > 0)
-		g_string_truncate (str, str->len - 1);
-
-	return g_string_free (str, FALSE);
+	return g_strdup_printf ("%i.%i.%i.%i",
+				(val >> 24) & 0xff,
+				(val >> 16) & 0xff,
+				(val >> 8) & 0xff,
+				val & 0xff);
 }
 
 /**
@@ -1746,5 +1739,5 @@ as_utils_version_parse (const gchar *version)
 		return g_strdup (version);
 	if (tmp == 0 || tmp < 0xff)
 		return g_strdup (version);
-	return as_utils_version_from_uint32 (tmp);
+	return as_utils_version_from_uint32 (tmp, AS_VERSION_PARSE_FLAG_USE_TRIPLET);
 }

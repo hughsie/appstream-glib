@@ -108,6 +108,20 @@ typedef enum {
 	AS_MARKUP_CONVERT_FLAG_LAST
 } AsMarkupConvertFlag;
 
+/**
+ * AsVersionParseFlag:
+ * @AS_VERSION_PARSE_FLAG_NONE:			No flags set
+ * @AS_VERSION_PARSE_FLAG_USE_TRIPLET:		Use Microsoft-style version numbers
+ *
+ * The flags used when parsing version numbers.
+ **/
+typedef enum {
+	AS_VERSION_PARSE_FLAG_NONE		= 0,
+	AS_VERSION_PARSE_FLAG_USE_TRIPLET	= 1 << 0,
+	/*< private >*/
+	AS_VERSION_PARSE_FLAG_LAST
+} AsVersionParseFlag;
+
 gchar		*as_markup_convert_simple	(const gchar	*markup,
 						 GError		**error);
 gchar		*as_markup_convert		(const gchar	*markup,
@@ -149,7 +163,8 @@ gint		 as_utils_vercmp		(const gchar	*version_a,
 						 const gchar	*version_b);
 gboolean	 as_utils_guid_is_valid		(const gchar	*guid);
 gchar		*as_utils_guid_from_string	(const gchar	*str);
-gchar		*as_utils_version_from_uint32	(guint32	 val);
+gchar		*as_utils_version_from_uint32	(guint32	 val,
+						 AsVersionParseFlag flags);
 gchar		*as_utils_version_parse		(const gchar	*version);
 
 G_END_DECLS
