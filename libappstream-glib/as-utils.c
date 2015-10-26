@@ -1700,6 +1700,7 @@ as_utils_version_from_uint32 (guint32 val, AsVersionParseFlag flags)
  * - Dotted decimal, e.g. "1.2.3"
  * - Base 16, a hex number *with* a 0x prefix, e.g. "0x10203"
  * - Base 10, a string containing just [0-9], e.g. "66051"
+ * - Date in YYYYMMDD format, e.g. 20150915
  *
  * Anything with a '.' or that doesn't match [0-9] or 0x[a-f,0-9] is considered
  * a string and returned without modification.
@@ -1718,6 +1719,11 @@ as_utils_version_parse (const gchar *version)
 
 	/* already dotted decimal */
 	if (g_strstr_len (version, -1, ".") != NULL)
+		return g_strdup (version);
+
+	/* is a date */
+	if (g_str_has_prefix (version, "20") &&
+	    strlen (version) == 8)
 		return g_strdup (version);
 
 	/* convert 0x prefixed strings to dotted decimal */
