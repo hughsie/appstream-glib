@@ -2025,8 +2025,9 @@ as_store_load_installed (AsStore *store,
 				g_clear_error (&error_local);
 				continue;
 			}
-			g_propagate_error (error, error_local);
-			return FALSE;
+			g_warning ("failed to parse %s: %s", filename, error_local->message);
+			g_clear_error (&error_local);
+			continue;
 		}
 
 		/* do not load applications with vetos */
