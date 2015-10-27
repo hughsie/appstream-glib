@@ -1,3 +1,40 @@
+Version 0.5.2
+~~~~~~~~~~~~~
+Released: 2015-10-27
+
+New Features:
+ - Add an --enable-profile option to appstream-util (Richard Hughes)
+ - Add as_markup_validate() to check descriptions (Richard Hughes)
+ - Add support for AppStream <size> metadata (Richard Hughes)
+ - Add the ability to attach blobs of data to AsRelease objects (Richard Hughes)
+ - Add the ability to parse .cab archives as AppStream stores (Richard Hughes)
+ - Remove the long-obsolete appdata-validate tool (Richard Hughes)
+
+Bugfixes:
+ - Accept a '0x' hexidecimal prefix when parsing a version (Richard Hughes)
+ - Adapt to DEP11 spec change (Matthias Klumpp)
+ - Add AsProfile for speed profiling (Richard Hughes)
+ - Allow as_markup_convert() to ignore errors (Richard Hughes)
+ - Always escape AppStream descriptions when doing passthrough (Richard Hughes)
+ - Do not attempt to parse the version in as_release_set_version() (Richard Hughes)
+ - Do not ever store the KDE x-test locale data (Richard Hughes)
+ - Do not fail to install firmware if DriverVer is not set (Richard Hughes)
+ - Do not overwrite the AppData URL with the one from the package (Richard Hughes)
+ - Do not parse ISO dates as uint32 version numbers (Richard Hughes)
+ - Do not write a checksum 'type' for unknown checksum kinds (Richard Hughes)
+ - Fix a typo in command name (Dmitry Shachnev)
+ - Fix crash in validator when processing '<li></li>' (Richard Hughes)
+ - Monitor /usr/share/applications for apps without AppData when using watch flags (Richard Hughes)
+ - Only accept UNIX paths for files in cab files (Richard Hughes)
+ - Require AppData files to be present in the AppStream metadata (Richard Hughes)
+ - Simplify veto messages for missing <name> and <summary> (Kalev Lember)
+ - Support super-HiDPI icons like shipped in Hedgewars (Richard Hughes)
+ - Try harder to deal with icons that have extension or full path listed (Kalev Lember)
+ - Use a sensible warning when processing desktop files with NoDisplay=true (Richard Hughes)
+ - Use as_utils_vercmp() to be correctly check versions for equality (Richard Hughes)
+ - Use a wildcard in the self tests to ignore GCab-generated hash differences (Richard Hughes)
+ - Use g_set_object() to fix potential crash when adding pixbufs (Richard Hughes)
+
 Version 0.5.1
 ~~~~~~~~~~~~~
 Released: 2015-09-15

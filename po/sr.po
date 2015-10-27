@@ -1,0 +1,291 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# Miloš Popović <gpopac@gmail.com>, 2015
+# Марко М. Костић (Marko M. Kostić) <marko.m.kostic@gmail.com>, 2015
+# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2014
+msgid ""
+msgstr ""
+"Project-Id-Version: appstream-glib\n"
+"Report-Msgid-Bugs-To: richard@hughsie.com\n"
+"POT-Creation-Date: 2015-10-27 12:19+0000\n"
+"PO-Revision-Date: 2015-10-05 12:11+0000\n"
+"Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
+"Language-Team: Serbian (http://www.transifex.com/freedesktop/appstream-glib/language/sr/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: sr\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#. TRANSLATORS: command line option
+msgid "Show extra debugging information"
+msgstr "Приказује додатне податке за исправљање грешака у програму"
+
+#. TRANSLATORS: command line option
+msgid "Add a cache ID to each component"
+msgstr "Додаје ИБ оставе сваком састојку"
+
+#. TRANSLATORS: command line option
+msgid "Include failed results in the output"
+msgstr "Укључи неуспешне резултате у излаз"
+
+#. TRANSLATORS: command line option
+msgid "Add HiDPI icons to the tarball"
+msgstr "Додај „HiDPi“ иконице у архиву"
+
+#. TRANSLATORS: command line option
+msgid "Add encoded icons to the XML"
+msgstr "Додај кодиране иконицу у „XML“"
+
+#. TRANSLATORS: command line option
+msgid "Do not compress the icons into a tarball"
+msgstr "Не пакуј иконице унутар архиве"
+
+#. TRANSLATORS: command line option
+msgid "Set the logging directory"
+msgstr "Подешава директоријум дневника"
+
+#. TRANSLATORS: command line option
+msgid "Set the packages directory"
+msgstr "Подешава директоријум пакета"
+
+#. TRANSLATORS: command line option
+msgid "Set the temporary directory"
+msgstr "Подешава привремени директоријум"
+
+#. TRANSLATORS: command line option
+msgid "Set the output directory"
+msgstr "Подешава директоријум излаза"
+
+#. TRANSLATORS: command line option
+msgid "Set the icons directory"
+msgstr "Постави фасциклу са иконицама"
+
+#. TRANSLATORS: command line option
+msgid "Set the cache directory"
+msgstr "Подешава директоријум оставе"
+
+#. TRANSLATORS: command line option
+msgid "Set the basenames of the output files"
+msgstr "Постави основно име за излазне датотеке"
+
+#. TRANSLATORS: command line option
+msgid "Set the origin name"
+msgstr "Подешава назив порекла"
+
+#. TRANSLATORS: command line option
+msgid "Set the number of threads"
+msgstr "Подешава број нити"
+
+#. TRANSLATORS: command line option
+msgid "Set the minimum icon size in pixels"
+msgstr "Постави најмању величину иконице у пикселима"
+
+#. TRANSLATORS: command line option
+msgid "Set the AppStream version"
+msgstr "Подешава издање Програмског тока"
+
+#. TRANSLATORS: command line option
+msgid "Set the ostree repo name"
+msgstr "Постави име „ostree“ ризнице"
+
+#. TRANSLATORS: command line option
+msgid "Set the old metadata location"
+msgstr "Подешава старо место метаподатака"
+
+#. TRANSLATORS: command line option
+msgid "Ignore certain types of veto"
+msgstr "Занемари одређене врсте вета"
+
+#. TRANSLATORS: error message
+msgid "Failed to parse arguments"
+msgstr "Не могу да обрадим аргументе"
+
+#. TRANSLATORS: error message
+msgid "API version no longer supported"
+msgstr "Издање АПИ-ја више није подржано"
+
+#. TRANSLATORS: error message
+msgid "Failed to set up builder"
+msgstr "Не могу да подесим програм за изградњу"
+
+#. TRANSLATORS: error message
+msgid "Failed to open packages"
+msgstr "Не могу да отворим пакет"
+
+#. TRANSLATORS: information message
+msgid "Scanning packages..."
+msgstr "Прегледам пакете..."
+
+#. TRANSLATORS: error message
+msgid "Failed to add package"
+msgstr "Не могу да додам пакет"
+
+#. TRANSLATORS: information message
+#, c-format
+msgid "Parsed %i/%i files..."
+msgstr "Обрадио сам %i/%i датотеке..."
+
+#. TRANSLATORS: error message
+msgid "Failed to generate metadata"
+msgstr "Не могу да направим метаподатке"
+
+#. success
+#. TRANSLATORS: information message
+msgid "Done!"
+msgstr "Готово!"
+
+#. TRANSLATORS: this is a command alias
+#, c-format
+msgid "Alias to %s"
+msgstr "Други назив за „%s“"
+
+msgid "Command not found, valid commands are:"
+msgstr "Нисам нашао наредбу, исправне наредбе су:"
+
+#. TRANSLATORS: any manual changes required?
+#. * also note: FIXME is a hardcoded string
+msgid "Please review the file and fix any 'FIXME' items"
+msgstr "Прегледајте датотеку и поправите сваку ставку „FIXME“"
+
+#. TRANSLATORS: information message
+msgid "New API version"
+msgstr "Ново издање АПИ-ја"
+
+msgid "Not enough arguments, expected old.xml new.xml version"
+msgstr "Нема довољно аргумената, очекивах „стари.xml нови.xml“ издање"
+
+msgid "Not enough arguments, expected file.xml"
+msgstr "Нема довољно аргумената, очекивах „датотека.xml“"
+
+#. TRANSLATORS: the file is valid
+msgid "OK"
+msgstr "У реду"
+
+#. list failures
+msgid "FAILED"
+msgstr "НЕУСПЕХ"
+
+msgid "Validation failed"
+msgstr "Потврђивање није успело"
+
+msgid "Validation of files failed"
+msgstr "Потврђивање датотека није успело"
+
+#. TRANSLATORS: this is the --nonet argument
+msgid "Do not use network access"
+msgstr "Не користи приступ мрежи"
+
+#. TRANSLATORS: command line option
+msgid "Show version"
+msgstr "Приказује издање"
+
+#. TRANSLATORS: command line option
+msgid "Enable profiling"
+msgstr "Укључи профилисање"
+
+#. TRANSLATORS: command description
+msgid "Converts AppStream metadata from one version to another"
+msgstr "Претвара метаподатке Програмског тока из једног издања у друго"
+
+#. TRANSLATORS: command description
+msgid "Upgrade AppData metadata to the latest version"
+msgstr "Надограђује метаподатке Програмског тока на најновије издање"
+
+#. TRANSLATORS: command description
+msgid "Creates an example Appdata file from a .desktop file"
+msgstr "Прави примерак датотеке Програмског тока из „.desktop“ датотеке"
+
+#. TRANSLATORS: command description
+msgid "Dumps the applications in the AppStream metadata"
+msgstr "Исписује програме у метаподацима Програмског тока"
+
+#. TRANSLATORS: command description
+msgid "Search for AppStream applications"
+msgstr "Потражи програме Програмског тока"
+
+#. TRANSLATORS: command description
+msgid "Display application search tokens"
+msgstr "Прикажи жетоне претраге програма"
+
+#. TRANSLATORS: command description
+msgid "Installs AppStream metadata"
+msgstr "Инсталира метаподатке Програмског тока"
+
+#. TRANSLATORS: command description
+msgid "Installs AppStream metadata with new origin"
+msgstr "Инсталира метаподатке Програмског тока са новим пореклом"
+
+#. TRANSLATORS: command description
+msgid "Uninstalls AppStream metadata"
+msgstr "Уклања метаподатке Програмског тока"
+
+#. TRANSLATORS: command description
+msgid "Create an HTML status page"
+msgstr "Прави ХТМЛ страницу стања"
+
+#. TRANSLATORS: command description
+msgid "Create an CSV status document"
+msgstr "Прави CSV документ стања"
+
+#. TRANSLATORS: command description
+msgid "Create an HTML matrix page"
+msgstr "Направи матричну ХТМЛ страницу"
+
+#. TRANSLATORS: command description
+msgid "List applications not backed by packages"
+msgstr "Исписује програме за које пакети нису направили резерву"
+
+#. TRANSLATORS: command description
+msgid "Validate an AppData or AppStream file"
+msgstr "Потврђује Програмске податке или датотеку Програмског тока"
+
+#. TRANSLATORS: command description
+msgid "Validate an AppData or AppStream file (relaxed)"
+msgstr "Потврђује Програмске податке или датотеку Програмског тока(опуштено)"
+
+#. TRANSLATORS: command description
+msgid "Validate an AppData or AppStream file (strict)"
+msgstr "Потврђује Програмске податке или датотеку Програмског тока(изричито)"
+
+#. TRANSLATORS: command description
+msgid "Convert an AppData file to NEWS format"
+msgstr "Претвори „AppData“ датотеку у „NEWS“ формат"
+
+#. TRANSLATORS: command description
+msgid "Convert an NEWS file to AppData format"
+msgstr "Претвори „NEWS“ датотеку у „AppData“ формат"
+
+#. TRANSLATORS: command description
+msgid "Check installed application data"
+msgstr "Проверава инсталиране податке програма"
+
+#. TRANSLATORS: command description
+msgid "Replace screenshots in source file"
+msgstr "Замени снимке екрана у изворној датотеци"
+
+#. TRANSLATORS: command description
+msgid "Mirror upstream screenshots"
+msgstr "Дуплирај узводне снимке екрана"
+
+#. TRANSLATORS: command description
+msgid "Mirror local firmware files"
+msgstr "Дуплирај локалне датотеке са фирмвером"
+
+#. TRANSLATORS: command description
+msgid "Incorporate extra metadata from an external file"
+msgstr "Уврсти додатне метаподатке из спољне датотеке"
+
+#. TRANSLATORS: command description
+msgid "Compare the contents of two AppStream files"
+msgstr "Упореди садржај две датотеке Програмског тока"
+
+#. TRANSLATORS: program name
+msgid "AppStream Utility"
+msgstr "Алатка Програмског тока"
+
+msgid "Version:"
+msgstr "Издање:"

@@ -4,305 +4,287 @@
 # 
 # Translators:
 # Igor Gnatenko <i.gnatenko.brain@gmail.com>, 2014
+# Serge Vylekzhanin <vylekzhanin@mail.ru>, 2014-2015
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2014-06-19 13:46+0400\n"
-"PO-Revision-Date: 2014-06-19 09:47+0000\n"
-"Last-Translator: Igor Gnatenko <i.gnatenko.brain@gmail.com>\n"
-"Language-Team: Russian (http://www.transifex.com/projects/p/appstream-glib/language/ru/)\n"
+"POT-Creation-Date: 2015-10-27 12:19+0000\n"
+"PO-Revision-Date: 2015-09-27 11:27+0000\n"
+"Last-Translator: Serge Vylekzhanin <vylekzhanin@mail.ru>\n"
+"Language-Team: Russian (http://www.transifex.com/freedesktop/appstream-glib/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ru\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:71 ../client/as-util.c:1501
 msgid "Show extra debugging information"
 msgstr "Показывать дополнительную отладочную информацию"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:74
-msgid "Do not use the network to download screenshots"
-msgstr "Не использовать сеть для скачивания скриншотов"
-
-#. TRANSLATORS: command line option
-#: ../client/as-builder.c:77
-msgid "Do not delete the decompressed package cache"
-msgstr "Не удалять распакованный кэш пакетов"
-
-#. TRANSLATORS: command line option
-#: ../client/as-builder.c:80
-msgid "Perform extra checks on the source metadata"
-msgstr "Выполнять дополнительные проверки в исходных метаданных"
-
-#. TRANSLATORS: command line option
-#: ../client/as-builder.c:83
 msgid "Add a cache ID to each component"
-msgstr "Добавлять идентификатор кэша в каждый компонент"
+msgstr "Добавить идентификатор кэша в каждый компонент"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:86
-msgid "Set the logging directory [default: ./logs]"
-msgstr "Установить директорию для логов [по умолчанию: ./logs]"
+msgid "Include failed results in the output"
+msgstr "Включить неудачные результаты в вывод"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:89
-msgid "Set the packages directory [default: ./packages]"
-msgstr "Установить директорию для пакетов [по умолчанию: ./packages]"
+msgid "Add HiDPI icons to the tarball"
+msgstr "Добавить пиктограммы высокого разрешения в архивный файл"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:92
-msgid "Set the temporary directory [default: ./tmp]"
-msgstr "Установить директорию для временных файлов [по умолчанию: ./tmp]"
+msgid "Add encoded icons to the XML"
+msgstr "Добавить закодированные пиктограммы в XML"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:95
-msgid "Use extra appstream data [default: ./appstream-extra]"
-msgstr "Использовать дополнительные appstream данные [по умолчанию: ./appstream-extra]"
+msgid "Do not compress the icons into a tarball"
+msgstr "Не сжимать пиктограммы в архивный файл"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:98
-msgid "Use extra appdata data [default: ./appdata-extra]"
-msgstr "Использовать дополнительные appdata данные [по умолчанию: ./appstream-data]"
+msgid "Set the logging directory"
+msgstr "Задать каталог журналов"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:101
-msgid "Use extra screenshots data [default: ./screenshots-extra]"
-msgstr "Использовать дополнительную директорию со скриншотами [по умолчанию: ./screenshots-extra]"
+msgid "Set the packages directory"
+msgstr "Задать каталог пакетов"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:104
-msgid "Set the output directory [default: .]"
-msgstr "Установить директорию для выходных файлов [по умолчанию: .]"
+msgid "Set the temporary directory"
+msgstr "Задать временный каталог"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:107
-msgid "Set the cache directory [default: ./cache]"
-msgstr "Установить директорию для кэша [по умолчанию: ./cache]"
+msgid "Set the output directory"
+msgstr "Задать каталог вывода данных"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:110
-msgid "Set the origin name [default: fedora-21]"
-msgstr "Установить уникальное имя [по умолчанию: fedora-21]"
+msgid "Set the icons directory"
+msgstr "Задать каталог пиктограмм"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:113
-msgid "Set the number of threads [default: 4]"
-msgstr "Установить количество потоков [по умолчанию: 4]"
+msgid "Set the cache directory"
+msgstr "Задать каталог кэша"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:116
-msgid "Set the AppStream version [default: 0.4]"
-msgstr "Установить версию AppStream [по умолчанию: 0.4]"
+msgid "Set the basenames of the output files"
+msgstr "Задать базовые названия выходных файлов"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:119
-msgid "Set the screenshot base URL [default: none]"
-msgstr "Установить URL для скриншотов [по умолчанию: none]"
+msgid "Set the origin name"
+msgstr "Задать название происхождения"
 
 #. TRANSLATORS: command line option
-#: ../client/as-builder.c:122
-msgid "Set the old metadata location [default: none]"
-msgstr "Установить директорию для старых метаданных [по умолчанию: none]"
+msgid "Set the number of threads"
+msgstr "Задать количество потоков"
+
+#. TRANSLATORS: command line option
+msgid "Set the minimum icon size in pixels"
+msgstr "Задать минимальный размер пиктограмм в пикселях"
+
+#. TRANSLATORS: command line option
+msgid "Set the AppStream version"
+msgstr "Задать версию AppStream"
+
+#. TRANSLATORS: command line option
+msgid "Set the ostree repo name"
+msgstr "Задать название хранилища ostree"
+
+#. TRANSLATORS: command line option
+msgid "Set the old metadata location"
+msgstr "Задать нахождение старых метаданных"
+
+#. TRANSLATORS: command line option
+msgid "Ignore certain types of veto"
+msgstr "Игнорировать определенные типы вето"
 
 #. TRANSLATORS: error message
-#: ../client/as-builder.c:136
-#, c-format
-msgid "Failed to parse arguments: %s\n"
-msgstr "Ошибка при обработке аргументов: %s\n"
+msgid "Failed to parse arguments"
+msgstr "Ошибка при распознавании аргументов"
 
 #. TRANSLATORS: error message
-#: ../client/as-builder.c:182
-msgid "failed to create temp dir"
-msgstr "ошибка при создании директории для временных файлов"
+msgid "API version no longer supported"
+msgstr "Данная версия API более не поддерживается"
 
 #. TRANSLATORS: error message
-#: ../client/as-builder.c:189
-#, c-format
-msgid "failed to create temp dir: %s"
-msgstr "ошибка при создании директории для временных файлов: %s"
+msgid "Failed to set up builder"
+msgstr "Не удалось настроить средство сборки"
 
 #. TRANSLATORS: error message
-#: ../client/as-builder.c:199
-#, c-format
-msgid "%s has to exist to use old metadata"
-msgstr "%s "
-
-#. TRANSLATORS: error message
-#: ../client/as-builder.c:206
-#, c-format
-msgid "failed to create icons dir: %s"
-msgstr "ошибка при создании директории для иконок: %s"
-
-#. TRANSLATORS: error message
-#: ../client/as-builder.c:214 ../client/as-builder.c:220
-msgid "failed to create log dir"
-msgstr "ошибка при создании директории для логов"
-
-#. TRANSLATORS: error message
-#: ../client/as-builder.c:228 ../client/as-builder.c:236
-#: ../client/as-builder.c:244 ../client/as-builder.c:252
-msgid "failed to create screenshot cache dir"
-msgstr "ошибка при создании директории для кэша скриншотов"
-
-#. TRANSLATORS: error message
-#: ../client/as-builder.c:258
-msgid "failed to create cache dir"
-msgstr "ошибка при создании директории для кэша"
-
-#. TRANSLATORS: error message
-#: ../client/as-builder.c:282
-#, c-format
-msgid "failed to set up context: %s"
-msgstr ""
-
-#. TRANSLATORS: error message
-#: ../client/as-builder.c:292
-#, c-format
-msgid "failed to open packages: %s"
-msgstr "ошибка пр иоткрытии пакетов: %s"
+msgid "Failed to open packages"
+msgstr "Не удалось открыть пакеты"
 
 #. TRANSLATORS: information message
-#: ../client/as-builder.c:305
-#, c-format
-msgid "Scanning packages...\n"
-msgstr "Сканирование пакетов....\n"
-
-#. TRANSLATORS: debug message
-#: ../client/as-builder.c:313
-#, c-format
-msgid "Skipping %s as found in old md cache"
-msgstr "Пропускается %s как найденный в старом кэше метаданных"
-
-#. TRANSLATORS: information message
-#: ../client/as-builder.c:326
-#, c-format
-msgid "Parsed %i/%i files...\n"
-msgstr "Обработано %i/%i файлов...\n"
+msgid "Scanning packages..."
+msgstr "Сканируем пакеты…"
 
 #. TRANSLATORS: error message
-#: ../client/as-builder.c:339
+msgid "Failed to add package"
+msgstr "Не удалось добавить пакет"
+
+#. TRANSLATORS: information message
 #, c-format
-msgid "failed to process context: %s"
-msgstr ""
+msgid "Parsed %i/%i files..."
+msgstr "Обработано %i из %i файлов…"
+
+#. TRANSLATORS: error message
+msgid "Failed to generate metadata"
+msgstr "Не удалось создать метаданные"
 
 #. success
 #. TRANSLATORS: information message
-#: ../client/as-builder.c:345
-#, c-format
-msgid "Done!\n"
-msgstr "Готово!\n"
+msgid "Done!"
+msgstr "Выполнено!"
 
 #. TRANSLATORS: this is a command alias
-#: ../client/as-util.c:105
 #, c-format
 msgid "Alias to %s"
 msgstr "Псевдоним к %s"
 
-#: ../client/as-util.c:193
 msgid "Command not found, valid commands are:"
 msgstr "Команда не найдена, корректные команды:"
 
-#. TRANSLATORS: information message
-#: ../client/as-util.c:353
-#, c-format
-msgid "New API version: %.2f\n"
-msgstr "Новая версия API: %.2f\n"
+#. TRANSLATORS: any manual changes required?
+#. * also note: FIXME is a hardcoded string
+msgid "Please review the file and fix any 'FIXME' items"
+msgstr "Пожалуйста, просмотрите файл и исправьте пункты, к которым добавлено «FIXME»"
 
-#: ../client/as-util.c:375
+#. TRANSLATORS: information message
+msgid "New API version"
+msgstr "Новая версия API"
+
 msgid "Not enough arguments, expected old.xml new.xml version"
-msgstr "Недостаточно аргументов, ожидается получить old.xml new.xml version"
+msgstr "Недостаточно аргументов, ожидалось old.xml new.xml version"
+
+msgid "Not enough arguments, expected file.xml"
+msgstr "Недостаточно аргументов, ожидался file.xml"
 
 #. TRANSLATORS: the file is valid
-#: ../client/as-util.c:1278 ../client/as-util.c:1363
 msgid "OK"
 msgstr "ОК"
 
 #. list failures
-#: ../client/as-util.c:1283
 msgid "FAILED"
 msgstr "ОШИБКА"
 
-#: ../client/as-util.c:1383
 msgid "Validation failed"
 msgstr "Проверка прошла неудачно"
 
-#: ../client/as-util.c:1430
 msgid "Validation of files failed"
 msgstr "Проверка файлов прошла неудачно"
 
 #. TRANSLATORS: this is the --nonet argument
-#: ../client/as-util.c:1498
 msgid "Do not use network access"
 msgstr "Не использовать доступ к сети"
 
 #. TRANSLATORS: command line option
-#: ../client/as-util.c:1504
 msgid "Show version"
 msgstr "Показать версию"
 
+#. TRANSLATORS: command line option
+msgid "Enable profiling"
+msgstr "Включить профилирование"
+
 #. TRANSLATORS: command description
-#: ../client/as-util.c:1522
 msgid "Converts AppStream metadata from one version to another"
 msgstr "Конвертирует AppStream метаданные из одной версии в другую"
 
 #. TRANSLATORS: command description
-#: ../client/as-util.c:1528
+msgid "Upgrade AppData metadata to the latest version"
+msgstr "Обновить метаданные AppData до последней версии"
+
+#. TRANSLATORS: command description
 msgid "Creates an example Appdata file from a .desktop file"
-msgstr "Создаёт примерный Appdata файл из .desktop файла"
+msgstr "Создаёт файл-пример Appdata из .desktop-файла"
 
 #. TRANSLATORS: command description
-#: ../client/as-util.c:1534
 msgid "Dumps the applications in the AppStream metadata"
-msgstr ""
+msgstr "Создаёт дамп приложений в метаданные AppStream"
 
 #. TRANSLATORS: command description
-#: ../client/as-util.c:1540
+msgid "Search for AppStream applications"
+msgstr "Поиск приложений AppStream"
+
+#. TRANSLATORS: command description
+msgid "Display application search tokens"
+msgstr "Показать токены поиска приложений"
+
+#. TRANSLATORS: command description
 msgid "Installs AppStream metadata"
-msgstr "Устанавливает AppStream метаданные"
+msgstr "Устанавливает метаданные AppStream"
 
 #. TRANSLATORS: command description
-#: ../client/as-util.c:1546
+msgid "Installs AppStream metadata with new origin"
+msgstr "Устанавливает метаданные AppStream с новым происхождением"
+
+#. TRANSLATORS: command description
 msgid "Uninstalls AppStream metadata"
-msgstr "Удаляет AppStream метаданные"
+msgstr "Удаляет метаданные AppStream"
 
 #. TRANSLATORS: command description
-#: ../client/as-util.c:1552
 msgid "Create an HTML status page"
-msgstr "Создаёт HTML страницу состояния"
+msgstr "Создать страницу состояния в формате HTML"
 
 #. TRANSLATORS: command description
-#: ../client/as-util.c:1558
+msgid "Create an CSV status document"
+msgstr "Создать документ состояния в формате CSV"
+
+#. TRANSLATORS: command description
+msgid "Create an HTML matrix page"
+msgstr "Создать страницу матрицы в формате HTML"
+
+#. TRANSLATORS: command description
 msgid "List applications not backed by packages"
-msgstr ""
+msgstr "Список приложений не из пакетов"
 
 #. TRANSLATORS: command description
-#: ../client/as-util.c:1564
 msgid "Validate an AppData or AppStream file"
 msgstr "Проверить корректность AppData или AppStream файла"
 
 #. TRANSLATORS: command description
-#: ../client/as-util.c:1570
 msgid "Validate an AppData or AppStream file (relaxed)"
 msgstr "Проверить корректность AppData или AppStream файла (мягко)"
 
 #. TRANSLATORS: command description
-#: ../client/as-util.c:1576
 msgid "Validate an AppData or AppStream file (strict)"
 msgstr "Проверить корректность AppData или AppStream файла (строго)"
 
+#. TRANSLATORS: command description
+msgid "Convert an AppData file to NEWS format"
+msgstr "Преобразовать файл AppData в формат NEWS"
+
+#. TRANSLATORS: command description
+msgid "Convert an NEWS file to AppData format"
+msgstr "Преобразовать файл NEWS в формат AppData"
+
+#. TRANSLATORS: command description
+msgid "Check installed application data"
+msgstr "Проверить данные установленного приложения"
+
+#. TRANSLATORS: command description
+msgid "Replace screenshots in source file"
+msgstr "Заменить снимки экрана в исходном файле"
+
+#. TRANSLATORS: command description
+msgid "Mirror upstream screenshots"
+msgstr "Отзеркалить снимки экрана из основной ветки разработки"
+
+#. TRANSLATORS: command description
+msgid "Mirror local firmware files"
+msgstr "Отзеркалить локальные файлы микрокода"
+
+#. TRANSLATORS: command description
+msgid "Incorporate extra metadata from an external file"
+msgstr "Включить дополнительные метаданные из внешнего файла"
+
+#. TRANSLATORS: command description
+msgid "Compare the contents of two AppStream files"
+msgstr "Сравнить содержимое двух файлов AppStream"
+
 #. TRANSLATORS: program name
-#: ../client/as-util.c:1589
 msgid "AppStream Utility"
 msgstr "Устилита AppStream"
 
-#: ../client/as-util.c:1595
-msgid "Failed to parse arguments"
-msgstr "Ошибка при распознавании аргументов"
-
-#: ../client/as-util.c:1612
 msgid "Version:"
 msgstr "Версия:"

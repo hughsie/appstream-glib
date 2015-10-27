@@ -1,0 +1,289 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# Rafael Fontenelle <rffontenelle@gmail.com>, 2015
+msgid ""
+msgstr ""
+"Project-Id-Version: appstream-glib\n"
+"Report-Msgid-Bugs-To: richard@hughsie.com\n"
+"POT-Creation-Date: 2015-10-27 12:19+0000\n"
+"PO-Revision-Date: 2015-10-06 18:52+0000\n"
+"Last-Translator: Rafael Fontenelle <rffontenelle@gmail.com>\n"
+"Language-Team: Portuguese (Brazil) (http://www.transifex.com/freedesktop/appstream-glib/language/pt_BR/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#. TRANSLATORS: command line option
+msgid "Show extra debugging information"
+msgstr "Mostra informação extra de depuração"
+
+#. TRANSLATORS: command line option
+msgid "Add a cache ID to each component"
+msgstr "Adiciona um ID de cache para cada componente"
+
+#. TRANSLATORS: command line option
+msgid "Include failed results in the output"
+msgstr "Inclui resultados falhos na saída"
+
+#. TRANSLATORS: command line option
+msgid "Add HiDPI icons to the tarball"
+msgstr "Adiciona ícones HiDPI para o tarball"
+
+#. TRANSLATORS: command line option
+msgid "Add encoded icons to the XML"
+msgstr "Adiciona ícones codificados ao XML"
+
+#. TRANSLATORS: command line option
+msgid "Do not compress the icons into a tarball"
+msgstr "Não comprime os ícones em um tarball"
+
+#. TRANSLATORS: command line option
+msgid "Set the logging directory"
+msgstr "Define o diretório de log"
+
+#. TRANSLATORS: command line option
+msgid "Set the packages directory"
+msgstr "Define o diretório de pacotes"
+
+#. TRANSLATORS: command line option
+msgid "Set the temporary directory"
+msgstr "Define o diretório temporário"
+
+#. TRANSLATORS: command line option
+msgid "Set the output directory"
+msgstr "Define o diretório de saída"
+
+#. TRANSLATORS: command line option
+msgid "Set the icons directory"
+msgstr "Define o diretório de ícones"
+
+#. TRANSLATORS: command line option
+msgid "Set the cache directory"
+msgstr "Define o diretório do cache"
+
+#. TRANSLATORS: command line option
+msgid "Set the basenames of the output files"
+msgstr "Define os nomes base dos arquivos de saída"
+
+#. TRANSLATORS: command line option
+msgid "Set the origin name"
+msgstr "Define o nome de origem"
+
+#. TRANSLATORS: command line option
+msgid "Set the number of threads"
+msgstr "Define o número de fluxos"
+
+#. TRANSLATORS: command line option
+msgid "Set the minimum icon size in pixels"
+msgstr "Define o tamanho mínimo do ícone em pixels"
+
+#. TRANSLATORS: command line option
+msgid "Set the AppStream version"
+msgstr "Define a versão do AppStream"
+
+#. TRANSLATORS: command line option
+msgid "Set the ostree repo name"
+msgstr "Define o nome do repositório ostree"
+
+#. TRANSLATORS: command line option
+msgid "Set the old metadata location"
+msgstr "Define a localização de metadados antigos"
+
+#. TRANSLATORS: command line option
+msgid "Ignore certain types of veto"
+msgstr "Ignora certos tipos de veto"
+
+#. TRANSLATORS: error message
+msgid "Failed to parse arguments"
+msgstr "Falha ao analisar argumentos"
+
+#. TRANSLATORS: error message
+msgid "API version no longer supported"
+msgstr "Versão da API não possui suporte"
+
+#. TRANSLATORS: error message
+msgid "Failed to set up builder"
+msgstr "Falha ao definir um compilador"
+
+#. TRANSLATORS: error message
+msgid "Failed to open packages"
+msgstr "Falha ao abrir pacotes"
+
+#. TRANSLATORS: information message
+msgid "Scanning packages..."
+msgstr "Verificando pacotes..."
+
+#. TRANSLATORS: error message
+msgid "Failed to add package"
+msgstr "Falha ao adicionar pacote"
+
+#. TRANSLATORS: information message
+#, c-format
+msgid "Parsed %i/%i files..."
+msgstr "Analisados os arquivos de %i/%i..."
+
+#. TRANSLATORS: error message
+msgid "Failed to generate metadata"
+msgstr "Falha ao gerar metadados"
+
+#. success
+#. TRANSLATORS: information message
+msgid "Done!"
+msgstr "Pronto!"
+
+#. TRANSLATORS: this is a command alias
+#, c-format
+msgid "Alias to %s"
+msgstr "Alias para %s"
+
+msgid "Command not found, valid commands are:"
+msgstr "Comando não encontrado, comandos válidos para:"
+
+#. TRANSLATORS: any manual changes required?
+#. * also note: FIXME is a hardcoded string
+msgid "Please review the file and fix any 'FIXME' items"
+msgstr "Por favor, reveja o arquivo e corrija quaisquer itens \"FIXME\""
+
+#. TRANSLATORS: information message
+msgid "New API version"
+msgstr "Nova versão da API"
+
+msgid "Not enough arguments, expected old.xml new.xml version"
+msgstr "Argumentos insuficientes, esperava versão antiga.xml nova.xml"
+
+msgid "Not enough arguments, expected file.xml"
+msgstr "Argumentos insuficientes, esperava arquivo.xml"
+
+#. TRANSLATORS: the file is valid
+msgid "OK"
+msgstr "OK"
+
+#. list failures
+msgid "FAILED"
+msgstr "FALHOU"
+
+msgid "Validation failed"
+msgstr "Validação falhou"
+
+msgid "Validation of files failed"
+msgstr "Validação de arquivos falhou"
+
+#. TRANSLATORS: this is the --nonet argument
+msgid "Do not use network access"
+msgstr "Não usar acesso por rede"
+
+#. TRANSLATORS: command line option
+msgid "Show version"
+msgstr "Mostra versão"
+
+#. TRANSLATORS: command line option
+msgid "Enable profiling"
+msgstr "Habilita perfilamento"
+
+#. TRANSLATORS: command description
+msgid "Converts AppStream metadata from one version to another"
+msgstr "Converte metadados AppStream de uma versão para outra"
+
+#. TRANSLATORS: command description
+msgid "Upgrade AppData metadata to the latest version"
+msgstr "Atualiza metadados do AppData para a última versão"
+
+#. TRANSLATORS: command description
+msgid "Creates an example Appdata file from a .desktop file"
+msgstr "Cria um arquivo AppData de exemplo de um arquivo .desktop"
+
+#. TRANSLATORS: command description
+msgid "Dumps the applications in the AppStream metadata"
+msgstr "Despeja os aplicativos nos metadados do AppStream"
+
+#. TRANSLATORS: command description
+msgid "Search for AppStream applications"
+msgstr "Pesquisa por aplicativos do AppStream"
+
+#. TRANSLATORS: command description
+msgid "Display application search tokens"
+msgstr "Exibe tokens de pesquisa por aplicativos"
+
+#. TRANSLATORS: command description
+msgid "Installs AppStream metadata"
+msgstr "Instala metadados de AppStream"
+
+#. TRANSLATORS: command description
+msgid "Installs AppStream metadata with new origin"
+msgstr "Instala metadados do AppStream com nova origem"
+
+#. TRANSLATORS: command description
+msgid "Uninstalls AppStream metadata"
+msgstr "Desinstala metadados do AppStream"
+
+#. TRANSLATORS: command description
+msgid "Create an HTML status page"
+msgstr "Cria uma página de status em HTML"
+
+#. TRANSLATORS: command description
+msgid "Create an CSV status document"
+msgstr "Cria um documento de status em CSV"
+
+#. TRANSLATORS: command description
+msgid "Create an HTML matrix page"
+msgstr "Cria uma página de matriz em HTML"
+
+#. TRANSLATORS: command description
+msgid "List applications not backed by packages"
+msgstr "Lista aplicativos não fornecidos por pacotes"
+
+#. TRANSLATORS: command description
+msgid "Validate an AppData or AppStream file"
+msgstr "Valida um arquivo AppData ou AppStream"
+
+#. TRANSLATORS: command description
+msgid "Validate an AppData or AppStream file (relaxed)"
+msgstr "Valida um arquivo de AppData ou AppStream (relaxado)"
+
+#. TRANSLATORS: command description
+msgid "Validate an AppData or AppStream file (strict)"
+msgstr "Valida um arquivo de AppData ou AppStream (estrito)"
+
+#. TRANSLATORS: command description
+msgid "Convert an AppData file to NEWS format"
+msgstr "Converte um arquivo AppData para formato NEWS"
+
+#. TRANSLATORS: command description
+msgid "Convert an NEWS file to AppData format"
+msgstr "Converte um arquivo NEWS para formato AppData"
+
+#. TRANSLATORS: command description
+msgid "Check installed application data"
+msgstr "Verifica dados de aplicativo instalado"
+
+#. TRANSLATORS: command description
+msgid "Replace screenshots in source file"
+msgstr "Substitui capturas de tela no arquivo fonte"
+
+#. TRANSLATORS: command description
+msgid "Mirror upstream screenshots"
+msgstr "Espelha capturas de tela do upstream"
+
+#. TRANSLATORS: command description
+msgid "Mirror local firmware files"
+msgstr "Espelha arquivos de firmware locais"
+
+#. TRANSLATORS: command description
+msgid "Incorporate extra metadata from an external file"
+msgstr "Incorpora metadados extra de um arquivo externo"
+
+#. TRANSLATORS: command description
+msgid "Compare the contents of two AppStream files"
+msgstr "Compara os conteúdos de dois arquivos AppStream"
+
+#. TRANSLATORS: program name
+msgid "AppStream Utility"
+msgstr "Utilitário AppStream"
+
+msgid "Version:"
+msgstr "Versão:"
