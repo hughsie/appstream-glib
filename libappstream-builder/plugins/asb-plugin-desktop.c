@@ -293,7 +293,6 @@ asb_plugin_desktop_refine (AsbPlugin *plugin,
 	AsAppParseFlags parse_flags = AS_APP_PARSE_FLAG_USE_HEURISTICS |
 				      AS_APP_PARSE_FLAG_ALLOW_VETO;
 	gboolean ret;
-	g_autofree gchar *app_id = NULL;
 	g_autoptr(AsApp) desktop_app = NULL;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
@@ -302,7 +301,6 @@ asb_plugin_desktop_refine (AsbPlugin *plugin,
 		parse_flags |= AS_APP_PARSE_FLAG_USE_FALLBACKS;
 
 	/* create app */
-	app_id = g_path_get_basename (filename);
 	desktop_app = as_app_new ();
 	if (!as_app_parse_file (desktop_app, filename, parse_flags, error))
 		return FALSE;
