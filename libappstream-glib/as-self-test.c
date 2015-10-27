@@ -24,6 +24,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <stdlib.h>
+#include <fnmatch.h>
 
 #include "as-app-private.h"
 #include "as-bundle-private.h"
@@ -43,6 +44,8 @@
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
+#define AS_TEST_WILDCARD_SHA1	"\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?"
+
 /**
  * as_test_compare_lines:
  **/
@@ -53,6 +56,10 @@ as_test_compare_lines (const gchar *txt1, const gchar *txt2, GError **error)
 
 	/* exactly the same */
 	if (g_strcmp0 (txt1, txt2) == 0)
+		return TRUE;
+
+	/* matches a pattern */
+	if (fnmatch (txt2, txt1, FNM_NOESCAPE) == 0)
 		return TRUE;
 
 	/* save temp files and diff them */
@@ -2880,8 +2887,8 @@ as_test_store_cab_func (void)
 	"<releases>\n"
 	"<release version=\"2.0.2\" timestamp=\"1424116753\">\n"
 	"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.2.cab</location>\n"
-	"<checksum filename=\"colorhug-als-2.0.2.cab\" target=\"container\" type=\"sha1\">7e179f45d2782c3c9744495dd4bbd91ad3d9e841</checksum>\n"
-	"<checksum filename=\"firmware.bin\" target=\"content\" type=\"sha1\">767a8a7b8a7b350b513f57761204b4aaa657aa44</checksum>\n"
+	"<checksum filename=\"colorhug-als-2.0.2.cab\" target=\"container\" type=\"sha1\">" AS_TEST_WILDCARD_SHA1 "</checksum>\n"
+	"<checksum filename=\"firmware.bin\" target=\"content\" type=\"sha1\">" AS_TEST_WILDCARD_SHA1 "</checksum>\n"
 	"<description><p>This unstable release adds the following features:</p>"
 	"<ul><li>Add TakeReadingArray to enable panel latency measurements</li>"
 	"<li>Speed up the auto-scaled measurements considerably, using 256ms as"
@@ -3859,7 +3866,7 @@ as_test_yaml_func (void)
 		" [KVL]ID=dave.desktop\n"
 		" [MAP]Name\n"
 		"  [KVL]C=dave\n";
-	ret = as_test_compare_lines (expected, str->str, &error);
+	ret = as_test_compare_lines (str->str, expected, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_string_free (str, TRUE);
