@@ -24,6 +24,7 @@
 
 #include "as-app-private.h"
 #include "as-inf.h"
+#include "as-utils-private.h"
 
 #define AS_APP_INF_CLASS_GUID_FIRMWARE	"f2e7dd72-6468-4e36-b6f1-6488f42c1b52"
 
@@ -72,6 +73,7 @@ as_app_parse_inf_file (AsApp *app,
 	g_autofree gchar *srcpkg = NULL;
 	g_autofree gchar *vendor = NULL;
 	g_autofree gchar *version = NULL;
+	g_autofree gchar *version_parsed = NULL;
 	g_autoptr(GKeyFile) kf = NULL;
 	g_autoptr(AsChecksum) csum = NULL;
 	g_autoptr(AsIcon) icon = NULL;
@@ -154,6 +156,9 @@ as_app_parse_inf_file (AsApp *app,
 		return FALSE;
 	}
 
+	/* convert if required */
+	version_parsed = as_utils_version_parse (version);
+
 	/* add the GUID as a provide */
 	provide_guid = as_app_parse_inf_sanitize_guid (guid);
 	if (provide_guid != NULL) {
@@ -230,7 +235,7 @@ as_app_parse_inf_file (AsApp *app,
 
 	/* add a release with no real description */
 	release = as_release_new ();
-	as_release_set_version (release, version);
+	as_release_set_version (release, version_parsed);
 	as_release_set_timestamp (release, timestamp);
 	csum = as_checksum_new ();
 	as_checksum_set_filename (csum, firmware_basename);

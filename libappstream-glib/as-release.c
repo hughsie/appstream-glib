@@ -387,7 +387,7 @@ as_release_set_version (AsRelease *release, const gchar *version)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	g_free (priv->version);
-	priv->version = as_utils_version_parse (version);
+	priv->version = g_strdup (version);
 }
 
 /**

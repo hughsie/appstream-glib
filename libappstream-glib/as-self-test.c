@@ -380,10 +380,6 @@ as_test_release_func (void)
 	g_assert (ret);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
-
-	/* verify converting hex prefix */
-	as_release_set_version (release, "0x600100");
-	g_assert_cmpstr (as_release_get_version (release), ==, "0.96.256");
 }
 
 static void
