@@ -98,7 +98,8 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %postun builder -p /sbin/ldconfig
 
 %files -f appstream-glib.lang
-%doc README.md AUTHORS NEWS COPYING
+%license COPYING
+%doc README.md AUTHORS NEWS
 %{_libdir}/libappstream-glib.so.8*
 %{_libdir}/girepository-1.0/*.typelib
 %{_bindir}/appstream-util
@@ -117,7 +118,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_datadir}/installed-tests/appstream-glib/*.test
 
 %files builder
-%doc COPYING
+%license COPYING
 %{_bindir}/appstream-builder
 %{_datadir}/bash-completion/completions/appstream-builder
 %{_libdir}/asb-plugins-%{as_plugin_version}/*.so
@@ -125,7 +126,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_mandir}/man1/appstream-builder.1.gz
 
 %files builder-devel
-%doc COPYING
+%license COPYING
 %{_libdir}/libappstream-builder.so
 %{_libdir}/pkgconfig/appstream-builder.pc
 %dir %{_includedir}/libappstream-builder
