@@ -39,14 +39,21 @@ static gboolean
 as_store_cab_cb (GCabFile *file, gpointer user_data)
 {
 	GPtrArray *filelist = (GPtrArray *) user_data;
-	gchar *fn;
+	const gchar *fn;
+	gchar *tmp;
 
-	/* only accept UNIX paths */
-	fn = g_strdup (gcab_file_get_name (file));
-	g_strdelimit (fn, "\\", '/');
+	/* strip Windows or Linux paths */
+	fn = gcab_file_get_name (file);
+	tmp = g_strrstr (fn, "\\");
+	if (tmp == NULL)
+		tmp = g_strrstr (fn, "/");
+	if (tmp != NULL) {
+		g_debug ("removed path prefix for %s", fn);
+		fn = tmp + 1;
+	}
 	gcab_file_set_extract_name (file, fn);
 
-	g_ptr_array_add (filelist, fn);
+	g_ptr_array_add (filelist, g_strdup (fn));
 	return TRUE;
 }
 
