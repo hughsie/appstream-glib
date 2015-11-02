@@ -411,6 +411,16 @@ as_app_parse_desktop_file (AsApp *app,
 		return FALSE;
 	}
 
+	/* check this is a valid desktop file */
+	if (!g_key_file_has_group (kf, G_KEY_FILE_DESKTOP_GROUP)) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "Not a desktop file: no [%s]",
+			     G_KEY_FILE_DESKTOP_GROUP);
+		return FALSE;
+	}
+
 	/* create app */
 	app_id = g_path_get_basename (desktop_file);
 	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
