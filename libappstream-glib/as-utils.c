@@ -1691,6 +1691,25 @@ as_utils_version_from_uint32 (guint32 val, AsVersionParseFlag flags)
 }
 
 /**
+ * as_utils_version_from_uint16:
+ * @val: A uint16le version number
+ * @flags: flags used for formatting, e.g. %AS_VERSION_PARSE_FLAG_USE_TRIPLET
+ *
+ * Returns a dotted decimal version string from a 16 bit number.
+ *
+ * Returns: A version number, e.g. "1.3"
+ *
+ * Since: 0.5.2
+ **/
+gchar *
+as_utils_version_from_uint16 (guint16 val, AsVersionParseFlag flags)
+{
+	return g_strdup_printf ("%i.%i",
+				(val >> 8) & 0xff,
+				val & 0xff);
+}
+
+/**
  * as_utils_version_parse:
  * @version: A version number
  *
