@@ -21,6 +21,7 @@ BuildRequires: gtk3-devel
 BuildRequires: gettext
 BuildRequires: intltool
 BuildRequires: libgcab1-devel
+BuildRequires: libuuid-devel
 
 # for the builder component
 BuildRequires: fontconfig-devel

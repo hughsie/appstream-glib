@@ -38,6 +38,7 @@
 #include <archive.h>
 #include <libsoup/soup.h>
 #include <stdlib.h>
+#include <uuid.h>
 
 #include "as-app.h"
 #include "as-enums.h"
@@ -1592,20 +1593,6 @@ as_ptr_array_find_string (GPtrArray *array, const gchar *value)
 }
 
 /**
- * as_utils_guid_is_xdigit:
- **/
-static gboolean
-as_utils_guid_is_xdigit (const gchar *str)
-{
-	guint i;
-	for (i = 0; str[i] != '\0'; i++) {
-		if (!g_ascii_isxdigit (str[i]))
-			return FALSE;
-	}
-	return TRUE;
-}
-
-/**
  * as_utils_guid_is_valid:
  * @guid: string to check
  *
@@ -1618,32 +1605,28 @@ as_utils_guid_is_xdigit (const gchar *str)
 gboolean
 as_utils_guid_is_valid (const gchar *guid)
 {
-	g_auto(GStrv) split = NULL;
+	gint rc;
+	uuid_t uu;
 	if (guid == NULL)
 		return FALSE;
-	split = g_strsplit (guid, "-", -1);
-	if (g_strv_length (split) != 5)
-		return FALSE;
-	if (strlen (split[0]) != 8 || !as_utils_guid_is_xdigit (split[0]))
-		return FALSE;
-	if (strlen (split[1]) != 4 || !as_utils_guid_is_xdigit (split[1]))
-		return FALSE;
-	if (strlen (split[2]) != 4 || !as_utils_guid_is_xdigit (split[2]))
-		return FALSE;
-	if (strlen (split[3]) != 4 || !as_utils_guid_is_xdigit (split[3]))
-		return FALSE;
-	if (strlen (split[4]) != 12 || !as_utils_guid_is_xdigit (split[4]))
-		return FALSE;
-	return TRUE;
+	rc = uuid_parse (guid, uu);
+	return rc == 0;
 }
 
 /**
  * as_utils_guid_from_string:
  * @str: A source string to use as a key
  *
- * Returns a GUID for a given string. This uses SHA1 and some string
- * modification so even small differences in the @str will produce radically
- * different GUID return values.
+ * Returns a GUID for a given string. This uses a hash and so even small
+ * differences in the @str will produce radically different return values.
+ *
+ * The implementation is taken from RFC4122, Section 4.1.3; specifically
+ * using a type-5 SHA-1 hash with a DNS namespace.
+ * The same result can be obtained with this simple python program:
+ *
+ *    #!/usr/bin/python
+ *    import uuid
+ *    print uuid.uuid5(uuid.NAMESPACE_DNS, 'python.org')
  *
  * Returns: A new GUID, or %NULL if the string was invalid
  *
@@ -1652,15 +1635,39 @@ as_utils_guid_is_valid (const gchar *guid)
 gchar *
 as_utils_guid_from_string (const gchar *str)
 {
-	gchar *tmp;
-	tmp = g_compute_checksum_for_string (G_CHECKSUM_SHA1, str, -1);
-	tmp[8] = '-';
-	tmp[13] = '-';
-	tmp[18] = '-';
-	tmp[23] = '-';
-	tmp[36] = '\0';
-	g_assert (as_utils_guid_is_valid (tmp));
-	return tmp;
+	const gchar *namespace_id = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
+	gchar guid_new[37]; /* 36 plus NUL */
+	gsize digestlen = 20;
+	guint8 hash[20];
+	gint rc;
+	uuid_t uu_namespace;
+	uuid_t uu_new;
+	g_autoptr(GChecksum) csum = NULL;
+
+	/* invalid */
+	if (str == NULL)
+		return NULL;
+
+	/* convert the namespace to binary */
+	rc = uuid_parse (namespace_id, uu_namespace);
+	g_assert (rc == 0);
+
+	/* hash the namespace and then the string */
+	csum = g_checksum_new (G_CHECKSUM_SHA1);
+	g_checksum_update (csum, (guchar *) uu_namespace, 16);
+	g_checksum_update (csum, (guchar *) str, strlen(str));
+	g_checksum_get_digest (csum, hash, &digestlen);
+
+	/* copy most parts of the hash 1:1 */
+	memcpy(uu_new, hash, 16);
+
+	/* set specific bits according to Section 4.1.3 */
+	uu_new[6] = (guint8) ((uu_new[6] & 0x0f) | (5 << 4));
+	uu_new[8] = (guint8) ((uu_new[8] & 0x3f) | 0x80);
+
+	/* return as a string */
+	uuid_unparse (uu_new, guid_new);
+	return g_strdup (guid_new);
 }
 
 /**

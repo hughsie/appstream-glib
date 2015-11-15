@@ -3336,7 +3336,8 @@ as_test_store_speed_desktop_func (void)
 static void
 as_test_utils_guid_func (void)
 {
-	g_autofree gchar *guid = NULL;
+	g_autofree gchar *guid1 = NULL;
+	g_autofree gchar *guid2 = NULL;
 
 	/* invalid */
 	g_assert (!as_utils_guid_is_valid (NULL));
@@ -3349,8 +3350,10 @@ as_test_utils_guid_func (void)
 	g_assert (as_utils_guid_is_valid ("1ff60ab2-3905-06a1-b476-0371f00c9e9b"));
 
 	/* make valid */
-	guid = as_utils_guid_from_string ("0x8086:0x0406");
-	g_assert_cmpstr (guid, ==, "1ff60ab2-3905-06a1-b476-0371f00c9e9b");
+	guid1 = as_utils_guid_from_string ("python.org");
+	g_assert_cmpstr (guid1, ==, "886313e1-3b8a-5372-9b90-0c9aee199e5d");
+	guid2 = as_utils_guid_from_string ("8086:0406");
+	g_assert_cmpstr (guid2, ==, "1fbd1f2c-80f4-5d7c-a6ad-35c7b9bd5486");
 }
 
 static void

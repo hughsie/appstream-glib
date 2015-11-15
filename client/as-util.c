@@ -3436,6 +3436,27 @@ as_util_pad_strings (const gchar *id, const gchar *msg, guint align)
 }
 
 /**
+ * as_util_generate_guid:
+ **/
+static gboolean
+as_util_generate_guid (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	g_autofree gchar *guid = NULL;
+
+	/* check args */
+	if (g_strv_length (values) != 1) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, expected STRING");
+		return FALSE;
+	}
+	guid = as_utils_guid_from_string (values[0]);
+	g_print ("%s\n", guid);
+	return TRUE;
+}
+
+/**
  * as_util_compare:
  **/
 static gboolean
@@ -3884,6 +3905,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Compare the contents of two AppStream files"),
 		     as_util_compare);
+	as_util_add (priv->cmd_array,
+		     "generate-guid",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Generate a GUID from an input string"),
+		     as_util_generate_guid);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,

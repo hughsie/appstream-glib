@@ -11,6 +11,7 @@ AM_CPPFLAGS =							\
 	$(GDKPIXBUF_CFLAGS)					\
 	$(LIBARCHIVE_CFLAGS)					\
 	$(SOUP_CFLAGS)						\
+	$(UUID_CFLAGS)						\
 	$(YAML_CFLAGS)						\
 	-I$(top_srcdir)/libappstream-glib			\
 	-I$(top_builddir)/libappstream-glib			\
@@ -148,6 +149,7 @@ libappstream_glib_la_LIBADD =					\
 	$(GDKPIXBUF_LIBS)					\
 	$(LIBARCHIVE_LIBS)					\
 	$(SOUP_LIBS)						\
+	$(UUID_LIBS)						\
 	$(YAML_LIBS)
 
 libappstream_glib_la_LDFLAGS =					\
@@ -168,6 +170,7 @@ as_self_test_LDADD =						\
 	$(GDKPIXBUF_LIBS)					\
 	$(LIBARCHIVE_LIBS)					\
 	$(SOUP_LIBS)						\
+	$(UUID_LIBS)						\
 	$(YAML_LIBS)						\
 	$(lib_LTLIBRARIES)
 as_self_test_CFLAGS = $(WARNINGFLAGS_C)
