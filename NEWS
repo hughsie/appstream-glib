@@ -1,3 +1,13 @@
+Version 0.5.4
+~~~~~~~~~~~~~
+Released: 2015-11-18
+
+New Features:
+ - Add as_utils_version_from_uint16() (Richard Hughes)
+
+Bugfixes:
+ - Generate GUID values according to RFC4122 (Richard Hughes)
+
 Version 0.5.3
 ~~~~~~~~~~~~~
 Released: 2015-11-05
