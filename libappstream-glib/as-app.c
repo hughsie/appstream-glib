@@ -201,6 +201,8 @@ as_app_state_to_string (AsAppState state)
 		return "removing";
 	if (state == AS_APP_STATE_UPDATABLE)
 		return "updatable";
+	if (state == AS_APP_STATE_UPDATABLE_LIVE)
+		return "updatable-live";
 	if (state == AS_APP_STATE_UNAVAILABLE)
 		return "unavailable";
 	return NULL;

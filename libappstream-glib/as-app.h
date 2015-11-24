@@ -179,6 +179,7 @@ typedef enum {
  * @AS_APP_STATE_QUEUED_FOR_INSTALL:		Application is queued for install
  * @AS_APP_STATE_INSTALLING:			Application is being installed
  * @AS_APP_STATE_REMOVING:			Application is being removed
+ * @AS_APP_STATE_UPDATABLE_LIVE:		Application is installed and updatable live
  *
  * The application state.
  **/
@@ -192,6 +193,7 @@ typedef enum {
 	AS_APP_STATE_QUEUED_FOR_INSTALL,		/* Since: 0.2.2 */
 	AS_APP_STATE_INSTALLING,			/* Since: 0.2.2 */
 	AS_APP_STATE_REMOVING,				/* Since: 0.2.2 */
+	AS_APP_STATE_UPDATABLE_LIVE,			/* Since: 0.5.4 */
 	/*< private >*/
 	AS_APP_STATE_LAST
 } AsAppState;
