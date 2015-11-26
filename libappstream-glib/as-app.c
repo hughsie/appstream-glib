@@ -3217,7 +3217,8 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 
 	/* <update_contact> */
 	if (as_node_context_get_output (ctx) == AS_APP_SOURCE_KIND_APPDATA ||
-	    as_node_context_get_output (ctx) == AS_APP_SOURCE_KIND_METAINFO) {
+	    as_node_context_get_output (ctx) == AS_APP_SOURCE_KIND_METAINFO ||
+	    as_node_context_get_output_trusted (ctx)) {
 		if (priv->update_contact != NULL) {
 			as_node_insert (node_app, "update_contact",
 					priv->update_contact, 0, NULL);

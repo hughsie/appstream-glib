@@ -39,6 +39,9 @@ void		 as_node_context_set_version	(AsNodeContext	*ctx,
 AsAppSourceKind	 as_node_context_get_source_kind (AsNodeContext	*ctx);
 void		 as_node_context_set_source_kind (AsNodeContext	*ctx,
 						 AsAppSourceKind source_kind);
+gboolean	 as_node_context_get_output_trusted (AsNodeContext	*ctx);
+void		 as_node_context_set_output_trusted (AsNodeContext	*ctx,
+						 gboolean output_trusted);
 AsAppSourceKind	 as_node_context_get_output	(AsNodeContext	*ctx);
 void		 as_node_context_set_output	(AsNodeContext	*ctx,
 						 AsAppSourceKind output);

@@ -1954,6 +1954,7 @@ struct _AsNodeContext {
 	AsAppSourceKind	 source_kind;
 	AsAppSourceKind	 output;
 	gdouble		 version;
+	gboolean	 output_trusted;
 };
 
 /**
@@ -2036,6 +2037,37 @@ void
 as_node_context_set_source_kind (AsNodeContext *ctx, AsAppSourceKind source_kind)
 {
 	ctx->source_kind = source_kind;
+}
+
+/**
+ * as_node_context_get_output_trusted: (skip)
+ * @ctx: a #AsNodeContext.
+ *
+ * Gets if the AppStream output is trusted to handle private data.
+ *
+ * Returns: output_trusted number
+ *
+ * Since: 0.5.5
+ **/
+gboolean
+as_node_context_get_output_trusted (AsNodeContext *ctx)
+{
+	return ctx->output_trusted;
+}
+
+/**
+ * as_node_context_set_output_trusted: (skip)
+ * @ctx: a #AsNodeContext.
+ * @output_trusted: boolean.
+ *
+ * Sets the AppStream output is trusted to handle private data.
+ *
+ * Since: 0.5.5
+ **/
+void
+as_node_context_set_output_trusted (AsNodeContext *ctx, gboolean output_trusted)
+{
+	ctx->output_trusted = output_trusted;
 }
 
 /**
