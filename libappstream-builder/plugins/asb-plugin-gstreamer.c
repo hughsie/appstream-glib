@@ -123,8 +123,13 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		if (!asb_utils_is_file_in_tmpdir (tmpdir, data[i].path))
 			continue;
 		split = g_strsplit (data[i].text, "|", -1);
-		for (j = 0; split[j] != NULL; j++)
+		for (j = 0; split[j] != NULL; j++) {
 			as_app_add_keyword (AS_APP (app), NULL, split[j]);
+			asb_package_log (pkg,
+					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+					 "Auto-adding keyword %s for %s",
+					 split[j], as_app_get_id (AS_APP (app)));
+		}
 	}
 
 	return TRUE;

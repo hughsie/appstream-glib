@@ -62,6 +62,10 @@ asb_plugin_process_filename (const gchar *filename,
 		return TRUE;
 	if (g_strcmp0 (types, "Plasma/Runner") != 0)
 		return TRUE;
+	asb_package_log (asb_app_get_package (app),
+			 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+			 "Auto-adding kudo SearchProvider for %s",
+			 as_app_get_id (AS_APP (app)));
 	as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_SEARCH_PROVIDER);
 	return TRUE;
 }
@@ -78,6 +82,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 {
 	gchar **filelist;
 	guint i;
+
+	/* already set */
+	if (as_app_has_kudo_kind (AS_APP (app), AS_KUDO_KIND_SEARCH_PROVIDER))
+		return TRUE;
 
 	/* look for a krunner provider */
 	filelist = asb_package_get_filelist (pkg);

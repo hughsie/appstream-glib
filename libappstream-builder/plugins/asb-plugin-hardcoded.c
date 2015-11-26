@@ -108,12 +108,22 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 	/* add extra categories */
 	tmp = as_app_get_id (AS_APP (app));
-	if (g_strcmp0 (tmp, "nautilus.desktop") == 0)
+	if (g_strcmp0 (tmp, "nautilus.desktop") == 0) {
 		as_app_add_category (AS_APP (app), "System");
+		asb_package_log (pkg,
+				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+				 "Auto-adding category System for %s",
+				 as_app_get_id (AS_APP (app)));
+	}
 
 	/* add extra project groups */
-	if (g_strcmp0 (tmp, "xfdashboard.desktop") == 0)
+	if (g_strcmp0 (tmp, "xfdashboard.desktop") == 0) {
 		as_app_set_project_group (AS_APP (app), "XFCE");
+		asb_package_log (pkg,
+				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+				 "Auto-adding project group XFCE for %s",
+				 as_app_get_id (AS_APP (app)));
+	}
 
 	/* use the URL to guess the project group */
 	tmp = asb_package_get_url (pkg);
@@ -132,6 +142,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	filelist = asb_package_get_filelist (pkg);
 	for (i = 0; filelist[i] != NULL; i++) {
 		if (asb_plugin_match_glob ("/usr/share/help/*", filelist[i])) {
+			asb_package_log (pkg,
+					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+					 "Auto-adding kudo UserDocs for %s",
+					 as_app_get_id (AS_APP (app)));
 			as_app_add_kudo_kind (AS_APP (app),
 					      AS_KUDO_KIND_USER_DOCS);
 			break;
@@ -142,6 +156,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	for (i = 0; filelist[i] != NULL; i++) {
 		if (asb_plugin_match_glob ("/usr/share/gnome-shell/search-providers/*",
 					   filelist[i])) {
+			asb_package_log (pkg,
+					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+					 "Auto-adding kudo SearchProvider for %s",
+					 as_app_get_id (AS_APP (app)));
 			as_app_add_kudo_kind (AS_APP (app),
 					      AS_KUDO_KIND_SEARCH_PROVIDER);
 			break;
@@ -208,8 +226,13 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	}
 
 	/* a ConsoleOnly category means we require AppData */
-	if (as_app_has_category (AS_APP(app), "ConsoleOnly"))
+	if (as_app_has_category (AS_APP(app), "ConsoleOnly")) {
+		asb_package_log (pkg,
+				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+				 "Auto-adding veto ConsoleOnly for %s",
+				 as_app_get_id (AS_APP (app)));
 		as_app_add_veto (AS_APP (app), "ConsoleOnly");
+	}
 
 	/* no categories means veto */
 //	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_DESKTOP &&

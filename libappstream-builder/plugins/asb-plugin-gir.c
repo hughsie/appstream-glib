@@ -90,6 +90,10 @@ asb_plugin_process_gir (AsbApp *app,
 		version = as_node_get_attribute (l, "version");
 		if (g_strcmp0 (name, "Gtk") == 0 &&
 		    g_strcmp0 (version, "3.0") == 0) {
+			asb_package_log (asb_app_get_package (app),
+					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+					 "Auto-adding kudo ModernToolkit for %s",
+					 as_app_get_id (AS_APP (app)));
 			as_app_add_kudo_kind (AS_APP (app),
 					      AS_KUDO_KIND_MODERN_TOOLKIT);
 		}
@@ -112,6 +116,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 {
 	gchar **filelist;
 	guint i;
+
+	/* already set */
+	if (as_app_has_kudo_kind (AS_APP (app), AS_KUDO_KIND_MODERN_TOOLKIT))
+		return TRUE;
 
 	/* look for any GIR files */
 	filelist = asb_package_get_filelist (pkg);

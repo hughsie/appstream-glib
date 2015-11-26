@@ -64,8 +64,13 @@ asb_plugin_gresource_app (AsbApp *app, const gchar *filename, GError **error)
 			    NULL, error);
 	if (!ret)
 		return FALSE;
-	if (g_strstr_len (data_out, -1, "gtk/menus.ui") != NULL)
+	if (g_strstr_len (data_out, -1, "gtk/menus.ui") != NULL) {
+		asb_package_log (asb_app_get_package (app),
+				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+				 "Auto-adding kudo AppMenu for %s",
+				 as_app_get_id (AS_APP (app)));
 		as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_APP_MENU);
+	}
 	return TRUE;
 }
 

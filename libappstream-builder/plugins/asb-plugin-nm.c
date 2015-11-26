@@ -66,12 +66,25 @@ asb_plugin_nm_app (AsbApp *app, const gchar *filename, GError **error)
 			    NULL, error);
 	if (!ret)
 		return FALSE;
-	if (g_strstr_len (data_out, -1, "gtk_application_new") != NULL)
-		as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_MODERN_TOOLKIT);
-	if (g_strstr_len (data_out, -1, "gtk_application_set_app_menu") != NULL)
-		as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_APP_MENU);
-	if (g_strstr_len (data_out, -1, "gtk_application_get_menu_by_id") != NULL)
-		as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_APP_MENU);
+	if (g_strstr_len (data_out, -1, "gtk_application_new") != NULL) {
+		if (!as_app_has_kudo_kind (AS_APP (app), AS_KUDO_KIND_MODERN_TOOLKIT)) {
+			asb_package_log (asb_app_get_package (app),
+					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+					 "Auto-adding kudo AppMenu for %s",
+					 as_app_get_id (AS_APP (app)));
+			as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_MODERN_TOOLKIT);
+		}
+	}
+	if (g_strstr_len (data_out, -1, "gtk_application_set_app_menu") != NULL ||
+	    g_strstr_len (data_out, -1, "gtk_application_get_menu_by_id") != NULL) {
+		if (!as_app_has_kudo_kind (AS_APP (app), AS_KUDO_KIND_APP_MENU)) {
+			asb_package_log (asb_app_get_package (app),
+					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+					 "Auto-adding kudo AppMenu for %s",
+					 as_app_get_id (AS_APP (app)));
+			as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_APP_MENU);
+		}
+	}
 	return TRUE;
 }
 
@@ -87,6 +100,11 @@ asb_plugin_process_app (AsbPlugin *plugin,
 {
 	gchar **filelist;
 	guint i;
+
+	/* already set */
+	if (as_app_has_kudo_kind (AS_APP (app), AS_KUDO_KIND_APP_MENU) &&
+	    as_app_has_kudo_kind (AS_APP (app), AS_KUDO_KIND_MODERN_TOOLKIT))
+		return TRUE;
 
 	filelist = asb_package_get_filelist (pkg);
 	for (i = 0; filelist[i] != NULL; i++) {

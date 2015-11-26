@@ -55,11 +55,19 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	gchar **filelist;
 	guint i;
 
+	/* already set */
+	if (as_app_has_kudo_kind (AS_APP (app), AS_KUDO_KIND_NOTIFICATIONS))
+		return TRUE;
+
 	/* look for a shell search provider */
 	filelist = asb_package_get_filelist (pkg);
 	for (i = 0; filelist[i] != NULL; i++) {
 		if (!asb_plugin_match_glob ("/usr/share/kde4/apps/*/*.notifyrc", filelist[i]))
 			continue;
+		asb_package_log (pkg,
+				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
+				 "Auto-adding kudo Notifications for %s",
+				 as_app_get_id (AS_APP (app)));
 		as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_NOTIFICATIONS);
 		break;
 	}
