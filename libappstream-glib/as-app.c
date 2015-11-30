@@ -4018,6 +4018,10 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 		tmp = g_ptr_array_index (priv->mimetypes, i);
 		as_app_add_tokens (app, tmp, "C", 1);
 	}
+	for (i = 0; i < priv->pkgnames->len; i++) {
+		tmp = g_ptr_array_index (priv->pkgnames, i);
+		as_app_add_tokens (app, tmp, "C", 1);
+	}
 }
 
 /**
