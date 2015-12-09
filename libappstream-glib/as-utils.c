@@ -791,6 +791,111 @@ as_utils_is_spdx_license (const gchar *license)
 }
 
 /**
+ * as_utils_license_to_spdx:
+ * @license: a not-quite SPDX license string, e.g. "GPLv3+"
+ *
+ * Converts a non-SPDX license into an SPDX format string where possible.
+ *
+ * Returns: the best-effort SPDX license string
+ *
+ * Since: 0.2.5
+ **/
+gchar *
+as_utils_license_to_spdx (const gchar *license)
+{
+	GString *str;
+	guint i;
+	guint j;
+	guint license_len;
+	struct {
+		const gchar	*old;
+		const gchar	*new;
+	} convert[] =  {
+		{ " with exceptions",		NULL },
+		{ " with advertising",		NULL },
+		{ " and ",			" AND " },
+		{ " or ",			" OR " },
+		{ "AGPLv3+",			"AGPL-3.0" },
+		{ "AGPLv3",			"AGPL-3.0" },
+		{ "Artistic 2.0",		"Artistic-2.0" },
+		{ "Artistic clarified",		"Artistic-2.0" },
+		{ "Artistic",			"Artistic-1.0" },
+		{ "ASL 1.1",			"Apache-1.1" },
+		{ "ASL 2.0",			"Apache-2.0" },
+		{ "Boost",			"BSL-1.0" },
+		{ "BSD",			"BSD-3-Clause" },
+		{ "CC0",			"CC0-1.0" },
+		{ "CC-BY-SA",			"CC-BY-SA-3.0" },
+		{ "CC-BY",			"CC-BY-3.0" },
+		{ "CDDL",			"CDDL-1.0" },
+		{ "CeCILL-C",			"CECILL-C" },
+		{ "CeCILL",			"CECILL-2.0" },
+		{ "CPAL",			"CPAL-1.0" },
+		{ "CPL",			"CPL-1.0" },
+		{ "EPL",			"EPL-1.0" },
+		{ "Free Art",			"ClArtistic" },
+		{ "GFDL",			"GFDL-1.3" },
+		{ "GPL+",			"GPL-1.0+" },
+		{ "GPLv2+",			"GPL-2.0+" },
+		{ "GPLv2",			"GPL-2.0" },
+		{ "GPLv3+",			"GPL-3.0+" },
+		{ "GPLv3",			"GPL-3.0" },
+		{ "IBM",			"IPL-1.0" },
+		{ "LGPL+",			"LGPL-2.1+" },
+		{ "LGPLv2.1",			"LGPL-2.1" },
+		{ "LGPLv2+",			"LGPL-2.1+" },
+		{ "LGPLv2",			"LGPL-2.1" },
+		{ "LGPLv3+",			"LGPL-3.0+" },
+		{ "LGPLv3",			"LGPL-3.0" },
+		{ "LPPL",			"LPPL-1.3c" },
+		{ "MPLv1.0",			"MPL-1.0" },
+		{ "MPLv1.1",			"MPL-1.1" },
+		{ "MPLv2.0",			"MPL-2.0" },
+		{ "Netscape",			"NPL-1.1" },
+		{ "OFL",			"OFL-1.1" },
+		{ "Python",			"Python-2.0" },
+		{ "QPL",			"QPL-1.0" },
+		{ "SPL",			"SPL-1.0" },
+		{ "zlib",			"Zlib" },
+		{ "ZPLv2.0",			"ZPL-2.0" },
+		{ "Unlicense",			"CC0-1.0" },
+		{ "Public Domain",		"LicenseRef-public-domain" },
+		{ "Copyright only",		"LicenseRef-public-domain" },
+		{ "Proprietary",		"LicenseRef-proprietary" },
+		{ "Commercial",			"LicenseRef-proprietary" },
+		{ NULL, NULL } };
+
+	/* nothing set */
+	if (license == NULL)
+		return NULL;
+
+	/* already in SPDX format */
+	if (as_utils_is_spdx_license (license))
+		return g_strdup (license);
+
+	/* go through the string looking for case-insensitive matches */
+	str = g_string_new ("");
+	license_len = strlen (license);
+	for (i = 0; i < license_len; i++) {
+		gboolean found = FALSE;
+		for (j = 0; convert[j].old != NULL; j++) {
+			guint old_len = strlen (convert[j].old);
+			if (g_ascii_strncasecmp (license + i,
+						 convert[j].old,
+						 old_len) != 0)
+				continue;
+			if (convert[j].new != NULL)
+				g_string_append (str, convert[j].new);
+			i += old_len - 1;
+			found = TRUE;
+		}
+		if (!found)
+			g_string_append_c (str, license[i]);
+	}
+	return g_string_free (str, FALSE);
+}
+
+/**
  * as_pixbuf_blur_private:
  **/
 static void

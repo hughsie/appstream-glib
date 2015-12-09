@@ -145,6 +145,7 @@ gboolean	 as_utils_is_category_id	(const gchar	*category_id);
 gboolean	 as_utils_is_blacklisted_id	(const gchar	*desktop_id);
 gchar		**as_utils_spdx_license_tokenize (const gchar	*license);
 gchar		*as_utils_spdx_license_detokenize (gchar	**license_tokens);
+gchar		*as_utils_license_to_spdx	(const gchar	*license);
 gchar		*as_utils_find_icon_filename	(const gchar	*destdir,
 						 const gchar	*search,
 						 GError		**error);

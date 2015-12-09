@@ -78,72 +78,8 @@ static void
 asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 {
 	guint i;
-	guint j;
 	g_autofree gchar *new = NULL;
 	g_auto(GStrv) tokens = NULL;
-	struct {
-		const gchar	*fedora;
-		const gchar	*spdx;
-	} convert[] =  {
-		{ "AGPLv3",			"AGPL-3.0" },
-		{ "AGPLv3+",			"AGPL-3.0" },
-		{ "AGPLv3 with exceptions",	"AGPL-3.0" },
-		{ "AGPLv3+ with exceptions",	"AGPL-3.0" },
-		{ "Artistic 2.0",		"Artistic-2.0" },
-		{ "Artistic",			"Artistic-1.0" },
-		{ "Artistic clarified",		"Artistic-2.0" },
-		{ "ASL 1.1",			"Apache-1.1" },
-		{ "ASL 2.0",			"Apache-2.0" },
-		{ "Boost",			"BSL-1.0" },
-		{ "BSD",			"BSD-3-Clause" },
-		{ "BSD with advertising",	"BSD-3-Clause" },
-		{ "CC0",			"CC0-1.0" },
-		{ "CC-BY",			"CC-BY-3.0" },
-		{ "CC-BY-SA",			"CC-BY-SA-3.0" },
-		{ "CDDL",			"CDDL-1.0" },
-		{ "CeCILL-C",			"CECILL-C" },
-		{ "CeCILL",			"CECILL-2.0" },
-		{ "CPAL",			"CPAL-1.0" },
-		{ "CPL",			"CPL-1.0" },
-		{ "EPL",			"EPL-1.0" },
-		{ "Free Art",			"ClArtistic" },
-		{ "GFDL",			"GFDL-1.3" },
-		{ "GPL+",			"GPL-1.0+" },
-		{ "GPLv2",			"GPL-2.0" },
-		{ "GPLv2+",			"GPL-2.0+" },
-		{ "GPLV2",			"GPL-2.0" },
-		{ "GPLv2 with exceptions",	"GPL-2.0-with-font-exception" },
-		{ "GPLv2+ with exceptions",	"GPL-2.0-with-font-exception" },
-		{ "GPLv3",			"GPL-3.0" },
-		{ "GPLv3+",			"GPL-3.0+" },
-		{ "GPLV3+",			"GPL-3.0+" },
-		{ "GPLv3+ with exceptions",	"GPL-3.0+" },
-		{ "GPLv3 with exceptions",	"GPL-3.0-with-GCC-exception" },
-		{ "GPL+ with exceptions",	"GPL-2.0-with-font-exception" },
-		{ "IBM",			"IPL-1.0" },
-		{ "LGPL+",			"LGPL-2.1+" },
-		{ "LGPLv2.1",			"LGPL-2.1" },
-		{ "LGPLv2",			"LGPL-2.1" },
-		{ "LGPLv2+",			"LGPL-2.1+" },
-		{ "LGPLv2 with exceptions",	"LGPL-2.0" },
-		{ "LGPLv2+ with exceptions",	"LGPL-2.0+" },
-		{ "LGPLv3",			"LGPL-3.0" },
-		{ "LGPLv3+",			"LGPL-3.0+" },
-		{ "LPPL",			"LPPL-1.3c" },
-		{ "MIT with advertising",	"MIT" },
-		{ "MPLv1.0",			"MPL-1.0" },
-		{ "MPLv1.1",			"MPL-1.1" },
-		{ "MPLv2.0",			"MPL-2.0" },
-		{ "Netscape",			"NPL-1.1" },
-		{ "OFL",			"OFL-1.1" },
-		{ "Python",			"Python-2.0" },
-		{ "QPL",			"QPL-1.0" },
-		{ "QPL with exceptions",	"QPL-1.0" },
-		{ "SPL",			"SPL-1.0" },
-		{ "zlib",			"Zlib" },
-		{ "ZPLv2.0",			"ZPL-2.0" },
-		{ "Unlicense",			"CC0-1.0" },
-		{ NULL, NULL } };
 
 	/* this isn't supposed to happen */
 	if (license == NULL) {
@@ -152,9 +88,9 @@ asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 		return;
 	}
 
-	/* tokenize the license string and try to convert the Fedora license
-	 * string to a SPDX license the best we can */
-	tokens = as_utils_spdx_license_tokenize (license);
+	/* tokenize the license string and log non SPDX licenses */
+	new = as_utils_license_to_spdx (license);
+	tokens = as_utils_spdx_license_tokenize (new);
 	for (i = 0; tokens[i] != NULL; i++) {
 
 		/* ignore */
@@ -168,30 +104,12 @@ asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 		if (tokens[i][0] == '@')
 			continue;
 
-		/* convert */
-		for (j = 0; convert[j].fedora != NULL; j++) {
-			if (g_strcmp0 (tokens[i], convert[j].fedora) == 0) {
-				g_free (tokens[i]);
-				tokens[i] = g_strdup_printf ("@%s", convert[j].spdx);
-				asb_package_log (pkg,
-						 ASB_PACKAGE_LOG_LEVEL_DEBUG,
-						 "Converting Fedora license "
-						 "'%s' to SPDX '%s'",
-						 convert[j].fedora,
-						 convert[j].spdx);
-				break;
-			}
-		}
-		if (convert[j].fedora != NULL)
-			continue;
-
 		/* no matching SPDX entry */
 		asb_package_log (pkg,
 				 ASB_PACKAGE_LOG_LEVEL_WARNING,
 				 "Unable to currently map Fedora "
 				 "license '%s' to SPDX", tokens[i]);
 	}
-	new = as_utils_spdx_license_detokenize (tokens);
 	asb_package_set_license (pkg, new);
 }
 

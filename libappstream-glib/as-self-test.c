@@ -3508,6 +3508,11 @@ as_test_utils_spdx_token_func (void)
 	g_assert (as_utils_is_spdx_license ("CC0 AND GFDL-1.3"));
 	g_assert (as_utils_is_spdx_license ("NOASSERTION"));
 	g_assert (!as_utils_is_spdx_license ("CC0 dave"));
+
+	/* importing non-SPDX formats */
+	tmp = as_utils_license_to_spdx ("CC0 and (Public Domain and GPLv3+ with exceptions)");
+	g_assert_cmpstr (tmp, ==, "CC0-1.0 AND (LicenseRef-public-domain AND GPL-3.0+)");
+	g_free (tmp);
 }
 
 static void
