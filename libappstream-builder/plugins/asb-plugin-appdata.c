@@ -120,6 +120,25 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	if (icons->len > 0)
 		g_ptr_array_set_size (icons, 0);
 
+	/* fix up the project license */
+	tmp = as_app_get_project_license (AS_APP (app));
+	if (tmp != NULL && !as_utils_is_spdx_license (tmp)) {
+		g_autofree gchar *license_spdx = NULL;
+		license_spdx = as_utils_license_to_spdx (tmp);
+		if (as_utils_is_spdx_license (license_spdx)) {
+			asb_package_log (asb_app_get_package (app),
+					 ASB_PACKAGE_LOG_LEVEL_WARNING,
+					 "project license fixup: %s -> %s",
+					 tmp, license_spdx);
+			as_app_set_project_license (AS_APP (app), license_spdx);
+		} else {
+			asb_package_log (asb_app_get_package (app),
+					 ASB_PACKAGE_LOG_LEVEL_WARNING,
+					 "project license is invalid: %s", tmp);
+			as_app_set_project_license (AS_APP (app), NULL);
+		}
+	}
+
 	/* add provide if missing */
 	tmp = as_app_get_id (AS_APP (app));
 	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_FIRMWARE &&

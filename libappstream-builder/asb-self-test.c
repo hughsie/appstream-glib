@@ -496,7 +496,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<kudo>SearchProvider</kudo>\n"
 		"<kudo>UserDocs</kudo>\n"
 		"</kudos>\n"
-		"<project_license>GPL-2.0+</project_license>\n"
+		"<project_license>LGPL-2.0+</project_license>\n"
 		"<url type=\"homepage\">http://people.freedesktop.org/~hughsient/appdata/</url>\n"
 		"<screenshots>\n"
 		"<screenshot type=\"default\">\n"

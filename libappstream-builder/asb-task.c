@@ -403,7 +403,8 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 					AS_URL_KIND_HOMEPAGE,
 					asb_package_get_url (priv->pkg));
 		}
-		if (asb_package_get_license (priv->pkg) != NULL) {
+		if (asb_package_get_license (priv->pkg) != NULL &&
+		    as_app_get_project_license (AS_APP (app)) == NULL) {
 			as_app_set_project_license (AS_APP (app),
 						    asb_package_get_license (priv->pkg));
 		}
