@@ -112,7 +112,7 @@ as_store_cab_verify_checksum_fw (AsChecksum *checksum,
 		gsize len;
 		g_autofree gchar *data = NULL;
 		if (!g_file_get_contents (rel_fn, &data, &len, error))
-			return NULL;
+			return FALSE;
 		actual = g_compute_checksum_for_data (G_CHECKSUM_SHA1, (guchar *)data, len);
 	}
 
