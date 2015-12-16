@@ -3438,6 +3438,10 @@ as_test_utils_spdx_token_func (void)
 	g_strfreev (tok);
 	g_free (tmp);
 
+	/* invalid */
+	tok = as_utils_spdx_license_tokenize (NULL);
+	g_assert (tok == NULL);
+
 	/* random */
 	tok = as_utils_spdx_license_tokenize ("Public Domain");
 	tmp = g_strjoinv ("  ", tok);
@@ -3480,6 +3484,10 @@ as_test_utils_spdx_token_func (void)
 	g_strfreev (tok);
 	g_free (tmp);
 
+	/* invalid tokens */
+	tmp = as_utils_spdx_license_detokenize (NULL);
+	g_assert (tmp == NULL);
+
 	/* leading brackets */
 	tok = as_utils_spdx_license_tokenize ("(MPLv1.1 or LGPLv3+) and LGPLv3");
 	tmp = g_strjoinv ("  ", tok);
@@ -3508,6 +3516,8 @@ as_test_utils_spdx_token_func (void)
 	g_assert (as_utils_is_spdx_license ("CC0 AND GFDL-1.3"));
 	g_assert (as_utils_is_spdx_license ("NOASSERTION"));
 	g_assert (!as_utils_is_spdx_license ("CC0 dave"));
+	g_assert (!as_utils_is_spdx_license (""));
+	g_assert (!as_utils_is_spdx_license (NULL));
 
 	/* importing non-SPDX formats */
 	tmp = as_utils_license_to_spdx ("CC0 and (Public Domain and GPLv3+ with exceptions)");

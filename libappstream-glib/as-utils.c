@@ -478,6 +478,10 @@ as_utils_is_spdx_license_id (const gchar *license_id)
 	g_autoptr(GBytes) data = NULL;
 	g_autofree gchar *key = NULL;
 
+	/* handle invalid */
+	if (license_id == NULL || license_id[0] == '\0')
+		return FALSE;
+
 	/* this is used to map non-SPDX licence-ids to legitimate values */
 	if (g_str_has_prefix (license_id, "LicenseRef-"))
 		return TRUE;
@@ -673,7 +677,7 @@ as_utils_spdx_license_tokenize_drop (AsUtilsSpdxHelper *helper)
  * with "|". Brackets are added as indervidual tokens and other strings are
  * appended into single tokens where possible.
  *
- * Returns: (transfer full): array of strings
+ * Returns: (transfer full): array of strings, or %NULL for invalid
  *
  * Since: 0.1.5
  **/
@@ -682,6 +686,10 @@ as_utils_spdx_license_tokenize (const gchar *license)
 {
 	guint i;
 	AsUtilsSpdxHelper helper;
+
+	/* handle invalid */
+	if (license == NULL)
+		return NULL;
 
 	helper.last_token_literal = FALSE;
 	helper.collect = g_string_new ("");
@@ -719,7 +727,7 @@ as_utils_spdx_license_tokenize (const gchar *license)
  *
  * De-tokenizes the SPDX licenses into a string.
  *
- * Returns: (transfer full): string
+ * Returns: (transfer full): string, or %NULL for invalid
  *
  * Since: 0.2.5
  **/
@@ -728,6 +736,10 @@ as_utils_spdx_license_detokenize (gchar **license_tokens)
 {
 	GString *tmp;
 	guint i;
+
+	/* handle invalid */
+	if (license_tokens == NULL)
+		return NULL;
 
 	tmp = g_string_new ("");
 	for (i = 0; license_tokens[i] != NULL; i++) {
@@ -765,6 +777,10 @@ as_utils_is_spdx_license (const gchar *license)
 	guint i;
 	g_auto(GStrv) tokens = NULL;
 
+	/* handle nothing set */
+	if (license == NULL || license[0] == '\0')
+		return FALSE;
+
 	/* no license information whatsoever */
 	if (g_strcmp0 (license, "NONE") == 0)
 		return TRUE;
@@ -774,6 +790,8 @@ as_utils_is_spdx_license (const gchar *license)
 		return TRUE;
 
 	tokens = as_utils_spdx_license_tokenize (license);
+	if (tokens == NULL)
+		return FALSE;
 	for (i = 0; tokens[i] != NULL; i++) {
 		if (tokens[i][0] == '@') {
 			if (as_utils_is_spdx_license_id (tokens[i] + 1))

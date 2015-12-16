@@ -958,6 +958,14 @@ as_app_validate_license (const gchar *license_text, GError **error)
 	g_auto(GStrv) licenses = NULL;
 
 	licenses = as_utils_spdx_license_tokenize (license_text);
+	if (licenses == NULL) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_FAILED,
+			     "SPDX license text '%s' could not be parsed",
+			     license_text);
+		return FALSE;
+	}
 	for (i = 0; licenses[i] != NULL; i++) {
 		if (g_strcmp0 (licenses[i], "&") == 0 ||
 		    g_strcmp0 (licenses[i], "|") == 0 ||
@@ -986,6 +994,8 @@ as_app_validate_is_content_license (const gchar *license)
 	guint i;
 	g_auto(GStrv) tokens = NULL;
 	tokens = as_utils_spdx_license_tokenize (license);
+	if (tokens == NULL)
+		return FALSE;
 	for (i = 0; tokens[i] != NULL; i++) {
 		if (g_strcmp0 (tokens[i], "@CC0-1.0") == 0)
 			continue;
