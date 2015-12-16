@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Necdet Yücel <necdetyucel@gmail.com>, 2014
+# Pedro Albuquerque <palbuquerque73@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
@@ -11,275 +11,275 @@ msgstr ""
 "POT-Creation-Date: 2015-12-16 12:35+0000\n"
 "PO-Revision-Date: 2015-12-16 12:35+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
-"Language-Team: Turkish (http://www.transifex.com/freedesktop/appstream-glib/language/tr/)\n"
+"Language-Team: Portuguese (http://www.transifex.com/freedesktop/appstream-glib/language/pt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: tr\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: pt\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. TRANSLATORS: command line option
 msgid "Show extra debugging information"
-msgstr "Ek hata ayıklama bilgisi göster"
+msgstr "Mostrar informação extra de depuração"
 
 #. TRANSLATORS: command line option
 msgid "Add a cache ID to each component"
-msgstr "Her bileşene bir bellek kimliği ekle"
+msgstr "Adicionar uma ID de cache a cada componente"
 
 #. TRANSLATORS: command line option
 msgid "Include failed results in the output"
-msgstr ""
+msgstr "Incluir resultados falhados na saída"
 
 #. TRANSLATORS: command line option
 msgid "Add HiDPI icons to the tarball"
-msgstr ""
+msgstr "Adicionar ícones HiDPI ao tarball"
 
 #. TRANSLATORS: command line option
 msgid "Add encoded icons to the XML"
-msgstr ""
+msgstr "Adicionar ícones codificados ao XML"
 
 #. TRANSLATORS: command line option
 msgid "Do not compress the icons into a tarball"
-msgstr ""
+msgstr "Não comprimir os ícones num tarball"
 
 #. TRANSLATORS: command line option
 msgid "Set the logging directory"
-msgstr "Günlük kaydı dizinini ayarla"
+msgstr "Definir a pasta de diário"
 
 #. TRANSLATORS: command line option
 msgid "Set the packages directory"
-msgstr "Paketler dizinini ayarla"
+msgstr "Definir a pasta de pacotes"
 
 #. TRANSLATORS: command line option
 msgid "Set the temporary directory"
-msgstr "Geçici dizini ayarla"
+msgstr "Definir a pasta temporária"
 
 #. TRANSLATORS: command line option
 msgid "Set the output directory"
-msgstr "Çıktı dizinini ayarla"
+msgstr "Definir a pasta de saída"
 
 #. TRANSLATORS: command line option
 msgid "Set the icons directory"
-msgstr ""
+msgstr "Definir a pasta de ícones"
 
 #. TRANSLATORS: command line option
 msgid "Set the cache directory"
-msgstr "Bellek dizini ayarla"
+msgstr "Definir a pasta de cache"
 
 #. TRANSLATORS: command line option
 msgid "Set the basenames of the output files"
-msgstr ""
+msgstr "Definir os nomes base dos ficheiros de saída"
 
 #. TRANSLATORS: command line option
 msgid "Set the origin name"
-msgstr "Köken adını ayarla"
+msgstr "Definir o nome de origem"
 
 #. TRANSLATORS: command line option
 msgid "Set the number of threads"
-msgstr "Süreç sayısını ayarla"
+msgstr "Definir o número de linhas"
 
 #. TRANSLATORS: command line option
 msgid "Set the minimum icon size in pixels"
-msgstr ""
+msgstr "Definir o tamanho mínimo do ícone, em pixels"
 
 #. TRANSLATORS: command line option
 msgid "Set the AppStream version"
-msgstr "AppStream sürümünü ayarla"
+msgstr "Definir a versão do AppStream"
 
 #. TRANSLATORS: command line option
 msgid "Set the ostree repo name"
-msgstr ""
+msgstr "Definir o nome de repositório ostree"
 
 #. TRANSLATORS: command line option
 msgid "Set the old metadata location"
-msgstr "Eski meta veri konumunu ayarla"
+msgstr "Definir a localização de metadados antigos"
 
 #. TRANSLATORS: command line option
 msgid "Ignore certain types of veto"
-msgstr ""
+msgstr "Ignorar certos tipos de veto"
 
 #. TRANSLATORS: error message
 msgid "Failed to parse arguments"
-msgstr "Argüman ayrıştırması başarısız"
+msgstr "Falha ao processar argumentos"
 
 #. TRANSLATORS: error message
 msgid "API version no longer supported"
-msgstr ""
+msgstr "A versão API já não é suportada"
 
 #. TRANSLATORS: error message
 msgid "Failed to set up builder"
-msgstr "İnşa edici kurulumu başarısız oldu"
+msgstr "Falha ao configurar o construtor"
 
 #. TRANSLATORS: error message
 msgid "Failed to open packages"
-msgstr "Paketler açılamadı"
+msgstr "Falha ao abrir os pacotes"
 
 #. TRANSLATORS: information message
 msgid "Scanning packages..."
-msgstr "Paketler taranıyor..."
+msgstr "A analisar os pacotes..."
 
 #. TRANSLATORS: error message
 msgid "Failed to add package"
-msgstr "Paket ekleme başarısız"
+msgstr "Falha ao adicionar pacote"
 
 #. TRANSLATORS: information message
 #, c-format
 msgid "Parsed %i/%i files..."
-msgstr "%i/%i dosyaları ayrıştırıldı..."
+msgstr "Processados %i/%i ficheiros..."
 
 #. TRANSLATORS: error message
 msgid "Failed to generate metadata"
-msgstr "Meta veri üretilemedi"
+msgstr "Falha ao gerar metadados"
 
 #. success
 #. TRANSLATORS: information message
 msgid "Done!"
-msgstr "Tamamlandı!"
+msgstr "Terminado!"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
 msgid "Alias to %s"
-msgstr "%s için takma ad"
+msgstr "Aliás de %s"
 
 msgid "Command not found, valid commands are:"
-msgstr "Komut bulunamadı, geçerli komutlar şunlar:"
+msgstr "Comando não encontrado, comandos válidos são:"
 
 #. TRANSLATORS: any manual changes required?
 #. * also note: FIXME is a hardcoded string
 msgid "Please review the file and fix any 'FIXME' items"
-msgstr "Lütfen dosyayı gözden geçirin ve 'FIXME' olarak işaretlenmiş ögeleri düzeltin"
+msgstr "Por favor, reveja o ficheiro e repare quaisquer itens \"FIXME\""
 
 #. TRANSLATORS: information message
 msgid "New API version"
-msgstr "Yeni API sürümü"
+msgstr "Nova versão do API"
 
 msgid "Not enough arguments, expected old.xml new.xml version"
-msgstr "Yeterli argüman yok, old.xml new.xml sürümleri bekleniyor"
+msgstr "Sem argumentos suficientes, esperadas versões old.xml e new.xml"
 
 msgid "Not enough arguments, expected file.xml"
-msgstr "Yeterli argüman yok, file.xml bekleniyor"
+msgstr "Sem argumentos suficientes, esperada file.xml"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
-msgstr "Tamam"
+msgstr "CORRETO"
 
 #. list failures
 msgid "FAILED"
-msgstr "BAŞARISIZ"
+msgstr "FALHA"
 
 msgid "Validation failed"
-msgstr "Doğrulama başarısız"
+msgstr "Validação falhada"
 
 msgid "Validation of files failed"
-msgstr "Dosyaların doğrulaması başarısız"
+msgstr "A validação dos ficheiros falhou"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
-msgstr "Ağ erişimini kullanma"
+msgstr "Não usar acesso à rede"
 
 #. TRANSLATORS: command line option
 msgid "Show version"
-msgstr "Sürümü göster"
+msgstr "Mostrar versão"
 
 #. TRANSLATORS: command line option
 msgid "Enable profiling"
-msgstr ""
+msgstr "Ativar análise de perfil"
 
 #. TRANSLATORS: command description
 msgid "Converts AppStream metadata from one version to another"
-msgstr "AppStream meta verisini bir sürümden diğerine dönüştürür"
+msgstr "Converte metadados do AppStream de uma versão para outra"
 
 #. TRANSLATORS: command description
 msgid "Upgrade AppData metadata to the latest version"
-msgstr "AppStream meta verisini son sürüme günceller"
+msgstr "Atualizar metadados AppStream para a última versão"
 
 #. TRANSLATORS: command description
 msgid "Creates an example Appdata file from a .desktop file"
-msgstr "Bir .desktop dosyasından bir örnek Appdata dosyası oluşturur"
+msgstr "Cria um ficheiro exemplo Appdata a partir de um ficheiro .desktop"
 
 #. TRANSLATORS: command description
 msgid "Dumps the applications in the AppStream metadata"
-msgstr "AppStream meta verisindeki uygulamaları döker"
+msgstr "Despeja as aplicações nos metadados do AppStream"
 
 #. TRANSLATORS: command description
 msgid "Search for AppStream applications"
-msgstr ""
+msgstr "Procurar aplicações AppStream"
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"
-msgstr ""
+msgstr "Mostrar símbolos de procura de aplicações"
 
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata"
-msgstr "AppStream meta verisini yükler"
+msgstr "Instala metadados do AppStream"
 
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata with new origin"
-msgstr "AppStream meta verisini yeni bir köken ile yükler"
+msgstr "Instala metadados do AppStream com nova origem"
 
 #. TRANSLATORS: command description
 msgid "Uninstalls AppStream metadata"
-msgstr "AppStream meta verisini kaldırır"
+msgstr "Desinstala metadados do AppStream"
 
 #. TRANSLATORS: command description
 msgid "Create an HTML status page"
-msgstr "Bir HTML durum sayfası oluşturur"
+msgstr "Cria uma página HTML de estado"
 
 #. TRANSLATORS: command description
 msgid "Create an CSV status document"
-msgstr "Bir CSV durum belgesi oluştur"
+msgstr "Cria um documento CSV de estado"
 
 #. TRANSLATORS: command description
 msgid "Create an HTML matrix page"
-msgstr ""
+msgstr "Cria uma página HTML de matriz"
 
 #. TRANSLATORS: command description
 msgid "List applications not backed by packages"
-msgstr "Paketler tarafından desteklenmeyen uygulamaları listele"
+msgstr "Listar aplicações não suportadas por pacotes"
 
 #. TRANSLATORS: command description
 msgid "Validate an AppData or AppStream file"
-msgstr "Bir AppData veya AppStream dosyasını doğrula"
+msgstr "Validar um ficheiro AppData ou AppStream"
 
 #. TRANSLATORS: command description
 msgid "Validate an AppData or AppStream file (relaxed)"
-msgstr "Bir AppData veya AppStream dosyasını doğrula (gevşek)"
+msgstr "Validar um ficheiro AppData ou AppStream (relaxado)"
 
 #. TRANSLATORS: command description
 msgid "Validate an AppData or AppStream file (strict)"
-msgstr "Bir AppData veya AppStream dosyasını doğrula (sıkı)"
+msgstr "Validar um ficheiro AppData ou AppStream (estrito)"
 
 #. TRANSLATORS: command description
 msgid "Convert an AppData file to NEWS format"
-msgstr ""
+msgstr "Converter um ficheiro AppData em formato NEWS"
 
 #. TRANSLATORS: command description
 msgid "Convert an NEWS file to AppData format"
-msgstr ""
+msgstr "Converter um ficheiro NEWS em formato AppData"
 
 #. TRANSLATORS: command description
 msgid "Check installed application data"
-msgstr "Kurulu uygulama verisini kontrol et"
+msgstr "Verificar dados da aplicação instalada"
 
 #. TRANSLATORS: command description
 msgid "Replace screenshots in source file"
-msgstr ""
+msgstr "Substituir capturas de ecrã no ficheiro origem"
 
 #. TRANSLATORS: command description
 msgid "Mirror upstream screenshots"
-msgstr ""
+msgstr "Espelhar capturas de ecrã"
 
 #. TRANSLATORS: command description
 msgid "Mirror local firmware files"
-msgstr ""
+msgstr "Espelhar ficheiros de firmware locais"
 
 #. TRANSLATORS: command description
 msgid "Incorporate extra metadata from an external file"
-msgstr ""
+msgstr "Incorporar metadados extra a partir de ficheiro externo"
 
 #. TRANSLATORS: command description
 msgid "Compare the contents of two AppStream files"
-msgstr ""
+msgstr "Comparar o conteúdo de dois ficheiros AppStream"
 
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
@@ -287,7 +287,7 @@ msgstr ""
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"
-msgstr "AppStream Uygulaması"
+msgstr "Utilitário AppStream"
 
 msgid "Version:"
-msgstr "Sürüm:"
+msgstr "Versão:"

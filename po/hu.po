@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Balázs Úr <urbalazs@gmail.com>, 2014
+# Balázs Úr <urbalazs@gmail.com>, 2014-2015
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2015-10-27 12:19+0000\n"
-"PO-Revision-Date: 2015-09-25 11:07+0000\n"
+"POT-Creation-Date: 2015-12-16 12:35+0000\n"
+"PO-Revision-Date: 2015-12-16 12:35+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/freedesktop/appstream-glib/language/hu/)\n"
 "MIME-Version: 1.0\n"
@@ -28,19 +28,19 @@ msgstr "Gyorsítótár-azonosító hozzáadása minden komponenshez"
 
 #. TRANSLATORS: command line option
 msgid "Include failed results in the output"
-msgstr ""
+msgstr "Sikertelen találatok felvétele a kimenetbe"
 
 #. TRANSLATORS: command line option
 msgid "Add HiDPI icons to the tarball"
-msgstr ""
+msgstr "HiDPI ikonok hozzáadása a tömörített fájlhoz"
 
 #. TRANSLATORS: command line option
 msgid "Add encoded icons to the XML"
-msgstr ""
+msgstr "Kódolt ikonok hozzáadása az XML-hez"
 
 #. TRANSLATORS: command line option
 msgid "Do not compress the icons into a tarball"
-msgstr ""
+msgstr "Ne tömörítse az ikonokat egy tömörített fájlba"
 
 #. TRANSLATORS: command line option
 msgid "Set the logging directory"
@@ -60,7 +60,7 @@ msgstr "A kimeneti könyvtár beállítása"
 
 #. TRANSLATORS: command line option
 msgid "Set the icons directory"
-msgstr ""
+msgstr "Az ikonok könyvtárának beállítása"
 
 #. TRANSLATORS: command line option
 msgid "Set the cache directory"
@@ -68,7 +68,7 @@ msgstr "A gyorsítótár könyvtár beállítása"
 
 #. TRANSLATORS: command line option
 msgid "Set the basenames of the output files"
-msgstr ""
+msgstr "A kimeneti fájlok alapneveinek beállítása"
 
 #. TRANSLATORS: command line option
 msgid "Set the origin name"
@@ -80,7 +80,7 @@ msgstr "A szálak számának beállítása"
 
 #. TRANSLATORS: command line option
 msgid "Set the minimum icon size in pixels"
-msgstr ""
+msgstr "A legkisebb ikonméret beállítása képpontban"
 
 #. TRANSLATORS: command line option
 msgid "Set the AppStream version"
@@ -88,7 +88,7 @@ msgstr "Az AppStream verziójának beállítása"
 
 #. TRANSLATORS: command line option
 msgid "Set the ostree repo name"
-msgstr ""
+msgstr "Az ostree tárolónév beállítása"
 
 #. TRANSLATORS: command line option
 msgid "Set the old metadata location"
@@ -96,7 +96,7 @@ msgstr "A régi metaadat helyének beállítása"
 
 #. TRANSLATORS: command line option
 msgid "Ignore certain types of veto"
-msgstr ""
+msgstr "Bizonyos vétótípusok mellőzése"
 
 #. TRANSLATORS: error message
 msgid "Failed to parse arguments"
@@ -104,7 +104,7 @@ msgstr "Nem sikerült az argumentumok feldolgozása"
 
 #. TRANSLATORS: error message
 msgid "API version no longer supported"
-msgstr ""
+msgstr "Az API verzió többé nem támogatott"
 
 #. TRANSLATORS: error message
 msgid "Failed to set up builder"
@@ -183,7 +183,7 @@ msgstr "Verzió megjelenítése"
 
 #. TRANSLATORS: command line option
 msgid "Enable profiling"
-msgstr ""
+msgstr "Profilalkotás engedélyezése"
 
 #. TRANSLATORS: command description
 msgid "Converts AppStream metadata from one version to another"
@@ -203,11 +203,11 @@ msgstr "Kiírja az alkalmazást az AppStream metaadatokba"
 
 #. TRANSLATORS: command description
 msgid "Search for AppStream applications"
-msgstr ""
+msgstr "AppStream alkalmazások keresése"
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"
-msgstr ""
+msgstr "Alkalmazáskeresési jelsorok megjelenítése"
 
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata"
@@ -231,7 +231,7 @@ msgstr "Egy CSV állapotdokumentum létrehozása"
 
 #. TRANSLATORS: command description
 msgid "Create an HTML matrix page"
-msgstr ""
+msgstr "Egy HTML mátrixoldal létrehozása"
 
 #. TRANSLATORS: command description
 msgid "List applications not backed by packages"
@@ -251,11 +251,11 @@ msgstr "Egy AppData vagy AppStream fájl ellenőrzése (szigorú)"
 
 #. TRANSLATORS: command description
 msgid "Convert an AppData file to NEWS format"
-msgstr ""
+msgstr "Egy AppData-fájl átalakítása NEWS formátumra"
 
 #. TRANSLATORS: command description
 msgid "Convert an NEWS file to AppData format"
-msgstr ""
+msgstr "Egy NEWS-fájl átalakítása AppData formátumra"
 
 #. TRANSLATORS: command description
 msgid "Check installed application data"
@@ -263,22 +263,26 @@ msgstr "Telepített alkalmazás adatok ellenőrzése"
 
 #. TRANSLATORS: command description
 msgid "Replace screenshots in source file"
-msgstr ""
+msgstr "Képernyőképek cseréje a forrásfájlban"
 
 #. TRANSLATORS: command description
 msgid "Mirror upstream screenshots"
-msgstr ""
+msgstr "A fő tároló képernyőképeinek tükrözése"
 
 #. TRANSLATORS: command description
 msgid "Mirror local firmware files"
-msgstr ""
+msgstr "Helyi firmware-fájlok tükrözése"
 
 #. TRANSLATORS: command description
 msgid "Incorporate extra metadata from an external file"
-msgstr ""
+msgstr "Extra metaadatok egyesítése egy külső fájlból"
 
 #. TRANSLATORS: command description
 msgid "Compare the contents of two AppStream files"
+msgstr "Két AppStream-fájl tartalmának összehasonlítása"
+
+#. TRANSLATORS: command description
+msgid "Generate a GUID from an input string"
 msgstr ""
 
 #. TRANSLATORS: program name

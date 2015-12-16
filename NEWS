@@ -1,3 +1,17 @@
+Version 0.5.5
+~~~~~~~~~~~~~
+Released: 2015-12-16
+
+New Features:
+ - Add a AS_APP_STATE_UPDATABLE_LIVE constant so we can support live updates (Richard Hughes)
+ - Add as_utils_license_to_spdx() (Richard Hughes)
+
+Bugfixes:
+ - Add the package name as another application search token (Richard Hughes)
+ - Fix a crash when tokenizing a NULL string (Richard Hughes)
+ - Log when we auto-add kudos or keywords (Richard Hughes)
+ - Only use the package license when not provided by the AppData file (Richard Hughes)
+
 Version 0.5.4
 ~~~~~~~~~~~~~
 Released: 2015-11-18

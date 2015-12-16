@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2015-10-27 12:19+0000\n"
-"PO-Revision-Date: 2015-09-25 11:07+0000\n"
+"POT-Creation-Date: 2015-12-16 12:35+0000\n"
+"PO-Revision-Date: 2015-12-16 12:35+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: French (http://www.transifex.com/freedesktop/appstream-glib/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -279,6 +279,10 @@ msgstr ""
 
 #. TRANSLATORS: command description
 msgid "Compare the contents of two AppStream files"
+msgstr ""
+
+#. TRANSLATORS: command description
+msgid "Generate a GUID from an input string"
 msgstr ""
 
 #. TRANSLATORS: program name

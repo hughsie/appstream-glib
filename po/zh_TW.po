@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2015-10-27 12:19+0000\n"
-"PO-Revision-Date: 2015-09-25 13:57+0000\n"
-"Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
+"POT-Creation-Date: 2015-12-16 12:35+0000\n"
+"PO-Revision-Date: 2015-12-16 12:35+0000\n"
+"Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -279,6 +279,10 @@ msgstr "從外部檔案整合額外中介資料"
 #. TRANSLATORS: command description
 msgid "Compare the contents of two AppStream files"
 msgstr "比較兩份 AppStream 檔案的內容"
+
+#. TRANSLATORS: command description
+msgid "Generate a GUID from an input string"
+msgstr ""
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"
