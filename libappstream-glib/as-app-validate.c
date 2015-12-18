@@ -986,6 +986,43 @@ as_app_validate_license (const gchar *license_text, GError **error)
 }
 
 /**
+ * as_app_validate_is_content_license_id:
+ **/
+static gboolean
+as_app_validate_is_content_license_id (const gchar *license_id)
+{
+	if (g_strcmp0 (license_id, "@CC0-1.0") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@CC-BY-3.0") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@CC-BY-3.0+") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@CC-BY-4.0") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@CC-BY-4.0+") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@CC-BY-SA-3.0") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@CC-BY-SA-3.0+") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@CC-BY-SA-4.0") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@CC-BY-SA-4.0+") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@GFDL-1.1") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@GFDL-1.2") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@GFDL-1.3") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "&") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "|") == 0)
+		return TRUE;
+	return FALSE;
+}
+
+/**
  * as_app_validate_is_content_license:
  **/
 static gboolean
@@ -997,25 +1034,8 @@ as_app_validate_is_content_license (const gchar *license)
 	if (tokens == NULL)
 		return FALSE;
 	for (i = 0; tokens[i] != NULL; i++) {
-		if (g_strcmp0 (tokens[i], "@CC0-1.0") == 0)
-			continue;
-		if (g_strcmp0 (tokens[i], "@CC-BY-3.0") == 0)
-			continue;
-		if (g_strcmp0 (tokens[i], "@CC-BY-4.0") == 0)
-			continue;
-		if (g_strcmp0 (tokens[i], "@CC-BY-SA-3.0") == 0)
-			continue;
-		if (g_strcmp0 (tokens[i], "@CC-BY-SA-4.0") == 0)
-			continue;
-		if (g_strcmp0 (tokens[i], "@GFDL-1.1") == 0)
-			continue;
-		if (g_strcmp0 (tokens[i], "@GFDL-1.2") == 0)
-			continue;
-		if (g_strcmp0 (tokens[i], "@GFDL-1.3") == 0)
-			continue;
-		if (g_strcmp0 (tokens[i], "&") == 0)
-			continue;
-		return FALSE;
+		if (!as_app_validate_is_content_license_id (tokens[i]))
+			return FALSE;
 	}
 	return TRUE;
 }
