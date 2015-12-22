@@ -61,6 +61,8 @@ as_id_kind_to_string (AsIdKind id_kind)
 		return "addon";
 	if (id_kind == AS_ID_KIND_FIRMWARE)
 		return "firmware";
+	if (id_kind == AS_ID_KIND_RUNTIME)
+		return "runtime";
 	return "unknown";
 }
 
@@ -93,6 +95,8 @@ as_id_kind_from_string (const gchar *id_kind)
 		return AS_ID_KIND_ADDON;
 	if (g_strcmp0 (id_kind, "firmware") == 0)
 		return AS_ID_KIND_FIRMWARE;
+	if (g_strcmp0 (id_kind, "runtime") == 0)
+		return AS_ID_KIND_RUNTIME;
 	return AS_ID_KIND_UNKNOWN;
 }
 
