@@ -51,7 +51,6 @@ asb_package_deb_ensure_simple (AsbPackage *pkg, GError **error)
 {
 	const gchar *argv[4] = { "dpkg", "--field", "fn", NULL };
 	gchar *tmp;
-	gchar **vr;
 	guint i;
 	guint j;
 	g_autofree gchar *output = NULL;
@@ -77,6 +76,7 @@ asb_package_deb_ensure_simple (AsbPackage *pkg, GError **error)
 			continue;
 		}
 		if (g_str_has_prefix (lines[i], "Version: ")) {
+			g_auto(GStrv) vr = NULL;
 			vr = g_strsplit (lines[i] + 9, "-", 2);
 			tmp = g_strstr_len (vr[0], -1, ":");
 			if (tmp == NULL) {
@@ -88,10 +88,10 @@ asb_package_deb_ensure_simple (AsbPackage *pkg, GError **error)
 				asb_package_set_version (pkg, tmp + 1);
 			}
 			asb_package_set_release (pkg, vr[1]);
-			g_strfreev (vr);
 			continue;
 		}
 		if (g_str_has_prefix (lines[i], "Depends: ")) {
+			g_auto(GStrv) vr = NULL;
 			vr = g_strsplit (lines[i] + 9, ", ", -1);
 			for (j = 0; vr[j] != NULL; j++) {
 				tmp = g_strstr_len (vr[j], -1, " ");
