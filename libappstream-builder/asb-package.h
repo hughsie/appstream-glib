@@ -110,11 +110,13 @@ gboolean	 asb_package_explode		(AsbPackage	*pkg,
 						 GPtrArray	*glob,
 						 GError		**error);
 AsbPackageKind	 asb_package_get_kind		(AsbPackage	*pkg);
+guint		 asb_package_get_epoch		(AsbPackage	*pkg);
 const gchar	*asb_package_get_filename	(AsbPackage	*pkg);
 const gchar	*asb_package_get_basename	(AsbPackage	*pkg);
 const gchar	*asb_package_get_arch		(AsbPackage	*pkg);
 const gchar	*asb_package_get_name		(AsbPackage	*pkg);
 const gchar	*asb_package_get_version	(AsbPackage	*pkg);
+const gchar	*asb_package_get_release_str	(AsbPackage	*pkg);
 const gchar	*asb_package_get_nevr		(AsbPackage	*pkg);
 const gchar	*asb_package_get_nevra		(AsbPackage	*pkg);
 const gchar	*asb_package_get_evr		(AsbPackage	*pkg);

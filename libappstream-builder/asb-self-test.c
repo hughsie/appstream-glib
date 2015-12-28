@@ -212,12 +212,36 @@ static void
 asb_test_package_func (void)
 {
 	g_autoptr(AsbPackage) pkg = NULL;
+	g_autoptr(AsbPackage) pkg2 = NULL;
+
+	/* set package values from filename */
 	pkg = asb_package_new ();
 	asb_package_set_filename (pkg, "/tmp/gambit-c-doc-4.7.3-2.fc22.noarch.rpm");
 	g_assert_cmpstr (asb_package_get_nevra (pkg), ==, "gambit-c-doc-4.7.3-2.fc22.noarch");
 	g_assert_cmpstr (asb_package_get_name (pkg), ==, "gambit-c-doc");
 	g_assert_cmpstr (asb_package_get_version (pkg), ==, "4.7.3");
+	g_assert_cmpstr (asb_package_get_release_str (pkg), ==, "2.fc22");
 	g_assert_cmpstr (asb_package_get_arch (pkg), ==, "noarch");
+	g_assert_cmpint (asb_package_get_epoch (pkg), ==, 0);
+
+	/* set package values again */
+	pkg2 = asb_package_new ();
+	asb_package_set_filename (pkg2, "/tmp/gambit-c-doc-4.7.3-2.fc22.noarch.rpm");
+
+	/* check same */
+	g_assert_cmpint (asb_package_compare (pkg, pkg2), ==, 0);
+
+	/* fix version */
+	asb_package_set_version (pkg2, "4.7.4");
+	g_assert_cmpint (asb_package_compare (pkg, pkg2), <, 0);
+	g_assert_cmpint (asb_package_compare (pkg2, pkg), >, 0);
+	asb_package_set_version (pkg2, "4.7.3");
+
+	/* fix release */
+	asb_package_set_release (pkg2, "3.fc22");
+	g_assert_cmpint (asb_package_compare (pkg, pkg2), <, 0);
+	g_assert_cmpint (asb_package_compare (pkg2, pkg), >, 0);
+	asb_package_set_release (pkg2, "2.fc22");
 }
 
 static void

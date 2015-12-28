@@ -301,6 +301,23 @@ asb_package_get_kind (AsbPackage *pkg)
 }
 
 /**
+ * asb_package_get_epoch:
+ * @pkg: A #AsbPackage
+ *
+ * Gets the epoch of the package.
+ *
+ * Returns: a #AsbPackageKind
+ *
+ * Since: 0.5.6
+ **/
+guint
+asb_package_get_epoch (AsbPackage *pkg)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	return priv->epoch;
+}
+
+/**
  * asb_package_get_basename:
  * @pkg: A #AsbPackage
  *
@@ -349,6 +366,23 @@ asb_package_get_version (AsbPackage *pkg)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 	return priv->version;
+}
+
+/**
+ * asb_package_get_release_str:
+ * @pkg: A #AsbPackage
+ *
+ * Gets the package release string
+ *
+ * Returns: utf8 string
+ *
+ * Since: 0.5.6
+ **/
+const gchar *
+asb_package_get_release_str (AsbPackage *pkg)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	return priv->release;
 }
 
 /**
@@ -1112,17 +1146,45 @@ asb_package_get_releases (AsbPackage *pkg)
  *
  * Compares one package with another.
  *
- * Returns: -1 for <, 0 for the same and +1 for >
+ * Returns: +1 for @pkg1 newer, 0 for the same and -1 if @pkg2 is newer
  *
  * Since: 0.1.0
  **/
 gint
 asb_package_compare (AsbPackage *pkg1, AsbPackage *pkg2)
 {
+	AsbPackagePrivate *priv1 = GET_PRIVATE (pkg1);
+	AsbPackagePrivate *priv2 = GET_PRIVATE (pkg2);
 	AsbPackageClass *klass = ASB_PACKAGE_GET_CLASS (pkg1);
+	gint rc;
+
+	/* class-specific compare method */
 	if (klass->compare != NULL)
 		return klass->compare (pkg1, pkg2);
-	return 0;
+
+	/* check name */
+	rc = g_strcmp0 (priv1->name, priv2->name);
+	if (rc != 0)
+		return rc;
+
+	/* check epoch */
+	if (priv1->epoch < priv2->epoch)
+		return -1;
+	if (priv1->epoch > priv2->epoch)
+		return 1;
+
+	/* check version */
+	rc = as_utils_vercmp (priv1->version, priv2->version);
+	if (rc != 0)
+		return rc;
+
+	/* check release */
+	rc = as_utils_vercmp (priv1->release, priv2->release);
+	if (rc != 0)
+		return rc;
+
+	/* check arch */
+	return g_strcmp0 (priv1->arch, priv2->arch);
 }
 
 /**
