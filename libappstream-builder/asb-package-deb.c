@@ -87,7 +87,14 @@ asb_package_deb_ensure_simple (AsbPackage *pkg, GError **error)
 				asb_package_set_epoch (pkg, j);
 				asb_package_set_version (pkg, tmp + 1);
 			}
-			asb_package_set_release (pkg, vr[1]);
+			if (vr[1] != NULL) {
+				asb_package_set_release (pkg, vr[1]);
+			} else {
+				/* packages don't actually have to have a
+				 * release value like rpm; in this case fake
+				 * something plausible */
+				asb_package_set_release (pkg, "0");
+			}
 			continue;
 		}
 		if (g_str_has_prefix (lines[i], "Depends: ")) {
