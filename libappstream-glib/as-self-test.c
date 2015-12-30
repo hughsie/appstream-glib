@@ -1578,7 +1578,9 @@ as_test_app_validate_file_bad_func (void)
 				    "<p> requires sentence case");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<li> requires sentence case");
-	g_assert_cmpint (probs->len, ==, 28);
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "<project_group> is not valid");
+	g_assert_cmpint (probs->len, ==, 29);
 }
 
 static void
