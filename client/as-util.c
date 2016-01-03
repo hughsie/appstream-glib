@@ -488,7 +488,8 @@ as_util_convert_appstream (GFile *file_input,
 	if (!as_store_from_file (store, file_input, NULL, NULL, error))
 		return FALSE;
 	/* TRANSLATORS: information message */
-	g_print ("Old API version: %.2f\n", as_store_get_api_version (store));
+	g_print ("%s: %.2f\n", _("Old API version"),
+		 as_store_get_api_version (store));
 
 	/* save file */
 	as_store_set_api_version (store, new_version);
@@ -555,7 +556,9 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 	g_set_error (error,
 		     AS_ERROR,
 		     AS_ERROR_INVALID_ARGUMENTS,
-		     "Conversion %s->%s not implemented",
+		     /* TRANSLATORS: the %s and %s are file types,
+		      * e.g. "appdata" to "appstream" */
+		     _("Conversion %s to %s is not implemented"),
 		     as_app_source_kind_to_string (input_kind),
 		     as_app_source_kind_to_string (output_kind));
 	return FALSE;
@@ -600,7 +603,9 @@ as_util_upgrade (AsUtilPrivate *priv, gchar **values, GError **error)
 			g_set_error (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
-				     "File format '%s' cannot be upgraded",
+				     /* TRANSLATORS: %s is a file type,
+				      * e.g. 'appdata' */
+				     _("File format '%s' cannot be upgraded"),
 				     as_app_source_kind_to_string (source_kind));
 			return FALSE;
 		}
@@ -644,7 +649,8 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 			g_set_error_literal (error,
 					     AS_ERROR,
 					     AS_ERROR_INVALID_ARGUMENTS,
-					     "Format not recognised");
+					     /* TRANSLATORS: not a recognised file type */
+					     _("Format not recognised"));
 			return FALSE;
 		}
 
@@ -1105,7 +1111,8 @@ as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **erro
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
-				     "Format not recognised");
+				     /* TRANSLATORS: not a recognised file type */
+				     _("Format not recognised"));
 		return FALSE;
 	}
 
@@ -1207,7 +1214,8 @@ as_util_add_file_to_store (AsStore *store, const gchar *filename, GError **error
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
-				     "Format not recognised");
+				     /* TRANSLATORS: not a recognised file type */
+				     _("Format not recognised"));
 		return FALSE;
 	}
 	return TRUE;
@@ -1781,7 +1789,8 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
-				     "No desktop applications found");
+				     /* TRANSLATORS: probably wrong XML */
+				     _("No desktop applications found"));
 		return FALSE;
 	}
 	g_string_append (html, "<table class=\"summary\">\n");
@@ -3502,7 +3511,8 @@ as_util_compare (AsUtilPrivate *priv, gchar **values, GError **error)
 		id = as_app_get_id (app);
 		if (as_store_get_app_by_id_with_fallbacks (store_new, id) != NULL)
 			continue;
-		as_util_pad_strings (id, "Removed", align);
+		/* TRANSLATORS: application was removed */
+		as_util_pad_strings (id, _("Removed"), align);
 	}
 
 	/* find apps in new that are not in old */
@@ -3514,7 +3524,8 @@ as_util_compare (AsUtilPrivate *priv, gchar **values, GError **error)
 		id = as_app_get_id (app);
 		if (as_store_get_app_by_id_with_fallbacks (store_old, id) != NULL)
 			continue;
-		as_util_pad_strings (id, "Added", align);
+		/* TRANSLATORS: application was added */
+		as_util_pad_strings (id, _("Added"), align);
 	}
 
 	return TRUE;
