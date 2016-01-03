@@ -2221,6 +2221,19 @@ as_store_validate_add (GPtrArray *problems, AsProblemKind kind, const gchar *fmt
 }
 
 /**
+ * as_store_get_unique_name_app_key:
+ */
+static gchar *
+as_store_get_unique_name_app_key (AsApp *app)
+{
+	g_autofree gchar *name_lower = NULL;
+	name_lower = g_utf8_strdown (as_app_get_name (app, NULL), -1);
+	return g_strdup_printf ("<%s:%s>",
+				as_id_kind_to_string (as_app_get_id_kind (app)),
+				name_lower);
+}
+
+/**
  * as_store_validate:
  * @store: a #AsStore instance.
  * @flags: the #AsAppValidateFlags to use, e.g. %AS_APP_VALIDATE_FLAG_NONE
@@ -2240,6 +2253,7 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 	AsApp *app;
 	GPtrArray *probs;
 	guint i;
+	g_autoptr(GHashTable) hash_names = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 
@@ -2271,10 +2285,16 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 		}
 	}
 
+	/* check there exists only onle application with a specific name */
+	hash_names = g_hash_table_new_full (g_str_hash, g_str_equal,
+					    g_free, (GDestroyNotify) g_object_unref);
+
 	/* check each application */
 	for (i = 0; i < priv->array->len; i++) {
+		AsApp *app_tmp;
 		AsProblem *prob;
 		guint j;
+		g_autofree gchar *app_key = NULL;
 		g_autoptr(GPtrArray) probs_app = NULL;
 
 		app = g_ptr_array_index (priv->array, i);
@@ -2426,6 +2446,25 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 						       as_problem_get_message (prob));
 			}
 		}
+
+		/* check uniqueness */
+		app_key = as_store_get_unique_name_app_key (app);
+		app_tmp = g_hash_table_lookup (hash_names, app_key);
+		if (app_tmp != NULL) {
+			as_store_validate_add (probs,
+					       AS_PROBLEM_KIND_DUPLICATE_DATA,
+					       "%s[%s] as the same name as %s[%s]: %s",
+					       as_app_get_id (app),
+					       as_app_get_pkgname_default (app),
+					       as_app_get_id (app_tmp),
+					       as_app_get_pkgname_default (app_tmp),
+					       app_key);
+		} else {
+			g_hash_table_insert (hash_names,
+					     g_strdup (app_key),
+					     g_object_ref (app));
+		}
+
 	}
 	return probs;
 }
