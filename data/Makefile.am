@@ -20,6 +20,9 @@ man_MANS +=						\
 endif
 endif
 
+itsdatadir = $(datadir)/gettext/its
+dist_itsdata_DATA = appdata.its appdata.loc
+
 XSLTPROC_FLAGS =					\
 	--nonet						\
 	--stringparam man.output.quietly 1		\
