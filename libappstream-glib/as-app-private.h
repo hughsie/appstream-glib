@@ -48,6 +48,7 @@ G_BEGIN_DECLS
  * @AS_APP_PROBLEM_TRANSLATED_ID:		The <id> value was translated
  * @AS_APP_PROBLEM_TRANSLATED_LICENSE:		The <license> value was translated
  * @AS_APP_PROBLEM_TRANSLATED_PROJECT_GROUP:	The <project_group> value was translated
+ * @AS_APP_PROBLEM_UPDATECONTACT_FALLBACK:	The file used <updatecontact> without a space
  *
  * The application problems detected when loading.
  **/
@@ -65,6 +66,7 @@ typedef enum {
 	AS_APP_PROBLEM_TRANSLATED_ID		= 1 << 9,
 	AS_APP_PROBLEM_TRANSLATED_LICENSE	= 1 << 10,
 	AS_APP_PROBLEM_TRANSLATED_PROJECT_GROUP	= 1 << 11,
+	AS_APP_PROBLEM_UPDATECONTACT_FALLBACK	= 1 << 12,
 	/*< private >*/
 	AS_APP_PROBLEM_LAST
 } AsAppProblems;

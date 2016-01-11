@@ -1317,6 +1317,12 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					     AS_PROBLEM_KIND_VALUE_MISSING,
 					     "<!-- Copyright [year] [name] --> is not present");
 		}
+		if (deprectated_failure &&
+		    (problems & AS_APP_PROBLEM_UPDATECONTACT_FALLBACK) > 0) {
+			ai_app_validate_add (&helper,
+					     AS_PROBLEM_KIND_TAG_INVALID,
+					     "<updatecontact> should be <update_contact>");
+		}
 	}
 
 	/* check for things that have to exist */

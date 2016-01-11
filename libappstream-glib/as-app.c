@@ -3496,6 +3496,11 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 
 	/* <update_contact> */
 	case AS_TAG_UPDATE_CONTACT:
+
+		/* this is the old name */
+		if (g_strcmp0 (as_node_get_name (n), "updatecontact") == 0)
+			priv->problems |= AS_APP_PROBLEM_UPDATECONTACT_FALLBACK;
+
 		as_app_set_update_contact (app, as_node_get_data (n));
 		break;
 
