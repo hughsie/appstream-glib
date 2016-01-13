@@ -816,7 +816,7 @@ as_utils_is_spdx_license (const gchar *license)
  *
  * Returns: the best-effort SPDX license string
  *
- * Since: 0.2.5
+ * Since: 0.5.5
  **/
 gchar *
 as_utils_license_to_spdx (const gchar *license)
