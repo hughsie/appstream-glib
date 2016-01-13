@@ -1198,6 +1198,7 @@ as_util_add_file_to_store (AsStore *store, const gchar *filename, GError **error
 	case AS_APP_SOURCE_KIND_APPDATA:
 	case AS_APP_SOURCE_KIND_METAINFO:
 	case AS_APP_SOURCE_KIND_DESKTOP:
+	case AS_APP_SOURCE_KIND_INF:
 		app = as_app_new ();
 		if (!as_app_parse_file (app, filename,
 					AS_APP_PARSE_FLAG_USE_HEURISTICS, error))
