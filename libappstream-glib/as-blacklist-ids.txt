@@ -9,3 +9,4 @@ Rodent-*.desktop
 rygel-preferences.desktop
 system-config-keyboard.desktop
 tracker-preferences.desktop
+Uninstall*.desktop
