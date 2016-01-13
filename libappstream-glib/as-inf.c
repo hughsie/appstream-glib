@@ -159,6 +159,17 @@ as_inf_get_dict (AsInfHelper *helper, GError **error)
 	g_autofree gchar *lower = NULL;
 	g_autoptr(GHashTable) dict_tmp = NULL;
 	g_auto(GStrv) keys = NULL;
+	struct {
+		const gchar		*search;
+		const gchar		*replace;
+	} types[] =  {
+		{ "REG_SZ",		"0x00000000" },
+		{ "REG_BINARY",		"0x00000001" },
+		{ "REG_MULTI_SZ",	"0x00010000" },
+		{ "REG_EXPAND_SZ",	"0x00020000" },
+		{ "REG_DWORD",		"0x00010001" },
+		{ "REG_NONE",		"0x00020001" },
+		{ NULL,			NULL } };
 
 	dict_tmp = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	lower = as_inf_make_case_insensitive (helper, "Strings");
@@ -169,6 +180,16 @@ as_inf_get_dict (AsInfHelper *helper, GError **error)
 			goto out;
 		g_hash_table_insert (dict_tmp, g_strdup (keys[i]), val);
 	}
+
+	/* verify that commonly missed types are present */
+	for (i = 0; types[i].search != NULL; i++) {
+		if (g_hash_table_lookup (dict_tmp, types[i].search) == NULL) {
+			g_hash_table_insert (dict_tmp,
+					     g_strdup (types[i].search),
+					     g_strdup (types[i].replace));
+		}
+	}
+
 	dict = g_hash_table_ref (dict_tmp);
 out:
 	return dict;
