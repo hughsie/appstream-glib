@@ -44,6 +44,8 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsbPackageOstree, asb_package_ostree, ASB_TYPE_PACKA
 
 #define GET_PRIVATE(o) (asb_package_ostree_get_instance_private (o))
 
+static gboolean asb_package_ostree_ensure_nevra (AsbPackage *pkg, GError **error);
+
 /**
  * asb_package_ostree_finalize:
  **/
@@ -87,6 +89,9 @@ asb_package_ostree_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	AsbPackageOstree *pkg_ostree = ASB_PACKAGE_OSTREE (pkg);
 	AsbPackageOstreePrivate *priv = GET_PRIVATE (pkg_ostree);
 	g_autoptr(GFile) file = NULL;
+
+	if (!asb_package_ostree_ensure_nevra (pkg, error))
+		return FALSE;
 
 	/* create the OstreeRepo */
 	file = g_file_new_for_path (priv->repodir);
