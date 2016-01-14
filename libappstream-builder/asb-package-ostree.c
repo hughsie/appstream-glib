@@ -30,6 +30,7 @@
 #include "config.h"
 
 #include <ostree.h>
+#include <string.h>
 
 #include "asb-package-ostree.h"
 #include "asb-plugin.h"
@@ -43,6 +44,8 @@ typedef struct
 G_DEFINE_TYPE_WITH_PRIVATE (AsbPackageOstree, asb_package_ostree, ASB_TYPE_PACKAGE)
 
 #define GET_PRIVATE(o) (asb_package_ostree_get_instance_private (o))
+
+static gboolean asb_package_ostree_ensure_nevra (AsbPackage *pkg, GError **error);
 
 /**
  * asb_package_ostree_finalize:
@@ -88,6 +91,9 @@ asb_package_ostree_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	AsbPackageOstreePrivate *priv = GET_PRIVATE (pkg_ostree);
 	g_autoptr(GFile) file = NULL;
 
+	if (!asb_package_ostree_ensure_nevra (pkg, error))
+		return FALSE;
+
 	/* create the OstreeRepo */
 	file = g_file_new_for_path (priv->repodir);
 	priv->repo = ostree_repo_new (file);
@@ -110,7 +116,8 @@ asb_package_ostree_build_filelist (GPtrArray *array, GFile *file, GError **error
 	if (enumerator == NULL)
 		return FALSE;
 	do {
-		g_autofree gchar *path = NULL;
+		g_autofree gchar *dir = NULL;
+		gchar *path;
 		g_autoptr(GFileInfo) info = NULL;
 
 		info = g_file_enumerator_next_file (enumerator, NULL, error);
@@ -121,8 +128,9 @@ asb_package_ostree_build_filelist (GPtrArray *array, GFile *file, GError **error
 		}
 
 		/* recurse if directory */
-		path = g_file_get_path (file);
-		g_ptr_array_add (array, g_build_filename (path, g_file_info_get_name (info), NULL));
+		dir = g_file_get_path (file);
+		path = g_build_filename ("/usr", dir + strlen ("/export"), g_file_info_get_name (info), NULL);
+		g_ptr_array_add (array, path);
 		if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY) {
 			g_autoptr(GFile) child = NULL;
 			child = g_file_get_child (g_file_enumerator_get_container (enumerator),
@@ -144,6 +152,7 @@ asb_package_ostree_ensure_files (AsbPackage *pkg, GError **error)
 	AsbPackageOstreePrivate *priv = GET_PRIVATE (pkg_ostree);
 	const gchar *rev;
 	g_autoptr(GFile) root = NULL;
+	g_autoptr(GFile) export = NULL;
 	g_autoptr(GPtrArray) array = NULL;
 
 	/* get the filelist */
@@ -152,10 +161,11 @@ asb_package_ostree_ensure_files (AsbPackage *pkg, GError **error)
 	rev = asb_package_get_source (pkg);
 	if (!ostree_repo_read_commit (priv->repo, rev, &root, NULL, NULL, error))
 		return FALSE;
-
+	export = g_file_get_child (root, "export");
 	/* build an array */
 	array = g_ptr_array_new_with_free_func (g_free);
-	if (!asb_package_ostree_build_filelist (array, root, error))
+	if (g_file_query_exists (export, NULL) &&
+	    !asb_package_ostree_build_filelist (array, export, error))
 		return FALSE;
 	g_ptr_array_add (array, NULL);
 	asb_package_set_filelist (pkg, (gchar **) array->pdata);
@@ -233,9 +243,11 @@ asb_package_ostree_explode (AsbPackage *pkg, const gchar *dir,
 	g_autofree gchar *resolved_commit = NULL;
 	g_autoptr(GFileInfo) file_info = NULL;
 	g_autoptr(GFile) root = NULL;
+	g_autoptr(GFile) export = NULL;
 	g_autoptr(GFile) target = NULL;
+	g_autoptr(GFile) usr = NULL;
 
-	/* extract root */
+	/* extract files */
 	commit = asb_package_get_source (pkg);
 	if (!ostree_repo_resolve_rev (priv->repo, commit, FALSE,
 				      &resolved_commit, error))
@@ -243,17 +255,21 @@ asb_package_ostree_explode (AsbPackage *pkg, const gchar *dir,
 	if (!ostree_repo_read_commit (priv->repo, resolved_commit,
 				      &root, NULL, NULL, error))
 		return FALSE;
-	file_info = g_file_query_info (root, "standard::*",
-				       G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-				       NULL, error);
-	if (file_info == NULL)
-		return FALSE;
-	target = g_file_new_for_path (dir);
-	if (!ostree_repo_checkout_tree (priv->repo, OSTREE_REPO_CHECKOUT_MODE_USER,
-					OSTREE_REPO_CHECKOUT_OVERWRITE_UNION_FILES,
-					target, OSTREE_REPO_FILE (root),
-					file_info, NULL, error))
-		return FALSE;
+	export = g_file_get_child (root, "export");
+	file_info = g_file_query_info (export, "standard::*",
+                                      G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                      NULL, error);
+	if (file_info != NULL) {
+		target = g_file_new_for_path (dir);
+		usr = g_file_get_child (target, "usr");
+		if (!g_file_make_directory (usr, NULL, error))
+			return FALSE;
+		if (!ostree_repo_checkout_tree (priv->repo, OSTREE_REPO_CHECKOUT_MODE_USER,
+						OSTREE_REPO_CHECKOUT_OVERWRITE_UNION_FILES,
+						usr, OSTREE_REPO_FILE (export),
+						file_info, NULL, error))
+			return FALSE;
+	}
 	return TRUE;
 }
 
