@@ -48,6 +48,9 @@
 #endif
 #include "asb-package-cab.h"
 #include "asb-package-deb.h"
+#ifdef HAVE_EOPKG
+#include "asb-package-eopkg.h"
+#endif
 
 typedef struct
 {
@@ -481,6 +484,10 @@ asb_context_add_filename (AsbContext *ctx, const gchar *filename, GError **error
 #if HAVE_ALPM
 	if (g_str_has_suffix (filename, ".pkg.tar.xz"))
 		pkg = asb_package_alpm_new ();
+#endif
+#if HAVE_EOPKG
+	if (g_str_has_suffix (filename, ".eopkg") && !g_str_has_suffix (filename, ".delta.eopkg"))
+		pkg = asb_package_eopkg_new ();
 #endif
 	if (g_str_has_suffix (filename, ".cab"))
 		pkg = asb_package_cab_new ();

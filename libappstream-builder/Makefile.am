@@ -82,6 +82,12 @@ libappstream_builder_la_SOURCES +=				\
 	asb-package-ostree.h
 endif
 
+if HAVE_EOPKG
+libappstream_builder_la_SOURCES +=				\
+	asb-package-eopkg.c					\
+	asb-package-eopkg.h
+endif
+
 libappstream_builder_la_LIBADD =				\
 	$(AS_GLIB_LIBS)						\
 	$(RPM_LIBS)						\

@@ -199,6 +199,21 @@ if test x$enable_builder != xno; then
 	else
 		HAVE_ALPM=no
 	fi
+	# eopkg (default disabled)
+	AC_ARG_ENABLE(eopkg, AS_HELP_STRING([--enable-eopkg],[Enable eopkg support]), enable_eopkg=yes, enable_eopkg=no)
+	if test x$enable_eopkg != xno; then
+        AC_CHECK_PROG(EOPKG_CHECK,eopkg,yes)
+        if test "x$EOPKG_CHECK" = "xyes"; then
+            AC_DEFINE(HAVE_EOPKG, 1, [define if EOPKG is installed])
+            HAVE_EOPKG="yes"
+        else
+            if test x$enable_eopkg = xyes; then
+                AC_MSG_ERROR([eopkg enabled but not found])
+            fi
+        fi
+	else
+		HAVE_EOPKG=no
+	fi
 	enable_builder=yes
 else
 	enable_builder=no
@@ -207,6 +222,7 @@ AM_CONDITIONAL(HAVE_BUILDER, test x$enable_builder = xyes)
 AM_CONDITIONAL(HAVE_RPM, test x$HAVE_RPM = xyes)
 AM_CONDITIONAL(HAVE_OSTREE, test x$HAVE_OSTREE = xyes)
 AM_CONDITIONAL(HAVE_ALPM, test x$HAVE_ALPM = xyes)
+AM_CONDITIONAL(HAVE_EOPKG, test x$HAVE_EOPKG = xyes)
 
 # man files
 AC_ARG_ENABLE(man,
