@@ -103,11 +103,6 @@ void
 asb_plugin_add_glob (GPtrArray *array, const gchar *glob)
 {
 	/* handle bundles automatically */
-	if (g_str_has_prefix (glob, "/usr/")) {
-		g_autofree gchar *glob_bundle = NULL;
-		glob_bundle = g_strdup_printf ("/files/%s", glob + 5);
-		g_ptr_array_add (array, asb_glob_value_new (glob_bundle, ""));
-	}
 	g_ptr_array_add (array, asb_glob_value_new (glob, ""));
 }
 
