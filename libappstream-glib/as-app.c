@@ -4479,9 +4479,36 @@ as_app_get_icon_default (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsIcon *icon;
+	guint i;
+	guint j;
+	AsIconKind kinds[] = {
+		AS_ICON_KIND_STOCK,
+		AS_ICON_KIND_LOCAL,
+		AS_ICON_KIND_CACHED,
+		AS_ICON_KIND_EMBEDDED,
+		AS_ICON_KIND_REMOTE,
+		AS_ICON_KIND_UNKNOWN };
 
+	/* nothing */
 	if (priv->icons->len == 0)
 		return NULL;
+
+	/* optimise common case */
+	if (priv->icons->len == 1) {
+		icon = g_ptr_array_index (priv->icons, 0);
+		return icon;
+	}
+
+	/* search for icons in the preferred order */
+	for (j = 0; kinds[j] != AS_ICON_KIND_UNKNOWN; j++) {
+		for (i = 0; i < priv->icons->len; i++) {
+			icon = g_ptr_array_index (priv->icons, i);
+			if (as_icon_get_kind (icon) == kinds[j])
+				return icon;
+		}
+	}
+
+	/* we can't decide, just return the first added */
 	icon = g_ptr_array_index (priv->icons, 0);
 	return icon;
 }
