@@ -425,6 +425,19 @@ as_app_parse_desktop_file (AsApp *app,
 	app_id = g_path_get_basename (desktop_file);
 	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
 
+	/* is this really a web-app? */
+	if ((flags & AS_APP_PARSE_FLAG_USE_HEURISTICS) > 0) {
+		g_autofree gchar *exec = NULL;
+		exec = g_key_file_get_string (kf,
+					      G_KEY_FILE_DESKTOP_GROUP,
+					      G_KEY_FILE_DESKTOP_KEY_EXEC,
+					      NULL);
+		if (exec != NULL) {
+			if (g_str_has_prefix (exec, "epiphany"))
+				as_app_set_id_kind (app, AS_ID_KIND_WEB_APP);
+		}
+	}
+
 	/* is blacklisted */
 	if (as_utils_is_blacklisted_id (app_id))
 		as_app_add_veto (app, "%s is not an application", app_id);
