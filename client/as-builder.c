@@ -64,7 +64,7 @@ as_builder_search_path (GPtrArray *array, const gchar *path, GError **error)
  * as_builder_setup_ostree:
  **/
 static gboolean
-as_builder_setup_ostree (AsbContext *ctx, const gchar *ostree_repo, GError **error)
+as_builder_setup_ostree (AsbContext *ctx, const gchar *ostree_repo, const gchar *ostree_arch, GError **error)
 {
 #ifdef HAVE_OSTREE
 	GHashTableIter iter;
@@ -105,7 +105,10 @@ as_builder_setup_ostree (AsbContext *ctx, const gchar *ostree_repo, GError **err
 		filename = g_build_filename (ostree_repo, name, NULL);
 		if (!asb_package_open (pkg, filename, error))
 			return FALSE;
-		asb_context_add_package (ctx, pkg);
+
+		if (ostree_arch == NULL ||
+		    strcmp (asb_package_get_arch (pkg), ostree_arch) == 0)
+			asb_context_add_package (ctx, pkg);
 	}
 	g_object_unref (repo);
 	return TRUE;
@@ -149,6 +152,7 @@ main (int argc, char **argv)
 	g_autofree gchar *old_metadata = NULL;
 	g_autofree gchar *origin = NULL;
 	g_autofree gchar *ostree_repo = NULL;
+	g_autofree gchar *ostree_arch = NULL;
 	g_autofree gchar *output_dir = NULL;
 	g_autofree gchar *temp_dir = NULL;
 	g_autofree gchar **veto_ignore = NULL;
@@ -210,6 +214,9 @@ main (int argc, char **argv)
 		{ "ostree-repo", '\0', 0, G_OPTION_ARG_STRING, &ostree_repo,
 			/* TRANSLATORS: command line option */
 			_("Set the ostree repo name"), "REPO" },
+		{ "ostree-arch", '\0', 0, G_OPTION_ARG_STRING, &ostree_arch,
+			/* TRANSLATORS: command line option */
+			_("Only handle this arch in the ostree repo"), "ARCH" },
 		{ "old-metadata", '\0', 0, G_OPTION_ARG_FILENAME, &old_metadata,
 			/* TRANSLATORS: command line option */
 			_("Set the old metadata location"), "DIR" },
@@ -396,7 +403,7 @@ main (int argc, char **argv)
 
 	/* load and data from an ostree repo */
 	if (ostree_repo != NULL) {
-		if (!as_builder_setup_ostree (ctx, ostree_repo, &error)) {
+		if (!as_builder_setup_ostree (ctx, ostree_repo, ostree_arch, &error)) {
 			g_print ("%s\n", error->message);
 			retval = EXIT_FAILURE;
 			goto out;
