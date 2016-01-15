@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Balázs Úr <urbalazs@gmail.com>, 2014-2015
+# Balázs Úr <urbalazs@gmail.com>, 2014-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2015-12-16 12:35+0000\n"
-"PO-Revision-Date: 2015-12-16 12:35+0000\n"
+"POT-Creation-Date: 2016-01-15 13:56+0000\n"
+"PO-Revision-Date: 2016-01-15 13:56+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/freedesktop/appstream-glib/language/hu/)\n"
 "MIME-Version: 1.0\n"
@@ -91,6 +91,10 @@ msgid "Set the ostree repo name"
 msgstr "Az ostree tárolónév beállítása"
 
 #. TRANSLATORS: command line option
+msgid "Only handle this arch in the ostree repo"
+msgstr ""
+
+#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "A régi metaadat helyének beállítása"
 
@@ -150,14 +154,38 @@ msgid "Please review the file and fix any 'FIXME' items"
 msgstr "Nézze át a fájlt, és javítson minden „FIXME” elemet"
 
 #. TRANSLATORS: information message
+msgid "Old API version"
+msgstr ""
+
+#. TRANSLATORS: information message
 msgid "New API version"
 msgstr "Új API verzió"
 
 msgid "Not enough arguments, expected old.xml new.xml version"
 msgstr "Nincs elég argumentum, a következő az elvárt: old.xml new.xml verzió"
 
+#. TRANSLATORS: the %s and %s are file types,
+#. * e.g. "appdata" to "appstream"
+#, c-format
+msgid "Conversion %s to %s is not implemented"
+msgstr ""
+
 msgid "Not enough arguments, expected file.xml"
 msgstr "Nincs elég argumentum, a következő az elvárt: file.xml"
+
+#. TRANSLATORS: %s is a file type,
+#. * e.g. 'appdata'
+#, c-format
+msgid "File format '%s' cannot be upgraded"
+msgstr ""
+
+#. TRANSLATORS: not a recognised file type
+msgid "Format not recognised"
+msgstr ""
+
+#. TRANSLATORS: probably wrong XML
+msgid "No desktop applications found"
+msgstr ""
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -172,6 +200,14 @@ msgstr "Az ellenőrzés nem sikerült"
 
 msgid "Validation of files failed"
 msgstr "A fájlok ellenőrzése nem sikerült"
+
+#. TRANSLATORS: application was removed
+msgid "Removed"
+msgstr ""
+
+#. TRANSLATORS: application was added
+msgid "Added"
+msgstr ""
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -283,7 +319,7 @@ msgstr "Két AppStream-fájl tartalmának összehasonlítása"
 
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
-msgstr ""
+msgstr "GUID előállítása egy bemeneti szövegből"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

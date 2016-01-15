@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2015-12-16 12:35+0000\n"
-"PO-Revision-Date: 2015-12-16 12:35+0000\n"
+"POT-Creation-Date: 2016-01-15 13:56+0000\n"
+"PO-Revision-Date: 2016-01-15 13:56+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/freedesktop/appstream-glib/language/ca/)\n"
 "MIME-Version: 1.0\n"
@@ -91,6 +91,10 @@ msgid "Set the ostree repo name"
 msgstr "Estableix el nom del dipòsit de l'arbre del sistema operatiu"
 
 #. TRANSLATORS: command line option
+msgid "Only handle this arch in the ostree repo"
+msgstr ""
+
+#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "Estableix la ubicació de les metadades antigues"
 
@@ -150,14 +154,38 @@ msgid "Please review the file and fix any 'FIXME' items"
 msgstr "Si us plau, reviseu el fitxer i corregiu qualsevol dels elements «FIXME»"
 
 #. TRANSLATORS: information message
+msgid "Old API version"
+msgstr ""
+
+#. TRANSLATORS: information message
 msgid "New API version"
 msgstr "Nova versió de l'API"
 
 msgid "Not enough arguments, expected old.xml new.xml version"
 msgstr "No hi ha prou arguments, s'esperaven els fitxers antic.xml nou.xml"
 
+#. TRANSLATORS: the %s and %s are file types,
+#. * e.g. "appdata" to "appstream"
+#, c-format
+msgid "Conversion %s to %s is not implemented"
+msgstr ""
+
 msgid "Not enough arguments, expected file.xml"
 msgstr "No hi ha prou arguments, s'esperava el fitxer.xml"
+
+#. TRANSLATORS: %s is a file type,
+#. * e.g. 'appdata'
+#, c-format
+msgid "File format '%s' cannot be upgraded"
+msgstr ""
+
+#. TRANSLATORS: not a recognised file type
+msgid "Format not recognised"
+msgstr ""
+
+#. TRANSLATORS: probably wrong XML
+msgid "No desktop applications found"
+msgstr ""
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -172,6 +200,14 @@ msgstr "Ha fallat la validació"
 
 msgid "Validation of files failed"
 msgstr "Ha fallat la validació dels fitxers"
+
+#. TRANSLATORS: application was removed
+msgid "Removed"
+msgstr ""
+
+#. TRANSLATORS: application was added
+msgid "Added"
+msgstr ""
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"

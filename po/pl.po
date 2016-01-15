@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2015-12-16 12:35+0000\n"
-"PO-Revision-Date: 2015-12-16 12:35+0000\n"
+"POT-Creation-Date: 2016-01-15 13:56+0000\n"
+"PO-Revision-Date: 2016-01-15 13:56+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Polish (http://www.transifex.com/freedesktop/appstream-glib/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -91,6 +91,10 @@ msgid "Set the ostree repo name"
 msgstr "Ustawia nazwę repozytorium OSTree"
 
 #. TRANSLATORS: command line option
+msgid "Only handle this arch in the ostree repo"
+msgstr ""
+
+#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "Ustawia położenie poprzednich metadanych"
 
@@ -150,14 +154,38 @@ msgid "Please review the file and fix any 'FIXME' items"
 msgstr "Proszę przejrzeć plik i naprawić elementy oznaczone jako „FIXME”"
 
 #. TRANSLATORS: information message
+msgid "Old API version"
+msgstr ""
+
+#. TRANSLATORS: information message
 msgid "New API version"
 msgstr "Nowa wersja API"
 
 msgid "Not enough arguments, expected old.xml new.xml version"
 msgstr "Za mało parametrów, oczekiwano wersji poprzedniej.xml nowej.xml"
 
+#. TRANSLATORS: the %s and %s are file types,
+#. * e.g. "appdata" to "appstream"
+#, c-format
+msgid "Conversion %s to %s is not implemented"
+msgstr ""
+
 msgid "Not enough arguments, expected file.xml"
 msgstr "Za mało parametrów, oczekiwano pliku.xml"
+
+#. TRANSLATORS: %s is a file type,
+#. * e.g. 'appdata'
+#, c-format
+msgid "File format '%s' cannot be upgraded"
+msgstr ""
+
+#. TRANSLATORS: not a recognised file type
+msgid "Format not recognised"
+msgstr ""
+
+#. TRANSLATORS: probably wrong XML
+msgid "No desktop applications found"
+msgstr ""
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -172,6 +200,14 @@ msgstr "Sprawdzenie się nie powiodło"
 
 msgid "Validation of files failed"
 msgstr "Sprawdzenie plików się nie powiodło"
+
+#. TRANSLATORS: application was removed
+msgid "Removed"
+msgstr ""
+
+#. TRANSLATORS: application was added
+msgid "Added"
+msgstr ""
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -283,7 +319,7 @@ msgstr "Porównuje zawartość dwóch plików AppStream"
 
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
-msgstr ""
+msgstr "Tworzy GUID z ciągu wejściowego"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

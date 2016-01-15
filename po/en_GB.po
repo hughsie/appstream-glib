@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Andi Chandler <andi@gowling.com>, 2016
 # Richard Hughes <richard@hughsie.com>, 2014-2015
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2015-12-16 12:35+0000\n"
-"PO-Revision-Date: 2015-12-16 12:35+0000\n"
+"POT-Creation-Date: 2016-01-15 13:56+0000\n"
+"PO-Revision-Date: 2016-01-15 13:56+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: English (United Kingdom) (http://www.transifex.com/freedesktop/appstream-glib/language/en_GB/)\n"
 "MIME-Version: 1.0\n"
@@ -91,6 +92,10 @@ msgid "Set the ostree repo name"
 msgstr "Set the ostree repo name"
 
 #. TRANSLATORS: command line option
+msgid "Only handle this arch in the ostree repo"
+msgstr ""
+
+#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "Set the old metadata location"
 
@@ -150,14 +155,38 @@ msgid "Please review the file and fix any 'FIXME' items"
 msgstr "Please review the file and fix any 'FIXME' items"
 
 #. TRANSLATORS: information message
+msgid "Old API version"
+msgstr ""
+
+#. TRANSLATORS: information message
 msgid "New API version"
 msgstr "New API version"
 
 msgid "Not enough arguments, expected old.xml new.xml version"
 msgstr "Not enough arguments, expected old.xml new.xml version"
 
+#. TRANSLATORS: the %s and %s are file types,
+#. * e.g. "appdata" to "appstream"
+#, c-format
+msgid "Conversion %s to %s is not implemented"
+msgstr ""
+
 msgid "Not enough arguments, expected file.xml"
 msgstr "Not enough arguments, expected file.xml"
+
+#. TRANSLATORS: %s is a file type,
+#. * e.g. 'appdata'
+#, c-format
+msgid "File format '%s' cannot be upgraded"
+msgstr ""
+
+#. TRANSLATORS: not a recognised file type
+msgid "Format not recognised"
+msgstr ""
+
+#. TRANSLATORS: probably wrong XML
+msgid "No desktop applications found"
+msgstr ""
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -172,6 +201,14 @@ msgstr "Validation failed"
 
 msgid "Validation of files failed"
 msgstr "Validation of files failed"
+
+#. TRANSLATORS: application was removed
+msgid "Removed"
+msgstr ""
+
+#. TRANSLATORS: application was added
+msgid "Added"
+msgstr ""
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -283,7 +320,7 @@ msgstr "Compare the contents of two AppStream files"
 
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
-msgstr ""
+msgstr "Generate a GUID from an input string"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

@@ -5,12 +5,13 @@
 # Translators:
 # Boyuan Yang <073plan@gmail.com>, 2015
 # 白铭骢 <jeffbai@aosc.xyz>, 2015
+# 白铭骢 <jeffbai@aosc.xyz>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2015-12-16 12:35+0000\n"
-"PO-Revision-Date: 2015-12-16 12:35+0000\n"
+"POT-Creation-Date: 2016-01-15 13:56+0000\n"
+"PO-Revision-Date: 2016-01-15 13:56+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -92,6 +93,10 @@ msgid "Set the ostree repo name"
 msgstr "设置 ostree 库名称"
 
 #. TRANSLATORS: command line option
+msgid "Only handle this arch in the ostree repo"
+msgstr ""
+
+#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "设置旧的元数据位置"
 
@@ -151,14 +156,38 @@ msgid "Please review the file and fix any 'FIXME' items"
 msgstr "请检查文件并修复任何标有“FIXME”的项目"
 
 #. TRANSLATORS: information message
+msgid "Old API version"
+msgstr ""
+
+#. TRANSLATORS: information message
 msgid "New API version"
 msgstr "新 API 版本"
 
 msgid "Not enough arguments, expected old.xml new.xml version"
 msgstr "参数不够，预期为 old.xml new.xml [版本]"
 
+#. TRANSLATORS: the %s and %s are file types,
+#. * e.g. "appdata" to "appstream"
+#, c-format
+msgid "Conversion %s to %s is not implemented"
+msgstr ""
+
 msgid "Not enough arguments, expected file.xml"
 msgstr "参数不足，预期 file.xml"
+
+#. TRANSLATORS: %s is a file type,
+#. * e.g. 'appdata'
+#, c-format
+msgid "File format '%s' cannot be upgraded"
+msgstr ""
+
+#. TRANSLATORS: not a recognised file type
+msgid "Format not recognised"
+msgstr ""
+
+#. TRANSLATORS: probably wrong XML
+msgid "No desktop applications found"
+msgstr ""
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -173,6 +202,14 @@ msgstr "验证失败"
 
 msgid "Validation of files failed"
 msgstr "文件验证失败"
+
+#. TRANSLATORS: application was removed
+msgid "Removed"
+msgstr ""
+
+#. TRANSLATORS: application was added
+msgid "Added"
+msgstr ""
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -284,7 +321,7 @@ msgstr "比较两份 AppStream 文件的内容"
 
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
-msgstr ""
+msgstr "从输入字符串创建 GUID"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

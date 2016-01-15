@@ -1,3 +1,26 @@
+Version 0.5.6
+~~~~~~~~~~~~~
+Released: 2015-01-15
+
+New Features:
+ - Add the runtime ID kind (Richard Hughes)
+ - Allow dumping inf files using appstream-util (Richard Hughes)
+ - Check name uniqueness when validating AppStream data (Richard Hughes)
+ - Install gettext ITS rules (Daiki Ueno)
+
+Bugfixes:
+ - Accept various 'or later' metadata content licenses (Richard Hughes)
+ - Allow specifying a particular ostree arch only (Alexander Larsson)
+ - Always blacklist desktop files for uninstalling software (Richard Hughes)
+ - Assume a release value of '0' when unset (Richard Hughes)
+ - Automatically add missing .inf types as required (Richard Hughes)
+ - Check the project_group when validating (Richard Hughes)
+ - Cull the application blacklist now we depend on AppData files (Richard Hughes)
+ - Fix AppStream generation when using duplicate .deb packages (Richard Hughes)
+ - Fix things up for xdg-app use (Alexander Larsson)
+ - Prefer stock icons when using as_app_get_icon_default() (Richard Hughes)
+ - Set a validation failure for files using <updatecontact> (Richard Hughes)
+
 Version 0.5.5
 ~~~~~~~~~~~~~
 Released: 2015-12-16

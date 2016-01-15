@@ -4,12 +4,13 @@
 # 
 # Translators:
 # Josef Andersson <josef.andersson@fripost.org>, 2015
+# sebras <sebras@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2015-12-16 12:35+0000\n"
-"PO-Revision-Date: 2015-12-16 12:35+0000\n"
+"POT-Creation-Date: 2016-01-15 13:56+0000\n"
+"PO-Revision-Date: 2016-01-15 13:56+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Swedish (http://www.transifex.com/freedesktop/appstream-glib/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -28,19 +29,19 @@ msgstr "Lägg till ett cache-ID till varje komponent"
 
 #. TRANSLATORS: command line option
 msgid "Include failed results in the output"
-msgstr ""
+msgstr "Inkludera misslcyakdes resultat i utmatningen"
 
 #. TRANSLATORS: command line option
 msgid "Add HiDPI icons to the tarball"
-msgstr ""
+msgstr "Lägg till HiDPI-ikonder till tar-arkivet"
 
 #. TRANSLATORS: command line option
 msgid "Add encoded icons to the XML"
-msgstr ""
+msgstr "Lägg till kodade ikonder till XML:en"
 
 #. TRANSLATORS: command line option
 msgid "Do not compress the icons into a tarball"
-msgstr ""
+msgstr "Komprimera inte ikonderna till ett tar-arkiv"
 
 #. TRANSLATORS: command line option
 msgid "Set the logging directory"
@@ -60,7 +61,7 @@ msgstr "Sätt utdatakatalogen"
 
 #. TRANSLATORS: command line option
 msgid "Set the icons directory"
-msgstr ""
+msgstr "Ställ in ikonernkatalogen"
 
 #. TRANSLATORS: command line option
 msgid "Set the cache directory"
@@ -68,7 +69,7 @@ msgstr "Sätt cachekatalogen"
 
 #. TRANSLATORS: command line option
 msgid "Set the basenames of the output files"
-msgstr ""
+msgstr "Ställ in grundnamnet för de utmatade filerna"
 
 #. TRANSLATORS: command line option
 msgid "Set the origin name"
@@ -80,7 +81,7 @@ msgstr "Sätt antalet trådar"
 
 #. TRANSLATORS: command line option
 msgid "Set the minimum icon size in pixels"
-msgstr ""
+msgstr "Ställ in den minimala storleken för ikoner i pixlar"
 
 #. TRANSLATORS: command line option
 msgid "Set the AppStream version"
@@ -88,6 +89,10 @@ msgstr "Sätt AppStream-version"
 
 #. TRANSLATORS: command line option
 msgid "Set the ostree repo name"
+msgstr "Ställ in arkivnamnet för ostree"
+
+#. TRANSLATORS: command line option
+msgid "Only handle this arch in the ostree repo"
 msgstr ""
 
 #. TRANSLATORS: command line option
@@ -96,7 +101,7 @@ msgstr "Sätt platsen för det gamla metadatat"
 
 #. TRANSLATORS: command line option
 msgid "Ignore certain types of veto"
-msgstr ""
+msgstr "Ignorera vissa typer av veto"
 
 #. TRANSLATORS: error message
 msgid "Failed to parse arguments"
@@ -104,7 +109,7 @@ msgstr "Misslyckades med att tolka argument"
 
 #. TRANSLATORS: error message
 msgid "API version no longer supported"
-msgstr ""
+msgstr "API-versionen stöds inte längre"
 
 #. TRANSLATORS: error message
 msgid "Failed to set up builder"
@@ -150,14 +155,38 @@ msgid "Please review the file and fix any 'FIXME' items"
 msgstr "Vänligen granska filen och fixa ”FIXME”-objekt"
 
 #. TRANSLATORS: information message
+msgid "Old API version"
+msgstr ""
+
+#. TRANSLATORS: information message
 msgid "New API version"
 msgstr "Ny API-version"
 
 msgid "Not enough arguments, expected old.xml new.xml version"
 msgstr "Inte nog med argument, förväntade old.xml new.xml version"
 
+#. TRANSLATORS: the %s and %s are file types,
+#. * e.g. "appdata" to "appstream"
+#, c-format
+msgid "Conversion %s to %s is not implemented"
+msgstr ""
+
 msgid "Not enough arguments, expected file.xml"
 msgstr "Inte nog med argument, förväntade file.xml"
+
+#. TRANSLATORS: %s is a file type,
+#. * e.g. 'appdata'
+#, c-format
+msgid "File format '%s' cannot be upgraded"
+msgstr ""
+
+#. TRANSLATORS: not a recognised file type
+msgid "Format not recognised"
+msgstr ""
+
+#. TRANSLATORS: probably wrong XML
+msgid "No desktop applications found"
+msgstr ""
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -173,6 +202,14 @@ msgstr "Validering misslyckades"
 msgid "Validation of files failed"
 msgstr "Validering av filer misslyckades"
 
+#. TRANSLATORS: application was removed
+msgid "Removed"
+msgstr ""
+
+#. TRANSLATORS: application was added
+msgid "Added"
+msgstr ""
+
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
 msgstr "Använd inte nätverksåtkomst"
@@ -183,7 +220,7 @@ msgstr "Visa version"
 
 #. TRANSLATORS: command line option
 msgid "Enable profiling"
-msgstr ""
+msgstr "Aktivera profilering"
 
 #. TRANSLATORS: command description
 msgid "Converts AppStream metadata from one version to another"
@@ -203,11 +240,11 @@ msgstr "Dumpar programmen i AppStream-metadatat"
 
 #. TRANSLATORS: command description
 msgid "Search for AppStream applications"
-msgstr ""
+msgstr "Sök efter AppStream-program"
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"
-msgstr ""
+msgstr "Visa sökelement för program"
 
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata"
@@ -231,7 +268,7 @@ msgstr "Skapa ett CSV-statusdokument"
 
 #. TRANSLATORS: command description
 msgid "Create an HTML matrix page"
-msgstr ""
+msgstr "Skapa en HTML-matrissida"
 
 #. TRANSLATORS: command description
 msgid "List applications not backed by packages"
@@ -251,11 +288,11 @@ msgstr "Validera en AppData- eller AppStream-fil (strikt)"
 
 #. TRANSLATORS: command description
 msgid "Convert an AppData file to NEWS format"
-msgstr ""
+msgstr "Konvertera en AppData-fil till NEWS-format"
 
 #. TRANSLATORS: command description
 msgid "Convert an NEWS file to AppData format"
-msgstr ""
+msgstr "Konvertera en NEWS-fil till AppData-format"
 
 #. TRANSLATORS: command description
 msgid "Check installed application data"
@@ -263,27 +300,27 @@ msgstr "Kontrollera installerad programdata"
 
 #. TRANSLATORS: command description
 msgid "Replace screenshots in source file"
-msgstr ""
+msgstr "Ersätt skärmdumpar i källfil"
 
 #. TRANSLATORS: command description
 msgid "Mirror upstream screenshots"
-msgstr ""
+msgstr "Spegla skärmdumparna från uppström"
 
 #. TRANSLATORS: command description
 msgid "Mirror local firmware files"
-msgstr ""
+msgstr "Spegla lokala fastmjukvarufiler"
 
 #. TRANSLATORS: command description
 msgid "Incorporate extra metadata from an external file"
-msgstr ""
+msgstr "Bädda in extra metadata från en extern fil"
 
 #. TRANSLATORS: command description
 msgid "Compare the contents of two AppStream files"
-msgstr ""
+msgstr "Jämför innehåller från två AppStream-filer"
 
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
-msgstr ""
+msgstr "Generera ett GUID från en inmatad sträng"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"
