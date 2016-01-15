@@ -92,6 +92,8 @@ void		 as_screenshot_set_caption	(AsScreenshot	*screenshot,
 						 const gchar	*caption);
 void		 as_screenshot_add_image	(AsScreenshot	*screenshot,
 						 AsImage	*image);
+gboolean	 as_screenshot_equal		(AsScreenshot	*screenshot1,
+						 AsScreenshot	*screenshot2);
 
 G_END_DECLS
 

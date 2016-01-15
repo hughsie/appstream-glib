@@ -784,6 +784,43 @@ as_image_get_alpha_flags (AsImage *image)
 }
 
 /**
+ * as_image_equal:
+ * @image1: a #AsImage instance.
+ * @image2: a #AsImage instance.
+ *
+ * Checks if two images are the same.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.5.7
+ **/
+gboolean
+as_image_equal (AsImage *image1, AsImage *image2)
+{
+	AsImagePrivate *priv1 = GET_PRIVATE (image1);
+	AsImagePrivate *priv2 = GET_PRIVATE (image2);
+
+	/* trivial */
+	if (image1 == image2)
+		return TRUE;
+
+	/* check for equality */
+	if (priv1->kind != priv2->kind)
+		return FALSE;
+	if (priv1->width != priv2->width)
+		return FALSE;
+	if (priv1->height != priv2->height)
+		return FALSE;
+	if (g_strcmp0 (priv1->url, priv2->url) != 0)
+		return FALSE;
+	if (g_strcmp0 (priv1->md5, priv2->md5) != 0)
+		return FALSE;
+
+	/* success */
+	return TRUE;
+}
+
+/**
  * as_image_new:
  *
  * Creates a new #AsImage.

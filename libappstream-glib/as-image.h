@@ -156,6 +156,8 @@ gboolean	 as_image_save_filename		(AsImage	*image,
 						 guint		 height,
 						 AsImageSaveFlags flags,
 						 GError		**error);
+gboolean	 as_image_equal			(AsImage	*image1,
+						 AsImage	*image2);
 
 G_END_DECLS
 

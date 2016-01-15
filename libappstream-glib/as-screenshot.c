@@ -506,6 +506,50 @@ as_screenshot_node_parse_dep11 (AsScreenshot *ss, GNode *node,
 }
 
 /**
+ * as_screenshot_equal:
+ * @screenshot1: a #AsScreenshot instance.
+ * @screenshot2: a #AsScreenshot instance.
+ *
+ * Checks if two screenshots are the same.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.5.7
+ **/
+gboolean
+as_screenshot_equal (AsScreenshot *screenshot1, AsScreenshot *screenshot2)
+{
+	AsScreenshotPrivate *priv1 = GET_PRIVATE (screenshot1);
+	AsScreenshotPrivate *priv2 = GET_PRIVATE (screenshot2);
+	AsImage *im1;
+	AsImage *im2;
+
+	/* trivial */
+	if (screenshot1 == screenshot2)
+		return TRUE;
+
+	/* check for equality */
+	if (priv1->priority != priv2->priority)
+		return FALSE;
+	if (priv1->images->len != priv2->images->len)
+		return FALSE;
+	if (g_strcmp0 (as_screenshot_get_caption (screenshot1, NULL),
+		       as_screenshot_get_caption (screenshot2, NULL)) != 0)
+		return FALSE;
+
+	/* check source images */
+	im1 = as_screenshot_get_source (screenshot1);
+	im2 = as_screenshot_get_source (screenshot2);
+	if (im1 != NULL && im2 != NULL) {
+		if (!as_image_equal (im1, im2))
+			return FALSE;
+	}
+
+	/* success */
+	return TRUE;
+}
+
+/**
  * as_screenshot_new:
  *
  * Creates a new #AsScreenshot.

@@ -2230,7 +2230,7 @@ as_app_add_screenshot (AsApp *app, AsScreenshot *screenshot)
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
 		for (i = 0; i < priv->screenshots->len; i++) {
 			ss = g_ptr_array_index (priv->screenshots, i);
-			if (ss == screenshot)
+			if (as_screenshot_equal (ss, screenshot))
 				return;
 		}
 	}
