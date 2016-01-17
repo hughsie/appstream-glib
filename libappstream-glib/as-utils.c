@@ -510,23 +510,6 @@ as_utils_is_spdx_license_id (const gchar *license_id)
 gboolean
 as_utils_is_blacklisted_id (const gchar *desktop_id)
 {
-	guint i;
-	g_autoptr(GBytes) data = NULL;
-	g_autofree gchar *key = NULL;
-	g_auto(GStrv) split = NULL;
-
-	/* load the readonly data section and look for the icon name */
-	data = g_resource_lookup_data (as_get_resource (),
-				       "/org/freedesktop/appstream-glib/as-blacklist-ids.txt",
-				       G_RESOURCE_LOOKUP_FLAGS_NONE,
-				       NULL);
-	if (data == NULL)
-		return FALSE;
-	split = g_strsplit (g_bytes_get_data (data, NULL), "\n", -1);
-	for (i = 0; split[i] != NULL; i++) {
-		if (fnmatch (split[i], desktop_id, 0) == 0)
-			return TRUE;
-	}
 	return FALSE;
 }
 

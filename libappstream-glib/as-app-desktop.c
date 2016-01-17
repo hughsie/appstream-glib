@@ -438,10 +438,6 @@ as_app_parse_desktop_file (AsApp *app,
 		}
 	}
 
-	/* is blacklisted */
-	if (as_utils_is_blacklisted_id (app_id))
-		as_app_add_veto (app, "%s is not an application", app_id);
-
 	/* Ubuntu helpfully put the package name in the desktop file name */
 	tmp = g_strstr_len (app_id, -1, ":");
 	if (tmp != NULL)

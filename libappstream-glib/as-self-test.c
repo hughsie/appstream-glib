@@ -3556,10 +3556,6 @@ as_test_utils_func (void)
 	g_assert (as_utils_is_category_id ("AudioVideoEditing"));
 	g_assert (!as_utils_is_category_id ("SpellEditing"));
 
-	/* blacklist */
-	g_assert (as_utils_is_blacklisted_id ("freeciv-server.desktop"));
-	g_assert (!as_utils_is_blacklisted_id ("gimp.desktop"));
-
 	/* valid description markup */
 	tmp = as_markup_convert_simple ("<p>Hello world!</p>", &error);
 	g_assert_no_error (error);

@@ -34,7 +34,6 @@ endif
 as-resources.c: appstream-glib.gresource.xml			\
 		as-stock-icons.txt				\
 		as-license-ids.txt				\
-		as-blacklist-ids.txt				\
 		as-category-ids.txt				\
 		as-environment-ids.txt
 	$(AM_V_GEN)						\
@@ -48,7 +47,6 @@ as-resources.c: appstream-glib.gresource.xml			\
 as-resources.h: appstream-glib.gresource.xml			\
 		as-stock-icons.txt				\
 		as-license-ids.txt				\
-		as-blacklist-ids.txt				\
 		as-category-ids.txt				\
 		as-environment-ids.txt
 	$(AM_V_GEN)						\
@@ -240,7 +238,6 @@ DISTCLEANFILES =						\
 EXTRA_DIST =							\
 	appstream-glib.gresource.xml				\
 	appstream-glib.pc.in					\
-	as-blacklist-ids.txt					\
 	as-category-ids.txt					\
 	as-environment-ids.txt					\
 	as-license-ids.txt					\
