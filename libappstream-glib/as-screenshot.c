@@ -341,7 +341,7 @@ as_screenshot_set_caption (AsScreenshot *screenshot,
  *
  * Inserts the screenshot into the DOM tree.
  *
- * Returns: (transfer none): A populated #GNode
+ * Returns: (transfer none): A populated #GNode, or %NULL
  *
  * Since: 0.1.1
  **/
@@ -354,6 +354,10 @@ as_screenshot_node_insert (AsScreenshot *screenshot,
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	GNode *n;
 	guint i;
+
+	/* nothing to add */
+	if (priv->images->len == 0)
+		return NULL;
 
 	n = as_node_insert (parent, "screenshot", NULL,
 			    AS_NODE_INSERT_FLAG_NONE,
