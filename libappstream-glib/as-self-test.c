@@ -455,6 +455,35 @@ as_test_release_func (void)
 }
 
 static void
+as_test_release_date_func (void)
+{
+	GError *error = NULL;
+	AsNode *n;
+	AsNode *root;
+	const gchar *src = "<release date=\"2016-01-18\"/>";
+	gboolean ret;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsRelease) release = NULL;
+
+	release = as_release_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "release");
+	g_assert (n != NULL);
+	ctx = as_node_context_new ();
+	ret = as_release_node_parse (release, n, ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_release_get_timestamp (release), ==, 1453075200);
+}
+
+static void
 as_test_provide_func (void)
 {
 	GError *error = NULL;
@@ -4469,6 +4498,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/provide", as_test_provide_func);
 	g_test_add_func ("/AppStream/checksum", as_test_checksum_func);
 	g_test_add_func ("/AppStream/release", as_test_release_func);
+	g_test_add_func ("/AppStream/release{date}", as_test_release_date_func);
 	g_test_add_func ("/AppStream/release{appdata}", as_test_release_appdata_func);
 	g_test_add_func ("/AppStream/release{appstream}", as_test_release_appstream_func);
 	g_test_add_func ("/AppStream/icon", as_test_icon_func);
