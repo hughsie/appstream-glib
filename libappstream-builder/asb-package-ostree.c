@@ -68,6 +68,9 @@ asb_package_ostree_finalize (GObject *object)
 static void
 asb_package_ostree_init (AsbPackageOstree *pkg_ostree)
 {
+	/* We call this here so that the alias table in gcharset.c is
+	   properly initialized, because it is not threadsafe... */
+	g_get_language_names ();
 }
 
 /**
