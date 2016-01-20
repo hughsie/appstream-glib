@@ -905,14 +905,34 @@ as_store_from_root (AsStore *store,
 	if (tmp != NULL)
 		as_store_set_builder_id (store, tmp);
 
-	/* if we have an origin either from the XML or _set_origin() */
+	/* nothing specified */
+	if (icon_root == NULL)
+		icon_root = "/usr/share/app-info/";
+
+	/* try the speecification directory first */
 	if (priv->origin != NULL) {
-		if (icon_root == NULL)
-			icon_root = "/usr/share/app-info/icons/";
 		icon_path = g_build_filename (icon_root,
+					      "..",
+					      "icons",
 					      priv->origin,
 					      NULL);
+		if (!g_file_test (icon_path, G_FILE_TEST_IS_DIR)) {
+			g_free (icon_path);
+			icon_path = NULL;
+		}
 	}
+
+	/* fall back to the xdg-app location */
+	if (icon_path == NULL) {
+		icon_path = g_build_filename (icon_root,
+					      "icons",
+					      NULL);
+		if (!g_file_test (icon_path, G_FILE_TEST_IS_DIR)) {
+			g_free (icon_path);
+			icon_path = NULL;
+		}
+	}
+
 	ctx = as_node_context_new ();
 	for (n = apps->children; n != NULL; n = n->next) {
 		g_autoptr(GError) error_local = NULL;
@@ -1769,7 +1789,6 @@ as_store_load_app_info_file (AsStore *store,
 static gboolean
 as_store_load_app_info (AsStore *store,
 			const gchar *path,
-			const gchar *format,
 			GCancellable *cancellable,
 			GError **error)
 {
@@ -1777,33 +1796,31 @@ as_store_load_app_info (AsStore *store,
 	const gchar *tmp;
 	g_autoptr(GDir) dir = NULL;
 	g_autoptr(GError) error_local = NULL;
-	g_autofree gchar *icon_root = NULL;
-	g_autofree gchar *path_md = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
 	/* emit once when finished */
 	tok = as_store_changed_inhibit (store);
 
 	/* search all files */
-	path_md = g_build_filename (path, format, NULL);
-	if (!g_file_test (path_md, G_FILE_TEST_EXISTS))
+	if (!g_file_test (path, G_FILE_TEST_EXISTS))
 		return TRUE;
-	dir = g_dir_open (path_md, 0, &error_local);
+	dir = g_dir_open (path, 0, &error_local);
 	if (dir == NULL) {
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
 			     "Failed to open %s: %s",
-			     path_md, error_local->message);
+			     path, error_local->message);
 		return FALSE;
 	}
-	icon_root = g_build_filename (path, "icons", NULL);
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
 		g_autofree gchar *filename_md = NULL;
-		filename_md = g_build_filename (path_md, tmp, NULL);
+		if (g_strcmp0 (tmp, "icons") == 0)
+			continue;
+		filename_md = g_build_filename (path, tmp, NULL);
 		if (!as_store_load_app_info_file (store,
 						  filename_md,
-						  icon_root,
+						  path,
 						  cancellable,
 						  error))
 			return FALSE;
@@ -1811,7 +1828,7 @@ as_store_load_app_info (AsStore *store,
 
 	/* watch the directories for changes */
 	if (!as_monitor_add_directory (priv->monitor,
-				       path_md,
+				       path,
 				       cancellable,
 				       error))
 		return FALSE;
@@ -2062,6 +2079,37 @@ as_store_load_path (AsStore *store, const gchar *path,
 }
 
 /**
+ * as_store_add_path_xdg_app:
+ **/
+static void
+as_store_add_path_xdg_app (GPtrArray *array, const gchar *base)
+{
+	const gchar *filename;
+	g_autoptr(GDir) dir = NULL;
+	dir = g_dir_open (base, 0, NULL);
+	if (dir == NULL)
+		return;
+	while ((filename = g_dir_read_name (dir)) != NULL) {
+		gchar *fn = g_build_filename (base,
+					      filename,
+					      "x86_64",
+					      "active",
+					      NULL);
+		g_ptr_array_add (array, fn);
+	}
+}
+
+/**
+ * as_store_add_path_both:
+ **/
+static void
+as_store_add_path_both (GPtrArray *array, const gchar *base)
+{
+	g_ptr_array_add (array, g_build_filename (base, "yaml", NULL));
+	g_ptr_array_add (array, g_build_filename (base, "xmls", NULL));
+}
+
+/**
  * as_store_load:
  * @store: a #AsStore instance.
  * @flags: #AsStoreLoadFlags, e.g. %AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM
@@ -2101,7 +2149,7 @@ as_store_load (AsStore *store,
 	for (i = 0; data_dirs[i] != NULL; i++) {
 		if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM) > 0) {
 			path = g_build_filename (data_dirs[i], "app-info", NULL);
-			g_ptr_array_add (app_info, path);
+			as_store_add_path_both (app_info, path);
 		}
 		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 			path = g_build_filename (data_dirs[i], "appdata", NULL);
@@ -2114,23 +2162,23 @@ as_store_load (AsStore *store,
 	}
 	if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM) > 0) {
 		path = g_build_filename (LOCALSTATEDIR, "lib", "app-info", NULL);
-		g_ptr_array_add (app_info, path);
+		as_store_add_path_both (app_info, path);
 		path = g_build_filename (LOCALSTATEDIR, "cache", "app-info", NULL);
-		g_ptr_array_add (app_info, path);
+		as_store_add_path_both (app_info, path);
 		/* ignore the prefix; we actually want to use the
 		 * distro-provided data in this case. */
 		if (g_strcmp0 (LOCALSTATEDIR, "/var") != 0) {
 			path = g_build_filename ("/var", "lib", "app-info", NULL);
-			g_ptr_array_add (app_info, path);
+			as_store_add_path_both (app_info, path);
 			path = g_build_filename ("/var", "cache", "app-info", NULL);
-			g_ptr_array_add (app_info, path);
+			as_store_add_path_both (app_info, path);
 		}
 	}
 
 	/* per-user locations */
 	if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_USER) > 0) {
 		path = g_build_filename (g_get_user_data_dir (), "app-info", NULL);
-		g_ptr_array_add (app_info, path);
+		as_store_add_path_both (app_info, path);
 	}
 	if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 		path = g_build_filename (g_get_user_data_dir (), "appdata", NULL);
@@ -2139,6 +2187,58 @@ as_store_load (AsStore *store,
 	if ((flags & AS_STORE_LOAD_FLAG_DESKTOP) > 0) {
 		path = g_build_filename (g_get_user_data_dir (), "applications", NULL);
 		g_ptr_array_add (installed, path);
+	}
+	if ((flags & AS_STORE_LOAD_FLAG_XDG_APP_USER) > 0) {
+		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
+			path = g_build_filename (g_get_user_data_dir (),
+						 "xdg-app",
+						 "exports",
+						 "share",
+						 "applications",
+						 NULL);
+			g_ptr_array_add (installed, path);
+		}
+		if ((flags & AS_STORE_LOAD_FLAG_DESKTOP) > 0) {
+			path = g_build_filename (g_get_user_data_dir (),
+						 "xdg-app",
+						 "exports",
+						 "share",
+						 "appdata",
+						 NULL);
+			g_ptr_array_add (installed, path);
+		}
+		/* add AppStream */
+		path = g_build_filename (g_get_user_data_dir (),
+					 "xdg-app",
+					 "appstream",
+					 NULL);
+		as_store_add_path_xdg_app (app_info, path);
+	}
+	if ((flags & AS_STORE_LOAD_FLAG_XDG_APP_SYSTEM) > 0) {
+		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
+			path = g_build_filename (LOCALSTATEDIR,
+						 "xdg-app",
+						 "exports",
+						 "share",
+						 "applications",
+						 NULL);
+			g_ptr_array_add (installed, path);
+		}
+		if ((flags & AS_STORE_LOAD_FLAG_DESKTOP) > 0) {
+			path = g_build_filename (LOCALSTATEDIR,
+						 "xdg-app",
+						 "exports",
+						 "share",
+						 "appdata",
+						 NULL);
+			g_ptr_array_add (installed, path);
+		}
+		/* add AppStream */
+		path = g_build_filename (LOCALSTATEDIR,
+					 "xdg-app",
+					 "appstream",
+					 NULL);
+		as_store_add_path_xdg_app (app_info, path);
 	}
 
 	/* load each app-info path if it exists */
@@ -2149,9 +2249,7 @@ as_store_load (AsStore *store,
 		dest = g_build_filename (priv->destdir ? priv->destdir : "/", tmp, NULL);
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 			continue;
-		if (!as_store_load_app_info (store, dest, "xmls", cancellable, error))
-			return FALSE;
-		if (!as_store_load_app_info (store, dest, "yaml", cancellable, error))
+		if (!as_store_load_app_info (store, dest, cancellable, error))
 			return FALSE;
 	}
 

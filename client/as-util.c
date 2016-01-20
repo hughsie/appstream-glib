@@ -1251,6 +1251,12 @@ as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 				    NULL, error)) {
 			return FALSE;
 		}
+	} else if (g_strcmp0 (values[0], "xdg-app") == 0) {
+		if (!as_store_load (store,
+				    AS_STORE_LOAD_FLAG_XDG_APP_USER,
+				    NULL, error)) {
+			return FALSE;
+		}
 	} else {
 		for (i = 0; values[i] != NULL; i++) {
 			if (!as_util_add_file_to_store (store, values[i], error))
@@ -1293,6 +1299,8 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 	if (!as_store_load (store,
 			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
 			    AS_STORE_LOAD_FLAG_APPDATA |
+			    AS_STORE_LOAD_FLAG_XDG_APP_USER |
+			    AS_STORE_LOAD_FLAG_XDG_APP_SYSTEM |
 			    AS_STORE_LOAD_FLAG_DESKTOP,
 			    NULL, error))
 		return FALSE;
