@@ -851,6 +851,19 @@ as_store_match_addons (AsStore *store)
 }
 
 /**
+ * as_store_set_origin_for_xdg_app:
+ **/
+static void
+as_store_set_origin_for_xdg_app (AsStore *store, const gchar *fn)
+{
+	g_auto(GStrv) split = g_strsplit (fn, "/", -1);
+	guint chunks = g_strv_length (split);
+	if (chunks < 5)
+		return;
+	as_store_set_origin (store, split[chunks - 4]);
+}
+
+/**
  * as_store_from_root:
  **/
 static gboolean
@@ -897,8 +910,12 @@ as_store_from_root (AsStore *store,
 
 	/* set in the XML file */
 	tmp = as_node_get_attribute (apps, "origin");
-	if (tmp != NULL)
-		as_store_set_origin (store, tmp);
+	if (tmp != NULL) {
+		if (g_strcmp0 (tmp, "xdg-app") == 0)
+			as_store_set_origin_for_xdg_app (store, source_filename);
+		else
+			as_store_set_origin (store, tmp);
+	}
 
 	/* set in the XML file */
 	tmp = as_node_get_attribute (apps, "builder_id");
