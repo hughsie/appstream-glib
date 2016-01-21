@@ -55,14 +55,7 @@
  *
  * Since: 0.3.7
  **/
-GQuark
-as_utils_error_quark (void)
-{
-	static GQuark quark = 0;
-	if (!quark)
-		quark = g_quark_from_static_string ("AsUtilsError");
-	return quark;
-}
+G_DEFINE_QUARK (as-utils-error-quark, as_utils_error)
 
 /**
  * as_markup_strsplit_words:

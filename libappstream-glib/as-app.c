@@ -111,14 +111,7 @@ typedef struct {
  *
  * Since: 0.1.2
  **/
-GQuark
-as_app_error_quark (void)
-{
-	static GQuark quark = 0;
-	if (!quark)
-		quark = g_quark_from_static_string ("AsAppError");
-	return quark;
-}
+G_DEFINE_QUARK (as-app-error-quark, as_app_error)
 
 /**
  * as_app_source_kind_from_string:

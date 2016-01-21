@@ -64,14 +64,7 @@ static guint signals [SIGNAL_LAST] = { 0 };
  *
  * Since: 0.4.2
  **/
-GQuark
-as_monitor_error_quark (void)
-{
-	static GQuark quark = 0;
-	if (!quark)
-		quark = g_quark_from_static_string ("AsMonitorError");
-	return quark;
-}
+G_DEFINE_QUARK (as-monitor-error-quark, as_monitor_error)
 
 /**
  * as_monitor_finalize:

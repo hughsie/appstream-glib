@@ -44,14 +44,7 @@
  *
  * Since: 0.3.7
  **/
-GQuark
-as_inf_error_quark (void)
-{
-	static GQuark quark = 0;
-	if (!quark)
-		quark = g_quark_from_static_string ("AsInfError");
-	return quark;
-}
+G_DEFINE_QUARK (as-inf-error-quark, as_inf_error)
 
 typedef struct {
 	GKeyFile		*keyfile;

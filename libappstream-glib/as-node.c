@@ -169,14 +169,7 @@ as_node_unref (AsNode *node)
  *
  * Since: 0.1.0
  **/
-GQuark
-as_node_error_quark (void)
-{
-	static GQuark quark = 0;
-	if (!quark)
-		quark = g_quark_from_static_string ("AsNodeError");
-	return quark;
-}
+G_DEFINE_QUARK (as-node-error-quark, as_node_error)
 
 /**
  * as_node_string_replace:

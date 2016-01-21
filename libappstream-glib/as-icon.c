@@ -64,14 +64,7 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsIcon, as_icon, G_TYPE_OBJECT)
  *
  * Since: 0.3.1
  **/
-GQuark
-as_icon_error_quark (void)
-{
-	static GQuark quark = 0;
-	if (!quark)
-		quark = g_quark_from_static_string ("AsIconError");
-	return quark;
-}
+G_DEFINE_QUARK (as-icon-error-quark, as_icon_error)
 
 /**
  * as_icon_finalize:

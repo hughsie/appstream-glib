@@ -95,14 +95,7 @@ static guint signals [SIGNAL_LAST] = { 0 };
  *
  * Since: 0.1.2
  **/
-GQuark
-as_store_error_quark (void)
-{
-	static GQuark quark = 0;
-	if (!quark)
-		quark = g_quark_from_static_string ("AsStoreError");
-	return quark;
-}
+G_DEFINE_QUARK (as-store-error-quark, as_store_error)
 
 /**
  * as_store_finalize:
