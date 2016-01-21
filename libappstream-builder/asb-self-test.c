@@ -540,6 +540,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<value key=\"X-CacheID\">app-1-1.fc21.x86_64.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
+#ifdef HAVE_GCAB
 		"<component type=\"firmware\">\n"
 		"<id>com.hughski.ColorHug2.firmware</id>\n"
 		"<name>ColorHug Firmware</name>\n"
@@ -569,6 +570,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<value key=\"X-CacheID\">colorhug-als-2.0.2.cab</value>\n"
 		"</metadata>\n"
 		"</component>\n"
+#endif
 		"</components>\n";
 	ret = asb_test_compare_lines (xml->str, expected_xml, &error);
 	g_assert_no_error (error);
@@ -784,6 +786,7 @@ asb_test_context_oldcache_func (void)
 static void
 asb_test_firmware_func (void)
 {
+#ifdef HAVE_GCAB
 	AsApp *app;
 	AsbPluginLoader *loader;
 	const gchar *expected_xml;
@@ -899,6 +902,7 @@ asb_test_firmware_func (void)
 	ret = asb_utils_rmtree ("/tmp/asbuilder", &error);
 	g_assert_no_error (error);
 	g_assert (ret);
+#endif
 }
 
 int

@@ -150,9 +150,13 @@ if test x$enable_builder != xno; then
 	PKG_CHECK_MODULES(GTK, gtk+-3.0)
 	PKG_CHECK_MODULES(SQLITE, sqlite3)
 	PKG_CHECK_MODULES(FREETYPE, pango fontconfig freetype2 >= 9.10.0)
-	AC_PATH_PROG(GCAB, [gcab], [no])
-	if test x$GCAB = "xno" ; then
-		AC_MSG_ERROR([gcab program not found])
+
+	# only for firmware */
+	if test x$enable_firmware != xno; then
+		AC_PATH_PROG(GCAB, [gcab], [no])
+		if test x$GCAB = "xno" ; then
+			AC_MSG_ERROR([gcab program not found])
+		fi
 	fi
 
 	# ostree (default enabled)

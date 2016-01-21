@@ -2893,6 +2893,7 @@ as_test_store_merges_local_func (void)
 static void
 as_test_store_cab_func (void)
 {
+#ifdef HAVE_GCAB
 	gboolean ret;
 	const gchar *src;
 	g_autoptr(GError) error = NULL;
@@ -2945,6 +2946,7 @@ as_test_store_cab_func (void)
 	ret = as_test_compare_lines (xml->str, src, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
+#endif
 }
 
 static void

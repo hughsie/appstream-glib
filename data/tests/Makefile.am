@@ -51,6 +51,7 @@ test_files =						\
 	validate.xml.gz
 
 if HAVE_BUILDER
+if HAVE_GCAB
 colorhug-als-2.0.0.cab: $(srcdir)/firmware/2_0_0/firmware.*
 	$(AM_V_GEN) touch -c -m -d"2000-01-01T00:00:00" $?;	\
 	$(GCAB) --create --nopath $@			\
@@ -73,6 +74,7 @@ BUILT_SOURCES =						\
 	colorhug-als-2.0.0.cab				\
 	colorhug-als-2.0.1.cab				\
 	colorhug-als-2.0.2.cab
+endif
 endif
 
 CLEANFILES =						\
