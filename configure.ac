@@ -144,12 +144,25 @@ else
 fi
 AM_CONDITIONAL(HAVE_GCAB, test x$enable_firmware = xyes)
 
+# font support (default enabled)
+AC_ARG_ENABLE(firmware, AS_HELP_STRING([--disable-fonts],[Disable font support]), enable_fonts=$enableval)
+if test x$enable_fonts != xno; then
+	AC_DEFINE(HAVE_FONTS,[1], [Use fonts])
+	enable_fonts=yes
+else
+	enable_fonts=no
+fi
+AM_CONDITIONAL(HAVE_FONTS, test x$enable_fonts = xyes)
+
 # builder (default enabled)
 AC_ARG_ENABLE(builder, AS_HELP_STRING([--disable-builder],[Disable AppStream builder support]), enable_builder=$enableval)
 if test x$enable_builder != xno; then
-	PKG_CHECK_MODULES(GTK, gtk+-3.0)
-	PKG_CHECK_MODULES(SQLITE, sqlite3)
-	PKG_CHECK_MODULES(FREETYPE, pango fontconfig freetype2 >= 9.10.0)
+
+	# only for fonts */
+	if test x$enable_fonts != xno; then
+		PKG_CHECK_MODULES(GTK, gtk+-3.0)
+		PKG_CHECK_MODULES(FREETYPE, pango fontconfig freetype2 >= 9.10.0)
+	fi
 
 	# only for firmware */
 	if test x$enable_firmware != xno; then
@@ -276,5 +289,6 @@ AC_MSG_RESULT([
     DEP-11 support:          ${enable_dep11}
     Builder support:         ${enable_builder}
     Firmware support:        ${enable_firmware}
+    Fonts support:           ${enable_fonts}
     Bash completion dir:     ${with_bashcompletiondir}
               ])

@@ -429,7 +429,11 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
+#ifdef HAVE_FONTS
 	g_assert_cmpint (as_store_get_size (store), ==, 4);
+#else
+	g_assert_cmpint (as_store_get_size (store), ==, 3);
+#endif
 	app = as_store_get_app_by_pkgname (store, "app");
 	g_assert (app != NULL);
 	app = as_store_get_app_by_id (store, "app.desktop");
@@ -439,6 +443,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
 		"<components version=\"0.9\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test\">\n"
+#ifdef HAVE_FONTS
 		"<component type=\"font\">\n"
 		"<id>Liberation</id>\n"
 		"<pkgname>font</pkgname>\n"
@@ -474,6 +479,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<value key=\"X-CacheID\">font-1-1.fc21.noarch.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
+#endif
 		"<component type=\"addon\">\n"
 		"<id>app-extra</id>\n"
 		"<pkgname>app-extra</pkgname>\n"
@@ -592,6 +598,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	xml_failed = as_store_to_xml (store_failed, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
 		"<components version=\"0.9\" builder_id=\"appstream-glib:4\" origin=\"asb-self-test-failed\">\n"
+#ifdef HAVE_FONTS
 		"<component type=\"font\">\n"
 		"<id>LiberationSerif</id>\n"
 		"<pkgname>font-serif</pkgname>\n"
@@ -629,6 +636,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<value key=\"X-CacheID\">font-serif-1-1.fc21.noarch.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
+#endif
 		"<component type=\"addon\">\n"
 		"<id>app-core</id>\n"
 		"<pkgname>app</pkgname>\n"

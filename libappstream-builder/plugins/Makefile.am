@@ -5,7 +5,6 @@ AM_CPPFLAGS =						\
 	$(LIBARCHIVE_CFLAGS)				\
 	$(SOUP_CFLAGS)					\
 	$(RPM_CFLAGS)					\
-	$(SQLITE_CFLAGS)				\
 	$(FREETYPE_CFLAGS)				\
 	-I$(top_srcdir)/libappstream-glib		\
 	-I$(top_builddir)/libappstream-glib		\
@@ -21,7 +20,6 @@ plugin_LTLIBRARIES =					\
 	libasb_plugin_desktop.la			\
 	libasb_plugin_gir.la				\
 	libasb_plugin_gresource.la			\
-	libasb_plugin_font.la				\
 	libasb_plugin_gettext.la			\
 	libasb_plugin_gstreamer.la			\
 	libasb_plugin_hardcoded.la			\
@@ -32,6 +30,11 @@ plugin_LTLIBRARIES =					\
 if HAVE_OSTREE
 plugin_LTLIBRARIES +=					\
 	libasb_plugin_ostree.la
+endif
+
+if HAVE_FONTS
+plugin_LTLIBRARIES +=					\
+	libasb_plugin_font.la
 endif
 
 libasb_plugin_dbus_la_SOURCES = asb-plugin-dbus.c
@@ -94,10 +97,12 @@ libasb_plugin_nm_la_LIBADD = $(GLIB_LIBS)
 libasb_plugin_nm_la_LDFLAGS = -module -avoid-version
 libasb_plugin_nm_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
+if HAVE_FONTS
 libasb_plugin_font_la_SOURCES = asb-plugin-font.c
 libasb_plugin_font_la_LIBADD = $(GLIB_LIBS) $(FREETYPE_LIBS) $(GDKPIXBUF_LIBS) $(GTK_LIBS)
 libasb_plugin_font_la_LDFLAGS = -module -avoid-version
 libasb_plugin_font_la_CFLAGS = $(GLIB_CFLAGS) $(GTK_CFLAGS) $(WARNINGFLAGS_C)
+endif
 
 if HAVE_OSTREE
 libasb_plugin_ostree_la_SOURCES = asb-plugin-ostree.c
