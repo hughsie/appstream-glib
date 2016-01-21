@@ -27,6 +27,7 @@
 #include <fnmatch.h>
 
 #include "as-app-private.h"
+#include "as-app-gettext.h"
 #include "as-bundle-private.h"
 #include "as-checksum-private.h"
 #include "as-enums.h"
@@ -322,6 +323,37 @@ as_test_monitor_file_func (void)
 	g_assert_cmpint (cnt_added, ==, 0);
 	g_assert_cmpint (cnt_removed, ==, 0);
 	g_assert_cmpint (cnt_changed, ==, 1);
+}
+
+static void
+as_test_app_gettext_func (void)
+{
+	GError *error = NULL;
+	gboolean ret;
+	g_autofree gchar *fn = NULL;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GList) list = NULL;
+
+	app = as_app_new ();
+	fn = as_test_get_filename ("locale");
+	g_assert (fn != NULL);
+	ret = as_app_gettext_search_path (app,
+					  fn,
+					  "app.mo",
+					  25,
+					  NULL,
+					  &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* check langs */
+	g_assert_cmpint (as_app_get_language (app, "en_GB"), ==, 100);
+	g_assert_cmpint (as_app_get_language (app, "ru"), ==, 33);
+	g_assert_cmpint (as_app_get_language (app, "fr_FR"), ==, -1);
+
+	/* check size */
+	list = as_app_get_languages (app);
+	g_assert_cmpint (g_list_length (list), ==, 2);
 }
 
 static void
@@ -4412,6 +4444,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/image{alpha}", as_test_image_alpha_func);
 	g_test_add_func ("/AppStream/screenshot", as_test_screenshot_func);
 	g_test_add_func ("/AppStream/app", as_test_app_func);
+	g_test_add_func ("/AppStream/app{gettext}", as_test_app_gettext_func);
 	g_test_add_func ("/AppStream/app{translated}", as_test_app_translated_func);
 	g_test_add_func ("/AppStream/app{validate-style}", as_test_app_validate_style_func);
 	g_test_add_func ("/AppStream/app{validate-appdata-good}", as_test_app_validate_appdata_good_func);

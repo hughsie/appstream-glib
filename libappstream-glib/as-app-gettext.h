@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -19,31 +19,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef __APPSTREAM_GLIB_H
-#define __APPSTREAM_GLIB_H
+#if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
+#error "Only <appstream-glib.h> can be included directly."
+#endif
 
-#define __APPSTREAM_GLIB_H_INSIDE__
+#ifndef __AS_APP_GETTEXT_H
+#define __AS_APP_GETTEXT_H
 
-#include <as-app.h>
-#include <as-app-gettext.h>
-#include <as-bundle.h>
-#include <as-checksum.h>
-#include <as-enums.h>
-#include <as-icon.h>
-#include <as-image.h>
-#include <as-inf.h>
-#include <as-node.h>
-#include <as-problem.h>
-#include <as-profile.h>
-#include <as-provide.h>
-#include <as-release.h>
-#include <as-screenshot.h>
-#include <as-store.h>
-#include <as-tag.h>
-#include <as-version.h>
-#include <as-utils.h>
+#include <glib.h>
+#include <gio/gio.h>
 
-#undef __APPSTREAM_GLIB_H_INSIDE__
+#include "as-app.h"
 
-#endif /* __APPSTREAM_GLIB_H */
+G_BEGIN_DECLS
 
+gboolean	 as_app_gettext_search_path	(AsApp		*app,
+						 const gchar	*path,
+						 const gchar	*base_filename,
+						 guint		 min_percentage,
+						 GCancellable	*cancellable,
+						 GError		**error);
+
+G_END_DECLS
+
+#endif /* __AS_APP_GETTEXT_H */
