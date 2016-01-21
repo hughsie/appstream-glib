@@ -13,7 +13,8 @@ dist_m4data_DATA +=					\
 man_MANS =
 if ENABLE_MAN
 man_MANS +=						\
-	appstream-util.1
+	appstream-util.1				\
+	appstream-compose.1
 if HAVE_BUILDER
 man_MANS +=						\
 	appstream-builder.1
@@ -33,6 +34,8 @@ XSLTPROC_FLAGS =					\
 
 appstream-util.1: appstream-util.xml
 	$(AM_V_GEN) xsltproc $(XSLTPROC_FLAGS) http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl $<
+appstream-compose.1: appstream-compose.xml
+	$(AM_V_GEN) xsltproc $(XSLTPROC_FLAGS) http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl $<
 if HAVE_BUILDER
 appstream-builder.1: appstream-builder.xml
 	$(AM_V_GEN) xsltproc $(XSLTPROC_FLAGS) http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl $<
@@ -44,6 +47,7 @@ dist_bashcompletion_DATA += appstream-builder
 endif
 
 EXTRA_DIST =						\
+	appstream-compose.xml				\
 	appstream-util.xml				\
 	appstream-builder.xml
 

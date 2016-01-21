@@ -2,4 +2,5 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
 client/as-builder.c
+client/as-compose.c
 client/as-util.c
