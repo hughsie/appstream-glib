@@ -63,105 +63,24 @@ asb_app_load_icon (AsbApp *app,
 		   guint min_icon_size,
 		   GError **error)
 {
-	GdkPixbuf *pixbuf = NULL;
-	guint pixbuf_height;
-	guint pixbuf_width;
-	guint tmp_height;
-	guint tmp_width;
-	g_autoptr(GdkPixbuf) pixbuf_src = NULL;
-	g_autoptr(GdkPixbuf) pixbuf_tmp = NULL;
+	g_autoptr(AsImage) im = NULL;
+	g_autoptr(GError) error_local = NULL;
 
-	/* open file in native size */
-	if (g_str_has_suffix (filename, ".svg")) {
-		pixbuf_src = gdk_pixbuf_new_from_file_at_scale (filename,
-								icon_size,
-								icon_size,
-								TRUE, error);
-	} else {
-		pixbuf_src = gdk_pixbuf_new_from_file (filename, error);
-	}
-	if (pixbuf_src == NULL)
-		return NULL;
-
-	/* check size */
-	if (gdk_pixbuf_get_width (pixbuf_src) < (gint) min_icon_size &&
-	    gdk_pixbuf_get_height (pixbuf_src) < (gint) min_icon_size) {
+	im = as_image_new ();
+	if (!as_image_load_filename_full (im,
+					  filename,
+					  icon_size,
+					  min_icon_size,
+					  AS_IMAGE_LOAD_FLAG_NONE,
+					  &error_local)) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
 			     ASB_PLUGIN_ERROR_FAILED,
-			     "icon %s was too small %ix%i",
-			     logfn,
-			     gdk_pixbuf_get_width (pixbuf_src),
-			     gdk_pixbuf_get_height (pixbuf_src));
+			     "%s: %s",
+			     error_local->message, logfn);
 		return NULL;
 	}
-
-	/* does the icon not have an alpha channel */
-	if (!gdk_pixbuf_get_has_alpha (pixbuf_src)) {
-		asb_package_log (asb_app_get_package (app),
-				 ASB_PACKAGE_LOG_LEVEL_INFO,
-				 "icon %s does not have an alpha channel",
-				 logfn);
-	}
-
-	/* don't do anything to an icon with the perfect size */
-	pixbuf_width = gdk_pixbuf_get_width (pixbuf_src);
-	pixbuf_height = gdk_pixbuf_get_height (pixbuf_src);
-	if (pixbuf_width == icon_size && pixbuf_height == icon_size)
-		return g_object_ref (pixbuf_src);
-
-	/* never scale up, just pad */
-	if (pixbuf_width < icon_size && pixbuf_height < icon_size) {
-		g_autofree gchar *size_str = NULL;
-		size_str = g_strdup_printf ("%ix%i",
-					    pixbuf_width,
-					    pixbuf_height);
-		asb_package_log (asb_app_get_package (app),
-				 ASB_PACKAGE_LOG_LEVEL_INFO,
-				 "icon %s padded to %ix%i as size %s",
-				 logfn, icon_size, icon_size, size_str);
-		pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8,
-					 icon_size, icon_size);
-		gdk_pixbuf_fill (pixbuf, 0x00000000);
-		gdk_pixbuf_copy_area (pixbuf_src,
-				      0, 0, /* of src */
-				      pixbuf_width, pixbuf_height,
-				      pixbuf,
-				      (icon_size - pixbuf_width) / 2,
-				      (icon_size - pixbuf_height) / 2);
-		return pixbuf;
-	}
-
-	/* is the aspect ratio perfectly square */
-	if (pixbuf_width == pixbuf_height) {
-		pixbuf = gdk_pixbuf_scale_simple (pixbuf_src,
-						  icon_size, icon_size,
-						  GDK_INTERP_HYPER);
-		as_pixbuf_sharpen (pixbuf, 1, -0.5);
-		return pixbuf;
-	}
-
-	/* create new square pixbuf with alpha padding */
-	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8,
-				 icon_size, icon_size);
-	gdk_pixbuf_fill (pixbuf, 0x00000000);
-	if (pixbuf_width > pixbuf_height) {
-		tmp_width = icon_size;
-		tmp_height = icon_size * pixbuf_height / pixbuf_width;
-	} else {
-		tmp_width = icon_size * pixbuf_width / pixbuf_height;
-		tmp_height = icon_size;
-	}
-	pixbuf_tmp = gdk_pixbuf_scale_simple (pixbuf_src, tmp_width, tmp_height,
-					      GDK_INTERP_HYPER);
-	as_pixbuf_sharpen (pixbuf_tmp, 1, -0.5);
-	gdk_pixbuf_copy_area (pixbuf_tmp,
-			      0, 0, /* of src */
-			      tmp_width, tmp_height,
-			      pixbuf,
-			      (icon_size - tmp_width) / 2,
-			      (icon_size - tmp_height) / 2);
-	return pixbuf;
+	return g_object_ref (as_image_get_pixbuf (im));
 }
 
 /**

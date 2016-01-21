@@ -472,6 +472,152 @@ as_image_node_parse_dep11 (AsImage *im, GNode *node,
 }
 
 /**
+ * as_image_load_filename_full:
+ * @image: a #AsImage instance.
+ * @filename: filename to read from
+ * @dest_size: The size of the constructed pixbuf, or 0 for the native size
+ * @src_size_min: The smallest source size allowed, or 0 for none
+ * @flags: a #AsImageLoadFlags, e.g. %AS_IMAGE_LOAD_FLAG_NONE
+ * @error: A #GError or %NULL.
+ *
+ * Reads an image from a file.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.5.6
+ **/
+gboolean
+as_image_load_filename_full (AsImage *image,
+			     const gchar *filename,
+			     guint dest_size,
+			     guint src_size_min,
+			     AsImageLoadFlags flags,
+			     GError **error)
+{
+	AsImagePrivate *priv = GET_PRIVATE (image);
+	guint pixbuf_height;
+	guint pixbuf_width;
+	guint tmp_height;
+	guint tmp_width;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
+	g_autoptr(GdkPixbuf) pixbuf_src = NULL;
+	g_autoptr(GdkPixbuf) pixbuf_tmp = NULL;
+
+	/* update basename */
+	if (flags & AS_IMAGE_LOAD_FLAG_SET_BASENAME) {
+		g_autofree gchar *basename = NULL;
+		basename = g_path_get_basename (filename);
+		as_image_set_basename (image, basename);
+	}
+
+	/* update checksum */
+	if (flags & AS_IMAGE_LOAD_FLAG_SET_CHECKSUM) {
+		gsize len;
+		g_autofree gchar *data = NULL;
+
+		/* get the contents so we can hash the predictable file data,
+		 * rather than the unpredicatable (for JPEG) pixel data */
+		if (!g_file_get_contents (filename, &data, &len, error))
+			return FALSE;
+		g_free (priv->md5);
+		priv->md5 = g_compute_checksum_for_data (G_CHECKSUM_MD5,
+							 (guchar * )data, len);
+	}
+
+	/* load the image of the native size */
+	if (dest_size == 0) {
+		pixbuf = gdk_pixbuf_new_from_file (filename, error);
+		if (pixbuf == NULL)
+			return FALSE;
+		as_image_set_pixbuf (image, pixbuf);
+		return TRUE;
+	}
+
+	/* open file in native size */
+	if (g_str_has_suffix (filename, ".svg")) {
+		pixbuf_src = gdk_pixbuf_new_from_file_at_scale (filename,
+								dest_size,
+								dest_size,
+								TRUE, error);
+	} else {
+		pixbuf_src = gdk_pixbuf_new_from_file (filename, error);
+	}
+	if (pixbuf_src == NULL)
+		return FALSE;
+
+	/* check size */
+	if (gdk_pixbuf_get_width (pixbuf_src) < (gint) src_size_min &&
+	    gdk_pixbuf_get_height (pixbuf_src) < (gint) src_size_min) {
+		g_set_error (error,
+			     AS_UTILS_ERROR,
+			     AS_UTILS_ERROR_FAILED,
+			     "icon was too small %ix%i",
+			     gdk_pixbuf_get_width (pixbuf_src),
+			     gdk_pixbuf_get_height (pixbuf_src));
+		return FALSE;
+	}
+
+	/* don't do anything to an icon with the perfect size */
+	pixbuf_width = gdk_pixbuf_get_width (pixbuf_src);
+	pixbuf_height = gdk_pixbuf_get_height (pixbuf_src);
+	if (pixbuf_width == dest_size && pixbuf_height == dest_size) {
+		as_image_set_pixbuf (image, pixbuf_src);
+		return TRUE;
+	}
+
+	/* never scale up, just pad */
+	if (pixbuf_width < dest_size && pixbuf_height < dest_size) {
+		g_debug ("icon padded to %ix%i as size %ix%i",
+			 dest_size, dest_size,
+			 pixbuf_width, pixbuf_height);
+		pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8,
+					 dest_size, dest_size);
+		gdk_pixbuf_fill (pixbuf, 0x00000000);
+		gdk_pixbuf_copy_area (pixbuf_src,
+				      0, 0, /* of src */
+				      pixbuf_width, pixbuf_height,
+				      pixbuf,
+				      (dest_size - pixbuf_width) / 2,
+				      (dest_size - pixbuf_height) / 2);
+		as_image_set_pixbuf (image, pixbuf);
+		return TRUE;
+	}
+
+	/* is the aspect ratio perfectly square */
+	if (pixbuf_width == pixbuf_height) {
+		pixbuf = gdk_pixbuf_scale_simple (pixbuf_src,
+						  dest_size, dest_size,
+						  GDK_INTERP_HYPER);
+		as_image_set_pixbuf (image, pixbuf);
+		return TRUE;
+	}
+
+	/* create new square pixbuf with alpha padding */
+	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8,
+				 dest_size, dest_size);
+	gdk_pixbuf_fill (pixbuf, 0x00000000);
+	if (pixbuf_width > pixbuf_height) {
+		tmp_width = dest_size;
+		tmp_height = dest_size * pixbuf_height / pixbuf_width;
+	} else {
+		tmp_width = dest_size * pixbuf_width / pixbuf_height;
+		tmp_height = dest_size;
+	}
+	pixbuf_tmp = gdk_pixbuf_scale_simple (pixbuf_src, tmp_width, tmp_height,
+					      GDK_INTERP_HYPER);
+	if (flags & AS_IMAGE_LOAD_FLAG_SHARPEN)
+		as_pixbuf_sharpen (pixbuf_tmp, 1, -0.5);
+	gdk_pixbuf_copy_area (pixbuf_tmp,
+			      0, 0, /* of src */
+			      tmp_width, tmp_height,
+			      pixbuf,
+			      (dest_size - tmp_width) / 2,
+			      (dest_size - tmp_height) / 2);
+	as_image_set_pixbuf (image, pixbuf);
+	return TRUE;
+}
+
+/**
  * as_image_load_filename:
  * @image: a #AsImage instance.
  * @filename: filename to read from
@@ -491,30 +637,12 @@ as_image_load_filename (AsImage *image,
 			const gchar *filename,
 			GError **error)
 {
-	AsImagePrivate *priv = GET_PRIVATE (image);
-	gsize len;
-	g_autofree gchar *basename = NULL;
-	g_autofree gchar *data = NULL;
-	g_autoptr(GdkPixbuf) pixbuf = NULL;
-
-	/* get the contents so we can hash the predictable file data,
-	 * rather than the unpredicatable (for JPEG) pixel data */
-	if (!g_file_get_contents (filename, &data, &len, error))
-		return FALSE;
-	g_free (priv->md5);
-	priv->md5 = g_compute_checksum_for_data (G_CHECKSUM_MD5,
-						 (guchar * )data, len);
-
-	/* load the image */
-	pixbuf = gdk_pixbuf_new_from_file (filename, error);
-	if (pixbuf == NULL)
-		return FALSE;
-
-	/* set */
-	basename = g_path_get_basename (filename);
-	as_image_set_basename (image, basename);
-	as_image_set_pixbuf (image, pixbuf);
-	return TRUE;
+	return as_image_load_filename_full (image,
+					    filename,
+					    0, 0,
+					    AS_IMAGE_LOAD_FLAG_SET_BASENAME |
+					    AS_IMAGE_LOAD_FLAG_SET_CHECKSUM,
+					    error);
 }
 
 /**

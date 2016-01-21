@@ -83,6 +83,24 @@ typedef enum {
 } AsImageSaveFlags;
 
 /**
+ * AsImageLoadFlags:
+ * @AS_IMAGE_LOAD_FLAG_NONE:		No special flags set
+ * @AS_IMAGE_LOAD_FLAG_SHARPEN:		Sharpen the resulting image
+ * @AS_IMAGE_LOAD_FLAG_SET_BASENAME:	Set the image basename
+ * @AS_IMAGE_LOAD_FLAG_SET_CHECKSUM:	Set the image checksum
+ *
+ * The flags used for loading images.
+ **/
+typedef enum {
+	AS_IMAGE_LOAD_FLAG_NONE		= 0,	/* Since: 0.5.6 */
+	AS_IMAGE_LOAD_FLAG_SHARPEN	= 1,	/* Since: 0.5.6 */
+	AS_IMAGE_LOAD_FLAG_SET_BASENAME	= 2,	/* Since: 0.5.6 */
+	AS_IMAGE_LOAD_FLAG_SET_CHECKSUM	= 4,	/* Since: 0.5.6 */
+	/*< private >*/
+	AS_IMAGE_LOAD_FLAG_LAST
+} AsImageLoadFlags;
+
+/**
  * AsImageAlphaFlags:
  * @AS_IMAGE_ALPHA_FLAG_NONE:		No padding detected
  * @AS_IMAGE_ALPHA_FLAG_TOP:		Padding detected at the image top
@@ -145,6 +163,12 @@ void		 as_image_set_pixbuf		(AsImage	*image,
 AsImageAlphaFlags as_image_get_alpha_flags	(AsImage	*image);
 gboolean	 as_image_load_filename		(AsImage	*image,
 						 const gchar	*filename,
+						 GError		**error);
+gboolean	 as_image_load_filename_full	(AsImage	*image,
+						 const gchar	*filename,
+						 guint		 dest_size,
+						 guint		 src_size_min,
+						 AsImageLoadFlags flags,
 						 GError		**error);
 GdkPixbuf	*as_image_save_pixbuf		(AsImage	*image,
 						 guint		 width,
