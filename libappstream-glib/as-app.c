@@ -1521,6 +1521,14 @@ as_app_set_project_group (AsApp *app, const gchar *project_group)
 		return;
 	}
 
+	/* check value */
+	if (priv->trust_flags != AS_APP_TRUST_FLAG_COMPLETE) {
+		if (!as_utils_is_environment_id (project_group)) {
+			priv->problems |= AS_APP_PROBLEM_INVALID_PROJECT_GROUP;
+			return;
+		}
+	}
+
 	g_free (priv->project_group);
 	priv->project_group = g_strdup (project_group);
 }
@@ -3512,8 +3520,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			priv->problems |= AS_APP_PROBLEM_TRANSLATED_PROJECT_GROUP;
 			break;
 		}
-		g_free (priv->project_group);
-		priv->project_group = as_node_take_data (n);
+		as_app_set_project_group (app, as_node_get_data (n));
 		break;
 
 	/* <compulsory_for_desktop> */

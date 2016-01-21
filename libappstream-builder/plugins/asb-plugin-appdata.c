@@ -158,18 +158,6 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		return FALSE;
 	}
 
-	/* check project group */
-	tmp = as_app_get_project_group (AS_APP (app));
-	if (tmp != NULL) {
-		if (!as_utils_is_environment_id (tmp)) {
-			asb_package_log (asb_app_get_package (app),
-					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "AppData project group invalid, "
-					 "so ignoring: %s", tmp);
-			as_app_set_project_group (AS_APP (app), NULL);
-		}
-	}
-
 	/* log updateinfo */
 	tmp = as_app_get_update_contact (AS_APP (app));
 	if (tmp != NULL) {

@@ -1239,17 +1239,6 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		}
 	}
 
-	/* project_group */
-	tmp = as_app_get_project_group (app);
-	if (tmp != NULL) {
-		if (!as_utils_is_environment_id (tmp)) {
-			ai_app_validate_add (&helper,
-					     AS_PROBLEM_KIND_TAG_INVALID,
-					     "<project_group> is not valid [%s]",
-					     tmp);
-		}
-	}
-
 	/* pkgname */
 	if (as_app_get_pkgname_default (app) != NULL &&
 	    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO) {
@@ -1323,6 +1312,13 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					     AS_PROBLEM_KIND_TAG_INVALID,
 					     "<updatecontact> should be <update_contact>");
 		}
+	}
+
+	/* check invalid values */
+	if ((problems & AS_APP_PROBLEM_INVALID_PROJECT_GROUP) > 0) {
+		ai_app_validate_add (&helper,
+				     AS_PROBLEM_KIND_TAG_INVALID,
+				     "<project_group> is not valid");
 	}
 
 	/* check for things that have to exist */
