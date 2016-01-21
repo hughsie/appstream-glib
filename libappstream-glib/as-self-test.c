@@ -333,13 +333,15 @@ as_test_app_gettext_func (void)
 	g_autofree gchar *fn = NULL;
 	g_autoptr(AsApp) app = NULL;
 	g_autoptr(GList) list = NULL;
+	g_auto(GStrv) intl_domains = NULL;
 
 	app = as_app_new ();
 	fn = as_test_get_filename ("locale");
 	g_assert (fn != NULL);
+	intl_domains = g_strsplit ("app,notgoingtoexist", ",", -1);
 	ret = as_app_gettext_search_path (app,
 					  fn,
-					  "app.mo",
+					  intl_domains,
 					  25,
 					  NULL,
 					  &error);
@@ -354,6 +356,37 @@ as_test_app_gettext_func (void)
 	/* check size */
 	list = as_app_get_languages (app);
 	g_assert_cmpint (g_list_length (list), ==, 2);
+}
+
+static void
+as_test_app_gettext_nodomain_func (void)
+{
+	GError *error = NULL;
+	gboolean ret;
+	g_autofree gchar *fn = NULL;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GList) list = NULL;
+	g_auto(GStrv) intl_domains = NULL;
+
+	app = as_app_new ();
+	fn = as_test_get_filename ("locale");
+	ret = as_app_gettext_search_path (app,
+					  fn,
+					  NULL,
+					  50,
+					  NULL,
+					  &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* check langs */
+	g_assert_cmpint (as_app_get_language (app, "en_GB"), ==, 100);
+	g_assert_cmpint (as_app_get_language (app, "ru"), ==, -1);
+	g_assert_cmpint (as_app_get_language (app, "fr_FR"), ==, -1);
+
+	/* check size */
+	list = as_app_get_languages (app);
+	g_assert_cmpint (g_list_length (list), ==, 1);
 }
 
 static void
@@ -4447,6 +4480,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/screenshot", as_test_screenshot_func);
 	g_test_add_func ("/AppStream/app", as_test_app_func);
 	g_test_add_func ("/AppStream/app{gettext}", as_test_app_gettext_func);
+	g_test_add_func ("/AppStream/app{gettext-nodomain}", as_test_app_gettext_nodomain_func);
 	g_test_add_func ("/AppStream/app{translated}", as_test_app_translated_func);
 	g_test_add_func ("/AppStream/app{validate-style}", as_test_app_validate_style_func);
 	g_test_add_func ("/AppStream/app{validate-appdata-good}", as_test_app_validate_appdata_good_func);

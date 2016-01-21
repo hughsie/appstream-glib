@@ -64,7 +64,7 @@ typedef struct {
 typedef struct {
 	guint		 max_nstrings;
 	GList		*data;
-	gchar		*base_filename;
+	gchar		**intl_domains;
 	guint		 min_percentage;
 } AsGettextContext;
 
@@ -107,7 +107,7 @@ static void
 as_gettext_ctx_free (AsGettextContext *ctx)
 {
 	g_list_free_full (ctx->data, (GDestroyNotify) as_gettext_entry_free);
-	g_free (ctx->base_filename);
+	g_strfreev (ctx->intl_domains);
 	g_free (ctx);
 }
 
@@ -158,6 +158,7 @@ as_gettext_ctx_search_locale (AsGettextContext *ctx,
 			      GError **error)
 {
 	const gchar *filename;
+	gboolean found_anything = FALSE;
 	guint i;
 	g_autoptr(GDir) dir = NULL;
 	g_autoptr(GPtrArray) mo_paths = NULL;
@@ -174,13 +175,22 @@ as_gettext_ctx_search_locale (AsGettextContext *ctx,
 		path = g_build_filename (messages_path, filename, NULL);
 		if (!g_file_test (path, G_FILE_TEST_EXISTS))
 			continue;
-		if (g_strcmp0 (filename, ctx->base_filename) == 0) {
-			if (!as_gettext_parse_file (ctx, locale, path, error))
-				return FALSE;
-			return TRUE;
+		for (i = 0; ctx->intl_domains != NULL &&
+			    ctx->intl_domains[i] != NULL; i++) {
+			g_autofree gchar *fn = NULL;
+			fn = g_strdup_printf ("%s.mo", ctx->intl_domains[i]);
+			if (g_strcmp0 (filename, fn) == 0) {
+				if (!as_gettext_parse_file (ctx, locale, path, error))
+					return FALSE;
+				found_anything = TRUE;
+			}
 		}
 		g_ptr_array_add (mo_paths, g_strdup (path));
 	}
+
+	/* we got data from one or more of the intl_domains */
+	if (found_anything == TRUE)
+		return TRUE;
 
 	/* fall back to parsing *everything*, which might give us more
 	 * language results than is actually true */
@@ -209,7 +219,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsGettextContext, as_gettext_ctx_free)
  * as_app_gettext_search_path:
  * @app: an #AsApp
  * @path: a path to search, e.g. "/usr/share/locale"
- * @base_filename: a filename, e.g. "gnome-software.mo"
+ * @intl_domains: (allow-none): gettext domains, e.g. ["gnome-software"]
  * @min_percentage: minimum percentage to add language
  * @cancellable: a #GCancellable or %NULL
  * @error: a #GError or %NULL
@@ -217,7 +227,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsGettextContext, as_gettext_ctx_free)
  * Searches a gettext catalog path for languages, and using a heuristic
  * adds <language> tags to the specified application.
  *
- * If @base_filename is not set then any filename is matched, which may
+ * If @intl_domains is not set then all domains are matched, which may
  * include more languages than you intended to.
  *
  * @min_percentage sets the minimum percentage to add a language tag.
@@ -235,7 +245,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsGettextContext, as_gettext_ctx_free)
 gboolean
 as_app_gettext_search_path (AsApp *app,
 			    const gchar *path,
-			    const gchar *base_filename,
+			    gchar **intl_domains,
 			    guint min_percentage,
 			    GCancellable *cancellable,
 			    GError **error)
@@ -251,7 +261,7 @@ as_app_gettext_search_path (AsApp *app,
 		return FALSE;
 	ctx = as_gettext_ctx_new ();
 	ctx->min_percentage = min_percentage;
-	ctx->base_filename = g_strdup (base_filename);
+	ctx->intl_domains = g_strdupv (intl_domains);
 	while ((filename = g_dir_read_name (dir)) != NULL) {
 		g_autofree gchar *fn = NULL;
 		fn = g_build_filename (path, filename, "LC_MESSAGES", NULL);

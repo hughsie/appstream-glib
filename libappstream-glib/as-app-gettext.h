@@ -35,7 +35,7 @@ G_BEGIN_DECLS
 
 gboolean	 as_app_gettext_search_path	(AsApp		*app,
 						 const gchar	*path,
-						 const gchar	*base_filename,
+						 gchar		**intl_domains,
 						 guint		 min_percentage,
 						 GCancellable	*cancellable,
 						 GError		**error);
