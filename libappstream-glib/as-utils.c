@@ -1178,7 +1178,7 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 	prefix = g_strdup_printf ("%s/usr", destdir);
 	if (!g_file_test (prefix, G_FILE_TEST_EXISTS)) {
 		g_free (prefix);
-		prefix = g_strdup_printf ("%s/files", destdir);
+		prefix = g_strdup (destdir);
 	}
 	if (!g_file_test (prefix, G_FILE_TEST_EXISTS)) {
 		g_set_error (error,

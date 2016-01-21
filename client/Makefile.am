@@ -21,6 +21,7 @@ AS_BUILDER_LIBS =					\
 	$(top_builddir)/libappstream-builder/libappstream-builder.la
 
 bin_PROGRAMS =						\
+	appstream-compose				\
 	appstream-util
 
 if HAVE_BUILDER
@@ -56,5 +57,17 @@ appstream_builder_LDFLAGS =				\
 appstream_builder_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 endif
+
+appstream_compose_SOURCES =				\
+	as-compose.c
+appstream_compose_LDADD =				\
+	$(AS_GLIB_LIBS)					\
+	$(GLIB_LIBS)					\
+	$(SOUP_LIBS)					\
+	$(LIBARCHIVE_LIBS)
+appstream_compose_LDFLAGS =				\
+	$(PIE_LDFLAGS)
+appstream_compose_CFLAGS =				\
+	$(WARNINGFLAGS_C)
 
 -include $(top_srcdir)/git.mk
