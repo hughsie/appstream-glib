@@ -57,15 +57,6 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	gchar **filelist;
 	guint i;
 
-	/* add extra project groups */
-	if (g_strcmp0 (as_app_get_id (AS_APP (app)), "xfdashboard.desktop") == 0) {
-		as_app_set_project_group (AS_APP (app), "XFCE");
-		asb_package_log (pkg,
-				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
-				 "Auto-adding project group XFCE for %s",
-				 as_app_get_id (AS_APP (app)));
-	}
-
 	/* look for any installed docs */
 	filelist = asb_package_get_filelist (pkg);
 	for (i = 0; filelist[i] != NULL; i++) {
