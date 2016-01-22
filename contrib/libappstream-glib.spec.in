@@ -40,7 +40,7 @@ Obsoletes: appdata-tools < 0.1.9
 Provides: appdata-tools
 
 # this is not a library version
-%define as_plugin_version               4
+%define as_plugin_version               5
 
 %description
 This library provides GObjects and helper methods to make it easy to read and

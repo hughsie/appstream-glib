@@ -291,13 +291,13 @@ asb_test_plugin_loader_func (void)
 
 	/* get the list of globs */
 	globs = asb_plugin_loader_get_globs (loader);\
-	g_assert_cmpint (globs->len, >=, 20);
+	g_assert_cmpint (globs->len, >=, 10);
 	g_assert_cmpstr (asb_glob_value_search (globs, "/usr/share/applications/gimp.desktop"), ==, "");
 	g_assert_cmpstr (asb_glob_value_search (globs, "/srv/dave.txt"), ==, NULL);
 
 	/* get the list of plugins */
 	plugins = asb_plugin_loader_get_plugins (loader);
-	g_assert_cmpint (plugins->len, >=, 13);
+	g_assert_cmpint (plugins->len, >=, 5);
 	plugin = g_ptr_array_index (plugins, 0);
 	g_assert (plugin != NULL);
 	g_assert (plugin->module != NULL);
@@ -519,9 +519,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<keyword>Remote</keyword>\n"
 		"</keywords>\n"
 		"<kudos>\n"
-		"<kudo>AppMenu</kudo>\n"
 		"<kudo>ModernToolkit</kudo>\n"
-		"<kudo>Notifications</kudo>\n"
 		"<kudo>SearchProvider</kudo>\n"
 		"<kudo>UserDocs</kudo>\n"
 		"</kudos>\n"
@@ -643,9 +641,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<name>Core</name>\n"
 		"<summary>Addons for core functionality</summary>\n"
 		"<kudos>\n"
-		"<kudo>AppMenu</kudo>\n"
 		"<kudo>ModernToolkit</kudo>\n"
-		"<kudo>Notifications</kudo>\n"
 		"<kudo>SearchProvider</kudo>\n"
 		"<kudo>UserDocs</kudo>\n"
 		"</kudos>\n"

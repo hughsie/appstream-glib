@@ -18,13 +18,8 @@ plugin_LTLIBRARIES =					\
 	libasb_plugin_appdata.la			\
 	libasb_plugin_dbus.la				\
 	libasb_plugin_desktop.la			\
-	libasb_plugin_gir.la				\
-	libasb_plugin_gresource.la			\
 	libasb_plugin_gettext.la			\
-	libasb_plugin_hardcoded.la			\
-	libasb_plugin_kde_services.la			\
-	libasb_plugin_kde_notifyrc.la			\
-	libasb_plugin_nm.la
+	libasb_plugin_hardcoded.la
 
 if HAVE_FONTS
 plugin_LTLIBRARIES +=					\
@@ -41,16 +36,6 @@ libasb_plugin_absorb_la_LIBADD = $(GLIB_LIBS)
 libasb_plugin_absorb_la_LDFLAGS = -module -avoid-version
 libasb_plugin_absorb_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
-libasb_plugin_kde_services_la_SOURCES = asb-plugin-kde-services.c
-libasb_plugin_kde_services_la_LIBADD = $(GLIB_LIBS)
-libasb_plugin_kde_services_la_LDFLAGS = -module -avoid-version
-libasb_plugin_kde_services_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
-
-libasb_plugin_kde_notifyrc_la_SOURCES = asb-plugin-kde-notifyrc.c
-libasb_plugin_kde_notifyrc_la_LIBADD = $(GLIB_LIBS)
-libasb_plugin_kde_notifyrc_la_LDFLAGS = -module -avoid-version
-libasb_plugin_kde_notifyrc_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
-
 libasb_plugin_gettext_la_SOURCES = asb-plugin-gettext.c
 libasb_plugin_gettext_la_LIBADD = $(GLIB_LIBS)
 libasb_plugin_gettext_la_LDFLAGS = -module -avoid-version
@@ -66,25 +51,10 @@ libasb_plugin_desktop_la_LIBADD = $(GLIB_LIBS) $(GDKPIXBUF_LIBS)
 libasb_plugin_desktop_la_LDFLAGS = -module -avoid-version
 libasb_plugin_desktop_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
-libasb_plugin_gir_la_SOURCES = asb-plugin-gir.c
-libasb_plugin_gir_la_LIBADD = $(GLIB_LIBS) $(GDKPIXBUF_LIBS)
-libasb_plugin_gir_la_LDFLAGS = -module -avoid-version
-libasb_plugin_gir_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
-
-libasb_plugin_gresource_la_SOURCES = asb-plugin-gresource.c
-libasb_plugin_gresource_la_LIBADD = $(GLIB_LIBS) $(GDKPIXBUF_LIBS)
-libasb_plugin_gresource_la_LDFLAGS = -module -avoid-version
-libasb_plugin_gresource_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
-
 libasb_plugin_appdata_la_SOURCES = asb-plugin-appdata.c
 libasb_plugin_appdata_la_LIBADD = $(GLIB_LIBS) $(GDKPIXBUF_LIBS)
 libasb_plugin_appdata_la_LDFLAGS = -module -avoid-version
 libasb_plugin_appdata_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
-
-libasb_plugin_nm_la_SOURCES = asb-plugin-nm.c
-libasb_plugin_nm_la_LIBADD = $(GLIB_LIBS)
-libasb_plugin_nm_la_LDFLAGS = -module -avoid-version
-libasb_plugin_nm_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
 if HAVE_FONTS
 libasb_plugin_font_la_SOURCES = asb-plugin-font.c
