@@ -106,18 +106,8 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	gint64 secs;
 	guint days;
 
-	/* add extra categories */
-	tmp = as_app_get_id (AS_APP (app));
-	if (g_strcmp0 (tmp, "nautilus.desktop") == 0) {
-		as_app_add_category (AS_APP (app), "System");
-		asb_package_log (pkg,
-				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
-				 "Auto-adding category System for %s",
-				 as_app_get_id (AS_APP (app)));
-	}
-
 	/* add extra project groups */
-	if (g_strcmp0 (tmp, "xfdashboard.desktop") == 0) {
+	if (g_strcmp0 (as_app_get_id (AS_APP (app)), "xfdashboard.desktop") == 0) {
 		as_app_set_project_group (AS_APP (app), "XFCE");
 		asb_package_log (pkg,
 				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
