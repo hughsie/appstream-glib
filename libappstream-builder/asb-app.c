@@ -121,7 +121,8 @@ asb_app_set_package (AsbApp *app, AsbPackage *pkg)
 	g_set_object (&priv->pkg, pkg);
 
 	/* be helpful */
-	as_app_add_pkgname (AS_APP (app), asb_package_get_name (pkg));
+	if (asb_package_get_kind (pkg) == ASB_PACKAGE_KIND_DEFAULT)
+		as_app_add_pkgname (AS_APP (app), asb_package_get_name (pkg));
 }
 
 /**
