@@ -4286,11 +4286,7 @@ as_app_parse_appdata_file (AsApp *app,
 	}
 
 	/* validate */
-	tmp = g_strstr_len (data, len, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-	if (tmp == NULL)
-		tmp = g_strstr_len (data, len, "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-	if (tmp == NULL)
-		tmp = g_strstr_len (data, len, "<?xml version='1.0' encoding='utf-8'?>");
+	tmp = g_strstr_len (data, len, "<?xml version=");
 	if (tmp == NULL)
 		priv->problems |= AS_APP_PROBLEM_NO_XML_HEADER;
 
