@@ -180,19 +180,5 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		}
 	}
 
-	/* a ConsoleOnly category means we require AppData */
-	if (as_app_has_category (AS_APP(app), "ConsoleOnly")) {
-		asb_package_log (pkg,
-				 ASB_PACKAGE_LOG_LEVEL_DEBUG,
-				 "Auto-adding veto ConsoleOnly for %s",
-				 as_app_get_id (AS_APP (app)));
-		as_app_add_veto (AS_APP (app), "ConsoleOnly");
-	}
-
-	/* no categories means veto */
-//	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_DESKTOP &&
-//	    as_app_get_categories(AS_APP(app))->len == 0)
-//		as_app_add_veto (AS_APP (app), "no Categories");
-
 	return TRUE;
 }
