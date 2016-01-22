@@ -184,22 +184,6 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		}
 	}
 
-	/* has the application been updated in the last year */
-	releases = as_app_get_releases (AS_APP (app));
-	if (asb_context_get_api_version (plugin->ctx) < 0.8) {
-		for (i = 0; i < releases->len; i++) {
-			release = g_ptr_array_index (releases, i);
-			secs = (g_get_real_time () / G_USEC_PER_SEC) -
-				as_release_get_timestamp (release);
-			days = secs / (60 * 60 * 24);
-			if (secs > 0 && days < 365) {
-				as_app_add_metadata (AS_APP (app),
-						     "X-Kudo-RecentRelease", "");
-				break;
-			}
-		}
-	}
-
 	/* has there been no upstream version recently */
 	if (releases->len > 0 &&
 	    as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_DESKTOP &&
