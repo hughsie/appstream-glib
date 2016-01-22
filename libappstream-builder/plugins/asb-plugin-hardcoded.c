@@ -98,13 +98,9 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			GError **error)
 {
 	const gchar *tmp;
-	AsRelease *release;
 	GPtrArray *deps;
 	gchar **filelist;
-	GPtrArray *releases;
 	guint i;
-	gint64 secs;
-	guint days;
 
 	/* add extra project groups */
 	if (g_strcmp0 (as_app_get_id (AS_APP (app)), "xfdashboard.desktop") == 0) {
@@ -181,21 +177,6 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			as_app_add_kudo_kind (AS_APP (app),
 					      AS_KUDO_KIND_MODERN_TOOLKIT);
 			break;
-		}
-	}
-
-	/* has there been no upstream version recently */
-	if (releases->len > 0 &&
-	    as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_DESKTOP &&
-	    !asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_IGNORE_DEAD_UPSTREAM)) {
-		release = g_ptr_array_index (releases, 0);
-		secs = (g_get_real_time () / G_USEC_PER_SEC) -
-			as_release_get_timestamp (release);
-		days = secs / (60 * 60 * 24);
-		if (secs > 0 && days > 365 * 5) {
-			asb_package_log (asb_app_get_package (app),
-					 ASB_PACKAGE_LOG_LEVEL_WARNING,
-					 "Dead upstream for > %i years", 5);
 		}
 	}
 
