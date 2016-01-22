@@ -139,17 +139,6 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		}
 	}
 
-	/* add provide if missing */
-	tmp = as_app_get_id (AS_APP (app));
-	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_FIRMWARE &&
-	    as_utils_guid_is_valid (tmp)) {
-		g_autoptr(AsProvide) provide = NULL;
-		provide = as_provide_new ();
-		as_provide_set_kind (provide, AS_PROVIDE_KIND_FIRMWARE_FLASHED);
-		as_provide_set_value (provide, tmp);
-		as_app_add_provide (AS_APP (app), provide);
-	}
-
 	/* check license */
 	tmp = as_app_get_metadata_license (AS_APP (app));
 	if (tmp == NULL) {
