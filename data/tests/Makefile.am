@@ -30,6 +30,8 @@ test_files =						\
 	font-1-1.fc21.noarch.rpm			\
 	font-serif-1-1.fc21.noarch.rpm			\
 	intltool.appdata.xml.in				\
+	locale/en_GB/LC_MESSAGES/app.mo			\
+	locale/ru/LC_MESSAGES/app.mo			\
 	origin-icons.tar.gz				\
 	origin.xml					\
 	rpmbuild/app.png				\
