@@ -88,6 +88,7 @@ add_icons (AsApp *app,
 	im = as_image_new ();
 	if (!as_image_load_filename_full (im, fn,
 					  64, min_icon_size,
+					  AS_IMAGE_LOAD_FLAG_ONLY_SUPPORTED |
 					  AS_IMAGE_LOAD_FLAG_SHARPEN,
 					  error)) {
 		g_prefix_error (error, "Failed to load icon: ");

@@ -88,6 +88,7 @@ typedef enum {
  * @AS_IMAGE_LOAD_FLAG_SHARPEN:		Sharpen the resulting image
  * @AS_IMAGE_LOAD_FLAG_SET_BASENAME:	Set the image basename
  * @AS_IMAGE_LOAD_FLAG_SET_CHECKSUM:	Set the image checksum
+ * @AS_IMAGE_LOAD_FLAG_ONLY_SUPPORTED:	Only load supported formats like PNG and JPG
  *
  * The flags used for loading images.
  **/
@@ -96,6 +97,7 @@ typedef enum {
 	AS_IMAGE_LOAD_FLAG_SHARPEN	= 1,	/* Since: 0.5.6 */
 	AS_IMAGE_LOAD_FLAG_SET_BASENAME	= 2,	/* Since: 0.5.6 */
 	AS_IMAGE_LOAD_FLAG_SET_CHECKSUM	= 4,	/* Since: 0.5.6 */
+	AS_IMAGE_LOAD_FLAG_ONLY_SUPPORTED = 8,	/* Since: 0.5.6 */
 	/*< private >*/
 	AS_IMAGE_LOAD_FLAG_LAST
 } AsImageLoadFlags;

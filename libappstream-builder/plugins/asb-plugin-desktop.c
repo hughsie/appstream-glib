@@ -56,7 +56,7 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
  * asb_app_load_icon:
  */
 static GdkPixbuf *
-asb_app_load_icon (AsbApp *app,
+asb_app_load_icon (AsbPlugin *plugin,
 		   const gchar *filename,
 		   const gchar *logfn,
 		   guint icon_size,
@@ -65,13 +65,18 @@ asb_app_load_icon (AsbApp *app,
 {
 	g_autoptr(AsImage) im = NULL;
 	g_autoptr(GError) error_local = NULL;
+	AsImageLoadFlags load_flags = AS_IMAGE_LOAD_FLAG_NONE;
+
+	/* is icon in a unsupported format */
+	if (!asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_IGNORE_LEGACY_ICONS))
+		load_flags |= AS_IMAGE_LOAD_FLAG_ONLY_SUPPORTED;
 
 	im = as_image_new ();
 	if (!as_image_load_filename_full (im,
 					  filename,
 					  icon_size,
 					  min_icon_size,
-					  AS_IMAGE_LOAD_FLAG_NONE,
+					  load_flags,
 					  &error_local)) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
@@ -112,34 +117,9 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 		return FALSE;
 	}
 
-	/* is icon in a unsupported format */
-	if (!asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_IGNORE_LEGACY_ICONS)) {
-		if (g_str_has_suffix (fn, ".xpm")) {
-			g_set_error (error,
-				     ASB_PLUGIN_ERROR,
-				     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
-				     "Uses XPM icon: %s", key);
-			return FALSE;
-		}
-		if (g_str_has_suffix (fn, ".gif")) {
-			g_set_error (error,
-				     ASB_PLUGIN_ERROR,
-				     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
-				     "Uses GIF icon: %s", key);
-			return FALSE;
-		}
-		if (g_str_has_suffix (fn, ".ico")) {
-			g_set_error (error,
-				     ASB_PLUGIN_ERROR,
-				     ASB_PLUGIN_ERROR_NOT_SUPPORTED,
-				     "Uses ICO icon: %s", key);
-			return FALSE;
-		}
-	}
-
 	/* load the icon */
 	min_icon_size = asb_context_get_min_icon_size (plugin->ctx);
-	pixbuf = asb_app_load_icon (app, fn, fn + strlen (tmpdir),
+	pixbuf = asb_app_load_icon (plugin, fn, fn + strlen (tmpdir),
 				    64, min_icon_size, error);
 	if (pixbuf == NULL) {
 		g_prefix_error (error, "Failed to load icon: ");
@@ -174,7 +154,7 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 		return TRUE;
 
 	/* load the HiDPI icon */
-	pixbuf_hidpi = asb_app_load_icon (app, fn_hidpi,
+	pixbuf_hidpi = asb_app_load_icon (plugin, fn_hidpi,
 					  fn_hidpi + strlen (tmpdir),
 					  128, 128, NULL);
 	if (pixbuf_hidpi == NULL)
