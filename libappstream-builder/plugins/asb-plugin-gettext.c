@@ -56,10 +56,6 @@ asb_plugin_process_app (AsbPlugin *plugin,
 
 	/* search for .mo files in the prefix */
 	root = g_build_filename (tmpdir, "/usr/share/locale", NULL);
-	if (!g_file_test (root, G_FILE_TEST_EXISTS)) {
-		g_free (root);
-		root = g_build_filename (tmpdir, "/files/share/locale", NULL);
-	}
 	if (!g_file_test (root, G_FILE_TEST_EXISTS))
 		return TRUE;
 

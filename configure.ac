@@ -172,21 +172,6 @@ if test x$enable_builder != xno; then
 		fi
 	fi
 
-	# ostree (default enabled)
-	AC_ARG_ENABLE(ostree, AS_HELP_STRING([--disable-ostree],[Disable ostree support]), enable_ostree=$enableval)
-	if test x$enable_ostree != xno; then
-		PKG_CHECK_MODULES(OSTREE, ostree-1 >= 2015.1, HAVE_OSTREE="yes", HAVE_OSTREE="no")
-		if test "x$HAVE_OSTREE" = "xyes"; then
-			AC_DEFINE(HAVE_OSTREE, 1, [define if OSTREE is installed])
-		else
-			if test x$enable_ostree = xyes; then
-				AC_MSG_ERROR([ostree enabled but not found])
-			fi
-		fi
-	else
-		HAVE_OSTREE=no
-	fi
-
 	# rpm (default enabled)
 	AC_ARG_ENABLE(rpm, AS_HELP_STRING([--disable-rpm],[Disable rpm support]), enable_rpm=$enableval)
 	if test x$enable_rpm != xno; then
@@ -222,7 +207,6 @@ else
 fi
 AM_CONDITIONAL(HAVE_BUILDER, test x$enable_builder = xyes)
 AM_CONDITIONAL(HAVE_RPM, test x$HAVE_RPM = xyes)
-AM_CONDITIONAL(HAVE_OSTREE, test x$HAVE_OSTREE = xyes)
 AM_CONDITIONAL(HAVE_ALPM, test x$HAVE_ALPM = xyes)
 
 # man files

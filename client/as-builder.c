@@ -27,11 +27,6 @@
 #include <stdlib.h>
 #include <locale.h>
 
-#ifdef HAVE_OSTREE
-#include <ostree.h>
-#include "asb-package-ostree.h"
-#endif
-
 #include "asb-context.h"
 #include "asb-utils.h"
 
@@ -58,67 +53,6 @@ as_builder_search_path (GPtrArray *array, const gchar *path, GError **error)
 		}
 	}
 	return TRUE;
-}
-
-/**
- * as_builder_setup_ostree:
- **/
-static gboolean
-as_builder_setup_ostree (AsbContext *ctx, const gchar *ostree_repo, const gchar *ostree_arch, GError **error)
-{
-#ifdef HAVE_OSTREE
-	GHashTableIter iter;
-	gpointer key;
-	gpointer value;
-	g_autoptr(GHashTable) refs = NULL;
-	g_autoptr(GFile) file = NULL;
-	OstreeRepo *repo = NULL;
-
-	/* load repo */
-	file = g_file_new_for_path (ostree_repo);
-	repo = ostree_repo_new (file);
-	if (!ostree_repo_list_refs (repo, NULL, &refs, NULL, error))
-		return FALSE;
-
-	/* create a fake package for each of the refs */
-	g_hash_table_iter_init (&iter, refs);
-	while (g_hash_table_iter_next (&iter, &key, &value)) {
-		const gchar *refspec = key;
-		g_autofree gchar *remote = NULL;
-		g_autofree gchar *name = NULL;
-		g_autofree gchar *filename = NULL;
-		g_autofree gchar *ref = NULL;
-		g_autoptr(AsbPackage) pkg = NULL;
-
-		if (!ostree_parse_refspec (refspec, &remote, &ref, error))
-			return FALSE;
-
-                if (!g_str_has_prefix (ref, "app/") &&
-                    !g_str_has_prefix (ref, "runtime/"))
-                  continue;
-
-		pkg = asb_package_ostree_new ();
-		asb_package_set_source (pkg, ref);
-		asb_package_ostree_set_repodir (ASB_PACKAGE_OSTREE (pkg), ostree_repo);
-
-		/* open the package */
-		filename = g_build_filename (ostree_repo, name, NULL);
-		if (!asb_package_open (pkg, filename, error))
-			return FALSE;
-
-		if (ostree_arch == NULL ||
-		    strcmp (asb_package_get_arch (pkg), ostree_arch) == 0)
-			asb_context_add_package (ctx, pkg);
-	}
-	g_object_unref (repo);
-	return TRUE;
-#else
-	g_set_error_literal (error,
-			     AS_UTILS_ERROR,
-			     AS_UTILS_ERROR_FAILED,
-			     "No ostree support enabled");
-	return FALSE;
-#endif
 }
 
 /**
@@ -151,8 +85,6 @@ main (int argc, char **argv)
 	g_autofree gchar *icons_dir = NULL;
 	g_autofree gchar *old_metadata = NULL;
 	g_autofree gchar *origin = NULL;
-	g_autofree gchar *ostree_repo = NULL;
-	g_autofree gchar *ostree_arch = NULL;
 	g_autofree gchar *output_dir = NULL;
 	g_autofree gchar *temp_dir = NULL;
 	g_autofree gchar **veto_ignore = NULL;
@@ -211,12 +143,6 @@ main (int argc, char **argv)
 		{ "api-version", '\0', 0, G_OPTION_ARG_DOUBLE, &api_version,
 			/* TRANSLATORS: command line option */
 			_("Set the AppStream version"), "API_VERSION" },
-		{ "ostree-repo", '\0', 0, G_OPTION_ARG_STRING, &ostree_repo,
-			/* TRANSLATORS: command line option */
-			_("Set the ostree repo name"), "REPO" },
-		{ "ostree-arch", '\0', 0, G_OPTION_ARG_STRING, &ostree_arch,
-			/* TRANSLATORS: command line option */
-			_("Only handle this arch in the ostree repo"), "ARCH" },
 		{ "old-metadata", '\0', 0, G_OPTION_ARG_FILENAME, &old_metadata,
 			/* TRANSLATORS: command line option */
 			_("Set the old metadata location"), "DIR" },
@@ -357,7 +283,7 @@ main (int argc, char **argv)
 
 	/* scan each package */
 	packages = g_ptr_array_new_with_free_func (g_free);
-	if (argc == 1 && ostree_repo == NULL) {
+	if (argc == 1) {
 		/* if the user launches the tool with no arguments */
 		if (packages_dirs == NULL) {
 			g_autofree gchar *tmp = NULL;
@@ -398,15 +324,6 @@ main (int argc, char **argv)
 			g_print (_("Parsed %i/%i files..."), i, packages->len);
 			g_print ("\n"),
 			g_timer_reset (timer);
-		}
-	}
-
-	/* load and data from an ostree repo */
-	if (ostree_repo != NULL) {
-		if (!as_builder_setup_ostree (ctx, ostree_repo, ostree_arch, &error)) {
-			g_print ("%s\n", error->message);
-			retval = EXIT_FAILURE;
-			goto out;
 		}
 	}
 

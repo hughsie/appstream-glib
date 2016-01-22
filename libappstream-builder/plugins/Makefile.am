@@ -27,11 +27,6 @@ plugin_LTLIBRARIES =					\
 	libasb_plugin_kde_notifyrc.la			\
 	libasb_plugin_nm.la
 
-if HAVE_OSTREE
-plugin_LTLIBRARIES +=					\
-	libasb_plugin_ostree.la
-endif
-
 if HAVE_FONTS
 plugin_LTLIBRARIES +=					\
 	libasb_plugin_font.la
@@ -102,13 +97,6 @@ libasb_plugin_font_la_SOURCES = asb-plugin-font.c
 libasb_plugin_font_la_LIBADD = $(GLIB_LIBS) $(FREETYPE_LIBS) $(GDKPIXBUF_LIBS) $(GTK_LIBS)
 libasb_plugin_font_la_LDFLAGS = -module -avoid-version
 libasb_plugin_font_la_CFLAGS = $(GLIB_CFLAGS) $(GTK_CFLAGS) $(WARNINGFLAGS_C)
-endif
-
-if HAVE_OSTREE
-libasb_plugin_ostree_la_SOURCES = asb-plugin-ostree.c
-libasb_plugin_ostree_la_LIBADD = $(GLIB_LIBS) $(FREETYPE_LIBS) $(GDKPIXBUF_LIBS)
-libasb_plugin_ostree_la_LDFLAGS = -module -avoid-version
-libasb_plugin_ostree_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 endif
 
 -include $(top_srcdir)/git.mk

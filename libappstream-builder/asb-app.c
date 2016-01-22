@@ -121,15 +121,7 @@ asb_app_set_package (AsbApp *app, AsbPackage *pkg)
 	g_set_object (&priv->pkg, pkg);
 
 	/* be helpful */
-	if (asb_package_get_kind (pkg) == ASB_PACKAGE_KIND_DEFAULT) {
-		as_app_add_pkgname (AS_APP (app), asb_package_get_name (pkg));
-	} else if (asb_package_get_kind (pkg) == ASB_PACKAGE_KIND_BUNDLE) {
-		g_autoptr(AsBundle) bundle = NULL;
-		bundle = as_bundle_new ();
-		as_bundle_set_id (bundle, asb_package_get_source (pkg));
-		as_bundle_set_kind (bundle, AS_BUNDLE_KIND_XDG_APP);
-		as_app_add_bundle (AS_APP (app), bundle);
-	}
+	as_app_add_pkgname (AS_APP (app), asb_package_get_name (pkg));
 }
 
 /**
