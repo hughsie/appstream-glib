@@ -4,14 +4,15 @@
 # 
 # Translators:
 # Boyuan Yang <073plan@gmail.com>, 2015
+# Dz Chen <wsxy162@gmail.com>, 2016
 # 白铭骢 <jeffbai@aosc.xyz>, 2015
 # 白铭骢 <jeffbai@aosc.xyz>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-01-15 13:56+0000\n"
-"PO-Revision-Date: 2016-01-15 13:56+0000\n"
+"POT-Creation-Date: 2016-01-22 14:01+0000\n"
+"PO-Revision-Date: 2016-01-22 14:01+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -89,14 +90,6 @@ msgid "Set the AppStream version"
 msgstr "设置 AppStream 版本"
 
 #. TRANSLATORS: command line option
-msgid "Set the ostree repo name"
-msgstr "设置 ostree 库名称"
-
-#. TRANSLATORS: command line option
-msgid "Only handle this arch in the ostree repo"
-msgstr ""
-
-#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "设置旧的元数据位置"
 
@@ -142,6 +135,46 @@ msgstr "元数据生成失败"
 msgid "Done!"
 msgstr "完成！"
 
+#. TRANSLATORS: we've saving the icon file to disk
+msgid "Saving icon"
+msgstr ""
+
+#. TRANSLATORS: command line option
+msgid "Set the prefix"
+msgstr ""
+
+#. TRANSLATORS: we're generating the AppStream data
+msgid "Processing application"
+msgstr ""
+
+#. TRANSLATORS: the .appdata.xml file could not
+#. * be loaded
+msgid "Error loading AppData file"
+msgstr ""
+
+#. TRANSLATORS: the .mo files could not be parsed
+msgid "Error parsing translations"
+msgstr ""
+
+#. TRANSLATORS: the .desktop file could not
+#. * be loaded
+msgid "Error loading desktop file"
+msgstr ""
+
+#. TRANSLATORS: this is when the folder could
+#. * not be created
+msgid "Error creating output directory"
+msgstr ""
+
+#. TRANSLATORS: we've saving the XML file to disk
+msgid "Saving AppStream"
+msgstr ""
+
+#. TRANSLATORS: this is when the destination file
+#. * cannot be saved for some reason
+msgid "Error saving AppStream file"
+msgstr ""
+
 #. TRANSLATORS: this is a command alias
 #, c-format
 msgid "Alias to %s"
@@ -157,7 +190,7 @@ msgstr "请检查文件并修复任何标有“FIXME”的项目"
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr ""
+msgstr "旧 API 版本"
 
 #. TRANSLATORS: information message
 msgid "New API version"
@@ -170,7 +203,7 @@ msgstr "参数不够，预期为 old.xml new.xml [版本]"
 #. * e.g. "appdata" to "appstream"
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "将 %s 转换成 %s 还未执行"
 
 msgid "Not enough arguments, expected file.xml"
 msgstr "参数不足，预期 file.xml"
@@ -179,15 +212,15 @@ msgstr "参数不足，预期 file.xml"
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "文件格式 “%s” 无法被升级"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "格式未识别"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "未发现桌面应用程序"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -205,11 +238,11 @@ msgstr "文件验证失败"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "已移除"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "已添加"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"

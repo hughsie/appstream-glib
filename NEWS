@@ -1,3 +1,26 @@
+Version 0.5.7
+~~~~~~~~~~~~~
+Released: 2015-01-22
+
+Notes:
+ - We've removed the ostree support and added a new appstream-compose command
+   to generate the AppStream metadata at xdg-app application build time.
+
+New Features:
+ - Add appstream-compose command line tool (Alexander Larsson)
+ - Add as_image_load_filename_full() (Richard Hughes)
+ - Move the blacklisted application list to the front-end client (Richard Hughes)
+ - Move the gettext parsing to libappstream-glib (Richard Hughes)
+ - Support date=iso8601 attributes in <release> markup (Richard Hughes)
+
+Bugfixes:
+ - Allow disabling font support with --disable-fonts (Richard Hughes)
+ - Detect web-apps which are added as .desktop files (Richard Hughes)
+ - Make the check for screenshot equality more robust (Richard Hughes)
+ - Only build the test firmware files when using --enable-firmware (Richard Hughes)
+ - Remove all traces of ostree (Alexander Larsson)
+ - Remove the GIR, GStreamer, GResource, nm and KDE-specific plugins (Richard Hughes)
+
 Version 0.5.6
 ~~~~~~~~~~~~~
 Released: 2015-01-15

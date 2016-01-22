@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Piotr Drąg <piotrdrag@gmail.com>, 2014-2015
+# Piotr Drąg <piotrdrag@gmail.com>, 2014-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-01-15 13:56+0000\n"
-"PO-Revision-Date: 2016-01-15 13:56+0000\n"
+"POT-Creation-Date: 2016-01-22 14:01+0000\n"
+"PO-Revision-Date: 2016-01-22 14:01+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Polish (http://www.transifex.com/freedesktop/appstream-glib/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -87,14 +87,6 @@ msgid "Set the AppStream version"
 msgstr "Ustawia wersję AppStream"
 
 #. TRANSLATORS: command line option
-msgid "Set the ostree repo name"
-msgstr "Ustawia nazwę repozytorium OSTree"
-
-#. TRANSLATORS: command line option
-msgid "Only handle this arch in the ostree repo"
-msgstr ""
-
-#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "Ustawia położenie poprzednich metadanych"
 
@@ -140,6 +132,46 @@ msgstr "Utworzenie metadanych się nie powiodło"
 msgid "Done!"
 msgstr "Gotowe."
 
+#. TRANSLATORS: we've saving the icon file to disk
+msgid "Saving icon"
+msgstr ""
+
+#. TRANSLATORS: command line option
+msgid "Set the prefix"
+msgstr ""
+
+#. TRANSLATORS: we're generating the AppStream data
+msgid "Processing application"
+msgstr ""
+
+#. TRANSLATORS: the .appdata.xml file could not
+#. * be loaded
+msgid "Error loading AppData file"
+msgstr ""
+
+#. TRANSLATORS: the .mo files could not be parsed
+msgid "Error parsing translations"
+msgstr ""
+
+#. TRANSLATORS: the .desktop file could not
+#. * be loaded
+msgid "Error loading desktop file"
+msgstr ""
+
+#. TRANSLATORS: this is when the folder could
+#. * not be created
+msgid "Error creating output directory"
+msgstr ""
+
+#. TRANSLATORS: we've saving the XML file to disk
+msgid "Saving AppStream"
+msgstr ""
+
+#. TRANSLATORS: this is when the destination file
+#. * cannot be saved for some reason
+msgid "Error saving AppStream file"
+msgstr ""
+
 #. TRANSLATORS: this is a command alias
 #, c-format
 msgid "Alias to %s"
@@ -155,7 +187,7 @@ msgstr "Proszę przejrzeć plik i naprawić elementy oznaczone jako „FIXME”"
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr ""
+msgstr "Poprzednia wersja API"
 
 #. TRANSLATORS: information message
 msgid "New API version"
@@ -168,7 +200,7 @@ msgstr "Za mało parametrów, oczekiwano wersji poprzedniej.xml nowej.xml"
 #. * e.g. "appdata" to "appstream"
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "Konwersja %s na %s nie jest zaimplementowana"
 
 msgid "Not enough arguments, expected file.xml"
 msgstr "Za mało parametrów, oczekiwano pliku.xml"
@@ -177,15 +209,15 @@ msgstr "Za mało parametrów, oczekiwano pliku.xml"
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "Nie można zaktualizować formatu pliku „%s”"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "Nie rozpoznano formatu"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "Nie odnaleziono żadnych programów"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -203,11 +235,11 @@ msgstr "Sprawdzenie plików się nie powiodło"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "Usunięto"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "Dodano"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"

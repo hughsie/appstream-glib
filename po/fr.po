@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-01-15 13:56+0000\n"
-"PO-Revision-Date: 2016-01-15 13:56+0000\n"
+"POT-Creation-Date: 2016-01-22 14:01+0000\n"
+"PO-Revision-Date: 2016-01-22 14:01+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: French (http://www.transifex.com/freedesktop/appstream-glib/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -87,14 +87,6 @@ msgid "Set the AppStream version"
 msgstr "Définit la version AppStream"
 
 #. TRANSLATORS: command line option
-msgid "Set the ostree repo name"
-msgstr ""
-
-#. TRANSLATORS: command line option
-msgid "Only handle this arch in the ostree repo"
-msgstr ""
-
-#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "Définit l'ancien emplacement des métadonnées"
 
@@ -139,6 +131,46 @@ msgstr "La génération de métadonnées a échoué"
 #. TRANSLATORS: information message
 msgid "Done!"
 msgstr "Terminé !"
+
+#. TRANSLATORS: we've saving the icon file to disk
+msgid "Saving icon"
+msgstr ""
+
+#. TRANSLATORS: command line option
+msgid "Set the prefix"
+msgstr ""
+
+#. TRANSLATORS: we're generating the AppStream data
+msgid "Processing application"
+msgstr ""
+
+#. TRANSLATORS: the .appdata.xml file could not
+#. * be loaded
+msgid "Error loading AppData file"
+msgstr ""
+
+#. TRANSLATORS: the .mo files could not be parsed
+msgid "Error parsing translations"
+msgstr ""
+
+#. TRANSLATORS: the .desktop file could not
+#. * be loaded
+msgid "Error loading desktop file"
+msgstr ""
+
+#. TRANSLATORS: this is when the folder could
+#. * not be created
+msgid "Error creating output directory"
+msgstr ""
+
+#. TRANSLATORS: we've saving the XML file to disk
+msgid "Saving AppStream"
+msgstr ""
+
+#. TRANSLATORS: this is when the destination file
+#. * cannot be saved for some reason
+msgid "Error saving AppStream file"
+msgstr ""
 
 #. TRANSLATORS: this is a command alias
 #, c-format
