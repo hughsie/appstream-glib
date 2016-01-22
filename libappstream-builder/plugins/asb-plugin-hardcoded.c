@@ -23,10 +23,6 @@
 
 #include <asb-plugin.h>
 
-struct AsbPluginPrivate {
-	GPtrArray	*project_groups;
-};
-
 /**
  * asb_plugin_get_name:
  */
@@ -44,47 +40,6 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
 	asb_plugin_add_glob (globs, "/usr/share/help/*");
 	asb_plugin_add_glob (globs, "/usr/share/gnome-shell/search-providers/*");
-}
-
-/**
- * asb_plugin_initialize:
- */
-void
-asb_plugin_initialize (AsbPlugin *plugin)
-{
-	plugin->priv = ASB_PLUGIN_GET_PRIVATE (AsbPluginPrivate);
-	plugin->priv->project_groups = asb_glob_value_array_new ();
-
-	/* this is a heuristic */
-	g_ptr_array_add (plugin->priv->project_groups,
-			 asb_glob_value_new ("http*://*.gnome.org*", "GNOME"));
-	g_ptr_array_add (plugin->priv->project_groups,
-			 asb_glob_value_new ("http://gnome-*.sourceforge.net/", "GNOME"));
-	g_ptr_array_add (plugin->priv->project_groups,
-			 asb_glob_value_new ("http*://*.kde.org*", "KDE"));
-	g_ptr_array_add (plugin->priv->project_groups,
-			 asb_glob_value_new ("http://*kde-apps.org/*", "KDE"));
-	g_ptr_array_add (plugin->priv->project_groups,
-			 asb_glob_value_new ("http://*xfce.org*", "XFCE"));
-	g_ptr_array_add (plugin->priv->project_groups,
-			 asb_glob_value_new ("http://lxde.org*", "LXDE"));
-	g_ptr_array_add (plugin->priv->project_groups,
-			 asb_glob_value_new ("http://pcmanfm.sourceforge.net/*", "LXDE"));
-	g_ptr_array_add (plugin->priv->project_groups,
-			 asb_glob_value_new ("http://lxde.sourceforge.net/*", "LXDE"));
-	g_ptr_array_add (plugin->priv->project_groups,
-			 asb_glob_value_new ("http://*mate-desktop.org*", "MATE"));
-	g_ptr_array_add (plugin->priv->project_groups,
-			 asb_glob_value_new ("http://*enlightenment.org*", "Enlightenment"));
-}
-
-/**
- * asb_plugin_destroy:
- */
-void
-asb_plugin_destroy (AsbPlugin *plugin)
-{
-	g_ptr_array_unref (plugin->priv->project_groups);
 }
 
 /**
@@ -110,19 +65,6 @@ asb_plugin_process_app (AsbPlugin *plugin,
 				 "Auto-adding project group XFCE for %s",
 				 as_app_get_id (AS_APP (app)));
 	}
-
-	/* use the URL to guess the project group */
-	tmp = asb_package_get_url (pkg);
-	if (as_app_get_project_group (AS_APP (app)) == NULL && tmp != NULL) {
-		tmp = asb_glob_value_search (plugin->priv->project_groups, tmp);
-		if (tmp != NULL)
-			as_app_set_project_group (AS_APP (app), tmp);
-	}
-
-	/* use summary to guess the project group */
-	tmp = as_app_get_comment (AS_APP (app), NULL);
-	if (tmp != NULL && g_strstr_len (tmp, -1, "for KDE") != NULL)
-		as_app_set_project_group (AS_APP (app), "KDE");
 
 	/* look for any installed docs */
 	filelist = asb_package_get_filelist (pkg);

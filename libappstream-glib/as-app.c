@@ -35,6 +35,7 @@
 #include "config.h"
 
 #include <string.h>
+#include <fnmatch.h>
 
 #include "as-app-private.h"
 #include "as-bundle-private.h"
@@ -4210,6 +4211,50 @@ as_app_parse_appdata_unintltoolize_cb (GNode *node, gpointer data)
 }
 
 /**
+ * as_app_parse_appdata_guess_project_group:
+ **/
+static void
+as_app_parse_appdata_guess_project_group (AsApp *app)
+{
+	const gchar *tmp;
+	guint i;
+	struct {
+		const gchar *project_group;
+		const gchar *url_glob;
+	} table[] = {
+		{ "Enlightenment",	"http://*enlightenment.org*" },
+		{ "GNOME",		"http*://*.gnome.org*" },
+		{ "GNOME",		"http://gnome-*.sourceforge.net/" },
+		{ "KDE",		"http://*kde-apps.org/*" },
+		{ "KDE",		"http*://*.kde.org*" },
+		{ "LXDE",		"http://lxde.org*" },
+		{ "LXDE",		"http://lxde.sourceforge.net/*" },
+		{ "LXDE",		"http://pcmanfm.sourceforge.net/*" },
+		{ "MATE",		"http://*mate-desktop.org*" },
+		{ "XFCE",		"http://*xfce.org*" },
+		{ NULL, NULL }
+	};
+
+	/* match a URL glob and set the project group */
+	tmp = as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE);
+	if (tmp == NULL)
+		return;
+	for (i = 0; table[i].project_group != NULL; i++) {
+		if (fnmatch (table[i].url_glob, tmp, 0) == 0) {
+			as_app_set_project_group (app, table[i].project_group);
+			return;
+		}
+	}
+
+	/* use summary to guess the project group */
+	tmp = as_app_get_comment (AS_APP (app), NULL);
+	if (tmp != NULL && g_strstr_len (tmp, -1, "for KDE") != NULL) {
+		as_app_set_project_group (AS_APP (app), "KDE");
+		return;
+	}
+}
+
+/**
  * as_app_parse_appdata_file:
  **/
 static gboolean
@@ -4305,6 +4350,13 @@ as_app_parse_appdata_file (AsApp *app,
 	as_node_context_set_source_kind (ctx, AS_APP_SOURCE_KIND_APPDATA);
 	if (!as_app_node_parse_full (app, node, flags, ctx, error))
 		return FALSE;
+
+	/* use heuristics */
+	if (flags & AS_APP_PARSE_FLAG_USE_HEURISTICS) {
+		if (as_app_get_project_group (app) == NULL)
+			as_app_parse_appdata_guess_project_group (app);
+	}
+
 	return TRUE;
 }
 
