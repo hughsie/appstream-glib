@@ -261,7 +261,7 @@ load_appdata (const gchar *prefix, const gchar *app_name, GError **error)
 
 	app = as_app_new ();
 	if (!as_app_parse_file (app, appdata_path,
-				AS_APP_PARSE_FLAG_NONE,
+				AS_APP_PARSE_FLAG_USE_HEURISTICS,
 				error))
 		return NULL;
 	if (as_app_get_id_kind (app) == AS_ID_KIND_UNKNOWN) {
