@@ -64,6 +64,7 @@ appstream_compose_LDADD =				\
 	$(AS_GLIB_LIBS)					\
 	$(GLIB_LIBS)					\
 	$(SOUP_LIBS)					\
+	$(GDKPIXBUF_LIBS)				\
 	$(LIBARCHIVE_LIBS)
 appstream_compose_LDFLAGS =				\
 	$(PIE_LDFLAGS)
