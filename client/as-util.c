@@ -3454,6 +3454,67 @@ as_util_pad_strings (const gchar *id, const gchar *msg, guint align)
 }
 
 /**
+ * as_util_modify:
+ **/
+static gboolean
+as_util_modify (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsNode *node_app;
+	AsNode *node_val;
+	g_autoptr(GFile) file = NULL;
+	g_autoptr(AsNode) root = NULL;
+
+	/* check args */
+	if (g_strv_length (values) != 3) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, expected FILENAME KEY VALUE");
+		return FALSE;
+	}
+
+	/* load file */
+	file = g_file_new_for_path (values[0]);
+	root = as_node_from_file (file,
+				  AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS |
+				  AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
+				  NULL,
+				  error);
+	if (root == NULL)
+		return FALSE;
+
+	/* get application node */
+	node_app = as_node_find (root, "component");
+	if (node_app == NULL)
+		node_app = as_node_find (root, "application");
+	if (node_app == NULL) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "invalid AppData file");
+		return FALSE;
+	}
+
+	/* find a key with this exact name */
+	node_val = as_node_find (node_app, values[1]);
+	if (node_val != NULL) {
+		as_node_set_data (node_val, values[2], AS_NODE_INSERT_FLAG_NONE);
+	} else {
+		as_node_insert (node_app,
+				values[1], values[2],
+				AS_NODE_INSERT_FLAG_NONE,
+				NULL);
+	}
+
+	/* save to file */
+	return as_node_to_file (root, file,
+				AS_NODE_TO_XML_FLAG_ADD_HEADER |
+				AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+				AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE,
+				NULL, error);
+}
+
+/**
  * as_util_generate_guid:
  **/
 static gboolean
@@ -3931,6 +3992,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Generate a GUID from an input string"),
 		     as_util_generate_guid);
+	as_util_add (priv->cmd_array,
+		     "modify",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Modify an AppData file"),
+		     as_util_modify);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
