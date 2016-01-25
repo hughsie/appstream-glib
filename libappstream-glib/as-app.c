@@ -4395,8 +4395,7 @@ as_app_parse_appdata_file (AsApp *app,
 		priv->problems |= AS_APP_PROBLEM_NO_XML_HEADER;
 
 	/* check for copyright */
-	tmp = g_strstr_len (data, len, "<!-- Copyright");
-	if (tmp == NULL)
+	if (fnmatch("*<!--*Copyright*-->*", data, 0) != 0)
 		priv->problems |= AS_APP_PROBLEM_NO_COPYRIGHT_INFO;
 
 	/* parse */

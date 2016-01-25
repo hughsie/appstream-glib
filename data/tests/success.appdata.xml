@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2013 Richard Hughes <richard@hughsie.com> -->
+<!--
+ Copyright 2013 Richard Hughes <richard@hughsie.com>
+ -->
 <application>
   <id type="desktop">gnome-power-statistics.desktop</id>
   <metadata_license>CC0 and CC-BY-3.0</metadata_license>
