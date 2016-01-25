@@ -922,31 +922,18 @@ as_store_from_root (AsStore *store,
 	if (tmp != NULL)
 		as_store_set_builder_id (store, tmp);
 
-	/* nothing specified */
-	if (icon_root == NULL)
-		icon_root = "/usr/share/app-info/";
-
-	/* try the speecification directory first */
+	/* if we have an origin either from the XML or _set_origin() */
 	if (priv->origin != NULL) {
-		icon_path = g_build_filename (icon_root,
-					      "..",
-					      "icons",
-					      priv->origin,
-					      NULL);
-		if (!g_file_test (icon_path, G_FILE_TEST_IS_DIR)) {
-			g_free (icon_path);
-			icon_path = NULL;
-		}
-	}
-
-	/* fall back to the xdg-app location */
-	if (icon_path == NULL) {
-		icon_path = g_build_filename (icon_root,
-					      "icons",
-					      NULL);
-		if (!g_file_test (icon_path, G_FILE_TEST_IS_DIR)) {
-			g_free (icon_path);
-			icon_path = NULL;
+		if (icon_root == NULL)
+			icon_root = "/usr/share/app-info/icons/";
+		if (g_strcmp0 (priv->origin, "xdg-app") == 0) {
+			icon_path = g_build_filename (icon_root,
+						      "icons",
+						      NULL);
+		} else {
+			icon_path = g_build_filename (icon_root,
+						      priv->origin,
+						      NULL);
 		}
 	}
 
