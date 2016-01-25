@@ -29,6 +29,7 @@
 #include "as-app-private.h"
 #include "as-app-gettext.h"
 #include "as-bundle-private.h"
+#include "as-translation-private.h"
 #include "as-checksum-private.h"
 #include "as-enums.h"
 #include "as-icon-private.h"
@@ -1180,6 +1181,49 @@ as_test_bundle_func (void)
 }
 
 static void
+as_test_translation_func (void)
+{
+	GError *error = NULL;
+	AsNode *n;
+	AsNode *root;
+	GString *xml;
+	const gchar *src =
+		"<translation type=\"gettext\">gnome-software</translation>";
+	gboolean ret;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsTranslation) translation = NULL;
+
+	translation = as_translation_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "translation");
+	g_assert (n != NULL);
+	ctx = as_node_context_new ();
+	ret = as_translation_node_parse (translation, n, ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_translation_get_kind (translation), ==, AS_TRANSLATION_KIND_GETTEXT);
+	g_assert_cmpstr (as_translation_get_id (translation), ==, "gnome-software");
+
+	/* back to node */
+	root = as_node_new ();
+	as_node_context_set_version (ctx, 0.4);
+	n = as_translation_node_insert (translation, root, ctx);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+}
+
+static void
 as_test_screenshot_func (void)
 {
 	GPtrArray *images;
@@ -1260,6 +1304,7 @@ as_test_app_func (void)
 		"<pkgname>gnome-software</pkgname>\n"
 		"<source_pkgname>gnome-software-src</source_pkgname>\n"
 		"<bundle type=\"limba\">gnome-software-gnome-3-16</bundle>\n"
+		"<translation type=\"gettext\">gnome-software</translation>\n"
 		"<name>Software</name>\n"
 		"<name xml:lang=\"pl\">Oprogramowanie</name>\n"
 		"<summary>Application manager</summary>\n"
@@ -1674,7 +1719,9 @@ as_test_app_validate_file_bad_func (void)
 				    "<li> requires sentence case");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<project_group> is not valid");
-	g_assert_cmpint (probs->len, ==, 29);
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
+				    "<translation> not specified");
+	g_assert_cmpint (probs->len, ==, 30);
 }
 
 static void
@@ -1881,7 +1928,9 @@ as_test_app_validate_style_func (void)
 				    "<summary> is shorter than <name>");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<url> is not present");
-	g_assert_cmpint (probs->len, ==, 11);
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
+				    "<translation> not specified");
+	g_assert_cmpint (probs->len, ==, 12);
 }
 
 static void
@@ -4504,6 +4553,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/icon", as_test_icon_func);
 	g_test_add_func ("/AppStream/icon{embedded}", as_test_icon_embedded_func);
 	g_test_add_func ("/AppStream/bundle", as_test_bundle_func);
+	g_test_add_func ("/AppStream/translation", as_test_translation_func);
 	g_test_add_func ("/AppStream/image", as_test_image_func);
 	g_test_add_func ("/AppStream/image{resize}", as_test_image_resize_func);
 	g_test_add_func ("/AppStream/image{alpha}", as_test_image_alpha_func);

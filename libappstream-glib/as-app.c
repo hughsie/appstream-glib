@@ -46,6 +46,7 @@
 #include "as-release-private.h"
 #include "as-screenshot-private.h"
 #include "as-tag.h"
+#include "as-translation-private.h"
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
@@ -76,6 +77,7 @@ typedef struct
 	GPtrArray	*screenshots;			/* of AsScreenshot */
 	GPtrArray	*icons;				/* of AsIcon */
 	GPtrArray	*bundles;			/* of AsBundle */
+	GPtrArray	*translations;			/* of AsTranslation */
 	GPtrArray	*vetos;				/* of string */
 	AsAppSourceKind	 source_kind;
 	AsAppState	 state;
@@ -285,6 +287,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->screenshots);
 	g_ptr_array_unref (priv->icons);
 	g_ptr_array_unref (priv->bundles);
+	g_ptr_array_unref (priv->translations);
 	g_ptr_array_unref (priv->token_cache);
 	g_ptr_array_unref (priv->vetos);
 
@@ -325,6 +328,7 @@ as_app_init (AsApp *app)
 	priv->screenshots = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->icons = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->bundles = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	priv->translations = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->token_cache = g_ptr_array_new_with_free_func ((GDestroyNotify) as_app_token_item_free);
 	priv->vetos = g_ptr_array_new_with_free_func (g_free);
 
@@ -729,6 +733,23 @@ as_app_get_bundles (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->bundles;
+}
+
+/**
+ * as_app_get_translations:
+ * @app: a #AsApp instance.
+ *
+ * Gets any translations the application has defined.
+ *
+ * Returns: (element-type AsTranslation) (transfer none): an array
+ *
+ * Since: 0.5.8
+ **/
+GPtrArray *
+as_app_get_translations (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->translations;
 }
 
 /**
@@ -2280,6 +2301,20 @@ as_app_check_bundle_duplicate (AsBundle *bundle1, AsBundle *bundle2)
 }
 
 /**
+ * as_app_check_translation_duplicate:
+ **/
+static gboolean
+as_app_check_translation_duplicate (AsTranslation *translation1, AsTranslation *translation2)
+{
+	if (as_translation_get_kind (translation1) != as_translation_get_kind (translation2))
+		return FALSE;
+	if (g_strcmp0 (as_translation_get_id (translation1),
+		       as_translation_get_id (translation2)) != 0)
+		return FALSE;
+	return TRUE;
+}
+
+/**
  * as_app_add_icon:
  * @app: a #AsApp instance.
  * @icon: a #AsIcon instance.
@@ -2342,6 +2377,33 @@ as_app_add_bundle (AsApp *app, AsBundle *bundle)
 		}
 	}
 	g_ptr_array_add (priv->bundles, g_object_ref (bundle));
+}
+
+/**
+ * as_app_add_translation:
+ * @app: a #AsApp instance.
+ * @translation: a #AsTranslation instance.
+ *
+ * Adds a translation to an application.
+ *
+ * Since: 0.5.8
+ **/
+void
+as_app_add_translation (AsApp *app, AsTranslation *translation)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
+		AsTranslation *bu_tmp;
+		guint i;
+		for (i = 0; i < priv->translations->len; i++) {
+			bu_tmp = g_ptr_array_index (priv->translations, i);
+			if (as_app_check_translation_duplicate (translation, bu_tmp))
+				return;
+		}
+	}
+	g_ptr_array_add (priv->translations, g_object_ref (translation));
 }
 
 /**
@@ -2656,6 +2718,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	AsAppPrivate *priv = GET_PRIVATE (donor);
 	AsAppPrivate *papp = GET_PRIVATE (app);
 	AsBundle *bundle;
+	AsTranslation *translation;
 	AsScreenshot *ss;
 	AsProvide *pr;
 	const gchar *tmp;
@@ -2695,6 +2758,12 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	for (i = 0; i < priv->bundles->len; i++) {
 		bundle = g_ptr_array_index (priv->bundles, i);
 		as_app_add_bundle (app, bundle);
+	}
+
+	/* translations */
+	for (i = 0; i < priv->translations->len; i++) {
+		translation = g_ptr_array_index (priv->translations, i);
+		as_app_add_translation (app, translation);
 	}
 
 	/* releases */
@@ -3046,6 +3115,12 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		as_bundle_node_insert (bu, node_app, ctx);
 	}
 
+	/* <translation> */
+	for (i = 0; i < priv->translations->len; i++) {
+		AsTranslation *bu = g_ptr_array_index (priv->translations, i);
+		as_translation_node_insert (bu, node_app, ctx);
+	}
+
 	/* <name> */
 	as_node_insert_localized (node_app, "name",
 				  priv->names,
@@ -3281,6 +3356,17 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		if (!as_bundle_node_parse (ic, n, ctx, error))
 			return FALSE;
 		as_app_add_bundle (app, ic);
+		break;
+	}
+
+	/* <translation> */
+	case AS_TAG_TRANSLATION:
+	{
+		g_autoptr(AsTranslation) ic = NULL;
+		ic = as_translation_new ();
+		if (!as_translation_node_parse (ic, n, ctx, error))
+			return FALSE;
+		as_app_add_translation (app, ic);
 		break;
 	}
 
@@ -3676,6 +3762,7 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags,
 		g_ptr_array_set_size (priv->extends, 0);
 		g_ptr_array_set_size (priv->icons, 0);
 		g_ptr_array_set_size (priv->bundles, 0);
+		g_ptr_array_set_size (priv->translations, 0);
 		g_hash_table_remove_all (priv->keywords);
 	}
 	for (n = node->children; n != NULL; n = n->next) {
@@ -3849,6 +3936,16 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 				if (!as_bundle_node_parse_dep11 (bu, c, ctx, error))
 					return FALSE;
 				as_app_add_bundle (app, bu);
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Translation") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				g_autoptr(AsTranslation) bu = NULL;
+				bu = as_translation_new ();
+				if (!as_translation_node_parse_dep11 (bu, c, ctx, error))
+					return FALSE;
+				as_app_add_translation (app, bu);
 			}
 			continue;
 		}

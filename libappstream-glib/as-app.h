@@ -34,6 +34,7 @@
 #include "as-provide.h"
 #include "as-release.h"
 #include "as-screenshot.h"
+#include "as-translation.h"
 
 G_BEGIN_DECLS
 
@@ -229,6 +230,7 @@ GPtrArray	*as_app_get_provides		(AsApp		*app);
 GPtrArray	*as_app_get_screenshots		(AsApp		*app);
 GPtrArray	*as_app_get_icons		(AsApp		*app);
 GPtrArray	*as_app_get_bundles		(AsApp		*app);
+GPtrArray	*as_app_get_translations	(AsApp		*app);
 GHashTable	*as_app_get_names		(AsApp		*app);
 GHashTable	*as_app_get_comments		(AsApp		*app);
 GHashTable	*as_app_get_developer_names	(AsApp		*app);
@@ -339,6 +341,8 @@ void		 as_app_add_icon		(AsApp		*app,
 						 AsIcon		*icon);
 void		 as_app_add_bundle		(AsApp		*app,
 						 AsBundle	*bundle);
+void		 as_app_add_translation		(AsApp		*app,
+						 AsTranslation	*translation);
 void		 as_app_add_language		(AsApp		*app,
 						 gint		 percentage,
 						 const gchar	*locale);

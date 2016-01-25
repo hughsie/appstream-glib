@@ -3500,10 +3500,15 @@ as_util_modify (AsUtilPrivate *priv, gchar **values, GError **error)
 	if (node_val != NULL) {
 		as_node_set_data (node_val, values[2], AS_NODE_INSERT_FLAG_NONE);
 	} else {
-		as_node_insert (node_app,
-				values[1], values[2],
-				AS_NODE_INSERT_FLAG_NONE,
-				NULL);
+		AsNode *n;
+		n = as_node_insert (node_app,
+				    values[1], values[2],
+				    AS_NODE_INSERT_FLAG_NONE,
+				    NULL);
+
+		/* special case some tags with default values */
+		if (g_strcmp0 (values[1], "translation") == 0)
+			as_node_add_attribute (n, "type", "gettext");
 	}
 
 	/* save to file */

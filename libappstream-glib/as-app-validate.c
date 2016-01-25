@@ -1078,6 +1078,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	gboolean require_url = TRUE;
 	gboolean require_content_license = TRUE;
 	gboolean require_name = TRUE;
+	gboolean require_translation = TRUE;
 	gboolean validate_license = TRUE;
 	gboolean ret;
 	guint length_name_max = 30;
@@ -1100,6 +1101,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		number_para_max = 10;
 		number_para_min = 1;
 		require_sentence_case = FALSE;
+		require_translation = FALSE;
 		switch (as_app_get_source_kind (app)) {
 		case AS_APP_SOURCE_KIND_METAINFO:
 		case AS_APP_SOURCE_KIND_APPDATA:
@@ -1237,6 +1239,15 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		default:
 			break;
 		}
+	}
+
+	/* translation */
+	if (require_translation &&
+	    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
+	    as_app_get_translations (app)->len == 0) {
+		ai_app_validate_add (&helper,
+				     AS_PROBLEM_KIND_TAG_MISSING,
+				     "<translation> not specified");
 	}
 
 	/* pkgname */

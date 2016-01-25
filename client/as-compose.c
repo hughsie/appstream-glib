@@ -300,6 +300,29 @@ load_appdata (const gchar *prefix, const gchar *app_name, GError **error)
 }
 
 /**
+ * get_gettext_domains:
+ **/
+static gchar **
+get_gettext_domains (GPtrArray *translations)
+{
+	guint i;
+	guint cnt = 0;
+	AsTranslation *t;
+	g_auto(GStrv) intl_domains = NULL;
+
+	intl_domains = g_new0 (gchar *, translations->len + 1);
+	for (i = 0; i < translations->len; i++) {
+		t = g_ptr_array_index (translations, i);
+		if (as_translation_get_kind (t) != AS_TRANSLATION_KIND_GETTEXT)
+			continue;
+		intl_domains[cnt++] = g_strdup (as_translation_get_id (t));
+	}
+	if (cnt == 0)
+		return NULL;
+	return g_steal_pointer (&intl_domains);
+}
+
+/**
  * main:
  **/
 int
@@ -396,7 +419,7 @@ main (int argc, char **argv)
 	/* load each application specified */
 	for (i = 1; i < (guint) argc; i++) {
 		const gchar *app_name = argv[i];
-		const gchar *gettext_domain;
+		GPtrArray *translations;
 		g_auto(GStrv) intl_domains = NULL;
 		g_autofree gchar *locale_path = NULL;
 		g_autoptr(AsApp) app_appdata = NULL;
@@ -414,15 +437,14 @@ main (int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 
-		/* set translations: FIXME add to specification */
-		gettext_domain = as_app_get_metadata_item (app_appdata,
-							   "X-Gettext-Domain");
-		if (gettext_domain != NULL) {
+		/* set translations */
+		translations = as_app_get_translations (app_appdata);
+		intl_domains = get_gettext_domains (translations);
+		if (intl_domains != NULL) {
 			locale_path = g_build_filename (prefix,
 							"share",
 							"locale",
 							NULL);
-			intl_domains = g_strsplit (gettext_domain, ",", -1);
 			if (!as_app_gettext_search_path (app_appdata,
 							 locale_path,
 							 intl_domains,

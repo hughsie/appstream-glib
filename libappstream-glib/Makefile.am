@@ -84,6 +84,7 @@ libappstream_glib_include_HEADERS =				\
 	as-screenshot.h						\
 	as-store.h						\
 	as-tag.h						\
+	as-translation.h					\
 	as-utils.h						\
 	as-version.h
 
@@ -122,8 +123,9 @@ libappstream_glib_la_SOURCES =					\
 	as-screenshot.c						\
 	as-screenshot-private.h					\
 	as-store.c						\
-										\
 	as-tag.c						\
+	as-translation.c					\
+	as-translation-private.h				\
 	as-utils.c						\
 	as-utils-private.h					\
 	as-version.h						\
@@ -208,6 +210,8 @@ introspection_sources =						\
 	as-store.h						\
 	as-tag.c						\
 	as-tag.h						\
+	as-translation.c					\
+	as-translation.h					\
 	as-utils.c						\
 	as-utils.h						\
 	as-version.h

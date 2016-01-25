@@ -46,6 +46,7 @@
     <xi:include href="xml/as-enums.xml"/>
     <xi:include href="xml/as-node.xml"/>
     <xi:include href="xml/as-tag.xml"/>
+    <xi:include href="xml/as-translation.xml"/>
     <xi:include href="xml/as-utils.xml"/>
     <xi:include href="xml/as-version.xml"/>
   </reference>
