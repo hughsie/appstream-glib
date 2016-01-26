@@ -98,6 +98,8 @@ as_translation_kind_from_string (const gchar *kind)
 {
 	if (g_strcmp0 (kind, "gettext") == 0)
 		return AS_TRANSLATION_KIND_GETTEXT;
+	if (g_strcmp0 (kind, "qt") == 0)
+		return AS_TRANSLATION_KIND_QT;
 	return AS_TRANSLATION_KIND_UNKNOWN;
 }
 
@@ -116,6 +118,8 @@ as_translation_kind_to_string (AsTranslationKind kind)
 {
 	if (kind == AS_TRANSLATION_KIND_GETTEXT)
 		return "gettext";
+	if (kind == AS_TRANSLATION_KIND_QT)
+		return "qt";
 	return NULL;
 }
 
@@ -203,6 +207,10 @@ as_translation_node_insert (AsTranslation *translation, GNode *parent, AsNodeCon
 {
 	AsTranslationPrivate *priv = GET_PRIVATE (translation);
 	GNode *n;
+
+	/* invalid */
+	if (priv->kind == AS_TRANSLATION_KIND_UNKNOWN)
+		return NULL;
 
 	n = as_node_insert (parent, "translation", priv->id,
 			    AS_NODE_INSERT_FLAG_NONE,

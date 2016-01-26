@@ -51,12 +51,14 @@ struct _AsTranslationClass
  * AsTranslationKind:
  * @AS_TRANSLATION_KIND_UNKNOWN:		Type invalid or not known
  * @AS_TRANSLATION_KIND_GETTEXT:		Gettext translation system
+ * @AS_TRANSLATION_KIND_QT:			QT translation system
  *
  * The translation type.
  **/
 typedef enum {
-	AS_TRANSLATION_KIND_UNKNOWN,
-	AS_TRANSLATION_KIND_GETTEXT,
+	AS_TRANSLATION_KIND_UNKNOWN,		/* Since: 0.5.7 */
+	AS_TRANSLATION_KIND_GETTEXT,		/* Since: 0.5.7 */
+	AS_TRANSLATION_KIND_QT,			/* Since: 0.5.8 */
 	/*< private >*/
 	AS_TRANSLATION_KIND_LAST
 } AsTranslationKind;

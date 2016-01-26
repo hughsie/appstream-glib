@@ -25,7 +25,7 @@
 #define __APPSTREAM_GLIB_H_INSIDE__
 
 #include <as-app.h>
-#include <as-app-gettext.h>
+#include <as-app-builder.h>
 #include <as-bundle.h>
 #include <as-checksum.h>
 #include <as-enums.h>

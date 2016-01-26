@@ -69,7 +69,7 @@ libappstream_glib_includedir = $(includedir)/libappstream-glib
 libappstream_glib_include_HEADERS =				\
 	appstream-glib.h					\
 	as-app.h						\
-	as-app-gettext.h					\
+	as-app-builder.h					\
 	as-bundle.h						\
 	as-checksum.h						\
 	as-enums.h						\
@@ -91,7 +91,7 @@ libappstream_glib_include_HEADERS =				\
 libappstream_glib_la_SOURCES =					\
 	as-app.c						\
 	as-app-desktop.c					\
-	as-app-gettext.c					\
+	as-app-builder.c					\
 	as-app-inf.c						\
 	as-app-private.h					\
 	as-app-validate.c					\

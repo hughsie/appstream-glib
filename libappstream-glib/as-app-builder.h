@@ -33,12 +33,26 @@
 
 G_BEGIN_DECLS
 
-gboolean	 as_app_gettext_search_path	(AsApp		*app,
-						 const gchar	*path,
-						 gchar		**intl_domains,
-						 guint		 min_percentage,
-						 GCancellable	*cancellable,
-						 GError		**error);
+/**
+ * AsAppBuilderFlags:
+ * @AS_APP_BUILDER_FLAG_NONE:			No special actions to use
+ * @AS_APP_BUILDER_FLAG_USE_FALLBACKS:		Fall back to guesses where required
+ *
+ * The flags to use when building applications.
+ **/
+typedef enum {
+	AS_APP_BUILDER_FLAG_NONE,
+	AS_APP_BUILDER_FLAG_USE_FALLBACKS	= 1,	/* Since: 0.5.8 */
+	/*< private >*/
+	AS_APP_BUILDER_FLAG_LAST,
+} AsAppBuilderFlags;
+
+gboolean	 as_app_builder_search_translations	(AsApp		*app,
+							 const gchar	*prefix,
+							 guint		 min_percentage,
+							 AsAppBuilderFlags flags,
+							 GCancellable	*cancellable,
+							 GError		**error);
 
 G_END_DECLS
 

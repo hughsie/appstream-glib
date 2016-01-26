@@ -39,6 +39,7 @@ void
 asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
 	asb_plugin_add_glob (globs, "/usr/share/locale/*/LC_MESSAGES/*.mo");
+	asb_plugin_add_glob (globs, "/usr/share/*/translations/*.qm");
 }
 
 /**
@@ -51,20 +52,20 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			const gchar *tmpdir,
 			GError **error)
 {
-	g_autofree gchar *root = NULL;
-	g_auto(GStrv) intl_domains = NULL;
+	g_autofree gchar *prefix = NULL;
+	GPtrArray *translations;
+
+	/* auto-add this */
+	translations = as_app_get_translations (AS_APP (app));
+	if (translations->len == 0) {
+		g_autoptr(AsTranslation) translation = as_translation_new ();
+		as_translation_set_id (translation, asb_package_get_name (pkg));
+		as_app_add_translation (AS_APP (app), translation);
+	}
 
 	/* search for .mo files in the prefix */
-	root = g_build_filename (tmpdir, "/usr/share/locale", NULL);
-	if (!g_file_test (root, G_FILE_TEST_EXISTS))
-		return TRUE;
-
-	/* generate */
-	intl_domains = g_strsplit (asb_package_get_name (pkg), ",", -1);
-	return as_app_gettext_search_path (AS_APP (app),
-					   root,
-					   intl_domains,
-					   25,
-					   NULL,
-					   error);
+	prefix = g_build_filename (tmpdir, "usr", NULL);
+	return as_app_builder_search_translations (AS_APP (app), prefix, 25,
+						   AS_APP_BUILDER_FLAG_USE_FALLBACKS,
+						   NULL, error);
 }

@@ -30,8 +30,6 @@ test_files =						\
 	font-1-1.fc21.noarch.rpm			\
 	font-serif-1-1.fc21.noarch.rpm			\
 	intltool.appdata.xml.in				\
-	locale/en_GB/LC_MESSAGES/app.mo			\
-	locale/ru/LC_MESSAGES/app.mo			\
 	origin-icons.tar.gz				\
 	origin.xml					\
 	rpmbuild/app.png				\
@@ -49,6 +47,9 @@ test_files =						\
 	usr/share/applications/test.desktop		\
 	usr/share/icons/hicolor/64x64/apps/test2.png	\
 	usr/share/icons/hicolor/128x128/apps/test3.png	\
+	usr/share/kdeapp/translations/kdeapp_fr.qm	\
+	usr/share/locale/en_GB/LC_MESSAGES/app.mo	\
+	usr/share/locale/ru/LC_MESSAGES/app.mo		\
 	usr/share/pixmaps/test.png			\
 	validate.xml.gz
 
