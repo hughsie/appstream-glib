@@ -217,17 +217,26 @@ as_app_builder_search_locale_gettext (AsAppBuilderContext *ctx,
 }
 
 typedef enum {
-	AS_APP_TRANSLATION_QM_TAG_END		= 1,
+	AS_APP_TRANSLATION_QM_TAG_END		= 0x1,
 	/* SourceText16 */
-	AS_APP_TRANSLATION_QM_TAG_TRANSLATION	= 3,
+	AS_APP_TRANSLATION_QM_TAG_TRANSLATION	= 0x3,
 	/* Context16 */
-	AS_APP_TRANSLATION_QM_TAG_OBSOLETE1	= 5,
-	AS_APP_TRANSLATION_QM_TAG_SOURCE_TEXT	= 6,
-	AS_APP_TRANSLATION_QM_TAG_CONTEXT	= 7,
-	AS_APP_TRANSLATION_QM_TAG_COMMENT	= 8,
+	AS_APP_TRANSLATION_QM_TAG_OBSOLETE1	= 0x5,
+	AS_APP_TRANSLATION_QM_TAG_SOURCE_TEXT	= 0x6,
+	AS_APP_TRANSLATION_QM_TAG_CONTEXT	= 0x7,
+	AS_APP_TRANSLATION_QM_TAG_COMMENT	= 0x8,
 	/* Obsolete2 */
 	AS_APP_TRANSLATION_QM_TAG_LAST
 } AsAppBuilderQmTag;
+
+typedef enum {
+	AS_APP_TRANSLATION_QM_SECTION_CONTEXTS	= 0x2f,
+	AS_APP_TRANSLATION_QM_SECTION_HASHES	= 0x42,
+	AS_APP_TRANSLATION_QM_SECTION_MESSAGES	= 0x69,
+	AS_APP_TRANSLATION_QM_SECTION_NUMERUS	= 0x88,
+	AS_APP_TRANSLATION_QM_SECTION_DEPS	= 0x96,
+	AS_APP_TRANSLATION_QM_SECTION_LAST
+} AsAppBuilderQmSection;
 
 static guint8
 _read_uint8 (const guint8 *data, guint32 *offset)
@@ -248,6 +257,54 @@ _read_uint32 (const guint8 *data, guint32 *offset)
 }
 
 /**
+ * as_app_builder_parse_data_qt:
+ **/
+static void
+as_app_builder_parse_data_qt (AsAppBuilderContext *ctx,
+			      const gchar *locale,
+			      const guint8 *data,
+			      guint32 len)
+{
+	AsAppBuilderEntry *entry;
+	guint32 m = 0;
+	guint nstrings = 0;
+
+	/* read data */
+	while (m < len) {
+		guint32 tag_len;
+		AsAppBuilderQmTag tag = _read_uint8(data, &m);
+		switch (tag) {
+		case AS_APP_TRANSLATION_QM_TAG_END:
+			break;
+		case AS_APP_TRANSLATION_QM_TAG_OBSOLETE1:
+			m += 4;
+			break;
+		case AS_APP_TRANSLATION_QM_TAG_TRANSLATION:
+		case AS_APP_TRANSLATION_QM_TAG_SOURCE_TEXT:
+		case AS_APP_TRANSLATION_QM_TAG_CONTEXT:
+		case AS_APP_TRANSLATION_QM_TAG_COMMENT:
+			tag_len = _read_uint32 (data, &m);
+			if (tag_len < 0xffffffff)
+				m += tag_len;
+			if (tag == AS_APP_TRANSLATION_QM_TAG_TRANSLATION)
+				nstrings++;
+			break;
+		default:
+			m = G_MAXUINT32;
+			break;
+		}
+	}
+
+	/* add new entry */
+	entry = as_app_builder_entry_new ();
+	entry->locale = g_strdup (locale);
+	entry->nstrings = nstrings;
+	if (entry->nstrings > ctx->max_nstrings)
+		ctx->max_nstrings = entry->nstrings;
+	ctx->data = g_list_prepend (ctx->data, entry);
+}
+
+/**
  * as_app_builder_parse_file_qt:
  **/
 static gboolean
@@ -256,11 +313,8 @@ as_app_builder_parse_file_qt (AsAppBuilderContext *ctx,
 			      const gchar *filename,
 			      GError **error)
 {
-	AsAppBuilderEntry *entry;
-	guint32 addr = 0;
 	guint32 len;
 	guint32 m = 0;
-	guint nstrings = 0;
 	g_autofree guint8 *data = NULL;
 	const guint8 qm_magic[] = {
 		0x3c, 0xb8, 0x64, 0x18, 0xca, 0xef, 0x9c, 0x95,
@@ -282,69 +336,19 @@ as_app_builder_parse_file_qt (AsAppBuilderContext *ctx,
 	}
 	m += sizeof(qm_magic);
 
-	/* unknown value 0x42? */
-	_read_uint8 (data, &m);
-
-	/* find offset to data table */
-	addr = _read_uint32 (data, &m);
-	m += addr;
-
-	/* unknown! */
-	_read_uint8 (data, &m);
-	_read_uint32 (data, &m);
-	//g_debug ("seeking to QM @ %x\n", m);
-
-	/* read data */
+	/* parse each section */
 	while (m < len) {
-		guint8 tag;
-		guint32 tag_len;
-		//g_debug ("QM @%x", m);
-		tag = _read_uint8(data, &m);
-		switch (tag) {
-		case AS_APP_TRANSLATION_QM_TAG_END:
-			//g_debug ("QM{END}");
-			break;
-		case AS_APP_TRANSLATION_QM_TAG_OBSOLETE1:
-			m += 4;
-			break;
-		case AS_APP_TRANSLATION_QM_TAG_TRANSLATION:
-			tag_len = _read_uint32 (data, &m);
-			if (tag_len < 0xffffffff)
-				m += tag_len;
-			//g_debug ("QM{TRANSLATION} len %i", tag_len);
-			nstrings++;
-			break;
-		case AS_APP_TRANSLATION_QM_TAG_SOURCE_TEXT:
-			tag_len = _read_uint32 (data, &m);
-			m += tag_len;
-			//g_debug ("QM{SOURCE_TEXT} len %i", tag_len);
-			break;
-		case AS_APP_TRANSLATION_QM_TAG_CONTEXT:
-			tag_len = _read_uint32 (data, &m);
-			m += tag_len;
-			//g_debug ("QM{CONTEXT} len %i", tag_len);
-			break;
-		case AS_APP_TRANSLATION_QM_TAG_COMMENT:
-			tag_len = _read_uint32 (data, &m);
-			m += tag_len;
-			//g_debug ("QM{COMMENT} len %i", tag_len);
-			break;
-		default:
-			//g_debug ("QM{unknown} tag kind %i", tag);
-			m = G_MAXUINT32;
-			break;
+		AsAppBuilderQmSection section = _read_uint8(data, &m);
+		guint32 section_len = _read_uint32 (data, &m);
+		if (section == AS_APP_TRANSLATION_QM_SECTION_MESSAGES) {
+			as_app_builder_parse_data_qt (ctx,
+						      locale,
+						      data + m,
+						      section_len);
 		}
+		m += section_len;
 	}
 
-//	g_debug ("for QT locale %s, nstrings=%i", locale, nstrings);
-
-	/* add new entry */
-	entry = as_app_builder_entry_new ();
-	entry->locale = g_strdup (locale);
-	entry->nstrings = nstrings;
-	if (entry->nstrings > ctx->max_nstrings)
-		ctx->max_nstrings = entry->nstrings;
-	ctx->data = g_list_prepend (ctx->data, entry);
 	return TRUE;
 }
 
