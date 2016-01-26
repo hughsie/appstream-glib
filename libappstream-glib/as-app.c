@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -2128,6 +2128,10 @@ as_app_subsume_release (AsRelease *release, AsRelease *donor)
 	tmp = as_release_get_description (donor, NULL);
 	if (tmp != NULL)
 		as_release_set_description (release, NULL, tmp);
+
+	/* only installed is useful */
+	if (as_release_get_state (donor) == AS_RELEASE_STATE_INSTALLED);
+		as_release_set_state (release, AS_RELEASE_STATE_INSTALLED);
 
 	/* overwrite the timestamp if the metadata is high quality,
 	 * or if no timestamp has already been set */

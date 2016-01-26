@@ -1974,6 +1974,27 @@ as_store_load_app_install (AsStore *store,
 }
 
 /**
+ * as_store_set_app_installed:
+ **/
+static void
+as_store_set_app_installed (AsApp *app)
+{
+	AsRelease *rel;
+	GPtrArray *releases;
+	guint i;
+
+	/* releases */
+	releases = as_app_get_releases (app);
+	for (i = 0; i < releases->len; i++) {
+		rel = g_ptr_array_index (releases, i);
+		as_release_set_state (rel, AS_RELEASE_STATE_INSTALLED);
+	}
+
+	/* app itself */
+	as_app_set_state (app, AS_APP_STATE_INSTALLED);
+}
+
+/**
  * as_store_load_installed:
  **/
 static gboolean
@@ -2048,9 +2069,12 @@ as_store_load_installed (AsStore *store,
 		    as_app_get_vetos(app)->len > 0)
 			continue;
 
+		/* as these are added from installed AppData files then all the
+		 * releases can also be marked as installed */
+		as_store_set_app_installed (app);
+
 		/* set lower priority than AppStream entries */
 		as_app_set_priority (app, -1);
-		as_app_set_state (app, AS_APP_STATE_INSTALLED);
 		as_store_add_app (store, app);
 	}
 

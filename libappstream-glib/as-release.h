@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -49,6 +49,22 @@ struct _AsReleaseClass
 	void (*_as_reserved8)	(void);
 };
 
+/**
+ * AsReleaseState:
+ * @AS_RELEASE_STATE_UNKNOWN:			Unknown state
+ * @AS_RELEASE_STATE_INSTALLED:			Release is installed
+ * @AS_RELEASE_STATE_AVAILABLE:			Release is available
+ *
+ * The release state.
+ **/
+typedef enum {
+	AS_RELEASE_STATE_UNKNOWN,		/* Since: 0.5.8 */
+	AS_RELEASE_STATE_INSTALLED,		/* Since: 0.5.8 */
+	AS_RELEASE_STATE_AVAILABLE,		/* Since: 0.5.8 */
+	/*< private >*/
+	AS_RELEASE_STATE_LAST
+} AsReleaseState;
+
 AsRelease	*as_release_new			(void);
 gint		 as_release_vercmp		(AsRelease	*rel1,
 						 AsRelease	*rel2);
@@ -68,6 +84,7 @@ AsChecksum	*as_release_get_checksum_by_target (AsRelease	*release,
 						 AsChecksumTarget target);
 GPtrArray	*as_release_get_checksums	(AsRelease	*release);
 AsUrgencyKind	 as_release_get_urgency		(AsRelease	*release);
+AsReleaseState	 as_release_get_state		(AsRelease	*release);
 guint64		 as_release_get_size		(AsRelease	*release,
 						 AsSizeKind	 kind);
 
@@ -87,7 +104,9 @@ void		 as_release_add_location	(AsRelease	*release,
 void		 as_release_add_checksum	(AsRelease	*release,
 						 AsChecksum	*checksum);
 void		 as_release_set_urgency		(AsRelease	*release,
-						 AsUrgencyKind urgency);
+						 AsUrgencyKind	 urgency);
+void		 as_release_set_state		(AsRelease	*release,
+						 AsReleaseState	 state);
 void		 as_release_set_size		(AsRelease	*release,
 						 AsSizeKind	 kind,
 						 guint64	 size);

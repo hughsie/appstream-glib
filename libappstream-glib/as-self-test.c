@@ -441,7 +441,12 @@ as_test_release_func (void)
 	/* verify */
 	g_assert_cmpint (as_release_get_timestamp (release), ==, 123);
 	g_assert_cmpint (as_release_get_urgency (release), ==, AS_URGENCY_KIND_CRITICAL);
+	g_assert_cmpint (as_release_get_state (release), ==, AS_RELEASE_STATE_UNKNOWN);
 	g_assert_cmpstr (as_release_get_version (release), ==, "0.1.2");
+
+	/* state is not stored in the XML */
+	as_release_set_state (release, AS_RELEASE_STATE_INSTALLED);
+	g_assert_cmpint (as_release_get_state (release), ==, AS_RELEASE_STATE_INSTALLED);
 
 	/* back to node */
 	root = as_node_new ();

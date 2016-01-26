@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -48,6 +48,7 @@
 typedef struct
 {
 	AsUrgencyKind		 urgency;
+	AsReleaseState		 state;
 	guint64			 size[AS_SIZE_KIND_LAST];
 	gchar			*version;
 	GHashTable		*blobs; /* of gchar*:GBytes */
@@ -90,6 +91,7 @@ as_release_init (AsRelease *release)
 	guint i;
 
 	priv->urgency = AS_URGENCY_KIND_UNKNOWN;
+	priv->state = AS_RELEASE_STATE_UNKNOWN;
 	priv->locations = g_ptr_array_new_with_free_func (g_free);
 	priv->checksums = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->blobs = g_hash_table_new_full (g_str_hash, g_str_equal,
@@ -193,6 +195,23 @@ as_release_get_urgency (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	return priv->urgency;
+}
+
+/**
+ * as_release_get_state:
+ * @release: a #AsRelease instance.
+ *
+ * Gets the release state.
+ *
+ * Returns: enumberated value, or %AS_RELEASE_STATE_UNKNOWN for not set or invalid
+ *
+ * Since: 0.5.8
+ **/
+AsReleaseState
+as_release_get_state (AsRelease *release)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	return priv->state;
 }
 
 /**
@@ -425,6 +444,22 @@ as_release_set_urgency (AsRelease *release, AsUrgencyKind urgency)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	priv->urgency = urgency;
+}
+
+/**
+ * as_release_set_state:
+ * @release: a #AsRelease instance.
+ * @state: the release state, e.g. %AS_RELEASE_STATE_INSTALLED
+ *
+ * Sets the release state.
+ *
+ * Since: 0.5.8
+ **/
+void
+as_release_set_state (AsRelease *release, AsReleaseState state)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	priv->state = state;
 }
 
 /**
