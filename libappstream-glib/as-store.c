@@ -1766,6 +1766,8 @@ as_store_load_app_info_file (AsStore *store,
 			     GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *icon_path = NULL;
 	g_autoptr(GFile) file = NULL;
 	g_autoptr(AsProfileTask) ptask = NULL;
 
@@ -1776,13 +1778,25 @@ as_store_load_app_info_file (AsStore *store,
 	if (!as_store_guess_origin_fallback (store, path_xml, error))
 		return FALSE;
 
+	/* for system-wide paths we need to remove the last "xmls" directory
+	 * on the icon path; in hindsight this was a bad idea */
+	basename = g_path_get_basename (icon_root);
+	if (g_strcmp0 (basename, "xmls") == 0) {
+		g_autofree gchar *dirname = NULL;
+		dirname = g_path_get_dirname (icon_root);
+		icon_path = g_build_filename (dirname, "icons", NULL);
+	} else {
+		icon_path = g_strdup (icon_root);
+	}
+
 	/* load this specific file */
 	g_debug ("Loading AppStream XML %s with icon path %s",
-		 path_xml, icon_root);
+		 path_xml, icon_path);
+
 	file = g_file_new_for_path (path_xml);
 	return as_store_from_file (store,
 				   file,
-				   icon_root,
+				   icon_path,
 				   cancellable,
 				   error);
 }
