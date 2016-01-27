@@ -3751,7 +3751,9 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags,
 	/* new style */
 	if (g_strcmp0 (as_node_get_name (node), "component") == 0) {
 		tmp = as_node_get_attribute (node, "type");
-		if (tmp != NULL)
+		if (tmp == NULL)
+			as_app_set_id_kind (app, AS_ID_KIND_GENERIC);
+		else
 			as_app_set_id_kind (app, as_id_kind_from_string (tmp));
 		prio = as_node_get_attribute_as_int (node, "priority");
 		if (prio != G_MAXINT && prio != 0)

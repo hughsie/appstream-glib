@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -63,6 +63,8 @@ as_id_kind_to_string (AsIdKind id_kind)
 		return "firmware";
 	if (id_kind == AS_ID_KIND_RUNTIME)
 		return "runtime";
+	if (id_kind == AS_ID_KIND_GENERIC)
+		return "generic";
 	return "unknown";
 }
 
@@ -97,6 +99,8 @@ as_id_kind_from_string (const gchar *id_kind)
 		return AS_ID_KIND_FIRMWARE;
 	if (g_strcmp0 (id_kind, "runtime") == 0)
 		return AS_ID_KIND_RUNTIME;
+	if (g_strcmp0 (id_kind, "generic") == 0)
+		return AS_ID_KIND_GENERIC;
 	return AS_ID_KIND_UNKNOWN;
 }
 

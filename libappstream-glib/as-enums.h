@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -42,8 +42,9 @@ G_BEGIN_DECLS
  * @AS_ID_KIND_ADDON:			An addon, e.g. a plugin
  * @AS_ID_KIND_FIRMWARE:		A firmware update
  * @AS_ID_KIND_RUNTIME:			Runtime platform
+ * @AS_ID_KIND_GENERIC:			Generic component
  *
- * The ID type.
+ * The component type.
  **/
 typedef enum {
 	AS_ID_KIND_UNKNOWN,		/* Since: 0.1.0 */
@@ -56,6 +57,7 @@ typedef enum {
 	AS_ID_KIND_ADDON,		/* Since: 0.1.7 */
 	AS_ID_KIND_FIRMWARE,		/* Since: 0.3.5 */
 	AS_ID_KIND_RUNTIME,		/* Since: 0.5.6 */
+	AS_ID_KIND_GENERIC,		/* Since: 0.5.8 */
 	/*< private >*/
 	AS_ID_KIND_LAST
 } AsIdKind;
