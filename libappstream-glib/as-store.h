@@ -56,7 +56,7 @@ struct _AsStoreClass
  * @AS_STORE_LOAD_FLAG_NONE:			No extra flags to use
  * @AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM:		The system app-info AppStream data
  * @AS_STORE_LOAD_FLAG_APP_INFO_USER:		The per-user app-info AppStream data
- * @AS_STORE_LOAD_FLAG_APP_INSTALL:		The ubuntu-specific app-install data
+ * @AS_STORE_LOAD_FLAG_APP_INSTALL:		The ubuntu-specific app-install data (obsolete)
  * @AS_STORE_LOAD_FLAG_APPDATA:			The installed AppData files
  * @AS_STORE_LOAD_FLAG_DESKTOP:			The installed desktop files
  * @AS_STORE_LOAD_FLAG_ALLOW_VETO:		Add vetoed applications

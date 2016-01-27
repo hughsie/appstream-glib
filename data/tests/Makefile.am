@@ -40,9 +40,7 @@ test_files =						\
 	test-0.1-1.fc21.noarch.rpm			\
 	translated.appdata.xml				\
 	usr/share/appdata/broken.appdata.xml		\
-	usr/share/app-install/desktop/test.desktop	\
 	usr/share/app-install/icons/aequorea/iceweasel.png \
-	usr/share/app-install/icons/test.png		\
 	usr/share/applications/broken.desktop		\
 	usr/share/applications/test.desktop		\
 	usr/share/icons/hicolor/64x64/apps/test2.png	\

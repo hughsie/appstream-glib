@@ -1090,12 +1090,6 @@ as_store_remove_by_source_file (AsStore *store, const gchar *filename)
 	as_store_perhaps_emit_changed (store, "remove-by-source-file");
 }
 
-static gboolean
-as_store_load_app_install_file (AsStore *store,
-				const gchar *filename,
-				const gchar *path_icons,
-				GError **error);
-
 /**
  * as_store_monitor_changed_cb:
  */
@@ -1109,20 +1103,14 @@ as_store_monitor_changed_cb (AsMonitor *monitor,
 	/* reload, or emit a signal */
 	if (priv->watch_flags & AS_STORE_WATCH_FLAG_ADDED) {
 		g_autoptr(GError) error = NULL;
+		g_autoptr(GFile) file = NULL;
 		_cleanup_uninhibit_ guint32 *tok = NULL;
 		tok = as_store_changed_inhibit (store);
 		as_store_remove_by_source_file (store, filename);
 		g_debug ("rescanning %s", filename);
-		if (g_str_has_suffix (filename, ".desktop")) {
-			if (!as_store_load_app_install_file (store, filename,
-							     NULL, &error))
-				g_warning ("failed to rescan: %s", error->message);
-		} else {
-			g_autoptr(GFile) file = NULL;
-			file = g_file_new_for_path (filename);
-			if (!as_store_from_file (store, file, NULL, NULL, &error))
-				g_warning ("failed to rescan: %s", error->message);
-		}
+		file = g_file_new_for_path (filename);
+		if (!as_store_from_file (store, file, NULL, NULL, &error))
+			g_warning ("failed to rescan: %s", error->message);
 	}
 	as_store_perhaps_emit_changed (store, "file changed");
 }
@@ -1140,17 +1128,11 @@ as_store_monitor_added_cb (AsMonitor *monitor,
 	/* reload, or emit a signal */
 	if (priv->watch_flags & AS_STORE_WATCH_FLAG_ADDED) {
 		g_autoptr(GError) error = NULL;
+		g_autoptr(GFile) file = NULL;
 		g_debug ("scanning %s", filename);
-		if (g_str_has_suffix (filename, ".desktop")) {
-			if (!as_store_load_app_install_file (store, filename,
-							     NULL, &error))
-				g_warning ("failed to rescan: %s", error->message);
-		} else {
-			g_autoptr(GFile) file = NULL;
-			file = g_file_new_for_path (filename);
-			if (!as_store_from_file (store, file, NULL, NULL, &error))
-				g_warning ("failed to rescan: %s", error->message);
-		}
+		file = g_file_new_for_path (filename);
+		if (!as_store_from_file (store, file, NULL, NULL, &error))
+			g_warning ("failed to rescan: %s", error->message);
 	} else {
 		as_store_perhaps_emit_changed (store, "file added");
 	}
@@ -1869,135 +1851,6 @@ as_store_load_app_info (AsStore *store,
 }
 
 /**
- * as_store_add_app_install_screenshot:
- **/
-static void
-as_store_add_app_install_screenshot (AsApp *app)
-{
-	GPtrArray *pkgnames;
-	const gchar *pkgname;
-	g_autofree gchar *url = NULL;
-	g_autoptr(AsImage) im = NULL;
-	g_autoptr(AsScreenshot) ss = NULL;
-
-	/* get the default package name */
-	pkgnames = as_app_get_pkgnames (app);
-	if (pkgnames->len == 0)
-		return;
-	pkgname = g_ptr_array_index (pkgnames, 0);
-	url = g_build_filename ("http://screenshots.debian.net/screenshot",
-				pkgname, NULL);
-
-	/* screenshots.debian.net doesn't specify a size, so this is a guess */
-	im = as_image_new ();
-	as_image_set_url (im, url);
-	as_image_set_width (im, 800);
-	as_image_set_height (im, 600);
-
-	/* add screenshot without a caption */
-	ss = as_screenshot_new ();
-	as_screenshot_add_image (ss, im);
-	as_app_add_screenshot (app, ss);
-}
-
-/**
- * as_store_load_app_install_file:
- **/
-static gboolean
-as_store_load_app_install_file (AsStore *store,
-				const gchar *filename,
-				const gchar *path_icons,
-				GError **error)
-{
-	AsIcon *icon;
-	GPtrArray *icons;
-	guint i;
-	g_autoptr(GError) error_local = NULL;
-	g_autoptr(AsApp) app = NULL;
-
-	app = as_app_new ();
-	as_app_set_icon_path (app, path_icons);
-	if (!as_app_parse_file (app,
-				filename,
-				AS_APP_PARSE_FLAG_USE_HEURISTICS,
-				&error_local)) {
-		if (g_error_matches (error_local,
-				     AS_APP_ERROR,
-				     AS_APP_ERROR_INVALID_TYPE)) {
-			/* Ubuntu include non-apps here too... */
-			return TRUE;
-		}
-		g_set_error (error,
-			     AS_STORE_ERROR,
-			     AS_STORE_ERROR_FAILED,
-			     "Failed to parse %s: %s",
-			     filename,
-			     error_local->message);
-		return FALSE;
-	}
-
-	/* convert all the icons */
-	icons = as_app_get_icons (app);
-	for (i = 0; i < icons->len; i++) {
-		icon = g_ptr_array_index (icons, i);
-		if (as_icon_get_kind (icon) == AS_ICON_KIND_UNKNOWN)
-			as_icon_set_kind (icon, AS_ICON_KIND_CACHED);
-	}
-	as_store_add_app_install_screenshot (app);
-	as_store_add_app (store, app);
-
-	/* this isn't strictly true, but setting it AS_APP_SOURCE_KIND_DESKTOP
-	 * means that it's considered installed by the front-end */
-	 as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
-
-	return TRUE;
-}
-
-/**
- * as_store_load_app_install:
- **/
-static gboolean
-as_store_load_app_install (AsStore *store,
-			   const gchar *path,
-			   GCancellable *cancellable,
-			   GError **error)
-{
-	const gchar *tmp;
-	g_autoptr(GDir) dir = NULL;
-	g_autoptr(GError) error_local = NULL;
-	g_autofree gchar *path_desktop = NULL;
-	g_autofree gchar *path_icons = NULL;
-
-	path_desktop = g_build_filename (path, "desktop", NULL);
-	if (!g_file_test (path_desktop, G_FILE_TEST_EXISTS))
-		return TRUE;
-	dir = g_dir_open (path_desktop, 0, &error_local);
-	if (dir == NULL) {
-		g_set_error (error,
-			     AS_STORE_ERROR,
-			     AS_STORE_ERROR_FAILED,
-			     "Failed to open %s: %s",
-			     path_desktop,
-			     error_local->message);
-		return FALSE;
-	}
-
-	path_icons = g_build_filename (path, "icons", NULL);
-	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		g_autofree gchar *filename = NULL;
-		if (!g_str_has_suffix (tmp, ".desktop"))
-			continue;
-		filename = g_build_filename (path_desktop, tmp, NULL);
-		if (!as_store_load_app_install_file (store,
-						     filename,
-						     path_icons,
-						     error))
-			return FALSE;
-	}
-	return TRUE;
-}
-
-/**
  * as_store_set_app_installed:
  **/
 static void
@@ -2313,15 +2166,6 @@ as_store_load (AsStore *store,
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 			continue;
 		if (!as_store_load_installed (store, flags, dest, cancellable, error))
-			return FALSE;
-	}
-
-	/* ubuntu specific */
-	if ((flags & AS_STORE_LOAD_FLAG_APP_INSTALL) > 0) {
-		g_autofree gchar *dest = NULL;
-		dest = g_build_filename (priv->destdir ? priv->destdir : "/",
-					 "/usr/share/app-install", NULL);
-		if (!as_store_load_app_install (store, dest, cancellable, error))
 			return FALSE;
 	}
 
