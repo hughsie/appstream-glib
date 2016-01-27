@@ -1246,6 +1246,7 @@ as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 	store = as_store_new ();
 	if (g_strcmp0 (values[0], "installed") == 0) {
 		if (!as_store_load (store,
+				    AS_STORE_LOAD_FLAG_IGNORE_INVALID |
 				    AS_STORE_LOAD_FLAG_APPDATA |
 				    AS_STORE_LOAD_FLAG_DESKTOP,
 				    NULL, error)) {
@@ -1253,6 +1254,7 @@ as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 		}
 	} else if (g_strcmp0 (values[0], "xdg-app") == 0) {
 		if (!as_store_load (store,
+				    AS_STORE_LOAD_FLAG_IGNORE_INVALID |
 				    AS_STORE_LOAD_FLAG_XDG_APP_USER,
 				    NULL, error)) {
 			return FALSE;
@@ -1297,6 +1299,7 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 	/* load system database */
 	store = as_store_new ();
 	if (!as_store_load (store,
+			    AS_STORE_LOAD_FLAG_IGNORE_INVALID |
 			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
 			    AS_STORE_LOAD_FLAG_APPDATA |
 			    AS_STORE_LOAD_FLAG_XDG_APP_USER |

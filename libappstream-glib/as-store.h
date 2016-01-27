@@ -62,6 +62,7 @@ struct _AsStoreClass
  * @AS_STORE_LOAD_FLAG_ALLOW_VETO:		Add vetoed applications
  * @AS_STORE_LOAD_FLAG_XDG_APP_USER:		Add xdg-app user applications
  * @AS_STORE_LOAD_FLAG_XDG_APP_SYSTEM:		Add xdg-app system applications
+ * @AS_STORE_LOAD_FLAG_IGNORE_INVALID:		Ignore invalid files
  *
  * The flags to use when loading the store.
  **/
@@ -75,6 +76,7 @@ typedef enum {
 	AS_STORE_LOAD_FLAG_ALLOW_VETO		= 32,	/* Since: 0.2.5 */
 	AS_STORE_LOAD_FLAG_XDG_APP_USER		= 64,	/* Since: 0.5.7 */
 	AS_STORE_LOAD_FLAG_XDG_APP_SYSTEM	= 128,	/* Since: 0.5.7 */
+	AS_STORE_LOAD_FLAG_IGNORE_INVALID	= 256,	/* Since: 0.5.8 */
 	/*< private >*/
 	AS_STORE_LOAD_FLAG_LAST
 } AsStoreLoadFlags;

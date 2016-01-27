@@ -1807,6 +1807,7 @@ as_store_load_app_info_file (AsStore *store,
 static gboolean
 as_store_load_app_info (AsStore *store,
 			const gchar *path,
+			AsStoreLoadFlags flags,
 			GCancellable *cancellable,
 			GError **error)
 {
@@ -1832,6 +1833,7 @@ as_store_load_app_info (AsStore *store,
 		return FALSE;
 	}
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
+		GError *error_store = NULL;
 		g_autofree gchar *filename_md = NULL;
 		if (g_strcmp0 (tmp, "icons") == 0)
 			continue;
@@ -1840,8 +1842,16 @@ as_store_load_app_info (AsStore *store,
 						  filename_md,
 						  path,
 						  cancellable,
-						  error))
-			return FALSE;
+						  &error_store)) {
+			if (flags & AS_STORE_LOAD_FLAG_IGNORE_INVALID) {
+				g_warning ("Ignoring invalid AppStream file %s: %s",
+					   filename_md, error_store->message);
+				g_clear_error (&error_store);
+			} else {
+				g_propagate_error (error, error_store);
+				return FALSE;
+			}
+		}
 	}
 
 	/* watch the directories for changes */
@@ -2291,7 +2301,7 @@ as_store_load (AsStore *store,
 		dest = g_build_filename (priv->destdir ? priv->destdir : "/", tmp, NULL);
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 			continue;
-		if (!as_store_load_app_info (store, dest, cancellable, error))
+		if (!as_store_load_app_info (store, dest, flags, cancellable, error))
 			return FALSE;
 	}
 
