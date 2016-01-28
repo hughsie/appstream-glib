@@ -851,16 +851,16 @@ as_store_match_addons (AsStore *store)
 }
 
 /**
- * as_store_set_origin_for_xdg_app:
+ * as_store_get_origin_for_xdg_app:
  **/
-static void
-as_store_set_origin_for_xdg_app (AsStore *store, const gchar *fn)
+static gchar *
+as_store_get_origin_for_xdg_app (const gchar *fn)
 {
 	g_auto(GStrv) split = g_strsplit (fn, "/", -1);
 	guint chunks = g_strv_length (split);
 	if (chunks < 5)
-		return;
-	as_store_set_origin (store, split[chunks - 4]);
+		return NULL;
+	return g_strdup (split[chunks - 4]);
 }
 
 /**
@@ -879,6 +879,7 @@ as_store_from_root (AsStore *store,
 	const gchar *tmp;
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autofree gchar *icon_path = NULL;
+	g_autofree gchar *origin_app = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 	g_autoptr(AsProfileTask) ptask = NULL;
 
@@ -910,11 +911,16 @@ as_store_from_root (AsStore *store,
 
 	/* set in the XML file */
 	tmp = as_node_get_attribute (apps, "origin");
-	if (tmp != NULL) {
-		if (g_strcmp0 (tmp, "xdg-app") == 0)
-			as_store_set_origin_for_xdg_app (store, source_filename);
-		else
-			as_store_set_origin (store, tmp);
+	if (tmp != NULL)
+		as_store_set_origin (store, tmp);
+
+	/* special case xdg-apps */
+	if (g_strcmp0 (priv->origin, "xdg-app") == 0) {
+		origin_app = as_store_get_origin_for_xdg_app (source_filename);
+		g_debug ("using app origin of %s rather than 'xdg-app'",
+			 origin_app);
+	} else {
+		origin_app = g_strdup (priv->origin);
 	}
 
 	/* set in the XML file */
@@ -967,7 +973,8 @@ as_store_from_root (AsStore *store,
 				     error_local->message);
 			return FALSE;
 		}
-		as_app_set_origin (app, priv->origin);
+		if (origin_app != NULL)
+			as_app_set_origin (app, origin_app);
 		if (source_filename != NULL)
 			as_app_set_source_file (app, source_filename);
 		as_store_add_app (store, app);
