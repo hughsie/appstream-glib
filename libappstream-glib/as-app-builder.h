@@ -53,6 +53,14 @@ gboolean	 as_app_builder_search_translations	(AsApp		*app,
 							 AsAppBuilderFlags flags,
 							 GCancellable	*cancellable,
 							 GError		**error);
+gboolean	 as_app_builder_search_kudos		(AsApp		*app,
+							 const gchar	*prefix,
+							 AsAppBuilderFlags flags,
+							 GError		**error);
+gboolean	 as_app_builder_search_provides		(AsApp		*app,
+							 const gchar	*prefix,
+							 AsAppBuilderFlags flags,
+							 GError		**error);
 
 G_END_DECLS
 

@@ -16,7 +16,6 @@ plugindir = $(libdir)/asb-plugins-$(AS_PLUGIN_VERSION)
 plugin_LTLIBRARIES =					\
 	libasb_plugin_absorb.la				\
 	libasb_plugin_appdata.la			\
-	libasb_plugin_dbus.la				\
 	libasb_plugin_desktop.la			\
 	libasb_plugin_gettext.la			\
 	libasb_plugin_hardcoded.la
@@ -25,11 +24,6 @@ if HAVE_FONTS
 plugin_LTLIBRARIES +=					\
 	libasb_plugin_font.la
 endif
-
-libasb_plugin_dbus_la_SOURCES = asb-plugin-dbus.c
-libasb_plugin_dbus_la_LIBADD = $(GLIB_LIBS)
-libasb_plugin_dbus_la_LDFLAGS = -module -avoid-version
-libasb_plugin_dbus_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
 libasb_plugin_absorb_la_SOURCES = asb-plugin-absorb.c
 libasb_plugin_absorb_la_LIBADD = $(GLIB_LIBS)

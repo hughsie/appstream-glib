@@ -425,6 +425,28 @@ main (int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 
+		/* auto-add kudos */
+		if (!as_app_builder_search_kudos (app_appdata,
+						  prefix,
+						  AS_APP_BUILDER_FLAG_NONE,
+						  &error)) {
+			/* TRANSLATORS: we could not auto-add the kudo */
+			g_print ("%s: %s\n", _("Error parsing kudos"),
+				 error->message);
+			return EXIT_FAILURE;
+		}
+
+		/* auto-add provides */
+		if (!as_app_builder_search_provides (app_appdata,
+						     prefix,
+						     AS_APP_BUILDER_FLAG_NONE,
+						     &error)) {
+			/* TRANSLATORS: we could not auto-add the provides */
+			g_print ("%s: %s\n", _("Error parsing provides"),
+				 error->message);
+			return EXIT_FAILURE;
+		}
+
 		as_store_add_app (store, app_appdata);
 
 		app_desktop = load_desktop (prefix,

@@ -40,6 +40,8 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
 	asb_plugin_add_glob (globs, "/usr/share/help/*");
 	asb_plugin_add_glob (globs, "/usr/share/gnome-shell/search-providers/*");
+	asb_plugin_add_glob (globs, "/usr/share/dbus-1/system-services/*.service");
+	asb_plugin_add_glob (globs, "/usr/share/dbus-1/services/*.service");
 }
 
 /**
@@ -56,6 +58,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	GPtrArray *deps;
 	gchar **filelist;
 	guint i;
+	g_autofree gchar *prefix = NULL;
 
 	/* look for any installed docs */
 	filelist = asb_package_get_filelist (pkg);
@@ -71,29 +74,22 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		}
 	}
 
-	/* look for a shell search provider */
-	for (i = 0; filelist[i] != NULL; i++) {
-		if (asb_plugin_match_glob ("/usr/share/gnome-shell/search-providers/*",
-					   filelist[i])) {
-			asb_package_log (pkg,
-					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
-					 "Auto-adding kudo SearchProvider for %s",
-					 as_app_get_id (AS_APP (app)));
-			as_app_add_kudo_kind (AS_APP (app),
-					      AS_KUDO_KIND_SEARCH_PROVIDER);
-			break;
-		}
-	}
+	/* look for kudos and provides */
+	prefix = g_build_filename (tmpdir, "usr", NULL);
+	if (!as_app_builder_search_kudos (AS_APP (app),
+					  prefix,
+					  AS_APP_BUILDER_FLAG_USE_FALLBACKS,
+					  error))
+		return FALSE;
+	if (!as_app_builder_search_provides (AS_APP (app),
+					     prefix,
+					     AS_APP_BUILDER_FLAG_USE_FALLBACKS,
+					     error))
+		return FALSE;
 
 	/* look for a high contrast icon */
 	for (i = 0; filelist[i] != NULL; i++) {
 		if (asb_plugin_match_glob ("/usr/share/icons/HighContrast/*",
-					   filelist[i])) {
-			as_app_add_kudo_kind (AS_APP (app),
-					      AS_KUDO_KIND_HIGH_CONTRAST);
-			break;
-		}
-		if (asb_plugin_match_glob ("/usr/share/icons/hicolor/symbolic/apps/*.svg",
 					   filelist[i])) {
 			as_app_add_kudo_kind (AS_APP (app),
 					      AS_KUDO_KIND_HIGH_CONTRAST);

@@ -516,3 +516,176 @@ as_app_builder_search_translations (AsApp *app,
 	}
 	return TRUE;
 }
+
+/**
+ * as_app_builder_search_path:
+ **/
+static gboolean
+as_app_builder_search_path (AsApp *app,
+			    const gchar *prefix,
+			    const gchar *path,
+			    AsAppBuilderFlags flags)
+{
+	const gchar *tmp;
+	g_autofree gchar *fn_prefix = NULL;
+	g_autoptr(GDir) dir = NULL;
+
+	/* find dir */
+	fn_prefix = g_build_filename (prefix, path, NULL);
+	if (!g_file_test (fn_prefix, G_FILE_TEST_IS_DIR))
+		return FALSE;
+	dir = g_dir_open (fn_prefix, 0, NULL);
+	if (dir == NULL)
+		return FALSE;
+
+	/* find any file with the app-id prefix */
+	while ((tmp = g_dir_read_name (dir)) != NULL) {
+		if (g_str_has_prefix (tmp, as_app_get_id (app)))
+			return TRUE;
+	}
+
+	/* just anything */
+	if (flags & AS_APP_BUILDER_FLAG_USE_FALLBACKS)
+		return TRUE;
+
+	return FALSE;
+}
+
+/**
+ * as_app_builder_search_kudos:
+ * @app: an #AsApp
+ * @prefix: a prefix to search, e.g. "/usr"
+ * @flags: #AsAppBuilderFlags, e.g. %AS_APP_BUILDER_FLAG_USE_FALLBACKS
+ * @cancellable: a #GCancellable or %NULL
+ * @error: a #GError or %NULL
+ *
+ * Searches a prefix for auto-detected kudos.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.5.8
+ **/
+gboolean
+as_app_builder_search_kudos (AsApp *app,
+			     const gchar *prefix,
+			     AsAppBuilderFlags flags,
+			     GError **error)
+{
+	/* gnome-shell search provider */
+	if (!as_app_has_kudo_kind (app, AS_KUDO_KIND_SEARCH_PROVIDER) &&
+	    as_app_builder_search_path (app, prefix,
+					"share/gnome-shell/search-providers",
+					flags)) {
+		g_debug ("auto-adding SearchProvider kudo");
+		as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_SEARCH_PROVIDER);
+	}
+
+	/* hicolor icon */
+	if (!as_app_has_kudo_kind (app, AS_KUDO_KIND_HIGH_CONTRAST) &&
+	    as_app_builder_search_path (app, prefix,
+					"share/icons/hicolor/symbolic/apps",
+					flags)) {
+		g_debug ("auto-adding HighContrast kudo");
+		as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_HIGH_CONTRAST);
+	}
+	return TRUE;
+}
+
+/**
+ * as_app_builder_search_dbus_file:
+ **/
+static gboolean
+as_app_builder_search_dbus_file (AsApp *app,
+				 const gchar *filename,
+				 AsProvideKind provide_kind,
+				 GError **error)
+{
+	g_autofree gchar *name = NULL;
+	g_autoptr(AsProvide) provide = NULL;
+	g_autoptr(GKeyFile) kf = NULL;
+
+	/* load file */
+	kf = g_key_file_new ();
+	if (!g_key_file_load_from_file (kf, filename, G_KEY_FILE_NONE, error))
+		return FALSE;
+	name = g_key_file_get_string (kf, "D-BUS Service", "Name", error);
+	if (name == NULL)
+		return FALSE;
+
+	/* add provide */
+	provide = as_provide_new ();
+	as_provide_set_kind (provide, provide_kind);
+	as_provide_set_value (provide, name);
+	as_app_add_provide (AS_APP (app), provide);
+	return TRUE;
+}
+
+/**
+ * as_app_builder_search_dbus:
+ **/
+static gboolean
+as_app_builder_search_dbus (AsApp *app,
+			    const gchar *prefix,
+			    const gchar *path,
+			    AsProvideKind provide_kind,
+			    AsAppBuilderFlags flags,
+			    GError **error)
+{
+	const gchar *tmp;
+	g_autofree gchar *fn_prefix = NULL;
+	g_autoptr(GDir) dir = NULL;
+
+	/* find dir */
+	fn_prefix = g_build_filename (prefix, path, NULL);
+	if (!g_file_test (fn_prefix, G_FILE_TEST_IS_DIR))
+		return TRUE;
+	dir = g_dir_open (fn_prefix, 0, error);
+	if (dir == NULL)
+		return FALSE;
+
+	/* find any file with the app-id prefix */
+	while ((tmp = g_dir_read_name (dir)) != NULL) {
+		g_autofree gchar *fn = NULL;
+		if ((flags & AS_APP_BUILDER_FLAG_USE_FALLBACKS) == 0) {
+			if (!g_str_has_prefix (tmp, as_app_get_id (app)))
+				continue;
+		}
+		fn = g_build_filename (fn_prefix, tmp, NULL);
+		if (!as_app_builder_search_dbus_file (app, fn, provide_kind, error))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
+ * as_app_builder_search_provides:
+ * @app: an #AsApp
+ * @prefix: a prefix to search, e.g. "/usr"
+ * @flags: #AsAppBuilderFlags, e.g. %AS_APP_BUILDER_FLAG_USE_FALLBACKS
+ * @cancellable: a #GCancellable or %NULL
+ * @error: a #GError or %NULL
+ *
+ * Searches a prefix for auto-detected provides.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.5.8
+ **/
+gboolean
+as_app_builder_search_provides (AsApp *app,
+				const gchar *prefix,
+				AsAppBuilderFlags flags,
+				GError **error)
+{
+	if (!as_app_builder_search_dbus (app, prefix,
+					 "share/dbus-1/system-services",
+					 AS_PROVIDE_KIND_DBUS_SYSTEM,
+					 flags, error))
+		return FALSE;
+	if (!as_app_builder_search_dbus (app, prefix,
+					 "share/dbus-1/services",
+					 AS_PROVIDE_KIND_DBUS_SESSION,
+					 flags, error))
+		return FALSE;
+	return TRUE;
+}
