@@ -2779,6 +2779,8 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 	switch (as_app_get_id_kind (app)) {
 	case AS_ID_KIND_INPUT_METHOD:
 	case AS_ID_KIND_CODEC:
+	case AS_ID_KIND_RUNTIME:
+	case AS_ID_KIND_GENERIC:
 		return TRUE;
 	default:
 		break;
