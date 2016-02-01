@@ -2987,6 +2987,23 @@ as_app_releases_sort_cb (gconstpointer a, gconstpointer b)
 }
 
 /**
+ * as_app_provides_sort_cb:
+ **/
+static gint
+as_app_provides_sort_cb (gconstpointer a, gconstpointer b)
+{
+	AsProvide *prov1 = *((AsProvide **) a);
+	AsProvide *prov2 = *((AsProvide **) b);
+
+	if (as_provide_get_kind (prov1) < as_provide_get_kind (prov2))
+		return -1;
+	if (as_provide_get_kind (prov1) > as_provide_get_kind (prov2))
+		return 1;
+	return g_strcmp0 (as_provide_get_value (prov1),
+			  as_provide_get_value (prov2));
+}
+
+/**
  * as_app_icons_sort_cb:
  **/
 static gint
@@ -3285,6 +3302,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	/* <provides> */
 	if (priv->provides->len > 0) {
 		AsProvide *provide;
+		g_ptr_array_sort (priv->provides, as_app_provides_sort_cb);
 		node_tmp = as_node_insert (node_app, "provides", NULL, 0, NULL);
 		for (i = 0; i < priv->provides->len; i++) {
 			provide = g_ptr_array_index (priv->provides, i);
