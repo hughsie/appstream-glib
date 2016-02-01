@@ -2104,8 +2104,12 @@ as_store_load (AsStore *store,
 						 NULL);
 			g_ptr_array_add (installed, path);
 		}
-		/* add AppStream */
-		path = g_build_filename (g_get_user_data_dir (),
+		/* If we're running INSIDE the xdg-app environment we'll have the
+		 * env var XDG_DATA_HOME set to "~/.var/app/org.gnome.Software/data"
+		 * so specify the path manually to get the real data */
+		path = g_build_filename (g_get_home_dir (),
+					 ".local",
+					 "share",
 					 "xdg-app",
 					 "appstream",
 					 NULL);
