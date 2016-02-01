@@ -2661,7 +2661,7 @@ as_test_store_embedded_func (void)
 	g_assert (icon != NULL);
 	g_assert_cmpint (as_icon_get_kind (icon), ==, AS_ICON_KIND_EMBEDDED);
 	g_assert_cmpstr (as_icon_get_name (icon), ==, "eog.png");
-	g_assert_cmpstr (as_icon_get_prefix (icon), ==, "/tmp/icons/origin");
+	g_assert_cmpstr (as_icon_get_prefix (icon), ==, "/tmp/origin/icons");
 
 	/* convert back to a file */
 	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_NONE);
@@ -3396,7 +3396,8 @@ as_test_store_origin_func (void)
 	g_assert_cmpint (as_store_get_size (store), ==, 1);
 	app = as_store_get_app_by_id (store, "test.desktop");
 	g_assert (app != NULL);
-	g_assert (g_str_has_suffix (as_app_get_icon_path (app), "icons/fedora-21"));
+	g_assert_cmpstr (as_app_get_icon_path (app), !=, NULL);
+	g_assert (g_str_has_suffix (as_app_get_icon_path (app), "icons"));
 	g_assert_cmpstr (as_app_get_origin (app), ==, "fedora-21");
 	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
 }

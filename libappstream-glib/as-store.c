@@ -917,22 +917,28 @@ as_store_from_root (AsStore *store,
 	/* special case xdg-apps */
 	if (g_strcmp0 (priv->origin, "xdg-app") == 0) {
 		origin_app = as_store_get_origin_for_xdg_app (source_filename);
-		g_debug ("using app origin of %s rather than 'xdg-app'",
-			 origin_app);
-		icon_path = g_build_filename (icon_prefix, "icons", NULL);
-	} else if (icon_prefix != NULL && priv->origin != NULL) {
-		g_autofree gchar *dirname = NULL;
-
-		/* look for ../icons/$origin */
-		dirname = g_path_get_dirname (icon_prefix);
-		icon_path = g_build_filename (dirname,
-					      "icons",
-					      priv->origin,
-					      NULL);
+		g_debug ("using app origin of '%s' rather than '%s'",
+			 origin_app, priv->origin);
+	} else {
 		origin_app = g_strdup (priv->origin);
 	}
 
-	/* we can only guess the icon path after we've read the origin */
+	/* guess the icon path after we've read the origin and then look for
+	 * ../icons/$origin if the topdir is 'xmls', falling back to ./icons */
+	if (icon_prefix != NULL) {
+		g_autofree gchar *topdir = NULL;
+		topdir = g_path_get_basename (icon_prefix);
+		if (g_strcmp0 (topdir, "xmls") == 0 && priv->origin != NULL) {
+			g_autofree gchar *dirname = NULL;
+			dirname = g_path_get_dirname (icon_prefix);
+			icon_path = g_build_filename (dirname,
+						      "icons",
+						      priv->origin,
+						      NULL);
+		} else {
+			icon_path = g_build_filename (icon_prefix, "icons", NULL);
+		}
+	}
 	g_debug ("using icon path %s", icon_path);
 
 	/* set in the XML file */
