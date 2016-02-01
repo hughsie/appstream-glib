@@ -703,10 +703,13 @@ gboolean
 as_icon_node_parse_dep11 (AsIcon *im, GNode *node,
 			  AsNodeContext *ctx, GError **error)
 {
-	if (g_strcmp0 (as_yaml_node_get_key (node), "cached") != 0)
-		return TRUE;
-	as_icon_set_name (im, as_yaml_node_get_value (node));
-	as_icon_set_kind (im, AS_ICON_KIND_CACHED);
+	if (g_strcmp0 (as_yaml_node_get_key (node), "cached") == 0) {
+		as_icon_set_name (im, as_yaml_node_get_value (node));
+		as_icon_set_kind (im, AS_ICON_KIND_CACHED);
+	} else if (g_strcmp0 (as_yaml_node_get_key (node), "stock") == 0) {
+		as_icon_set_name (im, as_yaml_node_get_value (node));
+		as_icon_set_kind (im, AS_ICON_KIND_STOCK);
+	}
 	return TRUE;
 }
 
