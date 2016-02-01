@@ -2844,7 +2844,7 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 static void
 as_util_check_root_app (AsApp *app, GPtrArray *problems)
 {
-	GError *error_local = NULL;
+	g_autoptr(GError) error_local = NULL;
 
 	/* skip */
 	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO)
@@ -2857,14 +2857,17 @@ as_util_check_root_app (AsApp *app, GPtrArray *problems)
 	/* check one line summary */
 	if (as_app_get_comment (app, NULL) == NULL) {
 		g_ptr_array_add (problems,
-				 g_strdup_printf ("%s has no Comment",
-						  as_app_get_id (app)));
+				 g_strdup_printf ("%s has no Comment\n - Source: %s",
+						  as_app_get_id (app),
+						  as_app_get_source_file (app)));
 	}
 
 	/* check icon exists and is large enough */
 	if (!as_util_check_root_app_icon (app, &error_local)) {
-		g_ptr_array_add (problems, g_strdup (error_local->message));
-		g_clear_error (&error_local);
+		g_ptr_array_add (problems,
+				 g_strdup_printf ("%s\n - Source: %s",
+						  error_local->message,
+						  as_app_get_source_file (app)));
 	}
 }
 
