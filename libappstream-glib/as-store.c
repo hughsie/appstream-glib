@@ -2040,6 +2040,10 @@ as_store_load (AsStore *store,
 	installed = g_ptr_array_new_with_free_func (g_free);
 	data_dirs = g_get_system_data_dirs ();
 	for (i = 0; data_dirs[i] != NULL; i++) {
+		if (g_strstr_len (data_dirs[i], -1, "xdg-app/exports") != NULL) {
+			g_debug ("skipping %s as invalid", data_dirs[i]);
+			continue;
+		}
 		if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM) > 0) {
 			path = g_build_filename (data_dirs[i], "app-info", NULL);
 			as_store_add_path_both (app_info, path);
