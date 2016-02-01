@@ -869,7 +869,7 @@ as_store_get_origin_for_xdg_app (const gchar *fn)
 static gboolean
 as_store_from_root (AsStore *store,
 		    AsNode *root,
-		    const gchar *icon_root,
+		    const gchar *icon_prefix,
 		    const gchar *source_filename,
 		    GError **error)
 {
@@ -919,29 +919,26 @@ as_store_from_root (AsStore *store,
 		origin_app = as_store_get_origin_for_xdg_app (source_filename);
 		g_debug ("using app origin of %s rather than 'xdg-app'",
 			 origin_app);
-	} else {
+		icon_path = g_build_filename (icon_prefix, "icons", NULL);
+	} else if (icon_prefix != NULL && priv->origin != NULL) {
+		g_autofree gchar *dirname = NULL;
+
+		/* look for ../icons/$origin */
+		dirname = g_path_get_dirname (icon_prefix);
+		icon_path = g_build_filename (dirname,
+					      "icons",
+					      priv->origin,
+					      NULL);
 		origin_app = g_strdup (priv->origin);
 	}
+
+	/* we can only guess the icon path after we've read the origin */
+	g_debug ("using icon path %s", icon_path);
 
 	/* set in the XML file */
 	tmp = as_node_get_attribute (apps, "builder_id");
 	if (tmp != NULL)
 		as_store_set_builder_id (store, tmp);
-
-	/* if we have an origin either from the XML or _set_origin() */
-	if (priv->origin != NULL) {
-		if (icon_root == NULL)
-			icon_root = "/usr/share/app-info/icons/";
-		if (g_strcmp0 (priv->origin, "xdg-app") == 0) {
-			icon_path = g_build_filename (icon_root,
-						      "icons",
-						      NULL);
-		} else {
-			icon_path = g_build_filename (icon_root,
-						      priv->origin,
-						      NULL);
-		}
-	}
 
 	ctx = as_node_context_new ();
 	for (n = apps->children; n != NULL; n = n->next) {
@@ -1166,7 +1163,7 @@ as_store_monitor_removed_cb (AsMonitor *monitor,
  * as_store_from_file:
  * @store: a #AsStore instance.
  * @file: a #GFile.
- * @icon_root: the icon path, or %NULL for the default.
+ * @icon_root: the icon path, or %NULL for the default (unused)
  * @cancellable: a #GCancellable.
  * @error: A #GError or %NULL.
  *
@@ -1184,12 +1181,13 @@ as_store_monitor_removed_cb (AsMonitor *monitor,
 gboolean
 as_store_from_file (AsStore *store,
 		    GFile *file,
-		    const gchar *icon_root,
+		    const gchar *icon_root, /* unused */
 		    GCancellable *cancellable,
 		    GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_autofree gchar *filename = NULL;
+	g_autofree gchar *icon_prefix = NULL;
 	g_autoptr(GError) error_local = NULL;
 	g_autoptr(AsNode) root = NULL;
 	g_autoptr(AsProfileTask) ptask = NULL;
@@ -1234,7 +1232,9 @@ as_store_from_file (AsStore *store,
 			return FALSE;
 	}
 
-	return as_store_from_root (store, root, icon_root, filename, error);
+	/* icon prefix is the directory the XML has been found in */
+	icon_prefix = g_path_get_dirname (filename);
+	return as_store_from_root (store, root, icon_prefix, filename, error);
 }
 
 /**
@@ -1750,13 +1750,10 @@ as_store_guess_origin_fallback (AsStore *store,
 static gboolean
 as_store_load_app_info_file (AsStore *store,
 			     const gchar *path_xml,
-			     const gchar *icon_root,
 			     GCancellable *cancellable,
 			     GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	g_autofree gchar *basename = NULL;
-	g_autofree gchar *icon_path = NULL;
 	g_autoptr(GFile) file = NULL;
 	g_autoptr(AsProfileTask) ptask = NULL;
 
@@ -1767,25 +1764,10 @@ as_store_load_app_info_file (AsStore *store,
 	if (!as_store_guess_origin_fallback (store, path_xml, error))
 		return FALSE;
 
-	/* for system-wide paths we need to remove the last "xmls" directory
-	 * on the icon path; in hindsight this was a bad idea */
-	basename = g_path_get_basename (icon_root);
-	if (g_strcmp0 (basename, "xmls") == 0) {
-		g_autofree gchar *dirname = NULL;
-		dirname = g_path_get_dirname (icon_root);
-		icon_path = g_build_filename (dirname, "icons", NULL);
-	} else {
-		icon_path = g_strdup (icon_root);
-	}
-
-	/* load this specific file */
-	g_debug ("Loading AppStream XML %s with icon path %s",
-		 path_xml, icon_path);
-
 	file = g_file_new_for_path (path_xml);
 	return as_store_from_file (store,
 				   file,
-				   icon_path,
+				   NULL, /* icon path */
 				   cancellable,
 				   error);
 }
@@ -1829,7 +1811,6 @@ as_store_load_app_info (AsStore *store,
 		filename_md = g_build_filename (path, tmp, NULL);
 		if (!as_store_load_app_info_file (store,
 						  filename_md,
-						  path,
 						  cancellable,
 						  &error_store)) {
 			if (flags & AS_STORE_LOAD_FLAG_IGNORE_INVALID) {
