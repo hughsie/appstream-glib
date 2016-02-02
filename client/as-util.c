@@ -1565,10 +1565,12 @@ as_util_status_html_join (GPtrArray *array)
 
 	txt = g_string_new ("");
 	for (i = 0; i < array->len; i++) {
+		g_autofree gchar *escaped = NULL;
 		tmp = g_ptr_array_index (array, i);
 		if (txt->len > 0)
 			g_string_append (txt, ", ");
-		g_string_append (txt, tmp);
+		escaped = g_markup_escape_text (tmp, -1);
+		g_string_append (txt, escaped);
 	}
 	return g_string_free (txt, FALSE);
 }
