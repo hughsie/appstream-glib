@@ -5,14 +5,14 @@
 # Translators:
 # Boyuan Yang <073plan@gmail.com>, 2015
 # Dz Chen <wsxy162@gmail.com>, 2016
-# 白铭骢 <jeffbai@aosc.xyz>, 2015
+# 白铭骢 <jeffbai@aosc.xyz>, 2015-2016
 # 白铭骢 <jeffbai@aosc.xyz>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-01-22 14:01+0000\n"
-"PO-Revision-Date: 2016-01-22 14:01+0000\n"
+"POT-Creation-Date: 2016-02-02 13:49+0000\n"
+"PO-Revision-Date: 2016-02-02 13:49+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -137,43 +137,51 @@ msgstr "完成！"
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "正在保存图标"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "设置前缀"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "正在处理应用程序"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "载入 AppData 文件出错"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
+msgstr "解析翻译出错"
+
+#. TRANSLATORS: we could not auto-add the kudo
+msgid "Error parsing kudos"
+msgstr ""
+
+#. TRANSLATORS: we could not auto-add the provides
+msgid "Error parsing provides"
 msgstr ""
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "载入 desktop 文件出错"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "创建输出目录出错"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "正在保存 AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "保存 AppStream 文件出错"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -355,6 +363,10 @@ msgstr "比较两份 AppStream 文件的内容"
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
 msgstr "从输入字符串创建 GUID"
+
+#. TRANSLATORS: command description
+msgid "Modify an AppData file"
+msgstr ""
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

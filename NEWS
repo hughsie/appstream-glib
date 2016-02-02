@@ -1,3 +1,29 @@
+Version 0.5.8
+~~~~~~~~~~~~~
+Released: 2015-02-02
+
+New Features:
+ - Add a flag for skipping invalid AppStream files (Richard Hughes)
+ - Add a modify command to appstream-util (Richard Hughes)
+ - Add support for per-user and system-wide xdg-app installed stores (Richard Hughes)
+ - Add support for the GENERIC component kind (Richard Hughes)
+ - Allow setting state on AsRelease objects (Richard Hughes)
+ - Support <translation> tags in AppData files (Richard Hughes)
+
+Bugfixes:
+ - Escape data before writing to an HTML file (Richard Hughes)
+ - Ignore temp and hidden files in AsMonitor (Richard Hughes)
+ - Move the kudo and provides autodetection to libappstream-glib (Richard Hughes)
+ - Only load supported icon kinds when using appstream-compose (Richard Hughes)
+ - Reject an invalid project group when parsing (Richard Hughes)
+ - Remove support for Ubuntu app-install data (Richard Hughes)
+ - Show the source of the 'appstream-util check-root' failure (Richard Hughes)
+ - Support multi-line copyright statements (Richard Hughes)
+ - Support stock dep11 icons (Matthias Klumpp)
+ - Support the QT translation system (Richard Hughes)
+ - Use predictable sorting when outputting <provides> (Richard Hughes)
+ - Use the project_group heuristics when parsing AppData files (Richard Hughes)
+
 Version 0.5.7
 ~~~~~~~~~~~~~
 Released: 2015-01-22

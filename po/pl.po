@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-01-22 14:01+0000\n"
-"PO-Revision-Date: 2016-01-22 14:01+0000\n"
+"POT-Creation-Date: 2016-02-02 13:49+0000\n"
+"PO-Revision-Date: 2016-02-02 13:49+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Polish (http://www.transifex.com/freedesktop/appstream-glib/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -134,43 +134,51 @@ msgstr "Gotowe."
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "Zapisywanie ikony"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "Ustawia przedrostek"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "Przetwarzanie programu"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "Błąd podczas wczytywania pliku AppData"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
+msgstr "Błąd podczas przetwarzania tłumaczeń"
+
+#. TRANSLATORS: we could not auto-add the kudo
+msgid "Error parsing kudos"
+msgstr ""
+
+#. TRANSLATORS: we could not auto-add the provides
+msgid "Error parsing provides"
 msgstr ""
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "Błąd podczas wczytywania pliku .desktop"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "Błąd podczas tworzenia katalogu wyjściowego"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "Zapisywanie pliku AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "Błąd podczas zapisywania pliku AppStream"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -352,6 +360,10 @@ msgstr "Porównuje zawartość dwóch plików AppStream"
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
 msgstr "Tworzy GUID z ciągu wejściowego"
+
+#. TRANSLATORS: command description
+msgid "Modify an AppData file"
+msgstr ""
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

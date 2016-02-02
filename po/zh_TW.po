@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-01-22 14:01+0000\n"
-"PO-Revision-Date: 2016-01-22 14:01+0000\n"
+"POT-Creation-Date: 2016-02-02 13:49+0000\n"
+"PO-Revision-Date: 2016-02-02 13:49+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
@@ -133,43 +133,51 @@ msgstr "完成！"
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "正在儲存圖示"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "設定前綴"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "正在處理應用程式"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "載入 AppData 檔案時發生錯誤"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
+msgstr "解析翻譯時發生錯誤"
+
+#. TRANSLATORS: we could not auto-add the kudo
+msgid "Error parsing kudos"
+msgstr ""
+
+#. TRANSLATORS: we could not auto-add the provides
+msgid "Error parsing provides"
 msgstr ""
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "載入桌面檔時發生錯誤"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "建立輸出目錄時發生錯誤"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "正在儲存 AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "儲存 AppStream 檔案時發生錯誤"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -186,11 +194,11 @@ msgstr "請檢閱檔案並修正任何有「FIXME」的項目"
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr ""
+msgstr "舊 API 版本"
 
 #. TRANSLATORS: information message
 msgid "New API version"
-msgstr "新的 API 版本"
+msgstr "新 API 版本"
 
 msgid "Not enough arguments, expected old.xml new.xml version"
 msgstr "引數不夠，預期 old.xml new.xml 版本"
@@ -199,7 +207,7 @@ msgstr "引數不夠，預期 old.xml new.xml 版本"
 #. * e.g. "appdata" to "appstream"
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "尚未實作從 %s 至 %s 的轉換"
 
 msgid "Not enough arguments, expected file.xml"
 msgstr "引數不足，預期 file.xml"
@@ -208,15 +216,15 @@ msgstr "引數不足，預期 file.xml"
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "無法升級「%s」格式"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "無法辨別格式"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "找不到桌面應用程式"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -234,11 +242,11 @@ msgstr "檔案驗證失敗"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "已移除"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "已加入"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -351,6 +359,10 @@ msgstr "比較兩份 AppStream 檔案的內容"
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
 msgstr "從輸入字串生成 GUID"
+
+#. TRANSLATORS: command description
+msgid "Modify an AppData file"
+msgstr ""
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

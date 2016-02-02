@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Dušan Kazik <prescott66@gmail.com>, 2015
+# Dušan Kazik <prescott66@gmail.com>, 2015-2016
 # helix84 <helix84@centrum.sk>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-01-22 14:01+0000\n"
-"PO-Revision-Date: 2016-01-22 14:01+0000\n"
+"POT-Creation-Date: 2016-02-02 13:49+0000\n"
+"PO-Revision-Date: 2016-02-02 13:49+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Slovak (http://www.transifex.com/freedesktop/appstream-glib/language/sk/)\n"
 "MIME-Version: 1.0\n"
@@ -135,43 +135,51 @@ msgstr "Hotovo!"
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "Ukladá sa ikona"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "Nastaviť predponu"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "Spracováva sa aplikácia"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "Chyba pri načítavaní súboru AppData"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
+msgstr "Chyba pri analyzovaní prekladov"
+
+#. TRANSLATORS: we could not auto-add the kudo
+msgid "Error parsing kudos"
+msgstr ""
+
+#. TRANSLATORS: we could not auto-add the provides
+msgid "Error parsing provides"
 msgstr ""
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "Chyba pri načítavaní süboru desktop"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "Chyba pri vytváraní výstupného adresára"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "Ukladá sa AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "Chyba pri ukladaní súboru AppStream"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -188,7 +196,7 @@ msgstr "Prosím, skontrolujte súbor a opravte prípadné položky „FIXME“"
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr ""
+msgstr "Stará verzia API"
 
 #. TRANSLATORS: information message
 msgid "New API version"
@@ -201,7 +209,7 @@ msgstr "Nedostatočný počet argumentov. Očakávali sa: starý.xml nový.xml v
 #. * e.g. "appdata" to "appstream"
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "Konverzia %s na %s nie je implementovaná"
 
 msgid "Not enough arguments, expected file.xml"
 msgstr "Nedostatočný počet argumentov. Očakávali sa: súbor.xml"
@@ -210,15 +218,15 @@ msgstr "Nedostatočný počet argumentov. Očakávali sa: súbor.xml"
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "Formát súboru \"%s\" nemôže byť aktualizovaný"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "Formát nebol rozpoznaný"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "Nenašli sa žiadne aplikácie pracovného prostredia"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -236,11 +244,11 @@ msgstr "Overenie súborov zlyhalo"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "Odstránená"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "Pridaná"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -352,6 +360,10 @@ msgstr "Porovná obsahy dvoch súborov AppStream"
 
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
+msgstr "Vygenerovať identifikátor GUID zo vstupného reťazca"
+
+#. TRANSLATORS: command description
+msgid "Modify an AppData file"
 msgstr ""
 
 #. TRANSLATORS: program name

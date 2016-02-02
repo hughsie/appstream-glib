@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-01-22 14:01+0000\n"
-"PO-Revision-Date: 2016-01-22 14:01+0000\n"
+"POT-Creation-Date: 2016-02-02 13:49+0000\n"
+"PO-Revision-Date: 2016-02-02 13:49+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Italian (http://www.transifex.com/freedesktop/appstream-glib/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -150,6 +150,14 @@ msgstr ""
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
+msgstr ""
+
+#. TRANSLATORS: we could not auto-add the kudo
+msgid "Error parsing kudos"
+msgstr ""
+
+#. TRANSLATORS: we could not auto-add the provides
+msgid "Error parsing provides"
 msgstr ""
 
 #. TRANSLATORS: the .desktop file could not
@@ -351,6 +359,10 @@ msgstr "Compare i contenuti di due file AppStream"
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
 msgstr "Genera uno GUID da una stringa in ingresso"
+
+#. TRANSLATORS: command description
+msgid "Modify an AppData file"
+msgstr ""
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

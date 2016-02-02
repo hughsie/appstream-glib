@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Robert Antoni Buj i Gelonch <rbuj@fedoraproject.org>, 2015
+# Robert Antoni Buj i Gelonch <rbuj@fedoraproject.org>, 2015-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-01-22 14:01+0000\n"
-"PO-Revision-Date: 2016-01-22 14:01+0000\n"
+"POT-Creation-Date: 2016-02-02 13:49+0000\n"
+"PO-Revision-Date: 2016-02-02 13:49+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/freedesktop/appstream-glib/language/ca/)\n"
 "MIME-Version: 1.0\n"
@@ -134,43 +134,51 @@ msgstr "Fet!"
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "S'està desant la icona"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "Estableix el prefix"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "S'està processant l'aplicació"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "S'ha produït un error en carregar el fitxer d'AppData"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
+msgstr "S'ha produït un error en analitzar sintàcticament les transaccions"
+
+#. TRANSLATORS: we could not auto-add the kudo
+msgid "Error parsing kudos"
+msgstr ""
+
+#. TRANSLATORS: we could not auto-add the provides
+msgid "Error parsing provides"
 msgstr ""
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "S'ha produït un error en carregar el fitxer d'escriptori"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "S'ha produït un error en crear el directori de sortida"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "S'està desant l'AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "S'ha produït un error en desar el fitxer d'AppStream"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -187,7 +195,7 @@ msgstr "Si us plau, reviseu el fitxer i corregiu qualsevol dels elements «FIXME
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr ""
+msgstr "Versió antiga de l'API"
 
 #. TRANSLATORS: information message
 msgid "New API version"
@@ -200,7 +208,7 @@ msgstr "No hi ha prou arguments, s'esperaven els fitxers antic.xml nou.xml"
 #. * e.g. "appdata" to "appstream"
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "La conversió de %s a %s no està implementada"
 
 msgid "Not enough arguments, expected file.xml"
 msgstr "No hi ha prou arguments, s'esperava el fitxer.xml"
@@ -209,15 +217,15 @@ msgstr "No hi ha prou arguments, s'esperava el fitxer.xml"
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "No es pot actualitzar el format de fitxer «%s»"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "Format no reconegut"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "No s'han trobat aplicacions d'escriptori"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -235,11 +243,11 @@ msgstr "Ha fallat la validació dels fitxers"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "Suprimit"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "Afegit"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -351,6 +359,10 @@ msgstr "Compara el contingut de dos fitxers AppStream"
 
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
+msgstr "Genera un GUID a partir d'una cadena de text"
+
+#. TRANSLATORS: command description
+msgid "Modify an AppData file"
 msgstr ""
 
 #. TRANSLATORS: program name

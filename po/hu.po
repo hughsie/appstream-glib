@@ -4,12 +4,13 @@
 # 
 # Translators:
 # Balázs Úr <urbalazs@gmail.com>, 2014-2016
+# kelemeng <kelemeng@ubuntu.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-01-22 14:01+0000\n"
-"PO-Revision-Date: 2016-01-22 14:01+0000\n"
+"POT-Creation-Date: 2016-02-02 13:49+0000\n"
+"PO-Revision-Date: 2016-02-02 13:49+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/freedesktop/appstream-glib/language/hu/)\n"
 "MIME-Version: 1.0\n"
@@ -134,43 +135,51 @@ msgstr "Kész!"
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "Ikon mentése"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "Előtag beállítása"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "Alkalmazás feldolgozása"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "Hiba az AppData fájl betöltésekor"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
+msgstr "Hiba a fordítások feldolgozásakor"
+
+#. TRANSLATORS: we could not auto-add the kudo
+msgid "Error parsing kudos"
+msgstr ""
+
+#. TRANSLATORS: we could not auto-add the provides
+msgid "Error parsing provides"
 msgstr ""
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "Hiba a desktop fájl betöltésekor"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "Hiba a kimeneti könyvtár létrehozásakor"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "AppStream mentése"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "Hiba az AppStream fájl mentésekor"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -187,7 +196,7 @@ msgstr "Nézze át a fájlt, és javítson minden „FIXME” elemet"
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr ""
+msgstr "Régi API verzió"
 
 #. TRANSLATORS: information message
 msgid "New API version"
@@ -200,7 +209,7 @@ msgstr "Nincs elég argumentum, a következő az elvárt: old.xml new.xml verzi�
 #. * e.g. "appdata" to "appstream"
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "A(z) %s -> %s átalakítás nincs megvalósítva"
 
 msgid "Not enough arguments, expected file.xml"
 msgstr "Nincs elég argumentum, a következő az elvárt: file.xml"
@@ -209,15 +218,15 @@ msgstr "Nincs elég argumentum, a következő az elvárt: file.xml"
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "A(z) „%s” fájlformátum nem frissíthető"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "A formátum ismeretlen"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "Nem találhatók asztali alkalmazások"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -235,11 +244,11 @@ msgstr "A fájlok ellenőrzése nem sikerült"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "Eltávolítva"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "Hozzáadva"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -352,6 +361,10 @@ msgstr "Két AppStream-fájl tartalmának összehasonlítása"
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
 msgstr "GUID előállítása egy bemeneti szövegből"
+
+#. TRANSLATORS: command description
+msgid "Modify an AppData file"
+msgstr ""
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"
