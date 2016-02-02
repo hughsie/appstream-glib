@@ -347,6 +347,7 @@ as_monitor_file_changed_cb (GFileMonitor *mon,
 	AsMonitorPrivate *priv = GET_PRIVATE (monitor);
 	const gchar *tmp;
 	gboolean is_temp;
+	g_autofree gchar *basename = NULL;
 	g_autofree gchar *filename = NULL;
 	g_autofree gchar *filename_other = NULL;
 
@@ -357,6 +358,18 @@ as_monitor_file_changed_cb (GFileMonitor *mon,
 		filename_other = g_file_get_path (other_file);
 	g_debug ("modified: %s %s [%i]", filename,
 		_g_file_monitor_to_string (event_type), is_temp);
+
+	/* ignore hidden files */
+	basename = g_path_get_basename (filename);
+	if (g_str_has_prefix (basename, ".")) {
+		g_debug ("ignoring hidden file");
+		return;
+	}
+	if (g_str_has_suffix (basename, ".swx") ||
+	    g_str_has_suffix (basename, ".swp")) {
+		g_debug ("ignoring temp file");
+		return;
+	}
 
 	switch (event_type) {
 	case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
