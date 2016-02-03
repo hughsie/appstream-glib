@@ -1,6 +1,6 @@
 Version 0.5.8
 ~~~~~~~~~~~~~
-Released: 2015-02-02
+Released: 2016-02-02
 
 New Features:
  - Add a flag for skipping invalid AppStream files (Richard Hughes)
@@ -26,7 +26,7 @@ Bugfixes:
 
 Version 0.5.7
 ~~~~~~~~~~~~~
-Released: 2015-01-22
+Released: 2016-01-22
 
 Notes:
  - We've removed the ostree support and added a new appstream-compose command
@@ -49,7 +49,7 @@ Bugfixes:
 
 Version 0.5.6
 ~~~~~~~~~~~~~
-Released: 2015-01-15
+Released: 2016-01-15
 
 New Features:
  - Add the runtime ID kind (Richard Hughes)
