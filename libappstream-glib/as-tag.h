@@ -28,6 +28,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 /**
  * AsTag:
  * @AS_TAG_UNKNOWN:			Type invalid or not known
