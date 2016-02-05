@@ -125,6 +125,7 @@ MIT-feh
 Frameworx-1.0
 FreeImage
 FTL
+FSFAP
 FSFUL
 FSFULLR
 Giftware
