@@ -1123,6 +1123,16 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		require_content_license = TRUE;
 	}
 
+	/* addons don't need such a long description */
+	switch (as_app_get_source_kind (app)) {
+	case AS_APP_SOURCE_KIND_METAINFO:
+	case AS_APP_SOURCE_KIND_APPDATA:
+		number_para_min = 1;
+		break;
+	default:
+		break;
+	}
+
 	/* set up networking */
 	helper.app = app;
 	helper.probs = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
