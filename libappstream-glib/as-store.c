@@ -68,6 +68,7 @@ typedef struct
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
 	AsMonitor		*monitor;
 	GHashTable		*metadata_indexes;	/* GHashTable{key} */
+	GHashTable		*appinfo_dirs;	/* GHashTable{path} */
 	AsStoreAddFlags		 add_flags;
 	AsStoreWatchFlags	 watch_flags;
 	AsStoreProblems		 problems;
@@ -115,6 +116,7 @@ as_store_finalize (GObject *object)
 	g_hash_table_unref (priv->hash_id);
 	g_hash_table_unref (priv->hash_pkgname);
 	g_hash_table_unref (priv->metadata_indexes);
+	g_hash_table_unref (priv->appinfo_dirs);
 
 	G_OBJECT_CLASS (as_store_parent_class)->finalize (object);
 }
@@ -1794,6 +1796,10 @@ as_store_load_app_info (AsStore *store,
 	g_autoptr(GError) error_local = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
+	/* Don't add the same dir twice, we're monitoring it for changes anyway */
+	if (g_hash_table_contains (priv->appinfo_dirs, path))
+		return TRUE;
+
 	/* emit once when finished */
 	tok = as_store_changed_inhibit (store);
 
@@ -1809,6 +1815,7 @@ as_store_load_app_info (AsStore *store,
 			     path, error_local->message);
 		return FALSE;
 	}
+
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
 		GError *error_store = NULL;
 		g_autofree gchar *filename_md = NULL;
@@ -1836,6 +1843,8 @@ as_store_load_app_info (AsStore *store,
 				       cancellable,
 				       error))
 		return FALSE;
+
+	g_hash_table_insert (priv->appinfo_dirs, g_strdup (path), NULL);
 
 	/* emit changed */
 	as_store_changed_uninhibit (&tok);
@@ -2477,6 +2486,10 @@ as_store_init (AsStore *store)
 						    g_str_equal,
 						    g_free,
 						    (GDestroyNotify) g_object_unref);
+	priv->appinfo_dirs = g_hash_table_new_full (g_str_hash,
+						    g_str_equal,
+						    NULL,
+						    NULL);
 	priv->monitor = as_monitor_new ();
 	g_signal_connect (priv->monitor, "changed",
 			  G_CALLBACK (as_store_monitor_changed_cb),
