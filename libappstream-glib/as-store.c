@@ -2042,7 +2042,10 @@ as_store_load_path (AsStore *store, const gchar *path,
  * as_store_add_path_xdg_app:
  **/
 static void
-as_store_add_path_xdg_app (AsStore *store, GPtrArray *array, const gchar *base, gboolean monitor)
+as_store_add_path_xdg_app (AsStore *store,
+			   GPtrArray *array,
+			   const gchar *base,
+			   gboolean monitor)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	const gchar *filename;
@@ -2050,11 +2053,12 @@ as_store_add_path_xdg_app (AsStore *store, GPtrArray *array, const gchar *base, 
 	g_autoptr(GError) error_local = NULL;
 
 	if (monitor) {
-		/* Mark and monitor directory so we can pick up later added remotes */
+		/* mark and monitor directory so we can pick up later added remotes */
 		g_hash_table_insert (priv->xdg_app_dirs, g_strdup (base), NULL);
 		if (!as_monitor_add_file (priv->monitor,
 					  base, NULL, &error_local))
-			g_warning ("Can't monitor dir %s: %s\n", base, error_local->message);
+			g_warning ("Can't monitor dir %s: %s",
+				   base, error_local->message);
 	}
 
 	dir = g_dir_open (base, 0, NULL);
@@ -2124,8 +2128,9 @@ as_store_load (AsStore *store,
 			continue;
 		}
 		if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM) > 0) {
-			path = g_build_filename (data_dirs[i], "app-info", NULL);
-			as_store_add_path_both (app_info, path);
+			g_autofree gchar *dest = NULL;
+			dest = g_build_filename (data_dirs[i], "app-info", NULL);
+			as_store_add_path_both (app_info, dest);
 		}
 		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 			path = g_build_filename (data_dirs[i], "appdata", NULL);
@@ -2137,24 +2142,29 @@ as_store_load (AsStore *store,
 		}
 	}
 	if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM) > 0) {
-		path = g_build_filename (LOCALSTATEDIR, "lib", "app-info", NULL);
-		as_store_add_path_both (app_info, path);
-		path = g_build_filename (LOCALSTATEDIR, "cache", "app-info", NULL);
-		as_store_add_path_both (app_info, path);
+		g_autofree gchar *dest1 = NULL;
+		g_autofree gchar *dest2 = NULL;
+		dest1 = g_build_filename (LOCALSTATEDIR, "lib", "app-info", NULL);
+		as_store_add_path_both (app_info, dest1);
+		dest2 = g_build_filename (LOCALSTATEDIR, "cache", "app-info", NULL);
+		as_store_add_path_both (app_info, dest2);
 		/* ignore the prefix; we actually want to use the
 		 * distro-provided data in this case. */
 		if (g_strcmp0 (LOCALSTATEDIR, "/var") != 0) {
-			path = g_build_filename ("/var", "lib", "app-info", NULL);
-			as_store_add_path_both (app_info, path);
-			path = g_build_filename ("/var", "cache", "app-info", NULL);
-			as_store_add_path_both (app_info, path);
+			g_autofree gchar *dest3 = NULL;
+			g_autofree gchar *dest4 = NULL;
+			dest3 = g_build_filename ("/var", "lib", "app-info", NULL);
+			as_store_add_path_both (app_info, dest3);
+			dest4 = g_build_filename ("/var", "cache", "app-info", NULL);
+			as_store_add_path_both (app_info, dest4);
 		}
 	}
 
 	/* per-user locations */
 	if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_USER) > 0) {
-		path = g_build_filename (g_get_user_data_dir (), "app-info", NULL);
-		as_store_add_path_both (app_info, path);
+		g_autofree gchar *dest = NULL;
+		dest = g_build_filename (g_get_user_data_dir (), "app-info", NULL);
+		as_store_add_path_both (app_info, dest);
 	}
 	if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 		path = g_build_filename (g_get_user_data_dir (), "appdata", NULL);
@@ -2165,6 +2175,7 @@ as_store_load (AsStore *store,
 		g_ptr_array_add (installed, path);
 	}
 	if ((flags & AS_STORE_LOAD_FLAG_XDG_APP_USER) > 0) {
+		g_autofree gchar *dest = NULL;
 		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 			path = g_build_filename (g_get_user_data_dir (),
 						 "xdg-app",
@@ -2186,15 +2197,16 @@ as_store_load (AsStore *store,
 		/* If we're running INSIDE the xdg-app environment we'll have the
 		 * env var XDG_DATA_HOME set to "~/.var/app/org.gnome.Software/data"
 		 * so specify the path manually to get the real data */
-		path = g_build_filename (g_get_home_dir (),
+		dest = g_build_filename (g_get_home_dir (),
 					 ".local",
 					 "share",
 					 "xdg-app",
 					 "appstream",
 					 NULL);
-		as_store_add_path_xdg_app (store, app_info, path, TRUE);
+		as_store_add_path_xdg_app (store, app_info, dest, TRUE);
 	}
 	if ((flags & AS_STORE_LOAD_FLAG_XDG_APP_SYSTEM) > 0) {
+		g_autofree gchar *dest = NULL;
 		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 			path = g_build_filename (LOCALSTATEDIR,
 						 "xdg-app",
@@ -2214,11 +2226,11 @@ as_store_load (AsStore *store,
 			g_ptr_array_add (installed, path);
 		}
 		/* add AppStream */
-		path = g_build_filename (LOCALSTATEDIR,
+		dest = g_build_filename (LOCALSTATEDIR,
 					 "xdg-app",
 					 "appstream",
 					 NULL);
-		as_store_add_path_xdg_app (store, app_info, path, TRUE);
+		as_store_add_path_xdg_app (store, app_info, dest, TRUE);
 	}
 
 	/* load each app-info path if it exists */
