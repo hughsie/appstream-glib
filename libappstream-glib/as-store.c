@@ -68,6 +68,8 @@ typedef struct
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
 	AsMonitor		*monitor;
 	GHashTable		*metadata_indexes;	/* GHashTable{key} */
+	GHashTable		*appinfo_dirs;	/* GHashTable{path} */
+	GHashTable		*xdg_app_dirs;	/* GHashTable{path} */
 	AsStoreAddFlags		 add_flags;
 	AsStoreWatchFlags	 watch_flags;
 	AsStoreProblems		 problems;
@@ -97,6 +99,16 @@ static guint signals [SIGNAL_LAST] = { 0 };
  **/
 G_DEFINE_QUARK (as-store-error-quark, as_store_error)
 
+static void     as_store_add_path_xdg_app (AsStore           *store,
+					   GPtrArray         *array,
+					   const gchar       *base,
+					   gboolean           monitor);
+static gboolean as_store_load_app_info    (AsStore           *store,
+					   const gchar       *path,
+					   AsStoreLoadFlags   flags,
+					   GCancellable      *cancellable,
+					   GError           **error);
+
 /**
  * as_store_finalize:
  **/
@@ -115,6 +127,8 @@ as_store_finalize (GObject *object)
 	g_hash_table_unref (priv->hash_id);
 	g_hash_table_unref (priv->hash_pkgname);
 	g_hash_table_unref (priv->metadata_indexes);
+	g_hash_table_unref (priv->appinfo_dirs);
+	g_hash_table_unref (priv->xdg_app_dirs);
 
 	G_OBJECT_CLASS (as_store_parent_class)->finalize (object);
 }
@@ -1068,6 +1082,34 @@ as_store_load_yaml_file (AsStore *store,
 }
 
 /**
+ * as_store_rescan_xdg_app_dir:
+ */
+static void
+as_store_rescan_xdg_app_dir (AsStore *store, const gchar *filename)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_autoptr(GPtrArray) app_info = NULL;
+	const gchar *tmp;
+	guint i;
+
+	g_debug ("rescanning xdg-app dir %s", filename);
+
+	app_info = g_ptr_array_new_with_free_func (g_free);
+	as_store_add_path_xdg_app (store, app_info, filename, FALSE);
+
+	for (i = 0; i < app_info->len; i++) {
+		g_autofree gchar *dest = NULL;
+		g_autoptr(GError) error_local = NULL;
+		tmp = g_ptr_array_index (app_info, i);
+		dest = g_build_filename (priv->destdir ? priv->destdir : "/", tmp, NULL);
+		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
+			continue;
+		if (!as_store_load_app_info (store, dest, AS_STORE_LOAD_FLAG_IGNORE_INVALID, NULL, &error_local))
+			g_warning ("Can't load app info: %s\n", error_local->message);
+	}
+}
+
+/**
  * as_store_remove_by_source_file:
  */
 static void
@@ -1112,15 +1154,20 @@ as_store_monitor_changed_cb (AsMonitor *monitor,
 
 	/* reload, or emit a signal */
 	if (priv->watch_flags & AS_STORE_WATCH_FLAG_ADDED) {
-		g_autoptr(GError) error = NULL;
-		g_autoptr(GFile) file = NULL;
 		_cleanup_uninhibit_ guint32 *tok = NULL;
 		tok = as_store_changed_inhibit (store);
-		as_store_remove_by_source_file (store, filename);
-		g_debug ("rescanning %s", filename);
-		file = g_file_new_for_path (filename);
-		if (!as_store_from_file (store, file, NULL, NULL, &error))
-			g_warning ("failed to rescan: %s", error->message);
+
+		if (g_file_test (filename, G_FILE_TEST_IS_REGULAR)) {
+			g_autoptr(GError) error = NULL;
+			g_autoptr(GFile) file = NULL;
+			as_store_remove_by_source_file (store, filename);
+			g_debug ("rescanning %s", filename);
+			file = g_file_new_for_path (filename);
+			if (!as_store_from_file (store, file, NULL, NULL, &error))
+				g_warning ("failed to rescan: %s", error->message);
+		} else if (g_hash_table_contains (priv->xdg_app_dirs, filename)) {
+			as_store_rescan_xdg_app_dir (store, filename);
+		}
 	}
 	as_store_perhaps_emit_changed (store, "file changed");
 }
@@ -1137,15 +1184,22 @@ as_store_monitor_added_cb (AsMonitor *monitor,
 
 	/* reload, or emit a signal */
 	if (priv->watch_flags & AS_STORE_WATCH_FLAG_ADDED) {
-		g_autoptr(GError) error = NULL;
-		g_autoptr(GFile) file = NULL;
-		g_debug ("scanning %s", filename);
-		file = g_file_new_for_path (filename);
-		if (!as_store_from_file (store, file, NULL, NULL, &error))
-			g_warning ("failed to rescan: %s", error->message);
-	} else {
-		as_store_perhaps_emit_changed (store, "file added");
+		_cleanup_uninhibit_ guint32 *tok = NULL;
+		tok = as_store_changed_inhibit (store);
+		if (g_file_test (filename, G_FILE_TEST_IS_REGULAR)) {
+			g_autoptr(GError) error = NULL;
+			g_autoptr(GFile) file = NULL;
+
+			g_debug ("scanning %s", filename);
+			file = g_file_new_for_path (filename);
+			if (!as_store_from_file (store, file, NULL, NULL, &error))
+				g_warning ("failed to rescan: %s", error->message);
+		} else if (g_hash_table_contains (priv->xdg_app_dirs, filename)) {
+			as_store_rescan_xdg_app_dir (store, filename);
+		}
+
 	}
+	as_store_perhaps_emit_changed (store, "file added");
 }
 
 /**
@@ -1794,6 +1848,10 @@ as_store_load_app_info (AsStore *store,
 	g_autoptr(GError) error_local = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
+	/* Don't add the same dir twice, we're monitoring it for changes anyway */
+	if (g_hash_table_contains (priv->appinfo_dirs, path))
+		return TRUE;
+
 	/* emit once when finished */
 	tok = as_store_changed_inhibit (store);
 
@@ -1809,6 +1867,7 @@ as_store_load_app_info (AsStore *store,
 			     path, error_local->message);
 		return FALSE;
 	}
+
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
 		GError *error_store = NULL;
 		g_autofree gchar *filename_md = NULL;
@@ -1836,6 +1895,8 @@ as_store_load_app_info (AsStore *store,
 				       cancellable,
 				       error))
 		return FALSE;
+
+	g_hash_table_insert (priv->appinfo_dirs, g_strdup (path), NULL);
 
 	/* emit changed */
 	as_store_changed_uninhibit (&tok);
@@ -1981,14 +2042,26 @@ as_store_load_path (AsStore *store, const gchar *path,
  * as_store_add_path_xdg_app:
  **/
 static void
-as_store_add_path_xdg_app (GPtrArray *array, const gchar *base)
+as_store_add_path_xdg_app (AsStore *store, GPtrArray *array, const gchar *base, gboolean monitor)
 {
+	AsStorePrivate *priv = GET_PRIVATE (store);
 	const gchar *filename;
 	g_autoptr(GDir) dir = NULL;
+	g_autoptr(GError) error_local = NULL;
+
+	if (monitor) {
+		/* Mark and monitor directory so we can pick up later added remotes */
+		g_hash_table_insert (priv->xdg_app_dirs, g_strdup (base), NULL);
+		if (!as_monitor_add_file (priv->monitor,
+					  base, NULL, &error_local))
+			g_warning ("Can't monitor dir %s: %s\n", base, error_local->message);
+	}
+
 	dir = g_dir_open (base, 0, NULL);
 	if (dir == NULL)
 		return;
 	while ((filename = g_dir_read_name (dir)) != NULL) {
+		g_autoptr(GError) error_local2 = NULL;
 		gchar *fn = g_build_filename (base,
 					      filename,
 					      "x86_64",
@@ -2119,7 +2192,7 @@ as_store_load (AsStore *store,
 					 "xdg-app",
 					 "appstream",
 					 NULL);
-		as_store_add_path_xdg_app (app_info, path);
+		as_store_add_path_xdg_app (store, app_info, path, TRUE);
 	}
 	if ((flags & AS_STORE_LOAD_FLAG_XDG_APP_SYSTEM) > 0) {
 		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
@@ -2145,7 +2218,7 @@ as_store_load (AsStore *store,
 					 "xdg-app",
 					 "appstream",
 					 NULL);
-		as_store_add_path_xdg_app (app_info, path);
+		as_store_add_path_xdg_app (store, app_info, path, TRUE);
 	}
 
 	/* load each app-info path if it exists */
@@ -2477,6 +2550,14 @@ as_store_init (AsStore *store)
 						    g_str_equal,
 						    g_free,
 						    (GDestroyNotify) g_object_unref);
+	priv->appinfo_dirs = g_hash_table_new_full (g_str_hash,
+						    g_str_equal,
+						    NULL,
+						    NULL);
+	priv->xdg_app_dirs = g_hash_table_new_full (g_str_hash,
+						    g_str_equal,
+						    NULL,
+						    NULL);
 	priv->monitor = as_monitor_new ();
 	g_signal_connect (priv->monitor, "changed",
 			  G_CALLBACK (as_store_monitor_changed_cb),
