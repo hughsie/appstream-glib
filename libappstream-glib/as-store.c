@@ -1048,7 +1048,7 @@ as_store_load_yaml_file (AsStore *store,
 	/* if we have an origin either from the YAML or _set_origin() */
 	if (priv->origin != NULL) {
 		if (icon_root == NULL)
-			icon_root = "/usr/share/app-info/icons/";
+			icon_root = "/var/lib/app-info/icons/";
 		icon_path = g_build_filename (icon_root,
 					      priv->origin,
 					      NULL);
