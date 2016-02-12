@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-02-02 13:49+0000\n"
-"PO-Revision-Date: 2016-02-02 13:49+0000\n"
-"Last-Translator: Richard Hughes <richard@hughsie.com>\n"
+"POT-Creation-Date: 2016-02-12 16:44+0000\n"
+"PO-Revision-Date: 2016-02-03 06:47+0000\n"
+"Last-Translator: Serge Vylekzhanin <vylekzhanin@mail.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/freedesktop/appstream-glib/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -156,11 +156,11 @@ msgstr "Ошибка при обработке переводов"
 
 #. TRANSLATORS: we could not auto-add the kudo
 msgid "Error parsing kudos"
-msgstr ""
+msgstr "Ошибка при обработке благодарностей"
 
 #. TRANSLATORS: we could not auto-add the provides
 msgid "Error parsing provides"
-msgstr ""
+msgstr "Ошибка при обработке обеспечений"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
@@ -364,7 +364,7 @@ msgstr "Создать GUID из строки входных данных"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
-msgstr ""
+msgstr "Изменить файл AppData"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

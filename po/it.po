@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-02-02 13:49+0000\n"
-"PO-Revision-Date: 2016-02-02 13:49+0000\n"
-"Last-Translator: Richard Hughes <richard@hughsie.com>\n"
+"POT-Creation-Date: 2016-02-12 16:44+0000\n"
+"PO-Revision-Date: 2016-02-03 12:32+0000\n"
+"Last-Translator: Milo Casagrande <milo@ubuntu.com>\n"
 "Language-Team: Italian (http://www.transifex.com/freedesktop/appstream-glib/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -133,51 +133,51 @@ msgstr "Fatto"
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "Salvataggio icona"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "Impostazione prefisso"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "Elaborazione applicazione"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "Errore nel caricare il file AppData"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
-msgstr ""
+msgstr "Errore nell'analizzare le traduzioni"
 
 #. TRANSLATORS: we could not auto-add the kudo
 msgid "Error parsing kudos"
-msgstr ""
+msgstr "Errore nell'analizzare i kudos"
 
 #. TRANSLATORS: we could not auto-add the provides
 msgid "Error parsing provides"
-msgstr ""
+msgstr "Errore nell'analizzare i provides"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "Errore nel caricare il file desktop"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "Errore nel creare la directory di output"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "Salvataggio AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "Errore nel salvare il file AppStream"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -362,7 +362,7 @@ msgstr "Genera uno GUID da una stringa in ingresso"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
-msgstr ""
+msgstr "Modifica un file AppData"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-02-02 13:49+0000\n"
-"PO-Revision-Date: 2016-02-02 13:49+0000\n"
-"Last-Translator: Richard Hughes <richard@hughsie.com>\n"
+"POT-Creation-Date: 2016-02-12 16:44+0000\n"
+"PO-Revision-Date: 2016-02-05 17:15+0000\n"
+"Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak (http://www.transifex.com/freedesktop/appstream-glib/language/sk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -156,11 +156,11 @@ msgstr "Chyba pri analyzovaní prekladov"
 
 #. TRANSLATORS: we could not auto-add the kudo
 msgid "Error parsing kudos"
-msgstr ""
+msgstr "Chyba pri analýze systému kudos"
 
 #. TRANSLATORS: we could not auto-add the provides
 msgid "Error parsing provides"
-msgstr ""
+msgstr "Chyba pri analýze systému provides"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
@@ -364,7 +364,7 @@ msgstr "Vygenerovať identifikátor GUID zo vstupného reťazca"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
-msgstr ""
+msgstr "Upraviť súbor AppData"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

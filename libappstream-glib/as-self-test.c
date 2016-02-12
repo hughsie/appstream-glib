@@ -2673,7 +2673,7 @@ as_test_store_embedded_func (void)
 	g_assert (ret);
 
 	/* check exists */
-	g_assert (g_file_test ("/tmp/origin/32x32/eog.png", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/origin/icons/32x32/eog.png", G_FILE_TEST_EXISTS));
 }
 
 static void

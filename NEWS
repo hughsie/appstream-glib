@@ -1,3 +1,15 @@
+Version 0.5.9
+~~~~~~~~~~~~~
+Released: 2016-02-12
+
+Bugfixes:
+ - Accept FSFAP as a valid metadata license (Richard Hughes)
+ - Add missing G_BEGIN_DECLS in libappstream-glib/as-tag.h (Andrea Azzarone)
+ - Fix a validation error for metainfo files with descriptions (Richard Hughes)
+ - Fix dates in NEWS - It's 2016! (Robert Ancell)
+ - Pick up newly added appinfo dirs for xdg-app remotes (Alexander Larsson)
+ - Update the SPDX license list (Richard Hughes)
+
 Version 0.5.8
 ~~~~~~~~~~~~~
 Released: 2016-02-02
