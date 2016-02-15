@@ -3970,7 +3970,7 @@ as_test_yaml_func (void)
 	as_yaml_unref (node);
 
 	/* dummy application */
-	filename = as_test_get_filename ("example.yml");
+	filename = as_test_get_filename ("usr/share/app-info/yaml/aequorea.yml");
 	g_assert (filename != NULL);
 	file = g_file_new_for_path (filename);
 	node = as_yaml_from_file (file, NULL, &error);
@@ -4025,7 +4025,6 @@ as_test_store_yaml_func (void)
 	GError *error = NULL;
 	gboolean ret;
 	g_autofree gchar *filename = NULL;
-	g_autofree gchar *icon_root = NULL;
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GFile) file = NULL;
 	g_autoptr(GString) str = NULL;
@@ -4054,10 +4053,10 @@ as_test_store_yaml_func (void)
 
 	/* load store */
 	store = as_store_new ();
-	filename = as_test_get_filename ("example.yml");
-	icon_root = as_test_get_filename ("usr/share/app-install/icons");
+	filename = as_test_get_filename ("usr/share/app-info/yaml/aequorea.yml");
+	g_assert (filename != NULL);
 	file = g_file_new_for_path (filename);
-	ret = as_store_from_file (store, file, icon_root, NULL, &error);
+	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 

@@ -18,7 +18,6 @@ test_files =						\
 	example.metainfo.xml				\
 	example-v04.xml.gz				\
 	example-v06.yml.gz				\
-	example.yml					\
 	firmware/2_0_0/firmware.bin			\
 	firmware/2_0_0/firmware.inf			\
 	firmware/2_0_1/firmware.bin			\
@@ -40,7 +39,8 @@ test_files =						\
 	test-0.1-1.fc21.noarch.rpm			\
 	translated.appdata.xml				\
 	usr/share/appdata/broken.appdata.xml		\
-	usr/share/app-install/icons/aequorea/iceweasel.png \
+	usr/share/app-info/icons/aequorea/iceweasel.png	\
+	usr/share/app-info/yaml/aequorea.yml		\
 	usr/share/applications/broken.desktop		\
 	usr/share/applications/test.desktop		\
 	usr/share/icons/hicolor/64x64/apps/test2.png	\

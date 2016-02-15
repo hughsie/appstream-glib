@@ -942,7 +942,9 @@ as_store_from_root (AsStore *store,
 	if (icon_prefix != NULL) {
 		g_autofree gchar *topdir = NULL;
 		topdir = g_path_get_basename (icon_prefix);
-		if (g_strcmp0 (topdir, "xmls") == 0 && priv->origin != NULL) {
+		if ((g_strcmp0 (topdir, "xmls") == 0 ||
+		     g_strcmp0 (topdir, "yaml") == 0)
+		    && priv->origin != NULL) {
 			g_autofree gchar *dirname = NULL;
 			dirname = g_path_get_dirname (icon_prefix);
 			icon_path = g_build_filename (dirname,
@@ -1013,7 +1015,6 @@ as_store_from_root (AsStore *store,
 static gboolean
 as_store_load_yaml_file (AsStore *store,
 			 GFile *file,
-			 const gchar *icon_root,
 			 GCancellable *cancellable,
 			 GError **error)
 {
@@ -1047,9 +1048,14 @@ as_store_load_yaml_file (AsStore *store,
 
 	/* if we have an origin either from the YAML or _set_origin() */
 	if (priv->origin != NULL) {
-		if (icon_root == NULL)
-			icon_root = "/usr/share/app-info/icons/";
-		icon_path = g_build_filename (icon_root,
+		g_autofree gchar *filename = NULL;
+		g_autofree gchar *icon_prefix1 = NULL;
+		g_autofree gchar *icon_prefix2 = NULL;
+		filename = g_file_get_path (file);
+		icon_prefix1 = g_path_get_dirname (filename);
+		icon_prefix2 = g_path_get_dirname (icon_prefix1);
+		icon_path = g_build_filename (icon_prefix2,
+					      "icons",
 					      priv->origin,
 					      NULL);
 	}
@@ -1260,8 +1266,7 @@ as_store_from_file (AsStore *store,
 	/* a DEP-11 file */
 	filename = g_file_get_path (file);
 	if (g_strstr_len (filename, -1, ".yml") != NULL)
-		return as_store_load_yaml_file (store, file, icon_root,
-						cancellable, error);
+		return as_store_load_yaml_file (store, file, cancellable, error);
 
 #ifdef HAVE_GCAB
 	/* a cab archive */
