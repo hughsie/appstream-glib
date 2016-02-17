@@ -74,6 +74,7 @@ add_icons (AsApp *app,
 	g_autoptr(AsImage) im = NULL;
 	g_autoptr(GdkPixbuf) pixbuf_hidpi = NULL;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
+	g_autoptr(GError) error_local = NULL;
 
 	/* find 64x64 icon */
 	fn = as_utils_find_icon_filename_full (prefix, key,
@@ -131,20 +132,26 @@ add_icons (AsApp *app,
 	fn_hidpi = as_utils_find_icon_filename_full (prefix, key,
 						     AS_UTILS_FIND_ICON_HI_DPI,
 						     NULL);
-	if (fn_hidpi == NULL)
+	if (fn_hidpi == NULL) {
+		g_debug ("no HiDPI icon found with key %s in %s", key, prefix);
 		return TRUE;
+	}
 
 	/* load the HiDPI icon */
+	g_debug ("trying to load %s", fn_hidpi);
 	if (!as_image_load_filename_full (im, fn_hidpi,
 					  128, 128,
 					  AS_IMAGE_LOAD_FLAG_SHARPEN,
-					  NULL)) {
+					  &error_local)) {
+		g_debug ("failed to load HiDPI icon: %s", error_local->message);
 		return TRUE;
 	}
 	pixbuf_hidpi = g_object_ref (as_image_get_pixbuf (im));
 	if (gdk_pixbuf_get_width (pixbuf_hidpi) <= gdk_pixbuf_get_width (pixbuf) ||
-	    gdk_pixbuf_get_height (pixbuf_hidpi) <= gdk_pixbuf_get_height (pixbuf))
+	    gdk_pixbuf_get_height (pixbuf_hidpi) <= gdk_pixbuf_get_height (pixbuf)) {
+		g_debug ("HiDPI icon no larger than normal icon");
 		return TRUE;
+	}
 	as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_HI_DPI_ICON);
 
 	/* save icon */
