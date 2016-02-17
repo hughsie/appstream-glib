@@ -931,11 +931,11 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 static gboolean
 as_app_validate_setup_networking (AsAppValidateHelper *helper, GError **error)
 {
-	helper->session = soup_session_sync_new_with_options (SOUP_SESSION_USER_AGENT,
-							      "libappstream-glib",
-							      SOUP_SESSION_TIMEOUT,
-							      5000,
-							      NULL);
+	helper->session = soup_session_new_with_options (SOUP_SESSION_USER_AGENT,
+							 "libappstream-glib",
+							 SOUP_SESSION_TIMEOUT,
+							 5000,
+							 NULL);
 	if (helper->session == NULL) {
 		g_set_error_literal (error,
 				     AS_APP_ERROR,
