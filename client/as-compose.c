@@ -135,7 +135,7 @@ add_icons (AsApp *app,
 		return TRUE;
 
 	/* load the HiDPI icon */
-	if (!as_image_load_filename_full (im, fn,
+	if (!as_image_load_filename_full (im, fn_hidpi,
 					  128, 128,
 					  AS_IMAGE_LOAD_FLAG_SHARPEN,
 					  NULL)) {
