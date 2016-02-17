@@ -43,6 +43,8 @@ typedef struct
 {
 	AsBundleKind		 kind;
 	gchar			*id;
+	gchar			*runtime;
+	gchar			*sdk;
 } AsBundlePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsBundle, as_bundle, G_TYPE_OBJECT)
@@ -59,6 +61,8 @@ as_bundle_finalize (GObject *object)
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
 
 	g_free (priv->id);
+	g_free (priv->runtime);
+	g_free (priv->sdk);
 
 	G_OBJECT_CLASS (as_bundle_parent_class)->finalize (object);
 }
@@ -140,6 +144,40 @@ as_bundle_get_id (AsBundle *bundle)
 }
 
 /**
+ * as_bundle_get_runtime:
+ * @bundle: a #AsBundle instance.
+ *
+ * Gets the runtime required for this bundle.
+ *
+ * Returns: Runtime identifier, e.g. "org.gnome.Platform/i386/master"
+ *
+ * Since: 0.5.10
+ **/
+const gchar *
+as_bundle_get_runtime (AsBundle *bundle)
+{
+	AsBundlePrivate *priv = GET_PRIVATE (bundle);
+	return priv->runtime;
+}
+
+/**
+ * as_bundle_get_sdk:
+ * @bundle: a #AsBundle instance.
+ *
+ * Gets the SDK for this bundle.
+ *
+ * Returns: SDK identifier, e.g. "org.gnome.Sdk/i386/master"
+ *
+ * Since: 0.5.10
+ **/
+const gchar *
+as_bundle_get_sdk (AsBundle *bundle)
+{
+	AsBundlePrivate *priv = GET_PRIVATE (bundle);
+	return priv->sdk;
+}
+
+/**
  * as_bundle_get_kind:
  * @bundle: a #AsBundle instance.
  *
@@ -171,6 +209,40 @@ as_bundle_set_id (AsBundle *bundle, const gchar *id)
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
 	g_free (priv->id);
 	priv->id = g_strdup (id);
+}
+
+/**
+ * as_bundle_set_runtime:
+ * @bundle: a #AsBundle instance.
+ * @runtime: the URL.
+ *
+ * Sets the runtime required for this bundle.
+ *
+ * Since: 0.5.10
+ **/
+void
+as_bundle_set_runtime (AsBundle *bundle, const gchar *runtime)
+{
+	AsBundlePrivate *priv = GET_PRIVATE (bundle);
+	g_free (priv->runtime);
+	priv->runtime = g_strdup (runtime);
+}
+
+/**
+ * as_bundle_set_sdk:
+ * @bundle: a #AsBundle instance.
+ * @sdk: the URL.
+ *
+ * Sets the SDK for this bundle.
+ *
+ * Since: 0.5.10
+ **/
+void
+as_bundle_set_sdk (AsBundle *bundle, const gchar *sdk)
+{
+	AsBundlePrivate *priv = GET_PRIVATE (bundle);
+	g_free (priv->sdk);
+	priv->sdk = g_strdup (sdk);
 }
 
 /**
@@ -211,6 +283,11 @@ as_bundle_node_insert (AsBundle *bundle, GNode *parent, AsNodeContext *ctx)
 			    AS_NODE_INSERT_FLAG_NONE,
 			    "type", as_bundle_kind_to_string (priv->kind),
 			    NULL);
+	if (priv->runtime != NULL)
+		as_node_add_attribute (n, "runtime", priv->runtime);
+	if (priv->sdk != NULL)
+		as_node_add_attribute (n, "sdk", priv->sdk);
+
 	return n;
 }
 
@@ -242,6 +319,13 @@ as_bundle_node_parse (AsBundle *bundle, GNode *node,
 		g_free (priv->id);
 		priv->id = taken;
 	}
+
+	/* optional */
+	g_free (priv->runtime);
+	priv->runtime = as_node_take_attribute (node, "runtime");
+	g_free (priv->sdk);
+	priv->sdk = as_node_take_attribute (node, "sdk");
+
 	return TRUE;
 }
 

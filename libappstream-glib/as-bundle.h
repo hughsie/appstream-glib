@@ -71,11 +71,17 @@ const gchar	*as_bundle_kind_to_string	(AsBundleKind	 kind);
 
 /* getters */
 const gchar	*as_bundle_get_id		(AsBundle	*bundle);
+const gchar	*as_bundle_get_runtime		(AsBundle	*bundle);
+const gchar	*as_bundle_get_sdk		(AsBundle	*bundle);
 AsBundleKind	 as_bundle_get_kind		(AsBundle	*bundle);
 
 /* setters */
 void		 as_bundle_set_id		(AsBundle	*bundle,
 						 const gchar	*id);
+void		 as_bundle_set_runtime		(AsBundle	*bundle,
+						 const gchar	*runtime);
+void		 as_bundle_set_sdk		(AsBundle	*bundle,
+						 const gchar	*sdk);
 void		 as_bundle_set_kind		(AsBundle	*bundle,
 						 AsBundleKind	 kind);
 

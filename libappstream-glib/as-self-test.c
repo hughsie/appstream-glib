@@ -1186,7 +1186,7 @@ as_test_bundle_func (void)
 	AsNode *root;
 	GString *xml;
 	const gchar *src =
-		"<bundle type=\"limba\">gnome-3-16</bundle>";
+		"<bundle sdk=\"2\" runtime=\"1\" type=\"limba\">gnome-3-16</bundle>";
 	gboolean ret;
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autoptr(AsBundle) bundle = NULL;
@@ -1208,6 +1208,8 @@ as_test_bundle_func (void)
 	/* verify */
 	g_assert_cmpint (as_bundle_get_kind (bundle), ==, AS_BUNDLE_KIND_LIMBA);
 	g_assert_cmpstr (as_bundle_get_id (bundle), ==, "gnome-3-16");
+	g_assert_cmpstr (as_bundle_get_runtime (bundle), ==, "1");
+	g_assert_cmpstr (as_bundle_get_sdk (bundle), ==, "2");
 
 	/* back to node */
 	root = as_node_new ();
