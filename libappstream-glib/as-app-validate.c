@@ -1072,6 +1072,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	const gchar *tmp;
 	const gchar *update_contact;
 	gboolean deprectated_failure = FALSE;
+	gboolean require_appstream_spec_only = FALSE;
 	gboolean require_contactdetails = TRUE;
 	gboolean require_copyright = FALSE;
 	gboolean require_project_license = FALSE;
@@ -1121,6 +1122,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		require_translations = TRUE;
 		require_project_license = TRUE;
 		require_content_license = TRUE;
+		require_appstream_spec_only = TRUE;
 	}
 
 	/* addons don't need such a long description */
@@ -1342,6 +1344,14 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		ai_app_validate_add (&helper,
 				     AS_PROBLEM_KIND_TAG_INVALID,
 				     "<project_group> is not valid");
+	}
+
+	/* only allow XML in the specification */
+	if (require_appstream_spec_only &&
+	    (problems & AS_APP_PROBLEM_INVALID_XML_TAG) > 0) {
+		ai_app_validate_add (&helper,
+				     AS_PROBLEM_KIND_TAG_INVALID,
+				     "XML data contains unknown tag");
 	}
 
 	/* check for things that have to exist */

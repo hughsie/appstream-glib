@@ -3720,6 +3720,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		}
 		break;
 	default:
+		priv->problems |= AS_APP_PROBLEM_INVALID_XML_TAG;
 		break;
 	}
 	return TRUE;

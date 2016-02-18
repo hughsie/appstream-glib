@@ -22,6 +22,7 @@
   <url type="bugtracker">www.dave.org</url>
   <updatecontact></updatecontact>
 
+  <xxx>This is not a valid tag</xxx>
   <releases>
     <release version="0.6.1" timestamp="20140330">
       <description>

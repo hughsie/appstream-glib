@@ -1692,6 +1692,7 @@ as_test_app_validate_file_bad_func (void)
 	g_autofree gchar *filename = NULL;
 	g_autoptr(AsApp) app = NULL;
 	g_autoptr(GPtrArray) probs = NULL;
+	g_autoptr(GPtrArray) probs2 = NULL;
 
 	/* open file */
 	app = as_app_new ();
@@ -1765,6 +1766,12 @@ as_test_app_validate_file_bad_func (void)
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<translation> not specified");
 	g_assert_cmpint (probs->len, ==, 30);
+
+	/* again, harder */
+	probs2 = as_app_validate (app, AS_APP_VALIDATE_FLAG_STRICT, &error);
+	as_test_app_validate_check (probs2, AS_PROBLEM_KIND_TAG_INVALID,
+				    "XML data contains unknown tag");
+	g_assert_cmpint (probs2->len, ==, 36);
 }
 
 static void
