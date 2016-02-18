@@ -72,7 +72,6 @@ main (int argc, char **argv)
 	gboolean ret;
 	gboolean uncompressed_icons = FALSE;
 	gboolean verbose = FALSE;
-	gdouble api_version = 0.0f;
 	gint max_threads = 4;
 	gint min_icon_size = 32;
 	guint i;
@@ -140,9 +139,6 @@ main (int argc, char **argv)
 		{ "min-icon-size", '\0', 0, G_OPTION_ARG_INT, &min_icon_size,
 			/* TRANSLATORS: command line option */
 			_("Set the minimum icon size in pixels"), "ICON_SIZE" },
-		{ "api-version", '\0', 0, G_OPTION_ARG_DOUBLE, &api_version,
-			/* TRANSLATORS: command line option */
-			_("Set the AppStream version"), "API_VERSION" },
 		{ "old-metadata", '\0', 0, G_OPTION_ARG_FILENAME, &old_metadata,
 			/* TRANSLATORS: command line option */
 			_("Set the old metadata location"), "DIR" },
@@ -178,8 +174,6 @@ main (int argc, char **argv)
 	}
 #endif
 	/* set defaults */
-	if (api_version < 0.01)
-		api_version = 0.8;
 	if (temp_dir == NULL)
 		temp_dir = g_strdup ("./tmp");
 	if (log_dir == NULL)
@@ -192,14 +186,6 @@ main (int argc, char **argv)
 		cache_dir = g_strdup ("./cache");
 	setlocale (LC_ALL, "");
 
-	/* obsolete */
-	if (api_version < 0.6) {
-		/* TRANSLATORS: error message */
-		g_warning ("%s", _("API version no longer supported"));
-		retval = EXIT_FAILURE;
-		goto out;
-	}
-
 	/* this really ought to be set */
 	if (basename == NULL) {
 		g_print ("WARNING: Metadata basename not set, using 'appstream'\n");
@@ -211,7 +197,7 @@ main (int argc, char **argv)
 	}
 
 	ctx = asb_context_new ();
-	asb_context_set_api_version (ctx, api_version);
+	asb_context_set_api_version (ctx, 0.8);
 	asb_context_set_old_metadata (ctx, old_metadata);
 	asb_context_set_log_dir (ctx, log_dir);
 	asb_context_set_temp_dir (ctx, temp_dir);

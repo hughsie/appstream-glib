@@ -326,7 +326,6 @@ main (int argc, char **argv)
 	g_autoptr(GFile) xml_dir = NULL;
 	g_autoptr(GFile) xml_file = NULL;
 	gint min_icon_size = 32;
-	gdouble api_version = 0.0f;
 	guint i;
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
@@ -350,9 +349,6 @@ main (int argc, char **argv)
 		{ "basename", '\0', 0, G_OPTION_ARG_STRING, &basename,
 			/* TRANSLATORS: command line option */
 			_("Set the basenames of the output files"), "NAME" },
-		{ "api-version", '\0', 0, G_OPTION_ARG_DOUBLE, &api_version,
-			/* TRANSLATORS: command line option */
-			_("Set the AppStream version"), "API_VERSION" },
 		{ NULL}
 	};
 
@@ -374,8 +370,6 @@ main (int argc, char **argv)
 		g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
 
 	/* set defaults */
-	if (api_version < 0.01)
-		api_version = 0.8;
 	if (prefix == NULL)
 		prefix = g_strdup ("/usr");
 	if (output_dir == NULL)
@@ -397,7 +391,7 @@ main (int argc, char **argv)
 	}
 
 	store = as_store_new ();
-	as_store_set_api_version (store, api_version);
+	as_store_set_api_version (store, 0.8);
 	as_store_set_origin (store, origin);
 
 	/* load each application specified */
