@@ -3439,6 +3439,49 @@ as_test_store_speed_appstream_func (void)
 }
 
 static void
+as_test_store_speed_search_func (void)
+{
+	AsApp *app;
+	GPtrArray *apps;
+	GError *error = NULL;
+	gboolean ret;
+	guint i;
+	guint j;
+	guint loops = 1000;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(GFile) file = NULL;
+	g_autoptr(GTimer) timer = NULL;
+	g_autoptr(AsStore) store = NULL;
+
+	/* run creating a store and tokenizing */
+	filename = as_test_get_filename ("example-v04.xml.gz");
+	file = g_file_new_for_path (filename);
+	store = as_store_new ();
+	ret = as_store_from_file (store, file, NULL, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* tokenize and search */
+	timer = g_timer_new ();
+	apps = as_store_get_apps (store);
+	for (j = 0; j < apps->len; j++) {
+		app = g_ptr_array_index (apps, j);
+		as_app_search_matches (app, "xxx");
+	}
+	g_print ("cold=%.0fms: ", g_timer_elapsed (timer, NULL) * 1000);
+
+	/* search again */
+	g_timer_reset (timer);
+	for (i = 0; i < loops; i++) {
+		for (j = 0; j < apps->len; j++) {
+			app = g_ptr_array_index (apps, j);
+			as_app_search_matches (app, "xxx");
+		}
+	}
+	g_print ("hot=%.2f ms: ", (g_timer_elapsed (timer, NULL) * 1000) / (gdouble) loops);
+}
+
+static void
 as_test_store_speed_appdata_func (void)
 {
 	GError *error = NULL;
@@ -4605,6 +4648,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{provides}", as_test_store_provides_func);
 	g_test_add_func ("/AppStream/store{local-appdata}", as_test_store_local_appdata_func);
 	g_test_add_func ("/AppStream/store{speed-appstream}", as_test_store_speed_appstream_func);
+	g_test_add_func ("/AppStream/store{speed-search}", as_test_store_speed_search_func);
 	g_test_add_func ("/AppStream/store{speed-appdata}", as_test_store_speed_appdata_func);
 	g_test_add_func ("/AppStream/store{speed-desktop}", as_test_store_speed_desktop_func);
 	g_test_add_func ("/AppStream/store{speed-yaml}", as_test_store_speed_yaml_func);
