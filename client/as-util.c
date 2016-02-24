@@ -1277,14 +1277,29 @@ as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
+ * as_util_sort_apps_by_sort_key_cb:
+ **/
+static gint
+as_util_sort_apps_by_sort_key_cb (gconstpointer a, gconstpointer b)
+{
+	AsApp *app1 = *((AsApp **) a);
+	AsApp *app2 = *((AsApp **) b);
+	return g_strcmp0 (as_app_get_metadata_item (app2, "SortKey"),
+			  as_app_get_metadata_item (app1, "SortKey"));
+}
+
+/**
  * as_util_search:
  **/
 static gboolean
 as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 {
+	AsApp *app;
 	GPtrArray *apps;
 	guint i;
+	guint score;
 	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GPtrArray) array = NULL;
 
 	/* check args */
 	if (g_strv_length (values) < 1) {
@@ -1307,12 +1322,28 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 			    AS_STORE_LOAD_FLAG_DESKTOP,
 			    NULL, error))
 		return FALSE;
+
+	/* add matches to an array */
 	apps = as_store_get_apps (store);
+	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	for (i = 0; i < apps->len; i++) {
-		AsApp *app;
 		app = g_ptr_array_index (apps, i);
-		if (as_app_search_matches_all (app, values))
-			g_print ("%s\n", as_app_get_id (app));
+		score = as_app_search_matches_all (app, values);
+		if (score > 0) {
+			g_autofree gchar *sort_key = NULL;
+			sort_key = g_strdup_printf ("%05i", score);
+			as_app_add_metadata (app, "SortKey", sort_key);
+			g_ptr_array_add (array, g_object_ref (app));
+		}
+	}
+
+	/* print sorted results */
+	g_ptr_array_sort (array, as_util_sort_apps_by_sort_key_cb);
+	for (i = 0; i < array->len; i++) {
+		app = g_ptr_array_index (array, i);
+		g_print ("[%s] %s\n",
+			 as_app_get_metadata_item (app, "SortKey"),
+			 as_app_get_id (app));
 	}
 	return TRUE;
 }
