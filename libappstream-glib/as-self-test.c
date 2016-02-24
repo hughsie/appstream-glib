@@ -2564,10 +2564,12 @@ as_test_app_search_func (void)
 {
 	const gchar *all[] = { "gnome", "install", "software", NULL };
 	const gchar *none[] = { "gnome", "xxx", "software", NULL };
-	const gchar *mime[] = { "vnd", "oasis", "opendocument","text", NULL };
+	const gchar *mime[] = { "oasis", "opendocument", NULL };
 	g_autoptr(AsApp) app = NULL;
 
 	app = as_app_new ();
+	as_app_set_id (app, "gnome-software");
+	as_app_add_pkgname (app, "gnome-software");
 	as_app_set_name (app, NULL, "GNOME Software");
 	as_app_set_comment (app, NULL, "Install and remove software");
 	as_app_add_mimetype (app, "application/vnd.oasis.opendocument.text");
@@ -2575,13 +2577,13 @@ as_test_app_search_func (void)
 	as_app_add_keyword (app, NULL, "c++");
 	as_app_add_keyword (app, NULL, "d-feet");
 
-	g_assert_cmpint (as_app_search_matches (app, "software"), ==, 80);
-	g_assert_cmpint (as_app_search_matches (app, "soft"), ==, 80);
-	g_assert_cmpint (as_app_search_matches (app, "install"), ==, 60);
-	g_assert_cmpint (as_app_search_matches (app, "awesome"), ==, 90);
-	g_assert_cmpint (as_app_search_matches (app, "c++"), ==, 90);
-	g_assert_cmpint (as_app_search_matches (app, "d-feet"), ==, 90);
-	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) all), ==, 220);
+	g_assert_cmpint (as_app_search_matches (app, "software"), ==, 96);
+	g_assert_cmpint (as_app_search_matches (app, "soft"), ==, 24);
+	g_assert_cmpint (as_app_search_matches (app, "install"), ==, 32);
+	g_assert_cmpint (as_app_search_matches (app, "awesome"), ==, 128);
+	g_assert_cmpint (as_app_search_matches (app, "c++"), ==, 128);
+	g_assert_cmpint (as_app_search_matches (app, "d-feet"), ==, 128);
+	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) all), ==, 96);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) none), ==, 0);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) mime), ==, 4);
 

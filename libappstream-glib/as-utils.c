@@ -1548,6 +1548,14 @@ as_utils_search_token_valid (const gchar *token)
 		"this", "other", "all", "using", "has", "some", "like", "them",
 		"well", "not", "using", "not", "but", "set", "its", "into",
 		"such", "was", "they", "where", "want", "only", "about",
+		"uses", "font", "features", "designed", "provides", "which",
+		"many", "used", "org", "fonts", "open", "more", "based",
+		"different", "including", "will", "multiple", "out", "have",
+		"each", "when", "need", "vnd", "most", "both", "their", "even",
+		"way", "several", "been", "while", "very", "add", "under",
+		"what", "those", "much", "either", "currently", "one",
+		"support", "make", "over", "these", "there", "without", "etc",
+		"main",
 		NULL };
 	if (strlen (token) < 3)
 		return FALSE;

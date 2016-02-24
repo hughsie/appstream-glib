@@ -94,18 +94,27 @@ typedef struct
 	gchar		*source_file;
 	gint		 priority;
 	gsize		 token_cache_valid;
-	GPtrArray	*token_cache;			/* of AsAppTokenItem */
+	GHashTable	*token_cache;			/* of string:AsAppTokenType* */
 } AsAppPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsApp, as_app, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (as_app_get_instance_private (o))
 
-typedef struct {
-	gchar		**values_ascii;
-	gchar		**values_utf8;
-	guint		  score;
-} AsAppTokenItem;
+
+typedef enum {
+	AS_APP_TOKEN_MATCH_NONE		= 0,		/* 0x00 */
+	AS_APP_TOKEN_MATCH_MIMETYPE	= 1 << 0,	/* 0x01 */
+	AS_APP_TOKEN_MATCH_PKGNAME	= 1 << 1,	/* 0x02 */
+	AS_APP_TOKEN_MATCH_DESCRIPTION	= 1 << 2,	/* 0x04 */
+	AS_APP_TOKEN_MATCH_COMMENT	= 1 << 3,	/* 0x08 */
+	AS_APP_TOKEN_MATCH_NAME		= 1 << 4,	/* 0x10 */
+	AS_APP_TOKEN_MATCH_KEYWORD	= 1 << 5,	/* 0x20 */
+	AS_APP_TOKEN_MATCH_ID		= 1 << 6,	/* 0x40 */
+	AS_APP_TOKEN_MATCH_LAST
+} AsAppTokenMatch;
+
+typedef guint16	AsAppTokenType;	/* big enough for both bitshifts */
 
 /**
  * as_app_error_quark:
@@ -273,6 +282,7 @@ as_app_finalize (GObject *object)
 	g_hash_table_unref (priv->metadata);
 	g_hash_table_unref (priv->names);
 	g_hash_table_unref (priv->urls);
+	g_hash_table_unref (priv->token_cache);
 	g_ptr_array_unref (priv->addons);
 	g_ptr_array_unref (priv->categories);
 	g_ptr_array_unref (priv->compulsory_for_desktops);
@@ -288,21 +298,9 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->icons);
 	g_ptr_array_unref (priv->bundles);
 	g_ptr_array_unref (priv->translations);
-	g_ptr_array_unref (priv->token_cache);
 	g_ptr_array_unref (priv->vetos);
 
 	G_OBJECT_CLASS (as_app_parent_class)->finalize (object);
-}
-
-/**
- * as_app_token_item_free:
- **/
-static void
-as_app_token_item_free (AsAppTokenItem *token_item)
-{
-	g_strfreev (token_item->values_ascii);
-	g_strfreev (token_item->values_utf8);
-	g_slice_free (AsAppTokenItem, token_item);
 }
 
 /**
@@ -329,7 +327,6 @@ as_app_init (AsApp *app)
 	priv->icons = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->bundles = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->translations = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
-	priv->token_cache = g_ptr_array_new_with_free_func ((GDestroyNotify) as_app_token_item_free);
 	priv->vetos = g_ptr_array_new_with_free_func (g_free);
 
 	priv->comments = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
@@ -339,6 +336,7 @@ as_app_init (AsApp *app)
 	priv->metadata = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->names = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->urls = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+	priv->token_cache = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 }
 
 /**
@@ -4038,32 +4036,29 @@ as_app_value_tokenize (const gchar *value)
 }
 
 /**
- * as_app_remove_invalid_tokens:
+ * as_app_add_token:
  **/
 static void
-as_app_remove_invalid_tokens (gchar **tokens)
+as_app_add_token (AsApp *app, const gchar *value, AsAppTokenMatch match_flag)
 {
-	guint i;
-	guint idx = 0;
-	guint len;
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsAppTokenType *match_pval;
 
-	if (tokens == NULL)
+	/* invalid */
+	if (!as_utils_search_token_valid (value))
 		return;
 
-	/* remove any tokens that are invalid and maintain the order */
-	len = g_strv_length (tokens);
-	for (i = 0; i < len; i++) {
-		if (!as_utils_search_token_valid (tokens[i])) {
-			g_free (tokens[i]);
-			tokens[i] = NULL;
-			continue;
-		}
-		tokens[idx++] = tokens[i];
+	/* does the token already exist */
+	match_pval = g_hash_table_lookup (priv->token_cache, value);
+	if (match_pval != NULL) {
+		*match_pval |= match_flag;
+		return;
 	}
 
-	/* unused token space */
-	for (i = idx; i < len; i++)
-		tokens[i] = NULL;
+	/* create and add */
+	match_pval = g_new0 (AsAppTokenType, 1);
+	*match_pval = match_flag;
+	g_hash_table_insert (priv->token_cache, g_strdup (value), match_pval);
 }
 
 /**
@@ -4073,10 +4068,11 @@ static void
 as_app_add_tokens (AsApp *app,
 		   const gchar *value,
 		   const gchar *locale,
-		   guint score)
+		   AsAppTokenMatch match_flag)
 {
-	AsAppPrivate *priv = GET_PRIVATE (app);
-	AsAppTokenItem *token_item;
+	guint i;
+	g_auto(GStrv) values_utf8 = NULL;
+	g_auto(GStrv) values_ascii = NULL;
 
 	/* sanity check */
 	if (value == NULL) {
@@ -4085,24 +4081,21 @@ as_app_add_tokens (AsApp *app,
 		return;
 	}
 
-	token_item = g_slice_new0 (AsAppTokenItem);
 #if GLIB_CHECK_VERSION(2,39,1)
+	/* tokenize with UTF-8 fallbacks */
 	if (g_strstr_len (value, -1, "+") == NULL &&
 	    g_strstr_len (value, -1, "-") == NULL) {
-		token_item->values_utf8 = g_str_tokenize_and_fold (value,
-								   locale,
-								   &token_item->values_ascii);
+		values_utf8 = g_str_tokenize_and_fold (value, locale, &values_ascii);
 	}
 #endif
-	if (token_item->values_utf8 == NULL)
-		token_item->values_utf8 = as_app_value_tokenize (value);
+	if (values_utf8 == NULL)
+		values_utf8 = as_app_value_tokenize (value);
 
-	/* remove any tokens that are invalid */
-	as_app_remove_invalid_tokens (token_item->values_utf8);
-	as_app_remove_invalid_tokens (token_item->values_ascii);
-
-	token_item->score = score;
-	g_ptr_array_add (priv->token_cache, token_item);
+	/* add each token */
+	for (i = 0; values_utf8 != NULL && values_utf8[i] != NULL; i++)
+		as_app_add_token (app, values_utf8[i], match_flag);
+	for (i = 0; values_ascii != NULL && values_ascii[i] != NULL; i++)
+		as_app_add_token (app, values_ascii[i], match_flag);
 }
 
 /**
@@ -4120,35 +4113,42 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 
 	/* add all the data we have */
 	if (priv->id_filename != NULL)
-		as_app_add_tokens (app, priv->id_filename, "C", 100);
+		as_app_add_tokens (app, priv->id_filename, "C", AS_APP_TOKEN_MATCH_ID);
 	locales = g_get_language_names ();
 	for (i = 0; locales[i] != NULL; i++) {
 		if (g_str_has_suffix (locales[i], ".UTF-8"))
 			continue;
 		tmp = as_app_get_name (app, locales[i]);
-		if (tmp != NULL)
-			as_app_add_tokens (app, tmp, locales[i], 80);
+		if (tmp != NULL) {
+			as_app_add_tokens (app, tmp, locales[i],
+					   AS_APP_TOKEN_MATCH_NAME);
+		}
 		tmp = as_app_get_comment (app, locales[i]);
-		if (tmp != NULL)
-			as_app_add_tokens (app, tmp, locales[i], 60);
+		if (tmp != NULL) {
+			as_app_add_tokens (app, tmp, locales[i],
+					   AS_APP_TOKEN_MATCH_COMMENT);
+		}
 		tmp = as_app_get_description (app, locales[i]);
-		if (tmp != NULL)
-			as_app_add_tokens (app, tmp, locales[i], 20);
+		if (tmp != NULL) {
+			as_app_add_tokens (app, tmp, locales[i],
+					   AS_APP_TOKEN_MATCH_DESCRIPTION);
+		}
 		array = as_app_get_keywords (app, locales[i]);
 		if (array != NULL) {
 			for (j = 0; j < array->len; j++) {
 				tmp = g_ptr_array_index (array, j);
-				as_app_add_tokens (app, tmp, locales[i], 90);
+				as_app_add_tokens (app, tmp, locales[i],
+						   AS_APP_TOKEN_MATCH_KEYWORD);
 			}
 		}
 	}
 	for (i = 0; i < priv->mimetypes->len; i++) {
 		tmp = g_ptr_array_index (priv->mimetypes, i);
-		as_app_add_tokens (app, tmp, "C", 1);
+		as_app_add_tokens (app, tmp, "C", AS_APP_TOKEN_MATCH_MIMETYPE);
 	}
 	for (i = 0; i < priv->pkgnames->len; i++) {
 		tmp = g_ptr_array_index (priv->pkgnames, i);
-		as_app_add_tokens (app, tmp, "C", 1);
+		as_app_add_tokens (app, tmp, "C", AS_APP_TOKEN_MATCH_PKGNAME);
 	}
 }
 
@@ -4184,8 +4184,10 @@ guint
 as_app_search_matches (AsApp *app, const gchar *search)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	AsAppTokenItem *item;
-	guint i, j;
+	AsAppTokenType *match_pval;
+	GList *l;
+	AsAppTokenMatch result = 0;
+	g_autoptr(GList) keys = NULL;
 
 	/* nothing to do */
 	if (search == NULL)
@@ -4197,27 +4199,21 @@ as_app_search_matches (AsApp *app, const gchar *search)
 		g_once_init_leave (&priv->token_cache_valid, TRUE);
 	}
 
-	/* find the search term */
-	for (i = 0; i < priv->token_cache->len; i++) {
-		item = g_ptr_array_index (priv->token_cache, i);
+	/* find the exact match (which is more awesome than a partial match) */
+	match_pval = g_hash_table_lookup (priv->token_cache, search);
+	if (match_pval != NULL)
+		return *match_pval << 2;
 
-		/* prefer UTF-8 matches */
-		if (item->values_utf8 != NULL) {
-			for (j = 0; item->values_utf8[j] != NULL; j++) {
-				if (g_str_has_prefix (item->values_utf8[j], search))
-					return item->score;
-			}
-		}
-
-		/* fall back to ASCII matches */
-		if (item->values_ascii != NULL) {
-			for (j = 0; item->values_ascii[j] != NULL; j++) {
-				if (g_str_has_prefix (item->values_ascii[j], search))
-					return item->score / 2;
-			}
+	/* need to do partial match */
+	keys = g_hash_table_get_keys (priv->token_cache);
+	for (l = keys; l != NULL; l = l->next) {
+		const gchar *key = l->data;
+		if (g_str_has_prefix (key, search)) {
+			match_pval = g_hash_table_lookup (priv->token_cache, key);
+			result |= *match_pval;
 		}
 	}
-	return 0;
+	return result;
 }
 
 /**
@@ -4234,9 +4230,9 @@ GPtrArray *
 as_app_get_search_tokens (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	AsAppTokenItem *item;
+	GList *l;
 	GPtrArray *array;
-	guint i, j;
+	g_autoptr(GList) keys = NULL;
 
 	/* ensure the token cache is created */
 	if (g_once_init_enter (&priv->token_cache_valid)) {
@@ -4244,19 +4240,11 @@ as_app_get_search_tokens (AsApp *app)
 		g_once_init_leave (&priv->token_cache_valid, TRUE);
 	}
 
-	/* return all the toek cache */
+	/* return all the token cache */
+	keys = g_hash_table_get_keys (priv->token_cache);
 	array = g_ptr_array_new_with_free_func (g_free);
-	for (i = 0; i < priv->token_cache->len; i++) {
-		item = g_ptr_array_index (priv->token_cache, i);
-		if (item->values_utf8 != NULL) {
-			for (j = 0; item->values_utf8[j] != NULL; j++)
-				g_ptr_array_add (array, g_strdup (item->values_utf8[j]));
-		}
-		if (item->values_ascii != NULL) {
-			for (j = 0; item->values_ascii[j] != NULL; j++)
-				g_ptr_array_add (array, g_strdup (item->values_ascii[j]));
-		}
-	}
+	for (l = keys; l != NULL; l = l->next)
+		g_ptr_array_add (array, g_strdup (l->data));
 	return array;
 }
 
@@ -4287,7 +4275,7 @@ as_app_search_matches_all (AsApp *app, gchar **search)
 		tmp = as_app_search_matches (app, search[i]);
 		if (tmp == 0)
 			return 0;
-		matches_sum += tmp;
+		matches_sum |= tmp;
 	}
 	return matches_sum;
 }
