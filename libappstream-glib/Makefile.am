@@ -251,6 +251,10 @@ EXTRA_DIST =							\
 	as-tag.gperf						\
 	as-version.h.in
 
+massif:
+	valgrind --tool=massif --massif-out-file=massif.log .libs/lt-as-self-test;	\
+	ms_print massif.log > massif.txt
+
 clean-local:
 	rm -f *~
 	rm -f $(CLEANFILES)
