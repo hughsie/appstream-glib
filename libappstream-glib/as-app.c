@@ -158,6 +158,8 @@ as_app_kind_to_string (AsAppKind kind)
 		return "runtime";
 	if (kind == AS_APP_KIND_GENERIC)
 		return "generic";
+	if (kind == AS_APP_KIND_DISTRO_UPGRADE)
+		return "distro-upgrade";
 	return "unknown";
 }
 
@@ -194,6 +196,8 @@ as_app_kind_from_string (const gchar *kind)
 		return AS_APP_KIND_RUNTIME;
 	if (g_strcmp0 (kind, "generic") == 0)
 		return AS_APP_KIND_GENERIC;
+	if (g_strcmp0 (kind, "distro-upgrade") == 0)
+		return AS_APP_KIND_DISTRO_UPGRADE;
 	return AS_APP_KIND_UNKNOWN;
 }
 

@@ -182,6 +182,7 @@ typedef enum {
  * @AS_APP_KIND_FIRMWARE:		A firmware update
  * @AS_APP_KIND_RUNTIME:		Runtime platform
  * @AS_APP_KIND_GENERIC:		Generic component
+ * @AS_APP_KIND_DISTRO_UPGRADE:		Distribution upgrade
  *
  * The component type.
  **/
@@ -197,6 +198,7 @@ typedef enum {
 	AS_APP_KIND_FIRMWARE,		/* Since: 0.5.10 */
 	AS_APP_KIND_RUNTIME,		/* Since: 0.5.10 */
 	AS_APP_KIND_GENERIC,		/* Since: 0.5.10 */
+	AS_APP_KIND_DISTRO_UPGRADE,	/* Since: 0.5.10 */
 	/*< private >*/
 	AS_APP_KIND_LAST
 } AsAppKind;
