@@ -210,7 +210,7 @@ load_desktop (const gchar *prefix,
 				AS_APP_PARSE_FLAG_ALLOW_VETO,
 				error))
 		return NULL;
-	if (as_app_get_id_kind (app) == AS_ID_KIND_UNKNOWN) {
+	if (as_app_get_kind (app) == AS_APP_KIND_UNKNOWN) {
 		g_set_error (error,
 			     AS_APP_ERROR,
 			     AS_APP_ERROR_FAILED,
@@ -271,7 +271,7 @@ load_appdata (const gchar *prefix, const gchar *app_name, GError **error)
 				AS_APP_PARSE_FLAG_USE_HEURISTICS,
 				error))
 		return NULL;
-	if (as_app_get_id_kind (app) == AS_ID_KIND_UNKNOWN) {
+	if (as_app_get_kind (app) == AS_APP_KIND_UNKNOWN) {
 		g_set_error (error,
 			     AS_APP_ERROR,
 			     AS_APP_ERROR_FAILED,

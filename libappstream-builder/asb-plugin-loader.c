@@ -312,7 +312,7 @@ asb_plugin_loader_merge (AsbPluginLoader *plugin_loader, GList *apps)
 					     (gpointer) app);
 			continue;
 		}
-		if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_FIRMWARE) {
+		if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_FIRMWARE) {
 			as_app_subsume_full (AS_APP (found), AS_APP (app),
 					     AS_APP_SUBSUME_FLAG_PARTIAL);
 		}

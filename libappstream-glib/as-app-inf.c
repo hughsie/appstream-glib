@@ -108,7 +108,7 @@ as_app_parse_inf_file (AsApp *app,
 			     "Driver class is '%s', not 'Firmware'", class);
 		return FALSE;
 	}
-	as_app_set_id_kind (app, AS_ID_KIND_FIRMWARE);
+	as_app_set_kind (app, AS_APP_KIND_FIRMWARE);
 
 	/* get the Class GUID */
 	class_guid_unsafe = g_key_file_get_string (kf, "Version", "ClassGuid", NULL);

@@ -54,7 +54,7 @@ typedef struct
 {
 	AsAppProblems	 problems;
 	AsIconKind	 icon_kind;
-	AsIdKind	 id_kind;
+	AsAppKind	 kind;
 	GHashTable	*comments;			/* of locale:string */
 	GHashTable	*developer_names;		/* of locale:string */
 	GHashTable	*descriptions;			/* of locale:string */
@@ -124,6 +124,78 @@ typedef guint16	AsAppTokenType;	/* big enough for both bitshifts */
  * Since: 0.1.2
  **/
 G_DEFINE_QUARK (as-app-error-quark, as_app_error)
+
+/**
+ * as_app_kind_to_string:
+ * @kind: the #AsAppKind.
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @kind
+ *
+ * Since: 0.5.10
+ **/
+const gchar *
+as_app_kind_to_string (AsAppKind kind)
+{
+	if (kind == AS_APP_KIND_DESKTOP)
+		return "desktop";
+	if (kind == AS_APP_KIND_CODEC)
+		return "codec";
+	if (kind == AS_APP_KIND_FONT)
+		return "font";
+	if (kind == AS_APP_KIND_INPUT_METHOD)
+		return "inputmethod";
+	if (kind == AS_APP_KIND_WEB_APP)
+		return "webapp";
+	if (kind == AS_APP_KIND_SOURCE)
+		return "source";
+	if (kind == AS_APP_KIND_ADDON)
+		return "addon";
+	if (kind == AS_APP_KIND_FIRMWARE)
+		return "firmware";
+	if (kind == AS_APP_KIND_RUNTIME)
+		return "runtime";
+	if (kind == AS_APP_KIND_GENERIC)
+		return "generic";
+	return "unknown";
+}
+
+/**
+ * as_app_kind_from_string:
+ * @kind: the string.
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Returns: a #AsAppKind or %AS_APP_KIND_UNKNOWN for unknown
+ *
+ * Since: 0.5.10
+ **/
+AsAppKind
+as_app_kind_from_string (const gchar *kind)
+{
+	if (g_strcmp0 (kind, "desktop") == 0)
+		return AS_APP_KIND_DESKTOP;
+	if (g_strcmp0 (kind, "codec") == 0)
+		return AS_APP_KIND_CODEC;
+	if (g_strcmp0 (kind, "font") == 0)
+		return AS_APP_KIND_FONT;
+	if (g_strcmp0 (kind, "inputmethod") == 0)
+		return AS_APP_KIND_INPUT_METHOD;
+	if (g_strcmp0 (kind, "webapp") == 0)
+		return AS_APP_KIND_WEB_APP;
+	if (g_strcmp0 (kind, "source") == 0)
+		return AS_APP_KIND_SOURCE;
+	if (g_strcmp0 (kind, "addon") == 0)
+		return AS_APP_KIND_ADDON;
+	if (g_strcmp0 (kind, "firmware") == 0)
+		return AS_APP_KIND_FIRMWARE;
+	if (g_strcmp0 (kind, "runtime") == 0)
+		return AS_APP_KIND_RUNTIME;
+	if (g_strcmp0 (kind, "generic") == 0)
+		return AS_APP_KIND_GENERIC;
+	return AS_APP_KIND_UNKNOWN;
+}
 
 /**
  * as_app_source_kind_from_string:
@@ -921,6 +993,7 @@ as_app_get_addons (AsApp *app)
 	return priv->addons;
 }
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 /**
  * as_app_get_id_kind:
  * @app: a #AsApp instance.
@@ -935,7 +1008,25 @@ AsIdKind
 as_app_get_id_kind (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	return priv->id_kind;
+	return priv->kind;
+}
+G_GNUC_END_IGNORE_DEPRECATIONS
+
+/**
+ * as_app_get_kind:
+ * @app: a #AsApp instance.
+ *
+ * Gets the ID kind.
+ *
+ * Returns: enumerated value
+ *
+ * Since: 0.5.10
+ **/
+AsAppKind
+as_app_get_kind (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->kind;
 }
 
 /**
@@ -1504,9 +1595,26 @@ as_app_set_trust_flags (AsApp *app, AsAppTrustFlags trust_flags)
 }
 
 /**
+ * as_app_set_kind:
+ * @app: a #AsApp instance.
+ * @kind: the #AsAppKind.
+ *
+ * Sets the application kind.
+ *
+ * Since: 0.5.10
+ **/
+void
+as_app_set_kind (AsApp *app, AsAppKind kind)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	priv->kind = kind;
+}
+
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+/**
  * as_app_set_id_kind:
  * @app: a #AsApp instance.
- * @id_kind: the #AsIdKind.
+ * @kind: the #AsAppKind.
  *
  * Sets the application kind.
  *
@@ -1516,8 +1624,9 @@ void
 as_app_set_id_kind (AsApp *app, AsIdKind id_kind)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	priv->id_kind = id_kind;
+	priv->kind = id_kind;
 }
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 /**
  * as_app_set_project_group:
@@ -2343,8 +2452,8 @@ as_app_add_icon (AsApp *app, AsIcon *icon)
 
 	/* assume that desktop stock icons are available in HiDPI sizes */
 	if (as_icon_get_kind (icon) == AS_ICON_KIND_STOCK) {
-		switch (priv->id_kind) {
-		case AS_ID_KIND_DESKTOP:
+		switch (priv->kind) {
+		case AS_APP_KIND_DESKTOP:
 			as_app_add_kudo_kind (app, AS_KUDO_KIND_HI_DPI_ICON);
 			break;
 		default:
@@ -2737,14 +2846,14 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	overwrite = (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) == 0;
 
 	/* id-kind */
-	if (papp->id_kind == AS_ID_KIND_UNKNOWN)
-		as_app_set_id_kind (app, priv->id_kind);
+	if (papp->kind == AS_APP_KIND_UNKNOWN)
+		as_app_set_kind (app, priv->kind);
 
 	/* AppData or AppStream can overwrite the id-kind of desktop files */
 	if ((priv->source_kind == AS_APP_SOURCE_KIND_APPDATA ||
 	     priv->source_kind == AS_APP_SOURCE_KIND_APPSTREAM) &&
 	    papp->source_kind == AS_APP_SOURCE_KIND_DESKTOP)
-		as_app_set_id_kind (app, priv->id_kind);
+		as_app_set_kind (app, priv->kind);
 
 	/* state */
 	if (papp->state == AS_APP_STATE_UNKNOWN)
@@ -3102,10 +3211,10 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 
 	/* <component> or <application> */
 	node_app = as_node_insert (parent, "component", NULL, 0, NULL);
-	if (priv->id_kind != AS_ID_KIND_UNKNOWN) {
+	if (priv->kind != AS_APP_KIND_UNKNOWN) {
 		as_node_add_attribute (node_app,
 				       "type",
-				       as_id_kind_to_string (priv->id_kind));
+				       as_app_kind_to_string (priv->kind));
 	}
 
 	/* <id> */
@@ -3353,7 +3462,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		}
 		tmp = as_node_get_attribute (n, "type");
 		if (tmp != NULL)
-			as_app_set_id_kind (app, as_id_kind_from_string (tmp));
+			as_app_set_kind (app, as_app_kind_from_string (tmp));
 		as_app_set_id (app, as_node_get_data (n));
 		break;
 
@@ -3769,9 +3878,9 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags,
 	if (g_strcmp0 (as_node_get_name (node), "component") == 0) {
 		tmp = as_node_get_attribute (node, "type");
 		if (tmp == NULL)
-			as_app_set_id_kind (app, AS_ID_KIND_GENERIC);
+			as_app_set_kind (app, AS_APP_KIND_GENERIC);
 		else
-			as_app_set_id_kind (app, as_id_kind_from_string (tmp));
+			as_app_set_kind (app, as_app_kind_from_string (tmp));
 		prio = as_node_get_attribute_as_int (node, "priority");
 		if (prio != G_MAXINT && prio != 0)
 			as_app_set_priority (app, prio);
@@ -3895,7 +4004,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 		}
 		if (g_strcmp0 (tmp, "Type") == 0) {
 			if (g_strcmp0 (as_yaml_node_get_value (n), "desktop-app") == 0) {
-				as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
+				as_app_set_kind (app, AS_APP_KIND_DESKTOP);
 				continue;
 			}
 			continue;

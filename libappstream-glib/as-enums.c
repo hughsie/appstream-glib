@@ -31,7 +31,9 @@
 #include "config.h"
 
 #include "as-enums.h"
+#include "as-app.h"
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 /**
  * as_id_kind_to_string:
  * @id_kind: the #AsIdKind.
@@ -45,27 +47,7 @@
 const gchar *
 as_id_kind_to_string (AsIdKind id_kind)
 {
-	if (id_kind == AS_ID_KIND_DESKTOP)
-		return "desktop";
-	if (id_kind == AS_ID_KIND_CODEC)
-		return "codec";
-	if (id_kind == AS_ID_KIND_FONT)
-		return "font";
-	if (id_kind == AS_ID_KIND_INPUT_METHOD)
-		return "inputmethod";
-	if (id_kind == AS_ID_KIND_WEB_APP)
-		return "webapp";
-	if (id_kind == AS_ID_KIND_SOURCE)
-		return "source";
-	if (id_kind == AS_ID_KIND_ADDON)
-		return "addon";
-	if (id_kind == AS_ID_KIND_FIRMWARE)
-		return "firmware";
-	if (id_kind == AS_ID_KIND_RUNTIME)
-		return "runtime";
-	if (id_kind == AS_ID_KIND_GENERIC)
-		return "generic";
-	return "unknown";
+	return as_app_kind_to_string (id_kind);
 }
 
 /**
@@ -81,28 +63,9 @@ as_id_kind_to_string (AsIdKind id_kind)
 AsIdKind
 as_id_kind_from_string (const gchar *id_kind)
 {
-	if (g_strcmp0 (id_kind, "desktop") == 0)
-		return AS_ID_KIND_DESKTOP;
-	if (g_strcmp0 (id_kind, "codec") == 0)
-		return AS_ID_KIND_CODEC;
-	if (g_strcmp0 (id_kind, "font") == 0)
-		return AS_ID_KIND_FONT;
-	if (g_strcmp0 (id_kind, "inputmethod") == 0)
-		return AS_ID_KIND_INPUT_METHOD;
-	if (g_strcmp0 (id_kind, "webapp") == 0)
-		return AS_ID_KIND_WEB_APP;
-	if (g_strcmp0 (id_kind, "source") == 0)
-		return AS_ID_KIND_SOURCE;
-	if (g_strcmp0 (id_kind, "addon") == 0)
-		return AS_ID_KIND_ADDON;
-	if (g_strcmp0 (id_kind, "firmware") == 0)
-		return AS_ID_KIND_FIRMWARE;
-	if (g_strcmp0 (id_kind, "runtime") == 0)
-		return AS_ID_KIND_RUNTIME;
-	if (g_strcmp0 (id_kind, "generic") == 0)
-		return AS_ID_KIND_GENERIC;
-	return AS_ID_KIND_UNKNOWN;
+	return as_app_kind_from_string (id_kind);
 }
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 /**
  * as_url_kind_to_string:

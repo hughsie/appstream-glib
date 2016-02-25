@@ -787,7 +787,7 @@ as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 	}
 
 	/* firmware does not need screenshots */
-	if (as_app_get_id_kind (app) == AS_ID_KIND_FIRMWARE)
+	if (as_app_get_kind (app) == AS_APP_KIND_FIRMWARE)
 		number_screenshots_min = 0;
 
 	/* metainfo and inf do not require any screenshots */
@@ -871,7 +871,7 @@ as_app_validate_release (AsApp *app,
 	}
 
 	/* for firmware, check urgency */
-	if (as_app_get_id_kind (app) == AS_ID_KIND_FIRMWARE &&
+	if (as_app_get_kind (app) == AS_APP_KIND_FIRMWARE &&
 	    as_release_get_urgency (release) == AS_URGENCY_KIND_UNKNOWN) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
@@ -1156,35 +1156,35 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	/* id */
 	ret = FALSE;
 	id = as_app_get_id (app);
-	switch (as_app_get_id_kind (app)) {
-	case AS_ID_KIND_DESKTOP:
-	case AS_ID_KIND_WEB_APP:
+	switch (as_app_get_kind (app)) {
+	case AS_APP_KIND_DESKTOP:
+	case AS_APP_KIND_WEB_APP:
 		if (g_str_has_suffix (id, ".desktop"))
 			ret = TRUE;
 		break;
-	case AS_ID_KIND_INPUT_METHOD:
+	case AS_APP_KIND_INPUT_METHOD:
 		if (g_str_has_suffix (id, ".xml"))
 			ret = TRUE;
 		else if (g_str_has_suffix (id, ".db"))
 			ret = TRUE;
 		break;
-	case AS_ID_KIND_CODEC:
+	case AS_APP_KIND_CODEC:
 		if (g_str_has_prefix (id, "gstreamer"))
 			ret = TRUE;
 		break;
-	case AS_ID_KIND_UNKNOWN:
+	case AS_APP_KIND_UNKNOWN:
 		ai_app_validate_add (&helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				     "<id> has invalid type attribute");
 
 		break;
-	case AS_ID_KIND_FIRMWARE:
+	case AS_APP_KIND_FIRMWARE:
 		if (g_str_has_suffix (id, ".firmware"))
 			ret = TRUE;
 		break;
-	case AS_ID_KIND_FONT:
-	case AS_ID_KIND_ADDON:
-	case AS_ID_KIND_SOURCE:
+	case AS_APP_KIND_FONT:
+	case AS_APP_KIND_ADDON:
+	case AS_APP_KIND_SOURCE:
 		/* anything goes */
 		ret = TRUE;
 	default:
@@ -1285,7 +1285,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 
 	/* extends */
 	if (as_app_get_extends(app)->len == 0 &&
-	    as_app_get_id_kind (app) == AS_ID_KIND_ADDON &&
+	    as_app_get_kind (app) == AS_APP_KIND_ADDON &&
 	    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO) {
 		ai_app_validate_add (&helper,
 				     AS_PROBLEM_KIND_TAG_MISSING,

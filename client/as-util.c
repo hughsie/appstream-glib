@@ -1642,7 +1642,7 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 		g_string_append (classes, "kde ");
 	if (g_strcmp0 (as_app_get_project_group (app), "XFCE") == 0)
 		g_string_append (classes, "xfce ");
-	if (as_app_get_id_kind (app) == AS_ID_KIND_ADDON)
+	if (as_app_get_kind (app) == AS_APP_KIND_ADDON)
 		g_string_append (classes, "addon ");
 	if (classes->len > 0)
 		g_string_truncate (classes, classes->len - 1);
@@ -1686,7 +1686,7 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 
 	/* type */
 	g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td><code>%s</code></td></tr>\n",
-				"Type", as_id_kind_to_string (as_app_get_id_kind (app)));
+				"Type", as_app_kind_to_string (as_app_get_kind (app)));
 
 	/* extends */
 	tmp = as_util_status_html_join (as_app_get_extends (app));
@@ -1783,7 +1783,7 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 	}
 
 	/* kudos */
-	if (as_app_get_id_kind (app) == AS_ID_KIND_DESKTOP) {
+	if (as_app_get_kind (app) == AS_APP_KIND_DESKTOP) {
 		tmp = as_util_status_html_join (as_app_get_kudos (app));
 		if (tmp != NULL) {
 			g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
@@ -1793,7 +1793,7 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 	}
 
 	/* vetos */
-	if (as_app_get_id_kind (app) == AS_ID_KIND_DESKTOP) {
+	if (as_app_get_kind (app) == AS_APP_KIND_DESKTOP) {
 		tmp = as_util_status_html_join (as_app_get_vetos (app));
 		if (tmp != NULL) {
 			g_string_append_printf (html, "<tr><td class=\"alt\">%s</td><td>%s</td></tr>\n",
@@ -1827,7 +1827,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 	/* count number of desktop apps */
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) == AS_ID_KIND_DESKTOP)
+		if (as_app_get_kind (app) == AS_APP_KIND_DESKTOP)
 			total++;
 	}
 	if (total == 0) {
@@ -1844,7 +1844,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 	cnt = 0;
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+		if (as_app_get_kind (app) != AS_APP_KIND_DESKTOP)
 			continue;
 		if (as_app_get_keywords(app, NULL) != NULL)
 			cnt++;
@@ -1858,7 +1858,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 	cnt = 0;
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+		if (as_app_get_kind (app) != AS_APP_KIND_DESKTOP)
 			continue;
 		if (as_app_get_screenshots(app)->len > 0)
 			cnt++;
@@ -1872,7 +1872,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 	total = 0;
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+		if (as_app_get_kind (app) != AS_APP_KIND_DESKTOP)
 			continue;
 		total++;
 	}
@@ -1898,7 +1898,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 	cnt = 0;
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) == AS_ID_KIND_ADDON)
+		if (as_app_get_kind (app) == AS_APP_KIND_ADDON)
 			cnt++;
 	}
 	g_string_append_printf (html, "<tr><td class=\"alt\">MetaInfo</td>"
@@ -2138,13 +2138,13 @@ as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	g_string_append (html, "<div id=\"apps\">\n");
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) == AS_ID_KIND_FONT)
+		if (as_app_get_kind (app) == AS_APP_KIND_FONT)
 			continue;
-		if (as_app_get_id_kind (app) == AS_ID_KIND_INPUT_METHOD)
+		if (as_app_get_kind (app) == AS_APP_KIND_INPUT_METHOD)
 			continue;
-		if (as_app_get_id_kind (app) == AS_ID_KIND_CODEC)
+		if (as_app_get_kind (app) == AS_APP_KIND_CODEC)
 			continue;
-		if (as_app_get_id_kind (app) == AS_ID_KIND_SOURCE)
+		if (as_app_get_kind (app) == AS_APP_KIND_SOURCE)
 			continue;
 		as_util_status_html_write_app (app, html, distro);
 	}
@@ -2428,7 +2428,7 @@ as_util_matrix_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	/* apps */
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+		if (as_app_get_kind (app) != AS_APP_KIND_DESKTOP)
 			continue;
 		as_util_matrix_html_write_app (app, html, distro);
 	}
@@ -2451,7 +2451,7 @@ as_util_status_csv_filter_func (AsApp *app, gchar **filters)
 {
 	const gchar *tmp;
 	guint i;
-	AsIdKind id_kind = AS_ID_KIND_DESKTOP;
+	AsAppKind id_kind = AS_APP_KIND_DESKTOP;
 
 	for (i = 0; filters[i] != NULL; i++) {
 		g_auto(GStrv) split = NULL;
@@ -2459,8 +2459,8 @@ as_util_status_csv_filter_func (AsApp *app, gchar **filters)
 		if (g_strv_length (split) != 2)
 			continue;
 		if (g_strcmp0 (split[0], "id-kind") == 0) {
-			id_kind = as_id_kind_from_string (split[1]);
-			if (as_app_get_id_kind (app) != id_kind)
+			id_kind = as_app_kind_from_string (split[1]);
+			if (as_app_get_kind (app) != id_kind)
 				return FALSE;
 			continue;
 		}
@@ -2809,11 +2809,11 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 	g_autoptr(GdkPixbuf) pb = NULL;
 
 	/* these are set by the software center */
-	switch (as_app_get_id_kind (app)) {
-	case AS_ID_KIND_INPUT_METHOD:
-	case AS_ID_KIND_CODEC:
-	case AS_ID_KIND_RUNTIME:
-	case AS_ID_KIND_GENERIC:
+	switch (as_app_get_kind (app)) {
+	case AS_APP_KIND_INPUT_METHOD:
+	case AS_APP_KIND_CODEC:
+	case AS_APP_KIND_RUNTIME:
+	case AS_APP_KIND_GENERIC:
 		return TRUE;
 	default:
 		break;
@@ -3050,7 +3050,7 @@ as_util_mirror_screenshots_app_file (AsApp *app,
 	as_image_set_basename (im_src, basename);
 
 	/* fonts only have full sized screenshots */
-	if (as_app_get_id_kind (AS_APP (app)) != AS_ID_KIND_FONT) {
+	if (as_app_get_kind (AS_APP (app)) != AS_APP_KIND_FONT) {
 		for (i = 0; sizes[i] != 0; i += 2) {
 
 			/* save LoDPI */
@@ -3102,7 +3102,7 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	g_autoptr(SoupSession) session = NULL;
 
 	/* fonts screenshots are auto-generated */
-	if (as_app_get_id_kind (app) == AS_ID_KIND_FONT) {
+	if (as_app_get_kind (app) == AS_APP_KIND_FONT) {
 		g_autofree gchar *url_new = NULL;
 		basename = g_path_get_basename (url);
 		url_new = g_build_filename (mirror_uri, "source", basename, NULL);
@@ -3387,7 +3387,7 @@ as_util_mirror_local_firmware (AsUtilPrivate *priv, gchar **values, GError **err
 
 		/* get app */
 		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_FIRMWARE)
+		if (as_app_get_kind (app) != AS_APP_KIND_FIRMWARE)
 			continue;
 		releases = as_app_get_releases (app);
 		if (releases->len == 0)
@@ -3622,7 +3622,7 @@ as_util_compare (AsUtilPrivate *priv, gchar **values, GError **error)
 	apps = as_store_get_apps (store_old);
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) == AS_ID_KIND_WEB_APP)
+		if (as_app_get_kind (app) == AS_APP_KIND_WEB_APP)
 			continue;
 		id = as_app_get_id (app);
 		if (as_store_get_app_by_id_with_fallbacks (store_new, id) != NULL)
@@ -3635,7 +3635,7 @@ as_util_compare (AsUtilPrivate *priv, gchar **values, GError **error)
 	apps = as_store_get_apps (store_new);
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
-		if (as_app_get_id_kind (app) == AS_ID_KIND_WEB_APP)
+		if (as_app_get_kind (app) == AS_APP_KIND_WEB_APP)
 			continue;
 		id = as_app_get_id (app);
 		if (as_store_get_app_by_id_with_fallbacks (store_old, id) != NULL)

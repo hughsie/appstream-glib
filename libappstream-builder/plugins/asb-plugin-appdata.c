@@ -88,7 +88,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				AS_APP_PARSE_FLAG_USE_HEURISTICS,
 				error))
 		return FALSE;
-	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_UNKNOWN) {
+	if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_UNKNOWN) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
 			     ASB_PLUGIN_ERROR_FAILED,
@@ -167,7 +167,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	}
 
 	/* add icon for firmware */
-	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_FIRMWARE) {
+	if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_FIRMWARE) {
 		g_autoptr(AsIcon) icon = NULL;
 		icon = as_icon_new ();
 		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
@@ -176,7 +176,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	}
 
 	/* fix up input methods */
-	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_INPUT_METHOD) {
+	if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_INPUT_METHOD) {
 		g_autoptr(AsIcon) icon = NULL;
 		icon = as_icon_new ();
 		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
@@ -187,7 +187,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	}
 
 	/* fix up codecs */
-	if (as_app_get_id_kind (AS_APP (app)) == AS_ID_KIND_CODEC) {
+	if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_CODEC) {
 		g_autoptr(AsIcon) icon = NULL;
 		icon = as_icon_new ();
 		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
@@ -263,7 +263,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 				      g_free, (GDestroyNotify) g_object_unref);
 	for (l = list; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+		if (as_app_get_kind (app) != AS_APP_KIND_DESKTOP)
 			continue;
 		g_hash_table_insert (hash,
 				     g_strdup (as_app_get_id (app)),
@@ -276,7 +276,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 		if (!ASB_IS_APP (l->data))
 			continue;
 		app = AS_APP (l->data);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_ADDON)
+		if (as_app_get_kind (app) != AS_APP_KIND_ADDON)
 			continue;
 		found = g_hash_table_lookup (hash, as_app_get_id (app));
 		if (found == NULL)

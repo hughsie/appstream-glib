@@ -423,7 +423,7 @@ as_app_parse_desktop_file (AsApp *app,
 
 	/* create app */
 	app_id = g_path_get_basename (desktop_file);
-	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
+	as_app_set_kind (app, AS_APP_KIND_DESKTOP);
 
 	/* is this really a web-app? */
 	if ((flags & AS_APP_PARSE_FLAG_USE_HEURISTICS) > 0) {
@@ -434,7 +434,7 @@ as_app_parse_desktop_file (AsApp *app,
 					      NULL);
 		if (exec != NULL) {
 			if (g_str_has_prefix (exec, "epiphany"))
-				as_app_set_id_kind (app, AS_ID_KIND_WEB_APP);
+				as_app_set_kind (app, AS_APP_KIND_WEB_APP);
 		}
 	}
 

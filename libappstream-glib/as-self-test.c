@@ -1550,7 +1550,7 @@ as_test_app_validate_appdata_good_func (void)
 	g_assert (ret);
 
 	/* check success */
-	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_DESKTOP);
+	g_assert_cmpint (as_app_get_kind (app), ==, AS_APP_KIND_DESKTOP);
 	g_assert_cmpstr (as_app_get_id (app), ==, "gnome-power-statistics.desktop");
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "0 A.D.");
 	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "Observe power management");
@@ -1604,7 +1604,7 @@ as_test_app_validate_metainfo_good_func (void)
 	g_assert (ret);
 
 	/* check success */
-	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_ADDON);
+	g_assert_cmpint (as_app_get_kind (app), ==, AS_APP_KIND_ADDON);
 	g_assert_cmpstr (as_app_get_id (app), ==, "gedit-code-assistance");
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "Code assistance");
 	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "Code assistance for C, C++ and Objective-C");
@@ -1646,7 +1646,7 @@ as_test_app_validate_intltool_func (void)
 	g_assert (ret);
 
 	/* check success */
-	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_DESKTOP);
+	g_assert_cmpint (as_app_get_kind (app), ==, AS_APP_KIND_DESKTOP);
 	g_assert_cmpstr (as_app_get_id (app), ==, "gnome-power-statistics.desktop");
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "0 A.D.");
 	g_assert_cmpstr (as_app_get_comment (app, "C"), ==, "Observe power management");
@@ -1895,7 +1895,7 @@ as_test_app_validate_style_func (void)
 	app = as_app_new ();
 	as_app_add_url (app, AS_URL_KIND_UNKNOWN, "dave.com");
 	as_app_set_id (app, "dave.exe");
-	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
+	as_app_set_kind (app, AS_APP_KIND_DESKTOP);
 	as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPDATA);
 	as_app_set_metadata_license (app, "BSD");
 	as_app_set_project_license (app, "GPL-2.0+");
@@ -2667,7 +2667,7 @@ as_test_store_embedded_func (void)
 	g_assert_cmpint (as_store_get_size (store), ==, 1);
 	app = as_store_get_app_by_id (store, "eog.desktop");
 	g_assert (app != NULL);
-	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_DESKTOP);
+	g_assert_cmpint (as_app_get_kind (app), ==, AS_APP_KIND_DESKTOP);
 	icon = as_app_get_icon_default (app);
 	g_assert (icon != NULL);
 	g_assert_cmpint (as_icon_get_kind (icon), ==, AS_ICON_KIND_EMBEDDED);
@@ -2854,7 +2854,7 @@ as_test_store_demote_func (void)
 				 AS_APP_PARSE_FLAG_ALLOW_VETO, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_app_get_id_kind (app_desktop), ==, AS_ID_KIND_DESKTOP);
+	g_assert_cmpint (as_app_get_kind (app_desktop), ==, AS_APP_KIND_DESKTOP);
 
 	/* load example appdata file */
 	app_appdata = as_app_new ();
@@ -2863,7 +2863,7 @@ as_test_store_demote_func (void)
 				 AS_APP_PARSE_FLAG_ALLOW_VETO, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_app_get_id_kind (app_appdata), ==, AS_ID_KIND_ADDON);
+	g_assert_cmpint (as_app_get_kind (app_appdata), ==, AS_APP_KIND_ADDON);
 
 	/* add apps */
 	store = as_store_new ();
@@ -2875,7 +2875,7 @@ as_test_store_demote_func (void)
 	g_assert_cmpint (as_store_get_size (store), ==, 1);
 	app = as_store_get_app_by_id (store, "example.desktop");
 	g_assert (app != NULL);
-	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_ADDON);
+	g_assert_cmpint (as_app_get_kind (app), ==, AS_APP_KIND_ADDON);
 	g_assert_cmpint (as_app_get_extends(app)->len, >, 0);
 
 	/* dump */
@@ -3092,7 +3092,7 @@ as_test_store_func (void)
 	g_assert_cmpfloat (as_store_get_api_version (store), >, 0.f);
 	app = as_app_new ();
 	as_app_set_id (app, "gnome-software.desktop");
-	as_app_set_id_kind (app, AS_ID_KIND_DESKTOP);
+	as_app_set_kind (app, AS_APP_KIND_DESKTOP);
 	as_store_add_app (store, app);
 	g_object_unref (app);
 	g_assert_cmpstr (as_store_get_origin (store), ==, NULL);
@@ -3100,7 +3100,7 @@ as_test_store_func (void)
 	/* add and then remove another app */
 	app = as_app_new ();
 	as_app_set_id (app, "junk.desktop");
-	as_app_set_id_kind (app, AS_ID_KIND_FONT);
+	as_app_set_kind (app, AS_APP_KIND_FONT);
 	as_store_add_app (store, app);
 	g_object_unref (app);
 	as_store_remove_app (store, app);
@@ -3119,7 +3119,7 @@ as_test_store_func (void)
 	/* add another app and ensure it's sorted */
 	app = as_app_new ();
 	as_app_set_id (app, "aaa.desktop");
-	as_app_set_id_kind (app, AS_ID_KIND_FONT);
+	as_app_set_kind (app, AS_APP_KIND_FONT);
 	as_store_add_app (store, app);
 	g_object_unref (app);
 	xml = as_store_to_xml (store, 0);
@@ -4130,7 +4130,7 @@ as_test_store_yaml_func (void)
 
 	/* test application properties */
 	app = as_store_get_app_by_id (store, "iceweasel.desktop");
-	g_assert_cmpint (as_app_get_id_kind (app), ==, AS_ID_KIND_DESKTOP);
+	g_assert_cmpint (as_app_get_kind (app), ==, AS_APP_KIND_DESKTOP);
 	g_assert_cmpstr (as_app_get_pkgname_default (app), ==, "iceweasel");
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "Iceweasel");
 	g_assert_cmpstr (as_app_get_origin (app), ==, "aequorea");

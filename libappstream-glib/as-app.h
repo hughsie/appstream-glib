@@ -170,6 +170,38 @@ typedef enum {
 } AsAppSourceKind;
 
 /**
+ * AsAppKind:
+ * @AS_APP_KIND_UNKNOWN:		Type invalid or not known
+ * @AS_APP_KIND_DESKTOP:		A desktop application
+ * @AS_APP_KIND_FONT:			A font add-on
+ * @AS_APP_KIND_CODEC:			A codec add-on
+ * @AS_APP_KIND_INPUT_METHOD:		A input method add-on
+ * @AS_APP_KIND_WEB_APP:		A web appication
+ * @AS_APP_KIND_SOURCE:			A software source
+ * @AS_APP_KIND_ADDON:			An addon, e.g. a plugin
+ * @AS_APP_KIND_FIRMWARE:		A firmware update
+ * @AS_APP_KIND_RUNTIME:		Runtime platform
+ * @AS_APP_KIND_GENERIC:		Generic component
+ *
+ * The component type.
+ **/
+typedef enum {
+	AS_APP_KIND_UNKNOWN,		/* Since: 0.5.10 */
+	AS_APP_KIND_DESKTOP,		/* Since: 0.5.10 */
+	AS_APP_KIND_FONT,		/* Since: 0.5.10 */
+	AS_APP_KIND_CODEC,		/* Since: 0.5.10 */
+	AS_APP_KIND_INPUT_METHOD,	/* Since: 0.5.10 */
+	AS_APP_KIND_WEB_APP,		/* Since: 0.5.10 */
+	AS_APP_KIND_SOURCE,		/* Since: 0.5.10 */
+	AS_APP_KIND_ADDON,		/* Since: 0.5.10 */
+	AS_APP_KIND_FIRMWARE,		/* Since: 0.5.10 */
+	AS_APP_KIND_RUNTIME,		/* Since: 0.5.10 */
+	AS_APP_KIND_GENERIC,		/* Since: 0.5.10 */
+	/*< private >*/
+	AS_APP_KIND_LAST
+} AsAppKind;
+
+/**
  * AsAppState:
  * @AS_APP_STATE_UNKNOWN:			Unknown state
  * @AS_APP_STATE_INSTALLED:			Application is installed
@@ -207,9 +239,11 @@ AsAppSourceKind	 as_app_guess_source_kind	(const gchar	*filename);
 AsAppSourceKind	 as_app_source_kind_from_string	(const gchar	*source_kind);
 const gchar	*as_app_source_kind_to_string	(AsAppSourceKind source_kind);
 const gchar	*as_app_state_to_string		(AsAppState	 state);
+const gchar	*as_app_kind_to_string		(AsAppKind	 kind);
+AsAppKind	 as_app_kind_from_string	(const gchar	*kind);
 
 /* getters */
-AsIdKind	 as_app_get_id_kind		(AsApp		*app);
+AsAppKind	 as_app_get_kind		(AsApp		*app);
 AsAppSourceKind	 as_app_get_source_kind		(AsApp		*app);
 AsAppState	 as_app_get_state		(AsApp		*app);
 AsAppTrustFlags	 as_app_get_trust_flags		(AsApp		*app);
@@ -276,8 +310,8 @@ gboolean	 as_app_has_permission		(AsApp		*app,
 /* setters */
 void		 as_app_set_id			(AsApp		*app,
 						 const gchar	*id);
-void		 as_app_set_id_kind		(AsApp		*app,
-						 AsIdKind	 id_kind);
+void		 as_app_set_kind		(AsApp		*app,
+						 AsAppKind	 kind);
 void		 as_app_set_source_kind		(AsApp		*app,
 						 AsAppSourceKind source_kind);
 void		 as_app_set_state		(AsApp		*app,
@@ -399,6 +433,15 @@ AsRelease	*as_app_get_release_default	(AsApp		*app);
 gboolean	 as_app_convert_icons		(AsApp		*app,
 						 AsIconKind	 kind,
 						 GError		**error);
+
+/* deprecated */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+AsIdKind	 as_app_get_id_kind		(AsApp		*app)
+G_DEPRECATED_FOR(as_app_get_kind);
+void		 as_app_set_id_kind		(AsApp		*app,
+						 AsIdKind	 id_kind)
+G_DEPRECATED_FOR(as_app_set_kind);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 G_END_DECLS
 

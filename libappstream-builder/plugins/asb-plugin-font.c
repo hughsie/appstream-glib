@@ -790,7 +790,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 		if (!ASB_IS_APP (l->data))
 			continue;
 		app = AS_APP (l->data);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_FONT)
+		if (as_app_get_kind (app) != AS_APP_KIND_FONT)
 			continue;
 		g_hash_table_insert (hash,
 				     g_strdup (as_app_get_id (app)),
@@ -802,7 +802,7 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 		if (!ASB_IS_APP (l->data))
 			continue;
 		app = AS_APP (l->data);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_FONT)
+		if (as_app_get_kind (app) != AS_APP_KIND_FONT)
 			continue;
 		extends_tmp = as_app_get_extends (app);
 		if (extends_tmp->len == 0)

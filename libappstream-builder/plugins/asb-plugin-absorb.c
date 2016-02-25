@@ -44,7 +44,7 @@ asb_plugin_absorb_parent_for_pkgname (GList *list, AsApp *parent, const gchar *p
 
 	for (l = list; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_ADDON)
+		if (as_app_get_kind (app) != AS_APP_KIND_ADDON)
 			continue;
 		if (g_strcmp0 (as_app_get_pkgname_default (app), pkgname) != 0)
 			continue;
@@ -72,7 +72,7 @@ asb_plugin_merge_prepare_deps (GList *list)
 
 	for (l = list; l != NULL; l = l->next) {
 		app = AS_APP (l->data);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_DESKTOP)
+		if (as_app_get_kind (app) != AS_APP_KIND_DESKTOP)
 			continue;
 		if (!ASB_IS_APP (app))
 			continue;

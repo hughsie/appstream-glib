@@ -60,7 +60,7 @@ typedef enum {
 	AS_ID_KIND_GENERIC,		/* Since: 0.5.8 */
 	/*< private >*/
 	AS_ID_KIND_LAST
-} AsIdKind;
+} AsIdKind G_GNUC_DEPRECATED_FOR(AsAppKind);
 
 /**
  * AsUrlKind:
@@ -154,14 +154,19 @@ AsSizeKind	 as_size_kind_from_string	(const gchar	*size_kind);
 const gchar	*as_urgency_kind_to_string	(AsUrgencyKind	 urgency_kind);
 AsUrgencyKind	 as_urgency_kind_from_string	(const gchar	*urgency_kind);
 
-const gchar	*as_id_kind_to_string		(AsIdKind	 id_kind);
-AsIdKind	 as_id_kind_from_string		(const gchar	*id_kind);
-
 const gchar	*as_url_kind_to_string		(AsUrlKind	 url_kind);
 AsUrlKind	 as_url_kind_from_string	(const gchar	*url_kind);
 
 const gchar	*as_kudo_kind_to_string		(AsKudoKind	 kudo_kind);
 AsKudoKind	 as_kudo_kind_from_string	(const gchar	*kudo_kind);
+
+/* deprecated */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+const gchar	*as_id_kind_to_string		(AsIdKind	 id_kind)
+G_DEPRECATED_FOR(as_app_kind_to_string);
+AsIdKind	 as_id_kind_from_string		(const gchar	*id_kind)
+G_DEPRECATED_FOR(as_app_kind_from_string);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 G_END_DECLS
 

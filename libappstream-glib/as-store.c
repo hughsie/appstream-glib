@@ -223,7 +223,7 @@ as_store_changed_uninhibit_cb (void *v)
 /**
  * as_store_add_filter:
  * @store: a #AsStore instance.
- * @kind: a #AsIdKind, e.g. %AS_ID_KIND_FIRMWARE
+ * @kind: a #AsAppKind, e.g. %AS_APP_KIND_FIRMWARE
  *
  * Adds a filter to the store so that only components of this type are
  * loaded into the store. This may be useful if the client is only interested
@@ -235,7 +235,7 @@ as_store_changed_uninhibit_cb (void *v)
  * Since: 0.3.5
  **/
 void
-as_store_add_filter (AsStore *store, AsIdKind kind)
+as_store_add_filter (AsStore *store, AsAppKind kind)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	priv->filter |= 1 << kind;
@@ -244,7 +244,7 @@ as_store_add_filter (AsStore *store, AsIdKind kind)
 /**
  * as_store_remove_filter:
  * @store: a #AsStore instance.
- * @kind: a #AsIdKind, e.g. %AS_ID_KIND_FIRMWARE
+ * @kind: a #AsAppKind, e.g. %AS_APP_KIND_FIRMWARE
  *
  * Removed a filter from the store so that components of this type are no longer
  * loaded into the store. This may be useful if the client is only interested
@@ -255,7 +255,7 @@ as_store_add_filter (AsStore *store, AsIdKind kind)
  * Since: 0.3.5
  **/
 void
-as_store_remove_filter (AsStore *store, AsIdKind kind)
+as_store_remove_filter (AsStore *store, AsAppKind kind)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	priv->filter &= ~(1 << kind);
@@ -857,7 +857,7 @@ as_store_match_addons (AsStore *store)
 
 	for (i = 0; i < priv->array->len; i++) {
 		app = g_ptr_array_index (priv->array, i);
-		if (as_app_get_id_kind (app) != AS_ID_KIND_ADDON)
+		if (as_app_get_kind (app) != AS_APP_KIND_ADDON)
 			continue;
 		plugin_ids = as_app_get_extends (app);
 		if (plugin_ids->len == 0) {
@@ -1010,9 +1010,9 @@ as_store_from_root (AsStore *store,
 		/* do the filtering here */
 		if (priv->filter != 0) {
 			if (g_strcmp0 (as_node_get_name (n), "component") == 0) {
-				AsIdKind kind_tmp;
+				AsAppKind kind_tmp;
 				tmp = as_node_get_attribute (n, "type");
-				kind_tmp = as_id_kind_from_string (tmp);
+				kind_tmp = as_app_kind_from_string (tmp);
 				if ((priv->filter & (1 << kind_tmp)) == 0)
 					continue;
 			}
@@ -2511,7 +2511,7 @@ as_store_get_unique_name_app_key (AsApp *app)
 	g_autofree gchar *name_lower = NULL;
 	name_lower = g_utf8_strdown (as_app_get_name (app, NULL), -1);
 	return g_strdup_printf ("<%s:%s>",
-				as_id_kind_to_string (as_app_get_id_kind (app)),
+				as_app_kind_to_string (as_app_get_kind (app)),
 				name_lower);
 }
 
@@ -2674,7 +2674,7 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 			}
 		}
 		if (priv->api_version < 0.7) {
-			if (as_app_get_id_kind (app) == AS_ID_KIND_ADDON) {
+			if (as_app_get_kind (app) == AS_APP_KIND_ADDON) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
 						       "metadata version is v%.1f and "
