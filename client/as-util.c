@@ -1331,7 +1331,7 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 		score = as_app_search_matches_all (app, values);
 		if (score > 0) {
 			g_autofree gchar *sort_key = NULL;
-			sort_key = g_strdup_printf ("%05i", score);
+			sort_key = g_strdup_printf ("%05x", score);
 			as_app_add_metadata (app, "SortKey", sort_key);
 			g_ptr_array_add (array, g_object_ref (app));
 		}
