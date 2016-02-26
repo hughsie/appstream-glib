@@ -160,6 +160,8 @@ as_app_kind_to_string (AsAppKind kind)
 		return "generic";
 	if (kind == AS_APP_KIND_DISTRO_UPGRADE)
 		return "distro-upgrade";
+	if (kind == AS_APP_KIND_SHELL_EXTENSION)
+		return "shell-extension";
 	return "unknown";
 }
 
@@ -198,6 +200,8 @@ as_app_kind_from_string (const gchar *kind)
 		return AS_APP_KIND_GENERIC;
 	if (g_strcmp0 (kind, "distro-upgrade") == 0)
 		return AS_APP_KIND_DISTRO_UPGRADE;
+	if (g_strcmp0 (kind, "shell-extension") == 0)
+		return AS_APP_KIND_SHELL_EXTENSION;
 	return AS_APP_KIND_UNKNOWN;
 }
 
