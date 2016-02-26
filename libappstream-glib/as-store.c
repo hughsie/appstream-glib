@@ -967,7 +967,8 @@ as_store_from_root (AsStore *store,
 		as_store_set_origin (store, tmp);
 
 	/* special case xdg-apps */
-	if (g_strcmp0 (priv->origin, "xdg-app") == 0) {
+	if (source_filename != NULL &&
+	    g_strcmp0 (priv->origin, "xdg-app") == 0) {
 		origin_app = as_store_get_origin_for_xdg_app (source_filename);
 		g_debug ("using app origin of '%s' rather than '%s'",
 			 origin_app, priv->origin);
