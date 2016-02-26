@@ -1387,16 +1387,40 @@ as_store_from_bytes (AsStore *store,
 		     GCancellable *cancellable,
 		     GError **error)
 {
+	g_autofree gchar *content_type = NULL;
+	gconstpointer data;
+	gsize size;
+
+	/* find content type */
+	data = g_bytes_get_data (bytes, &size);
+	content_type = g_content_type_guess (NULL, data, size, NULL);
+
+	/* is an AppStream file */
+	if (g_strcmp0 (content_type, "application/xml") == 0) {
+		g_autofree gchar *tmp = g_strndup (data, size);
+		return as_store_from_xml (store, tmp, NULL, error);
+	}
+
+	/* is firmware */
+	if (g_strcmp0 (content_type, "application/vnd.ms-cab-compressed") == 0) {
 #ifdef HAVE_GCAB
-	/* lets assume this is a .cab file for now */
-	return as_store_cab_from_bytes (store, bytes, cancellable, error);
+		return as_store_cab_from_bytes (store, bytes, cancellable, error);
 #else
+		g_set_error (error,
+			     AS_STORE_ERROR,
+			     AS_STORE_ERROR_FAILED,
+			     "no firmware support, compiled with --disable-firmware");
+		return FALSE;
+#endif
+	}
+
+	/* not sure what to do */
 	g_set_error (error,
 		     AS_STORE_ERROR,
 		     AS_STORE_ERROR_FAILED,
-		     "no firmware support, compiled with --disable-firmware");
+		     "cannot load store of type %s",
+		     content_type);
 	return FALSE;
-#endif
 }
 
 /**
