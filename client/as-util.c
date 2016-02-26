@@ -2814,7 +2814,8 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 	case AS_APP_KIND_CODEC:
 	case AS_APP_KIND_RUNTIME:
 	case AS_APP_KIND_GENERIC:
-	case AS_APP_KIND_DISTRO_UPGRADE:
+	case AS_APP_KIND_OS_UPDATE:
+	case AS_APP_KIND_OS_UPGRADE:
 		return TRUE;
 	default:
 		break;
