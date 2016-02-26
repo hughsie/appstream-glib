@@ -2564,7 +2564,7 @@ as_test_app_search_func (void)
 {
 	const gchar *all[] = { "gnome", "install", "software", NULL };
 	const gchar *none[] = { "gnome", "xxx", "software", NULL };
-	const gchar *mime[] = { "oasis", "opendocument", NULL };
+	const gchar *mime[] = { "application/vnd.oasis.opendocument.text", NULL };
 	g_autoptr(AsApp) app = NULL;
 
 	app = as_app_new ();
