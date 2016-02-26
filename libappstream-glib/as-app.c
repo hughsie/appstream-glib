@@ -82,6 +82,7 @@ typedef struct
 	AsAppSourceKind	 source_kind;
 	AsAppState	 state;
 	AsAppTrustFlags	 trust_flags;
+	AsAppQuirk	 quirk;
 	gchar		*icon_path;
 	gchar		*id_filename;
 	gchar		*id;
@@ -1604,6 +1605,40 @@ as_app_set_trust_flags (AsApp *app, AsAppTrustFlags trust_flags)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->trust_flags = trust_flags;
+}
+
+/**
+ * as_app_has_quirk:
+ * @app: a #AsApp instance.
+ * @quirk: the #AsAppQuirk, e.g. %AS_APP_QUIRK_PROVENANCE
+ *
+ * Queries to see if an application has a specific attribute.
+ *
+ * Returns: %TRUE if the application has the attribute
+ *
+ * Since: 0.5.10
+ **/
+gboolean
+as_app_has_quirk (AsApp *app, AsAppQuirk quirk)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return (priv->quirk & quirk) > 0;
+}
+
+/**
+ * as_app_add_quirk:
+ * @app: a #AsApp instance.
+ * @quirk: the #AsAppQuirk, e.g. %AS_APP_QUIRK_PROVENANCE
+ *
+ * Adds a specific attribute to an application.
+ *
+ * Since: 0.5.10
+ **/
+void
+as_app_add_quirk (AsApp *app, AsAppQuirk quirk)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	priv->quirk |= quirk;
 }
 
 /**

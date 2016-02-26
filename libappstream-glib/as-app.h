@@ -208,6 +208,22 @@ typedef enum {
 } AsAppKind;
 
 /**
+ * AsAppQuirk:
+ * @AS_APP_QUIRK_NONE:			No special attributes
+ * @AS_APP_QUIRK_PROVENANCE:		Installed by OS vendor
+ * @AS_APP_QUIRK_COMPULSORY:		Cannot be removed
+ *
+ * The component attributes.
+ **/
+typedef enum {
+	AS_APP_QUIRK_NONE		= 0,		/* Since: 0.5.10 */
+	AS_APP_QUIRK_PROVENANCE		= 1 << 0,	/* Since: 0.5.10 */
+	AS_APP_QUIRK_COMPULSORY		= 1 << 1,	/* Since: 0.5.10 */
+	/*< private >*/
+	AS_APP_QUIRK_LAST
+} AsAppQuirk;
+
+/**
  * AsAppState:
  * @AS_APP_STATE_UNKNOWN:			Unknown state
  * @AS_APP_STATE_INSTALLED:			Application is installed
@@ -312,6 +328,8 @@ gboolean	 as_app_has_kudo_kind		(AsApp		*app,
 						 AsKudoKind	 kudo);
 gboolean	 as_app_has_permission		(AsApp		*app,
 						 const gchar	*permission);
+gboolean	 as_app_has_quirk		(AsApp		*app,
+						 AsAppQuirk	 quirk);
 
 /* setters */
 void		 as_app_set_id			(AsApp		*app,
@@ -400,6 +418,8 @@ void		 as_app_add_addon		(AsApp		*app,
 						 AsApp		*addon);
 void		 as_app_add_extends		(AsApp		*app,
 						 const gchar	*extends);
+void		 as_app_add_quirk		(AsApp		*app,
+						 AsAppQuirk	 quirk);
 
 /* object methods */
 GPtrArray	*as_app_validate		(AsApp		*app,
