@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-02-12 16:44+0000\n"
-"PO-Revision-Date: 2016-02-03 06:47+0000\n"
-"Last-Translator: Serge Vylekzhanin <vylekzhanin@mail.ru>\n"
+"POT-Creation-Date: 2016-02-26 20:10+0000\n"
+"PO-Revision-Date: 2016-02-26 20:10+0000\n"
+"Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Russian (http://www.transifex.com/freedesktop/appstream-glib/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -84,10 +84,6 @@ msgid "Set the minimum icon size in pixels"
 msgstr "Задать минимальный размер пиктограмм в пикселях"
 
 #. TRANSLATORS: command line option
-msgid "Set the AppStream version"
-msgstr "Задать версию AppStream"
-
-#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "Задать нахождение старых метаданных"
 
@@ -98,10 +94,6 @@ msgstr "Игнорировать определенные типы вето"
 #. TRANSLATORS: error message
 msgid "Failed to parse arguments"
 msgstr "Ошибка при распознавании аргументов"
-
-#. TRANSLATORS: error message
-msgid "API version no longer supported"
-msgstr "Данная версия API более не поддерживается"
 
 #. TRANSLATORS: error message
 msgid "Failed to set up builder"
@@ -365,6 +357,10 @@ msgstr "Создать GUID из строки входных данных"
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
 msgstr "Изменить файл AppData"
+
+#. TRANSLATORS: command description
+msgid "Split an AppStream file to AppData and Metainfo files"
+msgstr ""
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

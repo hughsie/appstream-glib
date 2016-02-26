@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-02-02 13:49+0000\n"
-"PO-Revision-Date: 2016-02-02 13:49+0000\n"
+"POT-Creation-Date: 2016-02-26 20:10+0000\n"
+"PO-Revision-Date: 2016-02-26 20:10+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -86,10 +86,6 @@ msgid "Set the minimum icon size in pixels"
 msgstr "设置图标的最小像素大小"
 
 #. TRANSLATORS: command line option
-msgid "Set the AppStream version"
-msgstr "设置 AppStream 版本"
-
-#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "设置旧的元数据位置"
 
@@ -100,10 +96,6 @@ msgstr "忽略特定类型的否认值"
 #. TRANSLATORS: error message
 msgid "Failed to parse arguments"
 msgstr "参数解析失败"
-
-#. TRANSLATORS: error message
-msgid "API version no longer supported"
-msgstr "API 版本不再被支持"
 
 #. TRANSLATORS: error message
 msgid "Failed to set up builder"
@@ -158,11 +150,11 @@ msgstr "解析翻译出错"
 
 #. TRANSLATORS: we could not auto-add the kudo
 msgid "Error parsing kudos"
-msgstr ""
+msgstr "解析 kudos 值出错"
 
 #. TRANSLATORS: we could not auto-add the provides
 msgid "Error parsing provides"
-msgstr ""
+msgstr "解析 provides 值出错"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
@@ -366,6 +358,10 @@ msgstr "从输入字符串创建 GUID"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
+msgstr "编辑 AppData 文件"
+
+#. TRANSLATORS: command description
+msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr ""
 
 #. TRANSLATORS: program name

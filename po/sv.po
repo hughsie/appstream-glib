@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-02-02 13:49+0000\n"
-"PO-Revision-Date: 2016-02-02 13:49+0000\n"
+"POT-Creation-Date: 2016-02-26 20:10+0000\n"
+"PO-Revision-Date: 2016-02-26 20:10+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Swedish (http://www.transifex.com/freedesktop/appstream-glib/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -84,10 +84,6 @@ msgid "Set the minimum icon size in pixels"
 msgstr "Ställ in den minimala storleken för ikoner i pixlar"
 
 #. TRANSLATORS: command line option
-msgid "Set the AppStream version"
-msgstr "Sätt AppStream-version"
-
-#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "Sätt platsen för det gamla metadatat"
 
@@ -98,10 +94,6 @@ msgstr "Ignorera vissa typer av veto"
 #. TRANSLATORS: error message
 msgid "Failed to parse arguments"
 msgstr "Misslyckades med att tolka argument"
-
-#. TRANSLATORS: error message
-msgid "API version no longer supported"
-msgstr "API-versionen stöds inte längre"
 
 #. TRANSLATORS: error message
 msgid "Failed to set up builder"
@@ -364,6 +356,10 @@ msgstr "Generera ett GUID från en inmatad sträng"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
+msgstr ""
+
+#. TRANSLATORS: command description
+msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr ""
 
 #. TRANSLATORS: program name

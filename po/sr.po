@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-02-02 13:49+0000\n"
-"PO-Revision-Date: 2016-02-02 13:49+0000\n"
+"POT-Creation-Date: 2016-02-26 20:10+0000\n"
+"PO-Revision-Date: 2016-02-26 20:10+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Serbian (http://www.transifex.com/freedesktop/appstream-glib/language/sr/)\n"
 "MIME-Version: 1.0\n"
@@ -85,10 +85,6 @@ msgid "Set the minimum icon size in pixels"
 msgstr "Постави најмању величину иконице у пикселима"
 
 #. TRANSLATORS: command line option
-msgid "Set the AppStream version"
-msgstr "Подешава издање Програмског тока"
-
-#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "Подешава старо место метаподатака"
 
@@ -99,10 +95,6 @@ msgstr "Занемари одређене врсте вета"
 #. TRANSLATORS: error message
 msgid "Failed to parse arguments"
 msgstr "Не могу да обрадим аргументе"
-
-#. TRANSLATORS: error message
-msgid "API version no longer supported"
-msgstr "Издање АПИ-ја више није подржано"
 
 #. TRANSLATORS: error message
 msgid "Failed to set up builder"
@@ -365,6 +357,10 @@ msgstr ""
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
+msgstr ""
+
+#. TRANSLATORS: command description
+msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr ""
 
 #. TRANSLATORS: program name

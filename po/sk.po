@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-02-12 16:44+0000\n"
-"PO-Revision-Date: 2016-02-05 17:15+0000\n"
-"Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
+"POT-Creation-Date: 2016-02-26 20:10+0000\n"
+"PO-Revision-Date: 2016-02-26 20:10+0000\n"
+"Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Slovak (http://www.transifex.com/freedesktop/appstream-glib/language/sk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -84,10 +84,6 @@ msgid "Set the minimum icon size in pixels"
 msgstr "Nastaví minimálnu veľkosť ikony v pixeloch"
 
 #. TRANSLATORS: command line option
-msgid "Set the AppStream version"
-msgstr "Nastaviť verziu AppStream"
-
-#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "Nastaviť umiestnenie starých metadát"
 
@@ -98,10 +94,6 @@ msgstr "Bude ignorovať určité typy veta"
 #. TRANSLATORS: error message
 msgid "Failed to parse arguments"
 msgstr "Nepodarilo sa spracovať argumenty"
-
-#. TRANSLATORS: error message
-msgid "API version no longer supported"
-msgstr "Verzia API už nie je podporovaná"
 
 #. TRANSLATORS: error message
 msgid "Failed to set up builder"
@@ -365,6 +357,10 @@ msgstr "Vygenerovať identifikátor GUID zo vstupného reťazca"
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
 msgstr "Upraviť súbor AppData"
+
+#. TRANSLATORS: command description
+msgid "Split an AppStream file to AppData and Metainfo files"
+msgstr ""
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

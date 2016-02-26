@@ -1,3 +1,25 @@
+Version 0.5.10
+~~~~~~~~~~~~~~
+Released: 2016-02-26
+
+New Features:
+ - Add AS_APP_KIND_OS_UPGRADE and AS_APP_KIND_OS_UPDATE (Richard Hughes)
+ - Add AS_APP_KIND_SHELL_EXTENSION (Richard Hughes)
+ - Add AsAppQuirk (Richard Hughes)
+ - Add a 'split-appstream' command to appstream-util (Richard Hughes)
+ - Add support for getting the SDK and runtime from the bundle (Richard Hughes)
+ - Support loading XML files using as_store_from_bytes() (Richard Hughes)
+
+Bugfixes:
+ - Add an application prefix to the ID for certain install scopes (Richard Hughes)
+ - Add a warning when validating in strict mode with invalid tags (Richard Hughes)
+ - Do not tokenize mimetypes (Richard Hughes)
+ - Improve the application search tokenizing and filtering (Richard Hughes)
+ - Load AppStream stores in a predictable order (Richard Hughes)
+ - Look in the correct icon directory for yaml files (Richard Hughes)
+ - Properly validate AppStream files with local or remote icons (Richard Hughes)
+ - Return results from 'appstream-util search' in relevance order (Richard Hughes)
+
 Version 0.5.9
 ~~~~~~~~~~~~~
 Released: 2016-02-12

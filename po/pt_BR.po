@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Rafael Fontenelle <rffontenelle@gmail.com>, 2015
+# Rafael Fontenelle <rffontenelle@gmail.com>, 2015-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-02-02 13:49+0000\n"
-"PO-Revision-Date: 2016-02-02 13:49+0000\n"
+"POT-Creation-Date: 2016-02-26 20:10+0000\n"
+"PO-Revision-Date: 2016-02-26 20:10+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/freedesktop/appstream-glib/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
@@ -83,10 +83,6 @@ msgid "Set the minimum icon size in pixels"
 msgstr "Define o tamanho mínimo do ícone em pixels"
 
 #. TRANSLATORS: command line option
-msgid "Set the AppStream version"
-msgstr "Define a versão do AppStream"
-
-#. TRANSLATORS: command line option
 msgid "Set the old metadata location"
 msgstr "Define a localização de metadados antigos"
 
@@ -97,10 +93,6 @@ msgstr "Ignora certos tipos de veto"
 #. TRANSLATORS: error message
 msgid "Failed to parse arguments"
 msgstr "Falha ao analisar argumentos"
-
-#. TRANSLATORS: error message
-msgid "API version no longer supported"
-msgstr "Versão da API não possui suporte"
 
 #. TRANSLATORS: error message
 msgid "Failed to set up builder"
@@ -134,51 +126,51 @@ msgstr "Pronto!"
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "Salvando o ícone"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "Define o prefixo"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "Processando o aplicativo"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "Erro ao carregar o arquivo AppData"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
-msgstr ""
+msgstr "Erro ao analisar traduções"
 
 #. TRANSLATORS: we could not auto-add the kudo
 msgid "Error parsing kudos"
-msgstr ""
+msgstr "Erro ao analisar kudos"
 
 #. TRANSLATORS: we could not auto-add the provides
 msgid "Error parsing provides"
-msgstr ""
+msgstr "Erro ao analisar o provides"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "Erro ao carregar o arquivo desktop"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "Erro ao criar diretório de saída"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "Salvando o AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "Erro ao salvar o arquivo de AppStream"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -195,7 +187,7 @@ msgstr "Por favor, reveja o arquivo e corrija quaisquer itens \"FIXME\""
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr ""
+msgstr "Versão antiga da API"
 
 #. TRANSLATORS: information message
 msgid "New API version"
@@ -208,7 +200,7 @@ msgstr "Argumentos insuficientes, esperava versão antiga.xml nova.xml"
 #. * e.g. "appdata" to "appstream"
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "A conversão de %s para %s não está implementada"
 
 msgid "Not enough arguments, expected file.xml"
 msgstr "Argumentos insuficientes, esperava arquivo.xml"
@@ -217,15 +209,15 @@ msgstr "Argumentos insuficientes, esperava arquivo.xml"
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "O formato de arquivo \"%s\" não pôde ser atualizado"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "Formato não reconhecido"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "Nenhum aplicativo desktop encontrado"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -243,11 +235,11 @@ msgstr "Validação de arquivos falhou"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "Removido"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "Adicionado"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -359,10 +351,14 @@ msgstr "Compara os conteúdos de dois arquivos AppStream"
 
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
-msgstr ""
+msgstr "Gera um GUID a partir de um texto de entrada"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
+msgstr "Modifica um arquivo AppData"
+
+#. TRANSLATORS: command description
+msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr ""
 
 #. TRANSLATORS: program name
