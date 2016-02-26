@@ -3497,6 +3497,66 @@ as_util_pad_strings (const gchar *id, const gchar *msg, guint align)
 }
 
 /**
+ * as_util_split_appstream:
+ **/
+static gboolean
+as_util_split_appstream (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsApp *app;
+	GPtrArray *apps;
+	const gchar *destdir;
+	const gchar *id;
+	guint i;
+	g_autoptr(GFile) file = NULL;
+	g_autoptr(AsStore) store = NULL;
+
+	/* check args */
+	if (g_strv_length (values) != 1) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, expected: appstream.xml");
+		return FALSE;
+	}
+
+	/* load store */
+	file = g_file_new_for_path (values[0]);
+	store = as_store_new ();
+	if (!as_store_from_file (store, file, NULL, NULL, error))
+		return FALSE;
+
+	/* support building in rpmbuild */
+	destdir = g_getenv ("DESTDIR");
+	if (destdir == NULL)
+		destdir = "/";
+
+	/* save each file */
+	apps = as_store_get_apps (store);
+	for (i = 0; i < apps->len; i++) {
+		g_autofree gchar *fn = NULL;
+		g_autofree gchar *path = NULL;
+		g_autoptr(GFile) file_app = NULL;
+
+		/* use AppData for desktop files, metainfo otherwise */
+		app = g_ptr_array_index (apps, i);
+		id = as_app_get_id (app);
+		if (as_app_get_kind (app) == AS_APP_KIND_DESKTOP) {
+			fn = g_strdup_printf ("%s.appdata.xml", id);
+		} else {
+			fn = g_strdup_printf ("%s.metainfo.xml", id);
+		}
+
+		/* save to a file */
+		path = g_build_filename (destdir, "usr", "share", "appdata", fn, NULL);
+		g_debug ("saving %s as %s", id, path);
+		file_app = g_file_new_for_path (path);
+		if (!as_app_to_file (app, file_app, NULL, error))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
  * as_util_modify:
  **/
 static gboolean
@@ -4046,6 +4106,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Modify an AppData file"),
 		     as_util_modify);
+	as_util_add (priv->cmd_array,
+		     "split-appstream",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Split an AppStream file to AppData and Metainfo files"),
+		     as_util_split_appstream);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
