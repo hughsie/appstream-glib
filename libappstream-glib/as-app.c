@@ -165,6 +165,8 @@ as_app_kind_to_string (AsAppKind kind)
 		return "os-upgrade";
 	if (kind == AS_APP_KIND_SHELL_EXTENSION)
 		return "shell-extension";
+	if (kind == AS_APP_KIND_LOCALIZATION)
+		return "localization";
 	return "unknown";
 }
 
@@ -207,6 +209,8 @@ as_app_kind_from_string (const gchar *kind)
 		return AS_APP_KIND_OS_UPGRADE;
 	if (g_strcmp0 (kind, "shell-extension") == 0)
 		return AS_APP_KIND_SHELL_EXTENSION;
+	if (g_strcmp0 (kind, "localization") == 0)
+		return AS_APP_KIND_LOCALIZATION;
 	return AS_APP_KIND_UNKNOWN;
 }
 
