@@ -135,6 +135,7 @@ gboolean	 as_markup_validate		(const gchar	*markup,
 						 GError		**error);
 gchar		**as_markup_strsplit_words	(const gchar	*text,
 						 guint		 line_len);
+gchar		*as_markup_import		(const gchar	*text);
 
 GQuark		 as_utils_error_quark		(void);
 gboolean	 as_utils_is_stock_icon_name	(const gchar	*name);

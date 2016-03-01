@@ -3727,6 +3727,27 @@ as_test_utils_spdx_token_func (void)
 }
 
 static void
+as_test_utils_markup_import_func (void)
+{
+	guint i;
+	struct {
+		const gchar *old;
+		const gchar *new;
+	} table[] = {
+		{ "",			NULL },
+		{ "dave",		"<p>dave</p>" },
+		{ "dave!\ndave?",	"<p>dave! dave?</p>" },
+		{ "dave!\n\ndave?",	"<p>dave!</p><p>dave?</p>" },
+		{ NULL,			NULL }
+	};
+	for (i = 0; table[i].old != NULL; i++) {
+		g_autofree gchar *new = NULL;
+		new = as_markup_import (table[i].old);
+		g_assert_cmpstr (new, ==, table[i].new);
+	}
+}
+
+static void
 as_test_utils_func (void)
 {
 	gboolean ret;
@@ -4618,6 +4639,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/node{intltool}", as_test_node_intltool_func);
 	g_test_add_func ("/AppStream/node{sort}", as_test_node_sort_func);
 	g_test_add_func ("/AppStream/utils", as_test_utils_func);
+	g_test_add_func ("/AppStream/utils{markup-import}", as_test_utils_markup_import_func);
 	g_test_add_func ("/AppStream/utils{version}", as_test_utils_version_func);
 	g_test_add_func ("/AppStream/utils{guid}", as_test_utils_guid_func);
 	g_test_add_func ("/AppStream/utils{icons}", as_test_utils_icons_func);

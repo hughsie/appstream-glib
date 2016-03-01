@@ -58,6 +58,48 @@
 G_DEFINE_QUARK (as-utils-error-quark, as_utils_error)
 
 /**
+ * as_markup_import:
+ * @text: the text to import.
+ *
+ * Imports unformatted text and converts to AppStream markup.
+ *
+ * Returns: (transfer full): appstream markup, or %NULL in event of an error
+ *
+ * Since: 0.5.11
+ */
+gchar *
+as_markup_import (const gchar *text)
+{
+	GString *str;
+	guint i;
+	g_auto(GStrv) lines = NULL;
+
+	/* empty */
+	if (text == NULL || text[0] == '\0')
+		return NULL;
+
+	/* just assume paragraphs */
+	str = g_string_new ("<p>");
+	lines = g_strsplit (text, "\n", -1);
+	for (i = 0; lines[i] != NULL; i++) {
+		g_autofree gchar *markup = NULL;
+		if (lines[i][0] == '\0') {
+			if (g_str_has_suffix (str->str, " "))
+				g_string_truncate (str, str->len - 1);
+			g_string_append (str, "</p><p>");
+			continue;
+		}
+		markup = g_markup_escape_text (lines[i], -1);
+		g_string_append (str, markup);
+		g_string_append (str, " ");
+	}
+	if (g_str_has_suffix (str->str, " "))
+		g_string_truncate (str, str->len - 1);
+	g_string_append (str, "</p>");
+	return g_string_free (str, FALSE);
+}
+
+/**
  * as_markup_strsplit_words:
  * @text: the text to split.
  * @line_len: the maximum length of the output line
