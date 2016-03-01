@@ -2338,11 +2338,11 @@ as_store_search_per_system (AsStore *store,
 		g_autofree gchar *dest1 = NULL;
 		g_autofree gchar *dest2 = NULL;
 		dest1 = g_build_filename (LOCALSTATEDIR, "lib", "app-info", NULL);
-		if (!as_store_search_app_info (store, flags, dest1, "system",
+		if (!as_store_search_app_info (store, flags, "system", dest1,
 					       cancellable, error))
 			return FALSE;
 		dest2 = g_build_filename (LOCALSTATEDIR, "cache", "app-info", NULL);
-		if (!as_store_search_app_info (store, flags, dest2, "system",
+		if (!as_store_search_app_info (store, flags, "system", dest2,
 					       cancellable, error))
 			return FALSE;
 		/* ignore the prefix; we actually want to use the
