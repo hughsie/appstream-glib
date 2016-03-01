@@ -476,7 +476,7 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	url = as_image_get_url (im);
 	g_debug ("checking %s", url);
 	base_uri = soup_uri_new (url);
-	if (base_uri == NULL) {
+	if (!SOUP_URI_VALID_FOR_HTTP (base_uri)) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_URL_NOT_FOUND,
 				     "<screenshot> url not valid [%s]", url);
