@@ -4273,7 +4273,7 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 
 	/* add all the data we have */
 	if (priv->id_filename != NULL)
-		as_app_add_tokens (app, priv->id_filename, "C", AS_APP_TOKEN_MATCH_ID);
+		as_app_add_token (app, priv->id_filename, AS_APP_TOKEN_MATCH_ID);
 	locales = g_get_language_names ();
 	for (i = 0; locales[i] != NULL; i++) {
 		if (g_str_has_suffix (locales[i], ".UTF-8"))
@@ -4308,7 +4308,7 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 	}
 	for (i = 0; i < priv->pkgnames->len; i++) {
 		tmp = g_ptr_array_index (priv->pkgnames, i);
-		as_app_add_tokens (app, tmp, "C", AS_APP_TOKEN_MATCH_PKGNAME);
+		as_app_add_token (app, tmp, AS_APP_TOKEN_MATCH_PKGNAME);
 	}
 }
 
