@@ -1316,6 +1316,7 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 	if (!as_store_load (store,
 			    AS_STORE_LOAD_FLAG_IGNORE_INVALID |
 			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
+			    AS_STORE_LOAD_FLAG_APP_INFO_USER |
 			    AS_STORE_LOAD_FLAG_APPDATA |
 			    AS_STORE_LOAD_FLAG_XDG_APP_USER |
 			    AS_STORE_LOAD_FLAG_XDG_APP_SYSTEM |
@@ -1384,7 +1385,10 @@ as_util_show_search_tokens (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* load system database */
 	store = as_store_new ();
-	if (!as_store_load (store, AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM, NULL, error))
+	if (!as_store_load (store,
+			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
+			    AS_STORE_LOAD_FLAG_APP_INFO_USER,
+			    NULL, error))
 		return FALSE;
 	dict = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	apps = as_store_get_apps (store);
