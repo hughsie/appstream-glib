@@ -3883,7 +3883,7 @@ as_test_utils_version_func (void)
 		{ 0xff01,	"0.0.65281",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
 		{ 0xff0001,	"0.255.1",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
 		{ 0xff000100,	"255.0.256",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
-		{ NULL,		NULL }
+		{ 0,		NULL }
 	};
 	struct {
 		const gchar *old;
