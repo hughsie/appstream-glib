@@ -2288,7 +2288,7 @@ as_app_subsume_release (AsRelease *release, AsRelease *donor)
 		as_release_set_description (release, NULL, tmp);
 
 	/* only installed is useful */
-	if (as_release_get_state (donor) == AS_RELEASE_STATE_INSTALLED);
+	if (as_release_get_state (donor) == AS_RELEASE_STATE_INSTALLED)
 		as_release_set_state (release, AS_RELEASE_STATE_INSTALLED);
 
 	/* overwrite the timestamp if the metadata is high quality,
