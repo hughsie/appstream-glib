@@ -1665,7 +1665,7 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 /**
  * as_app_set_id_kind:
  * @app: a #AsApp instance.
- * @kind: the #AsAppKind.
+ * @id_kind: the #AsAppKind.
  *
  * Sets the application kind.
  *
