@@ -45,6 +45,9 @@ void		 as_node_context_set_output_trusted (AsNodeContext	*ctx,
 AsAppSourceKind	 as_node_context_get_output	(AsNodeContext	*ctx);
 void		 as_node_context_set_output	(AsNodeContext	*ctx,
 						 AsAppSourceKind output);
+const gchar	*as_node_context_get_media_base_url (AsNodeContext	*ctx);
+void		 as_node_context_set_media_base_url (AsNodeContext	*ctx,
+						     const gchar	*url);
 
 gchar		*as_node_take_data		(const GNode	*node);
 gchar		*as_node_take_attribute		(const GNode	*node,

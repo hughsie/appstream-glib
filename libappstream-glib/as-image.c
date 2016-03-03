@@ -465,8 +465,16 @@ as_image_node_parse_dep11 (AsImage *im, GNode *node,
 			as_image_set_height (im, as_yaml_node_get_value_as_int (n));
 		else if (g_strcmp0 (tmp, "width") == 0)
 			as_image_set_width (im, as_yaml_node_get_value_as_int (n));
-		else if (g_strcmp0 (tmp, "url") == 0)
-			as_image_set_url (im, as_yaml_node_get_value (n));
+		else if (g_strcmp0 (tmp, "url") == 0) {
+			const gchar *media_base_url = as_node_context_get_media_base_url (ctx);
+			if (media_base_url != NULL) {
+				g_autofree gchar *url = NULL;
+				url = g_build_path ("/", media_base_url, as_yaml_node_get_value (n), NULL);
+				as_image_set_url (im, url);
+			} else {
+				as_image_set_url (im, as_yaml_node_get_value (n));
+			}
+		}
 	}
 	return TRUE;
 }

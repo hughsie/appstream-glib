@@ -1076,6 +1076,7 @@ as_store_load_yaml_file (AsStore *store,
 		return FALSE;
 
 	/* get header information */
+	ctx = as_node_context_new ();
 	for (n = root->children->children; n != NULL; n = n->next) {
 		tmp = as_yaml_node_get_key (n);
 		if (g_strcmp0 (tmp, "Origin") == 0) {
@@ -1085,6 +1086,10 @@ as_store_load_yaml_file (AsStore *store,
 		if (g_strcmp0 (tmp, "Version") == 0) {
 			if (as_yaml_node_get_value (n) != NULL)
 				as_store_set_api_version (store, g_ascii_strtod (as_yaml_node_get_value (n), NULL));
+			continue;
+		}
+		if (g_strcmp0 (tmp, "MediaBaseUrl") == 0) {
+			as_node_context_set_media_base_url (ctx, as_yaml_node_get_value (n));
 			continue;
 		}
 	}
@@ -1107,7 +1112,6 @@ as_store_load_yaml_file (AsStore *store,
 	tok = as_store_changed_inhibit (store);
 
 	/* parse applications */
-	ctx = as_node_context_new ();
 	for (app_n = root->children->next; app_n != NULL; app_n = app_n->next) {
 		g_autoptr(AsApp) app = NULL;
 		if (app_n->children == NULL)
