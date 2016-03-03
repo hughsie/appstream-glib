@@ -129,9 +129,12 @@ as_app_parse_shell_extension_data (AsApp *app,
 		tmp = json_object_get_string_member (json_obj, "description");
 		if (tmp != NULL) {
 			g_autofree gchar *desc = NULL;
-			desc = as_markup_import (tmp);
-			if (desc != NULL)
-				as_app_set_description (app, NULL, desc);
+			desc = as_markup_import (tmp,
+						 AS_MARKUP_CONVERT_FORMAT_SIMPLE,
+						 error);
+			if (desc == NULL)
+				return FALSE;
+			as_app_set_description (app, NULL, desc);
 		}
 	}
 	if (json_object_has_member (json_obj, "url")) {

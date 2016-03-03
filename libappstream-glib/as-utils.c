@@ -58,17 +58,10 @@
 G_DEFINE_QUARK (as-utils-error-quark, as_utils_error)
 
 /**
- * as_markup_import:
- * @text: the text to import.
- *
- * Imports unformatted text and converts to AppStream markup.
- *
- * Returns: (transfer full): appstream markup, or %NULL in event of an error
- *
- * Since: 0.5.11
+ * as_markup_import_simple:
  */
-gchar *
-as_markup_import (const gchar *text)
+static gchar *
+as_markup_import_simple (const gchar *text, GError **error)
 {
 	GString *str;
 	guint i;
@@ -97,6 +90,30 @@ as_markup_import (const gchar *text)
 		g_string_truncate (str, str->len - 1);
 	g_string_append (str, "</p>");
 	return g_string_free (str, FALSE);
+}
+
+/**
+ * as_markup_import:
+ * @text: the text to import.
+ * @format: the #AsMarkupConvertFormat, e.g. %AS_MARKUP_CONVERT_FORMAT_SIMPLE
+ * @error: A #GError or %NULL
+ *
+ * Imports text and converts to AppStream markup.
+ *
+ * Returns: (transfer full): appstream markup, or %NULL in event of an error
+ *
+ * Since: 0.5.11
+ */
+gchar *
+as_markup_import (const gchar *text, AsMarkupConvertFormat format, GError **error)
+{
+	if (format == AS_MARKUP_CONVERT_FORMAT_SIMPLE)
+		return as_markup_import_simple (text, error);
+	g_set_error_literal (error,
+			     AS_UTILS_ERROR,
+			     AS_UTILS_ERROR_INVALID_TYPE,
+			     "unknown comnversion kind");
+	return NULL;
 }
 
 /**

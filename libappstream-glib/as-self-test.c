@@ -3742,7 +3742,11 @@ as_test_utils_markup_import_func (void)
 	};
 	for (i = 0; table[i].old != NULL; i++) {
 		g_autofree gchar *new = NULL;
-		new = as_markup_import (table[i].old);
+		g_autoptr(GError) error = NULL;
+		new = as_markup_import (table[i].old,
+					AS_MARKUP_CONVERT_FORMAT_SIMPLE,
+					&error);
+		g_assert_no_error (error);
 		g_assert_cmpstr (new, ==, table[i].new);
 	}
 }
