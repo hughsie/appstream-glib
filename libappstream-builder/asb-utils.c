@@ -536,35 +536,6 @@ asb_utils_write_archive_dir (const gchar *filename,
 	return asb_utils_write_archive (filename, directory, files, error);
 }
 
-/**
- * asb_string_replace:
- * @string: Source string
- * @search: utf8 string to search for
- * @replace: utf8 string to replace with
- *
- * Does search/replace on a given string.
- *
- * Returns: the number of times the string was replaced
- *
- * Since: 0.1.0
- **/
-guint
-asb_string_replace (GString *string, const gchar *search, const gchar *replace)
-{
-	g_autofree gchar *tmp = NULL;
-	g_auto(GStrv) split = NULL;
-
-	/* quick search */
-	if (g_strstr_len (string->str, -1, search) == NULL)
-		return 0;
-
-	/* replace */
-	split = g_strsplit (string->str, search, -1);
-	tmp = g_strjoinv (replace, split);
-	g_string_assign (string, tmp);
-	return g_strv_length (split) - 1;
-}
-
 /******************************************************************************/
 
 struct AsbGlobValue {

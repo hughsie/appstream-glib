@@ -173,25 +173,6 @@ as_node_unref (AsNode *node)
 G_DEFINE_QUARK (as-node-error-quark, as_node_error)
 
 /**
- * as_node_string_replace:
- **/
-static void
-as_node_string_replace (GString *string, const gchar *search, const gchar *replace)
-{
-	g_autofree gchar *tmp = NULL;
-	g_auto(GStrv) split = NULL;
-
-	/* quick search */
-	if (g_strstr_len (string->str, -1, search) == NULL)
-		return;
-
-	/* replace */
-	split = g_strsplit (string->str, search, -1);
-	tmp = g_strjoinv (replace, split);
-	g_string_assign (string, tmp);
-}
-
-/**
  * as_node_string_replace_inplace:
  **/
 static void
@@ -241,9 +222,9 @@ as_node_cdata_to_escaped (AsNodeData *data)
 		return;
 	str = g_string_new (data->cdata);
 	g_free (data->cdata);
-	as_node_string_replace (str, "&", "&amp;");
-	as_node_string_replace (str, "<", "&lt;");
-	as_node_string_replace (str, ">", "&gt;");
+	as_utils_string_replace (str, "&", "&amp;");
+	as_utils_string_replace (str, "<", "&lt;");
+	as_utils_string_replace (str, ">", "&gt;");
 	data->cdata = g_string_free (str, FALSE);
 	data->cdata_escaped = TRUE;
 }

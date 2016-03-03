@@ -52,9 +52,6 @@ void		 asb_glob_value_free			(AsbGlobValue	*kv);
 const gchar	*asb_glob_value_search			(GPtrArray	*array,
 							 const gchar	*search);
 GPtrArray	*asb_glob_value_array_new		(void);
-guint		 asb_string_replace			(GString	*string,
-							 const gchar	*search,
-							 const gchar	*replace);
 
 G_END_DECLS
 

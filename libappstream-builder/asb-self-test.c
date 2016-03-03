@@ -259,18 +259,6 @@ asb_test_utils_glob_func (void)
 }
 
 static void
-asb_test_utils_replace_func (void)
-{
-	guint n;
-	g_autoptr(GString) str = NULL;
-
-	str = g_string_new ("I want to have searched for search");
-	n = asb_string_replace (str, "search", "replace");
-	g_assert_cmpstr (str->str, ==, "I want to have replaceed for replace");
-	g_assert_cmpint (n, ==, 2);
-}
-
-static void
 asb_test_plugin_loader_func (void)
 {
 	AsbPluginLoader *loader = NULL;
@@ -925,7 +913,6 @@ main (int argc, char **argv)
 
 	/* tests go here */
 	g_test_add_func ("/AppStreamBuilder/package", asb_test_package_func);
-	g_test_add_func ("/AppStreamBuilder/utils{replace}", asb_test_utils_replace_func);
 	g_test_add_func ("/AppStreamBuilder/utils{glob}", asb_test_utils_glob_func);
 	g_test_add_func ("/AppStreamBuilder/plugin-loader", asb_test_plugin_loader_func);
 	g_test_add_func ("/AppStreamBuilder/firmware", asb_test_firmware_func);

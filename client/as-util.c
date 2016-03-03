@@ -704,46 +704,6 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_string_replace:
- **/
-static guint
-as_string_replace (GString *string, const gchar *search, const gchar *replace)
-{
-	gchar *tmp;
-	guint count = 0;
-	guint replace_len;
-	guint search_len;
-
-	search_len = strlen (search);
-	replace_len = strlen (replace);
-
-	do {
-		tmp = g_strstr_len (string->str, -1, search);
-		if (tmp == NULL)
-			goto out;
-
-		/* reallocate the string if required */
-		if (search_len > replace_len) {
-			g_string_erase (string,
-					tmp - string->str,
-					search_len - replace_len);
-		}
-		if (search_len < replace_len) {
-			g_string_insert_len (string,
-					    tmp - string->str,
-					    search,
-					    replace_len - search_len);
-		}
-
-		/* just memcmp in the new string */
-		memcpy (tmp, replace, replace_len);
-		count++;
-	} while (TRUE);
-out:
-	return count;
-}
-
 typedef enum {
 	AS_UTIL_SECTION_KIND_UNKNOWN,
 	AS_UTIL_SECTION_KIND_HEADER,
@@ -1001,7 +961,7 @@ as_util_news_to_appdata (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* try to unsplit lines */
 	data_str = g_string_new (data);
-	as_string_replace (data_str, "\n   ", " ");
+	as_utils_string_replace (data_str, "\n   ", " ");
 
 	/* break up into sections */
 	desc = g_string_new ("");

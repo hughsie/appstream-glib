@@ -4592,6 +4592,33 @@ as_test_utils_install_filename_func (void)
 	g_assert (g_file_test ("/tmp/destdir/usr/share/app-info/icons/origin/64x64/org.gnome.Software.png", G_FILE_TEST_EXISTS));
 }
 
+static void
+as_test_utils_string_replace_func (void)
+{
+	guint i;
+	struct {
+		const gchar *str;
+		const gchar *search;
+		const gchar *replace;
+		const gchar *result;
+	} table[] = {
+		{ "",		"",		"",		"" },
+		{ "one",	"one",		"two",		"two" },
+		{ "one",	"one",		"1",		"1" },
+		{ "one",	"one",		"onlyme",	"onlyme" },
+		{ "we few ppl",	" few ",	"",		"weppl" },
+		{ "bee&",	"&",		"&amp;",	"bee&amp;" },
+		{ NULL,		NULL,		NULL,		NULL }
+	};
+	for (i = 0; table[i].str != NULL; i++) {
+		g_autoptr(GString) str = g_string_new (table[i].str);
+		as_utils_string_replace (str,
+					 table[i].search,
+					 table[i].replace);
+		g_assert_cmpstr (str->str, ==, table[i].result);
+	}
+}
+
 int
 main (int argc, char **argv)
 {
@@ -4651,6 +4678,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/utils{install-filename}", as_test_utils_install_filename_func);
 	g_test_add_func ("/AppStream/utils{vercmp}", as_test_utils_vercmp_func);
+	g_test_add_func ("/AppStream/utils{string-replace}", as_test_utils_string_replace_func);
 	if (g_test_slow ()) {
 		g_test_add_func ("/AppStream/monitor{dir}", as_test_monitor_dir_func);
 		g_test_add_func ("/AppStream/monitor{file}", as_test_monitor_file_func);
