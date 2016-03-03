@@ -696,7 +696,7 @@ as_node_from_xml (const gchar *data,
 		as_node_passthrough_cb,
 		NULL };
 
-	g_return_val_if_fail (data != NULL, FALSE);
+	g_return_val_if_fail (data != NULL, NULL);
 
 	root = as_node_new ();
 	helper.flags = flags;

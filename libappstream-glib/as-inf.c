@@ -948,7 +948,7 @@ as_inf_get_driver_version (GKeyFile *keyfile, guint64 *timestamp, GError **error
 				     AS_INF_ERROR,
 				     AS_INF_ERROR_NOT_FOUND,
 				     "DriverVer is missing");
-		return FALSE;
+		return NULL;
 	}
 
 	/* split into driver date and version */
