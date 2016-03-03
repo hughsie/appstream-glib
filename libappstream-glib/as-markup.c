@@ -37,6 +37,260 @@
 #include "as-node.h"
 #include "as-utils.h"
 
+typedef enum {
+	AS_MARKUP_TAG_UNKNOWN,
+	AS_MARKUP_TAG_PARA,
+	AS_MARKUP_TAG_OL,
+	AS_MARKUP_TAG_UL,
+	AS_MARKUP_TAG_LI,
+	AS_MARKUP_TAG_LAST
+} AsMarkupTag;
+
+typedef struct {
+	AsMarkupTag	 action;
+	GString		*output;
+	GString		*temp;
+} AsMarkupImportHelper;
+
+/**
+ * as_markup_import_html_flush:
+ **/
+static void
+as_markup_import_html_flush (AsMarkupImportHelper *helper)
+{
+	gchar *tmp;
+	guint i;
+	g_auto(GStrv) split = NULL;
+
+	/* trivial case */
+	if (helper->action == AS_MARKUP_TAG_UNKNOWN)
+		return;
+	if (helper->temp->len == 0)
+		return;
+
+	/* split into lines and strip */
+	split = g_strsplit (helper->temp->str, "\n", -1);
+	for (i = 0; split[i] != NULL; i++) {
+		tmp = g_strstrip (split[i]);
+		if (tmp[0] == '\0')
+			continue;
+		switch (helper->action) {
+		case AS_MARKUP_TAG_PARA:
+			g_string_append_printf (helper->output, "<p>%s</p>", tmp);
+			break;
+		case AS_MARKUP_TAG_LI:
+			g_string_append_printf (helper->output, "<li>%s</li>", tmp);
+			break;
+		default:
+			break;
+		}
+	}
+	g_string_truncate (helper->temp, 0);
+}
+
+/**
+ * as_markup_import_html_set_tag:
+ **/
+static void
+as_markup_import_html_set_tag (AsMarkupImportHelper *helper, AsMarkupTag action_new)
+{
+	if (helper->action == AS_MARKUP_TAG_UL &&
+	    action_new == AS_MARKUP_TAG_LI) {
+		g_string_append (helper->output, "<ul>");
+		helper->action = action_new;
+	} else if (helper->action == AS_MARKUP_TAG_UL &&
+		   action_new == AS_MARKUP_TAG_UNKNOWN) {
+		g_string_append (helper->output, "</ul>");
+		helper->action = action_new;
+	} else {
+		helper->action = action_new;
+	}
+}
+
+/**
+ * as_markup_import_html_start_cb:
+ **/
+static void
+as_markup_import_html_start_cb (GMarkupParseContext *context,
+				const gchar *element_name,
+				const gchar **attribute_names,
+				const gchar **attribute_values,
+				gpointer user_data,
+				GError **error)
+{
+	AsMarkupImportHelper *helper = (AsMarkupImportHelper *) user_data;
+
+	/* don't assume the document starts with <p> */
+	if (g_strcmp0 (element_name, "document") == 0 ||
+	    g_strcmp0 (element_name, "p") == 0) {
+		as_markup_import_html_set_tag (helper, AS_MARKUP_TAG_PARA);
+		return;
+	}
+	if (g_strcmp0 (element_name, "li") == 0) {
+		as_markup_import_html_set_tag (helper, AS_MARKUP_TAG_LI);
+		return;
+	}
+	if (g_strcmp0 (element_name, "ul") == 0) {
+		as_markup_import_html_flush (helper);
+		as_markup_import_html_set_tag (helper, AS_MARKUP_TAG_UL);
+		return;
+	}
+
+	/* do not include the contents of these tags */
+	if (g_strcmp0 (element_name, "h1") == 0 ||
+	    g_strcmp0 (element_name, "h2") == 0) {
+		as_markup_import_html_flush (helper);
+		as_markup_import_html_set_tag (helper, AS_MARKUP_TAG_UNKNOWN);
+		return;
+	}
+}
+
+/**
+ * as_markup_import_html_end_cb:
+ **/
+static void
+as_markup_import_html_end_cb (GMarkupParseContext *context,
+			      const gchar *element_name,
+			      gpointer user_data,
+			      GError **error)
+{
+	AsMarkupImportHelper *helper = (AsMarkupImportHelper *) user_data;
+
+	if (g_strcmp0 (element_name, "document") == 0 ||
+	    g_strcmp0 (element_name, "p") == 0) {
+		as_markup_import_html_flush (helper);
+		as_markup_import_html_set_tag (helper, AS_MARKUP_TAG_UNKNOWN);
+		return;
+	}
+	/* don't assume the next section starts with <p> */
+	if (g_strcmp0 (element_name, "h1") == 0 ||
+	    g_strcmp0 (element_name, "h2") == 0) {
+		as_markup_import_html_flush (helper);
+		as_markup_import_html_set_tag (helper, AS_MARKUP_TAG_PARA);
+		return;
+	}
+	if (g_strcmp0 (element_name, "li") == 0) {
+		as_markup_import_html_flush (helper);
+		/* not UL, else we do a new <ul> on next <li> */
+		as_markup_import_html_set_tag (helper, AS_MARKUP_TAG_LI);
+		return;
+	}
+	if (g_strcmp0 (element_name, "ul") == 0 ||
+	    g_strcmp0 (element_name, "ol") == 0) {
+		as_markup_import_html_set_tag (helper, AS_MARKUP_TAG_UL);
+		as_markup_import_html_set_tag (helper, AS_MARKUP_TAG_UNKNOWN);
+		return;
+	}
+}
+
+/**
+ * as_markup_import_html_text_cb:
+ **/
+static void
+as_markup_import_html_text_cb (GMarkupParseContext *context,
+			       const gchar *text,
+			       gsize text_len,
+			       gpointer user_data,
+			       GError **error)
+{
+	AsMarkupImportHelper *helper = (AsMarkupImportHelper *) user_data;
+	g_autofree gchar *tmp = NULL;
+
+	if (helper->action == AS_MARKUP_TAG_UNKNOWN)
+		return;
+
+	/* do not assume text is NULL-terminated */
+	tmp = g_strndup (text, text_len);
+	g_string_append (helper->temp, tmp);
+}
+
+/**
+ * as_markup_import_html_erase:
+ *
+ * Replaces any tag with whitespace.
+ **/
+static void
+as_markup_import_html_erase (GString *str, const gchar *start, const gchar *end)
+{
+	guint i, j;
+	guint start_len = strlen (start);
+	guint end_len = strlen (end);
+	for (i = 0; str->str[i] != '\0'; i++) {
+		if (memcmp (&str->str[i], start, start_len) != 0)
+			continue;
+		for (j = i; i < str->len; j++) {
+			if (memcmp (&str->str[j], end, end_len) != 0)
+				continue;
+			/* delete this section and restart the search */
+			g_string_erase (str, i, (j - i) + end_len);
+			i = -1;
+			break;
+		}
+	}
+}
+
+/**
+ * as_markup_import_html:
+ **/
+static gchar *
+as_markup_import_html (const gchar *text, GError **error)
+{
+	AsMarkupImportHelper helper;
+	GMarkupParseContext *ctx;
+	GMarkupParser parser = {
+		as_markup_import_html_start_cb,
+		as_markup_import_html_end_cb,
+		as_markup_import_html_text_cb,
+		NULL,
+		NULL };
+	g_autoptr(GString) str = NULL;
+	g_autoptr(GString) helper_output = NULL;
+	g_autoptr(GString) helper_temp = NULL;
+
+	/* clean these up on failure */
+	helper_output = g_string_new ("");
+	helper_temp = g_string_new ("");
+
+	/* set up XML parser */
+	helper.action = AS_MARKUP_TAG_UNKNOWN;
+	helper.output = helper_output;
+	helper.temp = helper_temp;
+	ctx = g_markup_parse_context_new (&parser,
+					  G_MARKUP_TREAT_CDATA_AS_TEXT,
+					  &helper,
+					  NULL);
+
+	/* ensure this has at least one set of quotes */
+	str = g_string_new ("");
+	g_string_append_printf (str, "<document>%s</document>", text);
+
+	/* convert win32 line endings */
+	g_strdelimit (str->str, "\r", '\n');
+
+	/* treat as paragraph breaks */
+	as_utils_string_replace (str, "<br>", "\n");
+
+	/* tidy up non-compliant HTML5 */
+	as_markup_import_html_erase (str, "<img", ">");
+	as_markup_import_html_erase (str, "<link", ">");
+	as_markup_import_html_erase (str, "<meta", ">");
+
+	/* use UTF-8 */
+	as_utils_string_replace (str, "&trade;", "™");
+	as_utils_string_replace (str, "&reg;", "®");
+	as_utils_string_replace (str, "&nbsp;", " ");
+
+	/* parse */
+	if (!g_markup_parse_context_parse (ctx, str->str, -1, error))
+		return NULL;
+
+	/* return only valid AppStream markup */
+	return as_markup_convert_full (helper.output->str,
+				       AS_MARKUP_CONVERT_FORMAT_APPSTREAM,
+				       AS_MARKUP_CONVERT_FLAG_IGNORE_ERRORS,
+				       error);
+}
+
 /**
  * as_markup_import_simple:
  */
@@ -89,6 +343,8 @@ as_markup_import (const gchar *text, AsMarkupConvertFormat format, GError **erro
 {
 	if (format == AS_MARKUP_CONVERT_FORMAT_SIMPLE)
 		return as_markup_import_simple (text, error);
+	if (format == AS_MARKUP_CONVERT_FORMAT_HTML)
+		return as_markup_import_html (text, error);
 	g_set_error_literal (error,
 			     AS_UTILS_ERROR,
 			     AS_UTILS_ERROR_INVALID_TYPE,

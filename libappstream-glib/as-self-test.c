@@ -4619,6 +4619,70 @@ as_test_utils_string_replace_func (void)
 	}
 }
 
+static void
+as_test_markup_import_html (void)
+{
+	const gchar *input;
+	g_autofree gchar *out_complex = NULL;
+	g_autofree gchar *out_list = NULL;
+	g_autofree gchar *out_simple = NULL;
+	g_autoptr(GError) error = NULL;
+	guint i;
+	struct {
+		const gchar *html;
+		const gchar *markup;
+	} table[] = {
+		{ "",					"" },
+		{ "dave",				"<p>dave</p>" },
+		{ "&trade;",				"<p>™</p>" },
+		{ "<p>paul</p>",			"<p>paul</p>" },
+		{ "<p>tim</p><p>baz</p>",		"<p>tim</p>\n<p>baz</p>" },
+		{ "<ul><li>1</li></ul>",		"<ul><li>1</li></ul>" },
+		{ "<ul><li>1</li><li>2</li></ul>",	"<ul><li>1</li><li>2</li></ul>" },
+		{ "<p>foo<i>awesome</i></p>",		"<p>fooawesome</p>" },
+		{ "a<img src=\"moo.png\">b",		"<p>ab</p>" },
+		{ "<h2>title</h2>content",		"<p>content</p>" },
+		{ "para1<br><br>para2",			"<p>para1</p>\n<p>para2</p>" },
+		{ "para1<h1>ignore</h1>para2",		"<p>para1</p>\n<p>para2</p>" },
+		{ NULL,				NULL}
+	};
+	for (i = 0; table[i].html != NULL; i++) {
+		g_autofree gchar *tmp = NULL;
+		g_autoptr(GError) error_local = NULL;
+		tmp = as_markup_import (table[i].html,
+					AS_MARKUP_CONVERT_FORMAT_HTML,
+					&error_local);
+		g_assert_no_error (error_local);
+		g_assert_cmpstr (tmp, ==, table[i].markup);
+	}
+
+	/* simple, from meta */
+	input = "This game is simply awesome&trade; in every way!";
+	out_simple = as_markup_import (input, AS_MARKUP_CONVERT_FORMAT_HTML, &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (out_simple, ==, "<p>This game is simply awesome™ in every way!</p>");
+
+	/* complex non-compliant HTML, from div */
+	input = "  <h1>header</h1>"
+		"  <p>First line of the <i>description</i> is okay...</p>"
+		"  <img src=\"moo.png\">"
+		"  <img src=\"png\">"
+		"  <p>Second <strong>line</strong> is <a href=\"#moo\">even</a> better!</p>";
+	out_complex = as_markup_import (input, AS_MARKUP_CONVERT_FORMAT_HTML, &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (out_complex, ==, "<p>First line of the description is okay...</p>\n"
+					  "<p>Second line is even better!</p>");
+
+	/* complex list */
+	input = "  <ul>"
+		"  <li>First line of the list</li>"
+		"  <li>Second line of the list</li>"
+		"  </ul>";
+	out_list = as_markup_import (input, AS_MARKUP_CONVERT_FORMAT_HTML, &error);
+	g_assert_no_error (error);
+	g_assert_cmpstr (out_list, ==, "<ul><li>First line of the list</li><li>Second line of the list</li></ul>");
+}
+
 int
 main (int argc, char **argv)
 {
@@ -4628,6 +4692,7 @@ main (int argc, char **argv)
 	g_log_set_fatal_mask (NULL, G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL);
 
 	/* tests go here */
+	g_test_add_func ("/AppStream/utils{string-replace}", as_test_utils_string_replace_func);
 	g_test_add_func ("/AppStream/tag", as_test_tag_func);
 	g_test_add_func ("/AppStream/provide", as_test_provide_func);
 	g_test_add_func ("/AppStream/checksum", as_test_checksum_func);
@@ -4660,6 +4725,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/app{subsume}", as_test_app_subsume_func);
 	g_test_add_func ("/AppStream/app{search}", as_test_app_search_func);
 	g_test_add_func ("/AppStream/inf", as_test_inf_func);
+	g_test_add_func ("/AppStream/markup{import-html}", as_test_markup_import_html);
 	g_test_add_func ("/AppStream/node", as_test_node_func);
 	g_test_add_func ("/AppStream/node{reflow}", as_test_node_reflow_text_func);
 	g_test_add_func ("/AppStream/node{xml}", as_test_node_xml_func);
@@ -4678,7 +4744,6 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/utils{install-filename}", as_test_utils_install_filename_func);
 	g_test_add_func ("/AppStream/utils{vercmp}", as_test_utils_vercmp_func);
-	g_test_add_func ("/AppStream/utils{string-replace}", as_test_utils_string_replace_func);
 	if (g_test_slow ()) {
 		g_test_add_func ("/AppStream/monitor{dir}", as_test_monitor_dir_func);
 		g_test_add_func ("/AppStream/monitor{file}", as_test_monitor_file_func);
