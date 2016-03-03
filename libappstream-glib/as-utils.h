@@ -77,38 +77,6 @@ typedef enum {
 } AsUtilsLocation;
 
 /**
- * AsMarkupConvertFormat:
- * @AS_MARKUP_CONVERT_FORMAT_SIMPLE:		UTF-8 text
- * @AS_MARKUP_CONVERT_FORMAT_MARKDOWN:		Markdown format
- * @AS_MARKUP_CONVERT_FORMAT_NULL:		No output
- * @AS_MARKUP_CONVERT_FORMAT_APPSTREAM:		AppStream (passthrough)
- *
- * The format used when converting to or from AppStream descriptions.
- **/
-typedef enum {
-	AS_MARKUP_CONVERT_FORMAT_SIMPLE,
-	AS_MARKUP_CONVERT_FORMAT_MARKDOWN,
-	AS_MARKUP_CONVERT_FORMAT_NULL,		/* Since: 0.5.2 */
-	AS_MARKUP_CONVERT_FORMAT_APPSTREAM,	/* Since: 0.5.2 */
-	/*< private >*/
-	AS_MARKUP_CONVERT_FORMAT_LAST
-} AsMarkupConvertFormat;
-
-/**
- * AsMarkupConvertFlag:
- * @AS_MARKUP_CONVERT_FLAG_NONE:		No flags set
- * @AS_MARKUP_CONVERT_FLAG_IGNORE_ERRORS:	Ignore errors where possible
- *
- * The flags used when converting descriptions from AppStream-style.
- **/
-typedef enum {
-	AS_MARKUP_CONVERT_FLAG_NONE		= 0,
-	AS_MARKUP_CONVERT_FLAG_IGNORE_ERRORS	= 1 << 0,
-	/*< private >*/
-	AS_MARKUP_CONVERT_FLAG_LAST
-} AsMarkupConvertFlag;
-
-/**
  * AsVersionParseFlag:
  * @AS_VERSION_PARSE_FLAG_NONE:			No flags set
  * @AS_VERSION_PARSE_FLAG_USE_TRIPLET:		Use Microsoft-style version numbers
@@ -121,23 +89,6 @@ typedef enum {
 	/*< private >*/
 	AS_VERSION_PARSE_FLAG_LAST
 } AsVersionParseFlag;
-
-gchar		*as_markup_convert_simple	(const gchar	*markup,
-						 GError		**error);
-gchar		*as_markup_convert		(const gchar	*markup,
-						 AsMarkupConvertFormat format,
-						 GError		**error);
-gchar		*as_markup_convert_full		(const gchar	*markup,
-						 AsMarkupConvertFormat format,
-						 AsMarkupConvertFlag flags,
-						 GError		**error);
-gboolean	 as_markup_validate		(const gchar	*markup,
-						 GError		**error);
-gchar		**as_markup_strsplit_words	(const gchar	*text,
-						 guint		 line_len);
-gchar		*as_markup_import		(const gchar	*text,
-						 AsMarkupConvertFormat format,
-						 GError		**error);
 
 GQuark		 as_utils_error_quark		(void);
 gboolean	 as_utils_is_stock_icon_name	(const gchar	*name);

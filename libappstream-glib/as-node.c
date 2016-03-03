@@ -37,6 +37,7 @@
 #include <glib.h>
 #include <string.h>
 
+#include "as-markup.h"
 #include "as-node-private.h"
 #include "as-utils-private.h"
 

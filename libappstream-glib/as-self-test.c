@@ -35,6 +35,7 @@
 #include "as-icon-private.h"
 #include "as-image-private.h"
 #include "as-inf.h"
+#include "as-markup.h"
 #include "as-monitor.h"
 #include "as-node-private.h"
 #include "as-problem.h"
