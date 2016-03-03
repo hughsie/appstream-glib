@@ -3864,6 +3864,54 @@ as_util_check_root (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
+ * as_util_markup_import:
+ **/
+static gboolean
+as_util_markup_import (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsMarkupConvertFormat format;
+	guint i;
+	g_autofree gchar *data = NULL;
+	g_autofree gchar *tmp = NULL;
+
+	/* check args */
+	if (g_strv_length (values) < 2) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "expected type filename");
+		return FALSE;
+	}
+
+	/* get type */
+	if (g_strcmp0 (values[0], "simple") == 0) {
+		format = AS_MARKUP_CONVERT_FORMAT_SIMPLE;
+	} else if (g_strcmp0 (values[0], "html") == 0) {
+		format = AS_MARKUP_CONVERT_FORMAT_HTML;
+	} else {
+		g_set_error (error,
+			     AS_ERROR,
+			     AS_ERROR_INVALID_ARGUMENTS,
+			     "invalid type %s",
+			     values[0]);
+		return FALSE;
+	}
+
+	/* read and convert */
+	for (i = 1; values[i] != NULL; i++) {
+		if (!g_file_get_contents (values[i], &data, NULL, error))
+			return FALSE;
+		tmp = as_markup_import (data, format, error);
+		if (tmp == NULL) {
+			g_prefix_error (error, "Failed to parse %s: ", values[i]);
+			return FALSE;
+		}
+		g_print ("%s\n", tmp);
+	}
+	return TRUE;
+}
+
+/**
  * as_util_ignore_cb:
  **/
 static void
@@ -4076,6 +4124,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Split an AppStream file to AppData and Metainfo files"),
 		     as_util_split_appstream);
+	as_util_add (priv->cmd_array,
+		     "markup-import",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Import a file to AppStream markup"),
+		     as_util_markup_import);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
