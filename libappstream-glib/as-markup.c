@@ -218,14 +218,14 @@ as_markup_render_li (GString *str, AsMarkupConvertFormat format, const gchar *da
 }
 
 /**
- * as_markup_render_ol_start:
+ * as_markup_render_ul_start:
  **/
 static void
-as_markup_render_ol_start (GString *str, AsMarkupConvertFormat format)
+as_markup_render_ul_start (GString *str, AsMarkupConvertFormat format)
 {
 	switch (format) {
 	case AS_MARKUP_CONVERT_FORMAT_APPSTREAM:
-		g_string_append (str, "<ol>");
+		g_string_append (str, "<ul>");
 		break;
 	default:
 		break;
@@ -233,14 +233,14 @@ as_markup_render_ol_start (GString *str, AsMarkupConvertFormat format)
 }
 
 /**
- * as_markup_render_ol_end:
+ * as_markup_render_ul_end:
  **/
 static void
-as_markup_render_ol_end (GString *str, AsMarkupConvertFormat format)
+as_markup_render_ul_end (GString *str, AsMarkupConvertFormat format)
 {
 	switch (format) {
 	case AS_MARKUP_CONVERT_FORMAT_APPSTREAM:
-		g_string_append (str, "</ol>");
+		g_string_append (str, "</ul>");
 		break;
 	default:
 		break;
@@ -331,7 +331,7 @@ as_markup_convert_full (const gchar *markup,
 		/* loop on the children */
 		if (g_strcmp0 (tag, "ul") == 0 ||
 		    g_strcmp0 (tag, "ol") == 0) {
-			as_markup_render_ol_start (str, format);
+			as_markup_render_ul_start (str, format);
 			for (tmp_c = tmp->children; tmp_c != NULL; tmp_c = tmp_c->next) {
 				tag_c = as_node_get_name (tmp_c);
 				if (g_strcmp0 (tag_c, "li") == 0) {
@@ -352,7 +352,7 @@ as_markup_convert_full (const gchar *markup,
 					     tag_c, tag);
 				return NULL;
 			}
-			as_markup_render_ol_end (str, format);
+			as_markup_render_ul_end (str, format);
 			continue;
 		}
 

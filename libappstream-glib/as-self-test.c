@@ -3830,11 +3830,11 @@ as_test_utils_func (void)
 	g_clear_error (&error);
 
 	/* passthrough */
-	tmp = as_markup_convert ("<p>pa&amp;ra</p><ol><li>one</li><li>two</li></ol>",
+	tmp = as_markup_convert ("<p>pa&amp;ra</p><ul><li>one</li><li>two</li></ul>",
 				 AS_MARKUP_CONVERT_FORMAT_APPSTREAM,
 				 &error);
 	g_assert_no_error (error);
-	g_assert_cmpstr (tmp, ==, "<p>pa&amp;ra</p><ol><li>one</li><li>two</li></ol>");
+	g_assert_cmpstr (tmp, ==, "<p>pa&amp;ra</p><ul><li>one</li><li>two</li></ul>");
 	g_free (tmp);
 
 	/* ignore errors */
@@ -3843,9 +3843,9 @@ as_test_utils_func (void)
 				      AS_MARKUP_CONVERT_FLAG_IGNORE_ERRORS,
 				      &error);
 	g_assert_no_error (error);
-	g_assert_cmpstr (tmp, ==, "<p>para</p><ol><li>one</li></ol>");
+	g_assert_cmpstr (tmp, ==, "<p>para</p><ul><li>one</li></ul>");
 	g_free (tmp);
-	tmp = as_markup_convert_full ("<p>para</p><ol><li>one</li><li>two</ol>",
+	tmp = as_markup_convert_full ("<p>para</p><ul><li>one</li><li>two</ul>",
 				      AS_MARKUP_CONVERT_FORMAT_APPSTREAM,
 				      AS_MARKUP_CONVERT_FLAG_IGNORE_ERRORS,
 				      &error);
