@@ -4196,10 +4196,10 @@ as_app_value_tokenize (const gchar *value)
 }
 
 /**
- * as_app_add_token:
+ * as_app_add_token_internal:
  **/
 static void
-as_app_add_token (AsApp *app, const gchar *value, AsAppTokenMatch match_flag)
+as_app_add_token_internal (AsApp *app, const gchar *value, AsAppTokenMatch match_flag)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsAppTokenType *match_pval;
@@ -4222,12 +4222,34 @@ as_app_add_token (AsApp *app, const gchar *value, AsAppTokenMatch match_flag)
 }
 
 /**
+ * as_app_add_token:
+ **/
+static void
+as_app_add_token (AsApp *app,
+		  const gchar *value,
+		  gboolean allow_split,
+		  AsAppTokenMatch match_flag)
+{
+	/* add extra tokens for names like x-plane or half-life */
+	if (allow_split && g_strstr_len (value, -1, "-") != NULL) {
+		guint i;
+		g_auto(GStrv) split = g_strsplit (value, "-", -1);
+		for (i = 0; split[i] != NULL; i++)
+			as_app_add_token_internal (app, split[i], match_flag);
+	}
+
+	/* add the whole token always, even when we split on hyphen */
+	as_app_add_token_internal (app, value, match_flag);
+}
+
+/**
  * as_app_add_tokens:
  **/
 static void
 as_app_add_tokens (AsApp *app,
 		   const gchar *value,
 		   const gchar *locale,
+		   gboolean allow_split,
 		   AsAppTokenMatch match_flag)
 {
 	guint i;
@@ -4253,9 +4275,9 @@ as_app_add_tokens (AsApp *app,
 
 	/* add each token */
 	for (i = 0; values_utf8 != NULL && values_utf8[i] != NULL; i++)
-		as_app_add_token (app, values_utf8[i], match_flag);
+		as_app_add_token (app, values_utf8[i], allow_split, match_flag);
 	for (i = 0; values_ascii != NULL && values_ascii[i] != NULL; i++)
-		as_app_add_token (app, values_ascii[i], match_flag);
+		as_app_add_token (app, values_ascii[i], allow_split, match_flag);
 }
 
 /**
@@ -4272,43 +4294,45 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 	guint j;
 
 	/* add all the data we have */
-	if (priv->id_filename != NULL)
-		as_app_add_token (app, priv->id_filename, AS_APP_TOKEN_MATCH_ID);
+	if (priv->id_filename != NULL) {
+		as_app_add_token (app, priv->id_filename, FALSE,
+				  AS_APP_TOKEN_MATCH_ID);
+	}
 	locales = g_get_language_names ();
 	for (i = 0; locales[i] != NULL; i++) {
 		if (g_str_has_suffix (locales[i], ".UTF-8"))
 			continue;
 		tmp = as_app_get_name (app, locales[i]);
 		if (tmp != NULL) {
-			as_app_add_tokens (app, tmp, locales[i],
+			as_app_add_tokens (app, tmp, locales[i], TRUE,
 					   AS_APP_TOKEN_MATCH_NAME);
 		}
 		tmp = as_app_get_comment (app, locales[i]);
 		if (tmp != NULL) {
-			as_app_add_tokens (app, tmp, locales[i],
+			as_app_add_tokens (app, tmp, locales[i], TRUE,
 					   AS_APP_TOKEN_MATCH_COMMENT);
 		}
 		tmp = as_app_get_description (app, locales[i]);
 		if (tmp != NULL) {
-			as_app_add_tokens (app, tmp, locales[i],
+			as_app_add_tokens (app, tmp, locales[i], FALSE,
 					   AS_APP_TOKEN_MATCH_DESCRIPTION);
 		}
 		array = as_app_get_keywords (app, locales[i]);
 		if (array != NULL) {
 			for (j = 0; j < array->len; j++) {
 				tmp = g_ptr_array_index (array, j);
-				as_app_add_tokens (app, tmp, locales[i],
+				as_app_add_tokens (app, tmp, locales[i], FALSE,
 						   AS_APP_TOKEN_MATCH_KEYWORD);
 			}
 		}
 	}
 	for (i = 0; i < priv->mimetypes->len; i++) {
 		tmp = g_ptr_array_index (priv->mimetypes, i);
-		as_app_add_token (app, tmp, AS_APP_TOKEN_MATCH_MIMETYPE);
+		as_app_add_token (app, tmp, FALSE, AS_APP_TOKEN_MATCH_MIMETYPE);
 	}
 	for (i = 0; i < priv->pkgnames->len; i++) {
 		tmp = g_ptr_array_index (priv->pkgnames, i);
-		as_app_add_token (app, tmp, AS_APP_TOKEN_MATCH_PKGNAME);
+		as_app_add_token (app, tmp, FALSE, AS_APP_TOKEN_MATCH_PKGNAME);
 	}
 }
 

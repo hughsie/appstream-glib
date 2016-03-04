@@ -2571,7 +2571,7 @@ as_test_app_search_func (void)
 	app = as_app_new ();
 	as_app_set_id (app, "gnome-software");
 	as_app_add_pkgname (app, "gnome-software");
-	as_app_set_name (app, NULL, "GNOME Software");
+	as_app_set_name (app, NULL, "GNOME Software X-Plane");
 	as_app_set_comment (app, NULL, "Install and remove software");
 	as_app_add_mimetype (app, "application/vnd.oasis.opendocument.text");
 	as_app_add_keyword (app, NULL, "awesome");
@@ -2587,6 +2587,10 @@ as_test_app_search_func (void)
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) all), ==, 96);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) none), ==, 0);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) mime), ==, 4);
+
+	/* test tokenization of hyphenated name */
+	g_assert_cmpint (as_app_search_matches (app, "x-plane"), ==, 64);
+	g_assert_cmpint (as_app_search_matches (app, "plane"), ==, 64);
 
 	/* do not add short or common keywords */
 	g_assert_cmpint (as_app_search_matches (app, "and"), ==, 0);
