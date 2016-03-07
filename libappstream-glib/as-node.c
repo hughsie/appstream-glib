@@ -1930,6 +1930,7 @@ struct _AsNodeContext {
 	AsAppSourceKind	 output;
 	gdouble		 version;
 	gboolean	 output_trusted;
+	gchar		*media_base_url;
 };
 
 /**
@@ -2074,4 +2075,34 @@ void
 as_node_context_set_output (AsNodeContext *ctx, AsAppSourceKind output)
 {
 	ctx->output = output;
+}
+
+/**
+ * as_node_context_get_media_base_url: (skip)
+ * @ctx: a #AsNodeContext.
+ *
+ * Gets the base URL for media used when inserting nodes.
+ *
+ * Since: 0.5.11
+ **/
+const gchar *
+as_node_context_get_media_base_url (AsNodeContext *ctx)
+{
+	return ctx->media_base_url;
+}
+
+/**
+ * as_node_context_set_media_base_url: (skip)
+ * @ctx: a #AsNodeContext.
+ * @url: a URL
+ *
+ * Sets the base URL for media used when inserting nodes.
+ *
+ * Since: 0.5.11
+ **/
+void
+as_node_context_set_media_base_url (AsNodeContext *ctx, const gchar *url)
+{
+	g_free (ctx->media_base_url);
+	ctx->media_base_url = g_strdup (url);
 }
