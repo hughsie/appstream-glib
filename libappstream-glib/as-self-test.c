@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -31,6 +31,7 @@
 #include "as-bundle-private.h"
 #include "as-translation-private.h"
 #include "as-checksum-private.h"
+#include "as-content-rating-private.h"
 #include "as-enums.h"
 #include "as-icon-private.h"
 #include "as-image-private.h"
@@ -1331,6 +1332,53 @@ as_test_screenshot_func (void)
 }
 
 static void
+as_test_content_rating_func (void)
+{
+	GError *error = NULL;
+	AsNode *n;
+	AsNode *root;
+	GString *xml;
+	const gchar *src =
+		"<content_rating type=\"oars-1.0\">\n"
+		"<content_attribute id=\"drugs-alcohol\">moderate</content_attribute>\n"
+		"</content_rating>\n";
+	gboolean ret;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsContentRating) content_rating = NULL;
+
+	content_rating = as_content_rating_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "content_rating");
+	g_assert (n != NULL);
+	ctx = as_node_context_new ();
+	ret = as_content_rating_node_parse (content_rating, n, ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* verify */
+	g_assert_cmpstr (as_content_rating_get_kind (content_rating), ==, "oars-1.0");
+	as_node_unref (root);
+
+	/* check CSM */
+	g_assert_cmpint (as_content_rating_get_minimum_age (content_rating), ==, 13);
+
+	/* back to node */
+	root = as_node_new ();
+	as_node_context_set_version (ctx, 0.8);
+	n = as_content_rating_node_insert (content_rating, root, ctx);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+}
+
+static void
 as_test_app_func (void)
 {
 	AsIcon *ic;
@@ -1390,6 +1438,9 @@ as_test_app_func (void)
 		"<image type=\"thumbnail\">http://b.png</image>\n"
 		"</screenshot>\n"
 		"</screenshots>\n"
+		"<content_rating type=\"oars-1.0\">\n"
+		"<content_attribute id=\"drugs-alcohol\">moderate</content_attribute>\n"
+		"</content_rating>\n"
 		"<releases>\n"
 		"<release version=\"3.11.91\" timestamp=\"1392724801\"/>\n"
 		"<release version=\"3.11.90\" timestamp=\"1392724800\"/>\n"
@@ -4700,6 +4751,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/tag", as_test_tag_func);
 	g_test_add_func ("/AppStream/provide", as_test_provide_func);
 	g_test_add_func ("/AppStream/checksum", as_test_checksum_func);
+	g_test_add_func ("/AppStream/content_rating", as_test_content_rating_func);
 	g_test_add_func ("/AppStream/release", as_test_release_func);
 	g_test_add_func ("/AppStream/release{date}", as_test_release_date_func);
 	g_test_add_func ("/AppStream/release{appdata}", as_test_release_appdata_func);

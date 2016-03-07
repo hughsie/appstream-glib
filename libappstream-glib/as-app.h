@@ -34,6 +34,7 @@
 #include "as-provide.h"
 #include "as-release.h"
 #include "as-screenshot.h"
+#include "as-content-rating.h"
 #include "as-translation.h"
 
 G_BEGIN_DECLS
@@ -288,6 +289,7 @@ GPtrArray	*as_app_get_architectures	(AsApp		*app);
 GPtrArray	*as_app_get_releases		(AsApp		*app);
 GPtrArray	*as_app_get_provides		(AsApp		*app);
 GPtrArray	*as_app_get_screenshots		(AsApp		*app);
+GPtrArray	*as_app_get_content_ratings	(AsApp		*app);
 GPtrArray	*as_app_get_icons		(AsApp		*app);
 GPtrArray	*as_app_get_bundles		(AsApp		*app);
 GPtrArray	*as_app_get_translations	(AsApp		*app);
@@ -399,6 +401,8 @@ void		 as_app_add_provide		(AsApp		*app,
 						 AsProvide	*provide);
 void		 as_app_add_screenshot		(AsApp		*app,
 						 AsScreenshot	*screenshot);
+void		 as_app_add_content_rating	(AsApp		*app,
+						 AsContentRating *content_rating);
 void		 as_app_add_icon		(AsApp		*app,
 						 AsIcon		*icon);
 void		 as_app_add_bundle		(AsApp		*app,
@@ -452,6 +456,8 @@ gboolean	 as_app_to_file			(AsApp		*app,
 						 GFile		*file,
 						 GCancellable	*cancellable,
 						 GError		**error);
+AsContentRating	*as_app_get_content_rating	(AsApp		*app,
+						 const gchar 	*kind);
 AsIcon		*as_app_get_icon_default	(AsApp		*app);
 AsIcon		*as_app_get_icon_for_size	(AsApp		*app,
 						 guint		 width,

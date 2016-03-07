@@ -56,3 +56,5 @@ location, AS_TAG_LOCATION
 checksum, AS_TAG_CHECKSUM
 size, AS_TAG_SIZE
 translation, AS_TAG_TRANSLATION
+content_rating, AS_TAG_CONTENT_RATING
+content_attribute, AS_TAG_CONTENT_ATTRIBUTE

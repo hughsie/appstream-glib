@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -19,34 +19,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef __APPSTREAM_GLIB_H
-#define __APPSTREAM_GLIB_H
+#if !defined (__APPSTREAM_GLIB_PRIVATE_H) && !defined (AS_COMPILATION)
+#error "Only <appstream-glib.h> can be included directly."
+#endif
 
-#define __APPSTREAM_GLIB_H_INSIDE__
+#ifndef __AS_CONTENT_RATING_PRIVATE_H
+#define __AS_CONTENT_RATING_PRIVATE_H
 
-#include <as-app.h>
-#include <as-app-builder.h>
-#include <as-bundle.h>
-#include <as-checksum.h>
-#include <as-content-rating.h>
-#include <as-enums.h>
-#include <as-icon.h>
-#include <as-image.h>
-#include <as-inf.h>
-#include <as-markup.h>
-#include <as-node.h>
-#include <as-problem.h>
-#include <as-profile.h>
-#include <as-provide.h>
-#include <as-release.h>
-#include <as-screenshot.h>
-#include <as-store.h>
-#include <as-tag.h>
-#include <as-translation.h>
-#include <as-version.h>
-#include <as-utils.h>
+#include <glib-object.h>
 
-#undef __APPSTREAM_GLIB_H_INSIDE__
+#include "as-content-rating.h"
+#include "as-node-private.h"
 
-#endif /* __APPSTREAM_GLIB_H */
+G_BEGIN_DECLS
 
+GNode		*as_content_rating_node_insert	(AsContentRating	*content_rating,
+						 GNode			*parent,
+						 AsNodeContext		*ctx);
+gboolean	 as_content_rating_node_parse	(AsContentRating	*content_rating,
+						 GNode			*node,
+						 AsNodeContext		*ctx,
+						 GError			**error);
+
+G_END_DECLS
+
+#endif /* __AS_CONTENT_RATING_PRIVATE_H */

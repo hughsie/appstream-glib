@@ -72,6 +72,7 @@ libappstream_glib_include_HEADERS =				\
 	as-app-builder.h					\
 	as-bundle.h						\
 	as-checksum.h						\
+	as-content-rating.h					\
 	as-enums.h						\
 	as-icon.h						\
 	as-image.h						\
@@ -100,6 +101,8 @@ libappstream_glib_la_SOURCES =					\
 	as-bundle-private.h					\
 	as-checksum.c						\
 	as-checksum-private.h					\
+	as-content-rating.c					\
+	as-content-rating-private.h				\
 	as-enums.c						\
 	as-icon.c						\
 	as-icon-private.h					\
@@ -190,6 +193,8 @@ introspection_sources =						\
 	as-bundle.h						\
 	as-checksum.c						\
 	as-checksum.h						\
+	as-content-rating.c					\
+	as-content-rating.h					\
 	as-enums.c						\
 	as-enums.h						\
 	as-icon.c						\

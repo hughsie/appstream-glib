@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com`
+ * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com`
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -81,6 +81,8 @@ G_BEGIN_DECLS
  * @AS_TAG_CHECKSUM:			`checksum`
  * @AS_TAG_SIZE:			`size`
  * @AS_TAG_TRANSLATION:			`translation`
+ * @AS_TAG_CONTENT_RATING:		`content_rating`
+ * @AS_TAG_CONTENT_ATTRIBUTE:		`content_attribute`
  *
  * The tag type.
  **/
@@ -134,6 +136,8 @@ typedef enum {
 	AS_TAG_CHECKSUM,		/* Since: 0.3.5 */
 	AS_TAG_SIZE,			/* Since: 0.5.2 */
 	AS_TAG_TRANSLATION,		/* Since: 0.5.8 */
+	AS_TAG_CONTENT_RATING,		/* Since: 0.5.12 */
+	AS_TAG_CONTENT_ATTRIBUTE,	/* Since: 0.5.12 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;

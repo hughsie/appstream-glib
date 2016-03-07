@@ -39,6 +39,7 @@
 
 #include "as-app-private.h"
 #include "as-bundle-private.h"
+#include "as-content-rating-private.h"
 #include "as-enums.h"
 #include "as-icon-private.h"
 #include "as-node-private.h"
@@ -75,6 +76,7 @@ typedef struct
 	GPtrArray	*releases;			/* of AsRelease */
 	GPtrArray	*provides;			/* of AsProvide */
 	GPtrArray	*screenshots;			/* of AsScreenshot */
+	GPtrArray	*content_ratings;		/* of AsContentRating */
 	GPtrArray	*icons;				/* of AsIcon */
 	GPtrArray	*bundles;			/* of AsBundle */
 	GPtrArray	*translations;			/* of AsTranslation */
@@ -375,6 +377,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->addons);
 	g_ptr_array_unref (priv->categories);
 	g_ptr_array_unref (priv->compulsory_for_desktops);
+	g_ptr_array_unref (priv->content_ratings);
 	g_ptr_array_unref (priv->extends);
 	g_ptr_array_unref (priv->kudos);
 	g_ptr_array_unref (priv->permissions);
@@ -401,6 +404,7 @@ as_app_init (AsApp *app)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->categories = g_ptr_array_new_with_free_func (g_free);
 	priv->compulsory_for_desktops = g_ptr_array_new_with_free_func (g_free);
+	priv->content_ratings = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->extends = g_ptr_array_new_with_free_func (g_free);
 	priv->keywords = g_hash_table_new_full (g_str_hash, g_str_equal,
 						g_free, (GDestroyNotify) g_ptr_array_unref);
@@ -786,6 +790,49 @@ as_app_get_screenshots (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->screenshots;
+}
+
+/**
+ * as_app_get_content_ratings:
+ * @app: a #AsApp instance.
+ *
+ * Gets any content_ratings the application has defined.
+ *
+ * Returns: (element-type AsContentRating) (transfer none): an array
+ *
+ * Since: 0.5.12
+ **/
+GPtrArray *
+as_app_get_content_ratings (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->content_ratings;
+}
+
+/**
+ * as_app_get_content_rating:
+ * @app: a #AsApp instance.
+ * @kind: a ratings kind, e.g. "oars-1.0"
+ *
+ * Gets a content ratings the application has defined of a specific type.
+ *
+ * Returns: (transfer none): a #AsContentRating or NULL for not found
+ *
+ * Since: 0.5.12
+ **/
+AsContentRating *
+as_app_get_content_rating (AsApp *app, const gchar *kind)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	guint i;
+
+	for (i = 0; i < priv->content_ratings->len; i++) {
+		AsContentRating *content_rating;
+		content_rating = g_ptr_array_index (priv->content_ratings, i);
+		if (g_strcmp0 (as_content_rating_get_kind (content_rating), kind) == 0)
+			return content_rating;
+	}
+	return NULL;
 }
 
 /**
@@ -2433,6 +2480,22 @@ as_app_add_screenshot (AsApp *app, AsScreenshot *screenshot)
 }
 
 /**
+ * as_app_add_content_rating:
+ * @app: a #AsApp instance.
+ * @content_rating: a #AsContentRating instance.
+ *
+ * Adds a content_rating to an application.
+ *
+ * Since: 0.5.12
+ **/
+void
+as_app_add_content_rating (AsApp *app, AsContentRating *content_rating)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_ptr_array_add (priv->content_ratings, g_object_ref (content_rating));
+}
+
+/**
  * as_app_check_icon_duplicate:
  **/
 static gboolean
@@ -2970,6 +3033,13 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		as_app_add_screenshot (app, ss);
 	}
 
+	/* content_ratings */
+	for (i = 0; i < priv->content_ratings->len; i++) {
+		AsContentRating *content_rating;
+		content_rating = g_ptr_array_index (priv->content_ratings, i);
+		as_app_add_content_rating (app, content_rating);
+	}
+
 	/* provides */
 	for (i = 0; i < priv->provides->len; i++) {
 		pr = g_ptr_array_index (priv->provides, i);
@@ -3447,6 +3517,15 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		}
 	}
 
+	/* <content_ratings> */
+	if (priv->content_ratings->len > 0) {
+		for (i = 0; i < priv->content_ratings->len; i++) {
+			AsContentRating *content_rating;
+			content_rating = g_ptr_array_index (priv->content_ratings, i);
+			as_content_rating_node_insert (content_rating, node_app, ctx);
+		}
+	}
+
 	/* <releases> */
 	if (priv->releases->len > 0) {
 		g_ptr_array_sort (priv->releases, as_app_releases_sort_cb);
@@ -3818,6 +3897,17 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		}
 		break;
 
+	/* <content_ratings> */
+	case AS_TAG_CONTENT_RATING:
+	{
+		g_autoptr(AsContentRating) content_rating = NULL;
+		content_rating = as_content_rating_new ();
+		if (!as_content_rating_node_parse (content_rating, n, ctx, error))
+			return FALSE;
+		as_app_add_content_rating (app, content_rating);
+		break;
+	}
+
 	/* <releases> */
 	case AS_TAG_RELEASES:
 		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
@@ -3946,6 +4036,7 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags,
 		g_ptr_array_set_size (priv->icons, 0);
 		g_ptr_array_set_size (priv->bundles, 0);
 		g_ptr_array_set_size (priv->translations, 0);
+		g_ptr_array_set_size (priv->content_ratings, 0);
 		g_hash_table_remove_all (priv->keywords);
 	}
 	for (n = node->children; n != NULL; n = n->next) {
