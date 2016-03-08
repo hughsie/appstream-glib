@@ -1,3 +1,25 @@
+Version 0.5.11
+~~~~~~~~~~~~~~
+Released: 2016-03-08
+
+Notes:
+
+New Features:
+ - Add AS_APP_KIND_LOCALIZATION (Richard Hughes)
+ - Add a 'markup-import' command to appstream-util for testing text import (Richard Hughes)
+ - Add as_markup_import() (Richard Hughes)
+ - Add as_utils_string_replace() (Richard Hughes)
+ - Add support for GNOME Shell extensions (Richard Hughes)
+ - Support importing HTML text using as_markup_import() (Richard Hughes)
+
+Bugfixes:
+ - Do not mark all subsumed applications as installed (Richard Hughes)
+ - Do not tokenize the application ID or package name (Richard Hughes)
+ - Fix crash when validating files containing invalid remote URIs (Richard Hughes)
+ - Fix ordering of parameters to as_store_search_app_info (Robert Ancell)
+ - Implement DEP-11 MediaBaseUrl support (Robert Ancell)
+ - Tokenize names like 'half-life' into two tokens for searching (Richard Hughes)
+
 Version 0.5.10
 ~~~~~~~~~~~~~~
 Released: 2016-02-26

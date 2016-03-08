@@ -5,13 +5,13 @@
 # Translators:
 # Miloš Popović <gpopac@gmail.com>, 2015
 # Марко М. Костић (Marko M. Kostić) <marko.m.kostic@gmail.com>, 2015
-# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2014
+# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2014,2016
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-02-26 20:10+0000\n"
-"PO-Revision-Date: 2016-02-26 20:10+0000\n"
+"POT-Creation-Date: 2016-03-08 14:22+0000\n"
+"PO-Revision-Date: 2016-03-08 14:22+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Serbian (http://www.transifex.com/freedesktop/appstream-glib/language/sr/)\n"
 "MIME-Version: 1.0\n"
@@ -128,51 +128,51 @@ msgstr "Готово!"
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "Чувам иконицу"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "Поставља префикс"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "Обрађујем програм"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "Грешка учитавања датотеке програмских података"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
-msgstr ""
+msgstr "Грешка обраде превода"
 
 #. TRANSLATORS: we could not auto-add the kudo
 msgid "Error parsing kudos"
-msgstr ""
+msgstr "Грешка обраде кудос-а"
 
 #. TRANSLATORS: we could not auto-add the provides
 msgid "Error parsing provides"
-msgstr ""
+msgstr "Грешка обраде достављања"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "Грешка учитавања датотеке радне површи"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "Грешка прављења излазног директоријума"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "Чувам Програмски ток"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "Грешка чувања датотеке програмског тока"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -189,7 +189,7 @@ msgstr "Прегледајте датотеку и поправите сваку
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr ""
+msgstr "Старо издање АПИ-ја"
 
 #. TRANSLATORS: information message
 msgid "New API version"
@@ -202,7 +202,7 @@ msgstr "Нема довољно аргумената, очекивах „ста
 #. * e.g. "appdata" to "appstream"
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "Претварање „%s“ у „%s“ није примењено"
 
 msgid "Not enough arguments, expected file.xml"
 msgstr "Нема довољно аргумената, очекивах „датотека.xml“"
@@ -211,15 +211,15 @@ msgstr "Нема довољно аргумената, очекивах „дат
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "Запис датотеке „%s“ се не може надоградити"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "Запис није препознат"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "Нисам пронашао програме радне површи"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -237,11 +237,11 @@ msgstr "Потврђивање датотека није успело"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "Уклоњен"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "Додат"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -353,14 +353,18 @@ msgstr "Упореди садржај две датотеке Програмск
 
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
-msgstr ""
+msgstr "Ствара ГУИБ из улазне ниске"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
-msgstr ""
+msgstr "Мења датотеку програмских података"
 
 #. TRANSLATORS: command description
 msgid "Split an AppStream file to AppData and Metainfo files"
+msgstr "Дели датотеку Програмског тока на програмске податке и на датотеке метаподатака"
+
+#. TRANSLATORS: command description
+msgid "Import a file to AppStream markup"
 msgstr ""
 
 #. TRANSLATORS: program name

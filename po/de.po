@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-02-26 20:10+0000\n"
-"PO-Revision-Date: 2016-02-26 20:10+0000\n"
+"POT-Creation-Date: 2016-03-08 14:22+0000\n"
+"PO-Revision-Date: 2016-03-08 14:22+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: German (http://www.transifex.com/freedesktop/appstream-glib/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -359,6 +359,10 @@ msgstr ""
 
 #. TRANSLATORS: command description
 msgid "Split an AppStream file to AppData and Metainfo files"
+msgstr ""
+
+#. TRANSLATORS: command description
+msgid "Import a file to AppStream markup"
 msgstr ""
 
 #. TRANSLATORS: program name

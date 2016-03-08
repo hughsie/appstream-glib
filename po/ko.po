@@ -4,14 +4,14 @@
 # 
 # Translators:
 # Shinjo Park <kde@peremen.name>, 2015
-# Seong-ho Cho <darkcircle.0426@gmail.com>, 2015
+# Seong-ho Cho <darkcircle.0426@gmail.com>, 2015-2016
 # Shinjo Park <kde@peremen.name>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-02-26 20:10+0000\n"
-"PO-Revision-Date: 2016-02-26 20:10+0000\n"
+"POT-Creation-Date: 2016-03-08 14:22+0000\n"
+"PO-Revision-Date: 2016-03-08 14:22+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Korean (http://www.transifex.com/freedesktop/appstream-glib/language/ko/)\n"
 "MIME-Version: 1.0\n"
@@ -50,7 +50,7 @@ msgstr "로그 디렉터리 지정"
 
 #. TRANSLATORS: command line option
 msgid "Set the packages directory"
-msgstr "패키지 디렉터리 설정"
+msgstr "꾸러미 디렉터리 설정"
 
 #. TRANSLATORS: command line option
 msgid "Set the temporary directory"
@@ -102,15 +102,15 @@ msgstr "빌더를 설정할 수 없음"
 
 #. TRANSLATORS: error message
 msgid "Failed to open packages"
-msgstr "패키지를 열 수 없음"
+msgstr "꾸러미를 열 수 없음"
 
 #. TRANSLATORS: information message
 msgid "Scanning packages..."
-msgstr "패키지 검사 중..."
+msgstr "꾸러미 검사 중..."
 
 #. TRANSLATORS: error message
 msgid "Failed to add package"
-msgstr "패키지를 추가할 수 없음"
+msgstr "꾸러미를 추가할 수 없음"
 
 #. TRANSLATORS: information message
 #, c-format
@@ -128,51 +128,51 @@ msgstr "완료!"
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "아이콘 저장중"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "접두부 설정"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "프로그램 처리중"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "AppData 파일 불러오는 중 오류"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
-msgstr ""
+msgstr "번역 해석중 오류"
 
 #. TRANSLATORS: we could not auto-add the kudo
 msgid "Error parsing kudos"
-msgstr ""
+msgstr "kudos 해석중 오류"
 
 #. TRANSLATORS: we could not auto-add the provides
 msgid "Error parsing provides"
-msgstr ""
+msgstr "제공 요소 해석중 오류"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "desktop 파일 불러오는 중 오류"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "출력 디렉터리 만드는 중 오류"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "AppStream 저장중"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "AppStream 파일 저장중 오류"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -189,7 +189,7 @@ msgstr "파일을 확인하여 'FIXME' 항목을 수정하십시오"
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr ""
+msgstr "오래된 API 버전"
 
 #. TRANSLATORS: information message
 msgid "New API version"
@@ -202,7 +202,7 @@ msgstr "인자가 충분하지 않습니다. old.xml new.xml version이 필요�
 #. * e.g. "appdata" to "appstream"
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "%s에서 %s(으)로의 변환은 아직 지원하지 않습니다"
 
 msgid "Not enough arguments, expected file.xml"
 msgstr "인자가 충분하지 않습니다. file.xml이 필요합니다"
@@ -211,15 +211,15 @@ msgstr "인자가 충분하지 않습니다. file.xml이 필요합니다"
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "'%s' 파일 형식을 업그레이드할 수 없습니다"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "인식할 수 없는 형식"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "데스크톱 프로그램이 없습니다"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -237,11 +237,11 @@ msgstr "파일 검증 실패"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "제거함"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "추가함"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -305,7 +305,7 @@ msgstr "HTML 매트릭스 페이지 만들기"
 
 #. TRANSLATORS: command description
 msgid "List applications not backed by packages"
-msgstr "패키지가 없는 프로그램 목록 출력"
+msgstr "꾸러미가 없는 프로그램 목록 출력"
 
 #. TRANSLATORS: command description
 msgid "Validate an AppData or AppStream file"
@@ -353,14 +353,18 @@ msgstr "두 AppStream 파일 내용 비교"
 
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
-msgstr ""
+msgstr "입력 문자열의 GUID 만들기"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
-msgstr ""
+msgstr "AppData 파일 수정"
 
 #. TRANSLATORS: command description
 msgid "Split an AppStream file to AppData and Metainfo files"
+msgstr "AppStream 파일을 AppData 파일과 Metainfo 파일로 분리"
+
+#. TRANSLATORS: command description
+msgid "Import a file to AppStream markup"
 msgstr ""
 
 #. TRANSLATORS: program name
