@@ -80,6 +80,7 @@ G_BEGIN_DECLS
  * @AS_TAG_LOCATION:			`location`
  * @AS_TAG_CHECKSUM:			`checksum`
  * @AS_TAG_SIZE:			`size`
+ * @AS_TAG_TRANSLATION:			`translation`
  *
  * The tag type.
  **/
