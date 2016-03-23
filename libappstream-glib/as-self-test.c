@@ -2889,6 +2889,26 @@ as_test_store_auto_reload_file_func (void)
 	g_assert (app == NULL);
 }
 
+/* get an application from the store ignoring the prefix */
+static void
+as_test_store_prefix_func (void)
+{
+	g_autoptr (AsStore) store = as_store_new ();
+	g_autoptr (AsApp) app = as_app_new ();
+	AsApp *app_tmp;
+
+	/* add app */
+	as_app_set_id (app, "xdg-app-user:org.gnome.Software.desktop");
+	as_store_add_app (store, app);
+
+	app_tmp = as_store_get_app_by_id (store, "org.gnome.Software.desktop");
+	g_assert (app_tmp == NULL);
+	app_tmp = as_store_get_app_by_id_ignore_prefix (store, "org.gnome.Software.desktop");
+	g_assert (app_tmp != NULL);
+	g_assert_cmpstr (as_app_get_id (app_tmp), ==,
+			 "xdg-app-user:org.gnome.Software.desktop");
+}
+
 /* demote the .desktop "application" to an addon */
 static void
 as_test_store_demote_func (void)
@@ -4811,6 +4831,7 @@ main (int argc, char **argv)
 		g_test_add_func ("/AppStream/store{auto-reload-dir}", as_test_store_auto_reload_dir_func);
 		g_test_add_func ("/AppStream/store{auto-reload-file}", as_test_store_auto_reload_file_func);
 	}
+	g_test_add_func ("/AppStream/store{prefix}", as_test_store_prefix_func);
 	g_test_add_func ("/AppStream/store{demote}", as_test_store_demote_func);
 	g_test_add_func ("/AppStream/store{cab}", as_test_store_cab_func);
 	g_test_add_func ("/AppStream/store{merges}", as_test_store_merges_func);

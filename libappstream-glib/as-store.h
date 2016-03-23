@@ -160,6 +160,9 @@ GPtrArray	*as_store_get_apps_by_metadata	(AsStore	*store,
 						 const gchar	*value);
 AsApp		*as_store_get_app_by_id		(AsStore	*store,
 						 const gchar	*id);
+AsApp		*as_store_get_app_by_id_ignore_prefix
+						(AsStore	*store,
+						 const gchar	*id);
 AsApp		*as_store_get_app_by_id_with_fallbacks (AsStore	*store,
 						 const gchar	*id);
 AsApp		*as_store_get_app_by_pkgname	(AsStore	*store,

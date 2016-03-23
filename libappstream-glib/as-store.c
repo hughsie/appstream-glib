@@ -486,6 +486,36 @@ as_store_get_app_by_provide (AsStore *store, AsProvideKind kind, const gchar *va
 }
 
 /**
+ * as_store_get_app_by_id_ignore_prefix:
+ * @store: a #AsStore instance.
+ * @id: the application full ID.
+ *
+ * Finds an application in the store ignoring the prefix type.
+ *
+ * Returns: (transfer none): a #AsApp or %NULL
+ *
+ * Since: 0.5.12
+ **/
+AsApp *
+as_store_get_app_by_id_ignore_prefix (AsStore *store, const gchar *id)
+{
+	AsApp *app;
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	guint i;
+
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+	g_return_val_if_fail (id != NULL, NULL);
+
+	/* find an application that provides something */
+	for (i = 0; i < priv->array->len; i++) {
+		app = g_ptr_array_index (priv->array, i);
+		if (g_strcmp0 (as_app_get_id_no_prefix (app), id) == 0)
+			return app;
+	}
+	return NULL;
+}
+
+/**
  * as_store_get_app_by_id_with_fallbacks:
  * @store: a #AsStore instance.
  * @id: the application full ID.
