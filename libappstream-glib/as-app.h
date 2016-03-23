@@ -216,6 +216,7 @@ typedef enum {
  * @AS_APP_QUIRK_PROVENANCE:		Installed by OS vendor
  * @AS_APP_QUIRK_COMPULSORY:		Cannot be removed
  * @AS_APP_QUIRK_HAS_SOURCE:		Has a source to allow staying up-to-date
+ * @AS_APP_QUIRK_MATCH_ANY_PREFIX:	Matches applications with any prefix
  *
  * The component attributes.
  **/
@@ -224,6 +225,7 @@ typedef enum {
 	AS_APP_QUIRK_PROVENANCE		= 1 << 0,	/* Since: 0.5.10 */
 	AS_APP_QUIRK_COMPULSORY		= 1 << 1,	/* Since: 0.5.10 */
 	AS_APP_QUIRK_HAS_SOURCE		= 1 << 2,	/* Since: 0.5.10 */
+	AS_APP_QUIRK_MATCH_ANY_PREFIX	= 1 << 3,	/* Since: 0.5.12 */
 	/*< private >*/
 	AS_APP_QUIRK_LAST
 } AsAppQuirk;
