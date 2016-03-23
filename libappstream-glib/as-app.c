@@ -462,6 +462,29 @@ as_app_get_id (AsApp *app)
 }
 
 /**
+ * as_app_get_id_no_prefix:
+ * @app: a #AsApp instance.
+ *
+ * Gets the full ID value, stripping any prefix.
+ *
+ * Returns: the ID, e.g. "org.gnome.Software.desktop"
+ *
+ * Since: 0.5.12
+ **/
+const gchar *
+as_app_get_id_no_prefix (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	gchar *tmp;
+	if (priv->id == NULL)
+		return NULL;
+	tmp = g_strrstr (priv->id, ":");
+	if (tmp != NULL)
+		return tmp + 1;
+	return priv->id;
+}
+
+/**
  * as_app_get_id_filename:
  * @app: a #AsApp instance.
  *
