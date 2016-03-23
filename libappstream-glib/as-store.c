@@ -405,6 +405,40 @@ as_store_get_apps_by_metadata (AsStore *store,
 	return apps;
 }
 
+
+/**
+ * as_store_get_apps_by_id:
+ * @store: a #AsStore instance.
+ * @id: the application full ID.
+ *
+ * Gets an array of all the applications that match a specific ID,
+ * ignoring the prefix type.
+ *
+ * Returns: (element-type AsApp) (transfer container): an array
+ *
+ * Since: 0.5.12
+ **/
+GPtrArray *
+as_store_get_apps_by_id (AsStore *store, const gchar *id)
+{
+	AsApp *app;
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	GPtrArray *apps;
+	guint i;
+
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+
+	/* find all the apps with this id */
+	apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	for (i = 0; i < priv->array->len; i++) {
+		app = g_ptr_array_index (priv->array, i);
+		if (g_strcmp0 (as_app_get_id_no_prefix (app), id) != 0)
+			continue;
+		g_ptr_array_add (apps, g_object_ref (app));
+	}
+	return apps;
+}
+
 /**
  * as_store_add_metadata_index:
  * @store: a #AsStore instance.

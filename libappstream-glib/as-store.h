@@ -155,6 +155,8 @@ gboolean	 as_store_load_path		(AsStore	*store,
 						 GError		**error);
 void		 as_store_remove_all		(AsStore	*store);
 GPtrArray	*as_store_get_apps		(AsStore	*store);
+GPtrArray	*as_store_get_apps_by_id	(AsStore	*store,
+						 const gchar	*id);
 GPtrArray	*as_store_get_apps_by_metadata	(AsStore	*store,
 						 const gchar	*key,
 						 const gchar	*value);
