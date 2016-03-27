@@ -848,16 +848,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 				return;
 			}
 
-			/* same priority of the same type */
-			if (as_app_get_priority (item) == as_app_get_priority (app) &&
-			    as_app_get_source_kind (item) == as_app_get_source_kind (app)) {
-				g_debug ("ignoring duplicate %s entry: %s",
-					 as_app_source_kind_to_string (as_app_get_source_kind (item)),
-					 id);
-				return;
-			}
-
-			/* same priority of different type */
+			/* same priority */
 			if (as_app_get_priority (item) ==
 			    as_app_get_priority (app)) {
 				g_debug ("merging duplicate %s:%s entries: %s",
