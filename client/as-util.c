@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -3461,6 +3461,61 @@ as_util_pad_strings (const gchar *id, const gchar *msg, guint align)
 }
 
 /**
+ * as_util_merge_appstream:
+ **/
+static gboolean
+as_util_merge_appstream (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	guint i, j;
+	g_autoptr(GFile) file_new = NULL;
+	g_autoptr(AsStore) store_new = NULL;
+
+	/* check args */
+	if (g_strv_length (values) < 2) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, expected: output.xml source1.xml ...");
+		return FALSE;
+	}
+
+	/* load each source store and add to master store */
+	store_new = as_store_new ();
+	as_store_set_api_version (store_new, 0.9);
+	for (j = 1; values[j] != NULL; j++) {
+		GPtrArray *apps;
+		g_autoptr(GFile) file = NULL;
+		g_autoptr(AsStore) store = NULL;
+
+		file = g_file_new_for_path (values[j]);
+		store = as_store_new ();
+		if (!as_store_from_file (store, file, NULL, NULL, error))
+			return FALSE;
+		apps = as_store_get_apps (store);
+		for (i = 0; i < apps->len; i++) {
+			AsApp *app = g_ptr_array_index (apps, i);
+			as_store_add_app (store_new, app);
+		}
+
+		/* adopt the origin from the first source */
+		if (j == 1) {
+			as_store_set_origin (store_new,
+					     as_store_get_origin (store));
+		}
+	}
+
+	/* save new store */
+	file_new = g_file_new_for_path (values[0]);
+	if (!as_store_to_file (store_new, file_new,
+			       AS_NODE_TO_XML_FLAG_ADD_HEADER |
+			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+			       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE,
+			       NULL, error))
+		return FALSE;
+	return TRUE;
+}
+
+/**
  * as_util_split_appstream:
  **/
 static gboolean
@@ -4124,6 +4179,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Split an AppStream file to AppData and Metainfo files"),
 		     as_util_split_appstream);
+	as_util_add (priv->cmd_array,
+		     "merge-appstream",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Merge several files to an AppStream file"),
+		     as_util_merge_appstream);
 	as_util_add (priv->cmd_array,
 		     "markup-import",
 		     NULL,
