@@ -1502,6 +1502,8 @@ as_test_app_func (void)
 	g_assert (as_app_has_permission (app, "Network"));
 	g_assert (!as_app_has_kudo (app, "MagicValue"));
 	g_assert (!as_app_has_kudo_kind (app, AS_KUDO_KIND_USER_DOCS));
+	g_assert (as_app_has_compulsory_for_desktop (app, "GNOME"));
+	g_assert (!as_app_has_compulsory_for_desktop (app, "KDE"));
 	as_node_unref (root);
 
 	/* check newest release */

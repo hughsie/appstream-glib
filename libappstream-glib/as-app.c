@@ -615,6 +615,32 @@ as_app_get_compulsory_for_desktops (AsApp *app)
 }
 
 /**
+ * as_app_has_compulsory_for_desktop:
+ * @app: a #AsApp instance.
+ * @desktop: a desktop string, e.g. "GNOME"
+ *
+ * Searches the compulsory for desktop list for a specific item.
+ *
+ * Returns: %TRUE if the application is compulsory for a specific desktop
+ *
+ * Since: 0.5.12
+ */
+gboolean
+as_app_has_compulsory_for_desktop (AsApp *app, const gchar *desktop)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	const gchar *tmp;
+	guint i;
+
+	for (i = 0; i < priv->compulsory_for_desktops->len; i++) {
+		tmp = g_ptr_array_index (priv->compulsory_for_desktops, i);
+		if (g_strcmp0 (tmp, desktop) == 0)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+/**
  * as_app_has_permission:
  * @app: a #AsApp instance.
  * @permission: a permission string, e.g. "Network"

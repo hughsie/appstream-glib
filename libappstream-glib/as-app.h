@@ -337,6 +337,8 @@ gboolean	 as_app_has_kudo_kind		(AsApp		*app,
 						 AsKudoKind	 kudo);
 gboolean	 as_app_has_permission		(AsApp		*app,
 						 const gchar	*permission);
+gboolean	 as_app_has_compulsory_for_desktop (AsApp	*app,
+						 const gchar	*permission);
 gboolean	 as_app_has_quirk		(AsApp		*app,
 						 AsAppQuirk	 quirk);
 
