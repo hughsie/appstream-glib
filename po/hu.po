@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-03-08 14:22+0000\n"
-"PO-Revision-Date: 2016-03-08 14:22+0000\n"
+"POT-Creation-Date: 2016-03-29 14:02+0100\n"
+"PO-Revision-Date: 2016-03-29 13:02+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/freedesktop/appstream-glib/language/hu/)\n"
 "MIME-Version: 1.0\n"
@@ -148,11 +148,11 @@ msgstr "Hiba a fordítások feldolgozásakor"
 
 #. TRANSLATORS: we could not auto-add the kudo
 msgid "Error parsing kudos"
-msgstr ""
+msgstr "Hiba a kudos feldolgozásakor"
 
 #. TRANSLATORS: we could not auto-add the provides
 msgid "Error parsing provides"
-msgstr ""
+msgstr "Hiba a biztosítottak feldolgozásakor"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
@@ -356,15 +356,19 @@ msgstr "GUID előállítása egy bemeneti szövegből"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
-msgstr ""
+msgstr "AppData fájl módosítása"
 
 #. TRANSLATORS: command description
 msgid "Split an AppStream file to AppData and Metainfo files"
+msgstr "Egy AppStream fájl felosztása AppData és Metainfo fájlokká"
+
+#. TRANSLATORS: command description
+msgid "Merge several files to an AppStream file"
 msgstr ""
 
 #. TRANSLATORS: command description
 msgid "Import a file to AppStream markup"
-msgstr ""
+msgstr "Fájl importálása AppStream jelölőnyelvbe"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-03-08 14:22+0000\n"
-"PO-Revision-Date: 2016-03-08 14:22+0000\n"
+"POT-Creation-Date: 2016-03-29 14:02+0100\n"
+"PO-Revision-Date: 2016-03-29 13:02+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Serbian (http://www.transifex.com/freedesktop/appstream-glib/language/sr/)\n"
 "MIME-Version: 1.0\n"
@@ -132,7 +132,7 @@ msgstr "Чувам иконицу"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr "Поставља префикс"
+msgstr "Подеси префикс"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
@@ -172,7 +172,7 @@ msgstr "Чувам Програмски ток"
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr "Грешка чувања датотеке програмског тока"
+msgstr "Грешка чувања датотеке Програмског тока"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -364,8 +364,12 @@ msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr "Дели датотеку Програмског тока на програмске податке и на датотеке метаподатака"
 
 #. TRANSLATORS: command description
-msgid "Import a file to AppStream markup"
+msgid "Merge several files to an AppStream file"
 msgstr ""
+
+#. TRANSLATORS: command description
+msgid "Import a file to AppStream markup"
+msgstr "Увози датотеку у означавање Програмског тока"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

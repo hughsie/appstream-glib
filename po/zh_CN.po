@@ -3,16 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Boyuan Yang <073plan@gmail.com>, 2015
+# Boyuan YANG <073plan@gmail.com>, 2015
 # Dz Chen <wsxy162@gmail.com>, 2016
-# 白铭骢 <jeffbai@aosc.xyz>, 2015-2016
-# 白铭骢 <jeffbai@aosc.xyz>, 2015
+# Mingcong Bai <jeffbai@aosc.xyz>, 2015-2016
+# Mingcong Bai <jeffbai@aosc.xyz>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-03-08 14:22+0000\n"
-"PO-Revision-Date: 2016-03-08 14:22+0000\n"
+"POT-Creation-Date: 2016-03-29 14:02+0100\n"
+"PO-Revision-Date: 2016-03-29 13:02+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -363,6 +363,10 @@ msgstr "编辑 AppData 文件"
 #. TRANSLATORS: command description
 msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr "将 AppStream 文件分割为 AppData 和 Metainfo 文件"
+
+#. TRANSLATORS: command description
+msgid "Merge several files to an AppStream file"
+msgstr ""
 
 #. TRANSLATORS: command description
 msgid "Import a file to AppStream markup"

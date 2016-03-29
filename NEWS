@@ -1,8 +1,22 @@
+Version 0.5.12
+~~~~~~~~~~~~~~
+Released: 2016-03-29
+
+New Features:
+ - Add a merge-appstream command to appstream-util (Richard Hughes)
+ - Add as_app_get_id_no_prefix() (Richard Hughes)
+ - Add as_app_has_compulsory_for_desktop() (Richard Hughes)
+ - Add AS_APP_QUIRK_MATCH_ANY_PREFIX (Richard Hughes)
+ - Add as_store_get_app_by_id_ignore_prefix() (Richard Hughes)
+ - Add as_store_get_apps_by_id() (Richard Hughes)
+ - Add support for content ratings (Richard Hughes)
+
+Bugfixes:
+ - Split up AudioVideo into two categories (Richard Hughes)
+
 Version 0.5.11
 ~~~~~~~~~~~~~~
 Released: 2016-03-08
-
-Notes:
 
 New Features:
  - Add AS_APP_KIND_LOCALIZATION (Richard Hughes)

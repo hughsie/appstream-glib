@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-03-08 14:22+0000\n"
-"PO-Revision-Date: 2016-03-08 14:22+0000\n"
+"POT-Creation-Date: 2016-03-29 14:02+0100\n"
+"PO-Revision-Date: 2016-03-29 13:02+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Czech (http://www.transifex.com/freedesktop/appstream-glib/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -127,51 +127,51 @@ msgstr "Hotovo!"
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "Ukládá se ikona"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "Nastavit prefix"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "Zpracovává se aplikace"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "Chyba při načítání souboru AppData"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
-msgstr ""
+msgstr "Chyba při zpracování překladů"
 
 #. TRANSLATORS: we could not auto-add the kudo
 msgid "Error parsing kudos"
-msgstr ""
+msgstr "Chyba při zpracování renomé"
 
 #. TRANSLATORS: we could not auto-add the provides
 msgid "Error parsing provides"
-msgstr ""
+msgstr "Chyba při zpracování, co poskytuje"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "Chyba při načítání souboru .desktop"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "Chyba při vytváření výstupní složky"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "Ukládá se AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "Chyba při ukládání souboru AppStream"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -188,7 +188,7 @@ msgstr "Projděte prosím soubor a opravte položky označené „FIXME“"
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr ""
+msgstr "Stará verze API"
 
 #. TRANSLATORS: information message
 msgid "New API version"
@@ -201,7 +201,7 @@ msgstr "Nedostatečný počet argumentů, očekávány: starý.mxl nový.xml ver
 #. * e.g. "appdata" to "appstream"
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "Převod %s na %s není implementován"
 
 msgid "Not enough arguments, expected file.xml"
 msgstr "Nedostatečný počet argumentů, očekáván: soubor.xml"
@@ -210,15 +210,15 @@ msgstr "Nedostatečný počet argumentů, očekáván: soubor.xml"
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "Formát souboru „%s“ nelze převést na novější verzi"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "Formát nebyl rozpoznán"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "Nebyly nalezeny žádné aplikace pro grafické prostředí"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -236,11 +236,11 @@ msgstr "Ověření souborů selhalo"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "Odebráno"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "Přidáno"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -356,15 +356,19 @@ msgstr "Vygenerovat GUID ze vstupního řetězce"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
-msgstr ""
+msgstr "Upravit soubor AppData"
 
 #. TRANSLATORS: command description
 msgid "Split an AppStream file to AppData and Metainfo files"
+msgstr "Rozdělit soubor AppStream na soubory AppData a Metainfo"
+
+#. TRANSLATORS: command description
+msgid "Merge several files to an AppStream file"
 msgstr ""
 
 #. TRANSLATORS: command description
 msgid "Import a file to AppStream markup"
-msgstr ""
+msgstr "Importovat soubor do značkovacího jazyka AppStream"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"
