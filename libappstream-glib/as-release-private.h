@@ -38,6 +38,10 @@ gboolean	 as_release_node_parse		(AsRelease	*release,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+gboolean	 as_release_node_parse_dep11	(AsRelease	*release,
+						 GNode		*node,
+						 AsNodeContext	*ctx,
+						 GError		**error);
 
 G_END_DECLS
 

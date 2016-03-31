@@ -4318,6 +4318,37 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 			}
 			continue;
 		}
+		if (g_strcmp0 (tmp, "Extends") == 0) {
+			for (c = n->children; c != NULL; c = c->next)
+				as_app_add_extends (app, as_yaml_node_get_key (c));
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Releases") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				g_autoptr(AsRelease) rel = NULL;
+				rel = as_release_new ();
+				if (!as_release_node_parse_dep11 (rel, c, ctx, error))
+					return FALSE;
+				as_app_add_release (app, rel);
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "DeveloperName") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				as_app_set_developer_name (app,
+							   as_yaml_node_get_key (c),
+							   as_yaml_node_get_value (c));
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "ProjectLicense") == 0) {
+			as_app_set_project_license (app, as_yaml_node_get_value (n));
+			continue;
+		}
+		if (g_strcmp0 (tmp, "ProjectGroup") == 0) {
+			as_app_set_project_group (app, as_yaml_node_get_value (n));
+			continue;
+		}
 	}
 	return TRUE;
 }

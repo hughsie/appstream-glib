@@ -44,6 +44,7 @@
 #include "as-release-private.h"
 #include "as-tag.h"
 #include "as-utils-private.h"
+#include "as-yaml.h"
 
 typedef struct
 {
@@ -743,6 +744,51 @@ as_release_node_parse (AsRelease *release, GNode *node,
 		}
 	}
 
+	return TRUE;
+}
+
+/**
+ * as_release_node_parse_dep11:
+ * @release: a #AsRelease instance.
+ * @node: a #GNode.
+ * @ctx: a #AsNodeContext.
+ * @error: A #GError or %NULL.
+ *
+ * Populates the object from a DEP-11 node.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.5.13
+ **/
+gboolean
+as_release_node_parse_dep11 (AsRelease *release, GNode *node,
+			     AsNodeContext *ctx, GError **error)
+{
+	GNode *c;
+	GNode *n;
+	const gchar *tmp;
+	const gchar *value;
+
+	for (n = node->children; n != NULL; n = n->next) {
+		tmp = as_yaml_node_get_key (n);
+		if (g_strcmp0 (tmp, "unix-timestamp") == 0) {
+			value = as_yaml_node_get_value (n);
+			as_release_set_timestamp (release, atol (value));
+			continue;
+		}
+		if (g_strcmp0 (tmp, "version") == 0) {
+			as_release_set_version (release, as_yaml_node_get_value (n));
+			continue;
+		}
+		if (g_strcmp0 (tmp, "description") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				as_release_set_description (release,
+							    as_yaml_node_get_key (c),
+							    as_yaml_node_get_value (c));
+			}
+			continue;
+		}
+	}
 	return TRUE;
 }
 
