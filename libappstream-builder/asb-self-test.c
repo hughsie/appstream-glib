@@ -54,6 +54,7 @@ asb_test_get_filename (const gchar *filename)
 }
 
 #define AS_TEST_WILDCARD_SHA1	"\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?"
+#define AS_TEST_WILDCARD_MD5	"\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?"
 
 /**
  * asb_test_compare_lines:
@@ -450,11 +451,11 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<screenshots>\n"
 		"<screenshot type=\"default\">\n"
 		"<caption>Liberation Serif – Regular</caption>\n"
-		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-85c191549daefb8f3b6cdb4d3d6d8597.png</image>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-" AS_TEST_WILDCARD_MD5 ".png</image>\n"
 		"</screenshot>\n"
 		"<screenshot priority=\"-32\">\n"
 		"<caption>Liberation Serif – Bold</caption>\n"
-		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-660e7a5a60fdeb133d3e8b24e2766f2e.png</image>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-" AS_TEST_WILDCARD_MD5 ".png</image>\n"
 		"</screenshot>\n"
 		"</screenshots>\n"
 		"<releases>\n"
@@ -609,11 +610,11 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<screenshots>\n"
 		"<screenshot type=\"default\">\n"
 		"<caption>Liberation Serif – Regular</caption>\n"
-		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-85c191549daefb8f3b6cdb4d3d6d8597.png</image>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-" AS_TEST_WILDCARD_MD5 ".png</image>\n"
 		"</screenshot>\n"
 		"<screenshot priority=\"-32\">\n"
 		"<caption>Liberation Serif – Bold</caption>\n"
-		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-660e7a5a60fdeb133d3e8b24e2766f2e.png</image>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-" AS_TEST_WILDCARD_MD5 ".png</image>\n"
 		"</screenshot>\n"
 		"</screenshots>\n"
 		"<releases>\n"
