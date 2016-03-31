@@ -1590,14 +1590,23 @@ as_store_check_apps_for_veto (AsStore *store)
 
 /**
  * as_store_remove_apps_with_veto:
+ * @store: a #AsStore instance.
+ *
+ * Removes any applications from the store if they have any vetos.
+ *
+ * Since: 0.5.13
  **/
-static void
+void
 as_store_remove_apps_with_veto (AsStore *store)
 {
 	guint i;
 	AsApp *app;
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	_cleanup_uninhibit_ guint32 *tok = NULL;
 
+	/* don't shortcut the list as we have to use as_store_remove_app()
+	 * rather than just removing from the GPtrArray */
+	tok = as_store_changed_inhibit (store);
 	do {
 		for (i = 0; i < priv->array->len; i++) {
 			app = g_ptr_array_index (priv->array, i);
@@ -1609,6 +1618,8 @@ as_store_remove_apps_with_veto (AsStore *store)
 			}
 		}
 	} while (i < priv->array->len);
+	as_store_changed_uninhibit (&tok);
+	as_store_perhaps_emit_changed (store, "remove-apps-with-veto");
 }
 
 /**
