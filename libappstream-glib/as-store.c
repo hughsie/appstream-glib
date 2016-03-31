@@ -1549,6 +1549,69 @@ as_store_apps_sort_cb (gconstpointer a, gconstpointer b)
 }
 
 /**
+ * as_store_check_app_for_veto:
+ **/
+static void
+as_store_check_app_for_veto (AsApp *app)
+{
+	/* these categories need AppData files */
+	if (as_app_get_description_size (app) == 0) {
+		guint i;
+		const gchar *cats_require_appdata[] = {
+			"ConsoleOnly",
+			"DesktopSettings",
+			"Settings",
+			NULL };
+		for (i = 0; cats_require_appdata[i] != NULL; i++) {
+			if (as_app_has_category (app, cats_require_appdata[i])) {
+				as_app_add_veto (app, "%s requires an AppData file",
+						 cats_require_appdata[i]);
+			}
+		}
+	}
+}
+
+/**
+ * as_store_check_apps_for_veto:
+ **/
+static void
+as_store_check_apps_for_veto (AsStore *store)
+{
+	guint i;
+	AsApp *app;
+	AsStorePrivate *priv = GET_PRIVATE (store);
+
+	/* add any vetos */
+	for (i = 0; i < priv->array->len; i++) {
+		app = g_ptr_array_index (priv->array, i);
+		as_store_check_app_for_veto (app);
+	}
+}
+
+/**
+ * as_store_remove_apps_with_veto:
+ **/
+static void
+as_store_remove_apps_with_veto (AsStore *store)
+{
+	guint i;
+	AsApp *app;
+	AsStorePrivate *priv = GET_PRIVATE (store);
+
+	do {
+		for (i = 0; i < priv->array->len; i++) {
+			app = g_ptr_array_index (priv->array, i);
+			if (as_app_get_vetos (app)->len > 0) {
+				g_debug ("removing %s as vetoed",
+					 as_app_get_id (app));
+				as_store_remove_app (store, app);
+				break;
+			}
+		}
+	} while (i < priv->array->len);
+}
+
+/**
  * as_store_to_xml:
  * @store: a #AsStore instance.
  * @flags: the AsNodeToXmlFlags, e.g. %AS_NODE_INSERT_FLAG_NONE.
@@ -1570,6 +1633,9 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 	guint i;
 	gchar version[6];
 	g_autofree AsNodeContext *ctx = NULL;
+
+	/* check categories of apps about to be written */
+	as_store_check_apps_for_veto (store);
 
 	/* get XML text */
 	node_root = as_node_new ();
@@ -2554,6 +2620,10 @@ as_store_load (AsStore *store,
 	/* system locations */
 	if (!as_store_search_per_system (store, flags, cancellable, error))
 		return FALSE;
+
+	/* find and remove any vetoed applications */
+	as_store_check_apps_for_veto (store);
+	as_store_remove_apps_with_veto (store);
 
 	/* match again, for applications extended from different roots */
 	as_store_match_addons (store);
