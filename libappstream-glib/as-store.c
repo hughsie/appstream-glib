@@ -1172,6 +1172,13 @@ as_store_load_yaml_file (AsStore *store,
 		if (app_n->children == NULL)
 			continue;
 		app = as_app_new ();
+
+		/* do the filtering here */
+		if (priv->filter != 0) {
+			if ((priv->filter & (1 << as_app_get_kind (app))) == 0)
+				continue;
+		}
+
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path);
 		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
