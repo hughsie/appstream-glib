@@ -2634,7 +2634,8 @@ as_store_load (AsStore *store,
 
 	/* find and remove any vetoed applications */
 	as_store_check_apps_for_veto (store);
-	as_store_remove_apps_with_veto (store);
+	if ((flags & AS_STORE_LOAD_FLAG_ALLOW_VETO) == 0)
+		as_store_remove_apps_with_veto (store);
 
 	/* match again, for applications extended from different roots */
 	as_store_match_addons (store);
