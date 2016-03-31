@@ -201,6 +201,18 @@ as_app_parse_file_key (AsApp *app,
 						   key,
 						   NULL, NULL);
 		for (i = 0; list[i] != NULL; i++) {
+			const gchar *category_blacklist[] = {
+				"X-GNOME-Settings-Panel",
+				"X-Unity-Settings-Panel",
+				NULL };
+
+			/* we have to veto these */
+			for (j = 0; category_blacklist[j] != NULL; j++) {
+				if (g_strcmp0 (list[i], category_blacklist[j]) == 0) {
+					as_app_add_veto (app, "Has category %s",
+							 category_blacklist[j]);
+				}
+			}
 
 			/* not a standard category */
 			if (g_str_has_prefix (list[i], "X-"))
