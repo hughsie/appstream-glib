@@ -1,3 +1,17 @@
+Version 0.5.13
+~~~~~~~~~~~~~~
+Released: 2016-04-01
+
+New Features:
+ - Add as_store_remove_apps_with_veto() (Richard Hughes)
+ - Enforce the requirement of AppData for 'Categories=DesktopSettings' (Richard Hughes)
+
+Bugfixes:
+ - Also filter YAML apps before adding to the store (Richard Hughes)
+ - Always veto anything with X-Unity-Settings-Panel (Richard Hughes)
+ - Do not hardcode x86_64 when searching for xdg-app metadata (Richard Hughes)
+ - Support more DEP11 YAML markup (Richard Hughes)
+
 Version 0.5.12
 ~~~~~~~~~~~~~~
 Released: 2016-03-29

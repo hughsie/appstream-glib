@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-03-29 14:02+0100\n"
-"PO-Revision-Date: 2016-03-29 13:02+0000\n"
-"Last-Translator: Richard Hughes <richard@hughsie.com>\n"
+"POT-Creation-Date: 2016-04-01 15:23+0100\n"
+"PO-Revision-Date: 2016-03-30 13:56+0000\n"
+"Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak (http://www.transifex.com/freedesktop/appstream-glib/language/sk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -364,7 +364,7 @@ msgstr "Rozdelí súbor AppStream na súbory AppData a Metainfo"
 
 #. TRANSLATORS: command description
 msgid "Merge several files to an AppStream file"
-msgstr ""
+msgstr "Zlúči niekoľko súborov do súboru AppStream"
 
 #. TRANSLATORS: command description
 msgid "Import a file to AppStream markup"

@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Ettore Atalan <atalanttore@googlemail.com>, 2014-2015
+# Ettore Atalan <atalanttore@googlemail.com>, 2014-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-03-29 14:02+0100\n"
-"PO-Revision-Date: 2016-03-29 13:02+0000\n"
-"Last-Translator: Richard Hughes <richard@hughsie.com>\n"
+"POT-Creation-Date: 2016-04-01 15:23+0100\n"
+"PO-Revision-Date: 2016-03-30 16:59+0000\n"
+"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
 "Language-Team: German (http://www.transifex.com/freedesktop/appstream-glib/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -126,24 +126,24 @@ msgstr "Fertig!"
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "Symbol wird gespeichert"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "Präfix festlegen"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "Anwendung wird verarbeitet"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "Fehler beim Laden der AppData-Datei"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
-msgstr ""
+msgstr "Fehler beim Parsen der Übersetzungen"
 
 #. TRANSLATORS: we could not auto-add the kudo
 msgid "Error parsing kudos"
@@ -156,21 +156,21 @@ msgstr ""
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "Fehler beim Laden der desktop-Datei"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "Fehler beim Erstellen des Ausgabeverzeichnisses"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "AppStream wird gespeichert"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "Fehler beim Speichern der AppStream-Datei"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -187,7 +187,7 @@ msgstr "Bitte begutachten Sie die Datei und beheben Sie etwaige \"FIXME\"-Eintr�
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr ""
+msgstr "Alte API-Version"
 
 #. TRANSLATORS: information message
 msgid "New API version"
@@ -200,7 +200,7 @@ msgstr "Nicht genügend Argumente, alt.xml neu.xml Version erwartet"
 #. * e.g. "appdata" to "appstream"
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "Konvertierung %s zu %s ist nicht implementiert"
 
 msgid "Not enough arguments, expected file.xml"
 msgstr "Nicht genügend Argumente, Datei.xml erwartet"
@@ -209,15 +209,15 @@ msgstr "Nicht genügend Argumente, Datei.xml erwartet"
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "Dateiformat '%s' kann nicht aktualisiert werden"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "Format nicht erkannt"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "Keine Desktop-Anwendungen gefunden"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -235,11 +235,11 @@ msgstr "Validierung der Dateien ist fehlgeschlagen"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "Entfernt"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "Hinzugefügt"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -351,23 +351,23 @@ msgstr "Inhalt zweier AppStream-Dateien vergleichen"
 
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
-msgstr ""
+msgstr "Eine GUID aus einer Eingabezeichenfolge erzeugen"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
-msgstr ""
+msgstr "Ändern einer AppData-Datei"
 
 #. TRANSLATORS: command description
 msgid "Split an AppStream file to AppData and Metainfo files"
-msgstr ""
+msgstr "Eine AppStream-Datei in AppData- und Metainfo-Dateien aufspalten"
 
 #. TRANSLATORS: command description
 msgid "Merge several files to an AppStream file"
-msgstr ""
+msgstr "Mehrere Dateien zu einer AppStream-Datei zusammenführen"
 
 #. TRANSLATORS: command description
 msgid "Import a file to AppStream markup"
-msgstr ""
+msgstr "Eine Datei in die AppStream-Auszeichnung importieren"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"
