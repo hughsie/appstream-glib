@@ -2357,6 +2357,57 @@ as_store_monitor_xdg_app_dir (AsStore *store,
 	}
 }
 
+/* until exported by xdg-app */
+#include <sys/utsname.h>
+#include <string.h>
+static const char *
+_xdg_app_get_arch (void)
+{
+  static struct utsname buf;
+  static const char *arch = NULL;
+  char *m;
+
+  if (arch != NULL)
+    return arch;
+
+  if (uname (&buf))
+    {
+      arch = "unknown";
+      return arch;
+    }
+
+  /* By default, just pass on machine, good enough for most arches */
+  arch = buf.machine;
+
+  /* Override for some arches */
+
+  m = buf.machine;
+  /* i?86 */
+  if (strlen (m) == 4 && m[0] == 'i' && m[2] == '8'  && m[3] == '6')
+    arch = "i386";
+  else if (g_str_has_prefix (m, "arm"))
+    {
+      if (g_str_has_suffix (m, "b"))
+        arch = "armeb";
+      else
+        arch = "arm";
+    }
+  else if (strcmp (m, "mips") == 0)
+    {
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+      arch = "mipsel";
+#endif
+    }
+  else if (strcmp (m, "mips64") == 0)
+    {
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+      arch = "mips64el";
+#endif
+    }
+
+  return arch;
+}
+
 /**
  * as_store_search_xdg_apps:
  **/
@@ -2378,7 +2429,7 @@ as_store_search_xdg_apps (AsStore *store,
 		g_autofree gchar *dest = NULL;
 		dest = g_build_filename (path,
 					 filename,
-					 "x86_64",
+					 _xdg_app_get_arch (),
 					 "active",
 					 NULL);
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
