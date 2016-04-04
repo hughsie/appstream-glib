@@ -351,6 +351,16 @@ as_app_parse_file_key (AsApp *app,
 						    NULL);
 		if (tmp != NULL && tmp[0] != '\0')
 			as_app_set_name (app, locale, tmp);
+
+	/* for Ubuntu */
+	} else if (g_strcmp0 (key, "X-AppStream-Ignore") == 0) {
+		gboolean ret;
+		ret = g_key_file_get_boolean (kf,
+					      G_KEY_FILE_DESKTOP_GROUP,
+					      key,
+					      NULL);
+		if (ret)
+			as_app_add_veto (app, "X-AppStream-Ignore");
 	}
 
 	return TRUE;
