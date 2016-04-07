@@ -667,6 +667,24 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 }
 
 /**
+ * as_app_has_pkgname:
+ **/
+static gboolean
+as_app_has_pkgname (AsApp *app, const gchar *pkgname)
+{
+	guint i;
+	GPtrArray *pkgnames;
+
+	pkgnames = as_app_get_pkgnames (app);
+	for (i = 0; i < pkgnames->len; i++) {
+		const gchar *tmp = g_ptr_array_index (pkgnames, i);
+		if (g_strcmp0 (tmp, pkgname) == 0)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+/**
  * as_store_get_app_by_pkgname:
  * @store: a #AsStore instance.
  * @pkgname: the package name.
@@ -680,9 +698,27 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 AsApp *
 as_store_get_app_by_pkgname (AsStore *store, const gchar *pkgname)
 {
+	AsApp *app;
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	guint i;
+
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
-	return g_hash_table_lookup (priv->hash_pkgname, pkgname);
+
+	/* in most cases, we can use the cache */
+	app = g_hash_table_lookup (priv->hash_pkgname, pkgname);
+	if (app != NULL)
+		return app;
+
+	/* fall back in case the user adds to app to the store, *then*
+	 * uses as_app_add_pkgname() on the app */
+	for (i = 0; i < priv->array->len; i++) {
+		app = g_ptr_array_index (priv->array, i);
+		if (as_app_has_pkgname (app, pkgname))
+			return app;
+	}
+
+	/* not found */
+	return NULL;
 }
 
 /**
