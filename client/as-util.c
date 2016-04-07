@@ -1310,6 +1310,49 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 /**
+ * as_util_search_pkgname:
+ **/
+static gboolean
+as_util_search_pkgname (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsApp *app;
+	guint i;
+	g_autoptr(AsStore) store = NULL;
+
+	/* check args */
+	if (g_strv_length (values) < 1) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected search terms");
+		return FALSE;
+	}
+
+	/* load system database */
+	store = as_store_new ();
+	if (!as_store_load (store,
+			    AS_STORE_LOAD_FLAG_IGNORE_INVALID |
+			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
+			    AS_STORE_LOAD_FLAG_APP_INFO_USER |
+			    AS_STORE_LOAD_FLAG_APPDATA |
+			    AS_STORE_LOAD_FLAG_XDG_APP_USER |
+			    AS_STORE_LOAD_FLAG_XDG_APP_SYSTEM |
+			    AS_STORE_LOAD_FLAG_DESKTOP,
+			    NULL, error))
+		return FALSE;
+
+	/* find by source */
+	for (i = 0; values[i] != NULL; i++) {
+		app = as_store_get_app_by_pkgname (store, values[i]);
+		if (app == NULL)
+			continue;
+		g_print ("%s\n", as_app_get_id (app));
+	}
+	return TRUE;
+}
+
+/**
  * as_util_search_token_sort_cb:
  **/
 static gint
@@ -4047,6 +4090,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Search for AppStream applications"),
 		     as_util_search);
+	as_util_add (priv->cmd_array,
+		     "search-pkgname",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Search for AppStream applications by package name"),
+		     as_util_search_pkgname);
 	as_util_add (priv->cmd_array,
 		     "show-search-tokens",
 		     NULL,
