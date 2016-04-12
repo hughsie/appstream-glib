@@ -2554,6 +2554,13 @@ as_store_search_per_system (AsStore *store,
 							dest, cancellable, error))
 				return FALSE;
 		}
+		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
+			g_autofree gchar *dest = NULL;
+			dest = g_build_filename (data_dirs[i], "metainfo", NULL);
+			if (!as_store_search_installed (store, flags, "system",
+							dest, cancellable, error))
+				return FALSE;
+		}
 		if ((flags & AS_STORE_LOAD_FLAG_DESKTOP) > 0) {
 			g_autofree gchar *dest = NULL;
 			dest = g_build_filename (data_dirs[i], "applications", NULL);
