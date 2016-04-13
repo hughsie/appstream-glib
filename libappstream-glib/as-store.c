@@ -2775,8 +2775,12 @@ as_store_validate_add (GPtrArray *problems, AsProblemKind kind, const gchar *fmt
 static gchar *
 as_store_get_unique_name_app_key (AsApp *app)
 {
+	const gchar *name;
 	g_autofree gchar *name_lower = NULL;
-	name_lower = g_utf8_strdown (as_app_get_name (app, NULL), -1);
+	name = as_app_get_name (app, NULL);
+	if (name == NULL)
+		return NULL;
+	name_lower = g_utf8_strdown (name, -1);
 	return g_strdup_printf ("<%s:%s>",
 				as_app_kind_to_string (as_app_get_kind (app)),
 				name_lower);
@@ -2998,22 +3002,23 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 
 		/* check uniqueness */
 		app_key = as_store_get_unique_name_app_key (app);
-		app_tmp = g_hash_table_lookup (hash_names, app_key);
-		if (app_tmp != NULL) {
-			as_store_validate_add (probs,
-					       AS_PROBLEM_KIND_DUPLICATE_DATA,
-					       "%s[%s] as the same name as %s[%s]: %s",
-					       as_app_get_id (app),
-					       as_app_get_pkgname_default (app),
-					       as_app_get_id (app_tmp),
-					       as_app_get_pkgname_default (app_tmp),
-					       app_key);
-		} else {
-			g_hash_table_insert (hash_names,
-					     g_strdup (app_key),
-					     g_object_ref (app));
+		if (app_key != NULL) {
+			app_tmp = g_hash_table_lookup (hash_names, app_key);
+			if (app_tmp != NULL) {
+				as_store_validate_add (probs,
+						       AS_PROBLEM_KIND_DUPLICATE_DATA,
+						       "%s[%s] as the same name as %s[%s]: %s",
+						       as_app_get_id (app),
+						       as_app_get_pkgname_default (app),
+						       as_app_get_id (app_tmp),
+						       as_app_get_pkgname_default (app_tmp),
+						       app_key);
+			} else {
+				g_hash_table_insert (hash_names,
+						     g_strdup (app_key),
+						     g_object_ref (app));
+			}
 		}
-
 	}
 	return probs;
 }
