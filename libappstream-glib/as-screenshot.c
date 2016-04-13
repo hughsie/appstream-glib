@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -168,7 +168,7 @@ as_screenshot_get_priority (AsScreenshot *screenshot)
  * as_screenshot_get_images:
  * @screenshot: a #AsScreenshot instance.
  *
- * Gets the image sizes included in the screenshot.
+ * Gets the images included in the screenshot of all sizes and locales.
  *
  * Returns: (element-type AsImage) (transfer none): an array
  *
@@ -179,6 +179,83 @@ as_screenshot_get_images (AsScreenshot *screenshot)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	return priv->images;
+}
+
+/**
+ * as_screenshot_get_images_for_locale:
+ * @screenshot: a #AsScreenshot instance.
+ *
+ * Returns all images of all sizes that are compatible with a specific locale.
+ *
+ * Returns: (element-type AsImage) (transfer container): an array
+ *
+ * Since: 0.5.14
+ **/
+GPtrArray *
+as_screenshot_get_images_for_locale (AsScreenshot *screenshot,
+				    const gchar *locale)
+{
+	AsImage *im;
+	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	GPtrArray *array;
+	guint i;
+
+	/* user wants a specific locale */
+	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	for (i = 0; i < priv->images->len; i++) {
+		im = g_ptr_array_index (priv->images, i);
+		if (!as_utils_locale_is_compatible (as_image_get_locale (im),
+						    locale))
+			continue;
+		g_ptr_array_add (array, g_object_ref (im));
+	}
+	return array;
+}
+
+/**
+ * as_screenshot_get_image_for_locale:
+ * @screenshot: a #AsScreenshot instance.
+ * @locale: locale, or %NULL
+ * @width: target width
+ * @height: target height
+ *
+ * Gets the AsImage closest to the target size with the specified locale.
+ * The #AsImage may not actually be the requested size, and the application may
+ * have to pad / rescale the image to make it fit.
+ *
+ * FIXME: This function assumes the images are ordered in preference order, e.g.
+ * "en_GB -> en -> NULL"
+ *
+ * Returns: (transfer none): an #AsImage, or %NULL
+ *
+ * Since: 0.5.14
+ **/
+AsImage *
+as_screenshot_get_image_for_locale (AsScreenshot *screenshot,
+				    const gchar *locale,
+				    guint width, guint height)
+{
+	AsImage *im;
+	AsImage *im_best = NULL;
+	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	guint best_size = G_MAXUINT;
+	guint i;
+	guint tmp;
+
+	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), NULL);
+
+	for (i = 0; i < priv->images->len; i++) {
+		im = g_ptr_array_index (priv->images, i);
+		if (!as_utils_locale_is_compatible (as_image_get_locale (im), locale))
+			continue;
+		tmp = ABS ((gint64) (width * height) -
+			   (gint64) (as_image_get_width (im) * as_image_get_height (im)));
+		if (tmp < best_size) {
+			best_size = tmp;
+			im_best = im;
+		}
+	}
+	return im_best;
 }
 
 /**
@@ -198,25 +275,10 @@ as_screenshot_get_images (AsScreenshot *screenshot)
 AsImage *
 as_screenshot_get_image (AsScreenshot *screenshot, guint width, guint height)
 {
-	AsImage *im;
-	AsImage *im_best = NULL;
-	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
-	guint best_size = G_MAXUINT;
-	guint i;
-	guint tmp;
-
-	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), NULL);
-
-	for (i = 0; i < priv->images->len; i++) {
-		im = g_ptr_array_index (priv->images, i);
-		tmp = ABS ((gint64) (width * height) -
-			   (gint64) (as_image_get_width (im) * as_image_get_height (im)));
-		if (tmp < best_size) {
-			best_size = tmp;
-			im_best = im;
-		}
-	}
-	return im_best;
+	return as_screenshot_get_image_for_locale (screenshot,
+						   NULL, /* locale */
+						   width,
+						   height);
 }
 
 /**

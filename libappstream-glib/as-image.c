@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -42,6 +42,7 @@
 typedef struct
 {
 	AsImageKind		 kind;
+	gchar			*locale;
 	gchar			*url;
 	gchar			*md5;
 	gchar			*basename;
@@ -68,6 +69,7 @@ as_image_finalize (GObject *object)
 	g_free (priv->url);
 	g_free (priv->md5);
 	g_free (priv->basename);
+	g_free (priv->locale);
 
 	G_OBJECT_CLASS (as_image_parent_class)->finalize (object);
 }
@@ -163,6 +165,23 @@ as_image_get_basename (AsImage *image)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	return priv->basename;
+}
+
+/**
+ * as_image_get_locale:
+ * @image: a #AsImage instance.
+ *
+ * Gets the locale of the image.
+ *
+ * Returns: locale, or %NULL
+ *
+ * Since: 0.5.14
+ **/
+const gchar *
+as_image_get_locale (AsImage *image)
+{
+	AsImagePrivate *priv = GET_PRIVATE (image);
+	return priv->locale;
 }
 
 /**
@@ -285,6 +304,23 @@ as_image_set_basename (AsImage *image, const gchar *basename)
 }
 
 /**
+ * as_image_set_locale:
+ * @image: a #AsImage instance.
+ * @locale: the new image locale, e.g. "en_GB" or %NULL.
+ *
+ * Sets the image locale.
+ *
+ * Since: 0.5.14
+ **/
+void
+as_image_set_locale (AsImage *image, const gchar *locale)
+{
+	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_free (priv->locale);
+	priv->locale = g_strdup (locale);
+}
+
+/**
  * as_image_set_width:
  * @image: a #AsImage instance.
  * @width: the width in pixels.
@@ -395,6 +431,8 @@ as_image_node_insert (AsImage *image, GNode *parent, AsNodeContext *ctx)
 				    "type", as_image_kind_to_string (priv->kind),
 				    NULL);
 	}
+	if (priv->locale != NULL)
+		as_node_add_attribute (n, "xml:lang", priv->locale);
 	return n;
 }
 
@@ -435,6 +473,11 @@ as_image_node_parse (AsImage *image, GNode *node,
 	if (taken != NULL) {
 		g_free (priv->url);
 		priv->url = taken;
+	}
+	taken = as_node_take_attribute (node, "xml:lang");
+	if (taken != NULL) {
+		g_free (priv->locale);
+		priv->locale = taken;
 	}
 	return TRUE;
 }

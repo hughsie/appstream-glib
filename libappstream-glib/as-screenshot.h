@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -77,7 +77,13 @@ gint		 as_screenshot_get_priority	(AsScreenshot	*screenshot);
 const gchar	*as_screenshot_get_caption	(AsScreenshot	*screenshot,
 						 const gchar	*locale);
 GPtrArray	*as_screenshot_get_images	(AsScreenshot	*screenshot);
+GPtrArray	*as_screenshot_get_images_for_locale (AsScreenshot	*screenshot,
+						 const gchar	*locale);
 AsImage		*as_screenshot_get_image	(AsScreenshot	*screenshot,
+						 guint		 width,
+						 guint		 height);
+AsImage		*as_screenshot_get_image_for_locale (AsScreenshot	*screenshot,
+						 const gchar	*locale,
 						 guint		 width,
 						 guint		 height);
 AsImage		*as_screenshot_get_source	(AsScreenshot	*screenshot);

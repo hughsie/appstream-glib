@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -42,6 +42,8 @@ void		 as_pixbuf_blur			(GdkPixbuf	*src,
 						 gint		 iterations);
 const gchar	*as_ptr_array_find_string	(GPtrArray	*array,
 						 const gchar	*value);
+gboolean	 as_utils_locale_is_compatible	(const gchar	*locale1,
+						 const gchar	*locale2);
 
 G_END_DECLS
 

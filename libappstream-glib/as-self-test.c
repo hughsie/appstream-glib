@@ -1114,7 +1114,7 @@ as_test_image_func (void)
 	AsNode *root;
 	GString *xml;
 	const gchar *src =
-		"<image type=\"thumbnail\" height=\"12\" width=\"34\">"
+		"<image xml:lang=\"en_GB\" type=\"thumbnail\" height=\"12\" width=\"34\">"
 		"http://www.hughsie.com/a.jpg</image>";
 	gboolean ret;
 	g_autofree AsNodeContext *ctx = NULL;
@@ -1140,6 +1140,7 @@ as_test_image_func (void)
 	g_assert_cmpint (as_image_get_kind (image), ==, AS_IMAGE_KIND_THUMBNAIL);
 	g_assert_cmpint (as_image_get_height (image), ==, 12);
 	g_assert_cmpint (as_image_get_width (image), ==, 34);
+	g_assert_cmpstr (as_image_get_locale (image), ==, "en_GB");
 	g_assert_cmpstr (as_image_get_url (image), ==, "http://www.hughsie.com/a.jpg");
 
 	/* back to node */
@@ -4706,6 +4707,30 @@ as_test_utils_string_replace_func (void)
 }
 
 static void
+as_test_utils_locale_compat_func (void)
+{
+	/* empty */
+	g_assert (as_utils_locale_is_compatible (NULL, NULL));
+
+	/* same */
+	g_assert (as_utils_locale_is_compatible ("en_GB", "en_GB"));
+
+	/* forward and reverse compatible */
+	g_assert (as_utils_locale_is_compatible ("en_GB", "en"));
+	g_assert (as_utils_locale_is_compatible ("en", "en_GB"));
+
+	/* different language and locale */
+	g_assert (!as_utils_locale_is_compatible ("en_GB", "fr_FR"));
+
+	/* politics */
+	g_assert (!as_utils_locale_is_compatible ("zh_CN", "zh_TW"));
+
+	/* never going to match system locale or language */
+	g_assert (!as_utils_locale_is_compatible ("xx_XX", NULL));
+	g_assert (!as_utils_locale_is_compatible (NULL, "xx_XX"));
+}
+
+static void
 as_test_markup_import_html (void)
 {
 	const gchar *input;
@@ -4778,6 +4803,7 @@ main (int argc, char **argv)
 	g_log_set_fatal_mask (NULL, G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL);
 
 	/* tests go here */
+	g_test_add_func ("/AppStream/utils{locale-compat}", as_test_utils_locale_compat_func);
 	g_test_add_func ("/AppStream/utils{string-replace}", as_test_utils_string_replace_func);
 	g_test_add_func ("/AppStream/tag", as_test_tag_func);
 	g_test_add_func ("/AppStream/provide", as_test_provide_func);
