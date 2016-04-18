@@ -2198,7 +2198,6 @@ as_app_add_category (AsApp *app, const gchar *category)
 	if (g_strcmp0 (category, "AudioVideo") == 0) {
 		as_app_add_category (app, "Audio");
 		as_app_add_category (app, "Video");
-		return;
 	}
 
 	g_ptr_array_add (priv->categories, g_strdup (category));
@@ -3778,10 +3777,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_CATEGORY)
 				continue;
-			taken = as_node_take_data (c);
-			if (taken == NULL)
+			tmp = as_node_get_data (c);
+			if (tmp == NULL)
 				continue;
-			g_ptr_array_add (priv->categories, taken);
+			as_app_add_category (app, tmp);
 		}
 		break;
 
