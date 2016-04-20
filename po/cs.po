@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-04-01 15:23+0100\n"
-"PO-Revision-Date: 2016-03-30 16:08+0000\n"
-"Last-Translator: Marek Černocký <marek@manet.cz>\n"
+"POT-Creation-Date: 2016-04-20 08:59+0100\n"
+"PO-Revision-Date: 2016-04-20 07:59+0000\n"
+"Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Czech (http://www.transifex.com/freedesktop/appstream-glib/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -273,6 +273,10 @@ msgstr "Vypsat aplikace z metadat AppStream"
 #. TRANSLATORS: command description
 msgid "Search for AppStream applications"
 msgstr "Vyhledat v AppStream aplikace"
+
+#. TRANSLATORS: command description
+msgid "Search for AppStream applications by package name"
+msgstr ""
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"

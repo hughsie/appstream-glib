@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-03-29 14:02+0100\n"
-"PO-Revision-Date: 2016-03-29 13:02+0000\n"
+"POT-Creation-Date: 2016-04-20 08:59+0100\n"
+"PO-Revision-Date: 2016-04-20 07:59+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -277,6 +277,10 @@ msgid "Search for AppStream applications"
 msgstr "搜索 AppStream 应用程序"
 
 #. TRANSLATORS: command description
+msgid "Search for AppStream applications by package name"
+msgstr ""
+
+#. TRANSLATORS: command description
 msgid "Display application search tokens"
 msgstr "显示应用程序搜索令牌"
 
@@ -366,11 +370,11 @@ msgstr "将 AppStream 文件分割为 AppData 和 Metainfo 文件"
 
 #. TRANSLATORS: command description
 msgid "Merge several files to an AppStream file"
-msgstr ""
+msgstr "合并多个文件到一 AppStream 文件上"
 
 #. TRANSLATORS: command description
 msgid "Import a file to AppStream markup"
-msgstr ""
+msgstr "导入文件到 AppStream 标记"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

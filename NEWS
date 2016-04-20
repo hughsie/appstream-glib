@@ -1,3 +1,19 @@
+Version 0.5.14
+~~~~~~~~~~~~~~
+Released: 2016-04-20
+
+New Features:
+ - Add AS_APP_QUIRK_NEEDS_REBOOT (Richard Hughes)
+ - Add AS_APP_QUIRK_NOT_REVIEWABLE (Richard Hughes)
+ - Add as_screenshot_get_image_for_locale() (Richard Hughes)
+ - Add search-pkgname to appstream-cmd (Richard Hughes)
+
+Bugfixes:
+ - Add the Audio+Video categories from AppStream XML too (Richard Hughes)
+ - Fall back to searching in as_store_get_app_by_pkgname() (Richard Hughes)
+ - Ignore desktop files with X-AppStream-Ignore (Richard Hughes)
+ - Search /usr/share/metainfo for local files (Richard Hughes)
+
 Version 0.5.13
 ~~~~~~~~~~~~~~
 Released: 2016-04-01

@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Muhammet Kara <muhammetk@gmail.com>, 2015
+# Muhammet Kara <muhammetk@gmail.com>, 2015-2016
 # Necdet Yücel <necdetyucel@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-03-29 14:02+0100\n"
-"PO-Revision-Date: 2016-03-29 13:02+0000\n"
+"POT-Creation-Date: 2016-04-20 08:59+0100\n"
+"PO-Revision-Date: 2016-04-20 07:59+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/freedesktop/appstream-glib/language/tr/)\n"
 "MIME-Version: 1.0\n"
@@ -171,7 +171,7 @@ msgstr ""
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "AppStream dosyasını kaydederken hata"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -188,7 +188,7 @@ msgstr "Lütfen dosyayı gözden geçirin ve 'FIXME' olarak işaretlenmiş ögel
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr ""
+msgstr "Eski API sürümü"
 
 #. TRANSLATORS: information message
 msgid "New API version"
@@ -210,15 +210,15 @@ msgstr "Yeterli argüman yok, file.xml bekleniyor"
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "'%s' dosya biçimi yükseltilemiyor"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "Biçim tanınmadı"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "Hiçbir masaüstü uygulaması bulunamadı"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -236,11 +236,11 @@ msgstr "Dosyaların doğrulaması başarısız"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "Kaldırıldı"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "Eklendi"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -272,6 +272,10 @@ msgstr "AppStream meta verisindeki uygulamaları döker"
 
 #. TRANSLATORS: command description
 msgid "Search for AppStream applications"
+msgstr ""
+
+#. TRANSLATORS: command description
+msgid "Search for AppStream applications by package name"
 msgstr ""
 
 #. TRANSLATORS: command description

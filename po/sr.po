@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-03-29 14:02+0100\n"
-"PO-Revision-Date: 2016-03-29 13:02+0000\n"
+"POT-Creation-Date: 2016-04-20 08:59+0100\n"
+"PO-Revision-Date: 2016-04-20 07:59+0000\n"
 "Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Serbian (http://www.transifex.com/freedesktop/appstream-glib/language/sr/)\n"
 "MIME-Version: 1.0\n"
@@ -274,6 +274,10 @@ msgstr "Исписује програме у метаподацима Прогр
 #. TRANSLATORS: command description
 msgid "Search for AppStream applications"
 msgstr "Потражи програме Програмског тока"
+
+#. TRANSLATORS: command description
+msgid "Search for AppStream applications by package name"
+msgstr ""
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"
