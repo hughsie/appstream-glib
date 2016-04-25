@@ -1669,7 +1669,7 @@ as_utils_string_replace (GString *string, const gchar *search, const gchar *repl
 					search_len - replace_len);
 			memcpy (tmp, replace, replace_len);
 		} else if (search_len < replace_len) {
-			g_string_insert_len (string, search_idx, search,
+			g_string_insert_len (string, search_idx, replace,
 					     replace_len - search_len);
 			/* we have to treat this specially as it could have
 			 * been reallocated when the insertion happened */
