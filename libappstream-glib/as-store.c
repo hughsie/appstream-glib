@@ -2208,6 +2208,22 @@ as_store_set_app_installed (AsApp *app)
 }
 
 /**
+ * as_store_load_installed_file_is_valid:
+ **/
+static gboolean
+as_store_load_installed_file_is_valid (const gchar *filename)
+{
+	if (g_str_has_suffix (filename, ".desktop"))
+		return TRUE;
+	if (g_str_has_suffix (filename, ".metainfo.xml"))
+		return TRUE;
+	if (g_str_has_suffix (filename, ".appdata.xml"))
+		return TRUE;
+	g_debug ("ignoring filename with invalid suffix: %s", filename);
+	return FALSE;
+}
+
+/**
  * as_store_load_installed:
  **/
 static gboolean
@@ -2252,7 +2268,7 @@ as_store_load_installed (AsStore *store,
 		g_autofree gchar *filename = NULL;
 		g_autoptr(AsApp) app = NULL;
 		filename = g_build_filename (path, tmp, NULL);
-		if (!g_file_test (filename, G_FILE_TEST_IS_REGULAR))
+		if (!as_store_load_installed_file_is_valid (filename))
 			continue;
 		if ((priv->add_flags & AS_STORE_ADD_FLAG_PREFER_LOCAL) == 0) {
 			app_tmp = as_store_get_app_by_id (store, tmp);
