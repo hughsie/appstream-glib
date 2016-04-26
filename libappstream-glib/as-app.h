@@ -220,6 +220,7 @@ typedef enum {
  * @AS_APP_QUIRK_NEEDS_REBOOT:		A reboot is required after the action
  * @AS_APP_QUIRK_NOT_REVIEWABLE:	The app is not reviewable
  * @AS_APP_QUIRK_HAS_SHORTCUT:		The app has a shortcut in the system
+ * @AS_APP_QUIRK_NOT_LAUNCHABLE:	The app is not launchable (run-able)
  *
  * The component attributes.
  **/
@@ -232,6 +233,7 @@ typedef enum {
 	AS_APP_QUIRK_NEEDS_REBOOT	= 1 << 4,	/* Since: 0.5.14 */
 	AS_APP_QUIRK_NOT_REVIEWABLE	= 1 << 5,	/* Since: 0.5.14 */
 	AS_APP_QUIRK_HAS_SHORTCUT	= 1 << 6,	/* Since: 0.5.15 */
+	AS_APP_QUIRK_NOT_LAUNCHABLE	= 1 << 7,	/* Since: 0.5.15 */
 	/*< private >*/
 	AS_APP_QUIRK_LAST
 } AsAppQuirk;
