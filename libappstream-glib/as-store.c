@@ -574,6 +574,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 	} id_map[] = {
 		/* GNOME */
 		{ "baobab.desktop",		"org.gnome.baobab.desktop" },
+		{ "bijiben.desktop",		"org.gnome.bijiben.desktop" },
 		{ "cheese.desktop",		"org.gnome.Cheese.desktop" },
 		{ "devhelp.desktop",		"org.gnome.Devhelp.desktop" },
 		{ "file-roller.desktop",	"org.gnome.FileRoller.desktop" },
@@ -594,6 +595,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "gnome-documents.desktop",	"org.gnome.Documents.desktop" },
 		{ "gnome-font-viewer.desktop",	"org.gnome.font-viewer.desktop" },
 		{ "gnome-maps.desktop",		"org.gnome.Maps.desktop" },
+		{ "gnome-nibbles.desktop",	"org.gnome.Nibbles.desktop" },
 		{ "gnome-photos.desktop",	"org.gnome.Photos.desktop" },
 		{ "gnome-screenshot.desktop",	"org.gnome.Screenshot.desktop" },
 		{ "gnome-software.desktop",	"org.gnome.Software.desktop" },
@@ -604,6 +606,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "gnotravex.desktop",		"gnome-tetravex.desktop" },
 		{ "gnotski.desktop",		"gnome-klotski.desktop" },
 		{ "gtali.desktop",		"tali.desktop" },
+		{ "latexila.desktop",		"org.gnome.latexila.desktop" },
 		{ "nautilus.desktop",		"org.gnome.Nautilus.desktop" },
 		{ "polari.desktop",		"org.gnome.Polari.desktop" },
 		{ "totem.desktop",		"org.gnome.Totem.desktop" },
