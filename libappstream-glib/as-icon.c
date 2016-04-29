@@ -642,6 +642,14 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 
 		/* preserve the URL for remote icons */
 		tmp = as_node_get_data (node);
+		if (tmp == NULL) {
+			g_set_error (error,
+				     AS_ICON_ERROR,
+				     AS_ICON_ERROR_FAILED,
+				     "no data for icon of type %s",
+				     as_icon_kind_to_string (priv->kind));
+			return FALSE;
+		}
 		if (priv->kind == AS_ICON_KIND_REMOTE)
 			as_icon_set_url (icon, tmp);
 		else if (priv->kind == AS_ICON_KIND_LOCAL)
