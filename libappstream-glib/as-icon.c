@@ -531,9 +531,15 @@ as_icon_node_insert (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 				    NULL);
 		break;
 	case AS_ICON_KIND_LOCAL:
-		n = as_node_insert (parent, "icon", priv->filename, 0,
-				    "type", as_icon_kind_to_string (priv->kind),
-				    NULL);
+		if (priv->filename != NULL) {
+			n = as_node_insert (parent, "icon", priv->filename, 0,
+					    "type", as_icon_kind_to_string (priv->kind),
+					    NULL);
+		} else {
+			n = as_node_insert (parent, "icon", priv->name, 0,
+					    "type", as_icon_kind_to_string (priv->kind),
+					    NULL);
+		}
 		break;
 	default:
 		n = as_node_insert (parent, "icon", priv->name, 0,
