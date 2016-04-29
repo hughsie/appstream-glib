@@ -4138,10 +4138,57 @@ as_app_node_parse_dep11_icons (AsApp *app, GNode *node,
 	guint size;
 	g_autoptr(AsIcon) ic_tmp = NULL;
 
-	/* YAML files only specify one icon for various sizes */
-	ic_tmp = as_icon_new ();
-	if (!as_icon_node_parse_dep11 (ic_tmp, node, ctx, error))
-		return FALSE;
+	if (g_strcmp0 (as_yaml_node_get_key (node), "cached") == 0) {
+		if (node->children == NULL) {
+			/* legacy compatibility */
+			ic_tmp = as_icon_new ();
+			as_icon_set_kind (ic_tmp, AS_ICON_KIND_CACHED);
+			as_icon_set_name (ic_tmp, as_yaml_node_get_value (node));
+		} else {
+			GNode *sn;
+			/* we have a modern YAML file */
+			for (sn = node->children; sn != NULL; sn = sn->next) {
+				g_autoptr(AsIcon) icon = NULL;
+				icon = as_icon_new ();
+				as_icon_set_kind (icon, AS_ICON_KIND_CACHED);
+				if (!as_icon_node_parse_dep11 (icon, sn, ctx, error))
+					return FALSE;
+				as_app_add_icon (app, icon);
+			}
+		}
+	} else if (g_strcmp0 (as_yaml_node_get_key (node), "stock") == 0) {
+		g_autoptr(AsIcon) icon = NULL;
+		icon = as_icon_new ();
+		as_icon_set_name (icon, as_yaml_node_get_value (node));
+		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+		as_app_add_icon (app, icon);
+	} else {
+		GNode *sn;
+		AsIconKind ikind;
+
+		if (g_strcmp0 (as_yaml_node_get_key (node), "remote") == 0) {
+			ikind = AS_ICON_KIND_REMOTE;
+		} else if (g_strcmp0 (as_yaml_node_get_key (node), "local") == 0) {
+			ikind = AS_ICON_KIND_REMOTE;
+		} else {
+			/* We have an unknown icon type, and just ignore that here */
+			return TRUE;
+		}
+
+		for (sn = node->children; sn != NULL; sn = sn->next) {
+			g_autoptr(AsIcon) icon = NULL;
+			icon = as_icon_new ();
+			as_icon_set_kind (icon, ikind);
+			if (!as_icon_node_parse_dep11 (icon, sn, ctx, error))
+				return FALSE;
+			as_app_add_icon (app, icon);
+		}
+	}
+
+	if (ic_tmp == NULL) {
+		/* we have no icon which we need to probe sizes for */
+		return TRUE;
+	}
 
 	/* find each size */
 	for (i = 0; sizes[i] != NULL; i++) {

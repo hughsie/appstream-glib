@@ -9,7 +9,10 @@ Name:
   C: Iceweasel
 Package: iceweasel
 Icon:
-  cached: iceweasel.png
+  cached:
+      - name: iceweasel.png
+        width: 64
+        height: 64
 Keywords:
   C:
     - browser
