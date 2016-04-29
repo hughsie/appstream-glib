@@ -4156,7 +4156,11 @@ as_test_yaml_func (void)
 		"  [KVL]C=Iceweasel\n"
 		" [KVL]Package=iceweasel\n"
 		" [MAP]Icon\n"
-		"  [KVL]cached=iceweasel.png\n"
+		"  [SEQ]cached\n"
+		"   [MAP]{\n"
+		"    [KVL]name=iceweasel.png\n"
+		"    [KVL]width=64\n"
+		"    [KVL]height=64\n"
 		" [MAP]Keywords\n"
 		"  [SEQ]C\n"
 		"   [KEY]browser\n"
@@ -4182,7 +4186,6 @@ as_test_yaml_func (void)
 	g_assert (ret);
 	g_string_free (str, TRUE);
 	as_yaml_unref (node);
-
 }
 
 static void

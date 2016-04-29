@@ -714,16 +714,58 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
  * Since: 0.3.1
  **/
 gboolean
-as_icon_node_parse_dep11 (AsIcon *im, GNode *node,
+as_icon_node_parse_dep11 (AsIcon *icon, GNode *node,
 			  AsNodeContext *ctx, GError **error)
 {
-	if (g_strcmp0 (as_yaml_node_get_key (node), "cached") == 0) {
-		as_icon_set_name (im, as_yaml_node_get_value (node));
-		as_icon_set_kind (im, AS_ICON_KIND_CACHED);
-	} else if (g_strcmp0 (as_yaml_node_get_key (node), "stock") == 0) {
-		as_icon_set_name (im, as_yaml_node_get_value (node));
-		as_icon_set_kind (im, AS_ICON_KIND_STOCK);
+	GNode *n;
+	AsIconPrivate *priv = GET_PRIVATE (icon);
+
+	for (n = node->children; n != NULL; n = n->next) {
+		const gchar *key;
+		gint size;
+
+		key = as_yaml_node_get_key (n);
+		if (g_strcmp0 (key, "width") == 0) {
+			size = as_yaml_node_get_value_as_int (n);
+			if (size == G_MAXINT)
+				size = 64;
+			priv->width = size;
+		} else if (g_strcmp0 (key, "height") == 0) {
+			size = as_yaml_node_get_value_as_int (n);
+			if (size == G_MAXINT)
+				size = 64;
+			priv->height = size;
+		} else {
+			if (priv->kind == AS_ICON_KIND_REMOTE) {
+				if (g_strcmp0 (key, "url") == 0) {
+					const gchar *media_baseurl;
+					media_baseurl = as_node_context_get_media_base_url (ctx);
+					if (media_baseurl == NULL) {
+						/* no baseurl, we can just set the value as URL */
+						as_icon_set_url (icon, as_yaml_node_get_value (n));
+					} else {
+						/* handle the media baseurl */
+						g_autofree gchar *url = NULL;
+						url = g_build_filename (media_baseurl,
+									as_yaml_node_get_value (n),
+									NULL);
+						as_icon_set_url (icon, url);
+					}
+				}
+			} else {
+				if (g_strcmp0 (key, "name") == 0) {
+					const gchar *icon_name;
+					icon_name = as_yaml_node_get_value (n);
+
+					if (g_str_has_prefix (icon_name, "/"))
+						as_icon_set_filename (icon, icon_name);
+					else
+						as_icon_set_name (icon, icon_name);
+				}
+			}
+		}
 	}
+
 	return TRUE;
 }
 
