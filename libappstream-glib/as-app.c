@@ -4151,6 +4151,7 @@ as_app_node_parse_dep11_icons (AsApp *app, GNode *node,
 				g_autoptr(AsIcon) icon = NULL;
 				icon = as_icon_new ();
 				as_icon_set_kind (icon, AS_ICON_KIND_CACHED);
+				as_icon_set_prefix (icon, priv->icon_path);
 				if (!as_icon_node_parse_dep11 (icon, sn, ctx, error))
 					return FALSE;
 				as_app_add_icon (app, icon);
@@ -4161,6 +4162,7 @@ as_app_node_parse_dep11_icons (AsApp *app, GNode *node,
 		icon = as_icon_new ();
 		as_icon_set_name (icon, as_yaml_node_get_value (node));
 		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+		as_icon_set_prefix (icon, priv->icon_path);
 		as_app_add_icon (app, icon);
 	} else {
 		GNode *sn;
