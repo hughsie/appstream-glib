@@ -441,8 +441,10 @@ asb_utils_write_archive (const gchar *filename,
 	struct stat st;
 
 	a = archive_write_new ();
-	if (g_str_has_suffix (filename, ".gz"))
+	if (g_str_has_suffix (filename, ".gz")) {
 		archive_write_add_filter_gzip (a);
+		archive_write_set_filter_option (a, "gz", "timestamp", NULL);
+	}
 	if (g_str_has_suffix (filename, ".bz2"))
 		archive_write_add_filter_bzip2 (a);
 	if (g_str_has_suffix (filename, ".xz"))
