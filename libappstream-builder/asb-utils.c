@@ -532,6 +532,9 @@ asb_utils_write_archive_dir (const gchar *filename,
 	if (files->len == 0)
 		return TRUE;
 
+	/* sort by filename for deterministic results */
+	g_ptr_array_sort (files, g_strcmp0);
+
 	/* write tar file */
 	return asb_utils_write_archive (filename, directory, files, error);
 }
