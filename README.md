@@ -26,8 +26,8 @@ To install the libappstream-glib library you either need to install the
 copy. To do the latter just do:
 
     dnf install automake autoconf libtool glib-devel docbook-utils \
-                gtk-doc gobject-introspection-devel rpm-devel \
-                gtk3-devel sqlite-devel libsoup-devel gettext-devel \
+               gtk-doc gobject-introspection-devel rpm-devel \
+               gtk3-devel sqlite-devel libsoup-devel gettext-devel \
                 intltool libarchive-devel libyaml-devel
     ./autogen.sh
     make
@@ -92,13 +92,15 @@ binary and data files, or you can build a local copy. To do the latter just do:
 To actually run the extractor you can do:
 
     ./appstream-builder --verbose   \
-                    --max-threads=8 \
-                    --log-dir=/tmp/logs \
-                    --packages-dir=/mnt/archive/Megarpms/21/Packages \
-                    --temp-dir=/mnt/ssd/AppStream/tmp \
-                    --output-dir=./repodata \
-                    --screenshot-url=http://megarpms.org/screenshots/ \
-                    --basename="megarpms-21"
+                      --max-threads=8 \
+                      --log-dir=/tmp/logs \
+                      --packages-dir=/mnt/archive/Megarpms/21/Packages \
+                      --temp-dir=/mnt/ssd/AppStream/tmp \
+                      --output-dir=./repodata \
+                      --screenshot-url=http://megarpms.org/screenshots/ \
+                      --basename="megarpms-21"
+
+Note: it is possible to use "globs" like `/mnt/archive/Megarpms/21/Packages*` to match multiple directories or packages.
 
 This will output a lot of progress text. Now, go and make a cup of tea and wait
 patiently if you have a lot of packages to process. After this is complete
