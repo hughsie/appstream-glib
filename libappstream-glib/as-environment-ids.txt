@@ -10,3 +10,4 @@ Unity
 XFCE
 EDE
 Cinnamon
+elementary
