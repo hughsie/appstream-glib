@@ -4761,6 +4761,7 @@ as_app_parse_appdata_guess_project_group (AsApp *app)
 		const gchar *project_group;
 		const gchar *url_glob;
 	} table[] = {
+		{ "elementary",		"http*://elementary.io*" },
 		{ "Enlightenment",	"http://*enlightenment.org*" },
 		{ "GNOME",		"http*://*.gnome.org*" },
 		{ "GNOME",		"http://gnome-*.sourceforge.net/" },
