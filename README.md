@@ -26,8 +26,8 @@ To install the libappstream-glib library you either need to install the
 copy. To do the latter just do:
 
     dnf install automake autoconf libtool glib-devel docbook-utils \
-                gtk-doc gobject-introspection-devel rpm-devel \
-                gtk3-devel sqlite-devel libsoup-devel gettext-devel \
+               gtk-doc gobject-introspection-devel rpm-devel \
+               gtk3-devel sqlite-devel libsoup-devel gettext-devel \
                 intltool libarchive-devel libyaml-devel
     ./autogen.sh
     make
@@ -40,7 +40,8 @@ If you want a new feature, or have found a bug or a way to crash this library,
 please report as much information as you can to the issue tracker:
 https://github.com/hughsie/appstream-glib/issues -- patches very welcome.
 
-New functionality or crash fixes should include a test in `libappstream-builder/as-self-test.c`
+New functionality or crash fixes should include a test in `libappstream-builder/
+as-self-test.c`
 to ensure we don't regress in the future. New functionality should also be
 thread safe and also not leak *any* memory for success or failure cases.
 
@@ -52,7 +53,8 @@ third party translation interface, transifex.com.
 Newly added strings will be periodically uploaded there for translation,
 and any new translations will be merged back to the project source code.
 
-Please use [https://www.transifex.com/projects/p/appstream-glib/](https://www.transifex.com/projects/p/appstream-glib/) to contribute translations,
+Please use [https://www.transifex.com/projects/p/appstream-glib/](https://www.tr
+ansifex.com/projects/p/appstream-glib/) to contribute translations,
 rather than sending pull requests.
 
 appstream-builder
@@ -76,7 +78,8 @@ What this tool does:
    merged into single applications. This is how fonts are collected.
  * The `AsbApplication` objects are serialized to XML and written to a
    compressed archive.
- * Any application icons or screenshots referenced are written to a .tar archive.
+ * Any application icons or screenshots referenced are written to a .tar archive
+.
 
 Getting Started
 -----------
@@ -92,13 +95,16 @@ binary and data files, or you can build a local copy. To do the latter just do:
 To actually run the extractor you can do:
 
     ./appstream-builder --verbose   \
-                    --max-threads=8 \
-                    --log-dir=/tmp/logs \
-                    --packages-dir=/mnt/archive/Megarpms/21/Packages \
-                    --temp-dir=/mnt/ssd/AppStream/tmp \
-                    --output-dir=./repodata \
-                    --screenshot-url=http://megarpms.org/screenshots/ \
-                    --basename="megarpms-21"
+                      --max-threads=8 \
+                      --log-dir=/tmp/logs \
+                      --packages-dir=/mnt/archive/Megarpms/21/Packages \
+                      --temp-dir=/mnt/ssd/AppStream/tmp \
+                      --output-dir=./repodata \
+                      --screenshot-url=http://megarpms.org/screenshots/ \
+                      --basename="megarpms-21"
+
+Note: it is possible to use "globs" like `/mnt/archive/Megarpms/21/Packages*` to
+ match multiple directories or packages.
 
 This will output a lot of progress text. Now, go and make a cup of tea and wait
 patiently if you have a lot of packages to process. After this is complete
@@ -149,7 +155,8 @@ What is an application
 Applications are defined in the context of AppStream as such:
 
  * Installs a desktop file and would be visible in a desktop
- * Has an metadata extractor (e.g. libappstream-builder/plugins/asb-plugin-gstreamer.c)
+ * Has an metadata extractor (e.g. libappstream-builder/plugins/asb-plugin-gstre
+amer.c)
    and includes an AppData file
 
 Guidelines for applications
@@ -200,7 +207,8 @@ Guidelines for fonts
  * Fonts **MUST** have a valid MetaInfo file installed to /usr/share/appdata
  * Fonts packaged in multiple packages **SHOULD** have multiple MetaInfo files
  * Fonts families **SHOULD** only have one description section
- * Fonts of different styles or weights of the same family **SHOULD** use `<extends>`
+ * Fonts of different styles or weights of the same family **SHOULD** use `<exte
+nds>`
  * MetaInfo files **SHOULD** include translations where possible
 
 License
