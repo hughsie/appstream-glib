@@ -2902,7 +2902,7 @@ as_test_store_prefix_func (void)
 	AsApp *app_tmp;
 
 	/* add app */
-	as_app_set_id (app, "xdg-app-user:org.gnome.Software.desktop");
+	as_app_set_id (app, "flatpak-user:org.gnome.Software.desktop");
 	as_store_add_app (store, app);
 
 	app_tmp = as_store_get_app_by_id (store, "org.gnome.Software.desktop");
@@ -2910,7 +2910,7 @@ as_test_store_prefix_func (void)
 	app_tmp = as_store_get_app_by_id_ignore_prefix (store, "org.gnome.Software.desktop");
 	g_assert (app_tmp != NULL);
 	g_assert_cmpstr (as_app_get_id (app_tmp), ==,
-			 "xdg-app-user:org.gnome.Software.desktop");
+			 "flatpak-user:org.gnome.Software.desktop");
 
 	/* there might be multiple apps we want to get */
 	apps = as_store_get_apps_by_id (store, "org.gnome.Software.desktop");
@@ -2918,7 +2918,7 @@ as_test_store_prefix_func (void)
 	g_assert_cmpint (apps->len, ==, 1);
 	app_tmp = g_ptr_array_index (apps, 0);
 	g_assert_cmpstr (as_app_get_id (app_tmp), ==,
-			 "xdg-app-user:org.gnome.Software.desktop");
+			 "flatpak-user:org.gnome.Software.desktop");
 }
 
 /* demote the .desktop "application" to an addon */

@@ -51,17 +51,20 @@ struct _AsBundleClass
  * AsBundleKind:
  * @AS_BUNDLE_KIND_UNKNOWN:		Type invalid or not known
  * @AS_BUNDLE_KIND_LIMBA:		Limba application bundle
- * @AS_BUNDLE_KIND_XDG_APP:		Desktop application deployment
+ * @AS_BUNDLE_KIND_FLATPAK:		Flatpak application deployment
  *
  * The bundle type.
  **/
 typedef enum {
 	AS_BUNDLE_KIND_UNKNOWN,
 	AS_BUNDLE_KIND_LIMBA,
-	AS_BUNDLE_KIND_XDG_APP,
+	AS_BUNDLE_KIND_FLATPAK,
 	/*< private >*/
 	AS_BUNDLE_KIND_LAST
 } AsBundleKind;
+
+/* DEPRECATED */
+#define AS_BUNDLE_KIND_XDG_APP	AS_BUNDLE_KIND_FLATPAK
 
 AsBundle	*as_bundle_new			(void);
 

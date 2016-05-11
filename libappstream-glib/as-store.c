@@ -69,7 +69,7 @@ typedef struct
 	AsMonitor		*monitor;
 	GHashTable		*metadata_indexes;	/* GHashTable{key} */
 	GHashTable		*appinfo_dirs;	/* GHashTable{path} */
-	GHashTable		*xdg_app_dirs;	/* GHashTable{path} */
+	GHashTable		*flatpak_dirs;	/* GHashTable{path} */
 	AsStoreAddFlags		 add_flags;
 	AsStoreWatchFlags	 watch_flags;
 	AsStoreProblems		 problems;
@@ -99,7 +99,7 @@ static guint signals [SIGNAL_LAST] = { 0 };
  **/
 G_DEFINE_QUARK (as-store-error-quark, as_store_error)
 
-static gboolean	as_store_search_xdg_apps (AsStore *store,
+static gboolean	as_store_search_flatpaks (AsStore *store,
 					  AsStoreLoadFlags flags,
 					  const gchar *id_prefix,
 					  const gchar *path,
@@ -130,7 +130,7 @@ as_store_finalize (GObject *object)
 	g_hash_table_unref (priv->hash_pkgname);
 	g_hash_table_unref (priv->metadata_indexes);
 	g_hash_table_unref (priv->appinfo_dirs);
-	g_hash_table_unref (priv->xdg_app_dirs);
+	g_hash_table_unref (priv->flatpak_dirs);
 
 	G_OBJECT_CLASS (as_store_parent_class)->finalize (object);
 }
@@ -970,10 +970,10 @@ as_store_match_addons (AsStore *store)
 }
 
 /**
- * as_store_get_origin_for_xdg_app:
+ * as_store_get_origin_for_flatpak:
  **/
 static gchar *
-as_store_get_origin_for_xdg_app (const gchar *fn)
+as_store_get_origin_for_flatpak (const gchar *fn)
 {
 	g_auto(GStrv) split = g_strsplit (fn, "/", -1);
 	guint chunks = g_strv_length (split);
@@ -989,7 +989,7 @@ as_store_get_origin_for_xdg_app (const gchar *fn)
  * continue to use the application ID as the primary identifier.
  *
  * Now we support installing things per-user, and also per-system and per-user
- * xdg-app (not even including jhbuild) we need to use the id prefix to
+ * flatpak (not even including jhbuild) we need to use the id prefix to
  * disambiguate the different applications according to a 'scope'.
  *
  * This means when we launch a specific application in the software center
@@ -1060,10 +1060,10 @@ as_store_from_root (AsStore *store,
 	if (tmp != NULL)
 		as_store_set_origin (store, tmp);
 
-	/* special case xdg-apps */
+	/* special case flatpak */
 	if (source_filename != NULL &&
-	    g_strcmp0 (priv->origin, "xdg-app") == 0) {
-		origin_app = as_store_get_origin_for_xdg_app (source_filename);
+	    as_bundle_kind_from_string (priv->origin) == AS_BUNDLE_KIND_FLATPAK) {
+		origin_app = as_store_get_origin_for_flatpak (source_filename);
 		g_debug ("using app origin of '%s' rather than '%s'",
 			 origin_app, priv->origin);
 	} else {
@@ -1236,10 +1236,10 @@ as_store_load_yaml_file (AsStore *store,
 }
 
 /**
- * as_store_rescan_xdg_app_dir:
+ * as_store_rescan_flatpak_dir:
  */
 static void
-as_store_rescan_xdg_app_dir (AsStore *store, const gchar *filename)
+as_store_rescan_flatpak_dir (AsStore *store, const gchar *filename)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	const gchar *id_prefix;
@@ -1247,13 +1247,13 @@ as_store_rescan_xdg_app_dir (AsStore *store, const gchar *filename)
 	g_autoptr(GError) error = NULL;
 
 	/* we helpfully saved this */
-	id_prefix = g_hash_table_lookup (priv->xdg_app_dirs, filename);
+	id_prefix = g_hash_table_lookup (priv->flatpak_dirs, filename);
 
-	g_debug ("rescanning xdg-app dir %s", filename);
+	g_debug ("rescanning flatpak dir %s", filename);
 	dest = g_build_filename (priv->destdir ? priv->destdir : "/", filename, NULL);
 	if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 		return;
-	if (!as_store_search_xdg_apps (store,
+	if (!as_store_search_flatpaks (store,
 				       AS_STORE_LOAD_FLAG_IGNORE_INVALID,
 				       id_prefix,
 				       dest,
@@ -1328,8 +1328,8 @@ as_store_monitor_changed_cb (AsMonitor *monitor,
 							  &error)){
 				g_warning ("failed to rescan: %s", error->message);
 			}
-		} else if (g_hash_table_contains (priv->xdg_app_dirs, filename)) {
-			as_store_rescan_xdg_app_dir (store, filename);
+		} else if (g_hash_table_contains (priv->flatpak_dirs, filename)) {
+			as_store_rescan_flatpak_dir (store, filename);
 		}
 	}
 	as_store_perhaps_emit_changed (store, "file changed");
@@ -1357,8 +1357,8 @@ as_store_monitor_added_cb (AsMonitor *monitor,
 			file = g_file_new_for_path (filename);
 			if (!as_store_from_file (store, file, NULL, NULL, &error)) //FIXME: id_kind
 				g_warning ("failed to rescan: %s", error->message);
-		} else if (g_hash_table_contains (priv->xdg_app_dirs, filename)) {
-			as_store_rescan_xdg_app_dir (store, filename);
+		} else if (g_hash_table_contains (priv->flatpak_dirs, filename)) {
+			as_store_rescan_flatpak_dir (store, filename);
 		}
 
 	}
@@ -2140,6 +2140,11 @@ as_store_load_app_info (AsStore *store,
 		return TRUE;
 	dir = g_dir_open (path, 0, &error_local);
 	if (dir == NULL) {
+		if (flags & AS_STORE_LOAD_FLAG_IGNORE_INVALID) {
+			g_warning ("ignoring invalid AppStream path %s: %s",
+				   path, error_local->message);
+			return TRUE;
+		}
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
@@ -2394,10 +2399,10 @@ as_store_search_app_info (AsStore *store,
 }
 
 /**
- * as_store_monitor_xdg_app_dir:
+ * as_store_monitor_flatpak_dir:
  **/
 static void
-as_store_monitor_xdg_app_dir (AsStore *store,
+as_store_monitor_flatpak_dir (AsStore *store,
 			      const gchar *path,
 			      const gchar *id_prefix)
 {
@@ -2405,7 +2410,7 @@ as_store_monitor_xdg_app_dir (AsStore *store,
 	g_autoptr(GError) error = NULL;
 
 	/* mark and monitor directory so we can pick up later added remotes */
-	g_hash_table_insert (priv->xdg_app_dirs, g_strdup (path), g_strdup (id_prefix));
+	g_hash_table_insert (priv->flatpak_dirs, g_strdup (path), g_strdup (id_prefix));
 	if (!as_monitor_add_file (priv->monitor,
 				  path, NULL, &error)) {
 		g_warning ("Can't monitor dir %s: %s",
@@ -2413,11 +2418,11 @@ as_store_monitor_xdg_app_dir (AsStore *store,
 	}
 }
 
-/* until exported by xdg-app */
+/* until exported by flatpak */
 #include <sys/utsname.h>
 #include <string.h>
 static const char *
-_xdg_app_get_arch (void)
+_flatpak_get_arch (void)
 {
   static struct utsname buf;
   static const char *arch = NULL;
@@ -2465,10 +2470,10 @@ _xdg_app_get_arch (void)
 }
 
 /**
- * as_store_search_xdg_apps:
+ * as_store_search_flatpaks:
  **/
 static gboolean
-as_store_search_xdg_apps (AsStore *store,
+as_store_search_flatpaks (AsStore *store,
 			  AsStoreLoadFlags flags,
 			  const gchar *id_prefix,
 			  const gchar *path,
@@ -2485,14 +2490,15 @@ as_store_search_xdg_apps (AsStore *store,
 		g_autofree gchar *dest = NULL;
 		dest = g_build_filename (path,
 					 filename,
-					 _xdg_app_get_arch (),
+					 _flatpak_get_arch (),
 					 "active",
 					 NULL);
 		g_debug ("searching path %s", dest);
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 			continue;
 		if (!as_store_load_app_info (store, id_prefix, dest,
-					     flags, cancellable, error))
+					     flags | AS_STORE_LOAD_FLAG_IGNORE_INVALID,
+					     cancellable, error))
 			return FALSE;
 	}
 	return TRUE;
@@ -2515,49 +2521,50 @@ as_store_search_per_system (AsStore *store,
 	/* profile */
 	ptask = as_profile_start_literal (priv->profile, "AsStore:load{per-system}");
 
-	/* xdg-app */
-	if ((flags & AS_STORE_LOAD_FLAG_XDG_APP_SYSTEM) > 0) {
+	/* flatpak */
+	if ((flags & AS_STORE_LOAD_FLAG_FLATPAK_SYSTEM) > 0) {
 		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 			g_autofree gchar *dest = NULL;
 			dest = g_build_filename (LOCALSTATEDIR,
-						 "xdg-app",
+						 "flatpak",
 						 "exports",
 						 "share",
 						 "applications",
 						 NULL);
-			if (!as_store_search_installed (store, flags, "system-xdgapp",
+			if (!as_store_search_installed (store, flags, "flatpak",
 							dest, cancellable, error))
 				return FALSE;
 		}
 		if ((flags & AS_STORE_LOAD_FLAG_DESKTOP) > 0) {
 			g_autofree gchar *dest = NULL;
 			dest = g_build_filename (LOCALSTATEDIR,
-						 "xdg-app",
+						 "flatpak",
 						 "exports",
 						 "share",
 						 "appdata",
 						 NULL);
-			if (!as_store_search_installed (store, flags, "system-xdgapp",
+			if (!as_store_search_installed (store, flags, "flatpak",
 							dest, cancellable, error))
 				return FALSE;
 		}
 		if (TRUE) {
 			g_autofree gchar *dest = NULL;
 			dest = g_build_filename (LOCALSTATEDIR,
-						 "xdg-app",
+						 "lib",
+						 "flatpak",
 						 "appstream",
 						 NULL);
-			if (!as_store_search_xdg_apps (store, flags, "system-xdgapp",
+			if (!as_store_search_flatpaks (store, flags, "flatpak",
 						       dest, cancellable, error))
 				return FALSE;
-			as_store_monitor_xdg_app_dir (store, dest, "system-xdgapp");
+			as_store_monitor_flatpak_dir (store, dest, "flatpak");
 		}
 	}
 
 	/* datadir AppStream, AppData and desktop */
 	data_dirs = g_get_system_data_dirs ();
 	for (i = 0; data_dirs[i] != NULL; i++) {
-		if (g_strstr_len (data_dirs[i], -1, "xdg-app/exports") != NULL) {
+		if (g_strstr_len (data_dirs[i], -1, "flatpak/exports") != NULL) {
 			g_debug ("skipping %s as invalid", data_dirs[i]);
 			continue;
 		}
@@ -2636,36 +2643,36 @@ as_store_search_per_user (AsStore *store,
 	/* profile */
 	ptask = as_profile_start_literal (priv->profile, "AsStore:load{per-user}");
 
-	/* xdg-app */
-	if ((flags & AS_STORE_LOAD_FLAG_XDG_APP_USER) > 0) {
+	/* flatpak */
+	if ((flags & AS_STORE_LOAD_FLAG_FLATPAK_USER) > 0) {
 
 		/* installed AppData and desktop */
 		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 			g_autofree gchar *dest = NULL;
 			dest = g_build_filename (g_get_user_data_dir (),
-						 "xdg-app",
+						 "flatpak",
 						 "exports",
 						 "share",
 						 "applications",
 						 NULL);
-			if (!as_store_search_installed (store, flags, "user-xdgapp",
+			if (!as_store_search_installed (store, flags, "user-flatpak",
 							dest, cancellable, error))
 				return FALSE;
 		}
 		if ((flags & AS_STORE_LOAD_FLAG_DESKTOP) > 0) {
 			g_autofree gchar *dest = NULL;
 			dest = g_build_filename (g_get_user_data_dir (),
-						 "xdg-app",
+						 "flatpak",
 						 "exports",
 						 "share",
 						 "appdata",
 						 NULL);
-			if (!as_store_search_installed (store, flags, "user-xdgapp",
+			if (!as_store_search_installed (store, flags, "user-flatpak",
 							dest, cancellable, error))
 				return FALSE;
 		}
 
-		/* If we're running INSIDE the xdg-app environment we'll have the
+		/* If we're running INSIDE the flatpak environment we'll have the
 		 * env var XDG_DATA_HOME set to "~/.var/app/org.gnome.Software/data"
 		 * so specify the path manually to get the real data */
 		if (TRUE) {
@@ -2673,13 +2680,13 @@ as_store_search_per_user (AsStore *store,
 			dest = g_build_filename (g_get_home_dir (),
 						 ".local",
 						 "share",
-						 "xdg-app",
+						 "flatpak",
 						 "appstream",
 						 NULL);
-			if (!as_store_search_xdg_apps (store, flags, "user-xdgapp",
+			if (!as_store_search_flatpaks (store, flags, "user-flatpak",
 						       dest, cancellable, error))
 				return FALSE;
-			as_store_monitor_xdg_app_dir (store, dest, "user-xdgapp");
+			as_store_monitor_flatpak_dir (store, dest, "user-flatpak");
 		}
 	}
 
@@ -3067,7 +3074,7 @@ as_store_init (AsStore *store)
 						    g_str_equal,
 						    g_free,
 						    g_free);
-	priv->xdg_app_dirs = g_hash_table_new_full (g_str_hash,
+	priv->flatpak_dirs = g_hash_table_new_full (g_str_hash,
 						    g_str_equal,
 						    g_free,
 						    g_free);

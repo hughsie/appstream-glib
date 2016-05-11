@@ -1212,10 +1212,10 @@ as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 				    NULL, error)) {
 			return FALSE;
 		}
-	} else if (g_strcmp0 (values[0], "xdg-app") == 0) {
+	} else if (g_strcmp0 (values[0], "flatpak") == 0) {
 		if (!as_store_load (store,
 				    AS_STORE_LOAD_FLAG_IGNORE_INVALID |
-				    AS_STORE_LOAD_FLAG_XDG_APP_USER,
+				    AS_STORE_LOAD_FLAG_FLATPAK_SYSTEM,
 				    NULL, error)) {
 			return FALSE;
 		}
@@ -1278,8 +1278,8 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
 			    AS_STORE_LOAD_FLAG_APP_INFO_USER |
 			    AS_STORE_LOAD_FLAG_APPDATA |
-			    AS_STORE_LOAD_FLAG_XDG_APP_USER |
-			    AS_STORE_LOAD_FLAG_XDG_APP_SYSTEM |
+			    AS_STORE_LOAD_FLAG_FLATPAK_USER |
+			    AS_STORE_LOAD_FLAG_FLATPAK_SYSTEM |
 			    AS_STORE_LOAD_FLAG_DESKTOP,
 			    NULL, error))
 		return FALSE;
@@ -1336,8 +1336,6 @@ as_util_search_pkgname (AsUtilPrivate *priv, gchar **values, GError **error)
 			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
 			    AS_STORE_LOAD_FLAG_APP_INFO_USER |
 			    AS_STORE_LOAD_FLAG_APPDATA |
-			    AS_STORE_LOAD_FLAG_XDG_APP_USER |
-			    AS_STORE_LOAD_FLAG_XDG_APP_SYSTEM |
 			    AS_STORE_LOAD_FLAG_DESKTOP,
 			    NULL, error))
 		return FALSE;

@@ -101,8 +101,10 @@ as_bundle_kind_from_string (const gchar *kind)
 {
 	if (g_strcmp0 (kind, "limba") == 0)
 		return AS_BUNDLE_KIND_LIMBA;
-	if (g_strcmp0 (kind, "xdg-app") == 0)
-		return AS_BUNDLE_KIND_XDG_APP;
+	if (g_strcmp0 (kind, "xdg-app") == 0) /* backwards compat */
+		return AS_BUNDLE_KIND_FLATPAK;
+	if (g_strcmp0 (kind, "flatpak") == 0)
+		return AS_BUNDLE_KIND_FLATPAK;
 	return AS_BUNDLE_KIND_UNKNOWN;
 }
 
@@ -121,8 +123,8 @@ as_bundle_kind_to_string (AsBundleKind kind)
 {
 	if (kind == AS_BUNDLE_KIND_LIMBA)
 		return "limba";
-	if (kind == AS_BUNDLE_KIND_XDG_APP)
-		return "xdg-app";
+	if (kind == AS_BUNDLE_KIND_FLATPAK)
+		return "flatpak";
 	return NULL;
 }
 
