@@ -2356,6 +2356,7 @@ as_store_search_installed (AsStore *store,
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_autofree gchar *dest = NULL;
 	dest = g_build_filename (priv->destdir ? priv->destdir : "/", path, NULL);
+	g_debug ("searching path %s", dest);
 	if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 		return TRUE;
 	return as_store_load_installed (store, flags, id_prefix,
@@ -2487,6 +2488,7 @@ as_store_search_xdg_apps (AsStore *store,
 					 _xdg_app_get_arch (),
 					 "active",
 					 NULL);
+		g_debug ("searching path %s", dest);
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 			continue;
 		if (!as_store_load_app_info (store, id_prefix, dest,
