@@ -2981,9 +2981,10 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 			if ((as_app_get_problems (app) & AS_APP_PROBLEM_PREFORMATTED_DESCRIPTION) != 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "%s: metadata version is v%.1f and "
 						       "<description> requiring markup "
 						       "was introduced in v0.6",
+						       as_app_get_id (app),
 						       priv->api_version);
 			}
 		}
