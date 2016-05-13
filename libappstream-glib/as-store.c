@@ -2523,7 +2523,6 @@ as_store_search_per_system (AsStore *store,
 
 	/* flatpak */
 	if ((flags & AS_STORE_LOAD_FLAG_FLATPAK_SYSTEM) > 0) {
-		const gchar *tmp;
 		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 			g_autofree gchar *dest = NULL;
 			dest = g_build_filename (LOCALSTATEDIR,
@@ -2552,20 +2551,6 @@ as_store_search_per_system (AsStore *store,
 			g_autofree gchar *dest = NULL;
 			dest = g_build_filename (LOCALSTATEDIR,
 						 "lib",
-						 "flatpak",
-						 "appstream",
-						 NULL);
-			if (!as_store_search_flatpaks (store, flags, "flatpak",
-						       dest, cancellable, error))
-				return FALSE;
-			as_store_monitor_flatpak_dir (store, dest, "flatpak");
-		}
-
-		/* for self tests */
-		tmp = g_getenv ("AS_GLIB_FLATPAK_EXTRA_DATADIR");
-		if (tmp != NULL) {
-			g_autofree gchar *dest = NULL;
-			dest = g_build_filename (tmp,
 						 "flatpak",
 						 "appstream",
 						 NULL);
