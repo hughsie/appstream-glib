@@ -3044,22 +3044,24 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 		}
 
 		/* check uniqueness */
-		app_key = as_store_get_unique_name_app_key (app);
-		if (app_key != NULL) {
-			app_tmp = g_hash_table_lookup (hash_names, app_key);
-			if (app_tmp != NULL) {
-				as_store_validate_add (probs,
-						       AS_PROBLEM_KIND_DUPLICATE_DATA,
-						       "%s[%s] as the same name as %s[%s]: %s",
-						       as_app_get_id (app),
-						       as_app_get_pkgname_default (app),
-						       as_app_get_id (app_tmp),
-						       as_app_get_pkgname_default (app_tmp),
-						       app_key);
-			} else {
-				g_hash_table_insert (hash_names,
-						     g_strdup (app_key),
-						     g_object_ref (app));
+		if (as_app_get_kind (app) != AS_APP_KIND_ADDON) {
+			app_key = as_store_get_unique_name_app_key (app);
+			if (app_key != NULL) {
+				app_tmp = g_hash_table_lookup (hash_names, app_key);
+				if (app_tmp != NULL) {
+					as_store_validate_add (probs,
+							       AS_PROBLEM_KIND_DUPLICATE_DATA,
+							       "%s[%s] as the same name as %s[%s]: %s",
+							       as_app_get_id (app),
+							       as_app_get_pkgname_default (app),
+							       as_app_get_id (app_tmp),
+							       as_app_get_pkgname_default (app_tmp),
+							       app_key);
+				} else {
+					g_hash_table_insert (hash_names,
+							     g_strdup (app_key),
+							     g_object_ref (app));
+				}
 			}
 		}
 	}
