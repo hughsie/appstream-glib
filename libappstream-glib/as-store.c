@@ -1306,6 +1306,51 @@ as_store_remove_by_source_file (AsStore *store, const gchar *filename)
 }
 
 /**
+ * as_store_watch_source_added:
+ */
+static void
+as_store_watch_source_added (AsStore *store, const gchar *filename)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	AsStorePathData *path_data;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GFile) file = NULL;
+
+	/* ignore directories */
+	if (!g_file_test (filename, G_FILE_TEST_IS_REGULAR))
+		return;
+
+	/* we helpfully saved this */
+	g_debug ("parsing new file %s", filename);
+	path_data = g_hash_table_lookup (priv->appinfo_dirs, filename);
+	if (path_data == NULL) {
+		g_warning ("no path data for %s", filename);
+		return;
+	}
+	file = g_file_new_for_path (filename);
+	if (!as_store_from_file_internal (store,
+					  file,
+					  path_data->id_prefix,
+					  path_data->arch,
+					  NULL, /* cancellable */
+					  &error)){
+		g_warning ("failed to rescan: %s", error->message);
+	}
+}
+
+/**
+ * as_store_watch_source_changed:
+ */
+static void
+as_store_watch_source_changed (AsStore *store, const gchar *filename)
+{
+	/* remove all the apps provided by the source file then re-add them */
+	g_debug ("re-parsing changed file %s", filename);
+	as_store_remove_by_source_file (store, filename);
+	as_store_watch_source_added (store, filename);
+}
+
+/**
  * as_store_monitor_changed_cb:
  */
 static void
@@ -1314,33 +1359,14 @@ as_store_monitor_changed_cb (AsMonitor *monitor,
 			     AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	_cleanup_uninhibit_ guint32 *tok = NULL;
 
 	/* reload, or emit a signal */
+	tok = as_store_changed_inhibit (store);
 	if (priv->watch_flags & AS_STORE_WATCH_FLAG_ADDED) {
-		_cleanup_uninhibit_ guint32 *tok = NULL;
-		tok = as_store_changed_inhibit (store);
-
-		if (g_file_test (filename, G_FILE_TEST_IS_REGULAR)) {
-			AsStorePathData *path_data;
-			g_autoptr(GError) error = NULL;
-			g_autoptr(GFile) file = NULL;
-			as_store_remove_by_source_file (store, filename);
-			g_debug ("rescanning %s", filename);
-			file = g_file_new_for_path (filename);
-
-			/* we helpfully saved this */
-			path_data = g_hash_table_lookup (priv->appinfo_dirs, filename);
-			if (!as_store_from_file_internal (store,
-							  file,
-							  path_data->id_prefix,
-							  path_data->arch,
-							  NULL, /* cancellable */
-							  &error)){
-				g_warning ("failed to rescan: %s", error->message);
-			}
-		} else if (g_hash_table_contains (priv->flatpak_dirs, filename)) {
+		as_store_watch_source_changed (store, filename);
+		if (g_hash_table_contains (priv->flatpak_dirs, filename))
 			as_store_rescan_flatpak_dir (store, filename);
-		}
 	}
 	as_store_perhaps_emit_changed (store, "file changed");
 }
@@ -1354,23 +1380,14 @@ as_store_monitor_added_cb (AsMonitor *monitor,
 			     AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	_cleanup_uninhibit_ guint32 *tok = NULL;
 
 	/* reload, or emit a signal */
+	tok = as_store_changed_inhibit (store);
 	if (priv->watch_flags & AS_STORE_WATCH_FLAG_ADDED) {
-		_cleanup_uninhibit_ guint32 *tok = NULL;
-		tok = as_store_changed_inhibit (store);
-		if (g_file_test (filename, G_FILE_TEST_IS_REGULAR)) {
-			g_autoptr(GError) error = NULL;
-			g_autoptr(GFile) file = NULL;
-
-			g_debug ("scanning %s", filename);
-			file = g_file_new_for_path (filename);
-			if (!as_store_from_file (store, file, NULL, NULL, &error)) //FIXME: id_kind
-				g_warning ("failed to rescan: %s", error->message);
-		} else if (g_hash_table_contains (priv->flatpak_dirs, filename)) {
+		as_store_watch_source_added (store, filename);
+		if (g_hash_table_contains (priv->flatpak_dirs, filename))
 			as_store_rescan_flatpak_dir (store, filename);
-		}
-
 	}
 	as_store_perhaps_emit_changed (store, "file added");
 }
@@ -1390,6 +1407,26 @@ as_store_monitor_removed_cb (AsMonitor *monitor,
 	} else {
 		as_store_perhaps_emit_changed (store, "file removed");
 	}
+}
+
+/**
+ * as_store_add_path_data:
+ *
+ * Save the path data so we can add any newly-discovered applications with the
+ * correct prefix and architecture.
+ **/
+static void
+as_store_add_path_data (AsStore *store,
+			const gchar *filename,
+			const gchar *id_prefix,
+			const gchar *arch)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	AsStorePathData *path_data = g_slice_new0 (AsStorePathData);
+
+	path_data->id_prefix = g_strdup (id_prefix);
+	path_data->arch = g_strdup (arch);
+	g_hash_table_insert (priv->appinfo_dirs, g_strdup (filename), path_data);
 }
 
 /**
@@ -1442,6 +1479,7 @@ as_store_from_file_internal (AsStore *store,
 
 	/* watch for file changes */
 	if (priv->watch_flags > 0) {
+		as_store_add_path_data (store, filename, id_prefix, arch);
 		if (!as_monitor_add_file (priv->monitor,
 					  filename,
 					  cancellable,
@@ -2141,7 +2179,6 @@ as_store_load_app_info (AsStore *store,
 			GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	AsStorePathData *path_data;
 	const gchar *tmp;
 	g_autoptr(GDir) dir = NULL;
 	g_autoptr(GError) error_local = NULL;
@@ -2196,18 +2233,12 @@ as_store_load_app_info (AsStore *store,
 	}
 
 	/* watch the directories for changes */
+	as_store_add_path_data (store, path, id_prefix, arch);
 	if (!as_monitor_add_directory (priv->monitor,
 				       path,
 				       cancellable,
 				       error))
 		return FALSE;
-
-	/* save the path data so we can add any newly-discovered applications
-	 * with the correct prefix and architecture */
-	path_data = g_slice_new0 (AsStorePathData);
-	path_data->arch = g_strdup (arch);
-	path_data->id_prefix = g_strdup (id_prefix);
-	g_hash_table_insert (priv->appinfo_dirs, g_strdup (path), path_data);
 
 	/* emit changed */
 	as_store_changed_uninhibit (&tok);
@@ -2280,6 +2311,7 @@ as_store_load_installed (AsStore *store,
 		return FALSE;
 
 	/* watch the directories for changes */
+	as_store_add_path_data (store, path, id_prefix, NULL);
 	if (!as_monitor_add_directory (priv->monitor,
 				       path,
 				       cancellable,
@@ -2433,6 +2465,7 @@ as_store_monitor_flatpak_dir (AsStore *store,
 
 	/* mark and monitor directory so we can pick up later added remotes */
 	g_hash_table_insert (priv->flatpak_dirs, g_strdup (path), g_strdup (id_prefix));
+	as_store_add_path_data (store, path, id_prefix, NULL);
 	if (!as_monitor_add_file (priv->monitor,
 				  path, NULL, &error)) {
 		g_warning ("Can't monitor dir %s: %s",
