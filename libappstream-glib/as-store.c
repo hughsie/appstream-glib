@@ -2559,6 +2559,13 @@ as_store_search_per_system (AsStore *store,
 				return FALSE;
 			as_store_monitor_flatpak_dir (store, dest, "flatpak");
 		}
+		if (g_strcmp0 (LOCALSTATEDIR, "/var") != 0) {
+			const gchar *dest = "/var/lib/flatpak/appstream";
+			if (!as_store_search_flatpaks (store, flags, "flatpak",
+						       dest, cancellable, error))
+				return FALSE;
+			as_store_monitor_flatpak_dir (store, dest, "flatpak");
+		}
 	}
 
 	/* datadir AppStream, AppData and desktop */
