@@ -2418,55 +2418,35 @@ as_store_monitor_flatpak_dir (AsStore *store,
 	}
 }
 
-/* until exported by flatpak */
-#include <sys/utsname.h>
-#include <string.h>
-static const char *
-_flatpak_get_arch (void)
+/**
+ * as_store_search_flatpak_arch:
+ **/
+static gboolean
+as_store_search_flatpak_arch (AsStore *store,
+			      AsStoreLoadFlags flags,
+			      const gchar *id_prefix,
+			      const gchar *path,
+			      GCancellable *cancellable,
+			      GError **error)
 {
-  static struct utsname buf;
-  static const char *arch = NULL;
-  char *m;
+	const gchar *fn;
+	g_autoptr(GDir) dir = NULL;
 
-  if (arch != NULL)
-    return arch;
-
-  if (uname (&buf))
-    {
-      arch = "unknown";
-      return arch;
-    }
-
-  /* By default, just pass on machine, good enough for most arches */
-  arch = buf.machine;
-
-  /* Override for some arches */
-
-  m = buf.machine;
-  /* i?86 */
-  if (strlen (m) == 4 && m[0] == 'i' && m[2] == '8'  && m[3] == '6')
-    arch = "i386";
-  else if (g_str_has_prefix (m, "arm"))
-    {
-      if (g_str_has_suffix (m, "b"))
-        arch = "armeb";
-      else
-        arch = "arm";
-    }
-  else if (strcmp (m, "mips") == 0)
-    {
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-      arch = "mipsel";
-#endif
-    }
-  else if (strcmp (m, "mips64") == 0)
-    {
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-      arch = "mips64el";
-#endif
-    }
-
-  return arch;
+	dir = g_dir_open (path, 0, NULL);
+	if (dir == NULL)
+		return TRUE;
+	while ((fn = g_dir_read_name (dir)) != NULL) {
+		g_autofree gchar *dest = NULL;
+		dest = g_build_filename (path, fn, "active", NULL);
+		g_debug ("searching path %s", dest);
+		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
+			continue;
+		if (!as_store_load_app_info (store, id_prefix, dest,
+					     flags | AS_STORE_LOAD_FLAG_IGNORE_INVALID,
+					     cancellable, error))
+			return FALSE;
+	}
+	return TRUE;
 }
 
 /**
@@ -2480,25 +2460,20 @@ as_store_search_flatpaks (AsStore *store,
 			  GCancellable *cancellable,
 			  GError **error)
 {
-	const gchar *filename;
+	const gchar *fn;
 	g_autoptr(GDir) dir = NULL;
 
 	dir = g_dir_open (path, 0, NULL);
 	if (dir == NULL)
 		return TRUE;
-	while ((filename = g_dir_read_name (dir)) != NULL) {
+	while ((fn = g_dir_read_name (dir)) != NULL) {
 		g_autofree gchar *dest = NULL;
-		dest = g_build_filename (path,
-					 filename,
-					 _flatpak_get_arch (),
-					 "active",
-					 NULL);
-		g_debug ("searching path %s", dest);
+		dest = g_build_filename (path, fn, NULL);
+		g_debug ("searching path for architectures: %s", dest);
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 			continue;
-		if (!as_store_load_app_info (store, id_prefix, dest,
-					     flags | AS_STORE_LOAD_FLAG_IGNORE_INVALID,
-					     cancellable, error))
+		if (!as_store_search_flatpak_arch (store, flags, id_prefix,
+						   dest, cancellable, error))
 			return FALSE;
 	}
 	return TRUE;
