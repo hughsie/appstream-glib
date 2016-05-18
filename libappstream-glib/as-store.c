@@ -68,8 +68,8 @@ typedef struct
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
 	AsMonitor		*monitor;
 	GHashTable		*metadata_indexes;	/* GHashTable{key} */
-	GHashTable		*appinfo_dirs;	/* GHashTable{path} */
-	GHashTable		*flatpak_dirs;	/* GHashTable{path} */
+	GHashTable		*appinfo_dirs;	/* GHashTable{path:AsStorePathData} */
+	GHashTable		*flatpak_dirs;	/* GHashTable{path:id_prefix} */
 	AsStoreAddFlags		 add_flags;
 	AsStoreWatchFlags	 watch_flags;
 	AsStoreProblems		 problems;
@@ -78,6 +78,11 @@ typedef struct
 	gboolean		 is_pending_changed_signal;
 	AsProfile		*profile;
 } AsStorePrivate;
+
+typedef struct {
+	gchar			*id_prefix;
+	gchar			*arch;
+} AsStorePathData;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsStore, as_store, G_TYPE_OBJECT)
 
@@ -1316,7 +1321,7 @@ as_store_monitor_changed_cb (AsMonitor *monitor,
 		tok = as_store_changed_inhibit (store);
 
 		if (g_file_test (filename, G_FILE_TEST_IS_REGULAR)) {
-			const gchar *id_prefix;
+			AsStorePathData *path_data;
 			g_autoptr(GError) error = NULL;
 			g_autoptr(GFile) file = NULL;
 			as_store_remove_by_source_file (store, filename);
@@ -1324,11 +1329,11 @@ as_store_monitor_changed_cb (AsMonitor *monitor,
 			file = g_file_new_for_path (filename);
 
 			/* we helpfully saved this */
-			id_prefix = g_hash_table_lookup (priv->appinfo_dirs, filename);
+			path_data = g_hash_table_lookup (priv->appinfo_dirs, filename);
 			if (!as_store_from_file_internal (store,
 							  file,
-							  id_prefix,
-							  NULL, // FIXME: arch
+							  path_data->id_prefix,
+							  path_data->arch,
 							  NULL, /* cancellable */
 							  &error)){
 				g_warning ("failed to rescan: %s", error->message);
@@ -2136,6 +2141,7 @@ as_store_load_app_info (AsStore *store,
 			GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	AsStorePathData *path_data;
 	const gchar *tmp;
 	g_autoptr(GDir) dir = NULL;
 	g_autoptr(GError) error_local = NULL;
@@ -2196,10 +2202,12 @@ as_store_load_app_info (AsStore *store,
 				       error))
 		return FALSE;
 
-	/* save the id_prefix */
-	g_hash_table_insert (priv->appinfo_dirs,
-			     g_strdup (path),
-			     g_strdup (id_prefix));
+	/* save the path data so we can add any newly-discovered applications
+	 * with the correct prefix and architecture */
+	path_data = g_slice_new0 (AsStorePathData);
+	path_data->arch = g_strdup (arch);
+	path_data->id_prefix = g_strdup (id_prefix);
+	g_hash_table_insert (priv->appinfo_dirs, g_strdup (path), path_data);
 
 	/* emit changed */
 	as_store_changed_uninhibit (&tok);
@@ -3051,6 +3059,17 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 }
 
 /**
+ * as_store_path_data_free:
+ **/
+static void
+as_store_path_data_free (AsStorePathData *path_data)
+{
+	g_free (path_data->arch);
+	g_free (path_data->id_prefix);
+	g_slice_free (AsStorePathData, path_data);
+}
+
+/**
  * as_store_init:
  **/
 static void
@@ -3072,7 +3091,7 @@ as_store_init (AsStore *store)
 	priv->appinfo_dirs = g_hash_table_new_full (g_str_hash,
 						    g_str_equal,
 						    g_free,
-						    g_free);
+						    (GDestroyNotify) as_store_path_data_free);
 	priv->flatpak_dirs = g_hash_table_new_full (g_str_hash,
 						    g_str_equal,
 						    g_free,
