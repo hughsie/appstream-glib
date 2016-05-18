@@ -108,6 +108,7 @@ static gboolean	as_store_search_flatpaks (AsStore *store,
 static gboolean	as_store_from_file_internal (AsStore *store,
 					     GFile *file,
 					     const gchar *id_prefix,
+					     const gchar *arch,
 					     GCancellable *cancellable,
 					     GError **error);
 
@@ -1017,6 +1018,7 @@ as_store_from_root (AsStore *store,
 		    const gchar *id_prefix,
 		    const gchar *icon_prefix,
 		    const gchar *source_filename,
+		    const gchar *arch,
 		    GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
@@ -1116,6 +1118,8 @@ as_store_from_root (AsStore *store,
 		app = as_app_new ();
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path);
+		if (arch != NULL)
+			as_app_add_arch (app, arch);
 		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
 		if (!as_app_node_parse (app, n, ctx, &error_local)) {
 			g_set_error (error,
@@ -1324,7 +1328,8 @@ as_store_monitor_changed_cb (AsMonitor *monitor,
 			if (!as_store_from_file_internal (store,
 							  file,
 							  id_prefix,
-							  NULL,
+							  NULL, // FIXME: arch
+							  NULL, /* cancellable */
 							  &error)){
 				g_warning ("failed to rescan: %s", error->message);
 			}
@@ -1389,6 +1394,7 @@ static gboolean
 as_store_from_file_internal (AsStore *store,
 			     GFile *file,
 			     const gchar *id_prefix,
+			     const gchar *arch,
 			     GCancellable *cancellable,
 			     GError **error)
 {
@@ -1441,7 +1447,7 @@ as_store_from_file_internal (AsStore *store,
 	/* icon prefix is the directory the XML has been found in */
 	icon_prefix = g_path_get_dirname (filename);
 	return as_store_from_root (store, root, id_prefix,
-				   icon_prefix, filename, error);
+				   icon_prefix, filename, arch, error);
 }
 
 /**
@@ -1470,7 +1476,8 @@ as_store_from_file (AsStore *store,
 		    GCancellable *cancellable,
 		    GError **error)
 {
-	return as_store_from_file_internal (store, file, NULL, cancellable, error);
+	return as_store_from_file_internal (store, file, NULL, NULL,
+					    cancellable, error);
 }
 
 /**
@@ -1574,7 +1581,10 @@ as_store_from_xml (AsStore *store,
 			     error_local->message);
 		return FALSE;
 	}
-	return as_store_from_root (store, root, id_prefix, icon_root, NULL, error);
+	return as_store_from_root (store, root, id_prefix, icon_root,
+				   NULL, /* filename */
+				   NULL, /* arch */
+				   error);
 }
 
 /**
@@ -2089,6 +2099,7 @@ static gboolean
 as_store_load_app_info_file (AsStore *store,
 			     const gchar *id_prefix,
 			     const gchar *path_xml,
+			     const gchar *arch,
 			     GCancellable *cancellable,
 			     GError **error)
 {
@@ -2107,6 +2118,7 @@ as_store_load_app_info_file (AsStore *store,
 	return as_store_from_file_internal (store,
 					    file,
 					    id_prefix,
+					    arch,
 					    cancellable,
 					    error);
 }
@@ -2118,6 +2130,7 @@ static gboolean
 as_store_load_app_info (AsStore *store,
 			const gchar *id_prefix,
 			const gchar *path,
+			const gchar *arch,
 			AsStoreLoadFlags flags,
 			GCancellable *cancellable,
 			GError **error)
@@ -2162,6 +2175,7 @@ as_store_load_app_info (AsStore *store,
 		if (!as_store_load_app_info_file (store,
 						  id_prefix,
 						  filename_md,
+						  arch,
 						  cancellable,
 						  &error_store)) {
 			if (flags & AS_STORE_LOAD_FLAG_IGNORE_INVALID) {
@@ -2391,7 +2405,7 @@ as_store_search_app_info (AsStore *store,
 					 NULL);
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 			continue;
-		if (!as_store_load_app_info (store, id_prefix, dest,
+		if (!as_store_load_app_info (store, id_prefix, dest, NULL,
 					     flags, cancellable, error))
 			return FALSE;
 	}
@@ -2441,7 +2455,7 @@ as_store_search_flatpak_arch (AsStore *store,
 		g_debug ("searching path %s", dest);
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 			continue;
-		if (!as_store_load_app_info (store, id_prefix, dest,
+		if (!as_store_load_app_info (store, id_prefix, dest, fn,
 					     flags | AS_STORE_LOAD_FLAG_IGNORE_INVALID,
 					     cancellable, error))
 			return FALSE;
