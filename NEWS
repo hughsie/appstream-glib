@@ -1,3 +1,24 @@
+Version 0.5.15
+~~~~~~~~~~~~~~
+Released: 2016-05-23
+
+New Features:
+ - Add AS_APP_QUIRK_HAS_SHORTCUT (Joaquim Rocha)
+ - Add AS_APP_QUIRK_NOT_LAUNCHABLE (Richard Hughes)
+ - Rename the xdg-app support to the new name: Flatpak (Richard Hughes)
+
+Bugfixes:
+ - Add all applications for all architectures when loading Flatpak (Richard Hughes)
+ - Add note in README.md for glob usage (Mingcong Bai)
+ - Allow addons to have duplicate names (Dominique Leuenberger)
+ - Correctly set the architecture on newly discovered applications (Richard Hughes)
+ - Ignore files with invalid suffixes when building installed stores (Richard Hughes)
+ - Make yaml icon parser spec compliant (Matthias Klumpp)
+ - Omit timestamp from gzip compressed files (Stefan Brüns)
+ - Save the ID prefix in more places (Richard Hughes)
+ - Show the app name when complaining about missing description (Dominique Leuenberger)
+ - Sort archive contents by name for repeatable results (Stefan Brüns)
+
 Version 0.5.14
 ~~~~~~~~~~~~~~
 Released: 2016-04-20

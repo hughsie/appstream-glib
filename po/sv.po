@@ -4,14 +4,14 @@
 # 
 # Translators:
 # Josef Andersson <josef.andersson@fripost.org>, 2015
-# sebras <sebras@gmail.com>, 2015
+# sebras <sebras@gmail.com>, 2015-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-04-20 08:59+0100\n"
-"PO-Revision-Date: 2016-04-20 07:59+0000\n"
-"Last-Translator: Richard Hughes <richard@hughsie.com>\n"
+"POT-Creation-Date: 2016-05-23 09:40+0100\n"
+"PO-Revision-Date: 2016-05-14 18:37+0000\n"
+"Last-Translator: sebras <sebras@gmail.com>\n"
 "Language-Team: Swedish (http://www.transifex.com/freedesktop/appstream-glib/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -127,51 +127,51 @@ msgstr "Klar!"
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "Sparningsikon"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "Ställ in prefixet"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "Behandlar program"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "Fel vid inläsning av AppData-fil"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
-msgstr ""
+msgstr "Fel vid tolkning av översättningar"
 
 #. TRANSLATORS: we could not auto-add the kudo
 msgid "Error parsing kudos"
-msgstr ""
+msgstr "Fel vid tolkning av kudos"
 
 #. TRANSLATORS: we could not auto-add the provides
 msgid "Error parsing provides"
-msgstr ""
+msgstr "Fel vid tolkning av tillhandahåller"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "Fel vid inläsning av skrivbordsfil"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "Fel vid skapande av utdatakatalog"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "Sparar AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "Fel vid sparning av AppStream-fil"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
@@ -188,7 +188,7 @@ msgstr "Vänligen granska filen och fixa ”FIXME”-objekt"
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr ""
+msgstr "Gammal API-version"
 
 #. TRANSLATORS: information message
 msgid "New API version"
@@ -201,7 +201,7 @@ msgstr "Inte nog med argument, förväntade old.xml new.xml version"
 #. * e.g. "appdata" to "appstream"
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "Konvertering från %s to %s är inte implementerad"
 
 msgid "Not enough arguments, expected file.xml"
 msgstr "Inte nog med argument, förväntade file.xml"
@@ -210,15 +210,15 @@ msgstr "Inte nog med argument, förväntade file.xml"
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "Filformat ”%s” kan inte uppgraderas"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "Format kan inte identifieras"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "Inga skrivbordsprogram hittades"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -236,11 +236,11 @@ msgstr "Validering av filer misslyckades"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "Borttaget"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "Tillagt"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
@@ -276,7 +276,7 @@ msgstr "Sök efter AppStream-program"
 
 #. TRANSLATORS: command description
 msgid "Search for AppStream applications by package name"
-msgstr ""
+msgstr "Sök efter AppStream-program efter paketnamn"
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"
@@ -360,19 +360,19 @@ msgstr "Generera ett GUID från en inmatad sträng"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
-msgstr ""
+msgstr "Modifiera en AppData-fil"
 
 #. TRANSLATORS: command description
 msgid "Split an AppStream file to AppData and Metainfo files"
-msgstr ""
+msgstr "Dela upp en AppStream-fil i AppData- och Metainfo-filer"
 
 #. TRANSLATORS: command description
 msgid "Merge several files to an AppStream file"
-msgstr ""
+msgstr "Sammanfoga flera filer till en AppStream-fil"
 
 #. TRANSLATORS: command description
 msgid "Import a file to AppStream markup"
-msgstr ""
+msgstr "Importera en fil till AppStream-uppmärkning"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"

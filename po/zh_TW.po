@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-04-20 08:59+0100\n"
-"PO-Revision-Date: 2016-04-20 07:59+0000\n"
-"Last-Translator: Richard Hughes <richard@hughsie.com>\n"
+"POT-Creation-Date: 2016-05-23 09:40+0100\n"
+"PO-Revision-Date: 2016-04-24 13:19+0000\n"
+"Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -276,7 +276,7 @@ msgstr "搜尋 AppStream 應用程式"
 
 #. TRANSLATORS: command description
 msgid "Search for AppStream applications by package name"
-msgstr ""
+msgstr "依據軟體包名稱搜尋 AppStream 應用程式"
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"
