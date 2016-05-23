@@ -196,6 +196,15 @@ asb_task_explode_extra_packages (AsbTask *task, GError **error)
 					     GINT_TO_POINTER (1));
 			g_ptr_array_add (icon_themes,
 					 g_strdup ("oxygen-icon-theme"));
+		/* Applications depending on yast2 have an implicit dependency
+		 * on yast2-branding-openSUSE, which brings required icons in this case.
+		 */
+		} else if (g_strcmp0 (tmp, "yast2-branding-openSUSE") == 0 ||
+			   g_strcmp0 (tmp, "yast2") == 0) {
+			g_hash_table_insert (hash, g_strdup ("yast2-branding-openSUSE"),
+					     GINT_TO_POINTER (1));
+			g_ptr_array_add (icon_themes,
+					 g_strdup ("yast2-branding-openSUSE"));
 		} else {
 			g_ptr_array_add (array, g_strdup (tmp));
 		}
