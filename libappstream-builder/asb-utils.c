@@ -508,6 +508,12 @@ asb_utils_add_files_recursive (GPtrArray *files,
 	return TRUE;
 }
 
+static gint
+my_pstrcmp (const gchar **a, const gchar **b)
+{
+	return g_strcmp0 (*a, *b);
+}
+
 /**
  * asb_utils_write_archive_dir:
  * @filename: archive filename
@@ -535,7 +541,7 @@ asb_utils_write_archive_dir (const gchar *filename,
 		return TRUE;
 
 	/* sort by filename for deterministic results */
-	g_ptr_array_sort (files, g_strcmp0);
+	g_ptr_array_sort (files, (GCompareFunc) my_pstrcmp);
 
 	/* write tar file */
 	return asb_utils_write_archive (filename, directory, files, error);
