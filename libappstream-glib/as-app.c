@@ -2190,10 +2190,6 @@ as_app_add_category (AsApp *app, const gchar *category)
 		return;
 	}
 
-	/* simple substitution */
-	if (g_strcmp0 (category, "Feed") == 0)
-		category = "News";
-
 	/* split this meta-category up */
 	if (g_strcmp0 (category, "AudioVideo") == 0) {
 		as_app_add_category (app, "Audio");
