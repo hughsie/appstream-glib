@@ -8,6 +8,7 @@ test_files =						\
 	app-1-1.fc21.x86_64.rpm				\
 	app-console-1-1.fc21.noarch.rpm			\
 	app-extra-1-1.fc21.noarch.rpm			\
+	appstream.xml					\
 	asb-self-test.xml.gz				\
 	broken.appdata.xml				\
 	broken.metainfo.xml				\
@@ -26,6 +27,7 @@ test_files =						\
 	firmware/2_0_2/firmware.bin			\
 	firmware/2_0_2/firmware.inf			\
 	firmware/2_0_2/firmware.metainfo.xml		\
+	flatpak_remote-name.xml				\
 	font-1-1.fc21.noarch.rpm			\
 	font-serif-1-1.fc21.noarch.rpm			\
 	intltool.appdata.xml.in				\

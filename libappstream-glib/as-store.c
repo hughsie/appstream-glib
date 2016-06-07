@@ -1030,13 +1030,21 @@ as_store_from_root (AsStore *store,
 	AsNode *apps;
 	AsNode *n;
 	const gchar *tmp;
+	const gchar *origin_delim = ":";
+	gchar *str;
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autofree gchar *icon_path = NULL;
+	g_autofree gchar *id_prefix_app = NULL;
 	g_autofree gchar *origin_app = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 	g_autoptr(AsProfileTask) ptask = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
+
+	/* make throws us under a bus, yet again */
+	tmp = g_getenv ("AS_SELF_TEST_PREFIX_DELIM");
+	if (tmp != NULL)
+		origin_delim = tmp;
 
 	/* profile */
 	ptask = as_profile_start_literal (priv->profile, "AsStore:store-from-root");
@@ -1067,14 +1075,64 @@ as_store_from_root (AsStore *store,
 	if (tmp != NULL)
 		as_store_set_origin (store, tmp);
 
-	/* special case flatpak */
-	if (source_filename != NULL &&
-	    as_bundle_kind_from_string (priv->origin) == AS_BUNDLE_KIND_FLATPAK) {
+	/* origin has prefix already specified in the XML */
+	if (priv->origin != NULL) {
+		str = g_strstr_len (priv->origin, -1, origin_delim);
+		if (str != NULL) {
+			id_prefix_app = g_strdup (priv->origin);
+			str = g_strstr_len (id_prefix_app, -1, origin_delim);
+			if (str != NULL) {
+				str[0] = '\0';
+				origin_app = g_strdup (str + 1);
+			}
+		}
+	}
+
+	/* special case flatpak symlinks -- scope:name.xml.gz */
+	if (origin_app == NULL &&
+	    g_strcmp0 (priv->origin, "flatpak") == 0 &&
+	    source_filename != NULL &&
+	    g_file_test (source_filename, G_FILE_TEST_IS_SYMLINK)) {
+		g_autofree gchar *source_basename = NULL;
+
+		/* get the origin */
+		source_basename = g_path_get_basename (source_filename);
+		str = g_strrstr (source_basename, ".xml");
+		if (str != NULL) {
+			str[0] = '\0';
+			origin_app = g_strdup (source_basename);
+		}
+
+		/* get the id-prefix */
+		str = g_strstr_len (source_basename, -1, origin_delim);
+		if (str != NULL) {
+			str[0] = '\0';
+			id_prefix_app = g_strdup (source_basename);
+		}
+	}
+
+	/* FIXME: we can remove this helper when nuking FLATPAK */
+	if (origin_app == NULL &&
+	    source_filename != NULL &&
+	    g_strcmp0 (priv->origin, "flatpak") == 0) {
+		id_prefix_app = g_strdup (id_prefix);
 		origin_app = as_store_get_origin_for_flatpak (source_filename);
+	}
+
+	/* fallback */
+	if (origin_app == NULL) {
+		id_prefix_app = g_strdup (id_prefix);
+		origin_app = g_strdup (priv->origin);
+	}
+
+	/* print what cleverness we did */
+	if (g_strcmp0 (origin_app, priv->origin) != 0) {
 		g_debug ("using app origin of '%s' rather than '%s'",
 			 origin_app, priv->origin);
-	} else {
-		origin_app = g_strdup (priv->origin);
+	}
+	if (g_strcmp0 (id_prefix_app, id_prefix) != 0) {
+		g_debug ("using app prefix of '%s' rather than '%s'",
+			 id_prefix_app, id_prefix);
 	}
 
 	/* guess the icon path after we've read the origin and then look for
@@ -1084,12 +1142,12 @@ as_store_from_root (AsStore *store,
 		topdir = g_path_get_basename (icon_prefix);
 		if ((g_strcmp0 (topdir, "xmls") == 0 ||
 		     g_strcmp0 (topdir, "yaml") == 0)
-		    && priv->origin != NULL) {
+		    && origin_app != NULL) {
 			g_autofree gchar *dirname = NULL;
 			dirname = g_path_get_dirname (icon_prefix);
 			icon_path = g_build_filename (dirname,
 						      "icons",
-						      priv->origin,
+						      origin_app,
 						      NULL);
 		} else {
 			icon_path = g_build_filename (icon_prefix, "icons", NULL);
@@ -1136,7 +1194,7 @@ as_store_from_root (AsStore *store,
 		}
 
 		/* set the correct scope */
-		as_store_fixup_id_prefix (app, id_prefix);
+		as_store_fixup_id_prefix (app, id_prefix_app);
 
 		if (origin_app != NULL)
 			as_app_set_origin (app, origin_app);
@@ -1519,7 +1577,9 @@ as_store_from_file (AsStore *store,
 		    GCancellable *cancellable,
 		    GError **error)
 {
-	return as_store_from_file_internal (store, file, NULL, NULL,
+	return as_store_from_file_internal (store, file,
+					    NULL, /* id_prefix */
+					    NULL, /* arch */
 					    cancellable, error);
 }
 
@@ -1604,7 +1664,6 @@ as_store_from_xml (AsStore *store,
 {
 	g_autoptr(GError) error_local = NULL;
 	g_autoptr(AsNode) root = NULL;
-	const gchar *id_prefix = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
@@ -1624,7 +1683,9 @@ as_store_from_xml (AsStore *store,
 			     error_local->message);
 		return FALSE;
 	}
-	return as_store_from_root (store, root, id_prefix, icon_root,
+	return as_store_from_root (store, root,
+				   NULL, /* id_prefix */
+				   icon_root,
 				   NULL, /* filename */
 				   NULL, /* arch */
 				   error);

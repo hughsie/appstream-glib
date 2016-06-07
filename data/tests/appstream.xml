@@ -1,0 +1,5 @@
+<components origin="flatpak">
+<component type="desktop">
+<id>test.desktop</id>
+</component>
+</components>

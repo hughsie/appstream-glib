@@ -2921,6 +2921,45 @@ as_test_store_prefix_func (void)
 			 "flatpak-user:org.gnome.Software.desktop");
 }
 
+/* load a store with a origin and scope encoded in the symlink name */
+static void
+as_test_store_flatpak_func (void)
+{
+	AsApp *app;
+	GError *error = NULL;
+	GPtrArray *apps;
+	gboolean ret;
+	g_autofree gchar *filename = NULL;
+	g_autofree gchar *filename_root = NULL;
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GFile) file = NULL;
+
+	/* make throws us under a bus, yet again */
+	g_setenv ("AS_SELF_TEST_PREFIX_DELIM", "_", TRUE);
+
+	/* load a symlinked file to the store */
+	store = as_store_new ();
+	filename_root = as_test_get_filename (".");
+	filename = g_build_filename (filename_root, "flatpak_remote-name.xml", NULL);
+	file = g_file_new_for_path (filename);
+	ret = as_store_from_file (store, file, NULL, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* test extraction of symlink data */
+	g_assert_cmpstr (as_store_get_origin (store), ==, "flatpak");
+	g_assert_cmpint (as_store_get_size (store), ==, 1);
+	apps = as_store_get_apps (store);
+	g_assert_cmpint (apps->len, ==, 1);
+	app = g_ptr_array_index (apps, 0);
+	g_assert_cmpstr (as_app_get_id (app), ==, "flatpak:test.desktop");
+	g_assert_cmpstr (as_app_get_origin (app), ==, "flatpak_remote-name");
+	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
+
+	/* back to normality */
+	g_unsetenv ("AS_SELF_TEST_PREFIX_DELIM");
+}
+
 /* demote the .desktop "application" to an addon */
 static void
 as_test_store_demote_func (void)
@@ -4871,6 +4910,7 @@ main (int argc, char **argv)
 		g_test_add_func ("/AppStream/store{auto-reload-dir}", as_test_store_auto_reload_dir_func);
 		g_test_add_func ("/AppStream/store{auto-reload-file}", as_test_store_auto_reload_file_func);
 	}
+	g_test_add_func ("/AppStream/store{flatpak}", as_test_store_flatpak_func);
 	g_test_add_func ("/AppStream/store{prefix}", as_test_store_prefix_func);
 	g_test_add_func ("/AppStream/store{demote}", as_test_store_demote_func);
 	g_test_add_func ("/AppStream/store{cab}", as_test_store_cab_func);
