@@ -2179,6 +2179,8 @@ as_app_add_category (AsApp *app, const gchar *category)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
+	g_return_if_fail (category != NULL);
+
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (category)) {
@@ -2214,6 +2216,8 @@ as_app_add_compulsory_for_desktop (AsApp *app, const gchar *compulsory_for_deskt
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
+	g_return_if_fail (compulsory_for_desktop != NULL);
+
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (compulsory_for_desktop)) {
@@ -2248,6 +2252,8 @@ as_app_add_keyword (AsApp *app,
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	GPtrArray *tmp;
 	g_autofree gchar *tmp_locale = NULL;
+
+	g_return_if_fail (keyword != NULL);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
@@ -2286,6 +2292,8 @@ as_app_add_kudo (AsApp *app, const gchar *kudo)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
+	g_return_if_fail (kudo != NULL);
+
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (kudo)) {
@@ -2311,6 +2319,8 @@ void
 as_app_add_permission (AsApp *app, const gchar *permission)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	g_return_if_fail (permission != NULL);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
@@ -2352,6 +2362,8 @@ void
 as_app_add_mimetype (AsApp *app, const gchar *mimetype)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	g_return_if_fail (mimetype != NULL);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
@@ -2696,6 +2708,8 @@ as_app_add_pkgname (AsApp *app, const gchar *pkgname)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
+	g_return_if_fail (pkgname != NULL);
+
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (pkgname)) {
@@ -2723,6 +2737,8 @@ void
 as_app_add_arch (AsApp *app, const gchar *arch)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	g_return_if_fail (arch != NULL);
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
