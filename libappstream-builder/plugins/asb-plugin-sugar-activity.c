@@ -91,14 +91,33 @@ _asb_plugin_load_sugar_icon (const gchar *path,
 			     AsIcon *ic) {
 	gsize len;
 	gchar *data = NULL;
+	gchar *tmp = NULL;
 	GBytes *bytes = NULL;
+	GString *string = NULL;
+	GRegex *regex = NULL;
 
 	if (!g_file_get_contents (path, &data, &len, NULL))
 		return FALSE;
-	printf ("ICON (got contents) = %s\n", path);
+
+	// Sugar icons have 2 XML entities, stroke_color and fill_color
+	regex = g_regex_new ("<!ENTITY stroke_color \"[^\"]+\">",
+			     0, 0, NULL);
+	tmp = g_regex_replace_literal (regex, data, len, 0,
+				       "<!ENTITY stroke_color \"#282828\">",
+				       0, NULL);
+	g_free (regex);
+
+	regex = g_regex_new ("<!ENTITY fill_color \"[^\"]+\">",
+			     0, 0, NULL);
+	tmp = g_regex_replace_literal (regex, tmp, -1, 0,
+				       "<!ENTITY fill_color \"#FFFFFF\">",
+				       0, NULL);
+	g_free (regex);
+
+	string = g_string_new (tmp);
+	bytes = g_string_free_to_bytes (string);
 
 	as_icon_set_kind (ic, AS_ICON_KIND_EMBEDDED);
-	bytes = g_bytes_new_take (data, len);
 	as_icon_set_data (ic, bytes);
 	as_icon_set_width (ic, 75);
 	as_icon_set_height (ic, 75);
