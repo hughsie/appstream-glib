@@ -88,13 +88,16 @@ asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
 
 static gboolean
 _asb_plugin_load_sugar_icon (const gchar *path,
-			     AsIcon *ic) {
+			     AsIcon *ic,
+			     AsApp *app,
+			     AsbPlugin *plugin) {
 	gsize len;
-	gchar *data = NULL;
-	gchar *tmp = NULL;
+	gboolean is_hidpi;
+	gchar *data, *name;
 	GBytes *bytes = NULL;
 	GString *string = NULL;
 	GRegex *regex = NULL;
+	GdkPixbufLoader *pbl = NULL;
 
 	if (!g_file_get_contents (path, &data, &len, NULL))
 		return FALSE;
@@ -102,25 +105,46 @@ _asb_plugin_load_sugar_icon (const gchar *path,
 	// Sugar icons have 2 XML entities, stroke_color and fill_color
 	regex = g_regex_new ("<!ENTITY stroke_color \"[^\"]+\">",
 			     0, 0, NULL);
-	tmp = g_regex_replace_literal (regex, data, len, 0,
-				       "<!ENTITY stroke_color \"#282828\">",
-				       0, NULL);
+	data = g_regex_replace_literal (regex, data, len, 0,
+					"<!ENTITY stroke_color \"#282828\">",
+					0, NULL);
 	g_free (regex);
 
 	regex = g_regex_new ("<!ENTITY fill_color \"[^\"]+\">",
 			     0, 0, NULL);
-	tmp = g_regex_replace_literal (regex, tmp, -1, 0,
-				       "<!ENTITY fill_color \"#FFFFFF\">",
-				       0, NULL);
+	data = g_regex_replace_literal (regex, data, -1, 0,
+					"<!ENTITY fill_color \"#FFFFFF\">",
+					0, NULL);
 	g_free (regex);
 
-	string = g_string_new (tmp);
+	// The PBL takes bytes/length, not null terminated string
+	string = g_string_new (data);
 	bytes = g_string_free_to_bytes (string);
 
-	as_icon_set_kind (ic, AS_ICON_KIND_EMBEDDED);
-	as_icon_set_data (ic, bytes);
-	as_icon_set_width (ic, 75);
-	as_icon_set_height (ic, 75);
+	is_hidpi = asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS);
+	for (gint factor = 1; factor <= (is_hidpi ? 2 : 1); factor++) {
+		pbl = gdk_pixbuf_loader_new_with_type ("svg", NULL);
+		gdk_pixbuf_loader_set_size (pbl, 64 * factor, 64 * factor);
+		gdk_pixbuf_loader_write_bytes (pbl, bytes, NULL);
+		if (!gdk_pixbuf_loader_close (pbl, NULL))
+			return FALSE;
+
+		as_icon_set_kind (ic, AS_ICON_KIND_CACHED);
+		as_icon_set_prefix (ic, as_app_get_icon_path (AS_APP (app)));
+		as_icon_set_pixbuf (ic, gdk_pixbuf_loader_get_pixbuf (pbl));
+		as_icon_set_width (ic, 64 * factor);
+		as_icon_set_height (ic, 64 * factor);
+		if (is_hidpi) {
+			name = g_strdup_printf ("%ix%i/%s.png",
+			    64 * factor, 64 * factor,
+			    as_app_get_id_filename (AS_APP (app)));
+		} else {
+			name = g_strdup_printf ("%s.png",
+			    as_app_get_id_filename (AS_APP (app)));
+		}
+		as_icon_set_name (ic, name);
+	}
+
 	return TRUE;
 }
 
@@ -198,7 +222,8 @@ asb_plugin_process_actinfo (AsbPlugin *plugin,
 
 		if (g_file_test (path, G_FILE_TEST_IS_REGULAR)) {
 			ic = as_icon_new ();
-			if (_asb_plugin_load_sugar_icon (path, ic))
+			if (_asb_plugin_load_sugar_icon (
+				    path, ic, AS_APP (app), plugin))
 				as_app_add_icon (app, ic);
 		}
 	}
