@@ -201,7 +201,6 @@ asb_plugin_process_actinfo (AsbPlugin *plugin,
 	tmp = g_key_file_get_string (actinfo, "Activity", "license", NULL);
 	if (tmp != NULL) {
 		as_app_set_project_license (app, tmp);
-		as_app_set_metadata_license (app, tmp);
 	}
 
 	tmp = g_key_file_get_string (actinfo, "Activity", "icon", NULL);
