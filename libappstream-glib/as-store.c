@@ -1371,6 +1371,7 @@ as_store_watch_source_added (AsStore *store, const gchar *filename)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	AsStorePathData *path_data;
+	g_autofree gchar *dirname = NULL;
 	g_autoptr(GError) error = NULL;
 	g_autoptr(GFile) file = NULL;
 
@@ -1379,10 +1380,11 @@ as_store_watch_source_added (AsStore *store, const gchar *filename)
 		return;
 
 	/* we helpfully saved this */
-	g_debug ("parsing new file %s", filename);
-	path_data = g_hash_table_lookup (priv->appinfo_dirs, filename);
+	dirname = g_path_get_dirname (filename);
+	g_debug ("parsing new file %s from %s", filename, dirname);
+	path_data = g_hash_table_lookup (priv->appinfo_dirs, dirname);
 	if (path_data == NULL) {
-		g_warning ("no path data for %s", filename);
+		g_warning ("no path data for %s", dirname);
 		return;
 	}
 	file = g_file_new_for_path (filename);
@@ -1475,16 +1477,40 @@ as_store_monitor_removed_cb (AsMonitor *monitor,
  **/
 static void
 as_store_add_path_data (AsStore *store,
-			const gchar *filename,
+			const gchar *path,
 			const gchar *id_prefix,
 			const gchar *arch)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	AsStorePathData *path_data = g_slice_new0 (AsStorePathData);
+	AsStorePathData *path_data;
 
+	/* check is a directory */
+	if (!g_file_test (path, G_FILE_TEST_IS_DIR)) {
+		g_warning ("not adding path %s [%s:%s] as not a directory",
+			   path, id_prefix, arch);
+		return;
+	}
+
+	/* check not already exists */
+	path_data = g_hash_table_lookup (priv->appinfo_dirs, path);
+	if (path_data != NULL) {
+		if (g_strcmp0 (path_data->id_prefix, id_prefix) != 0 ||
+		    g_strcmp0 (path_data->arch, arch) != 0) {
+			g_warning ("already added path %s [%s:%s] vs new [%s:%s]",
+				   path, path_data->id_prefix, path_data->arch,
+				   id_prefix, arch);
+		} else {
+			g_debug ("already added path %s [%s:%s]",
+				 path, path_data->id_prefix, path_data->arch);
+		}
+		return;
+	}
+
+	/* create new */
+	path_data = g_slice_new0 (AsStorePathData);
 	path_data->id_prefix = g_strdup (id_prefix);
 	path_data->arch = g_strdup (arch);
-	g_hash_table_insert (priv->appinfo_dirs, g_strdup (filename), path_data);
+	g_hash_table_insert (priv->appinfo_dirs, g_strdup (path), path_data);
 }
 
 /**
@@ -1537,7 +1563,6 @@ as_store_from_file_internal (AsStore *store,
 
 	/* watch for file changes */
 	if (priv->watch_flags > 0) {
-		as_store_add_path_data (store, filename, id_prefix, arch);
 		if (!as_monitor_add_file (priv->monitor,
 					  filename,
 					  cancellable,
