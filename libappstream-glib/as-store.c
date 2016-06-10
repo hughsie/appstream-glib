@@ -2657,7 +2657,7 @@ as_store_search_per_system (AsStore *store,
 						 "flatpak",
 						 "exports",
 						 "share",
-						 "appdata",
+						 "metainfo",
 						 NULL);
 			if (!as_store_search_installed (store, flags, "flatpak",
 							dest, cancellable, error))
@@ -2788,7 +2788,7 @@ as_store_search_per_user (AsStore *store,
 						 "flatpak",
 						 "exports",
 						 "share",
-						 "appdata",
+						 "metainfo",
 						 NULL);
 			if (!as_store_search_installed (store, flags, "user-flatpak",
 							dest, cancellable, error))
@@ -2822,10 +2822,10 @@ as_store_search_per_user (AsStore *store,
 			return FALSE;
 	}
 
-	/* AppData */
+	/* AppData / MetaInfo */
 	if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 		g_autofree gchar *dest = NULL;
-		dest = g_build_filename (g_get_user_data_dir (), "appdata", NULL);
+		dest = g_build_filename (g_get_user_data_dir (), "metainfo", NULL);
 		if (!as_store_search_installed (store, flags, "user",
 						dest, cancellable, error))
 			return FALSE;
