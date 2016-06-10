@@ -2941,6 +2941,10 @@ as_test_store_flatpak_func (void)
 	store = as_store_new ();
 	filename_root = as_test_get_filename (".");
 	filename = g_build_filename (filename_root, "flatpak_remote-name.xml", NULL);
+	if (!g_file_test (filename, G_FILE_TEST_IS_SYMLINK)) {
+		g_debug ("not doing symlink test in distcheck as regular file");
+		return;
+	}
 	file = g_file_new_for_path (filename);
 	ret = as_store_from_file (store, file, NULL, NULL, &error);
 	g_assert_no_error (error);
