@@ -44,8 +44,8 @@
     <para>
       <command>appstream-compose</command> is a simple app that takes a
       prefix (default /usr) and a set of application names.
-      It looks for appdata, desktop and icon files with that
-      basename in $prefix/share/[appdata|applications|icons] and generates
+      It looks for metainfo, desktop and icon files with that
+      basename in $prefix/share/[metainfo|applications|icons] and generates
       appstream xml files and icons in (by default) $prefix/share/app-info.
     </para>
   </refsect1>

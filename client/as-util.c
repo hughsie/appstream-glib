@@ -3598,7 +3598,7 @@ as_util_split_appstream (AsUtilPrivate *priv, gchar **values, GError **error)
 		}
 
 		/* save to a file */
-		path = g_build_filename (destdir, "usr", "share", "appdata", fn, NULL);
+		path = g_build_filename (destdir, "usr", "share", "metainfo", fn, NULL);
 		g_debug ("saving %s as %s", id, path);
 		file_app = g_file_new_for_path (path);
 		if (!as_app_to_file (app, file_app, NULL, error))
