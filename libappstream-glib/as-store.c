@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2013-2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2013-2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -1340,6 +1340,7 @@ as_store_remove_by_source_file (AsStore *store, const gchar *filename)
 	GPtrArray *apps;
 	guint i;
 	const gchar *tmp;
+	_cleanup_uninhibit_ guint32 *tok = NULL;
 	g_autoptr(GPtrArray) ids = NULL;
 
 	/* find any applications in the store with this source file */
@@ -1353,6 +1354,7 @@ as_store_remove_by_source_file (AsStore *store, const gchar *filename)
 	}
 
 	/* remove these from the store */
+	tok = as_store_changed_inhibit (store);
 	for (i = 0; i < ids->len; i++) {
 		tmp = g_ptr_array_index (ids, i);
 		g_debug ("removing %s as %s invalid", tmp, filename);
@@ -1360,6 +1362,7 @@ as_store_remove_by_source_file (AsStore *store, const gchar *filename)
 	}
 
 	/* the store changed */
+	as_store_changed_uninhibit (&tok);
 	as_store_perhaps_emit_changed (store, "remove-by-source-file");
 }
 
@@ -1428,6 +1431,7 @@ as_store_monitor_changed_cb (AsMonitor *monitor,
 		if (g_hash_table_contains (priv->flatpak_dirs, filename))
 			as_store_rescan_flatpak_dir (store, filename);
 	}
+	as_store_changed_uninhibit (&tok);
 	as_store_perhaps_emit_changed (store, "file changed");
 }
 
@@ -1449,6 +1453,7 @@ as_store_monitor_added_cb (AsMonitor *monitor,
 		if (g_hash_table_contains (priv->flatpak_dirs, filename))
 			as_store_rescan_flatpak_dir (store, filename);
 	}
+	as_store_changed_uninhibit (&tok);
 	as_store_perhaps_emit_changed (store, "file added");
 }
 
