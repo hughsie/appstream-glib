@@ -13,7 +13,7 @@
       <email>richard@hughsie.com</email>
     </author>
     <copyright>
-      <year>2013-2014</year>
+      <year>2013-2016</year>
       <holder>Richard Hughes</holder>
     </copyright>
   </refentryinfo>
@@ -44,8 +44,8 @@
     <para>
       <command>appstream-compose</command> is a simple app that takes a
       prefix (default /usr) and a set of application names.
-      It looks for appdata, desktop and icon files with that
-      basename in $prefix/share/[appdata|applications|icons] and generates
+      It looks for appdata, metainfo, desktop and icon files with that
+      basename in $prefix/share/[appdata|metainfo|applications|icons] and generates
       appstream xml files and icons in (by default) $prefix/share/app-info.
     </para>
   </refsect1>

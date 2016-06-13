@@ -2836,6 +2836,15 @@ as_store_search_per_user (AsStore *store,
 			return FALSE;
 	}
 
+	/* MetaInfo */
+	if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
+		g_autofree gchar *dest = NULL;
+		dest = g_build_filename (g_get_user_data_dir (), "metainfo", NULL);
+		if (!as_store_search_installed (store, flags, "user",
+						dest, cancellable, error))
+			return FALSE;
+	}
+
 	/* desktop files */
 	if ((flags & AS_STORE_LOAD_FLAG_DESKTOP) > 0) {
 		g_autofree gchar *dest = NULL;

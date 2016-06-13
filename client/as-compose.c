@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2015 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
  * Copyright (C) 2016 Alexander Larsson <alexl@redhat.com>
  *
  * Licensed under the GNU General Public License Version 2
@@ -261,9 +261,18 @@ load_appdata (const gchar *prefix, const gchar *app_name, GError **error)
 					NULL);
 	appdata_path = g_build_filename (prefix,
 					 "share",
-					 "appdata",
+					 "metainfo",
 					 appdata_basename,
 					 NULL);
+	/* fall back to the legacy path */
+	if (!g_file_test (appdata_path, G_FILE_TEST_EXISTS)) {
+		g_free (appdata_path);
+		appdata_path = g_build_filename (prefix,
+						 "share",
+						 "appdata",
+						 appdata_basename,
+						 NULL);
+	}
 	g_debug ("Looking for %s", appdata_path);
 
 	app = as_app_new ();
