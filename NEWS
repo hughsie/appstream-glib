@@ -1,3 +1,19 @@
+Version 0.5.16
+~~~~~~~~~~~~~~
+Released: 2016-06-13
+
+New Features:
+ - Add elementary to list of project groups (Fabio Valentini)
+ - Allow setting the id prefix and origin using a symlink name (Richard Hughes)
+
+Bugfixes:
+ - Add yast2-branding-openSUSE if an app depends on yast2 (Dominique Leuenberger)
+ - Correctly detect new AppStream apps in new directories (Richard Hughes)
+ - Do not rename a category ID in AsApp (Richard Hughes)
+ - Fix g_ptr_array_sort use (Kalev Lember)
+ - Load metainfo files if present (Richard Hughes)
+ - Never allow NULL to be added to AsApp string array (Richard Hughes)
+
 Version 0.5.15
 ~~~~~~~~~~~~~~
 Released: 2016-05-23
