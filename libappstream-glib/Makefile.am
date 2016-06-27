@@ -127,6 +127,8 @@ libappstream_glib_la_SOURCES =					\
 	as-resources.h						\
 	as-screenshot.c						\
 	as-screenshot-private.h					\
+	as-stemmer.c						\
+	as-stemmer.h						\
 	as-store.c						\
 	as-tag.c						\
 	as-translation.c					\
@@ -156,6 +158,7 @@ libappstream_glib_la_LIBADD =					\
 	$(GDKPIXBUF_LIBS)					\
 	$(LIBARCHIVE_LIBS)					\
 	$(SOUP_LIBS)						\
+	$(STEMMER_LIBS)						\
 	$(UUID_LIBS)						\
 	$(YAML_LIBS)
 
@@ -177,6 +180,7 @@ as_self_test_LDADD =						\
 	$(GDKPIXBUF_LIBS)					\
 	$(LIBARCHIVE_LIBS)					\
 	$(SOUP_LIBS)						\
+	$(STEMMER_LIBS)						\
 	$(UUID_LIBS)						\
 	$(YAML_LIBS)						\
 	$(lib_LTLIBRARIES)

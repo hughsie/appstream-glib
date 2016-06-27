@@ -46,6 +46,7 @@
 #include "as-provide-private.h"
 #include "as-release-private.h"
 #include "as-screenshot-private.h"
+#include "as-stemmer.h"
 #include "as-tag.h"
 #include "as-translation-private.h"
 #include "as-utils-private.h"
@@ -56,6 +57,7 @@ typedef struct
 	AsAppProblems	 problems;
 	AsIconKind	 icon_kind;
 	AsAppKind	 kind;
+	AsStemmer	*stemmer;
 	GHashTable	*comments;			/* of locale:string */
 	GHashTable	*developer_names;		/* of locale:string */
 	GHashTable	*descriptions;			/* of locale:string */
@@ -374,6 +376,7 @@ as_app_finalize (GObject *object)
 	g_hash_table_unref (priv->names);
 	g_hash_table_unref (priv->urls);
 	g_hash_table_unref (priv->token_cache);
+	g_object_unref (priv->stemmer);
 	g_ptr_array_unref (priv->addons);
 	g_ptr_array_unref (priv->categories);
 	g_ptr_array_unref (priv->compulsory_for_desktops);
@@ -402,6 +405,7 @@ static void
 as_app_init (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	priv->stemmer = as_stemmer_new ();
 	priv->categories = g_ptr_array_new_with_free_func (g_free);
 	priv->compulsory_for_desktops = g_ptr_array_new_with_free_func (g_free);
 	priv->content_ratings = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -4437,17 +4441,21 @@ as_app_value_tokenize (const gchar *value)
  * as_app_add_token_internal:
  **/
 static void
-as_app_add_token_internal (AsApp *app, const gchar *value, AsAppTokenMatch match_flag)
+as_app_add_token_internal (AsApp *app,
+			   const gchar *value,
+			   AsAppTokenMatch match_flag)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsAppTokenType *match_pval;
+	g_autofree gchar *value_stem = NULL;
 
 	/* invalid */
 	if (!as_utils_search_token_valid (value))
 		return;
 
 	/* does the token already exist */
-	match_pval = g_hash_table_lookup (priv->token_cache, value);
+	value_stem = as_stemmer_process (priv->stemmer, value);
+	match_pval = g_hash_table_lookup (priv->token_cache, value_stem);
 	if (match_pval != NULL) {
 		*match_pval |= match_flag;
 		return;
@@ -4456,7 +4464,9 @@ as_app_add_token_internal (AsApp *app, const gchar *value, AsAppTokenMatch match
 	/* create and add */
 	match_pval = g_new0 (AsAppTokenType, 1);
 	*match_pval = match_flag;
-	g_hash_table_insert (priv->token_cache, g_strdup (value), match_pval);
+	g_hash_table_insert (priv->token_cache,
+			     g_steal_pointer (&value_stem),
+			     match_pval);
 }
 
 /**
@@ -4610,6 +4620,7 @@ as_app_search_matches (AsApp *app, const gchar *search)
 	GList *l;
 	AsAppTokenMatch result = 0;
 	g_autoptr(GList) keys = NULL;
+	g_autofree gchar *search_stem = NULL;
 
 	/* nothing to do */
 	if (search == NULL)
@@ -4622,7 +4633,8 @@ as_app_search_matches (AsApp *app, const gchar *search)
 	}
 
 	/* find the exact match (which is more awesome than a partial match) */
-	match_pval = g_hash_table_lookup (priv->token_cache, search);
+	search_stem = as_stemmer_process (priv->stemmer, search);
+	match_pval = g_hash_table_lookup (priv->token_cache, search_stem);
 	if (match_pval != NULL)
 		return *match_pval << 2;
 
@@ -4630,7 +4642,7 @@ as_app_search_matches (AsApp *app, const gchar *search)
 	keys = g_hash_table_get_keys (priv->token_cache);
 	for (l = keys; l != NULL; l = l->next) {
 		const gchar *key = l->data;
-		if (g_str_has_prefix (key, search)) {
+		if (g_str_has_prefix (key, search_stem)) {
 			match_pval = g_hash_table_lookup (priv->token_cache, key);
 			result |= *match_pval;
 		}

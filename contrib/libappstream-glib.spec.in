@@ -22,6 +22,7 @@ BuildRequires: gettext
 BuildRequires: intltool
 BuildRequires: libgcab1-devel
 BuildRequires: libuuid-devel
+BuildRequires: libstemmer-devel
 BuildRequires: json-glib-devel >= 1.1.1
 
 # for the builder component

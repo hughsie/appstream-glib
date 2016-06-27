@@ -2634,7 +2634,7 @@ as_test_app_search_func (void)
 
 	g_assert_cmpint (as_app_search_matches (app, "software"), ==, 96);
 	g_assert_cmpint (as_app_search_matches (app, "soft"), ==, 24);
-	g_assert_cmpint (as_app_search_matches (app, "install"), ==, 32);
+	g_assert_cmpint (as_app_search_matches (app, "installing"), ==, 32);
 	g_assert_cmpint (as_app_search_matches (app, "awesome"), ==, 128);
 	g_assert_cmpint (as_app_search_matches (app, "c++"), ==, 128);
 	g_assert_cmpint (as_app_search_matches (app, "d-feet"), ==, 128);

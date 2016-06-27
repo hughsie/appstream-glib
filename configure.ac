@@ -245,6 +245,19 @@ if test x$enable_dep11 = xyes; then
   AC_DEFINE(AS_BUILD_DEP11,1,[Build DEP-11 code])
 fi
 
+dnl ---------------------------------------------------------------------------
+dnl - Use libstemmer for search stemming
+dnl ---------------------------------------------------------------------------
+AC_ARG_ENABLE(stemmer, AS_HELP_STRING([--enable-stemmer],[enable search stemmer]),
+              enable_stemmer=$enableval,enable_stemmer=yes)
+AM_CONDITIONAL(HAVE_LIBSTEMMER, test x$enable_stemmer = xyes)
+if test x$enable_stemmer = xyes; then
+  AC_CHECK_HEADER(libstemmer.h, [], [AC_MSG_ERROR([No libstemmer.h])])
+  STEMMER_LIBS="-lstemmer"
+  AC_SUBST(STEMMER_LIBS)
+  AC_DEFINE(HAVE_LIBSTEMMER,1,[define if libstemmer is installed])
+fi
+
 AC_CONFIG_FILES([
 Makefile
 client/Makefile
@@ -272,6 +285,7 @@ AC_MSG_RESULT([
     includedir:              ${includedir}
     lib dir:                 ${libdir}
     DEP-11 support:          ${enable_dep11}
+    Stemming support:        ${enable_stemmer}
     Builder support:         ${enable_builder}
     Firmware support:        ${enable_firmware}
     Fonts support:           ${enable_fonts}
