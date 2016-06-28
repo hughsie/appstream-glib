@@ -23,18 +23,12 @@
 
 #include <asb-plugin.h>
 
-/**
- * asb_plugin_get_name:
- */
 const gchar *
 asb_plugin_get_name (void)
 {
 	return "gettext";
 }
 
-/**
- * asb_plugin_add_globs:
- */
 void
 asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
@@ -42,9 +36,6 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 	asb_plugin_add_glob (globs, "/usr/share/*/translations/*.qm");
 }
 
-/**
- * asb_plugin_process_app:
- */
 gboolean
 asb_plugin_process_app (AsbPlugin *plugin,
 			AsbPackage *pkg,

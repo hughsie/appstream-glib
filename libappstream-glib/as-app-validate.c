@@ -42,9 +42,6 @@ typedef struct {
 	guint			 number_paragraphs;
 } AsAppValidateHelper;
 
-/**
- * ai_app_validate_add:
- */
 G_GNUC_PRINTF (3, 4) static void
 ai_app_validate_add (AsAppValidateHelper *helper,
 		     AsProblemKind kind,
@@ -104,9 +101,6 @@ ai_app_validate_fullstop_ending (const gchar *tmp)
 	return tmp[str_len - 1] == '.';
 }
 
-/**
- * as_app_validate_has_hyperlink:
- **/
 static gboolean
 as_app_validate_has_hyperlink (const gchar *text)
 {
@@ -119,9 +113,6 @@ as_app_validate_has_hyperlink (const gchar *text)
 	return FALSE;
 }
 
-/**
- * as_app_validate_has_email:
- **/
 static gboolean
 as_app_validate_has_email (const gchar *text)
 {
@@ -132,9 +123,6 @@ as_app_validate_has_email (const gchar *text)
 	return FALSE;
 }
 
-/**
- * as_app_validate_has_first_word_capital:
- **/
 static gboolean
 as_app_validate_has_first_word_capital (AsAppValidateHelper *helper, const gchar *text)
 {
@@ -168,9 +156,6 @@ as_app_validate_has_first_word_capital (AsAppValidateHelper *helper, const gchar
 	return FALSE;
 }
 
-/**
- * as_app_validate_description_li:
- **/
 static void
 as_app_validate_description_li (const gchar *text, AsAppValidateHelper *helper)
 {
@@ -224,9 +209,6 @@ as_app_validate_description_li (const gchar *text, AsAppValidateHelper *helper)
 	}
 }
 
-/**
- * as_app_validate_description_para:
- **/
 static void
 as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper)
 {
@@ -297,9 +279,6 @@ as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper
 	helper->para_chars_before_list += str_len;
 }
 
-/**
- * as_app_validate_description_list:
- **/
 static void
 as_app_validate_description_list (const gchar *text,
 				  gboolean allow_short_para,
@@ -335,9 +314,6 @@ as_app_validate_description_list (const gchar *text,
 	helper->para_chars_before_list = 0;
 }
 
-/**
- * as_app_validate_description:
- **/
 static gboolean
 as_app_validate_description (const gchar *xml,
 			     AsAppValidateHelper *helper,
@@ -414,9 +390,6 @@ as_app_validate_description (const gchar *xml,
 	return TRUE;
 }
 
-/**
- * as_app_validate_image_url_already_exists:
- */
 static gboolean
 as_app_validate_image_url_already_exists (AsAppValidateHelper *helper,
 					  const gchar *search)
@@ -432,9 +405,6 @@ as_app_validate_image_url_already_exists (AsAppValidateHelper *helper,
 	return FALSE;
 }
 
-/**
- * ai_app_validate_image_check:
- */
 static gboolean
 ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 {
@@ -607,9 +577,6 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	return TRUE;
 }
 
-/**
- * as_app_validate_image:
- **/
 static void
 as_app_validate_image (AsImage *im, AsAppValidateHelper *helper)
 {
@@ -640,9 +607,6 @@ as_app_validate_image (AsImage *im, AsAppValidateHelper *helper)
 		g_ptr_array_add (helper->screenshot_urls, g_strdup (url));
 }
 
-/**
- * as_app_validate_screenshot:
- **/
 static void
 as_app_validate_screenshot (AsScreenshot *ss, AsAppValidateHelper *helper)
 {
@@ -707,9 +671,6 @@ as_app_validate_screenshot (AsScreenshot *ss, AsAppValidateHelper *helper)
 	}
 }
 
-/**
- * as_app_validate_icons:
- **/
 static void
 as_app_validate_icons (AsApp *app, AsAppValidateHelper *helper)
 {
@@ -767,9 +728,6 @@ as_app_validate_icons (AsApp *app, AsAppValidateHelper *helper)
 	}
 }
 
-/**
- * as_app_validate_screenshots:
- **/
 static void
 as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 {
@@ -830,9 +788,6 @@ as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 	}
 }
 
-/**
- * as_app_validate_release:
- **/
 static gboolean
 as_app_validate_release (AsApp *app,
 			 AsRelease *release,
@@ -899,9 +854,6 @@ as_app_validate_release (AsApp *app,
 	return TRUE;
 }
 
-/**
- * as_app_validate_releases:
- **/
 static gboolean
 as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **error)
 {
@@ -928,9 +880,6 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 	return TRUE;
 }
 
-/**
- * as_app_validate_setup_networking:
- **/
 static gboolean
 as_app_validate_setup_networking (AsAppValidateHelper *helper, GError **error)
 {
@@ -951,9 +900,6 @@ as_app_validate_setup_networking (AsAppValidateHelper *helper, GError **error)
 	return TRUE;
 }
 
-/**
- * as_app_validate_license:
- **/
 static gboolean
 as_app_validate_license (const gchar *license_text, GError **error)
 {
@@ -988,9 +934,6 @@ as_app_validate_license (const gchar *license_text, GError **error)
 	return TRUE;
 }
 
-/**
- * as_app_validate_is_content_license_id:
- **/
 static gboolean
 as_app_validate_is_content_license_id (const gchar *license_id)
 {
@@ -1027,9 +970,6 @@ as_app_validate_is_content_license_id (const gchar *license_id)
 	return FALSE;
 }
 
-/**
- * as_app_validate_is_content_license:
- **/
 static gboolean
 as_app_validate_is_content_license (const gchar *license)
 {

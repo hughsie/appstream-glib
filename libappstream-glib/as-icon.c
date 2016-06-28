@@ -66,9 +66,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsIcon, as_icon, G_TYPE_OBJECT)
  **/
 G_DEFINE_QUARK (as-icon-error-quark, as_icon_error)
 
-/**
- * as_icon_finalize:
- **/
 static void
 as_icon_finalize (GObject *object)
 {
@@ -88,17 +85,11 @@ as_icon_finalize (GObject *object)
 	G_OBJECT_CLASS (as_icon_parent_class)->finalize (object);
 }
 
-/**
- * as_icon_init:
- **/
 static void
 as_icon_init (AsIcon *icon)
 {
 }
 
-/**
- * as_icon_class_init:
- **/
 static void
 as_icon_class_init (AsIconClass *klass)
 {
@@ -475,9 +466,6 @@ as_icon_set_data (AsIcon *icon, GBytes *data)
 	priv->data = g_bytes_ref (data);
 }
 
-/**
- * as_icon_node_insert_embedded:
- **/
 static GNode *
 as_icon_node_insert_embedded (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 {
@@ -557,9 +545,6 @@ as_icon_node_insert (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 	return n;
 }
 
-/**
- * as_icon_node_parse_embedded:
- **/
 static gboolean
 as_icon_node_parse_embedded (AsIcon *icon, GNode *n, GError **error)
 {

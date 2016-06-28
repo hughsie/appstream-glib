@@ -29,9 +29,6 @@
 #include <locale.h>
 #include <errno.h>
 
-/**
- * as_util_app_log:
- **/
 G_GNUC_PRINTF (2, 3)
 static void
 as_compose_app_log (AsApp *app, const gchar *fmt, ...)
@@ -315,9 +312,6 @@ load_appdata (const gchar *prefix, const gchar *app_name, GError **error)
 	return g_steal_pointer (&app);
 }
 
-/**
- * main:
- **/
 int
 main (int argc, char **argv)
 {

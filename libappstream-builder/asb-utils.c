@@ -19,11 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-/**
- * SECTION:asb-utils
- * @short_description: Helper functionality.
- * @stability: Unstable
- */
 
 #include "config.h"
 
@@ -174,9 +169,6 @@ asb_utils_ensure_exists_and_empty (const gchar *directory, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_utils_count_directories_deep:
- **/
 static const guint
 asb_utils_count_directories_deep (const gchar *path)
 {
@@ -191,9 +183,6 @@ asb_utils_count_directories_deep (const gchar *path)
 	return cnt;
 }
 
-/**
- * asb_utils_get_back_to_root:
- **/
 static gchar *
 asb_utils_get_back_to_root (guint levels)
 {
@@ -206,11 +195,6 @@ asb_utils_get_back_to_root (guint levels)
 	return g_string_free (str, FALSE);
 }
 
-/**
- * asb_utils_sanitise_path:
- *
- * Converts various formats into an absolute path.
- **/
 static gchar *
 asb_utils_sanitise_path (const gchar *path)
 {
@@ -226,9 +210,6 @@ asb_utils_sanitise_path (const gchar *path)
 	return g_strconcat ("/", path, NULL);
 }
 
-/**
- * asb_utils_explode_file:
- **/
 static gboolean
 asb_utils_explode_file (struct archive_entry *entry, const gchar *dir)
 {
@@ -423,9 +404,6 @@ out:
 	return ret;
 }
 
-/**
- * asb_utils_write_archive:
- **/
 static gboolean
 asb_utils_write_archive (const gchar *filename,
 			 const gchar *path_orig,
@@ -476,9 +454,6 @@ out:
 	return ret;
 }
 
-/**
- * asb_utils_add_files_recursive:
- **/
 static gboolean
 asb_utils_add_files_recursive (GPtrArray *files,
 			       const gchar *path_orig,

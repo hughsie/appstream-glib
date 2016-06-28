@@ -38,18 +38,12 @@
 #define __APPSTREAM_GLIB_PRIVATE_H
 #include <as-app-private.h>
 
-/**
- * asb_plugin_get_name:
- */
 const gchar *
 asb_plugin_get_name (void)
 {
 	return "font";
 }
 
-/**
- * asb_plugin_add_globs:
- */
 void
 asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
@@ -57,9 +51,6 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 	asb_plugin_add_glob (globs, "/usr/share/fonts/*/*.ttf");
 }
 
-/**
- * _asb_plugin_check_filename:
- */
 static gboolean
 _asb_plugin_check_filename (const gchar *filename)
 {
@@ -70,9 +61,6 @@ _asb_plugin_check_filename (const gchar *filename)
 	return FALSE;
 }
 
-/**
- * asb_font_fix_metadata:
- */
 static void
 asb_font_fix_metadata (AsbApp *app)
 {
@@ -228,9 +216,6 @@ asb_font_fix_metadata (AsbApp *app)
 	}
 }
 
-/**
- * asb_font_string_is_valid:
- */
 static gboolean
 asb_font_string_is_valid (const gchar *text)
 {
@@ -245,9 +230,6 @@ asb_font_string_is_valid (const gchar *text)
 	return TRUE;
 }
 
-/**
- * asb_font_add_metadata:
- */
 static void
 asb_font_add_metadata (AsbApp *app, FT_Face ft_face)
 {
@@ -295,9 +277,6 @@ asb_font_add_metadata (AsbApp *app, FT_Face ft_face)
 	}
 }
 
-/**
- * asb_font_is_pixbuf_empty:
- */
 static gboolean
 asb_font_is_pixbuf_empty (const GdkPixbuf *pixbuf)
 {
@@ -325,9 +304,6 @@ asb_font_is_pixbuf_empty (const GdkPixbuf *pixbuf)
 	return TRUE;
 }
 
-/**
- * asb_font_get_pixbuf:
- */
 static GdkPixbuf *
 asb_font_get_pixbuf (FT_Face ft_face,
 		     guint width,
@@ -381,9 +357,6 @@ asb_font_get_pixbuf (FT_Face ft_face,
 	return pixbuf;
 }
 
-/**
- * asb_font_get_caption:
- */
 static gchar *
 asb_font_get_caption (AsbApp *app)
 {
@@ -401,9 +374,6 @@ asb_font_get_caption (AsbApp *app)
 	return g_strdup_printf ("%s – %s", family, subfamily);
 }
 
-/**
- * asb_font_add_screenshot:
- */
 static gboolean
 asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
 			 const gchar *cache_id, GError **error)
@@ -536,9 +506,6 @@ asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
 	return TRUE;
 }
 
-/**
- * asb_font_add_languages:
- */
 static void
 asb_font_add_languages (AsbApp *app, const FcPattern *pattern)
 {
@@ -572,9 +539,6 @@ asb_font_add_languages (AsbApp *app, const FcPattern *pattern)
 		as_app_add_language (AS_APP (app), 0, "en");
 }
 
-/**
- * asb_plugin_font_set_name:
- */
 static void
 asb_plugin_font_set_name (AsbApp *app, const gchar *name)
 {
@@ -608,9 +572,6 @@ asb_plugin_font_set_name (AsbApp *app, const gchar *name)
 	as_app_set_name (AS_APP (app), "C", ptr);
 }
 
-/**
- * asb_plugin_font_app:
- */
 static gboolean
 asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 		     const gchar *filename, GError **error)
@@ -737,9 +698,6 @@ out:
 	return ret;
 }
 
-/**
- * asb_plugin_process_app:
- */
 gboolean
 asb_plugin_process_app (AsbPlugin *plugin,
 			AsbPackage *pkg,
@@ -770,9 +728,6 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	return TRUE;
 }
 
-/**
- * asb_plugin_merge:
- */
 void
 asb_plugin_merge (AsbPlugin *plugin, GList *list)
 {

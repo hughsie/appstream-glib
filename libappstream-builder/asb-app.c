@@ -46,9 +46,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsbApp, asb_app, AS_TYPE_APP)
 
 #define GET_PRIVATE(o) (asb_app_get_instance_private (o))
 
-/**
- * asb_app_finalize:
- **/
 static void
 asb_app_finalize (GObject *object)
 {
@@ -62,9 +59,6 @@ asb_app_finalize (GObject *object)
 	G_OBJECT_CLASS (asb_app_parent_class)->finalize (object);
 }
 
-/**
- * asb_app_init:
- **/
 static void
 asb_app_init (AsbApp *app)
 {
@@ -77,9 +71,6 @@ asb_app_init (AsbApp *app)
 				AS_APP_TRUST_FLAG_CHECK_VALID_UTF8);
 }
 
-/**
- * asb_app_class_init:
- **/
 static void
 asb_app_class_init (AsbAppClass *klass)
 {

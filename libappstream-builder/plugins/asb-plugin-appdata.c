@@ -24,18 +24,12 @@
 
 #include <asb-plugin.h>
 
-/**
- * asb_plugin_get_name:
- */
 const gchar *
 asb_plugin_get_name (void)
 {
 	return "appdata";
 }
 
-/**
- * asb_plugin_add_globs:
- */
 void
 asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
@@ -43,9 +37,6 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 	asb_plugin_add_glob (globs, "/usr/share/appdata/*.appdata.xml");
 }
 
-/**
- * _asb_plugin_check_filename:
- */
 static gboolean
 _asb_plugin_check_filename (const gchar *filename)
 {
@@ -56,18 +47,12 @@ _asb_plugin_check_filename (const gchar *filename)
 	return FALSE;
 }
 
-/**
- * asb_plugin_check_filename:
- */
 gboolean
 asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
 {
 	return _asb_plugin_check_filename (filename);
 }
 
-/**
- * asb_plugin_process_filename:
- */
 static gboolean
 asb_plugin_process_filename (AsbPlugin *plugin,
 			     AsbPackage *pkg,
@@ -204,9 +189,6 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	return TRUE;
 }
 
-/**
- * asb_plugin_process:
- */
 GList *
 asb_plugin_process (AsbPlugin *plugin,
 		    AsbPackage *pkg,
@@ -247,9 +229,6 @@ asb_plugin_process (AsbPlugin *plugin,
 	return apps;
 }
 
-/**
- * asb_plugin_merge:
- */
 void
 asb_plugin_merge (AsbPlugin *plugin, GList *list)
 {

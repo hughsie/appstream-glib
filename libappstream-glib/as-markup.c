@@ -52,9 +52,6 @@ typedef struct {
 	GString		*temp;
 } AsMarkupImportHelper;
 
-/**
- * as_markup_import_html_flush:
- **/
 static void
 as_markup_import_html_flush (AsMarkupImportHelper *helper)
 {
@@ -88,9 +85,6 @@ as_markup_import_html_flush (AsMarkupImportHelper *helper)
 	g_string_truncate (helper->temp, 0);
 }
 
-/**
- * as_markup_import_html_set_tag:
- **/
 static void
 as_markup_import_html_set_tag (AsMarkupImportHelper *helper, AsMarkupTag action_new)
 {
@@ -107,9 +101,6 @@ as_markup_import_html_set_tag (AsMarkupImportHelper *helper, AsMarkupTag action_
 	}
 }
 
-/**
- * as_markup_import_html_start_cb:
- **/
 static void
 as_markup_import_html_start_cb (GMarkupParseContext *context,
 				const gchar *element_name,
@@ -145,9 +136,6 @@ as_markup_import_html_start_cb (GMarkupParseContext *context,
 	}
 }
 
-/**
- * as_markup_import_html_end_cb:
- **/
 static void
 as_markup_import_html_end_cb (GMarkupParseContext *context,
 			      const gchar *element_name,
@@ -183,9 +171,6 @@ as_markup_import_html_end_cb (GMarkupParseContext *context,
 	}
 }
 
-/**
- * as_markup_import_html_text_cb:
- **/
 static void
 as_markup_import_html_text_cb (GMarkupParseContext *context,
 			       const gchar *text,
@@ -204,11 +189,6 @@ as_markup_import_html_text_cb (GMarkupParseContext *context,
 	g_string_append (helper->temp, tmp);
 }
 
-/**
- * as_markup_import_html_erase:
- *
- * Replaces any tag with whitespace.
- **/
 static void
 as_markup_import_html_erase (GString *str, const gchar *start, const gchar *end)
 {
@@ -229,9 +209,6 @@ as_markup_import_html_erase (GString *str, const gchar *start, const gchar *end)
 	}
 }
 
-/**
- * as_markup_import_html:
- **/
 static gchar *
 as_markup_import_html (const gchar *text, GError **error)
 {
@@ -291,9 +268,6 @@ as_markup_import_html (const gchar *text, GError **error)
 				       error);
 }
 
-/**
- * as_markup_import_simple:
- */
 static gchar *
 as_markup_import_simple (const gchar *text, GError **error)
 {
@@ -412,9 +386,6 @@ as_markup_strsplit_words (const gchar *text, guint line_len)
 	return (gchar **) g_ptr_array_free (lines, FALSE);
 }
 
-/**
- * as_markup_render_para:
- **/
 static void
 as_markup_render_para (GString *str, AsMarkupConvertFormat format, const gchar *data)
 {
@@ -443,9 +414,6 @@ as_markup_render_para (GString *str, AsMarkupConvertFormat format, const gchar *
 	}
 }
 
-/**
- * as_markup_render_li:
- **/
 static void
 as_markup_render_li (GString *str, AsMarkupConvertFormat format, const gchar *data)
 {
@@ -473,9 +441,6 @@ as_markup_render_li (GString *str, AsMarkupConvertFormat format, const gchar *da
 	}
 }
 
-/**
- * as_markup_render_ul_start:
- **/
 static void
 as_markup_render_ul_start (GString *str, AsMarkupConvertFormat format)
 {
@@ -488,9 +453,6 @@ as_markup_render_ul_start (GString *str, AsMarkupConvertFormat format)
 	}
 }
 
-/**
- * as_markup_render_ul_end:
- **/
 static void
 as_markup_render_ul_end (GString *str, AsMarkupConvertFormat format)
 {

@@ -48,9 +48,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsProvide, as_provide, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (as_provide_get_instance_private (o))
 
-/**
- * as_provide_finalize:
- **/
 static void
 as_provide_finalize (GObject *object)
 {
@@ -62,17 +59,11 @@ as_provide_finalize (GObject *object)
 	G_OBJECT_CLASS (as_provide_parent_class)->finalize (object);
 }
 
-/**
- * as_provide_init:
- **/
 static void
 as_provide_init (AsProvide *provide)
 {
 }
 
-/**
- * as_provide_class_init:
- **/
 static void
 as_provide_class_init (AsProvideClass *klass)
 {

@@ -50,9 +50,6 @@ typedef struct {
 	GPtrArray	*translations;		/* no ref */
 } AsAppBuilderContext;
 
-/**
- * as_app_builder_entry_new:
- **/
 static AsAppBuilderEntry *
 as_app_builder_entry_new (void)
 {
@@ -61,9 +58,6 @@ as_app_builder_entry_new (void)
 	return entry;
 }
 
-/**
- * as_app_builder_entry_free:
- **/
 static void
 as_app_builder_entry_free (AsAppBuilderEntry *entry)
 {
@@ -71,9 +65,6 @@ as_app_builder_entry_free (AsAppBuilderEntry *entry)
 	g_slice_free (AsAppBuilderEntry, entry);
 }
 
-/**
- * as_app_builder_ctx_new:
- **/
 static AsAppBuilderContext *
 as_app_builder_ctx_new (void)
 {
@@ -82,9 +73,6 @@ as_app_builder_ctx_new (void)
 	return ctx;
 }
 
-/**
- * as_app_builder_ctx_free:
- **/
 static void
 as_app_builder_ctx_free (AsAppBuilderContext *ctx)
 {
@@ -107,9 +95,6 @@ typedef struct {
 	guint32		 trans_sysdep_tab_offset;
 } AsAppBuilderGettextHeader;
 
-/**
- * as_app_builder_parse_file_gettext:
- **/
 static gboolean
 as_app_builder_parse_file_gettext (AsAppBuilderContext *ctx,
 				   const gchar *locale,
@@ -149,9 +134,6 @@ as_app_builder_parse_file_gettext (AsAppBuilderContext *ctx,
 	return TRUE;
 }
 
-/**
- * as_app_builder_search_locale_gettext:
- **/
 static gboolean
 as_app_builder_search_locale_gettext (AsAppBuilderContext *ctx,
 				      const gchar *locale,
@@ -256,9 +238,6 @@ _read_uint32 (const guint8 *data, guint32 *offset)
 	return GUINT32_FROM_BE (tmp);
 }
 
-/**
- * as_app_builder_parse_data_qt:
- **/
 static void
 as_app_builder_parse_data_qt (AsAppBuilderContext *ctx,
 			      const gchar *locale,
@@ -304,9 +283,6 @@ as_app_builder_parse_data_qt (AsAppBuilderContext *ctx,
 	ctx->data = g_list_prepend (ctx->data, entry);
 }
 
-/**
- * as_app_builder_parse_file_qt:
- **/
 static gboolean
 as_app_builder_parse_file_qt (AsAppBuilderContext *ctx,
 			      const gchar *locale,
@@ -352,9 +328,6 @@ as_app_builder_parse_file_qt (AsAppBuilderContext *ctx,
 	return TRUE;
 }
 
-/**
- * as_app_builder_search_translations_qt:
- **/
 static gboolean
 as_app_builder_search_translations_qt (AsAppBuilderContext *ctx,
 				       const gchar *prefix,
@@ -406,9 +379,6 @@ as_app_builder_search_translations_qt (AsAppBuilderContext *ctx,
 	return TRUE;
 }
 
-/**
- * as_app_builder_search_translations_gettext:
- **/
 static gboolean
 as_app_builder_search_translations_gettext (AsAppBuilderContext *ctx,
 					    const gchar *prefix,
@@ -436,9 +406,6 @@ as_app_builder_search_translations_gettext (AsAppBuilderContext *ctx,
 	return TRUE;
 }
 
-/**
- * as_app_builder_entry_sort_cb:
- **/
 static gint
 as_app_builder_entry_sort_cb (gconstpointer a, gconstpointer b)
 {
@@ -517,9 +484,6 @@ as_app_builder_search_translations (AsApp *app,
 	return TRUE;
 }
 
-/**
- * as_app_builder_search_path:
- **/
 static gboolean
 as_app_builder_search_path (AsApp *app,
 			    const gchar *prefix,
@@ -591,9 +555,6 @@ as_app_builder_search_kudos (AsApp *app,
 	return TRUE;
 }
 
-/**
- * as_app_builder_search_dbus_file:
- **/
 static gboolean
 as_app_builder_search_dbus_file (AsApp *app,
 				 const gchar *filename,
@@ -620,9 +581,6 @@ as_app_builder_search_dbus_file (AsApp *app,
 	return TRUE;
 }
 
-/**
- * as_app_builder_search_dbus:
- **/
 static gboolean
 as_app_builder_search_dbus (AsApp *app,
 			    const gchar *prefix,

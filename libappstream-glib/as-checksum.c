@@ -51,9 +51,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsChecksum, as_checksum, G_TYPE_OBJECT)
 
 #define AS_CHECKSUM_UNKNOWN	((guint) -1)
 
-/**
- * as_checksum_finalize:
- **/
 static void
 as_checksum_finalize (GObject *object)
 {
@@ -66,9 +63,6 @@ as_checksum_finalize (GObject *object)
 	G_OBJECT_CLASS (as_checksum_parent_class)->finalize (object);
 }
 
-/**
- * as_checksum_init:
- **/
 static void
 as_checksum_init (AsChecksum *checksum)
 {
@@ -76,9 +70,6 @@ as_checksum_init (AsChecksum *checksum)
 	priv->kind = AS_CHECKSUM_UNKNOWN;
 }
 
-/**
- * as_checksum_class_init:
- **/
 static void
 as_checksum_class_init (AsChecksumClass *klass)
 {
@@ -261,9 +252,6 @@ as_checksum_set_target (AsChecksum *checksum, AsChecksumTarget target)
 	priv->target = target;
 }
 
-/**
- * _g_checksum_type_from_string:
- **/
 static GChecksumType
 _g_checksum_type_from_string (const gchar *checksum_type)
 {
@@ -278,9 +266,6 @@ _g_checksum_type_from_string (const gchar *checksum_type)
 	return -1;
 }
 
-/**
- * _g_checksum_type_to_string:
- **/
 static const gchar *
 _g_checksum_type_to_string (GChecksumType checksum_type)
 {

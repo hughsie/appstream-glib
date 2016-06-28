@@ -73,9 +73,6 @@ as_node_new (void)
 	return g_node_new (data);
 }
 
-/**
- * as_node_attr_free:
- **/
 static void
 as_node_attr_free (AsNodeAttr *attr)
 {
@@ -83,9 +80,6 @@ as_node_attr_free (AsNodeAttr *attr)
 	g_slice_free (AsNodeAttr, attr);
 }
 
-/**
- * as_node_attr_insert:
- **/
 static AsNodeAttr *
 as_node_attr_insert (AsNodeData *data, const gchar *key, const gchar *value)
 {
@@ -97,9 +91,6 @@ as_node_attr_insert (AsNodeData *data, const gchar *key, const gchar *value)
 	return attr;
 }
 
-/**
- * as_node_attr_find:
- **/
 static AsNodeAttr *
 as_node_attr_find (AsNodeData *data, const gchar *key)
 {
@@ -114,9 +105,6 @@ as_node_attr_find (AsNodeData *data, const gchar *key)
 	return NULL;
 }
 
-/**
- * as_node_attr_lookup:
- **/
 static const gchar *
 as_node_attr_lookup (AsNodeData *data, const gchar *key)
 {
@@ -127,9 +115,6 @@ as_node_attr_lookup (AsNodeData *data, const gchar *key)
 	return NULL;
 }
 
-/**
- * as_node_destroy_node_cb:
- **/
 static gboolean
 as_node_destroy_node_cb (AsNode *node, gpointer user_data)
 {
@@ -172,9 +157,6 @@ as_node_unref (AsNode *node)
  **/
 G_DEFINE_QUARK (as-node-error-quark, as_node_error)
 
-/**
- * as_node_string_replace_inplace:
- **/
 static void
 as_node_string_replace_inplace (gchar *text,
 				const gchar *search,
@@ -197,9 +179,6 @@ as_node_string_replace_inplace (gchar *text,
 	}
 }
 
-/**
- * as_node_cdata_to_raw:
- **/
 static void
 as_node_cdata_to_raw (AsNodeData *data)
 {
@@ -211,9 +190,6 @@ as_node_cdata_to_raw (AsNodeData *data)
 	data->cdata_escaped = FALSE;
 }
 
-/**
- * as_node_cdata_to_escaped:
- **/
 static void
 as_node_cdata_to_escaped (AsNodeData *data)
 {
@@ -229,9 +205,6 @@ as_node_cdata_to_escaped (AsNodeData *data)
 	data->cdata_escaped = TRUE;
 }
 
-/**
- * as_node_add_padding:
- **/
 static void
 as_node_add_padding (GString *xml, guint depth)
 {
@@ -240,9 +213,6 @@ as_node_add_padding (GString *xml, guint depth)
 		g_string_append (xml, "  ");
 }
 
-/**
- * as_node_get_attr_string:
- **/
 static gchar *
 as_node_get_attr_string (AsNodeData *data)
 {
@@ -262,9 +232,6 @@ as_node_get_attr_string (AsNodeData *data)
 	return g_string_free (str, FALSE);
 }
 
-/**
- * as_tag_data_get_name:
- **/
 static const gchar *
 as_tag_data_get_name (AsNodeData *data)
 {
@@ -273,9 +240,6 @@ as_tag_data_get_name (AsNodeData *data)
 	return data->name;
 }
 
-/**
- * as_node_data_set_name:
- **/
 static void
 as_node_data_set_name (AsNodeData *data, const gchar *name, AsNodeInsertFlags flags)
 {
@@ -290,9 +254,6 @@ as_node_data_set_name (AsNodeData *data, const gchar *name, AsNodeInsertFlags fl
 	}
 }
 
-/**
- * as_node_sort_children:
- **/
 static void
 as_node_sort_children (AsNode *first)
 {
@@ -319,9 +280,6 @@ as_node_sort_children (AsNode *first)
 		as_node_sort_children (first->next);
 }
 
-/**
- * as_node_to_xml_string:
- **/
 static void
 as_node_to_xml_string (GString *xml,
 		       guint depth_offset,
@@ -502,9 +460,6 @@ as_node_to_xml (const AsNode *node, AsNodeToXmlFlags flags)
 	return xml;
 }
 
-/**
- * as_node_start_element_cb:
- **/
 static void
 as_node_start_element_cb (GMarkupParseContext *context,
 			  const gchar *element_name,
@@ -542,9 +497,6 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	helper->current = current;
 }
 
-/**
- * as_node_end_element_cb:
- **/
 static void
 as_node_end_element_cb (GMarkupParseContext *context,
 			const gchar         *element_name,
@@ -555,9 +507,6 @@ as_node_end_element_cb (GMarkupParseContext *context,
 	helper->current = helper->current->parent;
 }
 
-/**
- * as_node_text_cb:
- **/
 static void
 as_node_text_cb (GMarkupParseContext *context,
 		 const gchar         *text,
@@ -599,9 +548,6 @@ as_node_text_cb (GMarkupParseContext *context,
 	}
 }
 
-/**
- * as_node_passthrough_cb:
- **/
 static void
 as_node_passthrough_cb (GMarkupParseContext *context,
 			const gchar         *passthrough_text,
@@ -860,9 +806,6 @@ as_node_from_file (GFile *file,
 	return root;
 }
 
-/**
- * as_node_get_child_node:
- **/
 static AsNode *
 as_node_get_child_node (const AsNode *root, const gchar *name,
 			const gchar *attr_key, const gchar *attr_value)
@@ -1310,9 +1253,6 @@ as_node_find_with_attribute (AsNode *root, const gchar *path,
 	return node;
 }
 
-/**
- * as_node_insert_line_breaks:
- **/
 static gchar *
 as_node_insert_line_breaks (const gchar *text, guint break_len)
 {
@@ -1388,9 +1328,6 @@ as_node_insert (AsNode *parent,
 	return g_node_insert_data (parent, -1, data);
 }
 
-/**
- * as_node_list_sort_cb:
- **/
 static gint
 as_node_list_sort_cb (gconstpointer a, gconstpointer b)
 {
@@ -1587,18 +1524,12 @@ as_node_get_localized_best (const AsNode *node, const gchar *key)
 	return as_hash_lookup_by_locale (hash, NULL);
 }
 
-/**
- * as_node_string_free:
- **/
 static void
 as_node_string_free (GString *string)
 {
 	g_string_free (string, TRUE);
 }
 
-/**
- * as_node_denorm_add_to_langs:
- **/
 static void
 as_node_denorm_add_to_langs (GHashTable *hash,
 			     const gchar *data,
@@ -1620,9 +1551,6 @@ as_node_denorm_add_to_langs (GHashTable *hash,
 	}
 }
 
-/**
- * as_node_denorm_get_str_for_lang:
- **/
 static GString *
 as_node_denorm_get_str_for_lang (GHashTable *hash,
 				AsNodeData *data,

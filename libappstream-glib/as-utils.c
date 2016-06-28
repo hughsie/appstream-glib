@@ -95,9 +95,6 @@ as_hash_lookup_by_locale (GHashTable *hash, const gchar *locale)
 	return NULL;
 }
 
-/**
- * as_utils_locale_to_language:
- **/
 static gchar *
 as_utils_locale_to_language (const gchar *locale)
 {
@@ -631,9 +628,6 @@ as_utils_license_to_spdx (const gchar *license)
 	return g_string_free (str, FALSE);
 }
 
-/**
- * as_pixbuf_blur_private:
- **/
 static void
 as_pixbuf_blur_private (GdkPixbuf *src, GdkPixbuf *dest, gint radius, guchar *div_kernel_size)
 {
@@ -996,9 +990,6 @@ as_utils_find_icon_filename (const gchar *destdir,
 						 error);
 }
 
-/**
- * as_utils_location_get_prefix:
- **/
 static const gchar *
 as_utils_location_get_prefix (AsUtilsLocation location)
 {
@@ -1011,9 +1002,6 @@ as_utils_location_get_prefix (AsUtilsLocation location)
 	return NULL;
 }
 
-/**
- * as_utils_install_icon:
- **/
 static gboolean
 as_utils_install_icon (AsUtilsLocation location,
 		       const gchar *filename,
@@ -1117,9 +1105,6 @@ out:
 	return ret;
 }
 
-/**
- * as_utils_install_xml:
- **/
 static gboolean
 as_utils_install_xml (const gchar *filename,
 		      const gchar *origin,

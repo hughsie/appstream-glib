@@ -44,9 +44,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsbPluginLoader, asb_plugin_loader, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (asb_plugin_loader_get_instance_private (o))
 
-/**
- * asb_plugin_loader_run:
- **/
 static void
 asb_plugin_loader_run (AsbPluginLoader *plugin_loader, const gchar *function_name)
 {
@@ -68,9 +65,6 @@ asb_plugin_loader_run (AsbPluginLoader *plugin_loader, const gchar *function_nam
 	}
 }
 
-/**
- * asb_plugin_loader_finalize:
- **/
 static void
 asb_plugin_loader_finalize (GObject *object)
 {
@@ -89,9 +83,6 @@ asb_plugin_loader_finalize (GObject *object)
 	G_OBJECT_CLASS (asb_plugin_loader_parent_class)->finalize (object);
 }
 
-/**
- * asb_plugin_loader_plugin_free:
- **/
 static void
 asb_plugin_loader_plugin_free (AsbPlugin *plugin)
 {
@@ -101,9 +92,6 @@ asb_plugin_loader_plugin_free (AsbPlugin *plugin)
 	g_slice_free (AsbPlugin, plugin);
 }
 
-/**
- * asb_plugin_loader_init:
- **/
 static void
 asb_plugin_loader_init (AsbPluginLoader *plugin_loader)
 {
@@ -325,9 +313,6 @@ asb_plugin_loader_merge (AsbPluginLoader *plugin_loader, GList *apps)
 	}
 }
 
-/**
- * asb_plugin_loader_open_plugin:
- **/
 static AsbPlugin *
 asb_plugin_loader_open_plugin (AsbPluginLoader *plugin_loader,
 			       const gchar *filename)
@@ -368,9 +353,6 @@ asb_plugin_loader_open_plugin (AsbPluginLoader *plugin_loader,
 	return plugin;
 }
 
-/**
- * asb_plugin_loader_sort_cb:
- **/
 static gint
 asb_plugin_loader_sort_cb (gconstpointer a, gconstpointer b)
 {
@@ -462,9 +444,6 @@ asb_plugin_loader_setup (AsbPluginLoader *plugin_loader, GError **error)
 }
 
 
-/**
- * asb_plugin_loader_class_init:
- **/
 static void
 asb_plugin_loader_class_init (AsbPluginLoaderClass *klass)
 {

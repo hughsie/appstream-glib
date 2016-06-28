@@ -50,9 +50,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsTranslation, as_translation, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (as_translation_get_instance_private (o))
 
-/**
- * as_translation_finalize:
- **/
 static void
 as_translation_finalize (GObject *object)
 {
@@ -64,17 +61,11 @@ as_translation_finalize (GObject *object)
 	G_OBJECT_CLASS (as_translation_parent_class)->finalize (object);
 }
 
-/**
- * as_translation_init:
- **/
 static void
 as_translation_init (AsTranslation *translation)
 {
 }
 
-/**
- * as_translation_class_init:
- **/
 static void
 as_translation_class_init (AsTranslationClass *klass)
 {

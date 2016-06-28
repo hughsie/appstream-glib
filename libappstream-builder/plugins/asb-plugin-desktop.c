@@ -30,18 +30,12 @@
 #include <as-utils-private.h>
 #include <as-app-private.h>
 
-/**
- * asb_plugin_get_name:
- */
 const gchar *
 asb_plugin_get_name (void)
 {
 	return "desktop";
 }
 
-/**
- * asb_plugin_add_globs:
- */
 void
 asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
@@ -52,9 +46,6 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 	asb_plugin_add_glob (globs, "/usr/share/*/icons/*");
 }
 
-/**
- * asb_app_load_icon:
- */
 static GdkPixbuf *
 asb_app_load_icon (AsbPlugin *plugin,
 		   const gchar *filename,
@@ -88,9 +79,6 @@ asb_app_load_icon (AsbPlugin *plugin,
 	return g_object_ref (as_image_get_pixbuf (im));
 }
 
-/**
- * asb_plugin_desktop_add_icons:
- */
 static gboolean
 asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 			      AsbApp *app,
@@ -177,9 +165,6 @@ asb_plugin_desktop_add_icons (AsbPlugin *plugin,
 	return TRUE;
 }
 
-/**
- * asb_plugin_desktop_refine:
- */
 static gboolean
 asb_plugin_desktop_refine (AsbPlugin *plugin,
 			   AsbPackage *pkg,
@@ -234,9 +219,6 @@ asb_plugin_desktop_refine (AsbPlugin *plugin,
 	return TRUE;
 }
 
-/**
- * asb_plugin_process_app:
- */
 gboolean
 asb_plugin_process_app (AsbPlugin *plugin,
 			AsbPackage *pkg,

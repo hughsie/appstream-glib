@@ -51,9 +51,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsBundle, as_bundle, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (as_bundle_get_instance_private (o))
 
-/**
- * as_bundle_finalize:
- **/
 static void
 as_bundle_finalize (GObject *object)
 {
@@ -67,17 +64,11 @@ as_bundle_finalize (GObject *object)
 	G_OBJECT_CLASS (as_bundle_parent_class)->finalize (object);
 }
 
-/**
- * as_bundle_init:
- **/
 static void
 as_bundle_init (AsBundle *bundle)
 {
 }
 
-/**
- * as_bundle_class_init:
- **/
 static void
 as_bundle_class_init (AsBundleClass *klass)
 {

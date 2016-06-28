@@ -63,9 +63,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsRelease, as_release, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (as_release_get_instance_private (o))
 
-/**
- * as_release_finalize:
- **/
 static void
 as_release_finalize (GObject *object)
 {
@@ -82,9 +79,6 @@ as_release_finalize (GObject *object)
 	G_OBJECT_CLASS (as_release_parent_class)->finalize (object);
 }
 
-/**
- * as_release_init:
- **/
 static void
 as_release_init (AsRelease *release)
 {
@@ -101,9 +95,6 @@ as_release_init (AsRelease *release)
 		priv->size[i] = 0;
 }
 
-/**
- * as_release_class_init:
- **/
 static void
 as_release_class_init (AsReleaseClass *klass)
 {
@@ -612,9 +603,6 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 	return n;
 }
 
-/**
- * as_release_iso8601_to_datetime:
- **/
 static GDateTime *
 as_release_iso8601_to_datetime (const gchar *iso_date)
 {

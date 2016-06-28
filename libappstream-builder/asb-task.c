@@ -50,9 +50,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsbTask, asb_task, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (asb_task_get_instance_private (o))
 
-/**
- * asb_task_add_suitable_plugins:
- **/
 static void
 asb_task_add_suitable_plugins (AsbTask *task)
 {
@@ -84,9 +81,6 @@ asb_task_add_suitable_plugins (AsbTask *task)
 	}
 }
 
-/**
- * asb_task_explode_extra_package:
- **/
 static gboolean
 asb_task_explode_extra_package (AsbTask *task,
 				const gchar *pkg_name,
@@ -146,9 +140,6 @@ asb_task_explode_extra_package (AsbTask *task,
 	return TRUE;
 }
 
-/**
- * asb_task_explode_extra_packages:
- **/
 static gboolean
 asb_task_explode_extra_packages (AsbTask *task, GError **error)
 {
@@ -516,9 +507,6 @@ out:
 	return TRUE;
 }
 
-/**
- * asb_task_finalize:
- **/
 static void
 asb_task_finalize (GObject *object)
 {
@@ -554,9 +542,6 @@ asb_task_set_package (AsbTask *task, AsbPackage *pkg)
 	priv->pkg = g_object_ref (pkg);
 }
 
-/**
- * asb_task_init:
- **/
 static void
 asb_task_init (AsbTask *task)
 {
@@ -564,9 +549,6 @@ asb_task_init (AsbTask *task)
 	priv->plugins_to_run = g_ptr_array_new ();
 }
 
-/**
- * asb_task_class_init:
- **/
 static void
 asb_task_class_init (AsbTaskClass *klass)
 {

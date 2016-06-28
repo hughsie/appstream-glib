@@ -52,9 +52,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsScreenshot, as_screenshot, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (as_screenshot_get_instance_private (o))
 
-/**
- * as_screenshot_finalize:
- **/
 static void
 as_screenshot_finalize (GObject *object)
 {
@@ -67,9 +64,6 @@ as_screenshot_finalize (GObject *object)
 	G_OBJECT_CLASS (as_screenshot_parent_class)->finalize (object);
 }
 
-/**
- * as_screenshot_init:
- **/
 static void
 as_screenshot_init (AsScreenshot *screenshot)
 {
@@ -79,9 +73,6 @@ as_screenshot_init (AsScreenshot *screenshot)
 	priv->captions = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 }
 
-/**
- * as_screenshot_class_init:
- **/
 static void
 as_screenshot_class_init (AsScreenshotClass *klass)
 {

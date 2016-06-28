@@ -46,9 +46,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsbPackageAlpm, asb_package_alpm, ASB_TYPE_PACKAGE)
 
 #define GET_PRIVATE(o) (asb_package_alpm_get_instance_private (o))
 
-/**
- * asb_package_alpm_finalize:
- **/
 static void
 asb_package_alpm_finalize (GObject *object)
 {
@@ -62,17 +59,11 @@ asb_package_alpm_finalize (GObject *object)
 	G_OBJECT_CLASS (asb_package_alpm_parent_class)->finalize (object);
 }
 
-/**
- * asb_package_alpm_init:
- **/
 static void
 asb_package_alpm_init (AsbPackageAlpm *pkg)
 {
 }
 
-/**
- * asb_package_alpm_list_to_array:
- **/
 static GPtrArray *
 asb_package_alpm_list_to_array (alpm_list_t *list)
 {
@@ -87,9 +78,6 @@ asb_package_alpm_list_to_array (alpm_list_t *list)
 	return array;
 }
 
-/**
- * asb_package_alpm_ensure_license:
- **/
 static gboolean
 asb_package_alpm_ensure_license (AsbPackage *pkg, GError **error)
 {
@@ -112,9 +100,6 @@ asb_package_alpm_ensure_license (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_alpm_ensure_version:
- **/
 static void
 asb_package_alpm_ensure_version (AsbPackage *pkg, GError **error)
 {
@@ -137,9 +122,6 @@ asb_package_alpm_ensure_version (AsbPackage *pkg, GError **error)
 }
 
 #if 0
-/**
- * asb_package_alpm_ensure_releases:
- **/
 static gboolean
 asb_package_alpm_ensure_releases (AsbPackage *pkg, GError **error)
 {
@@ -149,9 +131,6 @@ asb_package_alpm_ensure_releases (AsbPackage *pkg, GError **error)
 }
 #endif
 
-/**
- * asb_package_alpm_ensure_depends:
- **/
 static gboolean
 asb_package_alpm_ensure_depends (AsbPackage *pkg, GError **error)
 {
@@ -167,9 +146,6 @@ asb_package_alpm_ensure_depends (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_alpm_ensure_filelists:
- **/
 static gboolean
 asb_package_alpm_ensure_filelists (AsbPackage *pkg, GError **error)
 {
@@ -192,9 +168,6 @@ asb_package_alpm_ensure_filelists (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_alpm_open:
- **/
 static gboolean
 asb_package_alpm_open (AsbPackage *pkg, const gchar *filename, GError **error)
 {
@@ -237,9 +210,6 @@ asb_package_alpm_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_alpm_compare:
- **/
 static gint
 asb_package_alpm_compare (AsbPackage *pkg1, AsbPackage *pkg2)
 {
@@ -255,9 +225,6 @@ asb_package_alpm_compare (AsbPackage *pkg1, AsbPackage *pkg2)
 	return alpm_pkg_vercmp (pkg1_version, pkg2_version);
 }
 
-/**
- * asb_package_alpm_ensure:
- **/
 static gboolean
 asb_package_alpm_ensure (AsbPackage *pkg,
 			 AsbPackageEnsureFlags flags,
@@ -278,9 +245,6 @@ asb_package_alpm_ensure (AsbPackage *pkg,
 	return TRUE;
 }
 
-/**
- * asb_package_alpm_class_init:
- **/
 static void
 asb_package_alpm_class_init (AsbPackageAlpmClass *klass)
 {
@@ -293,9 +257,6 @@ asb_package_alpm_class_init (AsbPackageAlpmClass *klass)
 	package_class->compare = asb_package_alpm_compare;
 }
 
-/**
- * asb_package_alpm_new:
- **/
 AsbPackage *
 asb_package_alpm_new (void)
 {

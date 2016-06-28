@@ -24,18 +24,12 @@
 #include <asb-plugin.h>
 #include <fnmatch.h>
 
-/**
- * asb_plugin_get_name:
- */
 const gchar *
 asb_plugin_get_name (void)
 {
 	return "absorb";
 }
 
-/**
- * asb_plugin_absorb_parent_for_pkgname:
- */
 static void
 asb_plugin_absorb_parent_for_pkgname (GList *list, AsApp *parent, const gchar *pkgname)
 {
@@ -60,9 +54,6 @@ asb_plugin_absorb_parent_for_pkgname (GList *list, AsApp *parent, const gchar *p
 	}
 }
 
-/**
- * asb_plugin_merge_prepare_deps:
- */
 static void
 asb_plugin_merge_prepare_deps (GList *list)
 {
@@ -83,9 +74,6 @@ asb_plugin_merge_prepare_deps (GList *list)
 	}
 }
 
-/**
- * asb_plugin_merge:
- */
 void
 asb_plugin_merge (AsbPlugin *plugin, GList *list)
 {

@@ -48,9 +48,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsbPackageRpm, asb_package_rpm, ASB_TYPE_PACKAGE)
 
 #define GET_PRIVATE(o) (asb_package_rpm_get_instance_private (o))
 
-/**
- * asb_package_rpm_finalize:
- **/
 static void
 asb_package_rpm_finalize (GObject *object)
 {
@@ -63,17 +60,11 @@ asb_package_rpm_finalize (GObject *object)
 	G_OBJECT_CLASS (asb_package_rpm_parent_class)->finalize (object);
 }
 
-/**
- * asb_package_rpm_init:
- **/
 static void
 asb_package_rpm_init (AsbPackageRpm *pkg)
 {
 }
 
-/**
- * asb_package_rpm_set_license:
- **/
 static void
 asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 {
@@ -113,9 +104,6 @@ asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 	asb_package_set_license (pkg, new);
 }
 
-/**
- * asb_package_rpm_set_source:
- **/
 static void
 asb_package_rpm_set_source (AsbPackage *pkg, const gchar *source)
 {
@@ -144,9 +132,6 @@ asb_package_rpm_set_source (AsbPackage *pkg, const gchar *source)
 	asb_package_set_source_pkgname (pkg, srcrpm);
 }
 
-/**
- * asb_package_rpm_ensure_nevra:
- **/
 static gboolean
 asb_package_rpm_ensure_nevra (AsbPackage *pkg, GError **error)
 {
@@ -169,9 +154,6 @@ asb_package_rpm_ensure_nevra (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_rpm_ensure_source:
- **/
 static gboolean
 asb_package_rpm_ensure_source (AsbPackage *pkg, GError **error)
 {
@@ -186,9 +168,6 @@ asb_package_rpm_ensure_source (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_rpm_ensure_url:
- **/
 static gboolean
 asb_package_rpm_ensure_url (AsbPackage *pkg, GError **error)
 {
@@ -203,9 +182,6 @@ asb_package_rpm_ensure_url (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_rpm_ensure_vcs:
- **/
 static gboolean
 asb_package_rpm_ensure_vcs (AsbPackage *pkg, GError **error)
 {
@@ -220,9 +196,6 @@ asb_package_rpm_ensure_vcs (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_rpm_ensure_license:
- **/
 static gboolean
 asb_package_rpm_ensure_license (AsbPackage *pkg, GError **error)
 {
@@ -237,9 +210,6 @@ asb_package_rpm_ensure_license (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_rpm_add_release:
- **/
 static void
 asb_package_rpm_add_release (AsbPackage *pkg,
 			     guint64 timestamp,
@@ -297,9 +267,6 @@ asb_package_rpm_add_release (AsbPackage *pkg,
 	}
 }
 
-/**
- * asb_package_rpm_ensure_releases:
- **/
 static gboolean
 asb_package_rpm_ensure_releases (AsbPackage *pkg, GError **error)
 {
@@ -330,9 +297,6 @@ asb_package_rpm_ensure_releases (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_rpm_ensure_deps:
- **/
 static gboolean
 asb_package_rpm_ensure_deps (AsbPackage *pkg, GError **error)
 {
@@ -375,9 +339,6 @@ out:
 	return ret;
 }
 
-/**
- * asb_package_rpm_ensure_filelists:
- **/
 static gboolean
 asb_package_rpm_ensure_filelists (AsbPackage *pkg, GError **error)
 {
@@ -437,9 +398,6 @@ out:
 	return ret;
 }
 
-/**
- * asb_package_rpm_strerror:
- **/
 static const gchar *
 asb_package_rpm_strerror (rpmRC rc)
 {
@@ -467,9 +425,6 @@ asb_package_rpm_strerror (rpmRC rc)
 	return str;
 }
 
-/**
- * asb_package_rpm_close:
- **/
 static gboolean
 asb_package_rpm_close (AsbPackage *pkg, GError **error)
 {
@@ -481,9 +436,6 @@ asb_package_rpm_close (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_rpm_open:
- **/
 static gboolean
 asb_package_rpm_open (AsbPackage *pkg, const gchar *filename, GError **error)
 {
@@ -529,9 +481,6 @@ out:
 	return ret;
 }
 
-/**
- * asb_package_rpm_ensure:
- **/
 static gboolean
 asb_package_rpm_ensure (AsbPackage *pkg,
 			AsbPackageEnsureFlags flags,
@@ -572,9 +521,6 @@ asb_package_rpm_ensure (AsbPackage *pkg,
 	return TRUE;
 }
 
-/**
- * asb_package_rpm_compare:
- **/
 static gint
 asb_package_rpm_compare (AsbPackage *pkg1, AsbPackage *pkg2)
 {
@@ -582,9 +528,6 @@ asb_package_rpm_compare (AsbPackage *pkg1, AsbPackage *pkg2)
 			  asb_package_get_evr (pkg2));
 }
 
-/**
- * asb_package_rpm_class_init:
- **/
 static void
 asb_package_rpm_class_init (AsbPackageRpmClass *klass)
 {
@@ -598,9 +541,6 @@ asb_package_rpm_class_init (AsbPackageRpmClass *klass)
 	package_class->compare = asb_package_rpm_compare;
 }
 
-/**
- * asb_package_rpm_init_cb:
- **/
 static gpointer
 asb_package_rpm_init_cb (gpointer user_data)
 {

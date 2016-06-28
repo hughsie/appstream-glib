@@ -60,9 +60,6 @@ typedef struct {
 	AsInfLoadFlags		 flags;
 } AsInfHelper;
 
-/**
- * as_inf_make_case_insensitive:
- */
 static gchar *
 as_inf_make_case_insensitive (AsInfHelper *helper, const gchar *text)
 {
@@ -71,9 +68,6 @@ as_inf_make_case_insensitive (AsInfHelper *helper, const gchar *text)
 	return g_strdup (text);
 }
 
-/**
- * as_inf_string_isdigits:
- */
 static gboolean
 as_inf_string_isdigits (const gchar *str)
 {
@@ -85,11 +79,6 @@ as_inf_string_isdigits (const gchar *str)
 	return TRUE;
 }
 
-/**
- * as_inf_replace_variable:
- *
- * Replaces any instance of %val% with the 'val' key value found in @dict.
- */
 static gchar *
 as_inf_replace_variable (AsInfHelper *helper, const gchar *line, GError **error)
 {
@@ -138,11 +127,6 @@ as_inf_replace_variable (AsInfHelper *helper, const gchar *line, GError **error)
 	return g_string_free (new, FALSE);
 }
 
-/**
- * as_inf_get_dict:
- *
- * Puts all the strings in [Strings] into a hash table.
- */
 static GHashTable *
 as_inf_get_dict (AsInfHelper *helper, GError **error)
 {
@@ -188,11 +172,6 @@ out:
 	return dict;
 }
 
-/**
- * as_inf_replace_variables:
- *
- * Replaces any key file value with it's substitution from [Strings]
- */
 static gboolean
 as_inf_replace_variables (AsInfHelper *helper, GError **error)
 {
@@ -245,9 +224,6 @@ as_inf_replace_variables (AsInfHelper *helper, GError **error)
 	return TRUE;
 }
 
-/**
- * as_inf_set_last_key:
- */
 static void
 as_inf_set_last_key (AsInfHelper *helper, const gchar *key)
 {
@@ -258,9 +234,6 @@ as_inf_set_last_key (AsInfHelper *helper, const gchar *key)
 	helper->last_key = g_strdup (key);
 }
 
-/**
- * as_inf_set_comment:
- */
 static void
 as_inf_set_comment (AsInfHelper *helper, const gchar *comment)
 {
@@ -274,9 +247,6 @@ as_inf_set_comment (AsInfHelper *helper, const gchar *comment)
 		g_strchug (helper->comment);
 }
 
-/**
- * as_inf_strcheckchars:
- */
 static gboolean
 as_inf_strcheckchars (const gchar *str, const gchar *chars)
 {
@@ -291,11 +261,6 @@ as_inf_strcheckchars (const gchar *str, const gchar *chars)
 	return FALSE;
 }
 
-/**
- * as_inf_strip_value:
- *
- * Strips off any comments and quotes from the .inf key value.
- */
 static gboolean
 as_inf_strip_value (AsInfHelper *helper, gchar *value, GError **error)
 {
@@ -346,9 +311,6 @@ as_inf_strip_value (AsInfHelper *helper, gchar *value, GError **error)
 	return TRUE;
 }
 
-/**
- * as_inf_set_group:
- */
 static gboolean
 as_inf_set_group (AsInfHelper *helper, const gchar *group, GError **error)
 {
@@ -427,9 +389,6 @@ as_inf_set_group (AsInfHelper *helper, const gchar *group, GError **error)
 	return TRUE;
 }
 
-/**
- * as_inf_set_key:
- */
 static void
 as_inf_set_key (AsInfHelper *helper, const gchar *key, const gchar *value)
 {
@@ -446,9 +405,6 @@ as_inf_set_key (AsInfHelper *helper, const gchar *key, const gchar *value)
 	as_inf_set_last_key (helper, key);
 }
 
-/**
- * as_inf_convert_key:
- */
 static void
 as_inf_convert_key (gchar *key)
 {
@@ -462,9 +418,6 @@ as_inf_convert_key (gchar *key)
 	}
 }
 
-/**
- * as_inf_repair_utf8:
- */
 static gboolean
 as_inf_repair_utf8 (AsInfHelper *helper, gchar *line, GError **error)
 {
@@ -490,9 +443,6 @@ as_inf_repair_utf8 (AsInfHelper *helper, gchar *line, GError **error)
 	return TRUE;
 }
 
-/**
- * as_inf_parse_line:
- */
 static gboolean
 as_inf_parse_line (AsInfHelper *helper, gchar *line, GError **error)
 {
@@ -752,9 +702,6 @@ out:
 	return ret;
 }
 
-/**
- * as_inf_helper_new:
- */
 static AsInfHelper *
 as_inf_helper_new (void)
 {
@@ -763,9 +710,6 @@ as_inf_helper_new (void)
 	return helper;
 }
 
-/**
- * as_inf_helper_free:
- */
 static void
 as_inf_helper_free (AsInfHelper *helper)
 {

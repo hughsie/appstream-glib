@@ -35,17 +35,11 @@
 
 G_DEFINE_TYPE (AsbPackageCab, asb_package_cab, ASB_TYPE_PACKAGE)
 
-/**
- * asb_package_cab_init:
- **/
 static void
 asb_package_cab_init (AsbPackageCab *pkg)
 {
 }
 
-/**
- * asb_package_cab_ensure_simple:
- **/
 static gboolean
 asb_package_cab_ensure_simple (AsbPackage *pkg, GError **error)
 {
@@ -73,9 +67,6 @@ asb_package_cab_ensure_simple (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_cab_ensure_filelists:
- **/
 static gboolean
 asb_package_cab_ensure_filelists (AsbPackage *pkg, GError **error)
 {
@@ -108,9 +99,6 @@ asb_package_cab_ensure_filelists (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_cab_open:
- **/
 static gboolean
 asb_package_cab_open (AsbPackage *pkg, const gchar *filename, GError **error)
 {
@@ -122,9 +110,6 @@ asb_package_cab_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_cab_ensure:
- **/
 static gboolean
 asb_package_cab_ensure (AsbPackage *pkg,
 			AsbPackageEnsureFlags flags,
@@ -143,9 +128,6 @@ asb_package_cab_ensure (AsbPackage *pkg,
 	return TRUE;
 }
 
-/**
- * asb_package_cab_class_init:
- **/
 static void
 asb_package_cab_class_init (AsbPackageCabClass *klass)
 {

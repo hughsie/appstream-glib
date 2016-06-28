@@ -50,9 +50,6 @@
 
 #define AS_TEST_WILDCARD_SHA1	"\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?\?"
 
-/**
- * as_test_compare_lines:
- **/
 static gboolean
 as_test_compare_lines (const gchar *txt1, const gchar *txt2, GError **error)
 {
@@ -80,9 +77,6 @@ as_test_compare_lines (const gchar *txt1, const gchar *txt2, GError **error)
 	return FALSE;
 }
 
-/**
- * as_test_get_filename:
- **/
 static gchar *
 as_test_get_filename (const gchar *filename)
 {
@@ -109,9 +103,6 @@ as_test_hang_check_cb (gpointer user_data)
 	return G_SOURCE_REMOVE;
 }
 
-/**
- * as_test_loop_run_with_timeout:
- **/
 static void
 as_test_loop_run_with_timeout (guint timeout_ms)
 {
@@ -122,9 +113,6 @@ as_test_loop_run_with_timeout (guint timeout_ms)
 	g_main_loop_run (_test_loop);
 }
 
-/**
- * as_test_loop_quit:
- **/
 static void
 as_test_loop_quit (void)
 {

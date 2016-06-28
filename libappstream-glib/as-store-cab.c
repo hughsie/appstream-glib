@@ -32,9 +32,6 @@
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(GCabCabinet, g_object_unref)
 #endif
 
-/**
- * as_store_cab_cb:
- **/
 static gboolean
 as_store_cab_cb (GCabFile *file, gpointer user_data)
 {
@@ -57,9 +54,6 @@ as_store_cab_cb (GCabFile *file, gpointer user_data)
 	return TRUE;
 }
 
-/**
- * as_store_cab_verify_checksum_cab:
- **/
 static gboolean
 as_store_cab_verify_checksum_cab (AsRelease *release,
 				  GBytes *bytes,
@@ -91,9 +85,6 @@ as_store_cab_verify_checksum_cab (AsRelease *release,
 	return TRUE;
 }
 
-/**
- * as_store_cab_verify_checksum_fw:
- **/
 static gboolean
 as_store_cab_verify_checksum_fw (AsChecksum *checksum,
 				 const gchar *tmp_path,
@@ -137,9 +128,6 @@ as_store_cab_verify_checksum_fw (AsChecksum *checksum,
 	return TRUE;
 }
 
-/**
- * as_store_cab_set_release_blobs:
- **/
 static gboolean
 as_store_cab_set_release_blobs (AsRelease *release, const gchar *tmp_path, GError **error)
 {
@@ -207,9 +195,6 @@ as_store_cab_set_release_blobs (AsRelease *release, const gchar *tmp_path, GErro
 	return TRUE;
 }
 
-/**
- * as_store_cab_from_bytes_with_origin:
- **/
 static gboolean
 as_store_cab_from_bytes_with_origin (AsStore *store,
 				     GBytes *bytes,
@@ -421,9 +406,6 @@ as_store_cab_from_bytes_with_origin (AsStore *store,
 	return TRUE;
 }
 
-/**
- * as_store_cab_from_bytes:
- **/
 gboolean
 as_store_cab_from_bytes (AsStore *store,
 			 GBytes *bytes,
@@ -434,9 +416,6 @@ as_store_cab_from_bytes (AsStore *store,
 						    cancellable, error);
 }
 
-/**
- * as_store_cab_from_file:
- **/
 gboolean
 as_store_cab_from_file (AsStore *store,
 			GFile *file,

@@ -30,9 +30,6 @@
 #include "asb-context.h"
 #include "asb-utils.h"
 
-/**
- * as_builder_search_path:
- **/
 static gboolean
 as_builder_search_path (GPtrArray *array, const gchar *path, GError **error)
 {
@@ -55,9 +52,6 @@ as_builder_search_path (GPtrArray *array, const gchar *path, GError **error)
 	return TRUE;
 }
 
-/**
- * main:
- **/
 int
 main (int argc, char **argv)
 {

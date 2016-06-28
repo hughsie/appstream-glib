@@ -66,9 +66,6 @@ static guint signals [SIGNAL_LAST] = { 0 };
  **/
 G_DEFINE_QUARK (as-monitor-error-quark, as_monitor_error)
 
-/**
- * as_monitor_finalize:
- **/
 static void
 as_monitor_finalize (GObject *object)
 {
@@ -86,9 +83,6 @@ as_monitor_finalize (GObject *object)
 	G_OBJECT_CLASS (as_monitor_parent_class)->finalize (object);
 }
 
-/**
- * as_monitor_init:
- **/
 static void
 as_monitor_init (AsMonitor *monitor)
 {
@@ -100,9 +94,6 @@ as_monitor_init (AsMonitor *monitor)
 	priv->queue_temp = g_ptr_array_new_with_free_func (g_free);
 }
 
-/**
- * as_monitor_class_init:
- **/
 static void
 as_monitor_class_init (AsMonitorClass *klass)
 {
@@ -159,9 +150,6 @@ as_monitor_class_init (AsMonitorClass *klass)
 	object_class->finalize = as_monitor_finalize;
 }
 
-/**
- * _g_file_monitor_to_string:
- */
 static const gchar *
 _g_file_monitor_to_string (GFileMonitorEvent ev)
 {
@@ -184,9 +172,6 @@ _g_file_monitor_to_string (GFileMonitorEvent ev)
 	return NULL;
 }
 
-/**
- * _g_ptr_array_str_find:
- */
 static const gchar *
 _g_ptr_array_str_find (GPtrArray *array, const gchar *fn)
 {
@@ -200,9 +185,6 @@ _g_ptr_array_str_find (GPtrArray *array, const gchar *fn)
 	return NULL;
 }
 
-/**
- * _g_ptr_array_str_remove:
- */
 static gboolean
 _g_ptr_array_str_remove (GPtrArray *array, const gchar *fn)
 {
@@ -218,9 +200,6 @@ _g_ptr_array_str_remove (GPtrArray *array, const gchar *fn)
 	return FALSE;
 }
 
-/**
- * _g_ptr_array_str_add:
- */
 static void
 _g_ptr_array_str_add (GPtrArray *array, const gchar *fn)
 {
@@ -229,9 +208,6 @@ _g_ptr_array_str_add (GPtrArray *array, const gchar *fn)
 	g_ptr_array_add (array, g_strdup (fn));
 }
 
-/**
- * as_monitor_emit_added:
- */
 static void
 as_monitor_emit_added (AsMonitor *monitor, const gchar *filename)
 {
@@ -241,9 +217,6 @@ as_monitor_emit_added (AsMonitor *monitor, const gchar *filename)
 	_g_ptr_array_str_add (priv->files, filename);
 }
 
-/**
- * as_monitor_emit_removed:
- */
 static void
 as_monitor_emit_removed (AsMonitor *monitor, const gchar *filename)
 {
@@ -253,9 +226,6 @@ as_monitor_emit_removed (AsMonitor *monitor, const gchar *filename)
 	_g_ptr_array_str_remove (priv->files, filename);
 }
 
-/**
- * as_monitor_emit_changed:
- */
 static void
 as_monitor_emit_changed (AsMonitor *monitor, const gchar *filename)
 {
@@ -263,9 +233,6 @@ as_monitor_emit_changed (AsMonitor *monitor, const gchar *filename)
 	g_signal_emit (monitor, signals[SIGNAL_CHANGED], 0, filename);
 }
 
-/**
- * as_monitor_process_pending:
- **/
 static void
 as_monitor_process_pending (AsMonitor *monitor)
 {
@@ -300,9 +267,6 @@ as_monitor_process_pending (AsMonitor *monitor)
 	g_ptr_array_set_size (priv->queue_add, 0);
 }
 
-/**
- * as_monitor_process_pending_trigger_cb:
- **/
 static gboolean
 as_monitor_process_pending_trigger_cb (gpointer user_data)
 {
@@ -315,9 +279,6 @@ as_monitor_process_pending_trigger_cb (gpointer user_data)
 	return FALSE;
 }
 
-/**
- * as_monitor_process_pending_trigger:
- **/
 static void
 as_monitor_process_pending_trigger (AsMonitor *monitor)
 {

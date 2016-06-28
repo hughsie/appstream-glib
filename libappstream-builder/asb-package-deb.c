@@ -35,17 +35,11 @@
 
 G_DEFINE_TYPE (AsbPackageDeb, asb_package_deb, ASB_TYPE_PACKAGE)
 
-/**
- * asb_package_deb_init:
- **/
 static void
 asb_package_deb_init (AsbPackageDeb *pkg)
 {
 }
 
-/**
- * asb_package_deb_ensure_simple:
- **/
 static gboolean
 asb_package_deb_ensure_simple (AsbPackage *pkg, GError **error)
 {
@@ -112,9 +106,6 @@ asb_package_deb_ensure_simple (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_deb_ensure_filelists:
- **/
 static gboolean
 asb_package_deb_ensure_filelists (AsbPackage *pkg, GError **error)
 {
@@ -152,9 +143,6 @@ asb_package_deb_ensure_filelists (AsbPackage *pkg, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_deb_open:
- **/
 static gboolean
 asb_package_deb_open (AsbPackage *pkg, const gchar *filename, GError **error)
 {
@@ -166,9 +154,6 @@ asb_package_deb_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_package_deb_explode:
- **/
 static gboolean
 asb_package_deb_explode (AsbPackage *pkg,
 			 const gchar *dir,
@@ -200,9 +185,6 @@ asb_package_deb_explode (AsbPackage *pkg,
 	return TRUE;
 }
 
-/**
- * asb_package_deb_class_init:
- **/
 static void
 asb_package_deb_class_init (AsbPackageDebClass *klass)
 {

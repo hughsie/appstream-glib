@@ -348,9 +348,6 @@ as_app_guess_source_kind (const gchar *filename)
 	return AS_APP_SOURCE_KIND_UNKNOWN;
 }
 
-/**
- * as_app_finalize:
- **/
 static void
 as_app_finalize (GObject *object)
 {
@@ -398,9 +395,6 @@ as_app_finalize (GObject *object)
 	G_OBJECT_CLASS (as_app_parent_class)->finalize (object);
 }
 
-/**
- * as_app_init:
- **/
 static void
 as_app_init (AsApp *app)
 {
@@ -436,9 +430,6 @@ as_app_init (AsApp *app)
 	priv->token_cache = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 }
 
-/**
- * as_app_class_init:
- **/
 static void
 as_app_class_init (AsAppClass *klass)
 {
@@ -1594,9 +1585,6 @@ as_app_get_source_file (AsApp *app)
 	return priv->source_file;
 }
 
-/**
- * as_app_validate_utf8:
- **/
 static gboolean
 as_app_validate_utf8 (const gchar *text)
 {
@@ -2385,9 +2373,6 @@ as_app_add_mimetype (AsApp *app, const gchar *mimetype)
 	g_ptr_array_add (priv->mimetypes, g_strdup (mimetype));
 }
 
-/**
- * as_app_subsume_release:
- **/
 static void
 as_app_subsume_release (AsRelease *release, AsRelease *donor)
 {
@@ -2495,9 +2480,6 @@ as_app_add_provide (AsApp *app, AsProvide *provide)
 	g_ptr_array_add (priv->provides, g_object_ref (provide));
 }
 
-/**
- * as_app_sort_screenshots:
- **/
 static gint
 as_app_sort_screenshots (gconstpointer a, gconstpointer b)
 {
@@ -2564,9 +2546,6 @@ as_app_add_content_rating (AsApp *app, AsContentRating *content_rating)
 	g_ptr_array_add (priv->content_ratings, g_object_ref (content_rating));
 }
 
-/**
- * as_app_check_icon_duplicate:
- **/
 static gboolean
 as_app_check_icon_duplicate (AsIcon *icon1, AsIcon *icon2)
 {
@@ -2580,9 +2559,6 @@ as_app_check_icon_duplicate (AsIcon *icon1, AsIcon *icon2)
 	return TRUE;
 }
 
-/**
- * as_app_check_bundle_duplicate:
- **/
 static gboolean
 as_app_check_bundle_duplicate (AsBundle *bundle1, AsBundle *bundle2)
 {
@@ -2594,9 +2570,6 @@ as_app_check_bundle_duplicate (AsBundle *bundle1, AsBundle *bundle2)
 	return TRUE;
 }
 
-/**
- * as_app_check_translation_duplicate:
- **/
 static gboolean
 as_app_check_translation_duplicate (AsTranslation *translation1, AsTranslation *translation2)
 {
@@ -2918,9 +2891,6 @@ as_app_add_addon (AsApp *app, AsApp *addon)
 /******************************************************************************/
 
 
-/**
- * as_app_subsume_dict:
- **/
 static void
 as_app_subsume_dict (GHashTable *dest, GHashTable *src, gboolean overwrite)
 {
@@ -2943,9 +2913,6 @@ as_app_subsume_dict (GHashTable *dest, GHashTable *src, gboolean overwrite)
 	}
 }
 
-/**
- * as_app_subsume_keywords:
- **/
 static void
 as_app_subsume_keywords (AsApp *app, AsApp *donor, gboolean overwrite)
 {
@@ -2978,9 +2945,6 @@ as_app_subsume_keywords (AsApp *app, AsApp *donor, gboolean overwrite)
 	}
 }
 
-/**
- * as_app_subsume_icon:
- **/
 static void
 as_app_subsume_icon (AsApp *app, AsIcon *icon)
 {
@@ -3007,9 +2971,6 @@ as_app_subsume_icon (AsApp *app, AsIcon *icon)
 	as_app_add_icon (app, icon);
 }
 
-/**
- * as_app_subsume_private:
- **/
 static void
 as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 {
@@ -3228,18 +3189,12 @@ as_app_subsume (AsApp *app, AsApp *donor)
 	as_app_subsume_full (app, donor, AS_APP_SUBSUME_FLAG_NONE);
 }
 
-/**
- * gs_app_node_language_sort_cb:
- **/
 static gint
 gs_app_node_language_sort_cb (gconstpointer a, gconstpointer b)
 {
 	return g_strcmp0 ((const gchar *) a, (const gchar *) b);
 }
 
-/**
- * as_app_node_insert_languages:
- **/
 static void
 as_app_node_insert_languages (AsApp *app, GNode *parent)
 {
@@ -3267,18 +3222,12 @@ as_app_node_insert_languages (AsApp *app, GNode *parent)
 	}
 }
 
-/**
- * as_app_ptr_array_sort_cb:
- **/
 static gint
 as_app_ptr_array_sort_cb (gconstpointer a, gconstpointer b)
 {
 	return g_strcmp0 (*((const gchar **) a), *((const gchar **) b));
 }
 
-/**
- * as_app_releases_sort_cb:
- **/
 static gint
 as_app_releases_sort_cb (gconstpointer a, gconstpointer b)
 {
@@ -3287,9 +3236,6 @@ as_app_releases_sort_cb (gconstpointer a, gconstpointer b)
 	return as_release_vercmp (*rel1, *rel2);
 }
 
-/**
- * as_app_provides_sort_cb:
- **/
 static gint
 as_app_provides_sort_cb (gconstpointer a, gconstpointer b)
 {
@@ -3304,9 +3250,6 @@ as_app_provides_sort_cb (gconstpointer a, gconstpointer b)
 			  as_provide_get_value (prov2));
 }
 
-/**
- * as_app_icons_sort_cb:
- **/
 static gint
 as_app_icons_sort_cb (gconstpointer a, gconstpointer b)
 {
@@ -3315,18 +3258,12 @@ as_app_icons_sort_cb (gconstpointer a, gconstpointer b)
 	return g_strcmp0 (as_icon_get_name (*ic1), as_icon_get_name (*ic2));
 }
 
-/**
- * as_app_list_sort_cb:
- **/
 static gint
 as_app_list_sort_cb (gconstpointer a, gconstpointer b)
 {
 	return g_strcmp0 ((const gchar *) a, (const gchar *) b);
 }
 
-/**
- * as_app_node_insert_keywords:
- **/
 static void
 as_app_node_insert_keywords (AsApp *app, GNode *parent, AsNodeContext *ctx)
 {
@@ -3643,9 +3580,6 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	return node_app;
 }
 
-/**
- * as_app_node_parse_child:
- **/
 static gboolean
 as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			 AsNodeContext *ctx, GError **error)
@@ -4047,9 +3981,6 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 	return TRUE;
 }
 
-/**
- * as_app_check_for_hidpi_icons:
- **/
 static void
 as_app_check_for_hidpi_icons (AsApp *app)
 {
@@ -4076,9 +4007,6 @@ as_app_check_for_hidpi_icons (AsApp *app)
 	as_app_add_icon (app, icon_hidpi);
 }
 
-/**
- * as_app_node_parse_full:
- **/
 static gboolean
 as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags,
 			AsNodeContext *ctx, GError **error)
@@ -4143,9 +4071,6 @@ as_app_node_parse (AsApp *app, GNode *node, AsNodeContext *ctx, GError **error)
 	return as_app_node_parse_full (app, node, AS_APP_PARSE_FLAG_NONE, ctx, error);
 }
 
-/**
- * as_app_node_parse_dep11_icons:
- **/
 static gboolean
 as_app_node_parse_dep11_icons (AsApp *app, GNode *node,
 			       AsNodeContext *ctx, GError **error)
@@ -4419,9 +4344,6 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 	return TRUE;
 }
 
-/**
- * as_app_value_tokenize:
- **/
 static gchar **
 as_app_value_tokenize (const gchar *value)
 {
@@ -4439,9 +4361,6 @@ as_app_value_tokenize (const gchar *value)
 	return values;
 }
 
-/**
- * as_app_add_token_internal:
- **/
 static void
 as_app_add_token_internal (AsApp *app,
 			   const gchar *value,
@@ -4471,9 +4390,6 @@ as_app_add_token_internal (AsApp *app,
 			     match_pval);
 }
 
-/**
- * as_app_add_token:
- **/
 static void
 as_app_add_token (AsApp *app,
 		  const gchar *value,
@@ -4492,9 +4408,6 @@ as_app_add_token (AsApp *app,
 	as_app_add_token_internal (app, value, match_flag);
 }
 
-/**
- * as_app_add_tokens:
- **/
 static void
 as_app_add_tokens (AsApp *app,
 		   const gchar *value,
@@ -4530,9 +4443,6 @@ as_app_add_tokens (AsApp *app,
 		as_app_add_token (app, values_ascii[i], allow_split, match_flag);
 }
 
-/**
- * as_app_create_token_cache_target:
- **/
 static void
 as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 {
@@ -4586,9 +4496,6 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 	}
 }
 
-/**
- * as_app_create_token_cache:
- **/
 static void
 as_app_create_token_cache (AsApp *app)
 {
@@ -4716,9 +4623,6 @@ as_app_search_matches_all (AsApp *app, gchar **search)
 	return matches_sum;
 }
 
-/**
- * as_app_parse_appdata_unintltoolize_cb:
- **/
 static gboolean
 as_app_parse_appdata_unintltoolize_cb (GNode *node, gpointer data)
 {
@@ -4763,9 +4667,6 @@ as_app_parse_appdata_unintltoolize_cb (GNode *node, gpointer data)
 	return FALSE;
 }
 
-/**
- * as_app_parse_appdata_guess_project_group:
- **/
 static void
 as_app_parse_appdata_guess_project_group (AsApp *app)
 {
@@ -4808,9 +4709,6 @@ as_app_parse_appdata_guess_project_group (AsApp *app)
 	}
 }
 
-/**
- * as_app_parse_appdata_file:
- **/
 static gboolean
 as_app_parse_appdata_file (AsApp *app,
 			   const gchar *filename,

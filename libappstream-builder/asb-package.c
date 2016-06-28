@@ -72,9 +72,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsbPackage, asb_package, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (asb_package_get_instance_private (o))
 
-/**
- * asb_package_finalize:
- **/
 static void
 asb_package_finalize (GObject *object)
 {
@@ -107,9 +104,6 @@ asb_package_finalize (GObject *object)
 	G_OBJECT_CLASS (asb_package_parent_class)->finalize (object);
 }
 
-/**
- * asb_package_init:
- **/
 static void
 asb_package_init (AsbPackage *pkg)
 {
@@ -834,9 +828,6 @@ asb_package_get_evr (AsbPackage *pkg)
 	return priv->evr;
 }
 
-/**
- * asb_package_class_init:
- **/
 static void
 asb_package_class_init (AsbPackageClass *klass)
 {
@@ -844,9 +835,6 @@ asb_package_class_init (AsbPackageClass *klass)
 	object_class->finalize = asb_package_finalize;
 }
 
-/**
- * asb_package_guess_from_filename:
- **/
 static void
 asb_package_guess_from_filename (AsbPackage *pkg)
 {

@@ -77,9 +77,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsbContext, asb_context, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (asb_context_get_instance_private (o))
 
-/**
- * asb_context_realpath:
- **/
 static gchar *
 asb_context_realpath (const gchar *path)
 {
@@ -698,9 +695,6 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_task_process_func:
- **/
 static void
 asb_task_process_func (gpointer data, gpointer user_data)
 {
@@ -712,9 +706,6 @@ asb_task_process_func (gpointer data, gpointer user_data)
 		g_warning ("Failed to run task: %s", error->message);
 }
 
-/**
- * asb_context_write_icons:
- **/
 static gboolean
 asb_context_write_icons (AsbContext *ctx,
 			 const gchar *temp_dir,
@@ -735,9 +726,6 @@ asb_context_write_icons (AsbContext *ctx,
 	return asb_utils_write_archive_dir (filename, priv->icons_dir, error);
 }
 
-/**
- * asb_context_write_screenshots:
- **/
 static gboolean
 asb_context_write_screenshots (AsbContext *ctx,
 			       const gchar *temp_dir,
@@ -760,9 +748,6 @@ asb_context_write_screenshots (AsbContext *ctx,
 	return asb_utils_write_archive_dir (filename, screenshot_dir, error);
 }
 
-/**
- * asb_context_write_xml:
- **/
 static gboolean
 asb_context_write_xml (AsbContext *ctx, GError **error)
 {
@@ -823,9 +808,6 @@ asb_context_write_xml (AsbContext *ctx, GError **error)
 				 NULL, error);
 }
 
-/**
- * asb_context_convert_icons:
- **/
 static gboolean
 asb_context_convert_icons (AsbContext *ctx, GError **error)
 {
@@ -848,9 +830,6 @@ asb_context_convert_icons (AsbContext *ctx, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_context_save_resources:
- **/
 static gboolean
 asb_context_save_resources (AsbContext *ctx, GError **error)
 {
@@ -874,9 +853,6 @@ asb_context_save_resources (AsbContext *ctx, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_context_detect_pkgname_dups:
- **/
 static gboolean
 asb_context_detect_pkgname_dups (AsbContext *ctx, GError **error)
 {
@@ -907,9 +883,6 @@ asb_context_detect_pkgname_dups (AsbContext *ctx, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_context_write_app_xml:
- **/
 static void
 asb_context_write_app_xml (AsbContext *ctx)
 {
@@ -939,9 +912,6 @@ asb_context_write_app_xml (AsbContext *ctx)
 	}
 }
 
-/**
- * asb_context_detect_missing_data:
- **/
 static gboolean
 asb_context_detect_missing_data (AsbContext *ctx, GError **error)
 {
@@ -970,9 +940,6 @@ asb_context_detect_missing_data (AsbContext *ctx, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_context_detect_missing_parents:
- **/
 static gboolean
 asb_context_detect_missing_parents (AsbContext *ctx, GError **error)
 {
@@ -1026,9 +993,6 @@ asb_context_detect_missing_parents (AsbContext *ctx, GError **error)
 	return TRUE;
 }
 
-/**
- * asb_context_write_xml_fail:
- **/
 static gboolean
 asb_context_write_xml_fail (AsbContext *ctx, GError **error)
 {
@@ -1074,9 +1038,6 @@ asb_context_write_xml_fail (AsbContext *ctx, GError **error)
 				 NULL, error);
 }
 
-/**
- * asb_context_write_xml_ignore:
- **/
 static gboolean
 asb_context_write_xml_ignore (AsbContext *ctx, GError **error)
 {
@@ -1110,9 +1071,6 @@ asb_context_write_xml_ignore (AsbContext *ctx, GError **error)
 				 NULL, error);
 }
 
-/**
- * asb_context_disable_older_pkgs:
- **/
 static void
 asb_context_disable_older_pkgs (AsbContext *ctx)
 {
@@ -1152,9 +1110,6 @@ asb_context_disable_older_pkgs (AsbContext *ctx)
 	}
 }
 
-/**
- * asb_context_disable_multiarch_pkgs:
- **/
 static void
 asb_context_disable_multiarch_pkgs (AsbContext *ctx)
 {
@@ -1415,9 +1370,6 @@ asb_context_add_app (AsbContext *ctx, AsbApp *app)
 	g_mutex_unlock (&priv->apps_mutex);
 }
 
-/**
- * asb_context_add_app_ignore:
- **/
 void
 asb_context_add_app_ignore (AsbContext *ctx, AsbPackage *pkg)
 {
@@ -1461,9 +1413,6 @@ asb_context_add_app_ignore (AsbContext *ctx, AsbPackage *pkg)
 	as_store_add_app (priv->store_ignore, app);
 }
 
-/**
- * asb_context_finalize:
- **/
 static void
 asb_context_finalize (GObject *object)
 {
@@ -1492,9 +1441,6 @@ asb_context_finalize (GObject *object)
 	G_OBJECT_CLASS (asb_context_parent_class)->finalize (object);
 }
 
-/**
- * asb_context_init:
- **/
 static void
 asb_context_init (AsbContext *ctx)
 {
@@ -1510,9 +1456,6 @@ asb_context_init (AsbContext *ctx)
 	priv->min_icon_size = 32;
 }
 
-/**
- * asb_context_class_init:
- **/
 static void
 asb_context_class_init (AsbContextClass *klass)
 {

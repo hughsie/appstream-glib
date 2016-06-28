@@ -25,9 +25,6 @@
 #include "as-app-private.h"
 #include "as-utils.h"
 
-/**
- * as_app_desktop_key_get_locale:
- */
 static gchar *
 as_app_desktop_key_get_locale (const gchar *key)
 {
@@ -46,9 +43,6 @@ as_app_desktop_key_get_locale (const gchar *key)
 	return locale;
 }
 
-/**
- * as_app_infer_file_key:
- **/
 static gboolean
 as_app_infer_file_key (AsApp *app,
 		       GKeyFile *kf,
@@ -96,9 +90,6 @@ as_app_infer_file_key (AsApp *app,
 	return TRUE;
 }
 
-/**
- * _as_utils_is_stock_icon_name_fallback:
- **/
 static gboolean
 _as_utils_is_stock_icon_name_fallback (const gchar *name)
 {
@@ -117,9 +108,6 @@ _as_utils_is_stock_icon_name_fallback (const gchar *name)
 	return FALSE;
 }
 
-/**
- * as_app_parse_file_key:
- **/
 static gboolean
 as_app_parse_file_key (AsApp *app,
 		       GKeyFile *kf,
@@ -366,9 +354,6 @@ as_app_parse_file_key (AsApp *app,
 	return TRUE;
 }
 
-/**
- * as_app_parse_file_key_fallback_comment:
- **/
 static gboolean
 as_app_parse_file_key_fallback_comment (AsApp *app,
 					GKeyFile *kf,
@@ -403,9 +388,6 @@ as_app_parse_file_key_fallback_comment (AsApp *app,
 	return TRUE;
 }
 
-/**
- * as_app_parse_desktop_file:
- **/
 gboolean
 as_app_parse_desktop_file (AsApp *app,
 			   const gchar *desktop_file,

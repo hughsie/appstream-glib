@@ -51,9 +51,6 @@ struct _AsProfileTask
 
 static gpointer as_profile_object = NULL;
 
-/**
- * as_profile_item_free:
- **/
 static void
 as_profile_item_free (AsProfileItem *item)
 {
@@ -61,9 +58,6 @@ as_profile_item_free (AsProfileItem *item)
 	g_free (item);
 }
 
-/**
- * as_profile_item_find:
- **/
 static AsProfileItem *
 as_profile_item_find (GPtrArray *array, const gchar *id)
 {
@@ -156,9 +150,6 @@ as_profile_start_literal (AsProfile *profile, const gchar *id)
 	return ptask;
 }
 
-/**
- * as_profile_task_free_internal:
- **/
 static void
 as_profile_task_free_internal (AsProfile *profile, const gchar *id)
 {
@@ -219,9 +210,6 @@ as_profile_task_free (AsProfileTask *ptask)
 	g_free (ptask);
 }
 
-/**
- * as_profile_sort_cb:
- **/
 static gint
 as_profile_sort_cb (gconstpointer a, gconstpointer b)
 {
@@ -326,9 +314,6 @@ as_profile_dump (AsProfile *profile)
 	}
 }
 
-/**
- * as_profile_autodump_cb:
- **/
 static gboolean
 as_profile_autodump_cb (gpointer user_data)
 {
@@ -354,9 +339,6 @@ as_profile_set_autodump (AsProfile *profile, guint delay)
 	profile->autodump_id = g_timeout_add (delay, as_profile_autodump_cb, profile);
 }
 
-/**
- * as_profile_finalize:
- **/
 static void
 as_profile_finalize (GObject *object)
 {
@@ -371,9 +353,6 @@ as_profile_finalize (GObject *object)
 	G_OBJECT_CLASS (as_profile_parent_class)->finalize (object);
 }
 
-/**
- * as_profile_class_init:
- **/
 static void
 as_profile_class_init (AsProfileClass *klass)
 {
@@ -381,9 +360,6 @@ as_profile_class_init (AsProfileClass *klass)
 	object_class->finalize = as_profile_finalize;
 }
 
-/**
- * as_profile_init:
- **/
 static void
 as_profile_init (AsProfile *profile)
 {

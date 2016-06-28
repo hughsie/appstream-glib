@@ -43,9 +43,6 @@ typedef struct {
 	AsYamlNodeKind	 kind;
 } AsYamlNode;
 
-/**
- * as_yaml_node_get_key:
- **/
 const gchar *
 as_yaml_node_get_key (const AsNode *node)
 {
@@ -60,9 +57,6 @@ as_yaml_node_get_key (const AsNode *node)
 	return ym->key;
 }
 
-/**
- * as_yaml_node_get_value:
- **/
 const gchar *
 as_yaml_node_get_value (const AsNode *node)
 {
@@ -77,9 +71,6 @@ as_yaml_node_get_value (const AsNode *node)
 	return ym->value;
 }
 
-/**
- * as_yaml_node_get_value_as_int:
- **/
 gint
 as_yaml_node_get_value_as_int (const AsNode *node)
 {
@@ -98,9 +89,6 @@ as_yaml_node_get_value_as_int (const AsNode *node)
 	return value_tmp;
 }
 
-/**
- * as_node_yaml_destroy_node_cb:
- **/
 static gboolean
 as_node_yaml_destroy_node_cb (AsNode *node, gpointer data)
 {
@@ -113,9 +101,6 @@ as_node_yaml_destroy_node_cb (AsNode *node, gpointer data)
 	return FALSE;
 }
 
-/**
- * as_yaml_unref:
- **/
 void
 as_yaml_unref (AsNode *node)
 {
@@ -124,9 +109,6 @@ as_yaml_unref (AsNode *node)
 	g_node_destroy (node);
 }
 
-/**
- * as_yaml_to_string_cb:
- **/
 static gboolean
 as_yaml_to_string_cb (AsNode *node, gpointer data)
 {
@@ -167,9 +149,6 @@ as_yaml_to_string_cb (AsNode *node, gpointer data)
 	return FALSE;
 }
 
-/**
- * as_yaml_to_string:
- **/
 GString *
 as_yaml_to_string (AsNode *node)
 {
@@ -180,9 +159,6 @@ as_yaml_to_string (AsNode *node)
 }
 
 #if AS_BUILD_DEP11
-/**
- * as_yaml_node_get_kind:
- **/
 static AsYamlNodeKind
 as_yaml_node_get_kind (AsNode *node)
 {
@@ -195,9 +171,6 @@ as_yaml_node_get_kind (AsNode *node)
 	return ym->kind;
 }
 
-/**
- * as_yaml_node_new:
- **/
 static AsYamlNode *
 as_yaml_node_new (AsYamlNodeKind kind, const gchar *id)
 {
@@ -208,9 +181,6 @@ as_yaml_node_new (AsYamlNodeKind kind, const gchar *id)
 	return ym;
 }
 
-/**
- * as_node_yaml_process_layer:
- **/
 static void
 as_node_yaml_process_layer (yaml_parser_t *parser, AsNode *parent)
 {
@@ -276,9 +246,6 @@ as_node_yaml_process_layer (yaml_parser_t *parser, AsNode *parent)
 }
 #endif
 
-/**
- * as_yaml_from_data:
- **/
 AsNode *
 as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 {
@@ -304,9 +271,6 @@ as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 }
 
 #if AS_BUILD_DEP11
-/**
- * as_yaml_read_handler_cb:
- **/
 static int
 as_yaml_read_handler_cb (void *data,
 			 unsigned char *buffer,
@@ -319,9 +283,6 @@ as_yaml_read_handler_cb (void *data,
 }
 #endif
 
-/**
- * as_yaml_from_file:
- **/
 AsNode *
 as_yaml_from_file (GFile *file, GCancellable *cancellable, GError **error)
 {

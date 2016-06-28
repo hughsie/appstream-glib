@@ -58,9 +58,6 @@ typedef struct {
 	AsUtilPrivateCb	 callback;
 } AsUtilItem;
 
-/**
- * as_util_item_free:
- **/
 static void
 as_util_item_free (AsUtilItem *item)
 {
@@ -70,18 +67,12 @@ as_util_item_free (AsUtilItem *item)
 	g_free (item);
 }
 
-/**
- * as_sort_command_name_cb:
- **/
 static gint
 as_sort_command_name_cb (AsUtilItem **item1, AsUtilItem **item2)
 {
 	return g_strcmp0 ((*item1)->name, (*item2)->name);
 }
 
-/**
- * as_util_add:
- **/
 static void
 as_util_add (GPtrArray *array,
 	     const gchar *name,
@@ -115,9 +106,6 @@ as_util_add (GPtrArray *array,
 	}
 }
 
-/**
- * as_util_get_descriptions:
- **/
 static gchar *
 as_util_get_descriptions (GPtrArray *array)
 {
@@ -161,9 +149,6 @@ as_util_get_descriptions (GPtrArray *array)
 	return g_string_free (string, FALSE);
 }
 
-/**
- * as_util_run:
- **/
 static gboolean
 as_util_run (AsUtilPrivate *priv, const gchar *command, gchar **values, GError **error)
 {
@@ -205,9 +190,6 @@ as_util_run (AsUtilPrivate *priv, const gchar *command, gchar **values, GError *
 	return FALSE;
 }
 
-/**
- * as_util_convert_appdata:
- **/
 static gboolean
 as_util_convert_appdata (GFile *file_input,
 			 GFile *file_output,
@@ -473,9 +455,6 @@ as_util_convert_appdata (GFile *file_input,
 	return TRUE;
 }
 
-/**
- * as_util_convert_appstream:
- **/
 static gboolean
 as_util_convert_appstream (GFile *file_input,
 			   GFile *file_output,
@@ -504,9 +483,6 @@ as_util_convert_appstream (GFile *file_input,
 	return TRUE;
 }
 
-/**
- * as_util_convert:
- **/
 static gboolean
 as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -564,9 +540,6 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 	return FALSE;
 }
 
-/**
- * as_util_upgrade:
- **/
 static gboolean
 as_util_upgrade (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -613,9 +586,6 @@ as_util_upgrade (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_appdata_to_news:
- **/
 static gboolean
 as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -714,9 +684,6 @@ typedef enum {
 	AS_UTIL_SECTION_KIND_LAST
 } AsUtilSectionKind;
 
-/**
- * as_util_news_to_appdata_guess_section:
- **/
 static AsUtilSectionKind
 as_util_news_to_appdata_guess_section (const gchar *lines)
 {
@@ -743,9 +710,6 @@ as_util_news_to_appdata_guess_section (const gchar *lines)
 	return AS_UTIL_SECTION_KIND_UNKNOWN;
 }
 
-/**
- * as_util_news_add_indent:
- **/
 static void
 as_util_news_add_indent (GString *str, guint indent_level)
 {
@@ -754,9 +718,6 @@ as_util_news_add_indent (GString *str, guint indent_level)
 		g_string_append (str, "  ");
 }
 
-/**
- * as_util_news_add_markup:
- **/
 static void
 as_util_news_add_markup (GString *desc, const gchar *tag, const gchar *line)
 {
@@ -820,9 +781,6 @@ as_util_news_add_markup (GString *desc, const gchar *tag, const gchar *line)
 	}
 }
 
-/**
- * as_util_news_to_appdata_hdr:
- **/
 static gboolean
 as_util_news_to_appdata_hdr (GString *desc, const gchar *txt, GError **error)
 {
@@ -895,9 +853,6 @@ as_util_news_to_appdata_hdr (GString *desc, const gchar *txt, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_news_to_appdata_list:
- **/
 static gboolean
 as_util_news_to_appdata_list (GString *desc, gchar **lines, GError **error)
 {
@@ -914,9 +869,6 @@ as_util_news_to_appdata_list (GString *desc, gchar **lines, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_news_to_appdata_para:
- **/
 static gboolean
 as_util_news_to_appdata_para (GString *desc, const gchar *txt, GError **error)
 {
@@ -933,9 +885,6 @@ as_util_news_to_appdata_para (GString *desc, const gchar *txt, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_news_to_appdata:
- **/
 static gboolean
 as_util_news_to_appdata (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -1040,9 +989,6 @@ as_util_news_to_appdata (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_appdata_from_desktop:
- **/
 static gboolean
 as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -1145,9 +1091,6 @@ as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **erro
 	return as_app_to_file (app, file, NULL, error);
 }
 
-/**
- * as_util_add_file_to_store:
- **/
 static gboolean
 as_util_add_file_to_store (AsStore *store, const gchar *filename, GError **error)
 {
@@ -1182,9 +1125,6 @@ as_util_add_file_to_store (AsStore *store, const gchar *filename, GError **error
 	return TRUE;
 }
 
-/**
- * as_util_dump:
- **/
 static gboolean
 as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -1229,9 +1169,6 @@ as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_sort_apps_by_sort_key_cb:
- **/
 static gint
 as_util_sort_apps_by_sort_key_cb (gconstpointer a, gconstpointer b)
 {
@@ -1241,9 +1178,6 @@ as_util_sort_apps_by_sort_key_cb (gconstpointer a, gconstpointer b)
 			  as_app_get_metadata_item (app1, "SortKey"));
 }
 
-/**
- * as_util_search:
- **/
 static gboolean
 as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -1300,9 +1234,6 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_search_pkgname:
- **/
 static gboolean
 as_util_search_pkgname (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -1341,9 +1272,6 @@ as_util_search_pkgname (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_search_token_sort_cb:
- **/
 static gint
 as_util_search_token_sort_cb (gconstpointer a, gconstpointer b, gpointer user_data)
 {
@@ -1359,9 +1287,6 @@ as_util_search_token_sort_cb (gconstpointer a, gconstpointer b, gpointer user_da
 	return 0;
 }
 
-/**
- * as_util_show_search_tokens:
- **/
 static gboolean
 as_util_show_search_tokens (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -1414,9 +1339,6 @@ as_util_show_search_tokens (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_install:
- **/
 static gboolean
 as_util_install (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -1444,9 +1366,6 @@ as_util_install (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_install_origin:
- **/
 static gboolean
 as_util_install_origin (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -1477,9 +1396,6 @@ as_util_install_origin (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_rmtree:
- **/
 static gboolean
 as_util_rmtree (const gchar *directory, GError **error)
 {
@@ -1520,9 +1436,6 @@ as_util_rmtree (const gchar *directory, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_uninstall:
- **/
 static gboolean
 as_util_uninstall (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -1575,9 +1488,6 @@ typedef enum {
 	AS_UTIL_DISTRO_LAST
 } AsUtilDistro;
 
-/**
- * as_util_status_html_join:
- */
 static gchar *
 as_util_status_html_join (GPtrArray *array)
 {
@@ -1602,9 +1512,6 @@ as_util_status_html_join (GPtrArray *array)
 	return g_string_free (txt, FALSE);
 }
 
-/**
- * as_util_status_html_write_app:
- */
 static void
 as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 {
@@ -1803,9 +1710,6 @@ as_util_status_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 	g_string_append (html, "</div>\n");
 }
 
-/**
- * as_util_status_html_write_exec_summary:
- */
 static gboolean
 as_util_status_html_write_exec_summary (GPtrArray *apps,
 					GString *html,
@@ -1906,9 +1810,6 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 	return TRUE;
 }
 
-/**
- * as_util_status_html_write_javascript:
- */
 static void
 as_util_status_html_write_javascript (GString *html)
 {
@@ -1971,9 +1872,6 @@ as_util_status_html_write_javascript (GString *html)
 	"</script>\n");
 }
 
-/**
- * as_util_status_html_write_css:
- */
 static void
 as_util_status_html_write_css (GString *html)
 {
@@ -2019,9 +1917,6 @@ as_util_status_html_write_css (GString *html)
 	"</style>\n");
 }
 
-/**
- * as_util_status_html_write_filter_section:
- */
 static void
 as_util_status_html_write_filter_section (GString *html)
 {
@@ -2070,9 +1965,6 @@ as_util_status_html_write_filter_section (GString *html)
 	"</table>\n");
 }
 
-/**
- * as_util_status_html:
- **/
 static gboolean
 as_util_status_html (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -2163,9 +2055,6 @@ typedef enum {
 	AS_UTIL_PKG_STATE_DEAD
 } AsUtilPkgState;
 
-/**
- * as_util_matrix_html_write_item:
- */
 static void
 as_util_matrix_html_write_item (AsUtilPkgState *state_app,
 				    AsUtilPkgState state,
@@ -2209,9 +2098,6 @@ as_util_matrix_html_write_item (AsUtilPkgState *state_app,
 	}
 }
 
-/**
- * as_util_matrix_html_write_app:
- */
 static void
 as_util_matrix_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 {
@@ -2338,9 +2224,6 @@ as_util_matrix_html_write_app (AsApp *app, GString *html, AsUtilDistro distro)
 	g_string_append (html, str->str);
 }
 
-/**
- * as_util_array_sort_by_pkgname_cb:
- **/
 static gint
 as_util_array_sort_by_pkgname_cb (gconstpointer a, gconstpointer b)
 {
@@ -2350,9 +2233,6 @@ as_util_array_sort_by_pkgname_cb (gconstpointer a, gconstpointer b)
 			  as_app_get_pkgname_default (app2));
 }
 
-/**
- * as_util_matrix_html:
- **/
 static gboolean
 as_util_matrix_html (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -2439,9 +2319,6 @@ as_util_matrix_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	return g_file_set_contents (values[0], html->str, -1, error);
 }
 
-/**
- * as_util_status_csv_filter_func:
- **/
 static gboolean
 as_util_status_csv_filter_func (AsApp *app, gchar **filters)
 {
@@ -2471,9 +2348,6 @@ as_util_status_csv_filter_func (AsApp *app, gchar **filters)
 	return TRUE;
 }
 
-/**
- * as_util_status_csv:
- **/
 static gboolean
 as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -2533,9 +2407,6 @@ as_util_status_csv (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_non_package_yaml:
- **/
 static gboolean
 as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -2584,9 +2455,6 @@ as_util_non_package_yaml (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_validate_output_text:
- **/
 static void
 as_util_validate_output_text (const gchar *filename, GPtrArray *probs)
 {
@@ -2620,9 +2488,6 @@ as_util_validate_output_text (const gchar *filename, GPtrArray *probs)
 	}
 }
 
-/**
- * as_util_validate_output_html:
- **/
 static void
 as_util_validate_output_html (const gchar *filename, GPtrArray *probs)
 {
@@ -2662,9 +2527,6 @@ as_util_validate_output_html (const gchar *filename, GPtrArray *probs)
 	g_print ("</html>\n");
 }
 
-/**
- * as_util_validate_file:
- **/
 static gboolean
 as_util_validate_file (const gchar *filename,
 		       AsAppValidateFlags flags,
@@ -2711,9 +2573,6 @@ as_util_validate_file (const gchar *filename,
 	return TRUE;
 }
 
-/**
- * as_util_validate_files:
- **/
 static gboolean
 as_util_validate_files (gchar **filenames,
 		        AsAppValidateFlags flags,
@@ -2758,9 +2617,6 @@ as_util_validate_files (gchar **filenames,
 	return n_failed == 0;
 }
 
-/**
- * as_util_validate:
- **/
 static gboolean
 as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -2770,9 +2626,6 @@ as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 	return as_util_validate_files (values, flags, error);
 }
 
-/**
- * as_util_validate_relax:
- **/
 static gboolean
 as_util_validate_relax (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -2782,9 +2635,6 @@ as_util_validate_relax (AsUtilPrivate *priv, gchar **values, GError **error)
 	return as_util_validate_files (values, flags, error);
 }
 
-/**
- * as_util_validate_strict:
- **/
 static gboolean
 as_util_validate_strict (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -2794,9 +2644,6 @@ as_util_validate_strict (AsUtilPrivate *priv, gchar **values, GError **error)
 	return as_util_validate_files (values, flags, error);
 }
 
-/**
- * as_util_check_root_app_icon:
- **/
 static gboolean
 as_util_check_root_app_icon (AsApp *app, GError **error)
 {
@@ -2869,9 +2716,6 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_check_root_app:
- **/
 static void
 as_util_check_root_app (AsApp *app, GPtrArray *problems)
 {
@@ -2902,9 +2746,6 @@ as_util_check_root_app (AsApp *app, GPtrArray *problems)
 	}
 }
 
-/**
- * as_util_app_log:
- **/
 G_GNUC_PRINTF (2, 3)
 static void
 as_util_app_log (AsApp *app, const gchar *fmt, ...)
@@ -2926,9 +2767,6 @@ as_util_app_log (AsApp *app, const gchar *fmt, ...)
 	g_print ("%s\n", tmp);
 }
 
-/**
- * as_util_mirror_screenshots_thumb:
- **/
 static gboolean
 as_util_mirror_screenshots_thumb (AsScreenshot *ss, AsImage *im_src,
 				  guint width, guint height, guint scale,
@@ -2978,9 +2816,6 @@ as_util_mirror_screenshots_thumb (AsScreenshot *ss, AsImage *im_src,
 	return TRUE;
 }
 
-/**
- * as_util_mirror_screenshots_app_file:
- **/
 static gboolean
 as_util_mirror_screenshots_app_file (AsApp *app,
 				     AsScreenshot *ss,
@@ -3076,9 +2911,6 @@ as_util_mirror_screenshots_app_file (AsApp *app,
 	return TRUE;
 }
 
-/**
- * as_util_mirror_screenshots_app_url:
- **/
 static gboolean
 as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 				    AsApp *app,
@@ -3190,9 +3022,6 @@ out:
 	return ret;
 }
 
-/**
- * as_util_mirror_screenshots_app:
- **/
 static gboolean
 as_util_mirror_screenshots_app (AsUtilPrivate *priv,
 				AsApp *app,
@@ -3225,9 +3054,6 @@ as_util_mirror_screenshots_app (AsUtilPrivate *priv,
 	return TRUE;
 }
 
-/**
- * as_util_mirror_screenshots:
- **/
 static gboolean
 as_util_mirror_screenshots (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -3348,9 +3174,6 @@ as_util_mirror_screenshots (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_mirror_local_firmware:
- **/
 static gboolean
 as_util_mirror_local_firmware (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -3428,10 +3251,6 @@ as_util_mirror_local_firmware (AsUtilPrivate *priv, gchar **values, GError **err
 	return TRUE;
 }
 
-/**
- * as_util_replace_screenshots:
- *
- **/
 static gboolean
 as_util_replace_screenshots (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -3479,9 +3298,6 @@ as_util_replace_screenshots (AsUtilPrivate *priv, gchar **values, GError **error
 	return TRUE;
 }
 
-/**
- * as_util_pad_strings:
- **/
 static void
 as_util_pad_strings (const gchar *id, const gchar *msg, guint align)
 {
@@ -3492,9 +3308,6 @@ as_util_pad_strings (const gchar *id, const gchar *msg, guint align)
 	g_print (" %s\n", msg);
 }
 
-/**
- * as_util_merge_appstream:
- **/
 static gboolean
 as_util_merge_appstream (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -3547,9 +3360,6 @@ as_util_merge_appstream (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_split_appstream:
- **/
 static gboolean
 as_util_split_appstream (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -3607,9 +3417,6 @@ as_util_split_appstream (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_modify:
- **/
 static gboolean
 as_util_modify (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -3673,9 +3480,6 @@ as_util_modify (AsUtilPrivate *priv, gchar **values, GError **error)
 				NULL, error);
 }
 
-/**
- * as_util_generate_guid:
- **/
 static gboolean
 as_util_generate_guid (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -3694,9 +3498,6 @@ as_util_generate_guid (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_compare:
- **/
 static gboolean
 as_util_compare (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -3760,9 +3561,6 @@ as_util_compare (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_incorporate:
- **/
 static gboolean
 as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -3950,9 +3748,6 @@ as_util_check_root (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_markup_import:
- **/
 static gboolean
 as_util_markup_import (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -3998,18 +3793,12 @@ as_util_markup_import (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
-/**
- * as_util_ignore_cb:
- **/
 static void
 as_util_ignore_cb (const gchar *log_domain, GLogLevelFlags log_level,
 		   const gchar *message, gpointer user_data)
 {
 }
 
-/**
- * main:
- **/
 int
 main (int argc, char *argv[])
 {

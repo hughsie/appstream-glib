@@ -117,9 +117,6 @@ static gboolean	as_store_from_file_internal (AsStore *store,
 					     GCancellable *cancellable,
 					     GError **error);
 
-/**
- * as_store_finalize:
- **/
 static void
 as_store_finalize (GObject *object)
 {
@@ -141,9 +138,6 @@ as_store_finalize (GObject *object)
 	G_OBJECT_CLASS (as_store_parent_class)->finalize (object);
 }
 
-/**
- * as_store_class_init:
- **/
 static void
 as_store_class_init (AsStoreClass *klass)
 {
@@ -168,9 +162,6 @@ as_store_class_init (AsStoreClass *klass)
 	object_class->finalize = as_store_finalize;
 }
 
-/**
- * as_store_perhaps_emit_changed:
- */
 static void
 as_store_perhaps_emit_changed (AsStore *store, const gchar *details)
 {
@@ -188,9 +179,6 @@ as_store_perhaps_emit_changed (AsStore *store, const gchar *details)
 	priv->is_pending_changed_signal = FALSE;
 }
 
-/**
- * as_store_changed_inhibit:
- */
 static guint32 *
 as_store_changed_inhibit (AsStore *store)
 {
@@ -199,9 +187,6 @@ as_store_changed_inhibit (AsStore *store)
 	return &priv->changed_block_refcnt;
 }
 
-/**
- * as_store_changed_uninhibit:
- */
 static void
 as_store_changed_uninhibit (guint32 **tok)
 {
@@ -215,9 +200,6 @@ as_store_changed_uninhibit (guint32 **tok)
 	*tok = NULL;
 }
 
-/**
- * as_store_changed_uninhibit_cb:
- */
 static void
 as_store_changed_uninhibit_cb (void *v)
 {
@@ -322,9 +304,6 @@ as_store_remove_all (AsStore *store)
 	g_hash_table_remove_all (priv->hash_pkgname);
 }
 
-/**
- * as_store_regen_metadata_index_key:
- **/
 static void
 as_store_regen_metadata_index_key (AsStore *store, const gchar *key)
 {
@@ -675,9 +654,6 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 	return NULL;
 }
 
-/**
- * as_app_has_pkgname:
- **/
 static gboolean
 as_app_has_pkgname (AsApp *app, const gchar *pkgname)
 {
@@ -937,9 +913,6 @@ as_store_add_app (AsStore *store, AsApp *app)
 	as_store_perhaps_emit_changed (store, "add-app");
 }
 
-/**
- * as_store_match_addons:
- **/
 static void
 as_store_match_addons (AsStore *store)
 {
@@ -975,9 +948,6 @@ as_store_match_addons (AsStore *store)
 	}
 }
 
-/**
- * as_store_get_origin_for_flatpak:
- **/
 static gchar *
 as_store_get_origin_for_flatpak (const gchar *fn)
 {
@@ -1014,9 +984,6 @@ as_store_fixup_id_prefix (AsApp *app, const gchar *id_prefix)
 	as_app_set_id (app, id);
 }
 
-/**
- * as_store_from_root:
- **/
 static gboolean
 as_store_from_root (AsStore *store,
 		    AsNode *root,
@@ -1213,9 +1180,6 @@ as_store_from_root (AsStore *store,
 	return TRUE;
 }
 
-/**
- * as_store_load_yaml_file:
- **/
 static gboolean
 as_store_load_yaml_file (AsStore *store,
 			 GFile *file,
@@ -1302,9 +1266,6 @@ as_store_load_yaml_file (AsStore *store,
 	return TRUE;
 }
 
-/**
- * as_store_rescan_flatpak_dir:
- */
 static void
 as_store_rescan_flatpak_dir (AsStore *store, const gchar *filename)
 {
@@ -1330,9 +1291,6 @@ as_store_rescan_flatpak_dir (AsStore *store, const gchar *filename)
 	}
 }
 
-/**
- * as_store_remove_by_source_file:
- */
 static void
 as_store_remove_by_source_file (AsStore *store, const gchar *filename)
 {
@@ -1366,9 +1324,6 @@ as_store_remove_by_source_file (AsStore *store, const gchar *filename)
 	as_store_perhaps_emit_changed (store, "remove-by-source-file");
 }
 
-/**
- * as_store_watch_source_added:
- */
 static void
 as_store_watch_source_added (AsStore *store, const gchar *filename)
 {
@@ -1401,9 +1356,6 @@ as_store_watch_source_added (AsStore *store, const gchar *filename)
 	}
 }
 
-/**
- * as_store_watch_source_changed:
- */
 static void
 as_store_watch_source_changed (AsStore *store, const gchar *filename)
 {
@@ -1413,9 +1365,6 @@ as_store_watch_source_changed (AsStore *store, const gchar *filename)
 	as_store_watch_source_added (store, filename);
 }
 
-/**
- * as_store_monitor_changed_cb:
- */
 static void
 as_store_monitor_changed_cb (AsMonitor *monitor,
 			     const gchar *filename,
@@ -1435,9 +1384,6 @@ as_store_monitor_changed_cb (AsMonitor *monitor,
 	as_store_perhaps_emit_changed (store, "file changed");
 }
 
-/**
- * as_store_monitor_added_cb:
- */
 static void
 as_store_monitor_added_cb (AsMonitor *monitor,
 			     const gchar *filename,
@@ -1457,9 +1403,6 @@ as_store_monitor_added_cb (AsMonitor *monitor,
 	as_store_perhaps_emit_changed (store, "file added");
 }
 
-/**
- * as_store_monitor_removed_cb:
- */
 static void
 as_store_monitor_removed_cb (AsMonitor *monitor,
 			     const gchar *filename,
@@ -1518,9 +1461,6 @@ as_store_add_path_data (AsStore *store,
 	g_hash_table_insert (priv->appinfo_dirs, g_strdup (path), path_data);
 }
 
-/**
- * as_store_from_file_internal:
- **/
 static gboolean
 as_store_from_file_internal (AsStore *store,
 			     GFile *file,
@@ -1721,9 +1661,6 @@ as_store_from_xml (AsStore *store,
 				   error);
 }
 
-/**
- * as_store_apps_sort_cb:
- **/
 static gint
 as_store_apps_sort_cb (gconstpointer a, gconstpointer b)
 {
@@ -1731,9 +1668,6 @@ as_store_apps_sort_cb (gconstpointer a, gconstpointer b)
 			  as_app_get_id (AS_APP (*(AsApp **) b)));
 }
 
-/**
- * as_store_check_app_for_veto:
- **/
 static void
 as_store_check_app_for_veto (AsApp *app)
 {
@@ -1754,9 +1688,6 @@ as_store_check_app_for_veto (AsApp *app)
 	}
 }
 
-/**
- * as_store_check_apps_for_veto:
- **/
 static void
 as_store_check_apps_for_veto (AsStore *store)
 {
@@ -2192,9 +2123,6 @@ as_store_set_watch_flags (AsStore *store, AsStoreWatchFlags watch_flags)
 	priv->watch_flags = watch_flags;
 }
 
-/**
- * as_store_guess_origin_fallback:
- */
 static gboolean
 as_store_guess_origin_fallback (AsStore *store,
 				const gchar *filename,
@@ -2226,9 +2154,6 @@ as_store_guess_origin_fallback (AsStore *store,
 	return TRUE;
 }
 
-/**
- * as_store_load_app_info_file:
- */
 static gboolean
 as_store_load_app_info_file (AsStore *store,
 			     const gchar *id_prefix,
@@ -2257,9 +2182,6 @@ as_store_load_app_info_file (AsStore *store,
 					    error);
 }
 
-/**
- * as_store_load_app_info:
- **/
 static gboolean
 as_store_load_app_info (AsStore *store,
 			const gchar *id_prefix,
@@ -2338,9 +2260,6 @@ as_store_load_app_info (AsStore *store,
 	return TRUE;
 }
 
-/**
- * as_store_set_app_installed:
- **/
 static void
 as_store_set_app_installed (AsApp *app)
 {
@@ -2359,9 +2278,6 @@ as_store_set_app_installed (AsApp *app)
 	as_app_set_state (app, AS_APP_STATE_INSTALLED);
 }
 
-/**
- * as_store_load_installed_file_is_valid:
- **/
 static gboolean
 as_store_load_installed_file_is_valid (const gchar *filename)
 {
@@ -2375,9 +2291,6 @@ as_store_load_installed_file_is_valid (const gchar *filename)
 	return FALSE;
 }
 
-/**
- * as_store_load_installed:
- **/
 static gboolean
 as_store_load_installed (AsStore *store,
 			 AsStoreLoadFlags flags,
@@ -2492,9 +2405,6 @@ as_store_load_path (AsStore *store, const gchar *path,
 					NULL, path, cancellable, error);
 }
 
-/**
- * as_store_search_installed:
- **/
 static gboolean
 as_store_search_installed (AsStore *store,
 			   AsStoreLoadFlags flags,
@@ -2513,9 +2423,6 @@ as_store_search_installed (AsStore *store,
 					dest, cancellable, error);
 }
 
-/**
- * as_store_search_app_info:
- **/
 static gboolean
 as_store_search_app_info (AsStore *store,
 			  AsStoreLoadFlags flags,
@@ -2543,9 +2450,6 @@ as_store_search_app_info (AsStore *store,
 	return TRUE;
 }
 
-/**
- * as_store_monitor_flatpak_dir:
- **/
 static void
 as_store_monitor_flatpak_dir (AsStore *store,
 			      const gchar *path,
@@ -2564,9 +2468,6 @@ as_store_monitor_flatpak_dir (AsStore *store,
 	}
 }
 
-/**
- * as_store_search_flatpak_arch:
- **/
 static gboolean
 as_store_search_flatpak_arch (AsStore *store,
 			      AsStoreLoadFlags flags,
@@ -2595,9 +2496,6 @@ as_store_search_flatpak_arch (AsStore *store,
 	return TRUE;
 }
 
-/**
- * as_store_search_flatpaks:
- **/
 static gboolean
 as_store_search_flatpaks (AsStore *store,
 			  AsStoreLoadFlags flags,
@@ -2625,9 +2523,6 @@ as_store_search_flatpaks (AsStore *store,
 	return TRUE;
 }
 
-/**
- * as_store_search_per_system:
- **/
 static gboolean
 as_store_search_per_system (AsStore *store,
 			    AsStoreLoadFlags flags,
@@ -2756,9 +2651,6 @@ as_store_search_per_system (AsStore *store,
 	return TRUE;
 }
 
-/**
- * as_store_search_per_user:
- **/
 static gboolean
 as_store_search_per_user (AsStore *store,
 			  AsStoreLoadFlags flags,
@@ -2905,9 +2797,6 @@ as_store_load (AsStore *store,
 	return TRUE;
 }
 
-/**
- * as_store_validate_add:
- */
 G_GNUC_PRINTF (3, 4) static void
 as_store_validate_add (GPtrArray *problems, AsProblemKind kind, const gchar *fmt, ...)
 {
@@ -2934,9 +2823,6 @@ as_store_validate_add (GPtrArray *problems, AsProblemKind kind, const gchar *fmt
 	g_ptr_array_add (problems, problem);
 }
 
-/**
- * as_store_get_unique_name_app_key:
- */
 static gchar *
 as_store_get_unique_name_app_key (AsApp *app)
 {
@@ -3191,9 +3077,6 @@ as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
 	return probs;
 }
 
-/**
- * as_store_path_data_free:
- **/
 static void
 as_store_path_data_free (AsStorePathData *path_data)
 {
@@ -3202,9 +3085,6 @@ as_store_path_data_free (AsStorePathData *path_data)
 	g_slice_free (AsStorePathData, path_data);
 }
 
-/**
- * as_store_init:
- **/
 static void
 as_store_init (AsStore *store)
 {

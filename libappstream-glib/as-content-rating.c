@@ -51,9 +51,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsContentRating, as_content_rating, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (as_content_rating_get_instance_private (o))
 
-/**
- * as_content_rating_finalize:
- **/
 static void
 as_content_rating_finalize (GObject *object)
 {
@@ -66,9 +63,6 @@ as_content_rating_finalize (GObject *object)
 	G_OBJECT_CLASS (as_content_rating_parent_class)->finalize (object);
 }
 
-/**
- * as_content_rating_key_free:
- **/
 static void
 as_content_rating_key_free (AsContentRatingKey *key)
 {
@@ -76,9 +70,6 @@ as_content_rating_key_free (AsContentRatingKey *key)
 	g_free (key);
 }
 
-/**
- * as_content_rating_init:
- **/
 static void
 as_content_rating_init (AsContentRating *content_rating)
 {
@@ -86,9 +77,6 @@ as_content_rating_init (AsContentRating *content_rating)
 	priv->keys = g_ptr_array_new_with_free_func ((GDestroyNotify) as_content_rating_key_free);
 }
 
-/**
- * as_content_rating_class_init:
- **/
 static void
 as_content_rating_class_init (AsContentRatingClass *klass)
 {

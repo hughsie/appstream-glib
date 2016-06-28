@@ -55,9 +55,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsImage, as_image, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (as_image_get_instance_private (o))
 
-/**
- * as_image_finalize:
- **/
 static void
 as_image_finalize (GObject *object)
 {
@@ -74,17 +71,11 @@ as_image_finalize (GObject *object)
 	G_OBJECT_CLASS (as_image_parent_class)->finalize (object);
 }
 
-/**
- * as_image_init:
- **/
 static void
 as_image_init (AsImage *image)
 {
 }
 
-/**
- * as_image_class_init:
- **/
 static void
 as_image_class_init (AsImageClass *klass)
 {
@@ -838,9 +829,6 @@ as_image_save_filename (AsImage *image,
 				NULL);
 }
 
-/**
- * is_pixel_alpha:
- **/
 static gboolean
 is_pixel_alpha (GdkPixbuf *pixbuf, guint x, guint y)
 {

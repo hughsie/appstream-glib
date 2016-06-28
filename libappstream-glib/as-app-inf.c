@@ -28,9 +28,6 @@
 
 #define AS_APP_INF_CLASS_GUID_FIRMWARE	"f2e7dd72-6468-4e36-b6f1-6488f42c1b52"
 
-/**
- * as_app_parse_inf_sanitize_guid:
- */
 static gchar *
 as_app_parse_inf_sanitize_guid (const gchar *guid)
 {
@@ -46,9 +43,6 @@ as_app_parse_inf_sanitize_guid (const gchar *guid)
 	return g_string_free (id, FALSE);
 }
 
-/**
- * as_app_parse_inf_file:
- **/
 gboolean
 as_app_parse_inf_file (AsApp *app,
 		       const gchar *filename,
