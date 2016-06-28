@@ -249,7 +249,7 @@ dnl ---------------------------------------------------------------------------
 dnl - Use libstemmer for search stemming
 dnl ---------------------------------------------------------------------------
 AC_ARG_ENABLE(stemmer, AS_HELP_STRING([--enable-stemmer],[enable search stemmer]),
-              enable_stemmer=$enableval,enable_stemmer=yes)
+              enable_stemmer=$enableval,enable_stemmer=no)
 AM_CONDITIONAL(HAVE_LIBSTEMMER, test x$enable_stemmer = xyes)
 if test x$enable_stemmer = xyes; then
   AC_CHECK_HEADER(libstemmer.h, [], [AC_MSG_ERROR([No libstemmer.h])])
