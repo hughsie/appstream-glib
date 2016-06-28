@@ -1651,11 +1651,13 @@ as_app_set_id (AsApp *app, const gchar *id)
 		return;
 	}
 
+	/* save full ID */
 	g_free (priv->id);
-	g_free (priv->id_filename);
-
 	priv->id = g_strdup (id);
-	priv->id_filename = g_strdup (priv->id);
+
+	/* save filename */
+	g_free (priv->id_filename);
+	priv->id_filename = g_strdup (as_app_get_id_no_prefix (app));
 	g_strdelimit (priv->id_filename, "&<>", '-');
 	tmp = g_strrstr_len (priv->id_filename, -1, ".");
 	if (tmp != NULL)
