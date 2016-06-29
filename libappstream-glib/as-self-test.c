@@ -348,6 +348,9 @@ as_test_app_builder_gettext_func (void)
 	g_assert_cmpint (as_app_get_language (app, "ru"), ==, 33);
 	g_assert_cmpint (as_app_get_language (app, "fr_FR"), ==, -1);
 
+	/* check fallback */
+	g_assert_cmpint (as_app_get_language (app, "ru_RU"), ==, 33);
+
 	/* check size */
 	list = as_app_get_languages (app);
 	g_assert_cmpint (g_list_length (list), ==, 2);

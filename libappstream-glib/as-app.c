@@ -1398,16 +1398,29 @@ gint
 as_app_get_language (AsApp *app, const gchar *locale)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	gboolean ret;
 	gpointer value = NULL;
+	g_auto(GStrv) lang = NULL;
 
+	/* fallback */
 	if (locale == NULL)
 		locale = "C";
-	ret = g_hash_table_lookup_extended (priv->languages,
-					    locale, NULL, &value);
-	if (!ret)
-		return -1;
-	return GPOINTER_TO_INT (value);
+
+	/* look up full locale */
+	if (g_hash_table_lookup_extended (priv->languages,
+					  locale, NULL, &value)) {
+		return GPOINTER_TO_INT (value);
+	}
+
+	/* look up just country code */
+	lang = g_strsplit (locale, "_", 2);
+	if (g_strv_length (lang) == 2 &&
+	    g_hash_table_lookup_extended (priv->languages,
+					  lang[0], NULL, &value)) {
+		return GPOINTER_TO_INT (value);
+	}
+
+	/* failed */
+	return -1;
 }
 
 /**
