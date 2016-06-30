@@ -250,6 +250,7 @@ typedef enum {
  * @AS_APP_STATE_INSTALLING:			Application is being installed
  * @AS_APP_STATE_REMOVING:			Application is being removed
  * @AS_APP_STATE_UPDATABLE_LIVE:		Application is installed and updatable live
+ * @AS_APP_STATE_PURCHASABLE:			Application is available for purchasing
  *
  * The application state.
  **/
@@ -264,6 +265,7 @@ typedef enum {
 	AS_APP_STATE_INSTALLING,			/* Since: 0.2.2 */
 	AS_APP_STATE_REMOVING,				/* Since: 0.2.2 */
 	AS_APP_STATE_UPDATABLE_LIVE,			/* Since: 0.5.4 */
+	AS_APP_STATE_PURCHASABLE,			/* Since: 0.5.17 */
 	/*< private >*/
 	AS_APP_STATE_LAST
 } AsAppState;
