@@ -291,6 +291,8 @@ as_app_state_to_string (AsAppState state)
 		return "available";
 	if (state == AS_APP_STATE_PURCHASABLE)
 		return "purchasable";
+	if (state == AS_APP_STATE_PURCHASING)
+		return "purchasing";
 	if (state == AS_APP_STATE_AVAILABLE_LOCAL)
 		return "local";
 	if (state == AS_APP_STATE_QUEUED_FOR_INSTALL)
