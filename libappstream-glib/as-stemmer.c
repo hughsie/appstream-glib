@@ -73,8 +73,8 @@ as_stemmer_process (AsStemmer *stemmer, const gchar *value)
 static void
 as_stemmer_finalize (GObject *object)
 {
-	AsStemmer *stemmer = AS_STEMMER (object);
 #ifdef HAVE_LIBSTEMMER
+	AsStemmer *stemmer = AS_STEMMER (object);
 	sb_stemmer_delete (stemmer->ctx);
 	g_mutex_clear (&stemmer->ctx_mutex);
 #endif
