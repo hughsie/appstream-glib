@@ -169,6 +169,8 @@ _g_file_monitor_to_string (GFileMonitorEvent ev)
 		return "UNMOUNTED";
 	if (ev == G_FILE_MONITOR_EVENT_MOVED)
 		return "MOVED";
+	if (ev == G_FILE_MONITOR_EVENT_RENAMED)
+		return "RENAMED";
 	return NULL;
 }
 
@@ -355,7 +357,7 @@ as_monitor_file_changed_cb (GFileMonitor *mon,
 			_g_ptr_array_str_add (priv->queue_changed, filename);
 		}
 		break;
-	case G_FILE_MONITOR_EVENT_MOVED:
+	case G_FILE_MONITOR_EVENT_RENAMED:
 		/* a temp file that was just created and atomically
 		 * renamed to its final destination */
 		tmp = _g_ptr_array_str_find (priv->queue_temp, filename);
@@ -415,7 +417,7 @@ as_monitor_add_directory (AsMonitor *monitor,
 
 	/* create new file monitor */
 	file = g_file_new_for_path (filename);
-	mon = g_file_monitor_directory (file, G_FILE_MONITOR_SEND_MOVED,
+	mon = g_file_monitor_directory (file, G_FILE_MONITOR_WATCH_MOVES,
 					cancellable, error);
 	if (mon == NULL)
 		return FALSE;
