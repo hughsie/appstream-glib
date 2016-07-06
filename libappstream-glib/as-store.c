@@ -1432,6 +1432,11 @@ as_store_add_path_data (AsStore *store,
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	AsStorePathData *path_data;
 
+	/* don't scan non-existent directories */
+	if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
+		return;
+	}
+
 	/* check is a directory */
 	if (!g_file_test (path, G_FILE_TEST_IS_DIR)) {
 		g_warning ("not adding path %s [%s:%s] as not a directory",
