@@ -199,6 +199,7 @@ as_tag_to_string (AsTag tag)
 		"review",
 		"reviewer_name",
 		"reviewer_id",
+		"suggests",
 		NULL };
 	if (tag > AS_TAG_LAST)
 		tag = AS_TAG_LAST;

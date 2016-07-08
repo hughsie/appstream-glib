@@ -50,6 +50,7 @@
 #include "as-stemmer.h"
 #include "as-tag.h"
 #include "as-translation-private.h"
+#include "as-suggest-private.h"
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
@@ -84,6 +85,7 @@ typedef struct
 	GPtrArray	*icons;				/* of AsIcon */
 	GPtrArray	*bundles;			/* of AsBundle */
 	GPtrArray	*translations;			/* of AsTranslation */
+	GPtrArray	*suggests;			/* of AsSuggest */
 	GPtrArray	*vetos;				/* of string */
 	AsAppSourceKind	 source_kind;
 	AsAppScope	 scope;
@@ -485,6 +487,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->icons);
 	g_ptr_array_unref (priv->bundles);
 	g_ptr_array_unref (priv->translations);
+	g_ptr_array_unref (priv->suggests);
 	g_ptr_array_unref (priv->vetos);
 
 	G_OBJECT_CLASS (as_app_parent_class)->finalize (object);
@@ -514,6 +517,7 @@ as_app_init (AsApp *app)
 	priv->icons = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->bundles = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->translations = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	priv->suggests = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->vetos = g_ptr_array_new_with_free_func (g_free);
 
 	priv->comments = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
@@ -1169,6 +1173,23 @@ as_app_get_translations (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->translations;
+}
+
+/**
+ * as_app_get_suggests:
+ * @app: a #AsApp instance.
+ *
+ * Gets any suggests the application has defined.
+ *
+ * Returns: (element-type AsSuggest) (transfer none): an array
+ *
+ * Since: 0.6.1
+ **/
+GPtrArray *
+as_app_get_suggests (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->suggests;
 }
 
 /**
@@ -3083,6 +3104,22 @@ as_app_add_translation (AsApp *app, AsTranslation *translation)
 }
 
 /**
+ * as_app_add_suggest:
+ * @app: a #AsApp instance.
+ * @suggest: a #AsSuggest instance.
+ *
+ * Adds a suggest to an application.
+ *
+ * Since: 0.6.1
+ **/
+void
+as_app_add_suggest (AsApp *app, AsSuggest *suggest)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_ptr_array_add (priv->suggests, g_object_ref (suggest));
+}
+
+/**
  * as_app_add_pkgname:
  * @app: a #AsApp instance.
  * @pkgname: the package name.
@@ -3437,6 +3474,12 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 			AsTranslation *tr = g_ptr_array_index (priv->translations, i);
 			as_app_add_translation (app, tr);
 		}
+	}
+
+	/* suggests */
+	for (i = 0; i < priv->suggests->len; i++) {
+		AsSuggest *suggest = g_ptr_array_index (priv->suggests, i);
+		as_app_add_suggest (app, suggest);
 	}
 
 	/* releases */
@@ -3865,6 +3908,12 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		as_translation_node_insert (bu, node_app, ctx);
 	}
 
+	/* <suggests> */
+	for (i = 0; i < priv->suggests->len; i++) {
+		AsSuggest *suggest = g_ptr_array_index (priv->suggests, i);
+		as_suggest_node_insert (suggest, node_app, ctx);
+	}
+
 	/* <name> */
 	as_node_insert_localized (node_app, "name",
 				  priv->names,
@@ -4130,6 +4179,17 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		if (!as_translation_node_parse (ic, n, ctx, error))
 			return FALSE;
 		as_app_add_translation (app, ic);
+		break;
+	}
+
+	/* <suggests> */
+	case AS_TAG_SUGGESTS:
+	{
+		g_autoptr(AsSuggest) ic = NULL;
+		ic = as_suggest_new ();
+		if (!as_suggest_node_parse (ic, n, ctx, error))
+			return FALSE;
+		as_app_add_suggest (app, ic);
 		break;
 	}
 
@@ -4576,6 +4636,7 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags,
 		g_ptr_array_set_size (priv->icons, 0);
 		g_ptr_array_set_size (priv->bundles, 0);
 		g_ptr_array_set_size (priv->translations, 0);
+		g_ptr_array_set_size (priv->suggests, 0);
 		g_ptr_array_set_size (priv->content_ratings, 0);
 		g_hash_table_remove_all (priv->keywords);
 	}
@@ -4806,6 +4867,16 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 				if (!as_translation_node_parse_dep11 (bu, c, ctx, error))
 					return FALSE;
 				as_app_add_translation (app, bu);
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Suggests") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				g_autoptr(AsSuggest) bu = NULL;
+				bu = as_suggest_new ();
+				if (!as_suggest_node_parse_dep11 (bu, c, ctx, error))
+					return FALSE;
+				as_app_add_suggest (app, bu);
 			}
 			continue;
 		}

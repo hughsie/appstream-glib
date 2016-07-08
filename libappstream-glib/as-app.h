@@ -35,6 +35,7 @@
 #include "as-release.h"
 #include "as-screenshot.h"
 #include "as-review.h"
+#include "as-suggest.h"
 #include "as-content-rating.h"
 #include "as-translation.h"
 
@@ -451,6 +452,7 @@ GPtrArray	*as_app_get_content_ratings	(AsApp		*app);
 GPtrArray	*as_app_get_icons		(AsApp		*app);
 GPtrArray	*as_app_get_bundles		(AsApp		*app);
 GPtrArray	*as_app_get_translations	(AsApp		*app);
+GPtrArray	*as_app_get_suggests		(AsApp		*app);
 GHashTable	*as_app_get_names		(AsApp		*app);
 GHashTable	*as_app_get_comments		(AsApp		*app);
 GHashTable	*as_app_get_developer_names	(AsApp		*app);
@@ -580,6 +582,8 @@ void		 as_app_add_bundle		(AsApp		*app,
 						 AsBundle	*bundle);
 void		 as_app_add_translation		(AsApp		*app,
 						 AsTranslation	*translation);
+void		 as_app_add_suggest		(AsApp		*app,
+						 AsSuggest	*suggest);
 void		 as_app_add_language		(AsApp		*app,
 						 gint		 percentage,
 						 const gchar	*locale);

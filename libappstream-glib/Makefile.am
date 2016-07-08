@@ -86,6 +86,7 @@ libappstream_glib_include_HEADERS =				\
 	as-review.h						\
 	as-screenshot.h						\
 	as-store.h						\
+	as-suggest.h						\
 	as-tag.h						\
 	as-translation.h					\
 	as-utils.h						\
@@ -134,6 +135,8 @@ libappstream_glib_la_SOURCES =					\
 	as-stemmer.c						\
 	as-stemmer.h						\
 	as-store.c						\
+	as-suggest.c						\
+	as-suggest-private.h					\
 	as-tag.c						\
 	as-translation.c					\
 	as-translation-private.h				\
@@ -227,6 +230,8 @@ introspection_sources =						\
 	as-screenshot.h						\
 	as-store.c						\
 	as-store.h						\
+	as-suggest.c						\
+	as-suggest.h						\
 	as-tag.c						\
 	as-tag.h						\
 	as-translation.c					\

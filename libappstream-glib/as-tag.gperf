@@ -63,3 +63,4 @@ reviews, AS_TAG_REVIEWS
 review, AS_TAG_REVIEW
 reviewer_name, AS_TAG_REVIEWER_NAME
 reviewer_id, AS_TAG_REVIEWER_ID
+suggests, AS_TAG_SUGGESTS

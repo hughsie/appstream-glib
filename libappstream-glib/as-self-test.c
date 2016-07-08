@@ -43,6 +43,7 @@
 #include "as-problem.h"
 #include "as-provide-private.h"
 #include "as-release-private.h"
+#include "as-suggest-private.h"
 #include "as-screenshot-private.h"
 #include "as-store.h"
 #include "as-tag.h"
@@ -1173,6 +1174,7 @@ as_test_image_func (void)
 	g_assert (ret);
 }
 
+
 static void
 as_test_review_func (void)
 {
@@ -1227,6 +1229,53 @@ as_test_review_func (void)
 	root = as_node_new ();
 	as_node_context_set_version (ctx, 0.4);
 	n = as_review_node_insert (review, root, ctx);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+}
+
+static void
+as_test_suggest_func (void)
+{
+	GError *error = NULL;
+	AsNode *n;
+	AsNode *root;
+	GString *xml;
+	const gchar *src =
+		"<suggests type=\"upstream\">\n"
+		"<id>gimp.desktop</id>\n"
+		"<id>mypaint.desktop</id>\n"
+		"</suggests>\n";
+	gboolean ret;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsSuggest) suggest = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
+
+	suggest = as_suggest_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "suggests");
+	g_assert (n != NULL);
+	ctx = as_node_context_new ();
+	ret = as_suggest_node_parse (suggest, n, ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_suggest_get_kind (suggest), ==, AS_SUGGEST_KIND_UPSTREAM);
+	g_assert_cmpint (as_suggest_get_ids(suggest)->len, ==, 2);
+
+	/* back to node */
+	root = as_node_new ();
+	as_node_context_set_version (ctx, 0.4);
+	n = as_suggest_node_insert (suggest, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	ret = as_test_compare_lines (xml->str, src, &error);
 	g_assert_no_error (error);
@@ -1452,6 +1501,10 @@ as_test_app_func (void)
 		"<source_pkgname>gnome-software-src</source_pkgname>\n"
 		"<bundle type=\"flatpak\">app/org.gnome.Software/x86_64/master</bundle>\n"
 		"<translation type=\"gettext\">gnome-software</translation>\n"
+		"<suggests type=\"upstream\">\n"
+		"<id>gimp.desktop</id>\n"
+		"<id>mypaint.desktop</id>\n"
+		"</suggests>\n"
 		"<name>Software</name>\n"
 		"<name xml:lang=\"pl\">Oprogramowanie</name>\n"
 		"<summary>Application manager</summary>\n"
@@ -5164,6 +5217,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/bundle", as_test_bundle_func);
 	g_test_add_func ("/AppStream/review", as_test_review_func);
 	g_test_add_func ("/AppStream/translation", as_test_translation_func);
+	g_test_add_func ("/AppStream/suggest", as_test_suggest_func);
 	g_test_add_func ("/AppStream/image", as_test_image_func);
 	g_test_add_func ("/AppStream/image{resize}", as_test_image_resize_func);
 	g_test_add_func ("/AppStream/image{alpha}", as_test_image_alpha_func);
