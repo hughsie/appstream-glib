@@ -83,6 +83,7 @@ typedef struct
 	GPtrArray	*bundles;			/* of AsBundle */
 	GPtrArray	*translations;			/* of AsTranslation */
 	GPtrArray	*vetos;				/* of string */
+	GPtrArray	*noshow_project_groups;		/* of string */
 	AsAppSourceKind	 source_kind;
 	AsAppState	 state;
 	AsAppTrustFlags	 trust_flags;
@@ -395,6 +396,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->bundles);
 	g_ptr_array_unref (priv->translations);
 	g_ptr_array_unref (priv->vetos);
+	g_ptr_array_unref (priv->noshow_project_groups);
 
 	G_OBJECT_CLASS (as_app_parent_class)->finalize (object);
 }
@@ -423,6 +425,7 @@ as_app_init (AsApp *app)
 	priv->bundles = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->translations = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->vetos = g_ptr_array_new_with_free_func (g_free);
+	priv->noshow_project_groups = g_ptr_array_new_with_free_func (g_free);
 
 	priv->comments = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->developer_names = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
@@ -1499,6 +1502,50 @@ as_app_get_metadata_item (AsApp *app, const gchar *key)
 }
 
 /**
+ * as_app_get_noshow_project_groups:
+ * @app: a #AsApp instance.
+ *
+ * Gets the project groups under which the app is not fit to be shown.
+ *
+ * Returns: (transfer none) (element-type utf8): A list of project groups
+ *
+ * Since: 0.5.17
+ */
+GPtrArray *
+as_app_get_noshow_project_groups (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->noshow_project_groups;
+}
+
+/**
+ * as_app_has_noshow_project_group:
+ * @app: a #AsApp instance.
+ * @project_group: a project group, e.g. "GNOME".
+ *
+ * Searches the noshow project group list for a specific item.
+ *
+ * Returns: %TRUE if the application is not fit to be shown in the specified
+ *   project group.
+ *
+ * Since: 0.5.17
+ */
+gboolean
+as_app_has_noshow_project_group (AsApp *app, const char *project_group)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	const gchar *tmp;
+	guint i;
+
+	for (i = 0; i < priv->noshow_project_groups->len; i++) {
+		tmp = g_ptr_array_index (priv->noshow_project_groups, i);
+		if (g_strcmp0 (tmp, project_group) == 0)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+/**
  * as_app_get_project_group:
  * @app: a #AsApp instance.
  *
@@ -1785,6 +1832,44 @@ as_app_set_id_kind (AsApp *app, AsIdKind id_kind)
 	priv->kind = id_kind;
 }
 G_GNUC_END_IGNORE_DEPRECATIONS
+
+/**
+ * as_app_add_noshow_project_group:
+ * @app: a #AsApp instance.
+ * @project_group: the project group, e.g. "GNOME".
+ *
+ * Sets the app as not fit to be shown under this project group.
+ *
+ * Since: 0.5.17
+ **/
+void
+as_app_add_noshow_project_group (AsApp *app, const gchar *project_group)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	g_return_if_fail (project_group != NULL);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
+	    !as_app_validate_utf8 (project_group)) {
+		priv->problems |= AS_APP_PROBLEM_NOT_VALID_UTF8;
+		return;
+	}
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0 &&
+	    as_ptr_array_find_string (priv->noshow_project_groups, project_group)) {
+		return;
+	}
+
+	/* check value */
+	if (priv->trust_flags != AS_APP_TRUST_FLAG_COMPLETE) {
+		if (!as_utils_is_environment_id (project_group)) {
+			priv->problems |= AS_APP_PROBLEM_INVALID_PROJECT_GROUP;
+			return;
+		}
+	}
+
+	g_ptr_array_add (priv->noshow_project_groups, g_strdup (project_group));
+}
 
 /**
  * as_app_set_project_group:

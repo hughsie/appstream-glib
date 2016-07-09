@@ -314,6 +314,7 @@ GHashTable	*as_app_get_metadata		(AsApp		*app);
 GHashTable	*as_app_get_descriptions	(AsApp		*app);
 GHashTable	*as_app_get_urls		(AsApp		*app);
 GPtrArray	*as_app_get_vetos		(AsApp		*app);
+GPtrArray       *as_app_get_noshow_project_groups (AsApp        *app);
 const gchar	*as_app_get_icon_path		(AsApp		*app);
 const gchar	*as_app_get_id_filename		(AsApp		*app);
 const gchar	*as_app_get_id			(AsApp		*app);
@@ -353,6 +354,8 @@ gboolean	 as_app_has_compulsory_for_desktop (AsApp	*app,
 						 const gchar	*desktop);
 gboolean	 as_app_has_quirk		(AsApp		*app,
 						 AsAppQuirk	 quirk);
+gboolean         as_app_has_noshow_project_group (AsApp         *app,
+						  const char    *project_group);
 
 /* setters */
 void		 as_app_set_id			(AsApp		*app,
@@ -445,6 +448,8 @@ void		 as_app_add_extends		(AsApp		*app,
 						 const gchar	*extends);
 void		 as_app_add_quirk		(AsApp		*app,
 						 AsAppQuirk	 quirk);
+void             as_app_add_noshow_project_group (AsApp         *app,
+						  const gchar   *project_group);
 
 /* object methods */
 GPtrArray	*as_app_validate		(AsApp		*app,
