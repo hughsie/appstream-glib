@@ -349,12 +349,12 @@ as_app_parse_file_key (AsApp *app,
 
 	/* Add any external attribute as metadata to the application */
 	if (g_str_has_prefix (key, "X-")) {
-		g_autofree value = NULL;
+		g_autofree char *value = NULL;
 		value = g_key_file_get_string (kf,
 					       G_KEY_FILE_DESKTOP_GROUP,
 					       key,
 					       NULL);
-		as_app_add_metadata (key, value);
+		as_app_add_metadata (app, key, value);
 	}
 
 	return TRUE;
