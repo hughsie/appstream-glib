@@ -202,10 +202,6 @@ as_app_parse_file_key (AsApp *app,
 				}
 			}
 
-			/* not a standard category */
-			if (g_str_has_prefix (list[i], "X-"))
-				continue;
-
 			/* check the category is valid */
 			if (!as_utils_is_category_id (list[i]))
 				continue;
