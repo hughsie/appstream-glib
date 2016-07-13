@@ -2205,8 +2205,10 @@ as_app_add_category (AsApp *app, const gchar *category)
 
 	/* split this meta-category up */
 	if (g_strcmp0 (category, "AudioVideo") == 0) {
-		as_app_add_category (app, "Audio");
-		as_app_add_category (app, "Video");
+		if (!as_app_has_category (app, "Audio"))
+			as_app_add_category (app, "Audio");
+		if (!as_app_has_category (app, "Video"))
+			as_app_add_category (app, "Video");
 	}
 
 	g_ptr_array_add (priv->categories, g_strdup (category));
