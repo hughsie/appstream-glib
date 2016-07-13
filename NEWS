@@ -1,3 +1,20 @@
+Version 0.5.17
+~~~~~~~~~~~~~~
+Released: 2016-07-13
+
+New Features:
+ - Add AS_STATE_PURCHASABLE and AS_STATE_PURCHASING constants (Robert Ancell)
+ - Add external (X-*) keys of an app's desktop file as metadata AsApp (Joaquim Rocha)
+
+Bugfixes:
+ - Correct disabling of timestamps for gzip (StefanBruens)
+ - Do not add multiple categories for apps with AudioVideo (Richard Hughes)
+ - Do not emit a warning when flatpak user directory doesn't exist (Kalev Lember)
+ - Fall back to the country code in as_app_get_language() (Richard Hughes)
+ - Fix gtk-doc build when builddir != srcdir (lantw44)
+ - Optionally use libstemmer for keyword stemming (Richard Hughes)
+ - Use non-deprecated glib API for monitoring renames (Kalev Lember)
+
 Version 0.5.16
 ~~~~~~~~~~~~~~
 Released: 2016-06-13
