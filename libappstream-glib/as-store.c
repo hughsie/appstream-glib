@@ -2330,6 +2330,9 @@ as_store_load_installed (AsStore *store,
 	/* emit once when finished */
 	tok = as_store_changed_inhibit (store);
 
+	/* always load all the .desktop 'X-' metadata */
+	parse_flags |= AS_APP_PARSE_FLAG_ADD_ALL_METADATA;
+
 	/* relax the checks when parsing */
 	if (flags & AS_STORE_LOAD_FLAG_ALLOW_VETO)
 		parse_flags |= AS_APP_PARSE_FLAG_ALLOW_VETO;

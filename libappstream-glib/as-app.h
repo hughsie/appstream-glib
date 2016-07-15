@@ -65,6 +65,7 @@ struct _AsAppClass
  * @AS_APP_PARSE_FLAG_APPEND_DATA:	Append new data rather than replacing
  * @AS_APP_PARSE_FLAG_ALLOW_VETO:	Do not return errors for vetoed apps
  * @AS_APP_PARSE_FLAG_USE_FALLBACKS:	Fall back to suboptimal data where required
+ * @AS_APP_PARSE_FLAG_ADD_ALL_METADATA:	Add all extra metadata from the source file
  *
  * The flags to use when parsing resources.
  **/
@@ -76,6 +77,7 @@ typedef enum {
 	AS_APP_PARSE_FLAG_APPEND_DATA		= 8,	/* Since: 0.1.8 */
 	AS_APP_PARSE_FLAG_ALLOW_VETO		= 16,	/* Since: 0.2.5 */
 	AS_APP_PARSE_FLAG_USE_FALLBACKS		= 32,	/* Since: 0.4.1 */
+	AS_APP_PARSE_FLAG_ADD_ALL_METADATA	= 64,	/* Since: 0.5.18 */
 	/*< private >*/
 	AS_APP_PARSE_FLAG_LAST,
 } AsAppParseFlags;

@@ -108,6 +108,36 @@ _as_utils_is_stock_icon_name_fallback (const gchar *name)
 	return FALSE;
 }
 
+static void
+as_app_parse_file_metadata (AsApp *app, GKeyFile *kf, const gchar *key)
+{
+	guint i;
+	g_autofree gchar *value = NULL;
+	const gchar *blacklist[] = {
+		"X-AppInstall-*",
+		"X-Desktop-File-Install-Version",
+		"X-Geoclue-Reason*",
+		"X-GNOME-Bugzilla-*",
+		"X-GNOME-FullName*",
+		"X-GNOME-Gettext-Domain",
+		"X-GNOME-UsesNotifications",
+		NULL };
+
+	if (!g_str_has_prefix (key, "X-"))
+		return;
+
+	/* anything blacklisted */
+	for (i = 0; blacklist[i] != NULL; i++) {
+		if (fnmatch (blacklist[i], key, 0) == 0)
+			return;
+	}
+	value = g_key_file_get_string (kf,
+				       G_KEY_FILE_DESKTOP_GROUP,
+				       key,
+				       NULL);
+	as_app_add_metadata (app, key, value);
+}
+
 static gboolean
 as_app_parse_file_key (AsApp *app,
 		       GKeyFile *kf,
@@ -347,15 +377,9 @@ as_app_parse_file_key (AsApp *app,
 			as_app_add_veto (app, "X-AppStream-Ignore");
 	}
 
-	/* Add any external attribute as metadata to the application */
-	if (g_str_has_prefix (key, "X-")) {
-		g_autofree char *value = NULL;
-		value = g_key_file_get_string (kf,
-					       G_KEY_FILE_DESKTOP_GROUP,
-					       key,
-					       NULL);
-		as_app_add_metadata (app, key, value);
-	}
+	/* add any external attribute as metadata to the application */
+	if (flags & AS_APP_PARSE_FLAG_ADD_ALL_METADATA)
+		as_app_parse_file_metadata (app, kf, key);
 
 	return TRUE;
 }
