@@ -53,8 +53,7 @@ third party translation interface, transifex.com.
 Newly added strings will be periodically uploaded there for translation,
 and any new translations will be merged back to the project source code.
 
-Please use [https://www.transifex.com/projects/p/appstream-glib/](https://www.tr
-ansifex.com/projects/p/appstream-glib/) to contribute translations,
+Please use [https://www.transifex.com/projects/p/appstream-glib/](https://www.transifex.com/projects/p/appstream-glib/) to contribute translations,
 rather than sending pull requests.
 
 appstream-builder
