@@ -83,6 +83,11 @@ G_BEGIN_DECLS
  * @AS_TAG_TRANSLATION:			`translation`
  * @AS_TAG_CONTENT_RATING:		`content_rating`
  * @AS_TAG_CONTENT_ATTRIBUTE:		`content_attribute`
+ * @AS_TAG_VERSION:			`version`
+ * @AS_TAG_REVIEWS:			`reviews`
+ * @AS_TAG_REVIEW:			`review`
+ * @AS_TAG_REVIEWER_NAME:		`reviewer_name`
+ * @AS_TAG_REVIEWER_ID:			`reviewer_id`
  *
  * The tag type.
  **/
@@ -138,6 +143,11 @@ typedef enum {
 	AS_TAG_TRANSLATION,		/* Since: 0.5.8 */
 	AS_TAG_CONTENT_RATING,		/* Since: 0.5.12 */
 	AS_TAG_CONTENT_ATTRIBUTE,	/* Since: 0.5.12 */
+	AS_TAG_VERSION,			/* Since: 0.5.18 */
+	AS_TAG_REVIEWS,			/* Since: 0.5.18 */
+	AS_TAG_REVIEW,			/* Since: 0.5.18 */
+	AS_TAG_REVIEWER_NAME,		/* Since: 0.5.18 */
+	AS_TAG_REVIEWER_ID,		/* Since: 0.5.18 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;

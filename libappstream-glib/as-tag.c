@@ -194,6 +194,11 @@ as_tag_to_string (AsTag tag)
 		"translation",
 		"content_rating",
 		"content_attribute",
+		"version",
+		"reviews",
+		"review",
+		"reviewer_name",
+		"reviewer_id",
 		NULL };
 	if (tag > AS_TAG_LAST)
 		tag = AS_TAG_LAST;

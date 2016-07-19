@@ -45,6 +45,7 @@
 #include "as-node-private.h"
 #include "as-provide-private.h"
 #include "as-release-private.h"
+#include "as-review-private.h"
 #include "as-screenshot-private.h"
 #include "as-stemmer.h"
 #include "as-tag.h"
@@ -78,6 +79,7 @@ typedef struct
 	GPtrArray	*releases;			/* of AsRelease */
 	GPtrArray	*provides;			/* of AsProvide */
 	GPtrArray	*screenshots;			/* of AsScreenshot */
+	GPtrArray	*reviews;			/* of AsReview */
 	GPtrArray	*content_ratings;		/* of AsContentRating */
 	GPtrArray	*icons;				/* of AsIcon */
 	GPtrArray	*bundles;			/* of AsBundle */
@@ -389,6 +391,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->releases);
 	g_ptr_array_unref (priv->provides);
 	g_ptr_array_unref (priv->screenshots);
+	g_ptr_array_unref (priv->reviews);
 	g_ptr_array_unref (priv->icons);
 	g_ptr_array_unref (priv->bundles);
 	g_ptr_array_unref (priv->translations);
@@ -417,6 +420,7 @@ as_app_init (AsApp *app)
 	priv->releases = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->provides = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->screenshots = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	priv->reviews = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->icons = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->bundles = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->translations = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -836,6 +840,23 @@ as_app_get_screenshots (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->screenshots;
+}
+
+/**
+ * as_app_get_reviews:
+ * @app: a #AsApp instance.
+ *
+ * Gets any reviews the application has defined.
+ *
+ * Returns: (element-type AsScreenshot) (transfer none): an array
+ *
+ * Since: 0.5.18
+ **/
+GPtrArray *
+as_app_get_reviews (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->reviews;
 }
 
 /**
@@ -2548,6 +2569,33 @@ as_app_add_screenshot (AsApp *app, AsScreenshot *screenshot)
 }
 
 /**
+ * as_app_add_review:
+ * @app: a #AsApp instance.
+ * @review: a #AsReview instance.
+ *
+ * Adds a review to an application.
+ *
+ * Since: 0.5.18
+ **/
+void
+as_app_add_review (AsApp *app, AsReview *review)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsReview *review_tmp;
+	guint i;
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
+		for (i = 0; i < priv->reviews->len; i++) {
+			review_tmp = g_ptr_array_index (priv->reviews, i);
+			if (as_review_equal (review_tmp, review))
+				return;
+		}
+	}
+	g_ptr_array_add (priv->reviews, g_object_ref (review));
+}
+
+/**
  * as_app_add_content_rating:
  * @app: a #AsApp instance.
  * @content_rating: a #AsContentRating instance.
@@ -2995,6 +3043,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	AsAppPrivate *papp = GET_PRIVATE (app);
 	AsBundle *bundle;
 	AsTranslation *translation;
+	AsReview *review;
 	AsScreenshot *ss;
 	AsProvide *pr;
 	const gchar *tmp;
@@ -3082,6 +3131,12 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	for (i = 0; i < priv->screenshots->len; i++) {
 		ss = g_ptr_array_index (priv->screenshots, i);
 		as_app_add_screenshot (app, ss);
+	}
+
+	/* reviews */
+	for (i = 0; i < priv->reviews->len; i++) {
+		review = g_ptr_array_index (priv->reviews, i);
+		as_app_add_review (app, review);
 	}
 
 	/* content_ratings */
@@ -3544,6 +3599,16 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		}
 	}
 
+	/* <reviews> */
+	if (priv->reviews->len > 0) {
+		AsReview *review;
+		node_tmp = as_node_insert (node_app, "reviews", NULL, 0, NULL);
+		for (i = 0; i < priv->reviews->len; i++) {
+			review = g_ptr_array_index (priv->reviews, i);
+			as_review_node_insert (review, node_tmp, ctx);
+		}
+	}
+
 	/* <content_ratings> */
 	if (priv->content_ratings->len > 0) {
 		for (i = 0; i < priv->content_ratings->len; i++) {
@@ -3920,6 +3985,21 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			if (!as_screenshot_node_parse (ss, c, ctx, error))
 				return FALSE;
 			as_app_add_screenshot (app, ss);
+		}
+		break;
+
+	/* <reviews> */
+	case AS_TAG_REVIEWS:
+		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
+			g_ptr_array_set_size (priv->reviews, 0);
+		for (c = n->children; c != NULL; c = c->next) {
+			g_autoptr(AsReview) review = NULL;
+			if (as_node_get_tag (c) != AS_TAG_REVIEW)
+				continue;
+			review = as_review_new ();
+			if (!as_review_node_parse (review, c, ctx, error))
+				return FALSE;
+			as_app_add_review (app, review);
 		}
 		break;
 
@@ -4325,6 +4405,16 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 				if (!as_screenshot_node_parse_dep11 (ss, c, ctx, error))
 					return FALSE;
 				as_app_add_screenshot (app, ss);
+			}
+			continue;
+		}
+		if (g_strcmp0 (tmp, "Reviews") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				g_autoptr(AsReview) review = NULL;
+				review = as_review_new ();
+				if (!as_review_node_parse_dep11 (review, c, ctx, error))
+					return FALSE;
+				as_app_add_review (app, review);
 			}
 			continue;
 		}

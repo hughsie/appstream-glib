@@ -58,3 +58,8 @@ size, AS_TAG_SIZE
 translation, AS_TAG_TRANSLATION
 content_rating, AS_TAG_CONTENT_RATING
 content_attribute, AS_TAG_CONTENT_ATTRIBUTE
+version, AS_TAG_VERSION
+reviews, AS_TAG_REVIEWS
+review, AS_TAG_REVIEW
+reviewer_name, AS_TAG_REVIEWER_NAME
+reviewer_id, AS_TAG_REVIEWER_ID

@@ -83,6 +83,7 @@ libappstream_glib_include_HEADERS =				\
 	as-profile.h						\
 	as-provide.h						\
 	as-release.h						\
+	as-review.h						\
 	as-screenshot.h						\
 	as-store.h						\
 	as-tag.h						\
@@ -123,6 +124,8 @@ libappstream_glib_la_SOURCES =					\
 	as-provide-private.h					\
 	as-release.c						\
 	as-release-private.h					\
+	as-review.c						\
+	as-review-private.h					\
 	as-resources.c						\
 	as-resources.h						\
 	as-screenshot.c						\
@@ -217,6 +220,8 @@ introspection_sources =						\
 	as-provide.h						\
 	as-release.c						\
 	as-release.h						\
+	as-review.c						\
+	as-review.h						\
 	as-screenshot.c						\
 	as-screenshot.h						\
 	as-store.c						\

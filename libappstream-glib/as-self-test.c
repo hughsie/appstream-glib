@@ -35,6 +35,7 @@
 #include "as-enums.h"
 #include "as-icon-private.h"
 #include "as-image-private.h"
+#include "as-review-private.h"
 #include "as-inf.h"
 #include "as-markup.h"
 #include "as-monitor.h"
@@ -1173,6 +1174,69 @@ as_test_image_func (void)
 }
 
 static void
+as_test_review_func (void)
+{
+	GError *error = NULL;
+	AsNode *n;
+	AsNode *root;
+	GString *xml;
+	const gchar *src =
+		"<review date=\"2016-09-15\" rating=\"80\" karma=\"-1\" id=\"17\">\n"
+		"<priority>5</priority>\n"
+		"<summary>Hello world</summary>\n"
+		"<description><p>Mighty Fine</p></description>\n"
+		"<version>1.2.3</version>\n"
+		"<reviewer_id>deadbeef</reviewer_id>\n"
+		"<reviewer_name>Richard Hughes</reviewer_name>\n"
+		"<lang>en_GB</lang>\n"
+		"<metadata>\n"
+		"<value key=\"foo\">bar</value>\n"
+		"</metadata>\n"
+		"</review>\n";
+	gboolean ret;
+	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsReview) review = NULL;
+
+	review = as_review_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "review");
+	g_assert (n != NULL);
+	ctx = as_node_context_new ();
+	ret = as_review_node_parse (review, n, ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_review_get_karma (review), ==, -1);
+	g_assert_cmpint (as_review_get_priority (review), ==, 5);
+	g_assert (as_review_get_date (review) != NULL);
+	g_assert_cmpstr (as_review_get_id (review), ==, "17");
+	g_assert_cmpstr (as_review_get_version (review), ==, "1.2.3");
+	g_assert_cmpstr (as_review_get_reviewer_id (review), ==, "deadbeef");
+	g_assert_cmpstr (as_review_get_reviewer_name (review), ==, "Richard Hughes");
+	g_assert_cmpstr (as_review_get_summary (review), ==, "Hello world");
+	g_assert_cmpstr (as_review_get_locale (review), ==, "en_GB");
+	g_assert_cmpstr (as_review_get_description (review), ==, "<p>Mighty Fine</p>");
+	g_assert_cmpstr (as_review_get_metadata_item (review, "foo"), ==, "bar");
+
+	/* back to node */
+	root = as_node_new ();
+	as_node_context_set_version (ctx, 0.4);
+	n = as_review_node_insert (review, root, ctx);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+}
+
+static void
 as_test_bundle_func (void)
 {
 	GError *error = NULL;
@@ -1430,6 +1494,11 @@ as_test_app_func (void)
 		"<image type=\"thumbnail\">http://b.png</image>\n"
 		"</screenshot>\n"
 		"</screenshots>\n"
+		"<reviews>\n"
+		"<review date=\"2016-09-15\">\n"
+		"<summary>Hello world</summary>\n"
+		"</review>\n"
+		"</reviews>\n"
 		"<content_rating type=\"oars-1.0\">\n"
 		"<content_attribute id=\"drugs-alcohol\">moderate</content_attribute>\n"
 		"</content_rating>\n"
@@ -4858,6 +4927,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/icon", as_test_icon_func);
 	g_test_add_func ("/AppStream/icon{embedded}", as_test_icon_embedded_func);
 	g_test_add_func ("/AppStream/bundle", as_test_bundle_func);
+	g_test_add_func ("/AppStream/review", as_test_review_func);
 	g_test_add_func ("/AppStream/translation", as_test_translation_func);
 	g_test_add_func ("/AppStream/image", as_test_image_func);
 	g_test_add_func ("/AppStream/image{resize}", as_test_image_resize_func);
