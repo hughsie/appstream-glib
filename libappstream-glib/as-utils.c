@@ -1669,3 +1669,39 @@ as_utils_string_replace (GString *string, const gchar *search, const gchar *repl
 
 	return count;
 }
+
+/**
+ * as_utils_iso8601_to_datetime: (skip)
+ * @iso_date: The ISO8601 date
+ *
+ * Converts an ISO8601 to a #GDateTime.
+ *
+ * Returns: a #GDateTime, or %NULL for error.
+ *
+ * Since: 0.5.18
+ **/
+GDateTime *
+as_utils_iso8601_to_datetime (const gchar *iso_date)
+{
+	GTimeVal tv;
+	guint dmy[] = {0, 0, 0};
+
+	/* nothing set */
+	if (iso_date == NULL || iso_date[0] == '\0')
+		return NULL;
+
+	/* try to parse complete ISO8601 date */
+	if (g_strstr_len (iso_date, -1, " ") != NULL) {
+		if (g_time_val_from_iso8601 (iso_date, &tv) && tv.tv_sec != 0)
+			return g_date_time_new_from_timeval_utc (&tv);
+	}
+
+	/* g_time_val_from_iso8601() blows goats and won't
+	 * accept a valid ISO8601 formatted date without a
+	 * time value - try and parse this case */
+	if (sscanf (iso_date, "%u-%u-%u", &dmy[0], &dmy[1], &dmy[2]) != 3)
+		return NULL;
+
+	/* create valid object */
+	return g_date_time_new_utc (dmy[0], dmy[1], dmy[2], 0, 0, 0);
+}

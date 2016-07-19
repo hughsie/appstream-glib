@@ -603,32 +603,6 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 	return n;
 }
 
-static GDateTime *
-as_release_iso8601_to_datetime (const gchar *iso_date)
-{
-	GTimeVal tv;
-	guint dmy[] = {0, 0, 0};
-
-	/* nothing set */
-	if (iso_date == NULL || iso_date[0] == '\0')
-		return NULL;
-
-	/* try to parse complete ISO8601 date */
-	if (g_strstr_len (iso_date, -1, " ") != NULL) {
-		if (g_time_val_from_iso8601 (iso_date, &tv) && tv.tv_sec != 0)
-			return g_date_time_new_from_timeval_utc (&tv);
-	}
-
-	/* g_time_val_from_iso8601() blows goats and won't
-	 * accept a valid ISO8601 formatted date without a
-	 * time value - try and parse this case */
-	if (sscanf (iso_date, "%u-%u-%u", &dmy[0], &dmy[1], &dmy[2]) != 3)
-		return NULL;
-
-	/* create valid object */
-	return g_date_time_new_utc (dmy[0], dmy[1], dmy[2], 0, 0, 0);
-}
-
 /**
  * as_release_node_parse:
  * @release: a #AsRelease instance.
@@ -656,7 +630,7 @@ as_release_node_parse (AsRelease *release, GNode *node,
 	tmp = as_node_get_attribute (node, "date");
 	if (tmp != NULL) {
 		g_autoptr(GDateTime) dt = NULL;
-		dt = as_release_iso8601_to_datetime (tmp);
+		dt = as_utils_iso8601_to_datetime (tmp);
 		if (dt != NULL)
 			as_release_set_timestamp (release, g_date_time_to_unix (dt));
 	}

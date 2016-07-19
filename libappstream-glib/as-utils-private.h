@@ -44,6 +44,7 @@ const gchar	*as_ptr_array_find_string	(GPtrArray	*array,
 						 const gchar	*value);
 gboolean	 as_utils_locale_is_compatible	(const gchar	*locale1,
 						 const gchar	*locale2);
+GDateTime	*as_utils_iso8601_to_datetime	(const gchar	*iso_date);
 
 G_END_DECLS
 
