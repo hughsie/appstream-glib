@@ -19,7 +19,6 @@ BuildRequires: libsoup-devel >= 2.51.92
 BuildRequires: gdk-pixbuf2-devel >= 2.31.5
 BuildRequires: gtk3-devel
 BuildRequires: gettext
-BuildRequires: intltool
 BuildRequires: libgcab1-devel
 BuildRequires: libuuid-devel
 BuildRequires: libstemmer-devel

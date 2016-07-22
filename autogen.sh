@@ -25,9 +25,9 @@ if ([ -z "$*" ] && [ "x$NOCONFIGURE" = "x" ]) ; then
   echo
 fi
 
+(cd $srcdir && autopoint --force) || exit 1
 (cd $srcdir && gtkdocize) || exit 1
 (cd $srcdir && autoreconf --force --install) || exit 1
-(cd $srcdir && intltoolize --force --copy --automake) || exit 1
 
 conf_flags="--enable-gtk-doc"
 

@@ -20,7 +20,6 @@ Bugfixes:
 
 cd po
 make appstream-glib.pot
-INTLTOOL_EXTRACT="/usr/bin/intltool-extract" XGETTEXT="/usr/bin/xgettext --no-location" srcdir=. /usr/bin/intltool-update --gettext-package appstream-glib --pot
 tx push --source
 tx pull --all --minimum-perc=5
 git add *.po

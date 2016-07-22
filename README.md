@@ -28,7 +28,7 @@ copy. To do the latter just do:
     dnf install automake autoconf libtool glib-devel docbook-utils \
                gtk-doc gobject-introspection-devel rpm-devel \
                gtk3-devel sqlite-devel libsoup-devel gettext-devel \
-                intltool libarchive-devel libyaml-devel
+               libarchive-devel libyaml-devel
     ./autogen.sh
     make
     make install
