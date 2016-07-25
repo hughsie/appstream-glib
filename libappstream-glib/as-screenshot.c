@@ -175,6 +175,7 @@ as_screenshot_get_images (AsScreenshot *screenshot)
 /**
  * as_screenshot_get_images_for_locale:
  * @screenshot: a #AsScreenshot instance.
+ * @locale: a locale, e.g. `en_GB`
  *
  * Returns all images of all sizes that are compatible with a specific locale.
  *
