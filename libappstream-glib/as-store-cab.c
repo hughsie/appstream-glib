@@ -257,7 +257,7 @@ as_store_cab_from_bytes_with_origin (AsStore *store,
 
 		/* debug */
 		fn = g_ptr_array_index (filelist, i);
-		g_debug ("found file %i\t%s", i, fn);
+		g_debug ("found file %u\t%s", i, fn);
 
 		/* if inf or metainfo, add */
 		if (as_app_guess_source_kind (fn) != AS_APP_SOURCE_KIND_METAINFO)

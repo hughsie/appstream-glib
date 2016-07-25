@@ -110,8 +110,8 @@ static gchar *
 as_util_get_descriptions (GPtrArray *array)
 {
 	guint i;
-	guint j;
-	guint len;
+	gsize j;
+	gsize len;
 	const guint max_len = 35;
 	AsUtilItem *item;
 	GString *string;
@@ -649,7 +649,7 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 
 			/* print release */
 			if (as_release_get_timestamp (rel) > 0) {
-				dt = g_date_time_new_from_unix_utc (as_release_get_timestamp (rel));
+				dt = g_date_time_new_from_unix_utc ((gint64) as_release_get_timestamp (rel));
 				date = g_date_time_format (dt, "%F");
 				g_string_append_printf (str, "Released: %s\n\n", date);
 			}
@@ -1333,7 +1333,7 @@ as_util_show_search_tokens (AsUtilPrivate *priv, gchar **values, GError **error)
 	for (l = keys; l != NULL; l = l->next) {
 		tmp = l->data;
 		cnt = g_hash_table_lookup (dict, tmp);
-		g_print ("%s [%i]\n", tmp, *cnt);
+		g_print ("%s [%u]\n", tmp, *cnt);
 	}
 
 	return TRUE;
@@ -1751,7 +1751,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 	}
 	perc = 100.f * (gdouble) cnt / (gdouble) total;
 	g_string_append_printf (html, "<tr><td class=\"alt\">Keywords</td>"
-				"<td>%i/%i</td><td class=\"thin\">%.1f%%</td></tr>\n",
+				"<td>%u/%u</td><td class=\"thin\">%.1f%%</td></tr>\n",
 				cnt, total, perc);
 
 	/* screenshots */
@@ -1765,7 +1765,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 	}
 	perc = 100.f * (gdouble) cnt / (gdouble) total;
 	g_string_append_printf (html, "<tr><td class=\"alt\">Screenshots</td>"
-				"<td>%i/%i</td><td class=\"thin\">%.1f%%</td></tr>\n",
+				"<td>%u/%u</td><td class=\"thin\">%.1f%%</td></tr>\n",
 				cnt, total, perc);
 
 	/* specific kudos */
@@ -1788,7 +1788,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 		if (total > 0)
 			perc = 100.f * (gdouble) cnt / (gdouble) total;
 		g_string_append_printf (html, "<tr><td class=\"alt\">"
-					"<i>%s</i></td><td>%i</td>"
+					"<i>%s</i></td><td>%u</td>"
 					"<td class=\"thin\">%.1f%%</td></tr>\n",
 					as_kudo_kind_to_string (j),
 					cnt, perc);
@@ -1802,7 +1802,7 @@ as_util_status_html_write_exec_summary (GPtrArray *apps,
 			cnt++;
 	}
 	g_string_append_printf (html, "<tr><td class=\"alt\">MetaInfo</td>"
-				"<td>%i</td><td class=\"thin\"></td></tr>\n", cnt);
+				"<td>%u</td><td class=\"thin\"></td></tr>\n", cnt);
 
 
 	g_string_append (html, "</table>\n");
@@ -2461,7 +2461,7 @@ as_util_validate_output_text (const gchar *filename, GPtrArray *probs)
 	AsProblem *problem;
 	const gchar *tmp;
 	guint i;
-	guint j;
+	gsize j;
 
 	/* success */
 	if (probs->len == 0) {
@@ -2479,7 +2479,7 @@ as_util_validate_output_text (const gchar *filename, GPtrArray *probs)
 		for (j = strlen (tmp); j < 20; j++)
 			g_print (" ");
 		if (as_problem_get_line_number (problem) > 0) {
-			g_print (" : %s [ln:%i]\n",
+			g_print (" : %s [ln:%u]\n",
 				 as_problem_get_message (problem),
 				 as_problem_get_line_number (problem));
 		} else {
@@ -2516,7 +2516,7 @@ as_util_validate_output_html (const gchar *filename, GPtrArray *probs)
 			g_print ("<li>");
 			g_print ("%s\n", tmp);
 			if (as_problem_get_line_number (problem) > 0) {
-				g_print (" (line %i)",
+				g_print (" (line %u)",
 					 as_problem_get_line_number (problem));
 			}
 			g_print ("</li>\n");
@@ -2751,7 +2751,7 @@ static void
 as_util_app_log (AsApp *app, const gchar *fmt, ...)
 {
 	const gchar *id;
-	guint i;
+	gsize i;
 	va_list args;
 	g_autofree gchar *tmp = NULL;
 
@@ -2787,7 +2787,7 @@ as_util_mirror_screenshots_thumb (AsScreenshot *ss, AsImage *im_src,
 	}
 
 	/* save to disk */
-	size_str = g_strdup_printf ("%ix%i", width * scale, height * scale);
+	size_str = g_strdup_printf ("%ux%u", width * scale, height * scale);
 	fn = g_build_filename (output_dir, size_str,
 			       as_image_get_basename (im_src),
 			       NULL);
@@ -2854,7 +2854,7 @@ as_util_mirror_screenshots_app_file (AsApp *app,
 		g_set_error (error,
 			     AS_APP_ERROR,
 			     AS_APP_ERROR_FAILED,
-			     "%s is too small to be used: %ix%i",
+			     "%s is too small to be used: %ux%u",
 			     filename_no_path,
 			     as_image_get_width (im_src),
 			     as_image_get_height (im_src));
@@ -3105,7 +3105,7 @@ as_util_mirror_screenshots (AsUtilPrivate *priv, gchar **values, GError **error)
 		for (i = 0; sizes[i] != 0; i += 2) {
 			g_autofree gchar *size_str = NULL;
 			g_autofree gchar *fn = NULL;
-			size_str = g_strdup_printf ("%ix%i",
+			size_str = g_strdup_printf ("%ux%u",
 						    sizes[i+0] * j,
 						    sizes[i+1] * j);
 			fn = g_build_filename (output_dir, size_str, NULL);
@@ -3301,7 +3301,7 @@ as_util_replace_screenshots (AsUtilPrivate *priv, gchar **values, GError **error
 static void
 as_util_pad_strings (const gchar *id, const gchar *msg, guint align)
 {
-	guint i;
+	gsize i;
 	g_print ("%s", id);
 	for (i = strlen (id); i < align; i++)
 		g_print (" ");
@@ -3740,7 +3740,7 @@ as_util_check_root (AsUtilPrivate *priv, gchar **values, GError **error)
 		g_set_error (error,
 			     AS_ERROR,
 			     AS_ERROR_FAILED,
-			     "Failed to check root, %i problems detected",
+			     "Failed to check root, %u problems detected",
 			     problems->len);
 		return FALSE;
 	}
@@ -3809,7 +3809,7 @@ main (int argc, char *argv[])
 	gboolean verbose = FALSE;
 	gboolean version = FALSE;
 	GError *error = NULL;
-	guint retval = 1;
+	gint retval = 1;
 	g_autofree gchar *cmd_descriptions = NULL;
 	const GOptionEntry options[] = {
 		{ "nonet", '\0', 0, G_OPTION_ARG_NONE, &nonet,

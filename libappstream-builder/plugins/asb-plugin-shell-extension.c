@@ -66,7 +66,7 @@ as_app_parse_shell_extension_data (AsApp *app,
 
 	/* parse the data */
 	json_parser = json_parser_new ();
-	if (!json_parser_load_from_data (json_parser, data, len, error))
+	if (!json_parser_load_from_data (json_parser, data, (gssize) len, error))
 		return FALSE;
 	json_root = json_parser_get_root (json_parser);
 	if (json_root == NULL) {

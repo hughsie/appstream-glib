@@ -106,19 +106,17 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsApp, as_app, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (as_app_get_instance_private (o))
 
+#define AS_APP_TOKEN_MATCH_NONE		(0u)		/* 0x00 */
+#define AS_APP_TOKEN_MATCH_MIMETYPE	(1u << 0)	/* 0x01 */
+#define AS_APP_TOKEN_MATCH_PKGNAME	(1u << 1)	/* 0x02 */
+#define AS_APP_TOKEN_MATCH_DESCRIPTION	(1u << 2)	/* 0x04 */
+#define AS_APP_TOKEN_MATCH_COMMENT	(1u << 3)	/* 0x08 */
+#define AS_APP_TOKEN_MATCH_NAME		(1u << 4)	/* 0x10 */
+#define AS_APP_TOKEN_MATCH_KEYWORD	(1u << 5)	/* 0x20 */
+#define AS_APP_TOKEN_MATCH_ID		(1u << 6)	/* 0x40 */
+#define AS_APP_TOKEN_MATCH_LAST
 
-typedef enum {
-	AS_APP_TOKEN_MATCH_NONE		= 0,		/* 0x00 */
-	AS_APP_TOKEN_MATCH_MIMETYPE	= 1 << 0,	/* 0x01 */
-	AS_APP_TOKEN_MATCH_PKGNAME	= 1 << 1,	/* 0x02 */
-	AS_APP_TOKEN_MATCH_DESCRIPTION	= 1 << 2,	/* 0x04 */
-	AS_APP_TOKEN_MATCH_COMMENT	= 1 << 3,	/* 0x08 */
-	AS_APP_TOKEN_MATCH_NAME		= 1 << 4,	/* 0x10 */
-	AS_APP_TOKEN_MATCH_KEYWORD	= 1 << 5,	/* 0x20 */
-	AS_APP_TOKEN_MATCH_ID		= 1 << 6,	/* 0x40 */
-	AS_APP_TOKEN_MATCH_LAST
-} AsAppTokenMatch;
-
+typedef guint16 AsAppTokenMatch;
 typedef guint16	AsAppTokenType;	/* big enough for both bitshifts */
 
 /**
@@ -1958,7 +1956,7 @@ as_app_set_update_contact (AsApp *app, const gchar *update_contact)
 		return;
 
 	/* keep going until we have no more matches */
-	len = strlen (priv->update_contact);
+	len = (guint) strlen (priv->update_contact);
 	while (done_replacement) {
 		done_replacement = FALSE;
 		for (i = 0; replacements[i].search != NULL; i++) {
@@ -3624,9 +3622,11 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 
 	/* <priority> */
 	case AS_TAG_PRIORITY:
-		as_app_set_priority (app, g_ascii_strtoll (as_node_get_data (n),
-							   NULL, 10));
+	{
+		gint64 tmp64 = g_ascii_strtoll (as_node_get_data (n), NULL, 10);
+		as_app_set_priority (app, (gint) tmp64);
 		break;
+	}
 
 	/* <pkgname> */
 	case AS_TAG_PKGNAME:
@@ -3967,7 +3967,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
 			g_hash_table_remove_all (priv->languages);
 		for (c = n->children; c != NULL; c = c->next) {
-			guint percent;
+			gint percent;
 			if (as_node_get_tag (c) != AS_TAG_LANG)
 				continue;
 			percent = as_node_get_attribute_as_int (c, "percentage");
@@ -4033,7 +4033,7 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags,
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	GNode *n;
 	const gchar *tmp;
-	guint prio;
+	gint prio;
 
 	/* new style */
 	if (g_strcmp0 (as_node_get_name (node), "component") == 0) {
@@ -4564,7 +4564,7 @@ as_app_search_matches (AsApp *app, const gchar *search)
 	search_stem = as_stemmer_process (priv->stemmer, search);
 	match_pval = g_hash_table_lookup (priv->token_cache, search_stem);
 	if (match_pval != NULL)
-		return *match_pval << 2;
+		return (guint) *match_pval << 2;
 
 	/* need to do partial match */
 	keys = g_hash_table_get_keys (priv->token_cache);
@@ -4757,7 +4757,7 @@ as_app_parse_appdata_file (AsApp *app,
 	}
 
 	/* validate */
-	tmp = g_strstr_len (data, len, "<?xml version=");
+	tmp = g_strstr_len (data, (gssize) len, "<?xml version=");
 	if (tmp == NULL)
 		priv->problems |= AS_APP_PROBLEM_NO_XML_HEADER;
 

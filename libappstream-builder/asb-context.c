@@ -1174,7 +1174,7 @@ asb_context_process (AsbContext *ctx, GError **error)
 	/* create thread pool */
 	pool = g_thread_pool_new (asb_task_process_func,
 				  ctx,
-				  priv->max_threads,
+				  (gint) priv->max_threads,
 				  TRUE,
 				  error);
 	if (pool == NULL)

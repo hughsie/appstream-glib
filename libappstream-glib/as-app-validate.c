@@ -95,7 +95,7 @@ ai_app_validate_fullstop_ending (const gchar *tmp)
 			cnt++;
 	if (cnt++ > 1)
 		return FALSE;
-	str_len = strlen (tmp);
+	str_len = (guint) strlen (tmp);
 	if (str_len == 0)
 		return FALSE;
 	return tmp[str_len - 1] == '.';
@@ -179,7 +179,7 @@ as_app_validate_description_li (const gchar *text, AsAppValidateHelper *helper)
 		return;
 	}
 
-	str_len = strlen (text);
+	str_len = (guint) strlen (text);
 	if (str_len < length_li_min) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
@@ -240,7 +240,7 @@ as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper
 	}
 	helper->previous_para_was_short = FALSE;
 
-	str_len = strlen (text);
+	str_len = (guint) strlen (text);
 	if (str_len < length_para_min) {
 		/* we don't add the problem now, as we allow a short
 		 * paragraph as an introduction to a list */
@@ -303,7 +303,7 @@ as_app_validate_description_list (const gchar *text,
 	    helper->para_chars_before_list < (guint) length_para_before_list) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "Content before <ul> is too short [%d], at least %d characters required",
+				     "Content before <ul> is too short [%u], at least %u characters required",
 				     helper->para_chars_before_list,
 				     length_para_before_list);
 	}
@@ -413,7 +413,7 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	gboolean require_correct_aspect_ratio = FALSE;
 	gdouble desired_aspect = 1.777777778;
 	gdouble screenshot_aspect;
-	gint status_code;
+	guint status_code;
 	guint screenshot_height;
 	guint screenshot_width;
 	guint ss_size_height_max = 900;
@@ -499,8 +499,8 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	}
 
 	/* check width matches */
-	screenshot_width = gdk_pixbuf_get_width (pixbuf);
-	screenshot_height = gdk_pixbuf_get_height (pixbuf);
+	screenshot_width = (guint) gdk_pixbuf_get_width (pixbuf);
+	screenshot_height = (guint) gdk_pixbuf_get_height (pixbuf);
 	if (as_image_get_width (im) != 0 &&
 	    as_image_get_width (im) != screenshot_width) {
 		ai_app_validate_add (helper,
@@ -585,7 +585,7 @@ as_app_validate_image (AsImage *im, AsAppValidateHelper *helper)
 
 	/* blank */
 	url = as_image_get_url (im);
-	if (strlen (url) == 0) {
+	if ((guint) strlen (url) == 0) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_VALUE_MISSING,
 				     "<screenshot> has no content");
@@ -638,7 +638,7 @@ as_app_validate_screenshot (AsScreenshot *ss, AsAppValidateHelper *helper)
 	}
 	tmp = as_screenshot_get_caption (ss, NULL);
 	if (tmp != NULL) {
-		str_len = strlen (tmp);
+		str_len = (guint) strlen (tmp);
 		if (str_len < length_caption_min) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
@@ -1340,7 +1340,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	/* name */
 	name = as_app_get_name (app, "C");
 	if (name != NULL) {
-		str_len = strlen (name);
+		str_len = (guint) strlen (name);
 		if (str_len < length_name_min) {
 			ai_app_validate_add (&helper,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
@@ -1379,7 +1379,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	/* comment */
 	summary = as_app_get_comment (app, "C");
 	if (summary != NULL) {
-		str_len = strlen (summary);
+		str_len = (guint) strlen (summary);
 		if (str_len < length_summary_min) {
 			ai_app_validate_add (&helper,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
@@ -1464,7 +1464,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	/* developer_name */
 	name = as_app_get_developer_name (app, NULL);
 	if (name != NULL) {
-		str_len = strlen (name);
+		str_len = (guint) strlen (name);
 		if (str_len < length_name_min) {
 			ai_app_validate_add (&helper,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,

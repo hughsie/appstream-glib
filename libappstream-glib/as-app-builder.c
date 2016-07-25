@@ -310,7 +310,7 @@ as_app_builder_parse_file_qt (AsAppBuilderContext *ctx,
 				     "file is invalid");
 		return FALSE;
 	}
-	m += sizeof(qm_magic);
+	m += (guint32) sizeof(qm_magic);
 
 	/* parse each section */
 	while (m < len) {
@@ -479,7 +479,7 @@ as_app_builder_search_translations (AsApp *app,
 		e = l->data;
 		if (e->percentage < min_percentage)
 			continue;
-		as_app_add_language (app, e->percentage, e->locale);
+		as_app_add_language (app, (gint) e->percentage, e->locale);
 	}
 	return TRUE;
 }

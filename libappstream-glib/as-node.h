@@ -128,6 +128,8 @@ const gchar	*as_node_get_attribute		(const GNode	*node,
 						 const gchar	*key);
 gint		 as_node_get_attribute_as_int	(const GNode	*node,
 						 const gchar	*key);
+guint		 as_node_get_attribute_as_uint	(const GNode	*node,
+						 const gchar	*key);
 GHashTable	*as_node_get_localized		(const GNode	*node,
 						 const gchar	*key);
 const gchar	*as_node_get_localized_best	(const GNode	*node,
@@ -148,6 +150,9 @@ void		 as_node_add_attribute		(GNode		*node,
 void		 as_node_add_attribute_as_int	(GNode		*node,
 						 const gchar	*key,
 						 gint		 value);
+void		 as_node_add_attribute_as_uint	(GNode		*node,
+						 const gchar	*key,
+						 guint		 value);
 void		 as_node_remove_attribute	(GNode		*node,
 						 const gchar	*key);
 

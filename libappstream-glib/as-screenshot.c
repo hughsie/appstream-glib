@@ -229,9 +229,9 @@ as_screenshot_get_image_for_locale (AsScreenshot *screenshot,
 	AsImage *im;
 	AsImage *im_best = NULL;
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
-	guint best_size = G_MAXUINT;
+	gint64 best_size = G_MAXINT64;
 	guint i;
-	guint tmp;
+	gint64 tmp;
 
 	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), NULL);
 
@@ -487,10 +487,10 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node,
 		AsImage *image;
 		image = as_image_new ();
 		as_image_set_kind (image, AS_IMAGE_KIND_SOURCE);
-		size = as_node_get_attribute_as_int (node, "width");
+		size = as_node_get_attribute_as_uint (node, "width");
 		if (size != G_MAXINT)
 			as_image_set_width (image, size);
-		size = as_node_get_attribute_as_int (node, "height");
+		size = as_node_get_attribute_as_uint (node, "height");
 		if (size != G_MAXINT)
 			as_image_set_height (image, size);
 		as_image_set_url (image, tmp);

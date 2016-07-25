@@ -468,7 +468,7 @@ asb_utils_add_files_recursive (GPtrArray *files,
 	dir = g_dir_open (path, 0, error);
 	if (dir == NULL)
 		return FALSE;
-	path_orig_len = strlen (path_orig);
+	path_orig_len = (guint) strlen (path_orig);
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
 		g_autofree gchar *path_new = NULL;
 		path_new = g_build_filename (path, tmp, NULL);

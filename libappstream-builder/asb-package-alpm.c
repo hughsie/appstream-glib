@@ -112,7 +112,7 @@ asb_package_alpm_ensure_version (AsbPackage *pkg, GError **error)
 
 	/* epoch:version:release */
 	if (g_strv_length (split) == 3) {
-		asb_package_set_epoch (pkg, g_ascii_strtoll (split[0], NULL, 0));
+		asb_package_set_epoch (pkg, (guint) g_ascii_strtoull (split[0], NULL, 0));
 		asb_package_set_version (pkg, split[1]);
 		asb_package_set_release (pkg, split[2]);
 	} else {/* version:release */
@@ -182,7 +182,7 @@ asb_package_alpm_open (AsbPackage *pkg, const gchar *filename, GError **error)
 		g_set_error (error,
 		             ASB_PLUGIN_ERROR,
 		             ASB_PLUGIN_ERROR_FAILED,
-		             "libalpm initialization failed %s (%d) for %s",
+		             "libalpm initialization failed %s (%u) for %s",
 		             alpm_strerror (alpm_error),
 		             alpm_error,
 		             filename);
@@ -194,7 +194,7 @@ asb_package_alpm_open (AsbPackage *pkg, const gchar *filename, GError **error)
 		g_set_error (error,
 		             ASB_PLUGIN_ERROR,
 		             ASB_PLUGIN_ERROR_FAILED,
-		             "Failed to load package %s : %s (%d)",
+		             "Failed to load package %s : %s (%u)",
 		             filename,
 		             alpm_strerror (alpm_errno (priv->handle)),
 		             alpm_errno (priv->handle));

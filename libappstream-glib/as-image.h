@@ -113,16 +113,13 @@ typedef enum {
  *
  * The flags used for reporting the alpha cutouts in the image.
  **/
-typedef enum {
-	AS_IMAGE_ALPHA_FLAG_NONE	= 0,	/* Since: 0.2.2 */
-	AS_IMAGE_ALPHA_FLAG_TOP		= 1,	/* Since: 0.2.2 */
-	AS_IMAGE_ALPHA_FLAG_BOTTOM	= 2,	/* Since: 0.2.2 */
-	AS_IMAGE_ALPHA_FLAG_LEFT	= 4,	/* Since: 0.2.2 */
-	AS_IMAGE_ALPHA_FLAG_RIGHT	= 8,	/* Since: 0.2.2 */
-	AS_IMAGE_ALPHA_FLAG_INTERNAL	= 16,	/* Since: 0.2.2 */
-	/*< private >*/
-	AS_IMAGE_ALPHA_FLAG_LAST
-} AsImageAlphaFlags;
+#define AS_IMAGE_ALPHA_FLAG_NONE	(0u)		/* Since: 0.2.2 */
+#define AS_IMAGE_ALPHA_FLAG_TOP		(1u << 0)	/* Since: 0.2.2 */
+#define AS_IMAGE_ALPHA_FLAG_BOTTOM	(1u << 1)	/* Since: 0.2.2 */
+#define AS_IMAGE_ALPHA_FLAG_LEFT	(1u << 2)	/* Since: 0.2.2 */
+#define AS_IMAGE_ALPHA_FLAG_RIGHT	(1u << 3)	/* Since: 0.2.2 */
+#define AS_IMAGE_ALPHA_FLAG_INTERNAL	(1u << 4)	/* Since: 0.2.2 */
+typedef guint AsImageAlphaFlags;
 
 /* some useful constants */
 #define AS_IMAGE_LARGE_HEIGHT		423	/* Since: 0.2.2 */

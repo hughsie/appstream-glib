@@ -34,7 +34,7 @@ static void
 as_compose_app_log (AsApp *app, const gchar *fmt, ...)
 {
 	const gchar *id;
-	guint i;
+	gsize i;
 	va_list args;
 	g_autofree gchar *tmp = NULL;
 
@@ -328,7 +328,7 @@ main (int argc, char **argv)
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GFile) xml_dir = NULL;
 	g_autoptr(GFile) xml_file = NULL;
-	gint min_icon_size = 32;
+	guint min_icon_size = 32;
 	guint i;
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,

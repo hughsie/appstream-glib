@@ -756,7 +756,7 @@ asb_package_get_nevr (AsbPackage *pkg)
 						      priv->version,
 						      priv->release);
 		} else {
-			priv->nevr = g_strdup_printf ("%s-%i:%s-%s",
+			priv->nevr = g_strdup_printf ("%s-%u:%s-%s",
 						      priv->name,
 						      priv->epoch,
 						      priv->version,
@@ -788,7 +788,7 @@ asb_package_get_nevra (AsbPackage *pkg)
 						       priv->release,
 						       priv->arch);
 		} else {
-			priv->nevra = g_strdup_printf ("%s-%i:%s-%s.%s",
+			priv->nevra = g_strdup_printf ("%s-%u:%s-%s.%s",
 						       priv->name,
 						       priv->epoch,
 						       priv->version,
@@ -819,7 +819,7 @@ asb_package_get_evr (AsbPackage *pkg)
 						     priv->version,
 						     priv->release);
 		} else {
-			priv->evr = g_strdup_printf ("%i:%s-%s",
+			priv->evr = g_strdup_printf ("%u:%s-%s",
 						     priv->epoch,
 						     priv->version,
 						     priv->release);

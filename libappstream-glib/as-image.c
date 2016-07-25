@@ -383,8 +383,8 @@ as_image_set_pixbuf (AsImage *image, GdkPixbuf *pixbuf)
 		priv->md5 = g_compute_checksum_for_data (G_CHECKSUM_MD5,
 							 data, len);
 	}
-	priv->width = gdk_pixbuf_get_width (pixbuf);
-	priv->height = gdk_pixbuf_get_height (pixbuf);
+	priv->width = (guint) gdk_pixbuf_get_width (pixbuf);
+	priv->height = (guint) gdk_pixbuf_get_height (pixbuf);
 }
 
 /**
@@ -404,24 +404,15 @@ as_image_node_insert (AsImage *image, GNode *parent, AsNodeContext *ctx)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	GNode *n;
-	gchar tmp_height[6];
-	gchar tmp_width[6];
-
-	if (priv->width > 0 && priv->height > 0) {
-		g_snprintf (tmp_width, sizeof (tmp_width), "%u", priv->width);
-		g_snprintf (tmp_height, sizeof (tmp_height), "%u", priv->height);
-		n = as_node_insert (parent, "image", priv->url,
-				    AS_NODE_INSERT_FLAG_NONE,
-				    "width", tmp_width,
-				    "height", tmp_height,
-				    "type", as_image_kind_to_string (priv->kind),
-				    NULL);
-	} else {
-		n = as_node_insert (parent, "image", priv->url,
-				    AS_NODE_INSERT_FLAG_NONE,
-				    "type", as_image_kind_to_string (priv->kind),
-				    NULL);
-	}
+	n = as_node_insert (parent, "image", priv->url,
+			    AS_NODE_INSERT_FLAG_NONE,
+			    NULL);
+	if (priv->width > 0)
+		as_node_add_attribute_as_uint (n, "width", priv->width);
+	if (priv->height > 0)
+		as_node_add_attribute_as_uint (n, "height", priv->height);
+	if (priv->kind > AS_IMAGE_KIND_UNKNOWN)
+		as_node_add_attribute (n, "type", as_image_kind_to_string (priv->kind));
 	if (priv->locale != NULL)
 		as_node_add_attribute (n, "xml:lang", priv->locale);
 	return n;
@@ -449,11 +440,11 @@ as_image_node_parse (AsImage *image, GNode *node,
 	gchar *taken;
 	guint size;
 
-	size = as_node_get_attribute_as_int (node, "width");
-	if (size != G_MAXINT)
+	size = as_node_get_attribute_as_uint (node, "width");
+	if (size != G_MAXUINT)
 		as_image_set_width (image, size);
-	size = as_node_get_attribute_as_int (node, "height");
-	if (size != G_MAXINT)
+	size = as_node_get_attribute_as_uint (node, "height");
+	if (size != G_MAXUINT)
 		as_image_set_height (image, size);
 	tmp = as_node_get_attribute (node, "type");
 	if (tmp == NULL)
@@ -496,9 +487,9 @@ as_image_node_parse_dep11 (AsImage *im, GNode *node,
 	for (n = node->children; n != NULL; n = n->next) {
 		tmp = as_yaml_node_get_key (n);
 		if (g_strcmp0 (tmp, "height") == 0)
-			as_image_set_height (im, as_yaml_node_get_value_as_int (n));
+			as_image_set_height (im, as_yaml_node_get_value_as_uint (n));
 		else if (g_strcmp0 (tmp, "width") == 0)
-			as_image_set_width (im, as_yaml_node_get_value_as_int (n));
+			as_image_set_width (im, as_yaml_node_get_value_as_uint (n));
 		else if (g_strcmp0 (tmp, "url") == 0) {
 			const gchar *media_base_url = as_node_context_get_media_base_url (ctx);
 			if (media_base_url != NULL) {
@@ -601,8 +592,8 @@ as_image_load_filename_full (AsImage *image,
 	/* open file in native size */
 	if (g_str_has_suffix (filename, ".svg")) {
 		pixbuf_src = gdk_pixbuf_new_from_file_at_scale (filename,
-								dest_size,
-								dest_size,
+								(gint) dest_size,
+								(gint) dest_size,
 								TRUE, error);
 	} else {
 		pixbuf_src = gdk_pixbuf_new_from_file (filename, error);
@@ -623,8 +614,8 @@ as_image_load_filename_full (AsImage *image,
 	}
 
 	/* don't do anything to an icon with the perfect size */
-	pixbuf_width = gdk_pixbuf_get_width (pixbuf_src);
-	pixbuf_height = gdk_pixbuf_get_height (pixbuf_src);
+	pixbuf_width = (guint) gdk_pixbuf_get_width (pixbuf_src);
+	pixbuf_height = (guint) gdk_pixbuf_get_height (pixbuf_src);
 	if (pixbuf_width == dest_size && pixbuf_height == dest_size) {
 		as_image_set_pixbuf (image, pixbuf_src);
 		return TRUE;
@@ -632,18 +623,19 @@ as_image_load_filename_full (AsImage *image,
 
 	/* never scale up, just pad */
 	if (pixbuf_width < dest_size && pixbuf_height < dest_size) {
-		g_debug ("icon padded to %ix%i as size %ix%i",
+		g_debug ("icon padded to %ux%u as size %ux%u",
 			 dest_size, dest_size,
 			 pixbuf_width, pixbuf_height);
 		pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8,
-					 dest_size, dest_size);
+					 (gint) dest_size, (gint) dest_size);
 		gdk_pixbuf_fill (pixbuf, 0x00000000);
 		gdk_pixbuf_copy_area (pixbuf_src,
 				      0, 0, /* of src */
-				      pixbuf_width, pixbuf_height,
+				      (gint) pixbuf_width,
+				      (gint) pixbuf_height,
 				      pixbuf,
-				      (dest_size - pixbuf_width) / 2,
-				      (dest_size - pixbuf_height) / 2);
+				      (gint) (dest_size - pixbuf_width) / 2,
+				      (gint) (dest_size - pixbuf_height) / 2);
 		as_image_set_pixbuf (image, pixbuf);
 		return TRUE;
 	}
@@ -651,7 +643,8 @@ as_image_load_filename_full (AsImage *image,
 	/* is the aspect ratio perfectly square */
 	if (pixbuf_width == pixbuf_height) {
 		pixbuf = gdk_pixbuf_scale_simple (pixbuf_src,
-						  dest_size, dest_size,
+						  (gint) dest_size,
+						  (gint) dest_size,
 						  GDK_INTERP_HYPER);
 		as_image_set_pixbuf (image, pixbuf);
 		return TRUE;
@@ -659,7 +652,7 @@ as_image_load_filename_full (AsImage *image,
 
 	/* create new square pixbuf with alpha padding */
 	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8,
-				 dest_size, dest_size);
+				 (gint) dest_size, (gint) dest_size);
 	gdk_pixbuf_fill (pixbuf, 0x00000000);
 	if (pixbuf_width > pixbuf_height) {
 		tmp_width = dest_size;
@@ -668,16 +661,18 @@ as_image_load_filename_full (AsImage *image,
 		tmp_width = dest_size * pixbuf_width / pixbuf_height;
 		tmp_height = dest_size;
 	}
-	pixbuf_tmp = gdk_pixbuf_scale_simple (pixbuf_src, tmp_width, tmp_height,
+	pixbuf_tmp = gdk_pixbuf_scale_simple (pixbuf_src,
+					      (gint) tmp_width,
+					      (gint) tmp_height,
 					      GDK_INTERP_HYPER);
 	if (flags & AS_IMAGE_LOAD_FLAG_SHARPEN)
 		as_pixbuf_sharpen (pixbuf_tmp, 1, -0.5);
 	gdk_pixbuf_copy_area (pixbuf_tmp,
 			      0, 0, /* of src */
-			      tmp_width, tmp_height,
+			      (gint) tmp_width, (gint) tmp_height,
 			      pixbuf,
-			      (dest_size - tmp_width) / 2,
-			      (dest_size - tmp_height) / 2);
+			      (gint) (dest_size - tmp_width) / 2,
+			      (gint) (dest_size - tmp_height) / 2);
 	as_image_set_pixbuf (image, pixbuf);
 	return TRUE;
 }
@@ -743,13 +738,13 @@ as_image_save_pixbuf (AsImage *image,
 
 	/* 0 means 'default' */
 	if (width == 0)
-		width = gdk_pixbuf_get_width (priv->pixbuf);
+		width = (guint) gdk_pixbuf_get_width (priv->pixbuf);
 	if (height == 0)
-		height = gdk_pixbuf_get_height (priv->pixbuf);
+		height = (guint) gdk_pixbuf_get_height (priv->pixbuf);
 
 	/* don't do anything to an image with the correct size */
-	pixbuf_width = gdk_pixbuf_get_width (priv->pixbuf);
-	pixbuf_height = gdk_pixbuf_get_height (priv->pixbuf);
+	pixbuf_width = (guint) gdk_pixbuf_get_width (priv->pixbuf);
+	pixbuf_height = (guint) gdk_pixbuf_get_height (priv->pixbuf);
 	if (width == pixbuf_width && height == pixbuf_height)
 		return g_object_ref (priv->pixbuf);
 
@@ -757,7 +752,7 @@ as_image_save_pixbuf (AsImage *image,
 	if (flags == AS_IMAGE_SAVE_FLAG_NONE ||
 	    (pixbuf_width / 16) * 9 == pixbuf_height) {
 		pixbuf = gdk_pixbuf_scale_simple (priv->pixbuf,
-						  width, height,
+						  (gint) width, (gint) height,
 						  GDK_INTERP_HYPER);
 		if ((flags & AS_IMAGE_SAVE_FLAG_SHARPEN) > 0)
 			as_pixbuf_sharpen (pixbuf, 1, -0.5);
@@ -769,8 +764,8 @@ as_image_save_pixbuf (AsImage *image,
 	/* create new 16:9 pixbuf with alpha padding */
 	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
 				 TRUE, 8,
-				 width,
-				 height);
+				 (gint) width,
+				 (gint) height);
 	gdk_pixbuf_fill (pixbuf, 0x00000000);
 	if ((pixbuf_width / 16) * 9 > pixbuf_height) {
 		tmp_width = width;
@@ -780,7 +775,8 @@ as_image_save_pixbuf (AsImage *image,
 		tmp_height = height;
 	}
 	pixbuf_tmp = gdk_pixbuf_scale_simple (priv->pixbuf,
-					      tmp_width, tmp_height,
+					      (gint) tmp_width,
+					      (gint) tmp_height,
 					      GDK_INTERP_HYPER);
 	if ((flags & AS_IMAGE_SAVE_FLAG_SHARPEN) > 0)
 		as_pixbuf_sharpen (pixbuf_tmp, 1, -0.5);
@@ -788,10 +784,11 @@ as_image_save_pixbuf (AsImage *image,
 		as_pixbuf_blur (pixbuf_tmp, 5, 3);
 	gdk_pixbuf_copy_area (pixbuf_tmp,
 			      0, 0, /* of src */
-			      tmp_width, tmp_height,
+			      (gint) tmp_width,
+			      (gint) tmp_height,
 			      pixbuf,
-			      (width - tmp_width) / 2,
-			      (height - tmp_height) / 2);
+			      (gint) (width - tmp_width) / 2,
+			      (gint) (height - tmp_height) / 2);
 	return pixbuf;
 }
 
@@ -832,11 +829,11 @@ as_image_save_filename (AsImage *image,
 static gboolean
 is_pixel_alpha (GdkPixbuf *pixbuf, guint x, guint y)
 {
-	gint rowstride, n_channels;
+	guint rowstride, n_channels;
 	guchar *pixels, *p;
 
-	n_channels = gdk_pixbuf_get_n_channels (pixbuf);
-	rowstride = gdk_pixbuf_get_rowstride (pixbuf);
+	n_channels = (guint) gdk_pixbuf_get_n_channels (pixbuf);
+	rowstride = (guint) gdk_pixbuf_get_rowstride (pixbuf);
 	pixels = gdk_pixbuf_get_pixels (pixbuf);
 
 	p = pixels + y * rowstride + x * n_channels;
@@ -879,16 +876,16 @@ as_image_get_alpha_flags (AsImage *image)
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	gboolean complete_line_of_alpha;
 	gboolean is_alpha;
-	gint width, height;
-	gint x, y;
+	guint width, height;
+	guint x, y;
 	guint cnt_content_to_alpha_h;
 	guint cnt_content_to_alpha_v = 0;
 
 	if (!gdk_pixbuf_get_has_alpha (priv->pixbuf))
 		return AS_IMAGE_ALPHA_FLAG_NONE;
 
-	width = gdk_pixbuf_get_width (priv->pixbuf);
-	height = gdk_pixbuf_get_height (priv->pixbuf);
+	width = (guint) gdk_pixbuf_get_width (priv->pixbuf);
+	height = (guint) gdk_pixbuf_get_height (priv->pixbuf);
 	for (y = 0; y < height; y++) {
 		mode_h = AS_IMAGE_ALPHA_MODE_START;
 		complete_line_of_alpha = TRUE;

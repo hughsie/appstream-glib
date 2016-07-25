@@ -438,8 +438,8 @@ as_icon_set_pixbuf (AsIcon *icon, GdkPixbuf *pixbuf)
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	g_set_object (&priv->pixbuf, pixbuf);
 	if (pixbuf != NULL) {
-		priv->width = gdk_pixbuf_get_width (pixbuf);
-		priv->height = gdk_pixbuf_get_height (pixbuf);
+		priv->width = (guint) gdk_pixbuf_get_width (pixbuf);
+		priv->height = (guint) gdk_pixbuf_get_height (pixbuf);
 	}
 }
 
@@ -478,8 +478,8 @@ as_icon_node_insert_embedded (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 			    "type", as_icon_kind_to_string (priv->kind),
 			    NULL);
 	if (as_node_context_get_version (ctx) >= 0.8) {
-		as_node_add_attribute_as_int (n, "width", priv->width);
-		as_node_add_attribute_as_int (n, "height", priv->height);
+		as_node_add_attribute_as_uint (n, "width", priv->width);
+		as_node_add_attribute_as_uint (n, "height", priv->height);
 	}
 	as_node_insert (n, "name", priv->name, 0, NULL);
 	data = g_base64_encode (g_bytes_get_data (priv->data, NULL),
@@ -538,9 +538,9 @@ as_icon_node_insert (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 	if (priv->kind == AS_ICON_KIND_CACHED &&
 	    as_node_context_get_version (ctx) >= 0.8) {
 		if (priv->width > 0)
-			as_node_add_attribute_as_int (n, "width", priv->width);
+			as_node_add_attribute_as_uint (n, "width", priv->width);
 		if (priv->height > 0)
-			as_node_add_attribute_as_int (n, "height", priv->height);
+			as_node_add_attribute_as_uint (n, "height", priv->height);
 	}
 	return n;
 }
@@ -619,7 +619,7 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	const gchar *tmp;
-	gint size;
+	guint size;
 	gboolean prepend_size = TRUE;
 
 	tmp = as_node_get_attribute (node, "type");
@@ -656,16 +656,16 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 		}
 
 		/* width is optional, assume 64px if missing */
-		size = as_node_get_attribute_as_int (node, "width");
-		if (size == G_MAXINT) {
+		size = as_node_get_attribute_as_uint (node, "width");
+		if (size == G_MAXUINT) {
 			size = 64;
 			prepend_size = FALSE;
 		}
 		priv->width = size;
 
 		/* height is optional, assume 64px if missing */
-		size = as_node_get_attribute_as_int (node, "height");
-		if (size == G_MAXINT) {
+		size = as_node_get_attribute_as_uint (node, "height");
+		if (size == G_MAXUINT) {
 			size = 64;
 			prepend_size = FALSE;
 		}
@@ -674,7 +674,7 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 		/* only use the size if the metadata has width and height */
 		if (prepend_size) {
 			g_free (priv->prefix_private);
-			priv->prefix_private = g_strdup_printf ("%s/%ix%i",
+			priv->prefix_private = g_strdup_printf ("%s/%ux%u",
 								priv->prefix,
 								priv->width,
 								priv->height);
@@ -707,17 +707,17 @@ as_icon_node_parse_dep11 (AsIcon *icon, GNode *node,
 
 	for (n = node->children; n != NULL; n = n->next) {
 		const gchar *key;
-		gint size;
+		guint size;
 
 		key = as_yaml_node_get_key (n);
 		if (g_strcmp0 (key, "width") == 0) {
-			size = as_yaml_node_get_value_as_int (n);
-			if (size == G_MAXINT)
+			size = as_yaml_node_get_value_as_uint (n);
+			if (size == G_MAXUINT)
 				size = 64;
 			priv->width = size;
 		} else if (g_strcmp0 (key, "height") == 0) {
-			size = as_yaml_node_get_value_as_int (n);
-			if (size == G_MAXINT)
+			size = as_yaml_node_get_value_as_uint (n);
+			if (size == G_MAXUINT)
 				size = 64;
 			priv->height = size;
 		} else {
@@ -784,8 +784,8 @@ as_icon_load (AsIcon *icon, AsIconLoadFlags flags, GError **error)
 			return FALSE;
 		}
 		pixbuf = gdk_pixbuf_new_from_file_at_size (priv->filename,
-							   priv->width,
-							   priv->height,
+							   (gint) priv->width,
+							   (gint) priv->height,
 							   error);
 		if (pixbuf == NULL)
 			return FALSE;
@@ -811,7 +811,7 @@ as_icon_load (AsIcon *icon, AsIconLoadFlags flags, GError **error)
 		for (i = 0; widths[i] != 0; i++) {
 			g_autofree gchar *fn_size = NULL;
 			g_autofree gchar *size_str = NULL;
-			size_str = g_strdup_printf ("%ix%i", widths[i], height[i]);
+			size_str = g_strdup_printf ("%ux%u", widths[i], height[i]);
 			fn_size = g_build_filename (priv->prefix, size_str, priv->name, NULL);
 			if (g_file_test (fn_size, G_FILE_TEST_EXISTS)) {
 				pixbuf = gdk_pixbuf_new_from_file (fn_size, error);
@@ -887,7 +887,7 @@ as_icon_convert_to_kind (AsIcon *icon, AsIconKind kind, GError **error)
 		g_autofree gchar *fn = NULL;
 
 		/* ensure the parent path exists */
-		size_str = g_strdup_printf ("%ix%i", priv->width, priv->height);
+		size_str = g_strdup_printf ("%ux%u", priv->width, priv->height);
 		path = g_build_filename (priv->prefix, size_str, NULL);
 		if (g_mkdir_with_parents (path, 0700) != 0) {
 			g_set_error (error,

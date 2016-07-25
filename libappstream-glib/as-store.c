@@ -226,7 +226,7 @@ void
 as_store_add_filter (AsStore *store, AsAppKind kind)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	priv->filter |= 1 << kind;
+	priv->filter |= 1u << kind;
 }
 
 /**
@@ -246,7 +246,7 @@ void
 as_store_remove_filter (AsStore *store, AsAppKind kind)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	priv->filter &= ~(1 << kind);
+	priv->filter &= ~(1u << kind);
 }
 
 /**
@@ -1142,7 +1142,7 @@ as_store_from_root (AsStore *store,
 				AsAppKind kind_tmp;
 				tmp = as_node_get_attribute (n, "type");
 				kind_tmp = as_app_kind_from_string (tmp);
-				if ((priv->filter & (1 << kind_tmp)) == 0)
+				if ((priv->filter & (1u << kind_tmp)) == 0)
 					continue;
 			}
 		}
@@ -1247,7 +1247,7 @@ as_store_load_yaml_file (AsStore *store,
 
 		/* do the filtering here */
 		if (priv->filter != 0) {
-			if ((priv->filter & (1 << as_app_get_kind (app))) == 0)
+			if ((priv->filter & (1u << as_app_get_kind (app))) == 0)
 				continue;
 		}
 

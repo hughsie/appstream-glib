@@ -178,7 +178,7 @@ as_profile_task_free_internal (AsProfile *profile, const gchar *id)
 	}
 
 	/* debug */
-	elapsed_ms = (item->time_stop - item->time_start) / 1000;
+	elapsed_ms = (gdouble) (item->time_stop - item->time_start) / 1000;
 	if (elapsed_ms > 5)
 		g_debug ("%s took %.0fms", id_thr, elapsed_ms);
 
@@ -285,10 +285,11 @@ as_profile_dump (AsProfile *profile)
 			continue;
 
 		/* print a timechart of what we've done */
-		bar_offset = scale * (item->time_start - time_start) / 1000;
+		bar_offset = (guint) (scale * (gdouble) (item->time_start -
+							 time_start) / 1000);
 		for (j = 0; j < bar_offset; j++)
 			g_print (" ");
-		bar_length = scale * time_ms;
+		bar_length = (guint) (scale * (gdouble) time_ms);
 		if (bar_length == 0)
 			bar_length = 1;
 		for (j = 0; j < bar_length; j++)

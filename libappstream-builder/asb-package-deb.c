@@ -77,7 +77,7 @@ asb_package_deb_ensure_simple (AsbPackage *pkg, GError **error)
 				asb_package_set_version (pkg, vr[0]);
 			} else {
 				*tmp = '\0';
-				j = g_ascii_strtoll (vr[0], NULL, 10);
+				j = (guint) g_ascii_strtoull (vr[0], NULL, 10);
 				asb_package_set_epoch (pkg, j);
 				asb_package_set_version (pkg, tmp + 1);
 			}

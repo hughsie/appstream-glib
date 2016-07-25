@@ -86,7 +86,25 @@ as_yaml_node_get_value_as_int (const AsNode *node)
 		return G_MAXINT;
 	if (value_tmp > G_MAXINT || value_tmp < G_MININT)
 		return G_MAXINT;
-	return value_tmp;
+	return (gint) value_tmp;
+}
+
+guint
+as_yaml_node_get_value_as_uint (const AsNode *node)
+{
+	const gchar *tmp;
+	gchar *endptr = NULL;
+	guint64 value_tmp;
+
+	tmp = as_yaml_node_get_value (node);
+	if (tmp == NULL)
+		return G_MAXUINT;
+	value_tmp = g_ascii_strtoull (tmp, &endptr, 10);
+	if (value_tmp == 0 && tmp == endptr)
+		return G_MAXUINT;
+	if (value_tmp > G_MAXUINT)
+		return G_MAXUINT;
+	return (guint) value_tmp;
 }
 
 static gboolean
@@ -114,12 +132,14 @@ as_yaml_to_string_cb (AsNode *node, gpointer data)
 {
 	AsYamlNode *ym = node->data;
 	GString *str = (GString *) data;
-	gint depth;
-	gint i;
+	guint depth;
+	guint i;
 
 	depth = g_node_depth (node);
-	for (i = 0; i < depth - 2; i++)
-		g_string_append (str, " ");
+	if (depth >= 2) {
+		for (i = 0; i < depth - 2; i++)
+			g_string_append (str, " ");
+	}
 	if (ym == NULL)
 		return FALSE;
 	switch (ym->kind) {
@@ -256,8 +276,8 @@ as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 	/* parse */
 	yaml_parser_initialize (&parser);
 	if (data_len < 0)
-		data_len = strlen (data);
-	yaml_parser_set_input_string (&parser, (guchar *) data, data_len);
+		data_len = (guint) strlen (data);
+	yaml_parser_set_input_string (&parser, (guchar *) data, (gsize) data_len);
 	node = g_node_new (NULL);
 	as_node_yaml_process_layer (&parser, node);
 	yaml_parser_delete (&parser);
@@ -278,7 +298,12 @@ as_yaml_read_handler_cb (void *data,
 			 size_t *size_read)
 {
 	GInputStream *stream = G_INPUT_STREAM (data);
-	*size_read = g_input_stream_read (stream, buffer, size, NULL, NULL);
+	*size_read = (gsize) g_input_stream_read (stream,
+						  buffer,
+						  (gsize)
+						  size,
+						  NULL,
+						  NULL);
 	return 1;
 }
 #endif

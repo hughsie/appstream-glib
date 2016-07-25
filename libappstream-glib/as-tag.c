@@ -85,7 +85,7 @@ as_tag_from_string_full (const gchar *tag, AsTagFlags flags)
 
 #ifdef HAVE_GPERF
 	/* use a perfect hash */
-	ky = as_tag_from_gperf (tag, strlen (tag));
+	ky = as_tag_from_gperf (tag, (guint) strlen (tag));
 	if (ky != NULL)
 		etag = ky->etag;
 #else

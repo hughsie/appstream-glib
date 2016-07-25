@@ -66,8 +66,8 @@ main (int argc, char **argv)
 	gboolean ret;
 	gboolean uncompressed_icons = FALSE;
 	gboolean verbose = FALSE;
-	gint max_threads = 4;
-	gint min_icon_size = 32;
+	guint max_threads = 4;
+	guint min_icon_size = 32;
 	guint i;
 	int retval = EXIT_SUCCESS;
 	g_autoptr(GDir) dir = NULL;
@@ -301,7 +301,7 @@ main (int argc, char **argv)
 		}
 		if (g_timer_elapsed (timer, NULL) > 3.f) {
 			/* TRANSLATORS: information message */
-			g_print (_("Parsed %i/%i files..."), i, packages->len);
+			g_print (_("Parsed %u/%u files..."), i, packages->len);
 			g_print ("\n"),
 			g_timer_reset (timer);
 		}

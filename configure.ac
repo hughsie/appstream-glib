@@ -96,6 +96,8 @@ if test "$GCC" = "yes"; then
 	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wshadow"
 	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wno-strict-aliasing"
 	WARNINGFLAGS_C="$WARNINGFLAGS_C -Winline"
+	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wconversion"
+	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wformat-signedness"
 else
 	WARNINGFLAGS_C=""
 fi

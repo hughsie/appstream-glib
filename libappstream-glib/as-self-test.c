@@ -468,7 +468,7 @@ as_test_release_func (void)
 	as_node_unref (root);
 
 	/* verify */
-	g_assert_cmpint (as_release_get_timestamp (release), ==, 123);
+	g_assert_cmpint ((gint32) as_release_get_timestamp (release), ==, 123);
 	g_assert_cmpint (as_release_get_urgency (release), ==, AS_URGENCY_KIND_CRITICAL);
 	g_assert_cmpint (as_release_get_state (release), ==, AS_RELEASE_STATE_UNKNOWN);
 	g_assert_cmpstr (as_release_get_version (release), ==, "0.1.2");
@@ -515,7 +515,7 @@ as_test_release_date_func (void)
 	as_node_unref (root);
 
 	/* verify */
-	g_assert_cmpint (as_release_get_timestamp (release), ==, 1453075200);
+	g_assert_cmpint ((gint32) as_release_get_timestamp (release), ==, 1453075200);
 }
 
 static void
@@ -599,7 +599,7 @@ as_test_release_appstream_func (void)
 	as_node_unref (root);
 
 	/* verify */
-	g_assert_cmpint (as_release_get_timestamp (release), ==, 123);
+	g_assert_cmpint ((gint32) as_release_get_timestamp (release), ==, 123);
 	g_assert_cmpstr (as_release_get_version (release), ==, "0.1.2");
 	g_assert_cmpstr (as_release_get_location_default (release), ==, "http://foo.com/bar.zip");
 	g_assert_cmpstr (as_release_get_description (release, "pl"), ==,
@@ -678,7 +678,7 @@ as_test_release_appdata_func (void)
 	as_node_unref (root);
 
 	/* verify */
-	g_assert_cmpint (as_release_get_timestamp (release), ==, 123);
+	g_assert_cmpint ((gint32) as_release_get_timestamp (release), ==, 123);
 	g_assert_cmpstr (as_release_get_version (release), ==, "0.1.2");
 	g_assert_cmpstr (as_release_get_description (release, NULL), ==,
 				"<p>This is a new release</p>");
@@ -1566,7 +1566,7 @@ as_test_app_validate_check (GPtrArray *array,
 	g_print ("\n");
 	for (i = 0; i < array->len; i++) {
 		problem = g_ptr_array_index (array, i);
-		g_print ("%i\t%s\n",
+		g_print ("%u\t%s\n",
 			 as_problem_get_kind (problem),
 			 as_problem_get_message (problem));
 	}
@@ -2087,7 +2087,7 @@ as_test_app_parse_file_inf_func (void)
 	releases = as_app_get_releases (app);
 	g_assert_cmpint (releases->len, ==, 1);
 	rel = g_ptr_array_index (releases, 0);
-	g_assert_cmpint (as_release_get_timestamp (rel), ==, 1425340800);
+	g_assert_cmpint ((gint32) as_release_get_timestamp (rel), ==, 1425340800);
 	g_assert_cmpstr (as_release_get_version (rel), ==, "0.2.2");
 	//g_assert_cmpstr (as_release_get_description (rel), ==, "XXX");
 }
@@ -2746,7 +2746,7 @@ store_changed_cb (AsStore *store, guint *cnt)
 {
 	as_test_loop_quit ();
 	(*cnt)++;
-	g_debug ("changed callback, now #%i", *cnt);
+	g_debug ("changed callback, now #%u", *cnt);
 }
 
 /* automatically reload changed directories */
@@ -4092,7 +4092,7 @@ as_test_store_metadata_index_func (void)
 	store = as_store_new ();
 	as_store_add_metadata_index (store, "X-CacheID");
 	for (i = 0; i < repeats; i++) {
-		g_autofree gchar *id = g_strdup_printf ("app-%05i", i);
+		g_autofree gchar *id = g_strdup_printf ("app-%05u", i);
 		g_autoptr(AsApp) app = as_app_new ();
 		as_app_set_id (app, id);
 		as_app_add_metadata (app, "X-CacheID", "dave.i386");
@@ -4606,7 +4606,7 @@ as_test_inf_func (void)
 	tmp = as_inf_get_driver_version (kf, &ts, &error);
 	g_assert_no_error (error);
 	g_assert_cmpstr (tmp, ==, "2.0.0");
-	g_assert_cmpint (ts, ==, 1425168000);
+	g_assert_cmpint ((gint32) ts, ==, 1425168000);
 	g_free (tmp);
 
 	/* invalid DriverVer date */

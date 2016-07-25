@@ -289,7 +289,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			}
 			nr_added++;
 		}
-		g_debug ("added %i apps from archive", apps_tmp->len);
+		g_debug ("added %u apps from archive", apps_tmp->len);
 		goto skip;
 	}
 

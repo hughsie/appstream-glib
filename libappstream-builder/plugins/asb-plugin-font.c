@@ -321,7 +321,7 @@ asb_font_get_pixbuf (FT_Face ft_face,
 
 	/* set up font */
 	surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
-					      width, height);
+					      (gint) width, (gint) height);
 	cr = cairo_create (surface);
 	font_face = cairo_ft_font_face_create_for_ft_face (ft_face, FT_LOAD_DEFAULT);
 	cairo_set_font_face (cr, font_face);
@@ -343,7 +343,7 @@ asb_font_get_pixbuf (FT_Face ft_face,
 		       (height / 2) - te.height / 2 - te.y_bearing);
 	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
 	cairo_show_text (cr, text);
-	pixbuf = gdk_pixbuf_get_from_surface (surface, 0, 0, width, height);
+	pixbuf = gdk_pixbuf_get_from_surface (surface, 0, 0, (gint) width, (gint) height);
 	if (pixbuf == NULL) {
 		g_set_error_literal (error,
 				     ASB_PLUGIN_ERROR,
@@ -514,7 +514,7 @@ asb_font_add_languages (AsbApp *app, const FcPattern *pattern)
 	FcStrList *list;
 	FcStrSet *langs;
 	FcValue fc_value;
-	guint i;
+	gint i;
 	gboolean any_added = FALSE;
 	gboolean skip_langs;
 
@@ -544,7 +544,6 @@ asb_plugin_font_set_name (AsbApp *app, const gchar *name)
 {
 	const gchar *ptr;
 	guint i;
-	guint len;
 	const gchar *prefixes[] = { "GFS ", NULL };
 	const gchar *suffixes[] = { " SIL",
 				    " ADF",
@@ -558,7 +557,7 @@ asb_plugin_font_set_name (AsbApp *app, const gchar *name)
 	tmp = g_strdup (name);
 	for (i = 0; suffixes[i] != NULL; i++) {
 		if (g_str_has_suffix (tmp, suffixes[i])) {
-			len = strlen (tmp);
+			gsize len = strlen (tmp);
 			tmp[len - strlen (suffixes[i])] = '\0';
 		}
 	}

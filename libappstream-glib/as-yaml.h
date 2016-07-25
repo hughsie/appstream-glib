@@ -44,6 +44,7 @@ AsYaml		*as_yaml_from_file		(GFile		*file,
 const gchar	*as_yaml_node_get_key		(const AsYaml	*node);
 const gchar	*as_yaml_node_get_value		(const AsYaml	*node);
 gint		 as_yaml_node_get_value_as_int	(const AsYaml	*node);
+guint		 as_yaml_node_get_value_as_uint	(const AsYaml	*node);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsYaml, as_yaml_unref)
 

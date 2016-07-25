@@ -515,7 +515,7 @@ as_inf_parse_line (AsInfHelper *helper, gchar *line, GError **error)
 	}
 
 	/* last char continuation */
-	len = strlen (line);
+	len = (guint) strlen (line);
 	if (line[len-1] == '\\') {
 		line[len-1] = '\0';
 		continuation = TRUE;
@@ -695,7 +695,7 @@ as_inf_parse_line (AsInfHelper *helper, gchar *line, GError **error)
 	}
 
 	/* add fake key */
-	key = g_strdup_printf ("value%03i", helper->nokey_idx++);
+	key = g_strdup_printf ("value%03u", helper->nokey_idx++);
 	as_inf_set_key (helper, key, line);
 out:
 	helper->last_line_continuation = continuation;
@@ -760,7 +760,7 @@ as_inf_load_data (GKeyFile *keyfile,
 	for (i = 0; lines[i] != NULL; i++) {
 		if (!as_inf_parse_line (helper, lines[i], error)) {
 			g_prefix_error (error,
-					"Failed to parse line %i: ",
+					"Failed to parse line %u: ",
 					i + 1);
 			ret = FALSE;
 			goto out;
@@ -781,7 +781,7 @@ as_inf_load_data (GKeyFile *keyfile,
 		for (i = 0; lines2[i] != NULL; i++) {
 			if (!as_inf_parse_line (helper, lines2[i], error)) {
 				g_prefix_error (error,
-						"Failed to parse line %i: ",
+						"Failed to parse line %u: ",
 						i + 1);
 				ret = FALSE;
 				goto out;
@@ -928,7 +928,7 @@ as_inf_get_driver_version (GKeyFile *keyfile, guint64 *timestamp, GError **error
 				     dv_split[0]);
 			return NULL;
 		}
-		*timestamp = g_date_time_to_unix (dt);
+		*timestamp = (guint64) g_date_time_to_unix (dt);
 	}
 	return g_strdup (dv_split[1]);
 }

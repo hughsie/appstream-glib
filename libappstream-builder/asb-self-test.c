@@ -142,11 +142,11 @@ asb_test_package_rpm_func (void)
 	rel = g_ptr_array_index (releases, 0);
 	g_assert (rel != NULL);
 	g_assert_cmpstr (as_release_get_version (rel), ==, "0.1");
-	g_assert_cmpint (as_release_get_timestamp (rel), ==, 1274097600);
+	g_assert_cmpint ((gint64) as_release_get_timestamp (rel), ==, 1274097600);
 	g_assert_cmpstr (as_release_get_description (rel, NULL), ==, NULL);
 	rel = asb_package_get_release (pkg, "0.1");
 	g_assert (rel != NULL);
-	g_assert_cmpint (as_release_get_timestamp (rel), ==, 1274097600);
+	g_assert_cmpint ((gint64) as_release_get_timestamp (rel), ==, 1274097600);
 
 	/* check config */
 	g_assert_cmpstr (asb_package_get_config (pkg, "test"), ==, NULL);

@@ -626,13 +626,13 @@ as_release_node_parse (AsRelease *release, GNode *node,
 
 	tmp = as_node_get_attribute (node, "timestamp");
 	if (tmp != NULL)
-		as_release_set_timestamp (release, atol (tmp));
+		as_release_set_timestamp (release, g_ascii_strtoull (tmp, NULL, 10));
 	tmp = as_node_get_attribute (node, "date");
 	if (tmp != NULL) {
 		g_autoptr(GDateTime) dt = NULL;
 		dt = as_utils_iso8601_to_datetime (tmp);
 		if (dt != NULL)
-			as_release_set_timestamp (release, g_date_time_to_unix (dt));
+			as_release_set_timestamp (release, (guint64) g_date_time_to_unix (dt));
 	}
 	tmp = as_node_get_attribute (node, "urgency");
 	if (tmp != NULL)
@@ -735,7 +735,7 @@ as_release_node_parse_dep11 (AsRelease *release, GNode *node,
 		tmp = as_yaml_node_get_key (n);
 		if (g_strcmp0 (tmp, "unix-timestamp") == 0) {
 			value = as_yaml_node_get_value (n);
-			as_release_set_timestamp (release, atol (value));
+			as_release_set_timestamp (release, g_ascii_strtoull (value, NULL, 10));
 			continue;
 		}
 		if (g_strcmp0 (tmp, "version") == 0) {

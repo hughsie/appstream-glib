@@ -149,7 +149,7 @@ asb_package_rpm_ensure_nevra (AsbPackage *pkg, GError **error)
 	headerGet (priv->h, RPMTAG_ARCH, td, HEADERGET_MINMEM);
 	asb_package_set_arch (pkg, rpmtdGetString (td));
 	headerGet (priv->h, RPMTAG_EPOCH, td, HEADERGET_MINMEM);
-	asb_package_set_epoch (pkg, rpmtdGetNumber (td));
+	asb_package_set_epoch (pkg, (guint) rpmtdGetNumber (td));
 	rpmtdFree (td);
 	return TRUE;
 }
@@ -380,7 +380,7 @@ asb_package_rpm_ensure_filelists (AsbPackage *pkg, GError **error)
 	i = 0;
 	dirindex = g_new0 (gint32, rpmtdCount (td[2]) + 1);
 	while (rpmtdNext (td[2]) != -1)
-		dirindex[i++] = rpmtdGetNumber (td[2]);
+		dirindex[i++] = (gint32) rpmtdGetNumber (td[2]);
 	i = 0;
 	filelist = g_new0 (gchar *, rpmtdCount (td[1]) + 1);
 	while (rpmtdNext (td[1]) != -1) {

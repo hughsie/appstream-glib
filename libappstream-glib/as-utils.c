@@ -608,11 +608,11 @@ as_utils_license_to_spdx (const gchar *license)
 
 	/* go through the string looking for case-insensitive matches */
 	str = g_string_new ("");
-	license_len = strlen (license);
+	license_len = (guint) strlen (license);
 	for (i = 0; i < license_len; i++) {
 		gboolean found = FALSE;
 		for (j = 0; convert[j].old != NULL; j++) {
-			guint old_len = strlen (convert[j].old);
+			guint old_len = (guint) strlen (convert[j].old);
 			if (g_ascii_strncasecmp (license + i,
 						 convert[j].old,
 						 old_len) != 0)
@@ -810,13 +810,13 @@ as_pixbuf_sharpen (GdkPixbuf *src, gint radius, gdouble amount)
 		p_src_row = p_src;
 		p_blurred_row = p_blurred;
 		for (x = 0; x < width; x++) {
-			p_src_row[0] = interpolate_value (p_src_row[0],
+			p_src_row[0] = (guchar) interpolate_value (p_src_row[0],
 							  p_blurred_row[0],
 							  amount);
-			p_src_row[1] = interpolate_value (p_src_row[1],
+			p_src_row[1] = (guchar) interpolate_value (p_src_row[1],
 							  p_blurred_row[1],
 							  amount);
-			p_src_row[2] = interpolate_value (p_src_row[2],
+			p_src_row[2] = (guchar) interpolate_value (p_src_row[2],
 							  p_blurred_row[2],
 							  amount);
 			p_src_row += n_channels;
@@ -1489,7 +1489,7 @@ as_utils_guid_from_string (const gchar *str)
 	/* hash the namespace and then the string */
 	csum = g_checksum_new (G_CHECKSUM_SHA1);
 	g_checksum_update (csum, (guchar *) uu_namespace, 16);
-	g_checksum_update (csum, (guchar *) str, strlen(str));
+	g_checksum_update (csum, (guchar *) str, (gssize) strlen (str));
 	g_checksum_get_digest (csum, hash, &digestlen);
 
 	/* copy most parts of the hash 1:1 */
@@ -1519,12 +1519,12 @@ gchar *
 as_utils_version_from_uint32 (guint32 val, AsVersionParseFlag flags)
 {
 	if (flags & AS_VERSION_PARSE_FLAG_USE_TRIPLET) {
-		return g_strdup_printf ("%i.%i.%i",
+		return g_strdup_printf ("%u.%u.%u",
 					(val >> 24) & 0xff,
 					(val >> 16) & 0xff,
 					val & 0xffff);
 	}
-	return g_strdup_printf ("%i.%i.%i.%i",
+	return g_strdup_printf ("%u.%u.%u.%u",
 				(val >> 24) & 0xff,
 				(val >> 16) & 0xff,
 				(val >> 8) & 0xff,
@@ -1545,9 +1545,9 @@ as_utils_version_from_uint32 (guint32 val, AsVersionParseFlag flags)
 gchar *
 as_utils_version_from_uint16 (guint16 val, AsVersionParseFlag flags)
 {
-	return g_strdup_printf ("%i.%i",
-				(val >> 8) & 0xff,
-				val & 0xff);
+	return g_strdup_printf ("%u.%u",
+				(guint) (val >> 8) & 0xff,
+				(guint) val & 0xff);
 }
 
 /**
@@ -1605,7 +1605,7 @@ as_utils_version_parse (const gchar *version)
 		return g_strdup (version);
 	if (tmp == 0 || tmp < 0xff)
 		return g_strdup (version);
-	return as_utils_version_from_uint32 (tmp, AS_VERSION_PARSE_FLAG_USE_TRIPLET);
+	return as_utils_version_from_uint32 ((guint32) tmp, AS_VERSION_PARSE_FLAG_USE_TRIPLET);
 }
 
 /**
@@ -1637,8 +1637,8 @@ as_utils_string_replace (GString *string, const gchar *search, const gchar *repl
 	if (string->len == 0)
 		return 0;
 
-	search_len = strlen (search);
-	replace_len = strlen (replace);
+	search_len = (guint) strlen (search);
+	replace_len = (guint) strlen (replace);
 
 	do {
 		tmp = g_strstr_len (string->str + search_idx, -1, search);
@@ -1646,7 +1646,7 @@ as_utils_string_replace (GString *string, const gchar *search, const gchar *repl
 			break;
 
 		/* advance the counter in case @replace contains @search */
-		search_idx = tmp - string->str;
+		search_idx = (guint) (tmp - string->str);
 
 		/* reallocate the string if required */
 		if (search_len > replace_len) {
@@ -1703,5 +1703,5 @@ as_utils_iso8601_to_datetime (const gchar *iso_date)
 		return NULL;
 
 	/* create valid object */
-	return g_date_time_new_utc (dmy[0], dmy[1], dmy[2], 0, 0, 0);
+	return g_date_time_new_utc ((gint) dmy[0], (gint) dmy[1], (gint) dmy[2], 0, 0, 0);
 }

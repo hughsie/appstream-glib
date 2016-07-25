@@ -193,8 +193,8 @@ static void
 as_markup_import_html_erase (GString *str, const gchar *start, const gchar *end)
 {
 	guint i, j;
-	guint start_len = strlen (start);
-	guint end_len = strlen (end);
+	guint start_len = (guint) strlen (start);
+	guint end_len = (guint) strlen (end);
 	for (i = 0; str->str[i] != '\0'; i++) {
 		if (memcmp (&str->str[i], start, start_len) != 0)
 			continue;
@@ -203,7 +203,7 @@ as_markup_import_html_erase (GString *str, const gchar *start, const gchar *end)
 				continue;
 			/* delete this section and restart the search */
 			g_string_erase (str, i, (j - i) + end_len);
-			i = -1;
+			i = (guint) -1;
 			break;
 		}
 	}

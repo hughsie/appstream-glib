@@ -169,9 +169,9 @@ as_node_string_replace_inplace (gchar *text,
 
 	while ((tmp = g_strstr_len (start, -1, search)) != NULL) {
 		*tmp = replace;
-		len = strlen (tmp);
+		len = (guint) strlen (tmp);
 		if (len_escaped == 0)
-			len_escaped = strlen (search);
+			len_escaped = (guint) strlen (search);
 		memcpy (tmp + 1,
 			tmp + len_escaped,
 			(len - len_escaped) + 1);
@@ -388,7 +388,7 @@ as_node_reflow_text (const gchar *text, gssize text_len)
 	g_auto(GStrv) split = NULL;
 
 	/* split the text into lines */
-	tmp = g_string_sized_new (text_len + 1);
+	tmp = g_string_sized_new ((gsize) text_len + 1);
 	split = g_strsplit (text, "\n", -1);
 	for (i = 0; split[i] != NULL; i++) {
 
@@ -544,7 +544,7 @@ as_node_text_cb (GMarkupParseContext *context,
 	if ((helper->flags & AS_NODE_FROM_XML_FLAG_LITERAL_TEXT) > 0) {
 		data->cdata = g_strndup (text, text_len);
 	} else {
-		data->cdata = as_node_reflow_text (text, text_len);
+		data->cdata = as_node_reflow_text (text, (gssize) text_len);
 	}
 }
 
@@ -566,7 +566,9 @@ as_node_passthrough_cb (GMarkupParseContext *context,
 		return;
 
 	/* xml header */
-	if (g_strstr_len (passthrough_text, passthrough_len, "<?xml") != NULL)
+	if (g_strstr_len (passthrough_text,
+			  (gssize) passthrough_len,
+			  "<?xml") != NULL)
 		return;
 
 	/* get stripped comment without '<!--' and '-->' */
@@ -1051,7 +1053,36 @@ as_node_get_attribute_as_int (const AsNode *node, const gchar *key)
 		return G_MAXINT;
 	if (value_tmp > G_MAXINT || value_tmp < G_MININT)
 		return G_MAXINT;
-	return value_tmp;
+	return (gint) value_tmp;
+}
+
+/**
+ * as_node_get_attribute_as_uint:
+ * @node: a #AsNode
+ * @key: the attribute key
+ *
+ * Gets a node attribute, e.g. 34
+ *
+ * Return value: integer value, or %G_MAXINT for error
+ *
+ * Since: 0.5.18
+ **/
+guint
+as_node_get_attribute_as_uint (const AsNode *node, const gchar *key)
+{
+	const gchar *tmp;
+	gchar *endptr = NULL;
+	guint64 value_tmp;
+
+	tmp = as_node_get_attribute (node, key);
+	if (tmp == NULL)
+		return G_MAXUINT;
+	value_tmp = g_ascii_strtoull (tmp, &endptr, 10);
+	if (value_tmp == 0 && tmp == endptr)
+		return G_MAXUINT;
+	if (value_tmp > G_MAXUINT)
+		return G_MAXUINT;
+	return (guint) value_tmp;
 }
 
 /**
@@ -1185,6 +1216,23 @@ as_node_add_attribute_as_int (AsNode *node, const gchar *key, gint value)
 }
 
 /**
+ * as_node_add_attribute_as_uint: (skip)
+ * @node: a #AsNode
+ * @key: the attribute key
+ * @value: new data
+ *
+ * Adds a new attribute to a node.
+ *
+ * Since: 0.5.18
+ **/
+void
+as_node_add_attribute_as_uint (AsNode *node, const gchar *key, guint value)
+{
+	g_autofree gchar *tmp = g_strdup_printf ("%u", value);
+	as_node_add_attribute (node, key, tmp);
+}
+
+/**
  * as_node_find: (skip)
  * @root: a root node, or %NULL
  * @path: a path in the DOM, e.g. "html/body"
@@ -1261,7 +1309,7 @@ as_node_insert_line_breaks (const gchar *text, guint break_len)
 	guint new_len;
 
 	/* allocate long enough for the string, plus the extra newlines */
-	new_len = strlen (text) * (break_len + 1) / break_len;
+	new_len = (guint) strlen (text) * (break_len + 1) / break_len;
 	str = g_string_new_len (NULL, new_len + 2);
 	g_string_append (str, "\n");
 	g_string_append (str, text);
