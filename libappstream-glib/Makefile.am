@@ -169,7 +169,7 @@ libappstream_glib_la_LDFLAGS =					\
 	-export-symbols-regex '^as_.*'
 
 libappstream_glib_la_CFLAGS =					\
-	$(WARNINGFLAGS_C)
+	$(WARN_CFLAGS)
 
 check_PROGRAMS =						\
 	as-self-test
@@ -184,7 +184,7 @@ as_self_test_LDADD =						\
 	$(UUID_LIBS)						\
 	$(YAML_LIBS)						\
 	$(lib_LTLIBRARIES)
-as_self_test_CFLAGS = $(WARNINGFLAGS_C)
+as_self_test_CFLAGS = $(WARN_CFLAGS)
 
 TESTS = as-self-test
 

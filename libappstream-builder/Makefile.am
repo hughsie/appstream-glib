@@ -90,7 +90,7 @@ libappstream_builder_la_LDFLAGS =				\
 	-export-symbols-regex '^asb_.*'
 
 libappstream_builder_la_CFLAGS =				\
-	$(WARNINGFLAGS_C)
+	$(WARN_CFLAGS)
 
 check_PROGRAMS =						\
 	asb-self-test
@@ -101,7 +101,7 @@ asb_self_test_LDADD =						\
 	$(GLIB_LIBS)						\
 	$(GDKPIXBUF_LIBS)					\
 	$(lib_LTLIBRARIES)
-asb_self_test_CFLAGS = $(WARNINGFLAGS_C)
+asb_self_test_CFLAGS = $(WARN_CFLAGS)
 
 TESTS = asb-self-test
 

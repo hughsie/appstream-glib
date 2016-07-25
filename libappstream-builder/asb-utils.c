@@ -169,7 +169,7 @@ asb_utils_ensure_exists_and_empty (const gchar *directory, GError **error)
 	return TRUE;
 }
 
-static const guint
+static guint
 asb_utils_count_directories_deep (const gchar *path)
 {
 	guint cnt = 0;

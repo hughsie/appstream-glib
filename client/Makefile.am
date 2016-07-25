@@ -40,7 +40,7 @@ appstream_util_LDADD =					\
 appstream_util_LDFLAGS =				\
 	$(PIE_LDFLAGS)
 appstream_util_CFLAGS =					\
-	$(WARNINGFLAGS_C)
+	$(WARN_CFLAGS)
 
 if HAVE_BUILDER
 appstream_builder_SOURCES =				\
@@ -55,7 +55,7 @@ appstream_builder_LDADD =				\
 appstream_builder_LDFLAGS =				\
 	$(PIE_LDFLAGS)
 appstream_builder_CFLAGS =				\
-	$(WARNINGFLAGS_C)
+	$(WARN_CFLAGS)
 endif
 
 appstream_compose_SOURCES =				\
@@ -69,6 +69,6 @@ appstream_compose_LDADD =				\
 appstream_compose_LDFLAGS =				\
 	$(PIE_LDFLAGS)
 appstream_compose_CFLAGS =				\
-	$(WARNINGFLAGS_C)
+	$(WARN_CFLAGS)
 
 -include $(top_srcdir)/git.mk

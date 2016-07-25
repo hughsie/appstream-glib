@@ -30,38 +30,38 @@ endif
 libasb_plugin_absorb_la_SOURCES = asb-plugin-absorb.c
 libasb_plugin_absorb_la_LIBADD = $(GLIB_LIBS)
 libasb_plugin_absorb_la_LDFLAGS = -module -avoid-version
-libasb_plugin_absorb_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
+libasb_plugin_absorb_la_CFLAGS = $(GLIB_CFLAGS) $(WARN_CFLAGS)
 
 libasb_plugin_gettext_la_SOURCES = asb-plugin-gettext.c
 libasb_plugin_gettext_la_LIBADD = $(GLIB_LIBS)
 libasb_plugin_gettext_la_LDFLAGS = -module -avoid-version
-libasb_plugin_gettext_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
+libasb_plugin_gettext_la_CFLAGS = $(GLIB_CFLAGS) $(WARN_CFLAGS)
 
 libasb_plugin_hardcoded_la_SOURCES = asb-plugin-hardcoded.c
 libasb_plugin_hardcoded_la_LIBADD = $(GLIB_LIBS)
 libasb_plugin_hardcoded_la_LDFLAGS = -module -avoid-version
-libasb_plugin_hardcoded_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
+libasb_plugin_hardcoded_la_CFLAGS = $(GLIB_CFLAGS) $(WARN_CFLAGS)
 
 libasb_plugin_desktop_la_SOURCES = asb-plugin-desktop.c
 libasb_plugin_desktop_la_LIBADD = $(GLIB_LIBS) $(GDKPIXBUF_LIBS)
 libasb_plugin_desktop_la_LDFLAGS = -module -avoid-version
-libasb_plugin_desktop_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
+libasb_plugin_desktop_la_CFLAGS = $(GLIB_CFLAGS) $(WARN_CFLAGS)
 
 libasb_plugin_appdata_la_SOURCES = asb-plugin-appdata.c
 libasb_plugin_appdata_la_LIBADD = $(GLIB_LIBS) $(GDKPIXBUF_LIBS)
 libasb_plugin_appdata_la_LDFLAGS = -module -avoid-version
-libasb_plugin_appdata_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
+libasb_plugin_appdata_la_CFLAGS = $(GLIB_CFLAGS) $(WARN_CFLAGS)
 
 libasb_plugin_shell_extension_la_SOURCES = asb-plugin-shell-extension.c
 libasb_plugin_shell_extension_la_LIBADD = $(GLIB_LIBS) $(JSON_GLIB_LIBS)
 libasb_plugin_shell_extension_la_LDFLAGS = -module -avoid-version
-libasb_plugin_shell_extension_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
+libasb_plugin_shell_extension_la_CFLAGS = $(GLIB_CFLAGS) $(WARN_CFLAGS)
 
 if HAVE_FONTS
 libasb_plugin_font_la_SOURCES = asb-plugin-font.c
 libasb_plugin_font_la_LIBADD = $(GLIB_LIBS) $(FREETYPE_LIBS) $(GDKPIXBUF_LIBS) $(GTK_LIBS)
 libasb_plugin_font_la_LDFLAGS = -module -avoid-version
-libasb_plugin_font_la_CFLAGS = $(GLIB_CFLAGS) $(GTK_CFLAGS) $(WARNINGFLAGS_C)
+libasb_plugin_font_la_CFLAGS = $(GLIB_CFLAGS) $(GTK_CFLAGS) $(WARN_CFLAGS)
 endif
 
 -include $(top_srcdir)/git.mk

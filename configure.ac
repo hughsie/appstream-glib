@@ -65,6 +65,31 @@ AC_HEADER_STDC
 LT_INIT
 AM_PROG_CC_C_O
 
+GNOME_COMPILE_WARNINGS([maximum],[
+	-Wmissing-declarations
+	-Wcast-align
+	-Wwrite-strings
+	-Wreturn-type
+	-Wformat-nonliteral
+	-Wmissing-format-attribute
+	-Wclobbered
+	-Wempty-body
+	-Wignored-qualifiers
+	-Wsign-compare
+	-Wtype-limits
+	-Wuninitialized
+	-Waggregate-return
+	-Wdeclaration-after-statement
+	-Wshadow
+	-Wno-strict-aliasing
+	-Winline
+	-Wmissing-parameter-type
+	-Woverride-init
+	-Wno-discarded-qualifiers
+	-Wconversion
+	-Wformat-signedness
+])
+
 # internationalization
 GETTEXT_PACKAGE=appstream-glib
 AC_SUBST(GETTEXT_PACKAGE)
@@ -73,35 +98,6 @@ IT_PROG_INTLTOOL([0.40.0])
 
 # set up gtk-doc
 GTK_DOC_CHECK(1.9)
-
-if test "$GCC" = "yes"; then
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wall"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wcast-align -Wno-uninitialized"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wmissing-declarations"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wredundant-decls"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wpointer-arith"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wcast-align"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wwrite-strings"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Winit-self"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wreturn-type"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wformat-nonliteral"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wformat-security"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wmissing-include-dirs"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wmissing-format-attribute"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wsign-compare"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wtype-limits"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wuninitialized"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Waggregate-return"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wdeclaration-after-statement"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wshadow"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wno-strict-aliasing"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Winline"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wconversion"
-	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wformat-signedness"
-else
-	WARNINGFLAGS_C=""
-fi
-AC_SUBST(WARNINGFLAGS_C)
 
 # check for PIE (position independent executable) support
 AX_CHECK_COMPILE_FLAG([-fPIE],
