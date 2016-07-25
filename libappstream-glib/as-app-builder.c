@@ -520,7 +520,6 @@ as_app_builder_search_path (AsApp *app,
  * @app: an #AsApp
  * @prefix: a prefix to search, e.g. "/usr"
  * @flags: #AsAppBuilderFlags, e.g. %AS_APP_BUILDER_FLAG_USE_FALLBACKS
- * @cancellable: a #GCancellable or %NULL
  * @error: a #GError or %NULL
  *
  * Searches a prefix for auto-detected kudos.
@@ -620,7 +619,6 @@ as_app_builder_search_dbus (AsApp *app,
  * @app: an #AsApp
  * @prefix: a prefix to search, e.g. "/usr"
  * @flags: #AsAppBuilderFlags, e.g. %AS_APP_BUILDER_FLAG_USE_FALLBACKS
- * @cancellable: a #GCancellable or %NULL
  * @error: a #GError or %NULL
  *
  * Searches a prefix for auto-detected provides.

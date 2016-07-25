@@ -1735,6 +1735,7 @@ as_node_get_localized_unwrap_type_ul (const AsNode *node,
 
 /**
  * as_node_fix_locale: (skip)
+ * @locale: The locale
  *
  * Fixes and filters incorrect locale strings.
  *

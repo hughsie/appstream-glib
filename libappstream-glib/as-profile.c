@@ -326,6 +326,7 @@ as_profile_autodump_cb (gpointer user_data)
 /**
  * as_profile_set_autodump:
  * @profile: A #AsProfile
+ * @delay: Duration in ms
  *
  * Dumps the current profiling table to stdout on a set interval.
  *
