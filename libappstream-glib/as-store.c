@@ -608,6 +608,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "kanagram.desktop",		"org.kde.kanagram.desktop" },
 		{ "kapman.desktop",		"org.kde.kapman.desktop" },
 		{ "kbruch.desktop",		"org.kde.kbruch.desktop" },
+		{ "kdevelop.desktop",		"org.kde.kdevelop.desktop" },
 		{ "kgeography.desktop",		"org.kde.kgeography.desktop" },
 		{ "khangman.desktop",		"org.kde.khangman.desktop" },
 		{ "kig.desktop",		"org.kde.kig.desktop" },
@@ -628,6 +629,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "partitionmanager.desktop",	"org.kde.PartitionManager.desktop" },
 		{ "picmi.desktop",		"org.kde.picmi.desktop" },
 		{ "rocs.desktop",		"org.kde.rocs.desktop" },
+		{ "skrooge.desktop",		"org.kde.skrooge.desktop" },
 		{ "step.desktop",		"org.kde.step.desktop" },
 
 		/* others */
