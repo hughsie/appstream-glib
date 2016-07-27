@@ -1181,7 +1181,7 @@ as_test_review_func (void)
 	AsNode *root;
 	GString *xml;
 	const gchar *src =
-		"<review date=\"2016-09-15\" rating=\"80\" karma=\"-1\" id=\"17\">\n"
+		"<review date=\"2016-09-15\" rating=\"80\" id=\"17\">\n"
 		"<priority>5</priority>\n"
 		"<summary>Hello world</summary>\n"
 		"<description><p>Mighty Fine</p></description>\n"
@@ -1212,7 +1212,6 @@ as_test_review_func (void)
 	as_node_unref (root);
 
 	/* verify */
-	g_assert_cmpint (as_review_get_karma (review), ==, -1);
 	g_assert_cmpint (as_review_get_priority (review), ==, 5);
 	g_assert (as_review_get_date (review) != NULL);
 	g_assert_cmpstr (as_review_get_id (review), ==, "17");

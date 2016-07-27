@@ -46,7 +46,6 @@ typedef struct
 	gchar			*summary;
 	gchar			*description;
 	gchar			*locale;
-	gint			 karma;
 	gint			 priority;
 	gint			 rating;
 	gchar			*version;
@@ -59,7 +58,6 @@ typedef struct
 enum {
 	PROP_0,
 	PROP_ID,
-	PROP_KARMA,
 	PROP_SUMMARY,
 	PROP_DESCRIPTION,
 	PROP_LOCALE,
@@ -103,9 +101,6 @@ as_review_get_property (GObject *object, guint prop_id,
 	AsReviewPrivate *priv = GET_PRIVATE (review);
 
 	switch (prop_id) {
-	case PROP_KARMA:
-		g_value_set_int (value, priv->karma);
-		break;
 	case PROP_ID:
 		g_value_set_string (value, priv->id);
 		break;
@@ -149,9 +144,6 @@ as_review_set_property (GObject *object, guint prop_id,
 	AsReview *review = AS_REVIEW (object);
 
 	switch (prop_id) {
-	case PROP_KARMA:
-		as_review_set_karma (review, g_value_get_int (value));
-		break;
 	case PROP_ID:
 		as_review_set_id (review, g_value_get_string (value));
 		break;
@@ -196,16 +188,6 @@ as_review_class_init (AsReviewClass *klass)
 	object_class->finalize = as_review_finalize;
 	object_class->get_property = as_review_get_property;
 	object_class->set_property = as_review_set_property;
-
-	/**
-	 * AsReview:karma:
-	 *
-	 * Since: 0.5.18
-	 **/
-	pspec = g_param_spec_int ("karma", NULL, NULL,
-				  G_MININT, G_MAXINT, 0,
-				  G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
-	g_object_class_install_property (object_class, PROP_KARMA, pspec);
 
 	/**
 	 * AsReview:id:
@@ -316,45 +298,6 @@ as_review_init (AsReview *review)
 	AsReviewPrivate *priv = GET_PRIVATE (review);
 	priv->metadata = g_hash_table_new_full (g_str_hash, g_str_equal,
 						g_free, g_free);
-}
-
-/**
- * as_review_get_karma:
- * @review: a #AsReview
- *
- * Gets the karma for the review, where positive numbers indicate
- * more positive feedback for the review.
- *
- * Returns: the karma value, or 0 for unset.
- *
- * Since: 0.5.18
- **/
-gint
-as_review_get_karma (AsReview *review)
-{
-	AsReviewPrivate *priv = GET_PRIVATE (review);
-	g_return_val_if_fail (AS_IS_REVIEW (review), 0);
-	return priv->karma;
-}
-
-/**
- * as_review_set_karma:
- * @review: a #AsReview
- * @karma: a karma value
- *
- * Sets the karma for the review, where positive numbers indicate
- * more positive feedback for the review.
- *
- * Karma can be positive or negative, or 0 for unset.
- *
- * Since: 0.5.18
- **/
-void
-as_review_set_karma (AsReview *review, gint karma)
-{
-	AsReviewPrivate *priv = GET_PRIVATE (review);
-	g_return_if_fail (AS_IS_REVIEW (review));
-	priv->karma = karma;
 }
 
 /**
@@ -838,8 +781,6 @@ as_review_equal (AsReview *review1, AsReview *review2)
 	/* check for equality */
 	if (!g_date_time_equal (priv1->date, priv2->date))
 		return FALSE;
-	if (priv1->karma != priv2->karma)
-		return FALSE;
 	if (priv1->priority != priv2->priority)
 		return FALSE;
 	if (priv1->rating != priv2->rating)
@@ -882,10 +823,6 @@ as_review_node_insert (AsReview *review, GNode *parent, AsNodeContext *ctx)
 			    NULL);
 	if (priv->id != NULL)
 		as_node_add_attribute (n, "id", priv->id);
-	if (priv->karma != 0) {
-		g_autofree gchar *str = g_strdup_printf ("%i", priv->karma);
-		as_node_add_attribute (n, "karma", str);
-	}
 	if (priv->priority != 0) {
 		g_autofree gchar *str = g_strdup_printf ("%i", priv->priority);
 		as_node_insert (n, "priority", str,
@@ -963,9 +900,6 @@ as_review_node_parse (AsReview *review, GNode *node,
 	const gchar *tmp;
 	gint itmp;
 
-	itmp = as_node_get_attribute_as_int (node, "karma");
-	if (itmp != G_MAXINT)
-		as_review_set_karma (review, itmp);
 	itmp = as_node_get_attribute_as_int (node, "rating");
 	if (itmp != G_MAXINT)
 		as_review_set_rating (review, itmp);

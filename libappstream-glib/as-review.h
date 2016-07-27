@@ -69,7 +69,6 @@ typedef enum {
 AsReview	*as_review_new			(void);
 
 /* getters */
-gint		 as_review_get_karma		(AsReview	*review);
 gint		 as_review_get_priority		(AsReview	*review);
 const gchar	*as_review_get_id		(AsReview	*review);
 const gchar	*as_review_get_summary		(AsReview	*review);
@@ -85,8 +84,6 @@ const gchar	*as_review_get_metadata_item	(AsReview	*review,
 						 const gchar	*key);
 
 /* setters */
-void		 as_review_set_karma		(AsReview	*review,
-						 gint		 karma);
 void		 as_review_set_priority		(AsReview	*review,
 						 gint		 priority);
 void		 as_review_set_id		(AsReview	*review,
