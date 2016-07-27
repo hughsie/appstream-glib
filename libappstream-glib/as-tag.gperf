@@ -1,7 +1,7 @@
 %language=ANSI-C
 %struct-type
-%define hash-function-name as_tag_hash
-%define lookup-function-name as_tag_from_gperf
+%define hash-function-name _as_tag_hash
+%define lookup-function-name _as_tag_from_gperf
 %readonly-tables
 %includes
 %pic
