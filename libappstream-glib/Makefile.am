@@ -91,6 +91,7 @@ libappstream_glib_include_HEADERS =				\
 	as-utils.h						\
 	as-version.h
 
+nodist_libappstream_glib_la_SOURCES =
 libappstream_glib_la_SOURCES =					\
 	as-app.c						\
 	as-app-desktop.c					\
@@ -149,7 +150,7 @@ libappstream_glib_la_SOURCES +=					\
 endif
 
 if HAVE_GPERF
-libappstream_glib_la_SOURCES += as-tag-private.h
+nodist_libappstream_glib_la_SOURCES += as-tag-private.h
 BUILT_SOURCES += as-tag-private.h
 endif
 
