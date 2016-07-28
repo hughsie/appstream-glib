@@ -140,10 +140,13 @@ if test x$enable_firmware != xno; then
 	PKG_CHECK_MODULES(GCAB, libgcab-1.0)
 	AC_DEFINE(HAVE_GCAB,[1], [Use gcab])
 	enable_firmware=yes
+	GCAB_DEPENDENCY=libgcab-1.0
 else
 	enable_firmware=no
+	GCAB_DEPENDENCY=
 fi
 AM_CONDITIONAL(HAVE_GCAB, test x$enable_firmware = xyes)
+AC_SUBST([GCAB_DEPENDENCY])
 
 # font support (default enabled)
 AC_ARG_ENABLE(firmware, AS_HELP_STRING([--disable-fonts],[Disable font support]), enable_fonts=$enableval)
