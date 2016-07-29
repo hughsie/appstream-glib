@@ -29,7 +29,7 @@
  *
  * This object represents a user-submitted application review.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 
 #include "config.h"
@@ -192,7 +192,7 @@ as_review_class_init (AsReviewClass *klass)
 	/**
 	 * AsReview:id:
 	 *
-	 * Since: 0.5.18
+	 * Since: 0.6.1
 	 **/
 	pspec = g_param_spec_string ("id", NULL, NULL,
 				     NULL,
@@ -202,7 +202,7 @@ as_review_class_init (AsReviewClass *klass)
 	/**
 	 * AsReview:summary:
 	 *
-	 * Since: 0.5.18
+	 * Since: 0.6.1
 	 **/
 	pspec = g_param_spec_string ("summary", NULL, NULL,
 				     NULL,
@@ -212,7 +212,7 @@ as_review_class_init (AsReviewClass *klass)
 	/**
 	 * AsReview:description:
 	 *
-	 * Since: 0.5.18
+	 * Since: 0.6.1
 	 **/
 	pspec = g_param_spec_string ("description", NULL, NULL,
 				     NULL,
@@ -222,7 +222,7 @@ as_review_class_init (AsReviewClass *klass)
 	/**
 	 * AsReview:locale:
 	 *
-	 * Since: 0.5.18
+	 * Since: 0.6.1
 	 **/
 	pspec = g_param_spec_string ("locale", NULL, NULL,
 				     NULL,
@@ -232,7 +232,7 @@ as_review_class_init (AsReviewClass *klass)
 	/**
 	 * AsReview:rating:
 	 *
-	 * Since: 0.5.18
+	 * Since: 0.6.1
 	 **/
 	pspec = g_param_spec_int ("rating", NULL, NULL,
 				  -1, 100, 0,
@@ -242,7 +242,7 @@ as_review_class_init (AsReviewClass *klass)
 	/**
 	 * AsReview:flags:
 	 *
-	 * Since: 0.5.18
+	 * Since: 0.6.1
 	 **/
 	pspec = g_param_spec_uint64 ("flags", NULL, NULL,
 				     AS_REVIEW_FLAG_NONE,
@@ -254,7 +254,7 @@ as_review_class_init (AsReviewClass *klass)
 	/**
 	 * AsReview:version:
 	 *
-	 * Since: 0.5.18
+	 * Since: 0.6.1
 	 **/
 	pspec = g_param_spec_string ("version", NULL, NULL,
 				     NULL,
@@ -264,7 +264,7 @@ as_review_class_init (AsReviewClass *klass)
 	/**
 	 * AsReview:reviewer-id:
 	 *
-	 * Since: 0.5.18
+	 * Since: 0.6.1
 	 **/
 	pspec = g_param_spec_string ("reviewer-id", NULL, NULL,
 				     NULL,
@@ -274,7 +274,7 @@ as_review_class_init (AsReviewClass *klass)
 	/**
 	 * AsReview:reviewer-name:
 	 *
-	 * Since: 0.5.18
+	 * Since: 0.6.1
 	 **/
 	pspec = g_param_spec_string ("reviewer-name", NULL, NULL,
 				     NULL,
@@ -284,7 +284,7 @@ as_review_class_init (AsReviewClass *klass)
 	/**
 	 * AsReview:date:
 	 *
-	 * Since: 0.5.18
+	 * Since: 0.6.1
 	 **/
 	pspec = g_param_spec_object ("date", NULL, NULL,
 				     AS_TYPE_REVIEW,
@@ -309,7 +309,7 @@ as_review_init (AsReview *review)
  *
  * Returns: the review priority, or 0 for unset.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 gint
 as_review_get_priority (AsReview *review)
@@ -327,7 +327,7 @@ as_review_get_priority (AsReview *review)
  * Sets the priority for the review, where positive numbers indicate
  * a better review for the specific user.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_review_set_priority (AsReview *review, gint priority)
@@ -345,7 +345,7 @@ as_review_set_priority (AsReview *review, gint priority)
  *
  * Returns: the review identifier, e.g. "deadbeef"
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 const gchar *
 as_review_get_id (AsReview *review)
@@ -363,7 +363,7 @@ as_review_get_id (AsReview *review)
  *
  * Returns: the one-line summary, e.g. "Awesome application"
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 const gchar *
 as_review_get_summary (AsReview *review)
@@ -380,7 +380,7 @@ as_review_get_summary (AsReview *review)
  *
  * Sets the review identifier that is unique to each review.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_review_set_id (AsReview *review, const gchar *id)
@@ -398,7 +398,7 @@ as_review_set_id (AsReview *review, const gchar *id)
  *
  * Sets the one-line summary that may be displayed in bold.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_review_set_summary (AsReview *review, const gchar *summary)
@@ -417,7 +417,7 @@ as_review_set_summary (AsReview *review, const gchar *summary)
  *
  * Returns: the string, or %NULL
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 const gchar *
 as_review_get_description (AsReview *review)
@@ -434,7 +434,7 @@ as_review_get_description (AsReview *review)
  *
  * Sets the multi-line review text that forms the body of the review.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_review_set_description (AsReview *review, const gchar *description)
@@ -453,7 +453,7 @@ as_review_set_description (AsReview *review, const gchar *description)
  *
  * Returns: the string, or %NULL
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 const gchar *
 as_review_get_locale (AsReview *review)
@@ -470,7 +470,7 @@ as_review_get_locale (AsReview *review)
  *
  * Sets the locale for the review.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_review_set_locale (AsReview *review, const gchar *locale)
@@ -489,7 +489,7 @@ as_review_set_locale (AsReview *review, const gchar *locale)
  *
  * Returns: integer as a percentage, or 0 for unset
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 gint
 as_review_get_rating (AsReview *review)
@@ -506,7 +506,7 @@ as_review_get_rating (AsReview *review)
  *
  * Sets the star rating of the review, where 100 is 5 stars..
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_review_set_rating (AsReview *review, gint rating)
@@ -525,7 +525,7 @@ as_review_set_rating (AsReview *review, gint rating)
  *
  * Returns: a #AsReviewFlags, e.g. %AS_REVIEW_FLAG_SELF
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 AsReviewFlags
 as_review_get_flags (AsReview *review)
@@ -543,7 +543,7 @@ as_review_get_flags (AsReview *review)
  * Gets any flags set on the review, for example if the user has already
  * voted on the review or if the user wrote the review themselves.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_review_set_flags (AsReview *review, AsReviewFlags flags)
@@ -560,7 +560,7 @@ as_review_set_flags (AsReview *review, AsReviewFlags flags)
  *
  * Adds flags to an existing review without replacing the other flags.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_review_add_flags (AsReview *review, AsReviewFlags flags)
@@ -578,7 +578,7 @@ as_review_add_flags (AsReview *review, AsReviewFlags flags)
  *
  * Returns: the reviewer ID, e.g. "deadbeef", or %NULL
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 const gchar *
 as_review_get_reviewer_id (AsReview *review)
@@ -596,7 +596,7 @@ as_review_get_reviewer_id (AsReview *review)
  *
  * Returns: the reviewer name, e.g. "David Smith", or %NULL
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 const gchar *
 as_review_get_reviewer_name (AsReview *review)
@@ -613,7 +613,7 @@ as_review_get_reviewer_name (AsReview *review)
  *
  * Sets the name of the reviewer, which can be left unset.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_review_set_reviewer_id (AsReview *review, const gchar *reviewer_id)
@@ -631,7 +631,7 @@ as_review_set_reviewer_id (AsReview *review, const gchar *reviewer_id)
  *
  * Sets the name of the reviewer, which can be left unset.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_review_set_reviewer_name (AsReview *review, const gchar *reviewer_name)
@@ -649,7 +649,7 @@ as_review_set_reviewer_name (AsReview *review, const gchar *reviewer_name)
  *
  * Sets the version string for the application being reviewed.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_review_set_version (AsReview *review, const gchar *version)
@@ -668,7 +668,7 @@ as_review_set_version (AsReview *review, const gchar *version)
  *
  * Returns: the version string, e.g. "0.1.2", or %NULL for unset
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 const gchar *
 as_review_get_version (AsReview *review)
@@ -686,7 +686,7 @@ as_review_get_version (AsReview *review)
  *
  * Returns: (transfer none): the #GDateTime, or %NULL for unset
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 GDateTime *
 as_review_get_date (AsReview *review)
@@ -703,7 +703,7 @@ as_review_get_date (AsReview *review)
  *
  * Sets the date the review was originally submitted.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_review_set_date (AsReview *review, GDateTime *date)
@@ -726,7 +726,7 @@ as_review_set_date (AsReview *review, GDateTime *date)
  *
  * Returns: A string value, or %NULL for not found
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 const gchar *
 as_review_get_metadata_item (AsReview *review, const gchar *key)
@@ -747,7 +747,7 @@ as_review_get_metadata_item (AsReview *review, const gchar *key)
  * It is left for the the plugin to use this method as required, but a
  * typical use would be to store some secure authentication token.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_review_add_metadata (AsReview *review, const gchar *key, const gchar *value)
@@ -766,7 +766,7 @@ as_review_add_metadata (AsReview *review, const gchar *key, const gchar *value)
  *
  * Returns: %TRUE for success
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 gboolean
 as_review_equal (AsReview *review1, AsReview *review2)
@@ -810,7 +810,7 @@ as_review_equal (AsReview *review1, AsReview *review2)
  *
  * Returns: (transfer none): A populated #GNode
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 GNode *
 as_review_node_insert (AsReview *review, GNode *parent, AsNodeContext *ctx)
@@ -889,7 +889,7 @@ as_review_node_insert (AsReview *review, GNode *parent, AsNodeContext *ctx)
  *
  * Returns: %TRUE for success
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 gboolean
 as_review_node_parse (AsReview *review, GNode *node,
@@ -975,7 +975,7 @@ as_review_node_parse (AsReview *review, GNode *node,
  *
  * Returns: %TRUE for success
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 gboolean
 as_review_node_parse_dep11 (AsReview *im, GNode *node,
@@ -991,7 +991,7 @@ as_review_node_parse_dep11 (AsReview *im, GNode *node,
  *
  * Returns: (transfer full): a #AsReview
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 AsReview *
 as_review_new (void)

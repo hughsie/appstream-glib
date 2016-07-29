@@ -1678,7 +1678,7 @@ as_utils_string_replace (GString *string, const gchar *search, const gchar *repl
  *
  * Returns: a #GDateTime, or %NULL for error.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 GDateTime *
 as_utils_iso8601_to_datetime (const gchar *iso_date)

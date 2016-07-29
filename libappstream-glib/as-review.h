@@ -56,7 +56,7 @@ struct _AsReviewClass
  *
  * The flags for the review.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 typedef enum {
 	AS_REVIEW_FLAG_NONE	= 0,

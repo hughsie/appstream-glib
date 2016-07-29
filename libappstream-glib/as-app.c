@@ -850,7 +850,7 @@ as_app_get_screenshots (AsApp *app)
  *
  * Returns: (element-type AsScreenshot) (transfer none): an array
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 GPtrArray *
 as_app_get_reviews (AsApp *app)
@@ -2567,7 +2567,7 @@ as_app_add_screenshot (AsApp *app, AsScreenshot *screenshot)
  *
  * Adds a review to an application.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_app_add_review (AsApp *app, AsReview *review)

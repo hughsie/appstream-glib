@@ -1065,7 +1065,7 @@ as_node_get_attribute_as_int (const AsNode *node, const gchar *key)
  *
  * Return value: integer value, or %G_MAXINT for error
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 guint
 as_node_get_attribute_as_uint (const AsNode *node, const gchar *key)
@@ -1223,7 +1223,7 @@ as_node_add_attribute_as_int (AsNode *node, const gchar *key, gint value)
  *
  * Adds a new attribute to a node.
  *
- * Since: 0.5.18
+ * Since: 0.6.1
  **/
 void
 as_node_add_attribute_as_uint (AsNode *node, const gchar *key, guint value)

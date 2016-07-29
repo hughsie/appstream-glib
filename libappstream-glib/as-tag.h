@@ -143,11 +143,11 @@ typedef enum {
 	AS_TAG_TRANSLATION,		/* Since: 0.5.8 */
 	AS_TAG_CONTENT_RATING,		/* Since: 0.5.12 */
 	AS_TAG_CONTENT_ATTRIBUTE,	/* Since: 0.5.12 */
-	AS_TAG_VERSION,			/* Since: 0.5.18 */
-	AS_TAG_REVIEWS,			/* Since: 0.5.18 */
-	AS_TAG_REVIEW,			/* Since: 0.5.18 */
-	AS_TAG_REVIEWER_NAME,		/* Since: 0.5.18 */
-	AS_TAG_REVIEWER_ID,		/* Since: 0.5.18 */
+	AS_TAG_VERSION,			/* Since: 0.6.1 */
+	AS_TAG_REVIEWS,			/* Since: 0.6.1 */
+	AS_TAG_REVIEW,			/* Since: 0.6.1 */
+	AS_TAG_REVIEWER_NAME,		/* Since: 0.6.1 */
+	AS_TAG_REVIEWER_ID,		/* Since: 0.6.1 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;
