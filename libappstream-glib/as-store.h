@@ -60,8 +60,8 @@ struct _AsStoreClass
  * @AS_STORE_LOAD_FLAG_APPDATA:			The installed AppData files
  * @AS_STORE_LOAD_FLAG_DESKTOP:			The installed desktop files
  * @AS_STORE_LOAD_FLAG_ALLOW_VETO:		Add vetoed applications
- * @AS_STORE_LOAD_FLAG_FLATPAK_USER:		Add flatpak user applications
- * @AS_STORE_LOAD_FLAG_FLATPAK_SYSTEM:		Add flatpak system applications
+ * @AS_STORE_LOAD_FLAG_FLATPAK_USER:		Add flatpak user applications (obsolete)
+ * @AS_STORE_LOAD_FLAG_FLATPAK_SYSTEM:		Add flatpak system applications (obsolete)
  * @AS_STORE_LOAD_FLAG_IGNORE_INVALID:		Ignore invalid files
  *
  * The flags to use when loading the store.
