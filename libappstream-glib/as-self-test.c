@@ -2987,6 +2987,23 @@ as_test_store_prefix_func (void)
 	app_tmp = g_ptr_array_index (apps, 0);
 	g_assert_cmpstr (as_app_get_id (app_tmp), ==,
 			 "flatpak-user:org.gnome.Software.desktop");
+
+	/* exact unique match */
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/test/*/*",
+						 AS_STORE_SEARCH_FLAG_NONE);
+	g_assert (app_tmp == NULL);
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/test/*/*",
+						 AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
+	g_assert (app_tmp == NULL);
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/org.gnome.Software.desktop/*/*",
+						 AS_STORE_SEARCH_FLAG_NONE);
+	g_assert (app_tmp != NULL);
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/org.gnome.Software.desktop/*/*",
+						 AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
+	g_assert (app_tmp != NULL);
+//	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/*/*/*",
+//						 AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
+//	g_assert (app_tmp != NULL);
 }
 
 /* load a store with a origin and scope encoded in the symlink name */

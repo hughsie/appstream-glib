@@ -79,6 +79,9 @@ typedef enum {
 #define AS_APP_ICON_MIN_HEIGHT			32
 #define AS_APP_ICON_MIN_WIDTH			32
 
+/* unique */
+#define AS_APP_UNIQUE_WILDCARD			"*"
+
 AsAppProblems	 as_app_get_problems		(AsApp		*app);
 guint		 as_app_get_name_size		(AsApp		*app);
 guint		 as_app_get_comment_size	(AsApp		*app);

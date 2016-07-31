@@ -116,6 +116,20 @@ typedef enum {
 } AsStoreWatchFlags;
 
 /**
+ * AsStoreSearchFlags:
+ * @AS_STORE_SEARCH_FLAG_NONE:			No extra flags to use
+ * @AS_STORE_SEARCH_FLAG_USE_WILDCARDS:		Process the globs
+ *
+ * The flags to use when searching in the store.
+ **/
+typedef enum {
+	AS_STORE_SEARCH_FLAG_NONE			= 0,	/* Since: 0.6.1 */
+	AS_STORE_SEARCH_FLAG_USE_WILDCARDS		= 1,	/* Since: 0.6.1 */
+	/*< private >*/
+	AS_STORE_SEARCH_FLAG_LAST
+} AsStoreSearchFlags;
+
+/**
  * AsStoreError:
  * @AS_STORE_ERROR_FAILED:			Generic failure
  *
@@ -166,6 +180,9 @@ GPtrArray	*as_store_get_apps_by_metadata	(AsStore	*store,
 						 const gchar	*value);
 AsApp		*as_store_get_app_by_id		(AsStore	*store,
 						 const gchar	*id);
+AsApp		*as_store_get_app_by_unique_id	(AsStore	*store,
+						 const gchar	*unique_id,
+						 AsStoreSearchFlags search_flags);
 AsApp		*as_store_get_app_by_id_ignore_prefix
 						(AsStore	*store,
 						 const gchar	*id);

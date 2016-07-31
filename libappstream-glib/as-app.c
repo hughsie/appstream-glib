@@ -514,7 +514,7 @@ static const gchar *
 as_app_fix_unique_nullable (const gchar *tmp)
 {
 	if (tmp == NULL || tmp[0] == '\0')
-		return "*";
+		return AS_APP_UNIQUE_WILDCARD;
 	return tmp;
 }
 
@@ -535,7 +535,7 @@ as_app_get_unique_id_system (AsApp *app)
 		return "package";
 
 	/* nothing */
-	return "*";
+	return AS_APP_UNIQUE_WILDCARD;
 }
 
 /**

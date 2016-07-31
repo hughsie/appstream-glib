@@ -65,6 +65,7 @@ typedef struct
 	gdouble			 api_version;
 	GPtrArray		*array;		/* of AsApp */
 	GHashTable		*hash_id;	/* of AsApp{id} */
+	GHashTable		*hash_unique_id;	/* of AsApp{unique_id} */
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
 	AsMonitor		*monitor;
 	GHashTable		*metadata_indexes;	/* GHashTable{key} */
@@ -123,6 +124,7 @@ as_store_finalize (GObject *object)
 	g_object_unref (priv->monitor);
 	g_object_unref (priv->profile);
 	g_hash_table_unref (priv->hash_id);
+	g_hash_table_unref (priv->hash_unique_id);
 	g_hash_table_unref (priv->hash_pkgname);
 	g_hash_table_unref (priv->metadata_indexes);
 	g_hash_table_unref (priv->appinfo_dirs);
@@ -293,6 +295,7 @@ as_store_remove_all (AsStore *store)
 	g_return_if_fail (AS_IS_STORE (store));
 	g_ptr_array_set_size (priv->array, 0);
 	g_hash_table_remove_all (priv->hash_id);
+	g_hash_table_remove_all (priv->hash_unique_id);
 	g_hash_table_remove_all (priv->hash_pkgname);
 }
 
@@ -451,6 +454,90 @@ as_store_get_app_by_id (AsStore *store, const gchar *id)
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 	return g_hash_table_lookup (priv->hash_id, id);
+}
+
+static AsApp *
+_as_app_new_from_unique_id (const gchar *unique_id)
+{
+	g_auto(GStrv) split = NULL;
+	g_autoptr(AsApp) app = as_app_new ();
+
+	split = g_strsplit (unique_id, "/", -1);
+	if (g_strv_length (split) != 7)
+		return NULL;
+	if (g_strcmp0 (split[0], AS_APP_UNIQUE_WILDCARD) != 0)
+		as_app_set_scope (app, as_app_scope_from_string (split[1]));
+	if (g_strcmp0 (split[2], AS_APP_UNIQUE_WILDCARD) != 0) {
+		if (g_strcmp0 (split[2], "package") == 0) {
+			as_app_add_pkgname (app, "");
+		} else {
+			AsBundleKind kind = as_bundle_kind_from_string (split[2]);
+			if (kind != AS_BUNDLE_KIND_UNKNOWN) {
+				AsBundle *bundle = as_bundle_new ();
+				as_bundle_set_kind (bundle, kind);
+				as_app_add_bundle (app, bundle);
+			}
+		}
+	}
+	if (g_strcmp0 (split[2], AS_APP_UNIQUE_WILDCARD) != 0)
+		as_app_set_origin (app, split[2]);
+	if (g_strcmp0 (split[3], AS_APP_UNIQUE_WILDCARD) != 0)
+		as_app_set_kind (app, as_app_kind_from_string (split[3]));
+	if (g_strcmp0 (split[4], AS_APP_UNIQUE_WILDCARD) != 0)
+		as_app_set_id (app, split[4]);
+	if (g_strcmp0 (split[5], AS_APP_UNIQUE_WILDCARD) != 0)
+		as_app_add_arch (app, split[5]);
+	if (g_strcmp0 (split[6], AS_APP_UNIQUE_WILDCARD) != 0)
+		as_app_set_branch (app, split[6]);
+
+	return g_steal_pointer (&app);
+}
+
+static AsApp *
+as_store_get_app_by_app (AsStore *store, AsApp *app)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	guint i;
+
+	for (i = 0; i < priv->array->len; i++) {
+		AsApp *app_tmp = g_ptr_array_index (priv->array, i);
+		if (as_app_equal (app_tmp, app))
+			return app_tmp;
+	}
+	return NULL;
+}
+
+/**
+ * as_store_get_app_by_unique_id:
+ * @store: a #AsStore instance.
+ * @unique_id: the application unique ID, e.g.
+ *      `user/flatpak/gnome-apps-nightly/app/gimp.desktop/i386/master`
+ * @search_flags: the search flags, e.g. %AS_STORE_SEARCH_FLAG_USE_WILDCARDS
+ *
+ * Finds an application in the store by matching the unique ID.
+ *
+ * Returns: (transfer none): a #AsApp or %NULL
+ *
+ * Since: 0.6.1
+ **/
+AsApp *
+as_store_get_app_by_unique_id (AsStore *store,
+			       const gchar *unique_id,
+			       AsStoreSearchFlags search_flags)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_autoptr(AsApp) app_tmp = NULL;
+
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+	g_return_val_if_fail (unique_id != NULL, NULL);
+
+	/* no globs */
+	if ((search_flags & AS_STORE_SEARCH_FLAG_USE_WILDCARDS) == 0)
+		return g_hash_table_lookup (priv->hash_unique_id, unique_id);
+
+	/* create virtual app using scope/system/origin/kind/id/arch/branch */
+	app_tmp = _as_app_new_from_unique_id (unique_id);
+	return as_store_get_app_by_app (store, app_tmp);
 }
 
 /**
@@ -743,6 +830,7 @@ as_store_remove_app (AsStore *store, AsApp *app)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_hash_table_remove (priv->hash_id, as_app_get_id (app));
+	g_hash_table_remove (priv->hash_unique_id, as_app_get_unique_id (app));
 	g_ptr_array_remove (priv->array, app);
 	g_hash_table_remove_all (priv->metadata_indexes);
 
@@ -773,6 +861,8 @@ as_store_remove_app_by_id (AsStore *store, const gchar *id)
 		if (g_strcmp0 (id, as_app_get_id (app)) != 0)
 			continue;
 		g_ptr_array_remove (priv->array, app);
+		g_hash_table_remove (priv->hash_unique_id,
+				     as_app_get_unique_id (app));
 	}
 	g_hash_table_remove_all (priv->metadata_indexes);
 
@@ -887,6 +977,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 			 as_app_source_kind_to_string (as_app_get_source_kind (item)),
 			 id);
 		g_hash_table_remove (priv->hash_id, id);
+		g_hash_table_remove (priv->hash_unique_id, id);
 		g_ptr_array_remove (priv->array, item);
 	}
 
@@ -894,6 +985,9 @@ as_store_add_app (AsStore *store, AsApp *app)
 	g_ptr_array_add (priv->array, g_object_ref (app));
 	g_hash_table_insert (priv->hash_id,
 			     (gpointer) as_app_get_id (app),
+			     app);
+	g_hash_table_insert (priv->hash_unique_id,
+			     (gpointer) as_app_get_unique_id (app),
 			     app);
 	pkgnames = as_app_get_pkgnames (app);
 	for (i = 0; i < pkgnames->len; i++) {
@@ -2893,6 +2987,10 @@ as_store_init (AsStore *store)
 					       g_str_equal,
 					       NULL,
 					       NULL);
+	priv->hash_unique_id = g_hash_table_new_full (g_str_hash,
+						      g_str_equal,
+						      NULL,
+						      NULL);
 	priv->hash_pkgname = g_hash_table_new_full (g_str_hash,
 						    g_str_equal,
 						    g_free,
