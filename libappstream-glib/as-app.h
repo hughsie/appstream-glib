@@ -275,6 +275,22 @@ typedef enum {
 	AS_APP_STATE_LAST
 } AsAppState;
 
+/**
+ * AsAppScope:
+ * @AS_APP_SCOPE_UNKNOWN:			Unknown scope
+ * @AS_APP_SCOPE_USER:				User scope
+ * @AS_APP_SCOPE_SYSTEM:			System scope
+ *
+ * The application scope.
+ **/
+typedef enum {
+	AS_APP_SCOPE_UNKNOWN,				/* Since: 0.6.1 */
+	AS_APP_SCOPE_USER,				/* Since: 0.6.1 */
+	AS_APP_SCOPE_SYSTEM,				/* Since: 0.6.1 */
+	/*< private >*/
+	AS_APP_SCOPE_LAST
+} AsAppScope;
+
 #define	AS_APP_ERROR				as_app_error_quark ()
 
 AsApp		*as_app_new			(void);
@@ -285,10 +301,13 @@ const gchar	*as_app_source_kind_to_string	(AsAppSourceKind source_kind);
 const gchar	*as_app_state_to_string		(AsAppState	 state);
 const gchar	*as_app_kind_to_string		(AsAppKind	 kind);
 AsAppKind	 as_app_kind_from_string	(const gchar	*kind);
+AsAppScope	 as_app_scope_from_string	(const gchar	*scope);
+const gchar	*as_app_scope_to_string		(AsAppScope	 scope);
 
 /* getters */
 AsAppKind	 as_app_get_kind		(AsApp		*app);
 AsAppSourceKind	 as_app_get_source_kind		(AsApp		*app);
+AsAppScope	 as_app_get_scope		(AsApp		*app);
 AsAppState	 as_app_get_state		(AsApp		*app);
 AsAppTrustFlags	 as_app_get_trust_flags		(AsApp		*app);
 GList		*as_app_get_languages		(AsApp		*app);
@@ -367,6 +386,8 @@ void		 as_app_set_kind		(AsApp		*app,
 						 AsAppKind	 kind);
 void		 as_app_set_source_kind		(AsApp		*app,
 						 AsAppSourceKind source_kind);
+void		 as_app_set_scope		(AsApp		*app,
+						 AsAppScope	 scope);
 void		 as_app_set_state		(AsApp		*app,
 						 AsAppState	 state);
 void		 as_app_set_trust_flags		(AsApp		*app,

@@ -86,6 +86,7 @@ typedef struct
 	GPtrArray	*translations;			/* of AsTranslation */
 	GPtrArray	*vetos;				/* of string */
 	AsAppSourceKind	 source_kind;
+	AsAppScope	 scope;
 	AsAppState	 state;
 	AsAppTrustFlags	 trust_flags;
 	AsAppQuirk	 quirk;
@@ -313,6 +314,46 @@ as_app_state_to_string (AsAppState state)
 }
 
 /**
+ * as_app_scope_from_string:
+ * @scope: a source kind string
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Return value: A #AsAppScope, e.g. %AS_APP_SCOPE_SYSTEM.
+ *
+ * Since: 0.6.1
+ **/
+AsAppScope
+as_app_scope_from_string (const gchar *scope)
+{
+	if (g_strcmp0 (scope, "user") == 0)
+		return AS_APP_SCOPE_USER;
+	if (g_strcmp0 (scope, "system") == 0)
+		return AS_APP_SCOPE_SYSTEM;
+	return AS_APP_SCOPE_UNKNOWN;
+}
+
+/**
+ * as_app_scope_to_string:
+ * @scope: the #AsAppScope, e.g. %AS_APP_SCOPE_SYSTEM
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @scope, or %NULL for unknown
+ *
+ * Since: 0.6.1
+ **/
+const gchar *
+as_app_scope_to_string (AsAppScope scope)
+{
+	if (scope == AS_APP_SCOPE_USER)
+		return "user";
+	if (scope == AS_APP_SCOPE_SYSTEM)
+		return "system";
+	return NULL;
+}
+
+/**
  * as_app_guess_source_kind:
  * @filename: a file name
  *
@@ -483,7 +524,7 @@ as_app_fix_unique_nullable (const gchar *tmp)
  *
  * Gets the unique ID value to represent the component.
  *
- * Returns: the unique ID, e.g. "fedora/desktop/gimp.desktop/i386/master"
+ * Returns: the unique ID, e.g. "system/fedora/desktop/gimp.desktop/i386/master"
  *
  * Since: 0.6.1
  **/
@@ -492,15 +533,19 @@ as_app_get_unique_id (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	if (priv->unique_id == NULL) {
+		const gchar *arch_str = NULL;
 		const gchar *id_str = NULL;
 		const gchar *kind_str = NULL;
-		const gchar *arch_str = NULL;
+		const gchar *scope_str = NULL;
 		if (priv->kind != AS_APP_KIND_UNKNOWN)
 			kind_str = as_app_kind_to_string (priv->kind);
+		if (priv->scope != AS_APP_SCOPE_UNKNOWN)
+			scope_str = as_app_scope_to_string (priv->scope);
 		id_str = as_app_get_id_no_prefix (app);
 		if (priv->architectures->len == 1)
 			arch_str = g_ptr_array_index (priv->architectures, 0);
-		priv->unique_id = g_strdup_printf ("%s/%s/%s/%s/%s",
+		priv->unique_id = g_strdup_printf ("%s/%s/%s/%s/%s/%s",
+						   as_app_fix_unique_nullable (scope_str),
 						   as_app_fix_unique_nullable (priv->origin),
 						   as_app_fix_unique_nullable (kind_str),
 						   as_app_fix_unique_nullable (id_str),
@@ -1294,6 +1339,23 @@ as_app_get_source_kind (AsApp *app)
 }
 
 /**
+ * as_app_get_scope:
+ * @app: a #AsApp instance.
+ *
+ * Gets the scope of the application.
+ *
+ * Returns: enumerated value
+ *
+ * Since: 0.6.1
+ **/
+AsAppScope
+as_app_get_scope (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->scope;
+}
+
+/**
  * as_app_get_state:
  * @app: a #AsApp instance.
  *
@@ -1784,6 +1846,22 @@ as_app_set_source_kind (AsApp *app, AsAppSourceKind source_kind)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->source_kind = source_kind;
+}
+
+/**
+ * as_app_set_scope:
+ * @app: a #AsApp instance.
+ * @scope: the #AsAppScope.
+ *
+ * Sets the scope of the application.
+ *
+ * Since: 0.6.1
+ **/
+void
+as_app_set_scope (AsApp *app, AsAppScope scope)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	priv->scope = scope;
 }
 
 /**

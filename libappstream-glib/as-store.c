@@ -79,7 +79,7 @@ typedef struct
 } AsStorePrivate;
 
 typedef struct {
-	gchar			*id_prefix;
+	AsAppScope		 scope;
 	gchar			*arch;
 } AsStorePathData;
 
@@ -105,7 +105,7 @@ G_DEFINE_QUARK (as-store-error-quark, as_store_error)
 
 static gboolean	as_store_from_file_internal (AsStore *store,
 					     GFile *file,
-					     const gchar *id_prefix,
+					     AsAppScope scope,
 					     const gchar *arch,
 					     GCancellable *cancellable,
 					     GError **error);
@@ -971,7 +971,7 @@ as_store_fixup_id_prefix (AsApp *app, const gchar *id_prefix)
 static gboolean
 as_store_from_root (AsStore *store,
 		    AsNode *root,
-		    const gchar *id_prefix,
+		    AsAppScope scope,
 		    const gchar *icon_prefix,
 		    const gchar *source_filename,
 		    const gchar *arch,
@@ -1064,7 +1064,7 @@ as_store_from_root (AsStore *store,
 
 	/* fallback */
 	if (origin_app == NULL) {
-		id_prefix_app = g_strdup (id_prefix);
+		id_prefix_app = g_strdup (as_app_scope_to_string (scope));
 		origin_app = g_strdup (priv->origin);
 	}
 
@@ -1072,10 +1072,6 @@ as_store_from_root (AsStore *store,
 	if (g_strcmp0 (origin_app, priv->origin) != 0) {
 		g_debug ("using app origin of '%s' rather than '%s'",
 			 origin_app, priv->origin);
-	}
-	if (g_strcmp0 (id_prefix_app, id_prefix) != 0) {
-		g_debug ("using app prefix of '%s' rather than '%s'",
-			 id_prefix_app, id_prefix);
 	}
 
 	/* guess the icon path after we've read the origin and then look for
@@ -1299,7 +1295,7 @@ as_store_watch_source_added (AsStore *store, const gchar *filename)
 	file = g_file_new_for_path (filename);
 	if (!as_store_from_file_internal (store,
 					  file,
-					  path_data->id_prefix,
+					  path_data->scope,
 					  path_data->arch,
 					  NULL, /* cancellable */
 					  &error)){
@@ -1371,7 +1367,7 @@ as_store_monitor_removed_cb (AsMonitor *monitor,
 static void
 as_store_add_path_data (AsStore *store,
 			const gchar *path,
-			const gchar *id_prefix,
+			AsAppScope scope,
 			const gchar *arch)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
@@ -1385,28 +1381,33 @@ as_store_add_path_data (AsStore *store,
 	/* check is a directory */
 	if (!g_file_test (path, G_FILE_TEST_IS_DIR)) {
 		g_warning ("not adding path %s [%s:%s] as not a directory",
-			   path, id_prefix, arch);
+			   path, as_app_scope_to_string (scope), arch);
 		return;
 	}
 
 	/* check not already exists */
 	path_data = g_hash_table_lookup (priv->appinfo_dirs, path);
 	if (path_data != NULL) {
-		if (g_strcmp0 (path_data->id_prefix, id_prefix) != 0 ||
+		if (path_data->scope != scope ||
 		    g_strcmp0 (path_data->arch, arch) != 0) {
 			g_warning ("already added path %s [%s:%s] vs new [%s:%s]",
-				   path, path_data->id_prefix, path_data->arch,
-				   id_prefix, arch);
+				   path,
+				   as_app_scope_to_string (path_data->scope),
+				   path_data->arch,
+				   as_app_scope_to_string (scope),
+				   arch);
 		} else {
 			g_debug ("already added path %s [%s:%s]",
-				 path, path_data->id_prefix, path_data->arch);
+				 path,
+				 as_app_scope_to_string (path_data->scope),
+				 path_data->arch);
 		}
 		return;
 	}
 
 	/* create new */
 	path_data = g_slice_new0 (AsStorePathData);
-	path_data->id_prefix = g_strdup (id_prefix);
+	path_data->scope = scope;
 	path_data->arch = g_strdup (arch);
 	g_hash_table_insert (priv->appinfo_dirs, g_strdup (path), path_data);
 }
@@ -1414,7 +1415,7 @@ as_store_add_path_data (AsStore *store,
 static gboolean
 as_store_from_file_internal (AsStore *store,
 			     GFile *file,
-			     const gchar *id_prefix,
+			     AsAppScope scope,
 			     const gchar *arch,
 			     GCancellable *cancellable,
 			     GError **error)
@@ -1467,7 +1468,7 @@ as_store_from_file_internal (AsStore *store,
 
 	/* icon prefix is the directory the XML has been found in */
 	icon_prefix = g_path_get_dirname (filename);
-	return as_store_from_root (store, root, id_prefix,
+	return as_store_from_root (store, root, scope,
 				   icon_prefix, filename, arch, error);
 }
 
@@ -1498,7 +1499,7 @@ as_store_from_file (AsStore *store,
 		    GError **error)
 {
 	return as_store_from_file_internal (store, file,
-					    NULL, /* id_prefix */
+					    AS_APP_SCOPE_UNKNOWN,
 					    NULL, /* arch */
 					    cancellable, error);
 }
@@ -1604,7 +1605,7 @@ as_store_from_xml (AsStore *store,
 		return FALSE;
 	}
 	return as_store_from_root (store, root,
-				   NULL, /* id_prefix */
+				   AS_APP_SCOPE_UNKNOWN,
 				   icon_root,
 				   NULL, /* filename */
 				   NULL, /* arch */
@@ -2106,7 +2107,7 @@ as_store_guess_origin_fallback (AsStore *store,
 
 static gboolean
 as_store_load_app_info_file (AsStore *store,
-			     const gchar *id_prefix,
+			     AsAppScope scope,
 			     const gchar *path_xml,
 			     const gchar *arch,
 			     GCancellable *cancellable,
@@ -2126,7 +2127,7 @@ as_store_load_app_info_file (AsStore *store,
 	file = g_file_new_for_path (path_xml);
 	return as_store_from_file_internal (store,
 					    file,
-					    id_prefix,
+					    scope,
 					    arch,
 					    cancellable,
 					    error);
@@ -2134,7 +2135,7 @@ as_store_load_app_info_file (AsStore *store,
 
 static gboolean
 as_store_load_app_info (AsStore *store,
-			const gchar *id_prefix,
+			AsAppScope scope,
 			const gchar *path,
 			const gchar *arch,
 			AsStoreLoadFlags flags,
@@ -2179,7 +2180,7 @@ as_store_load_app_info (AsStore *store,
 			continue;
 		filename_md = g_build_filename (path, tmp, NULL);
 		if (!as_store_load_app_info_file (store,
-						  id_prefix,
+						  scope,
 						  filename_md,
 						  arch,
 						  cancellable,
@@ -2196,7 +2197,7 @@ as_store_load_app_info (AsStore *store,
 	}
 
 	/* watch the directories for changes */
-	as_store_add_path_data (store, path, id_prefix, arch);
+	as_store_add_path_data (store, path, scope, arch);
 	if (!as_monitor_add_directory (priv->monitor,
 				       path,
 				       cancellable,
@@ -2244,7 +2245,7 @@ as_store_load_installed_file_is_valid (const gchar *filename)
 static gboolean
 as_store_load_installed (AsStore *store,
 			 AsStoreLoadFlags flags,
-			 const gchar *id_prefix,
+			 AsAppScope scope,
 			 const gchar *path,
 			 GCancellable *cancellable,
 			 GError **error)
@@ -2265,7 +2266,7 @@ as_store_load_installed (AsStore *store,
 		return FALSE;
 
 	/* watch the directories for changes */
-	as_store_add_path_data (store, path, id_prefix, NULL);
+	as_store_add_path_data (store, path, scope, NULL);
 	if (!as_monitor_add_directory (priv->monitor,
 				       path,
 				       cancellable,
@@ -2314,7 +2315,7 @@ as_store_load_installed (AsStore *store,
 		}
 
 		/* set the correct scope */
-		as_store_fixup_id_prefix (app, id_prefix);
+		as_store_fixup_id_prefix (app, as_app_scope_to_string (scope));
 
 		/* do not load applications with vetos */
 		if ((flags & AS_STORE_LOAD_FLAG_ALLOW_VETO) == 0 &&
@@ -2355,13 +2356,14 @@ as_store_load_path (AsStore *store, const gchar *path,
 		    GCancellable *cancellable, GError **error)
 {
 	return as_store_load_installed (store, AS_STORE_LOAD_FLAG_NONE,
-					NULL, path, cancellable, error);
+					AS_APP_SCOPE_UNKNOWN,
+					path, cancellable, error);
 }
 
 static gboolean
 as_store_search_installed (AsStore *store,
 			   AsStoreLoadFlags flags,
-			   const gchar *id_prefix,
+			   AsAppScope scope,
 			   const gchar *path,
 			   GCancellable *cancellable,
 			   GError **error)
@@ -2372,14 +2374,14 @@ as_store_search_installed (AsStore *store,
 	g_debug ("searching path %s", dest);
 	if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 		return TRUE;
-	return as_store_load_installed (store, flags, id_prefix,
+	return as_store_load_installed (store, flags, scope,
 					dest, cancellable, error);
 }
 
 static gboolean
 as_store_search_app_info (AsStore *store,
 			  AsStoreLoadFlags flags,
-			  const gchar *id_prefix,
+			  AsAppScope scope,
 			  const gchar *path,
 			  GCancellable *cancellable,
 			  GError **error)
@@ -2396,7 +2398,7 @@ as_store_search_app_info (AsStore *store,
 					 NULL);
 		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
 			continue;
-		if (!as_store_load_app_info (store, id_prefix, dest, NULL,
+		if (!as_store_load_app_info (store, scope, dest, NULL,
 					     flags, cancellable, error))
 			return FALSE;
 	}
@@ -2427,28 +2429,28 @@ as_store_search_per_system (AsStore *store,
 		if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM) > 0) {
 			g_autofree gchar *dest = NULL;
 			dest = g_build_filename (data_dirs[i], "app-info", NULL);
-			if (!as_store_search_app_info (store, flags, "system",
+			if (!as_store_search_app_info (store, flags, AS_APP_SCOPE_SYSTEM,
 						       dest, cancellable, error))
 				return FALSE;
 		}
 		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 			g_autofree gchar *dest = NULL;
 			dest = g_build_filename (data_dirs[i], "appdata", NULL);
-			if (!as_store_search_installed (store, flags, "system",
+			if (!as_store_search_installed (store, flags, AS_APP_SCOPE_SYSTEM,
 							dest, cancellable, error))
 				return FALSE;
 		}
 		if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 			g_autofree gchar *dest = NULL;
 			dest = g_build_filename (data_dirs[i], "metainfo", NULL);
-			if (!as_store_search_installed (store, flags, "system",
+			if (!as_store_search_installed (store, flags, AS_APP_SCOPE_SYSTEM,
 							dest, cancellable, error))
 				return FALSE;
 		}
 		if ((flags & AS_STORE_LOAD_FLAG_DESKTOP) > 0) {
 			g_autofree gchar *dest = NULL;
 			dest = g_build_filename (data_dirs[i], "applications", NULL);
-			if (!as_store_search_installed (store, flags, "system",
+			if (!as_store_search_installed (store, flags, AS_APP_SCOPE_SYSTEM,
 							dest, cancellable, error))
 				return FALSE;
 		}
@@ -2459,11 +2461,11 @@ as_store_search_per_system (AsStore *store,
 		g_autofree gchar *dest1 = NULL;
 		g_autofree gchar *dest2 = NULL;
 		dest1 = g_build_filename (LOCALSTATEDIR, "lib", "app-info", NULL);
-		if (!as_store_search_app_info (store, flags, "system", dest1,
+		if (!as_store_search_app_info (store, flags, AS_APP_SCOPE_SYSTEM, dest1,
 					       cancellable, error))
 			return FALSE;
 		dest2 = g_build_filename (LOCALSTATEDIR, "cache", "app-info", NULL);
-		if (!as_store_search_app_info (store, flags, "system", dest2,
+		if (!as_store_search_app_info (store, flags, AS_APP_SCOPE_SYSTEM, dest2,
 					       cancellable, error))
 			return FALSE;
 		/* ignore the prefix; we actually want to use the
@@ -2472,11 +2474,11 @@ as_store_search_per_system (AsStore *store,
 			g_autofree gchar *dest3 = NULL;
 			g_autofree gchar *dest4 = NULL;
 			dest3 = g_build_filename ("/var", "lib", "app-info", NULL);
-			if (!as_store_search_app_info (store, flags, "system",
+			if (!as_store_search_app_info (store, flags, AS_APP_SCOPE_SYSTEM,
 						       dest3, cancellable, error))
 				return FALSE;
 			dest4 = g_build_filename ("/var", "cache", "app-info", NULL);
-			if (!as_store_search_app_info (store, flags, "system",
+			if (!as_store_search_app_info (store, flags, AS_APP_SCOPE_SYSTEM,
 						       dest4, cancellable, error))
 				return FALSE;
 		}
@@ -2500,7 +2502,7 @@ as_store_search_per_user (AsStore *store,
 	if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_USER) > 0) {
 		g_autofree gchar *dest = NULL;
 		dest = g_build_filename (g_get_user_data_dir (), "app-info", NULL);
-		if (!as_store_search_app_info (store, flags, "user",
+		if (!as_store_search_app_info (store, flags, AS_APP_SCOPE_USER,
 					       dest, cancellable, error))
 			return FALSE;
 	}
@@ -2509,7 +2511,7 @@ as_store_search_per_user (AsStore *store,
 	if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 		g_autofree gchar *dest = NULL;
 		dest = g_build_filename (g_get_user_data_dir (), "appdata", NULL);
-		if (!as_store_search_installed (store, flags, "user",
+		if (!as_store_search_installed (store, flags, AS_APP_SCOPE_USER,
 						dest, cancellable, error))
 			return FALSE;
 	}
@@ -2518,7 +2520,7 @@ as_store_search_per_user (AsStore *store,
 	if ((flags & AS_STORE_LOAD_FLAG_APPDATA) > 0) {
 		g_autofree gchar *dest = NULL;
 		dest = g_build_filename (g_get_user_data_dir (), "metainfo", NULL);
-		if (!as_store_search_installed (store, flags, "user",
+		if (!as_store_search_installed (store, flags, AS_APP_SCOPE_USER,
 						dest, cancellable, error))
 			return FALSE;
 	}
@@ -2527,7 +2529,7 @@ as_store_search_per_user (AsStore *store,
 	if ((flags & AS_STORE_LOAD_FLAG_DESKTOP) > 0) {
 		g_autofree gchar *dest = NULL;
 		dest = g_build_filename (g_get_user_data_dir (), "applications", NULL);
-		if (!as_store_search_installed (store, flags, "user",
+		if (!as_store_search_installed (store, flags, AS_APP_SCOPE_USER,
 						dest, cancellable, error))
 			return FALSE;
 	}
@@ -2867,7 +2869,6 @@ static void
 as_store_path_data_free (AsStorePathData *path_data)
 {
 	g_free (path_data->arch);
-	g_free (path_data->id_prefix);
 	g_slice_free (AsStorePathData, path_data);
 }
 
