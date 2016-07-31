@@ -483,7 +483,7 @@ as_app_fix_unique_nullable (const gchar *tmp)
  *
  * Gets the unique ID value to represent the component.
  *
- * Returns: the unique ID, e.g. "desktop/gimp.desktop/master"
+ * Returns: the unique ID, e.g. "desktop/gimp.desktop/i386/master"
  *
  * Since: 0.6.1
  **/
@@ -494,12 +494,16 @@ as_app_get_unique_id (AsApp *app)
 	if (priv->unique_id == NULL) {
 		const gchar *id_str = NULL;
 		const gchar *kind_str = NULL;
+		const gchar *arch_str = NULL;
 		if (priv->kind != AS_APP_KIND_UNKNOWN)
 			kind_str = as_app_kind_to_string (priv->kind);
 		id_str = as_app_get_id_no_prefix (app);
-		priv->unique_id = g_strdup_printf ("%s/%s/%s",
+		if (priv->architectures->len == 1)
+			arch_str = g_ptr_array_index (priv->architectures, 0);
+		priv->unique_id = g_strdup_printf ("%s/%s/%s/%s",
 						   as_app_fix_unique_nullable (kind_str),
 						   as_app_fix_unique_nullable (id_str),
+						   as_app_fix_unique_nullable (arch_str),
 						   as_app_fix_unique_nullable (priv->branch));
 	}
 	return priv->unique_id;
@@ -3797,9 +3801,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			return FALSE;
 		as_app_add_bundle (app, bu);
 
-		/* set the branch */
+		/* set the architecture and branch */
 		if (as_bundle_get_kind (bu) == AS_BUNDLE_KIND_FLATPAK) {
 			g_auto(GStrv) split = g_strsplit (as_bundle_get_id (bu), "/", -1);
+			as_app_add_arch (app, split[2]);
 			if (priv->branch == NULL)
 				priv->branch = g_strdup (split[3]);
 		}
