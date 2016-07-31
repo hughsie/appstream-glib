@@ -3025,7 +3025,7 @@ as_test_store_flatpak_func (void)
 	g_assert_cmpint (apps->len, ==, 1);
 	app = g_ptr_array_index (apps, 0);
 	g_assert_cmpstr (as_app_get_id (app), ==, "flatpak:test.desktop");
-	g_assert_cmpstr (as_app_get_unique_id (app), ==, "*/flatpak/remote-name/desktop/test.desktop/x86_64/master");
+	g_assert_cmpstr (as_app_get_unique_id (app), ==, "system/flatpak/remote-name/desktop/test.desktop/x86_64/master");
 	g_assert_cmpstr (as_app_get_id_filename (app), ==, "test");
 	g_assert_cmpstr (as_app_get_origin (app), ==, "remote-name");
 	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);

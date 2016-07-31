@@ -1063,6 +1063,10 @@ as_store_from_root (AsStore *store,
 			str[0] = '\0';
 			id_prefix_app = g_strdup (source_basename);
 		}
+
+		/* although in ~, this is a system scope app */
+		if (g_strcmp0 (id_prefix_app, "flatpak") == 0)
+			scope = AS_APP_SCOPE_SYSTEM;
 	}
 
 	/* fallback */
@@ -1126,6 +1130,7 @@ as_store_from_root (AsStore *store,
 			as_app_set_icon_path (app, icon_path);
 		if (arch != NULL)
 			as_app_add_arch (app, arch);
+		as_app_set_scope (app, scope);
 		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
 		if (!as_app_node_parse (app, n, ctx, &error_local)) {
 			g_set_error (error,
