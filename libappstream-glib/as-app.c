@@ -1723,7 +1723,7 @@ as_app_set_state (AsApp *app, AsAppState state)
 /**
  * as_app_set_trust_flags:
  * @app: a #AsApp instance.
- * @trust_flags: the #AsAppSourceKind.
+ * @trust_flags: the #AsAppTrustFlags.
  *
  * Sets the check flags, where %AS_APP_TRUST_FLAG_COMPLETE is completely
  * trusted input.
