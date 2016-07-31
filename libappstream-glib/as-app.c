@@ -100,6 +100,7 @@ typedef struct
 	gchar		*update_contact;
 	gchar		*unique_id;
 	gchar		*source_file;
+	gchar		*branch;
 	gint		 priority;
 	gsize		 token_cache_valid;
 	GHashTable	*token_cache;			/* of string:AsAppTokenType* */
@@ -370,6 +371,7 @@ as_app_finalize (GObject *object)
 	g_free (priv->update_contact);
 	g_free (priv->unique_id);
 	g_free (priv->source_file);
+	g_free (priv->branch);
 	g_hash_table_unref (priv->comments);
 	g_hash_table_unref (priv->developer_names);
 	g_hash_table_unref (priv->descriptions);
@@ -481,7 +483,7 @@ as_app_fix_unique_nullable (const gchar *tmp)
  *
  * Gets the unique ID value to represent the component.
  *
- * Returns: the unique ID, e.g. "desktop/gimp.desktop"
+ * Returns: the unique ID, e.g. "desktop/gimp.desktop/master"
  *
  * Since: 0.6.1
  **/
@@ -495,9 +497,10 @@ as_app_get_unique_id (AsApp *app)
 		if (priv->kind != AS_APP_KIND_UNKNOWN)
 			kind_str = as_app_kind_to_string (priv->kind);
 		id_str = as_app_get_id_no_prefix (app);
-		priv->unique_id = g_strdup_printf ("%s/%s",
+		priv->unique_id = g_strdup_printf ("%s/%s/%s",
 						   as_app_fix_unique_nullable (kind_str),
-						   as_app_fix_unique_nullable (id_str));
+						   as_app_fix_unique_nullable (id_str),
+						   as_app_fix_unique_nullable (priv->branch));
 	}
 	return priv->unique_id;
 }
@@ -1678,6 +1681,23 @@ as_app_get_source_file (AsApp *app)
 	return priv->source_file;
 }
 
+/**
+ * as_app_get_branch:
+ * @app: a #AsApp instance.
+ *
+ * Gets the branch for the application.
+ *
+ * Returns: string, or %NULL if unset
+ *
+ * Since: 0.6.1
+ **/
+const gchar *
+as_app_get_branch (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->branch;
+}
+
 static gboolean
 as_app_validate_utf8 (const gchar *text)
 {
@@ -1988,6 +2008,23 @@ as_app_set_source_file (AsApp *app, const gchar *source_file)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_free (priv->source_file);
 	priv->source_file = g_strdup (source_file);
+}
+
+/**
+ * as_app_set_branch:
+ * @app: a #AsApp instance.
+ * @branch: the branch, e.g. "master" or "3-16".
+ *
+ * Set the branch that the instance was sourced from.
+ *
+ * Since: 0.6.1
+ **/
+void
+as_app_set_branch (AsApp *app, const gchar *branch)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_free (priv->branch);
+	priv->branch = g_strdup (branch);
 }
 
 /**
@@ -3249,6 +3286,10 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	if (priv->source_file != NULL)
 		as_app_set_source_file (app, priv->source_file);
 
+	/* branch */
+	if (priv->branch != NULL)
+		as_app_set_branch (app, priv->branch);
+
 	/* source_pkgname */
 	if (priv->source_pkgname != NULL)
 		as_app_set_source_pkgname (app, priv->source_pkgname);
@@ -3750,11 +3791,18 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 	/* <bundle> */
 	case AS_TAG_BUNDLE:
 	{
-		g_autoptr(AsBundle) ic = NULL;
-		ic = as_bundle_new ();
-		if (!as_bundle_node_parse (ic, n, ctx, error))
+		g_autoptr(AsBundle) bu = NULL;
+		bu = as_bundle_new ();
+		if (!as_bundle_node_parse (bu, n, ctx, error))
 			return FALSE;
-		as_app_add_bundle (app, ic);
+		as_app_add_bundle (app, bu);
+
+		/* set the branch */
+		if (as_bundle_get_kind (bu) == AS_BUNDLE_KIND_FLATPAK) {
+			g_auto(GStrv) split = g_strsplit (as_bundle_get_id (bu), "/", -1);
+			if (priv->branch == NULL)
+				priv->branch = g_strdup (split[3]);
+		}
 		break;
 	}
 

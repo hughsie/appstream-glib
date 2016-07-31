@@ -1,5 +1,6 @@
 <components origin="flatpak">
 <component type="desktop">
 <id>test.desktop</id>
+<bundle type="flatpak">app/org.gnome.clocks/x86_64/master</bundle>
 </component>
 </components>

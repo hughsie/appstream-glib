@@ -1450,7 +1450,7 @@ as_test_app_func (void)
 		"<id>org.gnome.Software.desktop</id>\n"
 		"<pkgname>gnome-software</pkgname>\n"
 		"<source_pkgname>gnome-software-src</source_pkgname>\n"
-		"<bundle type=\"limba\">gnome-software-gnome-3-16</bundle>\n"
+		"<bundle type=\"flatpak\">app/org.gnome.Software/x86_64/master</bundle>\n"
 		"<translation type=\"gettext\">gnome-software</translation>\n"
 		"<name>Software</name>\n"
 		"<name xml:lang=\"pl\">Oprogramowanie</name>\n"
@@ -1537,7 +1537,7 @@ as_test_app_func (void)
 	/* verify */
 	g_assert_cmpstr (as_app_get_id (app), ==, "org.gnome.Software.desktop");
 	g_assert_cmpstr (as_app_get_id_filename (app), ==, "org.gnome.Software");
-	g_assert_cmpstr (as_app_get_unique_id (app), ==, "desktop/org.gnome.Software.desktop");
+	g_assert_cmpstr (as_app_get_unique_id (app), ==, "desktop/org.gnome.Software.desktop/master");
 	g_assert_cmpstr (as_app_get_name (app, "pl"), ==, "Oprogramowanie");
 	g_assert_cmpstr (as_app_get_comment (app, NULL), ==, "Application manager");
 	g_assert_cmpstr (as_app_get_description (app, NULL), ==, "<p>Software allows you to find stuff</p>");
@@ -1547,6 +1547,7 @@ as_test_app_func (void)
 	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_APP_SOURCE_KIND_UNKNOWN);
 	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
 	g_assert_cmpstr (as_app_get_project_license (app), ==, "GPLv2+");
+	g_assert_cmpstr (as_app_get_branch (app), ==, "master");
 	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);
 	g_assert_cmpint (as_app_get_priority (app), ==, -4);
 	g_assert_cmpint (as_app_get_screenshots(app)->len, ==, 2);
@@ -1583,8 +1584,8 @@ as_test_app_func (void)
 	/* check bundle */
 	bu = as_app_get_bundle_default (app);
 	g_assert (bu != NULL);
-	g_assert_cmpint (as_bundle_get_kind (bu), ==, AS_BUNDLE_KIND_LIMBA);
-	g_assert_cmpstr (as_bundle_get_id (bu), ==, "gnome-software-gnome-3-16");
+	g_assert_cmpint (as_bundle_get_kind (bu), ==, AS_BUNDLE_KIND_FLATPAK);
+	g_assert_cmpstr (as_bundle_get_id (bu), ==, "app/org.gnome.Software/x86_64/master");
 
 	/* check we can get a specific icon */
 	ic = as_app_get_icon_for_size (app, 999, 999);
@@ -3024,7 +3025,7 @@ as_test_store_flatpak_func (void)
 	g_assert_cmpint (apps->len, ==, 1);
 	app = g_ptr_array_index (apps, 0);
 	g_assert_cmpstr (as_app_get_id (app), ==, "flatpak:test.desktop");
-	g_assert_cmpstr (as_app_get_unique_id (app), ==, "desktop/test.desktop");
+	g_assert_cmpstr (as_app_get_unique_id (app), ==, "desktop/test.desktop/master");
 	g_assert_cmpstr (as_app_get_id_filename (app), ==, "test");
 	g_assert_cmpstr (as_app_get_origin (app), ==, "flatpak_remote-name");
 	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
