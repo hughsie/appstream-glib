@@ -490,12 +490,66 @@ as_app_class_init (AsAppClass *klass)
 
 /******************************************************************************/
 
+static gboolean
+as_app_equal_int (guint v1, guint v2)
+{
+	if (v1 == 0 || v2 == 0)
+		return TRUE;
+	return v1 == v2;
+}
+
+static gboolean
+as_app_equal_str (const gchar *v1, const gchar *v2)
+{
+	if (v1 == NULL || v2 == NULL)
+		return TRUE;
+	return g_strcmp0 (v1, v2) == 0;
+}
+
+static gboolean
+as_app_equal_array_str (GPtrArray *v1, GPtrArray *v2)
+{
+	if (v1->len == 0 || v2->len == 0)
+		return TRUE;
+	return g_strcmp0 (g_ptr_array_index (v1, 0),
+			  g_ptr_array_index (v2, 0)) == 0;
+}
+
+static AsBundleKind
+as_app_get_unique_id_bundle (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* prefer bundle */
+	if (priv->bundles->len > 0) {
+		AsBundle *bundle = g_ptr_array_index (priv->bundles, 0);
+		if (as_bundle_get_kind (bundle) != AS_BUNDLE_KIND_UNKNOWN)
+			return as_bundle_get_kind (bundle);
+	}
+
+	/* fallback to packages */
+	if (priv->pkgnames->len > 0)
+		return AS_BUNDLE_KIND_PACKAGE;
+
+	/* nothing */
+	return AS_BUNDLE_KIND_UNKNOWN;
+}
+
 /**
  * as_app_equal:
  * @app1: a #AsApp instance.
  * @app2: another #AsApp instance.
  *
- * Compare one application with another for equality.
+ * Compare one application with another for equality using the following
+ * properties:
+ *
+ *  1. scope, e.g. `system` or `user`
+ *  2. bundle kind, e.g. `package` or `flatpak`
+ *  3. origin, e.g. `fedora` or `gnome-apps-nightly`
+ *  4. kind, e.g. `app` or `runtime`
+ *  5. AppStream ID, e.g. `gimp.desktop`
+ *  6. arch, e.g. `x86_64` or `i386`
+ *  7. branch, e.g. `3.20` or `master`
  *
  * Returns: %TRUE if the applications are equal
  *
@@ -504,10 +558,27 @@ as_app_class_init (AsAppClass *klass)
 gboolean
 as_app_equal (AsApp *app1, AsApp *app2)
 {
+	AsAppPrivate *priv1 = GET_PRIVATE (app1);
+	AsAppPrivate *priv2 = GET_PRIVATE (app2);
 	if (app1 == app2)
 		return TRUE;
-	return g_strcmp0 (as_app_get_unique_id (app1),
-			  as_app_get_unique_id (app2)) == 0;
+	if (!as_app_equal_int (priv1->scope, priv2->scope))
+		return FALSE;
+	if (!as_app_equal_int (priv1->kind, priv2->kind))
+		return FALSE;
+	if (!as_app_equal_str (priv1->id_filename, priv2->id_filename))
+		return FALSE;
+	if (!as_app_equal_str (priv1->origin, priv2->origin))
+		return FALSE;
+	if (!as_app_equal_str (priv1->branch, priv2->branch))
+		return FALSE;
+	if (!as_app_equal_array_str (priv1->architectures,
+				     priv2->architectures))
+		return FALSE;
+	if (!as_app_equal_int (as_app_get_unique_id_bundle (app1),
+			       as_app_get_unique_id_bundle (app2)))
+		return FALSE;
+	return TRUE;
 }
 
 static const gchar *
@@ -516,26 +587,6 @@ as_app_fix_unique_nullable (const gchar *tmp)
 	if (tmp == NULL || tmp[0] == '\0')
 		return AS_APP_UNIQUE_WILDCARD;
 	return tmp;
-}
-
-static const gchar *
-as_app_get_unique_id_system (AsApp *app)
-{
-	AsAppPrivate *priv = GET_PRIVATE (app);
-
-	/* prefer bundle */
-	if (priv->bundles->len > 0) {
-		AsBundle *bundle = g_ptr_array_index (priv->bundles, 0);
-		if (as_bundle_get_kind (bundle) != AS_BUNDLE_KIND_UNKNOWN)
-			return as_bundle_kind_to_string (as_bundle_get_kind (bundle));
-	}
-
-	/* fallback to packages */
-	if (priv->pkgnames->len > 0)
-		return "package";
-
-	/* nothing */
-	return AS_APP_UNIQUE_WILDCARD;
 }
 
 /**
@@ -553,7 +604,9 @@ as_app_get_unique_id (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	if (priv->unique_id == NULL) {
+		AsBundleKind bundle_kind;
 		const gchar *arch_str = NULL;
+		const gchar *bundle_str = NULL;
 		const gchar *id_str = NULL;
 		const gchar *kind_str = NULL;
 		const gchar *scope_str = NULL;
@@ -561,12 +614,15 @@ as_app_get_unique_id (AsApp *app)
 			kind_str = as_app_kind_to_string (priv->kind);
 		if (priv->scope != AS_APP_SCOPE_UNKNOWN)
 			scope_str = as_app_scope_to_string (priv->scope);
+		bundle_kind = as_app_get_unique_id_bundle (app);
+		if (bundle_kind != AS_BUNDLE_KIND_UNKNOWN)
+			bundle_str = as_bundle_kind_to_string (bundle_kind);
 		id_str = as_app_get_id_no_prefix (app);
 		if (priv->architectures->len == 1)
 			arch_str = g_ptr_array_index (priv->architectures, 0);
 		priv->unique_id = g_strdup_printf ("%s/%s/%s/%s/%s/%s/%s",
 						   as_app_fix_unique_nullable (scope_str),
-						   as_app_get_unique_id_system (app),
+						   as_app_fix_unique_nullable (bundle_str),
 						   as_app_fix_unique_nullable (priv->origin),
 						   as_app_fix_unique_nullable (kind_str),
 						   as_app_fix_unique_nullable (id_str),
