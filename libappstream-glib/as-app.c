@@ -518,13 +518,33 @@ as_app_fix_unique_nullable (const gchar *tmp)
 	return tmp;
 }
 
+static const gchar *
+as_app_get_unique_id_system (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* prefer bundle */
+	if (priv->bundles->len > 0) {
+		AsBundle *bundle = g_ptr_array_index (priv->bundles, 0);
+		if (as_bundle_get_kind (bundle) != AS_BUNDLE_KIND_UNKNOWN)
+			return as_bundle_kind_to_string (as_bundle_get_kind (bundle));
+	}
+
+	/* fallback to packages */
+	if (priv->pkgnames->len > 0)
+		return "package";
+
+	/* nothing */
+	return "*";
+}
+
 /**
  * as_app_get_unique_id:
  * @app: a #AsApp instance.
  *
  * Gets the unique ID value to represent the component.
  *
- * Returns: the unique ID, e.g. "system/fedora/desktop/gimp.desktop/i386/master"
+ * Returns: the unique ID, e.g. "system/package/fedora/desktop/gimp.desktop/i386/master"
  *
  * Since: 0.6.1
  **/
@@ -544,8 +564,9 @@ as_app_get_unique_id (AsApp *app)
 		id_str = as_app_get_id_no_prefix (app);
 		if (priv->architectures->len == 1)
 			arch_str = g_ptr_array_index (priv->architectures, 0);
-		priv->unique_id = g_strdup_printf ("%s/%s/%s/%s/%s/%s",
+		priv->unique_id = g_strdup_printf ("%s/%s/%s/%s/%s/%s/%s",
 						   as_app_fix_unique_nullable (scope_str),
+						   as_app_get_unique_id_system (app),
 						   as_app_fix_unique_nullable (priv->origin),
 						   as_app_fix_unique_nullable (kind_str),
 						   as_app_fix_unique_nullable (id_str),
