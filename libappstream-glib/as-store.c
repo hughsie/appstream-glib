@@ -987,6 +987,7 @@ as_store_from_root (AsStore *store,
 	g_autofree gchar *icon_path = NULL;
 	g_autofree gchar *id_prefix_app = NULL;
 	g_autofree gchar *origin_app = NULL;
+	g_autofree gchar *origin_app_icons = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 	g_autoptr(AsProfileTask) ptask = NULL;
 
@@ -1035,6 +1036,7 @@ as_store_from_root (AsStore *store,
 			if (str != NULL) {
 				str[0] = '\0';
 				origin_app = g_strdup (str + 1);
+				origin_app_icons = g_strdup (str + 1);
 			}
 		}
 	}
@@ -1051,7 +1053,8 @@ as_store_from_root (AsStore *store,
 		str = g_strrstr (source_basename, ".xml");
 		if (str != NULL) {
 			str[0] = '\0';
-			origin_app = g_strdup (source_basename);
+			origin_app = g_strdup (source_basename + 8);
+			origin_app_icons = g_strdup (source_basename);
 		}
 
 		/* get the id-prefix */
@@ -1066,6 +1069,7 @@ as_store_from_root (AsStore *store,
 	if (origin_app == NULL) {
 		id_prefix_app = g_strdup (as_app_scope_to_string (scope));
 		origin_app = g_strdup (priv->origin);
+		origin_app_icons = g_strdup (priv->origin);
 	}
 
 	/* print what cleverness we did */
@@ -1081,12 +1085,12 @@ as_store_from_root (AsStore *store,
 		topdir = g_path_get_basename (icon_prefix);
 		if ((g_strcmp0 (topdir, "xmls") == 0 ||
 		     g_strcmp0 (topdir, "yaml") == 0)
-		    && origin_app != NULL) {
+		    && origin_app_icons != NULL) {
 			g_autofree gchar *dirname = NULL;
 			dirname = g_path_get_dirname (icon_prefix);
 			icon_path = g_build_filename (dirname,
 						      "icons",
-						      origin_app,
+						      origin_app_icons,
 						      NULL);
 		} else {
 			icon_path = g_build_filename (icon_prefix, "icons", NULL);
