@@ -1229,7 +1229,7 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 		app = g_ptr_array_index (array, i);
 		g_print ("[%s] %s\n",
 			 as_app_get_metadata_item (app, "SortKey"),
-			 as_app_get_id (app));
+			 as_app_get_unique_id (app));
 	}
 	return TRUE;
 }
