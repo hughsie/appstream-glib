@@ -483,7 +483,7 @@ as_app_fix_unique_nullable (const gchar *tmp)
  *
  * Gets the unique ID value to represent the component.
  *
- * Returns: the unique ID, e.g. "desktop/gimp.desktop/i386/master"
+ * Returns: the unique ID, e.g. "fedora/desktop/gimp.desktop/i386/master"
  *
  * Since: 0.6.1
  **/
@@ -500,7 +500,8 @@ as_app_get_unique_id (AsApp *app)
 		id_str = as_app_get_id_no_prefix (app);
 		if (priv->architectures->len == 1)
 			arch_str = g_ptr_array_index (priv->architectures, 0);
-		priv->unique_id = g_strdup_printf ("%s/%s/%s/%s",
+		priv->unique_id = g_strdup_printf ("%s/%s/%s/%s/%s",
+						   as_app_fix_unique_nullable (priv->origin),
 						   as_app_fix_unique_nullable (kind_str),
 						   as_app_fix_unique_nullable (id_str),
 						   as_app_fix_unique_nullable (arch_str),
