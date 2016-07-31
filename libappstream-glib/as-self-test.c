@@ -1537,6 +1537,7 @@ as_test_app_func (void)
 	/* verify */
 	g_assert_cmpstr (as_app_get_id (app), ==, "org.gnome.Software.desktop");
 	g_assert_cmpstr (as_app_get_id_filename (app), ==, "org.gnome.Software");
+	g_assert_cmpstr (as_app_get_unique_id (app), ==, "desktop/org.gnome.Software.desktop");
 	g_assert_cmpstr (as_app_get_name (app, "pl"), ==, "Oprogramowanie");
 	g_assert_cmpstr (as_app_get_comment (app, NULL), ==, "Application manager");
 	g_assert_cmpstr (as_app_get_description (app, NULL), ==, "<p>Software allows you to find stuff</p>");
@@ -1565,6 +1566,9 @@ as_test_app_func (void)
 	g_assert (as_app_has_compulsory_for_desktop (app, "GNOME"));
 	g_assert (!as_app_has_compulsory_for_desktop (app, "KDE"));
 	as_node_unref (root);
+
+	/* check equality */
+	g_assert (as_app_equal (app, app));
 
 	/* check newest release */
 	rel = as_app_get_release_default (app);
@@ -3020,6 +3024,7 @@ as_test_store_flatpak_func (void)
 	g_assert_cmpint (apps->len, ==, 1);
 	app = g_ptr_array_index (apps, 0);
 	g_assert_cmpstr (as_app_get_id (app), ==, "flatpak:test.desktop");
+	g_assert_cmpstr (as_app_get_unique_id (app), ==, "desktop/test.desktop");
 	g_assert_cmpstr (as_app_get_id_filename (app), ==, "test");
 	g_assert_cmpstr (as_app_get_origin (app), ==, "flatpak_remote-name");
 	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);

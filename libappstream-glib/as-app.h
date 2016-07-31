@@ -322,6 +322,7 @@ const gchar	*as_app_get_icon_path		(AsApp		*app);
 const gchar	*as_app_get_id_filename		(AsApp		*app);
 const gchar	*as_app_get_id			(AsApp		*app);
 const gchar	*as_app_get_id_no_prefix	(AsApp		*app);
+const gchar	*as_app_get_unique_id		(AsApp		*app);
 const gchar	*as_app_get_pkgname_default	(AsApp		*app);
 const gchar	*as_app_get_source_pkgname	(AsApp		*app);
 const gchar	*as_app_get_origin		(AsApp		*app);
@@ -492,6 +493,8 @@ AsRelease	*as_app_get_release_default	(AsApp		*app);
 gboolean	 as_app_convert_icons		(AsApp		*app,
 						 AsIconKind	 kind,
 						 GError		**error);
+gboolean	 as_app_equal			(AsApp		*app1,
+						 AsApp		*app2);
 
 /* deprecated */
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS

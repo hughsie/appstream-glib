@@ -98,6 +98,7 @@ typedef struct
 	gchar		*metadata_license;
 	gchar		*source_pkgname;
 	gchar		*update_contact;
+	gchar		*unique_id;
 	gchar		*source_file;
 	gint		 priority;
 	gsize		 token_cache_valid;
@@ -367,6 +368,7 @@ as_app_finalize (GObject *object)
 	g_free (priv->origin);
 	g_free (priv->source_pkgname);
 	g_free (priv->update_contact);
+	g_free (priv->unique_id);
 	g_free (priv->source_file);
 	g_hash_table_unref (priv->comments);
 	g_hash_table_unref (priv->developer_names);
@@ -444,6 +446,61 @@ as_app_class_init (AsAppClass *klass)
 }
 
 /******************************************************************************/
+
+/**
+ * as_app_equal:
+ * @app1: a #AsApp instance.
+ * @app2: another #AsApp instance.
+ *
+ * Compare one application with another for equality.
+ *
+ * Returns: %TRUE if the applications are equal
+ *
+ * Since: 0.6.1
+ **/
+gboolean
+as_app_equal (AsApp *app1, AsApp *app2)
+{
+	if (app1 == app2)
+		return TRUE;
+	return g_strcmp0 (as_app_get_unique_id (app1),
+			  as_app_get_unique_id (app2)) == 0;
+}
+
+static const gchar *
+as_app_fix_unique_nullable (const gchar *tmp)
+{
+	if (tmp == NULL || tmp[0] == '\0')
+		return "*";
+	return tmp;
+}
+
+/**
+ * as_app_get_unique_id:
+ * @app: a #AsApp instance.
+ *
+ * Gets the unique ID value to represent the component.
+ *
+ * Returns: the unique ID, e.g. "desktop/gimp.desktop"
+ *
+ * Since: 0.6.1
+ **/
+const gchar *
+as_app_get_unique_id (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	if (priv->unique_id == NULL) {
+		const gchar *id_str = NULL;
+		const gchar *kind_str = NULL;
+		if (priv->kind != AS_APP_KIND_UNKNOWN)
+			kind_str = as_app_kind_to_string (priv->kind);
+		id_str = as_app_get_id_no_prefix (app);
+		priv->unique_id = g_strdup_printf ("%s/%s",
+						   as_app_fix_unique_nullable (kind_str),
+						   as_app_fix_unique_nullable (id_str));
+	}
+	return priv->unique_id;
+}
 
 /**
  * as_app_get_id:
