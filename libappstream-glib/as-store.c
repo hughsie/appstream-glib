@@ -114,6 +114,7 @@ static gboolean	as_store_from_file_internal (AsStore *store,
 					     GFile *file,
 					     const gchar *id_prefix,
 					     const gchar *arch,
+					     AsStoreWatchFlags watch_flags,
 					     GCancellable *cancellable,
 					     GError **error);
 
@@ -1348,10 +1349,13 @@ as_store_watch_source_added (AsStore *store, const gchar *filename)
 		return;
 	}
 	file = g_file_new_for_path (filename);
+	/* Do not watch the file for changes: we're already watching its
+	 * parent directory */
 	if (!as_store_from_file_internal (store,
 					  file,
 					  path_data->id_prefix,
 					  path_data->arch,
+					  AS_STORE_WATCH_FLAG_NONE,
 					  NULL, /* cancellable */
 					  &error)){
 		g_warning ("failed to rescan: %s", error->message);
@@ -1473,6 +1477,7 @@ as_store_from_file_internal (AsStore *store,
 			     GFile *file,
 			     const gchar *id_prefix,
 			     const gchar *arch,
+			     AsStoreWatchFlags watch_flags,
 			     GCancellable *cancellable,
 			     GError **error)
 {
@@ -1514,7 +1519,7 @@ as_store_from_file_internal (AsStore *store,
 	}
 
 	/* watch for file changes */
-	if (priv->watch_flags > 0) {
+	if (watch_flags > 0) {
 		if (!as_monitor_add_file (priv->monitor,
 					  filename,
 					  cancellable,
@@ -1554,9 +1559,12 @@ as_store_from_file (AsStore *store,
 		    GCancellable *cancellable,
 		    GError **error)
 {
+	AsStorePrivate *priv = GET_PRIVATE (store);
+
 	return as_store_from_file_internal (store, file,
 					    NULL, /* id_prefix */
 					    NULL, /* arch */
+					    priv->watch_flags,
 					    cancellable, error);
 }
 
@@ -2181,10 +2189,13 @@ as_store_load_app_info_file (AsStore *store,
 		return FALSE;
 
 	file = g_file_new_for_path (path_xml);
+	/* Do not monitor the file: assume we are already monitoring its
+	 * directory */
 	return as_store_from_file_internal (store,
 					    file,
 					    id_prefix,
 					    arch,
+					    AS_STORE_WATCH_FLAG_NONE,
 					    cancellable,
 					    error);
 }
