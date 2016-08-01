@@ -87,6 +87,7 @@ guint		 as_app_get_name_size		(AsApp		*app);
 guint		 as_app_get_comment_size	(AsApp		*app);
 guint		 as_app_get_description_size	(AsApp		*app);
 GPtrArray	*as_app_get_search_tokens	(AsApp		*app);
+AsBundleKind	 as_app_get_bundle_kind		(AsApp		*app);
 
 GNode		*as_app_node_insert		(AsApp		*app,
 						 GNode		*parent,

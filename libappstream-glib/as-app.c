@@ -515,8 +515,8 @@ as_app_equal_array_str (GPtrArray *v1, GPtrArray *v2)
 			  g_ptr_array_index (v2, 0)) == 0;
 }
 
-static AsBundleKind
-as_app_get_unique_id_bundle (AsApp *app)
+AsBundleKind
+as_app_get_bundle_kind (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
@@ -575,8 +575,8 @@ as_app_equal (AsApp *app1, AsApp *app2)
 	if (!as_app_equal_array_str (priv1->architectures,
 				     priv2->architectures))
 		return FALSE;
-	if (!as_app_equal_int (as_app_get_unique_id_bundle (app1),
-			       as_app_get_unique_id_bundle (app2)))
+	if (!as_app_equal_int (as_app_get_bundle_kind (app1),
+			       as_app_get_bundle_kind (app2)))
 		return FALSE;
 	return TRUE;
 }
@@ -614,7 +614,7 @@ as_app_get_unique_id (AsApp *app)
 			kind_str = as_app_kind_to_string (priv->kind);
 		if (priv->scope != AS_APP_SCOPE_UNKNOWN)
 			scope_str = as_app_scope_to_string (priv->scope);
-		bundle_kind = as_app_get_unique_id_bundle (app);
+		bundle_kind = as_app_get_bundle_kind (app);
 		if (bundle_kind != AS_BUNDLE_KIND_UNKNOWN)
 			bundle_str = as_bundle_kind_to_string (bundle_kind);
 		id_str = as_app_get_id_no_prefix (app);
