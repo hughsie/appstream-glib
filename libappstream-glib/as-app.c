@@ -563,6 +563,10 @@ as_app_equal (AsApp *app1, AsApp *app2)
 {
 	AsAppPrivate *priv1 = GET_PRIVATE (app1);
 	AsAppPrivate *priv2 = GET_PRIVATE (app2);
+
+	g_return_val_if_fail (AS_IS_APP (app1), FALSE);
+	g_return_val_if_fail (AS_IS_APP (app2), FALSE);
+
 	if (app1 == app2)
 		return TRUE;
 	if (!as_app_equal_int (priv1->scope, priv2->scope))
@@ -586,14 +590,6 @@ as_app_equal (AsApp *app1, AsApp *app2)
 	return TRUE;
 }
 
-static const gchar *
-as_app_fix_unique_nullable (const gchar *tmp)
-{
-	if (tmp == NULL || tmp[0] == '\0')
-		return AS_APP_UNIQUE_WILDCARD;
-	return tmp;
-}
-
 /**
  * as_app_get_unique_id:
  * @app: a #AsApp instance.
@@ -609,31 +605,17 @@ as_app_get_unique_id (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	if (priv->unique_id == NULL) {
-		AsBundleKind bundle_kind;
 		const gchar *arch_str = NULL;
-		const gchar *bundle_str = NULL;
-		const gchar *id_str = NULL;
-		const gchar *kind_str = NULL;
-		const gchar *scope_str = NULL;
-		if (priv->kind != AS_APP_KIND_UNKNOWN)
-			kind_str = as_app_kind_to_string (priv->kind);
-		if (priv->scope != AS_APP_SCOPE_UNKNOWN)
-			scope_str = as_app_scope_to_string (priv->scope);
-		bundle_kind = as_app_get_bundle_kind (app);
-		if (bundle_kind != AS_BUNDLE_KIND_UNKNOWN)
-			bundle_str = as_bundle_kind_to_string (bundle_kind);
-		id_str = as_app_get_id_no_prefix (app);
 		if (priv->architectures->len == 1)
 			arch_str = g_ptr_array_index (priv->architectures, 0);
-		priv->unique_id = g_strdup_printf ("%s/%s/%s/%s/%s/%s/%s/%s",
-						   as_app_fix_unique_nullable (scope_str),
-						   as_app_fix_unique_nullable (bundle_str),
-						   as_app_fix_unique_nullable (priv->origin),
-						   as_app_fix_unique_nullable (kind_str),
-						   as_app_fix_unique_nullable (id_str),
-						   as_app_fix_unique_nullable (arch_str),
-						   as_app_fix_unique_nullable (priv->branch),
-						   as_app_fix_unique_nullable (priv->version));
+		priv->unique_id = as_utils_unique_id_build (priv->scope,
+							    as_app_get_bundle_kind (app),
+							    priv->origin,
+							    priv->kind,
+							    as_app_get_id_no_prefix (app),
+							    arch_str,
+							    priv->branch,
+							    priv->version);
 	}
 	return priv->unique_id;
 }

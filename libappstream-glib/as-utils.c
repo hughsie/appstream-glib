@@ -40,7 +40,7 @@
 #include <stdlib.h>
 #include <uuid.h>
 
-#include "as-app.h"
+#include "as-app-private.h"
 #include "as-enums.h"
 #include "as-node.h"
 #include "as-resources.h"
@@ -1704,4 +1704,62 @@ as_utils_iso8601_to_datetime (const gchar *iso_date)
 
 	/* create valid object */
 	return g_date_time_new_utc ((gint) dmy[0], (gint) dmy[1], (gint) dmy[2], 0, 0, 0);
+}
+
+static const gchar *
+_as_utils_fix_unique_id_part (const gchar *tmp)
+{
+	if (tmp == NULL || tmp[0] == '\0')
+		return AS_APP_UNIQUE_WILDCARD;
+	return tmp;
+}
+
+/**
+ * as_utils_unique_id_build:
+ * @scope: a #AsAppScope e.g. %AS_APP_SCOPE_SYSTEM
+ * @bundle_kind: System, e.g. 'package' or 'flatpak'
+ * @origin: Origin, e.g. 'fedora' or 'gnome-apps-nightly'
+ * @kind: #AsAppKind, e.g. %AS_APP_KIND_DESKTOP
+ * @id: AppStream ID, e.g. 'gimp.desktop'
+ * @arch: Arch, e.g. 'x86_64' or 'i386'
+ * @branch: Branch, e.g. '3-20' or 'master'
+ * @version: Version, e.g. '1.2.3'
+ *
+ * Builds a valid unique ID using available data.
+ *
+ * Returns: a unique name, or %NULL for error;
+ *
+ * Since: 0.6.1
+ */
+gchar *
+as_utils_unique_id_build (AsAppScope scope,
+			  AsBundleKind bundle_kind,
+			  const gchar *origin,
+			  AsAppKind kind,
+			  const gchar *id,
+			  const gchar *arch,
+			  const gchar *branch,
+			  const gchar *version)
+{
+	const gchar *bundle_str = NULL;
+	const gchar *kind_str = NULL;
+	const gchar *scope_str = NULL;
+
+	g_return_val_if_fail (id != NULL, NULL);
+
+	if (kind != AS_APP_KIND_UNKNOWN)
+		kind_str = as_app_kind_to_string (kind);
+	if (scope != AS_APP_SCOPE_UNKNOWN)
+		scope_str = as_app_scope_to_string (scope);
+	if (bundle_kind != AS_BUNDLE_KIND_UNKNOWN)
+		bundle_str = as_bundle_kind_to_string (bundle_kind);
+	return g_strdup_printf ("%s/%s/%s/%s/%s/%s/%s/%s",
+				_as_utils_fix_unique_id_part (scope_str),
+				_as_utils_fix_unique_id_part (bundle_str),
+				_as_utils_fix_unique_id_part (origin),
+				_as_utils_fix_unique_id_part (kind_str),
+				_as_utils_fix_unique_id_part (id),
+				_as_utils_fix_unique_id_part (arch),
+				_as_utils_fix_unique_id_part (branch),
+				_as_utils_fix_unique_id_part (version));
 }

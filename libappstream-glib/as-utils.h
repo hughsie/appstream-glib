@@ -28,6 +28,9 @@
 
 #include <glib.h>
 
+#include "as-app.h"
+#include "as-bundle.h"
+
 G_BEGIN_DECLS
 
 /**
@@ -129,6 +132,14 @@ gchar		*as_utils_version_parse		(const gchar	*version);
 guint		 as_utils_string_replace	(GString	*string,
 						 const gchar	*search,
 						 const gchar	*replace);
+gchar		*as_utils_unique_id_build	(AsAppScope	 scope,
+						 AsBundleKind	 bundle_kind,
+						 const gchar	*origin,
+						 AsAppKind	 kind,
+						 const gchar	*id,
+						 const gchar	*arch,
+						 const gchar	*branch,
+						 const gchar	*version);
 
 G_END_DECLS
 
