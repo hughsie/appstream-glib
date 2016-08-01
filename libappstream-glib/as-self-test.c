@@ -1537,7 +1537,7 @@ as_test_app_func (void)
 	/* verify */
 	g_assert_cmpstr (as_app_get_id (app), ==, "org.gnome.Software.desktop");
 	g_assert_cmpstr (as_app_get_id_filename (app), ==, "org.gnome.Software");
-	g_assert_cmpstr (as_app_get_unique_id (app), ==, "*/flatpak/*/desktop/org.gnome.Software.desktop/i386/master");
+	g_assert_cmpstr (as_app_get_unique_id (app), ==, "*/flatpak/*/desktop/org.gnome.Software.desktop/i386/master/*");
 	g_assert_cmpstr (as_app_get_name (app, "pl"), ==, "Oprogramowanie");
 	g_assert_cmpstr (as_app_get_comment (app, NULL), ==, "Application manager");
 	g_assert_cmpstr (as_app_get_description (app, NULL), ==, "<p>Software allows you to find stuff</p>");
@@ -2989,19 +2989,19 @@ as_test_store_prefix_func (void)
 			 "flatpak-user:org.gnome.Software.desktop");
 
 	/* exact unique match */
-	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/test/*/*",
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/test/*/*/*",
 						 AS_STORE_SEARCH_FLAG_NONE);
 	g_assert (app_tmp == NULL);
-	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/test/*/*",
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/test/*/*/*",
 						 AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
 	g_assert (app_tmp == NULL);
-	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/org.gnome.Software.desktop/*/*",
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/org.gnome.Software.desktop/*/*/*",
 						 AS_STORE_SEARCH_FLAG_NONE);
 	g_assert (app_tmp != NULL);
-	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/org.gnome.Software.desktop/*/*",
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/org.gnome.Software.desktop/*/*/*",
 						 AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
 	g_assert (app_tmp != NULL);
-	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/*/*/*",
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/*/*/*/*",
 						 AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
 	g_assert (app_tmp != NULL);
 }
@@ -3042,7 +3042,7 @@ as_test_store_flatpak_func (void)
 	g_assert_cmpint (apps->len, ==, 1);
 	app = g_ptr_array_index (apps, 0);
 	g_assert_cmpstr (as_app_get_id (app), ==, "flatpak:test.desktop");
-	g_assert_cmpstr (as_app_get_unique_id (app), ==, "system/flatpak/remote-name/desktop/test.desktop/x86_64/master");
+	g_assert_cmpstr (as_app_get_unique_id (app), ==, "system/flatpak/remote-name/desktop/test.desktop/x86_64/master/*");
 	g_assert_cmpstr (as_app_get_id_filename (app), ==, "test");
 	g_assert_cmpstr (as_app_get_origin (app), ==, "remote-name");
 	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
