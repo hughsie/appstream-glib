@@ -1343,7 +1343,9 @@ as_store_watch_source_added (AsStore *store, const gchar *filename)
 	/* we helpfully saved this */
 	dirname = g_path_get_dirname (filename);
 	g_debug ("parsing new file %s from %s", filename, dirname);
-	path_data = g_hash_table_lookup (priv->appinfo_dirs, dirname);
+	path_data = g_hash_table_lookup (priv->appinfo_dirs, filename);
+	if (path_data == NULL)
+		path_data = g_hash_table_lookup (priv->appinfo_dirs, dirname);
 	if (path_data == NULL) {
 		g_warning ("no path data for %s", dirname);
 		return;
@@ -1443,13 +1445,6 @@ as_store_add_path_data (AsStore *store,
 		return;
 	}
 
-	/* check is a directory */
-	if (!g_file_test (path, G_FILE_TEST_IS_DIR)) {
-		g_warning ("not adding path %s [%s:%s] as not a directory",
-			   path, id_prefix, arch);
-		return;
-	}
-
 	/* check not already exists */
 	path_data = g_hash_table_lookup (priv->appinfo_dirs, path);
 	if (path_data != NULL) {
@@ -1520,6 +1515,7 @@ as_store_from_file_internal (AsStore *store,
 
 	/* watch for file changes */
 	if (watch_flags > 0) {
+		as_store_add_path_data (store, filename, id_prefix, arch);
 		if (!as_monitor_add_file (priv->monitor,
 					  filename,
 					  cancellable,
