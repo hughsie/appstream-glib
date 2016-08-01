@@ -1200,6 +1200,7 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* load system database */
 	store = as_store_new ();
+	as_store_set_add_flags (store, AS_STORE_ADD_FLAG_USE_UNIQUE_ID);
 	if (!as_store_load (store,
 			    AS_STORE_LOAD_FLAG_IGNORE_INVALID |
 			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
