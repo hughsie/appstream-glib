@@ -2976,6 +2976,16 @@ as_app_add_bundle (AsApp *app, AsBundle *bundle)
 				return;
 		}
 	}
+
+	/* set the architecture and branch */
+	if (as_bundle_get_kind (bundle) == AS_BUNDLE_KIND_FLATPAK) {
+		g_auto(GStrv) split = g_strsplit (as_bundle_get_id (bundle), "/", -1);
+		if (priv->architectures->len == 0)
+			as_app_add_arch (app, split[2]);
+		if (priv->branch == NULL)
+			as_app_set_branch (app, split[3]);
+	}
+
 	g_ptr_array_add (priv->bundles, g_object_ref (bundle));
 }
 
@@ -3982,14 +3992,6 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		if (!as_bundle_node_parse (bu, n, ctx, error))
 			return FALSE;
 		as_app_add_bundle (app, bu);
-
-		/* set the architecture and branch */
-		if (as_bundle_get_kind (bu) == AS_BUNDLE_KIND_FLATPAK) {
-			g_auto(GStrv) split = g_strsplit (as_bundle_get_id (bu), "/", -1);
-			as_app_add_arch (app, split[2]);
-			if (priv->branch == NULL)
-				priv->branch = g_strdup (split[3]);
-		}
 		break;
 	}
 

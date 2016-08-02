@@ -3364,6 +3364,66 @@ as_test_store_func (void)
 }
 
 static void
+as_test_store_unique_func (void)
+{
+	AsApp *app;
+	GPtrArray *apps;
+	g_autoptr(AsApp) app1 = NULL;
+	g_autoptr(AsApp) app2 = NULL;
+	g_autoptr(AsApp) app3 = NULL;
+	g_autoptr(AsBundle) bundle2 = NULL;
+	g_autoptr(AsBundle) bundle3 = NULL;
+	g_autoptr(AsStore) store = NULL;
+
+	/* create a store and add a single app */
+	store = as_store_new ();
+	as_store_set_add_flags (store, AS_STORE_ADD_FLAG_USE_UNIQUE_ID);
+	app1 = as_app_new ();
+	as_app_set_id (app1, "org.gnome.Software.desktop");
+	as_app_set_kind (app1, AS_APP_KIND_DESKTOP);
+	as_app_add_pkgname (app1, "gnome-software");
+	as_store_add_app (store, app1);
+
+	/* add a stable bundle */
+	app2 = as_app_new ();
+	bundle2 = as_bundle_new ();
+	as_bundle_set_kind (bundle2, AS_BUNDLE_KIND_FLATPAK);
+	as_bundle_set_id (bundle2, "app/org.gnome.Software/i386/3-18");
+	as_app_set_id (app2, "org.gnome.Software.desktop");
+	as_app_set_kind (app2, AS_APP_KIND_DESKTOP);
+	as_app_add_bundle (app2, bundle2);
+	as_store_add_app (store, app2);
+
+	/* add a master bundle */
+	app3 = as_app_new ();
+	bundle3 = as_bundle_new ();
+	as_bundle_set_kind (bundle3, AS_BUNDLE_KIND_FLATPAK);
+	as_bundle_set_id (bundle3, "app/org.gnome.Software/i386/master");
+	as_app_set_id (app3, "org.gnome.Software.desktop");
+	as_app_set_kind (app3, AS_APP_KIND_DESKTOP);
+	as_app_add_bundle (app3, bundle3);
+	as_store_add_app (store, app3);
+
+	g_assert_cmpint (as_store_get_size (store), ==, 3);
+	apps = as_store_get_apps_by_id (store, "org.gnome.Software.desktop");
+	g_assert_cmpint (apps->len, ==, 3);
+	app = g_ptr_array_index (apps, 0);
+	g_assert_cmpstr (as_app_get_unique_id (app), ==,
+			 "*/package/*/desktop/org.gnome.Software.desktop/*/*/*");
+	app = g_ptr_array_index (apps, 1);
+	g_assert_cmpstr (as_app_get_unique_id (app), ==,
+			 "*/flatpak/*/desktop/org.gnome.Software.desktop/i386/3-18/*");
+	app = g_ptr_array_index (apps, 2);
+	g_assert_cmpstr (as_app_get_unique_id (app), ==,
+			 "*/flatpak/*/desktop/org.gnome.Software.desktop/i386/master/*");
+	app = as_store_get_app_by_unique_id (store,
+					     "*/flatpak/*/desktop/"
+					     "org.gnome.Software.desktop/i386/master/*",
+					     AS_STORE_SEARCH_FLAG_NONE);
+	g_assert (app != NULL);
+}
+
+static void
 as_test_store_provides_func (void)
 {
 	AsApp *app;
@@ -4997,6 +5057,7 @@ main (int argc, char **argv)
 	}
 	g_test_add_func ("/AppStream/yaml", as_test_yaml_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
+	g_test_add_func ("/AppStream/store{unique}", as_test_store_unique_func);
 	g_test_add_func ("/AppStream/store{empty}", as_test_store_empty_func);
 	if (g_test_slow ()) {
 		g_test_add_func ("/AppStream/store{auto-reload-dir}", as_test_store_auto_reload_dir_func);
