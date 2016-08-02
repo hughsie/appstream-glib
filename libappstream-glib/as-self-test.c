@@ -4268,6 +4268,7 @@ as_test_store_metadata_index_func (void)
 static void
 as_test_yaml_func (void)
 {
+#if AS_BUILD_DEP11
 	AsYaml *node;
 	GError *error = NULL;
 	GString *str;
@@ -4376,11 +4377,15 @@ as_test_yaml_func (void)
 	g_assert (ret);
 	g_string_free (str, TRUE);
 	as_yaml_unref (node);
+#else
+	g_test_skip ("Compiled without YAML (DEP-11) support");
+#endif
 }
 
 static void
 as_test_store_yaml_func (void)
 {
+#if AS_BUILD_DEP11
 	AsApp *app;
 	GError *error = NULL;
 	gboolean ret;
@@ -4440,11 +4445,15 @@ as_test_store_yaml_func (void)
 	g_assert_cmpstr (as_app_get_pkgname_default (app), ==, "iceweasel");
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "Iceweasel");
 	g_assert_cmpstr (as_app_get_origin (app), ==, "aequorea");
+#else
+	g_test_skip ("Compiled without YAML (DEP-11) support");
+#endif
 }
 
 static void
 as_test_store_speed_yaml_func (void)
 {
+#if AS_BUILD_DEP11
 	GError *error = NULL;
 	gboolean ret;
 	guint i;
@@ -4472,7 +4481,9 @@ as_test_store_speed_yaml_func (void)
 		g_assert (as_store_get_app_by_id (store, "blobwars.desktop") != NULL);
 	}
 	g_print ("%.0f ms: ", g_timer_elapsed (timer, NULL) * 1000 / loops);
-
+#else
+	g_test_skip ("Compiled without YAML (DEP-11) support");
+#endif
 }
 
 static void
