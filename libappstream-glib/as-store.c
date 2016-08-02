@@ -64,7 +64,7 @@ typedef struct
 	gchar			*builder_id;
 	gdouble			 api_version;
 	GPtrArray		*array;		/* of AsApp */
-	GHashTable		*hash_id;	/* of AsApp{id} */
+	GHashTable		*hash_id;	/* of GPtrArray of AsApp{id} */
 	GHashTable		*hash_unique_id;	/* of AsApp{unique_id} */
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
 	AsMonitor		*monitor;
@@ -402,22 +402,13 @@ as_store_get_apps_by_metadata (AsStore *store,
 GPtrArray *
 as_store_get_apps_by_id (AsStore *store, const gchar *id)
 {
-	AsApp *app;
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	GPtrArray *apps;
-	guint i;
-
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
-
-	/* find all the apps with this id */
-	apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
-	for (i = 0; i < priv->array->len; i++) {
-		app = g_ptr_array_index (priv->array, i);
-		if (g_strcmp0 (as_app_get_id_no_prefix (app), id) != 0)
-			continue;
-		g_ptr_array_add (apps, g_object_ref (app));
-	}
-	return apps;
+	apps = g_hash_table_lookup (priv->hash_id, id);
+	if (apps != NULL)
+		return g_ptr_array_ref (apps);
+	return g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 }
 
 /**
@@ -444,6 +435,9 @@ as_store_add_metadata_index (AsStore *store, const gchar *key)
  * @id: the application full ID.
  *
  * Finds an application in the store by ID.
+ * If more than one application exists matching the specific ID,
+ * (for instance when using %AS_STORE_ADD_FLAG_USE_UNIQUE_ID) then the
+ * first item that was added is returned.
  *
  * Returns: (transfer none): a #AsApp or %NULL
  *
@@ -453,8 +447,12 @@ AsApp *
 as_store_get_app_by_id (AsStore *store, const gchar *id)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	GPtrArray *apps;
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
-	return g_hash_table_lookup (priv->hash_id, id);
+	apps = g_hash_table_lookup (priv->hash_id, id);
+	if (apps == NULL)
+		return NULL;
+	return g_ptr_array_index (apps, 0);
 }
 
 static AsApp *
@@ -834,7 +832,13 @@ void
 as_store_remove_app (AsStore *store, AsApp *app)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	g_hash_table_remove (priv->hash_id, as_app_get_id (app));
+	GPtrArray *apps;
+
+	/* only remove this specific unique app */
+	apps = g_hash_table_lookup (priv->hash_id, as_app_get_id (app));
+	if (apps != NULL)
+		g_ptr_array_remove (apps, app);
+
 	g_hash_table_remove (priv->hash_unique_id, as_app_get_unique_id (app));
 	g_ptr_array_remove (priv->array, app);
 	g_hash_table_remove_all (priv->metadata_indexes);
@@ -879,8 +883,9 @@ static void
 as_store_add_app_internal (AsStore *store, AsApp *app,
 			   AsStoreSearchFlags search_flags)
 {
-	AsApp *item;
+	AsApp *item = NULL;
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	GPtrArray *apps;
 	GPtrArray *pkgnames;
 	const gchar *id;
 	const gchar *pkgname;
@@ -902,7 +907,9 @@ as_store_add_app_internal (AsStore *store, AsApp *app,
 			item = as_store_get_app_by_app (store, app);
 		}
 	} else {
-		item = g_hash_table_lookup (priv->hash_id, id);
+		apps = g_hash_table_lookup (priv->hash_id, id);
+		if (apps != NULL && apps->len > 0)
+			item = g_ptr_array_index (apps, 0);
 	}
 	if (item != NULL) {
 
@@ -981,16 +988,21 @@ as_store_add_app_internal (AsStore *store, AsApp *app,
 		g_debug ("removing %s entry: %s",
 			 as_app_source_kind_to_string (as_app_get_source_kind (item)),
 			 id);
-		g_hash_table_remove (priv->hash_id, id);
-		g_hash_table_remove (priv->hash_unique_id, id);
-		g_ptr_array_remove (priv->array, item);
+		as_store_remove_app (store, item);
 	}
+
+	/* create hash of id:[apps] if required */
+	apps = g_hash_table_lookup (priv->hash_id, id);
+	if (apps == NULL) {
+		apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+		g_hash_table_insert (priv->hash_id,
+				     (gpointer) as_app_get_id (app),
+				     apps);
+	}
+	g_ptr_array_add (apps, g_object_ref (app));
 
 	/* success, add to array */
 	g_ptr_array_add (priv->array, g_object_ref (app));
-	g_hash_table_insert (priv->hash_id,
-			     (gpointer) as_app_get_id (app),
-			     app);
 	g_hash_table_insert (priv->hash_unique_id,
 			     (gpointer) as_app_get_unique_id (app),
 			     app);
@@ -3034,7 +3046,7 @@ as_store_init (AsStore *store)
 	priv->hash_id = g_hash_table_new_full (g_str_hash,
 					       g_str_equal,
 					       NULL,
-					       NULL);
+					       (GDestroyNotify) g_ptr_array_unref);
 	priv->hash_unique_id = g_hash_table_new_full (g_str_hash,
 						      g_str_equal,
 						      NULL,

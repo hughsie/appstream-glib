@@ -2981,7 +2981,7 @@ as_test_store_prefix_func (void)
 			 "flatpak-user:org.gnome.Software.desktop");
 
 	/* there might be multiple apps we want to get */
-	apps = as_store_get_apps_by_id (store, "org.gnome.Software.desktop");
+	apps = as_store_get_apps_by_id (store, "flatpak-user:org.gnome.Software.desktop");
 	g_assert (apps != NULL);
 	g_assert_cmpint (apps->len, ==, 1);
 	app_tmp = g_ptr_array_index (apps, 0);
@@ -3302,7 +3302,9 @@ as_test_store_func (void)
 {
 	AsApp *app;
 	GString *xml;
+	gboolean ret;
 	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GError) error = NULL;
 
 	/* create a store and add a single app */
 	store = as_store_new ();
@@ -3315,6 +3317,20 @@ as_test_store_func (void)
 	g_object_unref (app);
 	g_assert_cmpstr (as_store_get_origin (store), ==, NULL);
 
+	/* check string output */
+	as_store_set_api_version (store, 0.6);
+	xml = as_store_to_xml (store, 0);
+	ret = as_test_compare_lines (xml->str,
+				     "<components version=\"0.6\">"
+				     "<component type=\"desktop\">"
+				     "<id>gnome-software.desktop</id>"
+				     "</component>"
+				     "</components>",
+				     &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_string_free (xml, TRUE);
+
 	/* add and then remove another app */
 	app = as_app_new ();
 	as_app_set_id (app, "junk.desktop");
@@ -3326,12 +3342,15 @@ as_test_store_func (void)
 	/* check string output */
 	as_store_set_api_version (store, 0.6);
 	xml = as_store_to_xml (store, 0);
-	g_assert_cmpstr (xml->str, ==,
-		"<components version=\"0.6\">"
-		"<component type=\"desktop\">"
-		"<id>gnome-software.desktop</id>"
-		"</component>"
-		"</components>");
+	ret = as_test_compare_lines (xml->str,
+				     "<components version=\"0.6\">"
+				     "<component type=\"desktop\">"
+				     "<id>gnome-software.desktop</id>"
+				     "</component>"
+				     "</components>",
+				     &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	g_string_free (xml, TRUE);
 
 	/* add another app and ensure it's sorted */
