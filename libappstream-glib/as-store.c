@@ -879,9 +879,20 @@ as_store_remove_app_by_id (AsStore *store, const gchar *id)
 	as_store_perhaps_emit_changed (store, "remove-app-by-id");
 }
 
-static void
-as_store_add_app_internal (AsStore *store, AsApp *app,
-			   AsStoreSearchFlags search_flags)
+/**
+ * as_store_add_app:
+ * @store: a #AsStore instance.
+ * @app: a #AsApp instance.
+ *
+ * Adds an application to the store. If a lower priority application has already
+ * been added then this new application will replace it.
+ *
+ * Additionally only applications where the kind is known will be added.
+ *
+ * Since: 0.1.0
+ **/
+void
+as_store_add_app (AsStore *store, AsApp *app)
 {
 	AsApp *item = NULL;
 	AsStorePrivate *priv = GET_PRIVATE (store);
@@ -900,12 +911,7 @@ as_store_add_app_internal (AsStore *store, AsApp *app,
 
 	/* find the item */
 	if (priv->add_flags & AS_STORE_ADD_FLAG_USE_UNIQUE_ID) {
-		if ((search_flags & AS_STORE_SEARCH_FLAG_USE_WILDCARDS) == 0) {
-			item = g_hash_table_lookup (priv->hash_unique_id,
-						    as_app_get_unique_id (app));
-		} else {
-			item = as_store_get_app_by_app (store, app);
-		}
+		item = as_store_get_app_by_app (store, app);
 	} else {
 		apps = g_hash_table_lookup (priv->hash_id, id);
 		if (apps != NULL && apps->len > 0)
@@ -1030,25 +1036,6 @@ as_store_add_app_internal (AsStore *store, AsApp *app,
 
 	/* added */
 	as_store_perhaps_emit_changed (store, "add-app");
-}
-
-/**
- * as_store_add_app:
- * @store: a #AsStore instance.
- * @app: a #AsApp instance.
- *
- * Adds an application to the store. If a lower priority application has already
- * been added then this new application will replace it.
- *
- * Additionally only applications where the kind is known will be added.
- *
- * Since: 0.1.0
- **/
-void
-as_store_add_app (AsStore *store, AsApp *app)
-{
-	as_store_add_app_internal (store, app,
-				   AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
 }
 
 static void
@@ -1305,8 +1292,7 @@ as_store_from_root (AsStore *store,
 			as_app_set_origin (app, origin_app);
 		if (source_filename != NULL)
 			as_app_set_source_file (app, source_filename);
-		as_store_add_app_internal (store, app,
-					   AS_STORE_SEARCH_FLAG_NONE);
+		as_store_add_app (store, app);
 	}
 
 	/* add addon kinds to their parent AsApp */
@@ -1394,10 +1380,8 @@ as_store_load_yaml_file (AsStore *store,
 		if (!as_app_node_parse_dep11 (app, app_n, ctx, error))
 			return FALSE;
 		as_app_set_origin (app, priv->origin);
-		if (as_app_get_id (app) != NULL) {
-			as_store_add_app_internal (store, app,
-						   AS_STORE_SEARCH_FLAG_NONE);
-		}
+		if (as_app_get_id (app) != NULL)
+			as_store_add_app (store, app);
 	}
 
 	/* emit changed */
@@ -2504,8 +2488,7 @@ as_store_load_installed (AsStore *store,
 
 		/* set lower priority than AppStream entries */
 		as_app_set_priority (app, -1);
-		as_store_add_app_internal (store, app,
-					   AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
+		as_store_add_app (store, app);
 	}
 
 	/* emit changed */
