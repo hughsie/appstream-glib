@@ -408,6 +408,129 @@ as_app_builder_search_translations_gettext (AsAppBuilderContext *ctx,
 	return TRUE;
 }
 
+static gchar *
+as_app_builder_get_locale_from_pak_fn (const gchar *basename)
+{
+	gchar *locale;
+	gchar *str;
+
+	/* FIXME: convert using a lookup table where required */
+	locale = g_strdup (basename);
+	str = g_strrstr (locale, ".");
+	if (str != NULL)
+		*str = '\0';
+	g_strdelimit (locale, "-", '_');
+	return locale;
+}
+
+static gboolean
+as_app_builder_parse_file_pak (AsAppBuilderContext *ctx,
+			       const gchar *locale,
+			       const gchar *filename,
+			       GError **error)
+{
+	AsAppBuilderEntry *entry;
+	gsize len = 0;
+	guint32 nr_resources;
+	guint32 version_number;
+	guint8 encoding;
+	g_autofree gchar *data = NULL;
+
+	if (!g_file_get_contents (filename, &data, &len, error))
+		return FALSE;
+	if (len < 9) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_FAILED,
+			     "file invalid, %" G_GSIZE_FORMAT "b in size",
+			     len);
+		return FALSE;
+	}
+
+	/* get 4 byte version number */
+	memcpy (&version_number, data + 0, 4);
+	if (version_number != 4) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_FAILED,
+			     "version number invalid, "
+			     "got %" G_GUINT32_FORMAT " expected 4",
+			     version_number);
+		return FALSE;
+	}
+
+	/* get 4 byte number of resources */
+	memcpy (&nr_resources, data + 4, 4);
+	if (nr_resources == 0) {
+		g_set_error_literal (error,
+				     AS_APP_ERROR,
+				     AS_APP_ERROR_FAILED,
+				     "no resources found");
+		return FALSE;
+	}
+
+	/* get single byte of encoding */
+	encoding = (guint8) data[8];
+	if (encoding != 0 && encoding != 1) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_FAILED,
+			     "PAK encoding invalid, got %u expected 0 or 1",
+			     encoding);
+		return FALSE;
+	}
+
+	/* create entry without reading resources */
+	entry = as_app_builder_entry_new ();
+	entry->locale = g_strdup (locale);
+	entry->nstrings = nr_resources;
+	if (entry->nstrings > ctx->max_nstrings)
+		ctx->max_nstrings = entry->nstrings;
+	ctx->data = g_list_prepend (ctx->data, entry);
+	return TRUE;
+}
+
+static gboolean
+as_app_builder_search_translations_pak (AsAppBuilderContext *ctx,
+					const gchar *prefix,
+					AsAppBuilderFlags flags,
+					GError **error)
+{
+	guint i;
+
+	/* search for each translation ID */
+	for (i = 0; i < ctx->translations->len; i++) {
+		const gchar *tmp;
+		g_autoptr(GDir) dir = NULL;
+		g_autofree gchar *path = NULL;
+		AsTranslation *t = g_ptr_array_index (ctx->translations, i);
+
+		/* required */
+		if (as_translation_get_id (t) == NULL)
+			continue;
+		path = g_build_filename (prefix,
+					 "lib64",
+					 as_translation_get_id (t),
+					 "locales",
+					 NULL);
+		if (!g_file_test (path, G_FILE_TEST_EXISTS))
+			return TRUE;
+		dir = g_dir_open (path, 0, error);
+		if (dir == NULL)
+			return FALSE;
+
+		/* parse file for sanity */
+		while ((tmp = g_dir_read_name (dir)) != 0) {
+			g_autofree gchar *locale = NULL;
+			g_autofree gchar *fn = g_build_filename (path, tmp, NULL);
+			locale = as_app_builder_get_locale_from_pak_fn (tmp);
+			if (!as_app_builder_parse_file_pak (ctx, locale, fn, error))
+				return FALSE;
+		}
+	}
+	return TRUE;
+}
+
 static gint
 as_app_builder_entry_sort_cb (gconstpointer a, gconstpointer b)
 {
@@ -465,6 +588,10 @@ as_app_builder_search_translations (AsApp *app,
 
 	/* search for gettext .mo files */
 	if (!as_app_builder_search_translations_gettext (ctx, prefix, flags, error))
+		return FALSE;
+
+	/* search for Google .pak files */
+	if (!as_app_builder_search_translations_pak (ctx, prefix, flags, error))
 		return FALSE;
 
 	/* calculate percentages */
