@@ -5025,6 +5025,10 @@ as_test_utils_unique_id_func (void)
 	gdouble duration_ns;
 	g_autoptr(GTimer) timer = g_timer_new ();
 
+	/* pathological cases */
+	g_assert (!as_utils_unique_id_equal ("foo", "bar"));
+	g_assert (!as_utils_unique_id_equal ("foo/bar/baz", "foo/bar"));
+
 	for (i = 0; i < loops; i++) {
 		g_assert (as_utils_unique_id_equal ("aa/bb/cc/dd/ee/ff/gg/hh",
 						    "aa/bb/cc/dd/ee/ff/gg/hh"));

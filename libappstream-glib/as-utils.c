@@ -1773,6 +1773,31 @@ as_utils_unique_id_find_part (const gchar *str)
 }
 
 /**
+ * as_utils_unique_id_valid:
+ * @unique_id: a unique ID
+ *
+ * Checks if a unique ID is valid i.e. has the correct number of
+ * sections.
+ *
+ * Returns: %TRUE if the ID is valid
+ *
+ * Since: 0.6.1
+ */
+gboolean
+as_utils_unique_id_valid (const gchar *unique_id)
+{
+	guint i;
+	guint sections = 1;
+	if (unique_id == NULL)
+		return FALSE;
+	for (i = 0; unique_id[i] != '\0'; i++) {
+		if (unique_id[i] == '/')
+			sections++;
+	}
+	return sections == 8;
+}
+
+/**
  * as_utils_unique_id_equal:
  * @unique_id1: a unique ID
  * @unique_id2: another unique ID
@@ -1797,7 +1822,8 @@ as_utils_unique_id_equal (const gchar *unique_id1, const gchar *unique_id2)
 		return TRUE;
 
 	/* invalid */
-	if (unique_id1 == NULL || unique_id2 == NULL)
+	if (!as_utils_unique_id_valid (unique_id1) ||
+	    !as_utils_unique_id_valid (unique_id2))
 		return FALSE;
 
 	/* look at each part */
