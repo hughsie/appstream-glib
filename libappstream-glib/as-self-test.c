@@ -5045,6 +5045,54 @@ as_test_utils_unique_id_func (void)
 	g_print ("%.0f ns: ", duration_ns / (loops * 4));
 }
 
+static void
+as_test_store_merge_func (void)
+{
+	g_autoptr (AsApp) app1 = NULL;
+	g_autoptr (AsApp) app2 = NULL;
+	g_autoptr (AsApp) app_merge = NULL;
+	g_autoptr (AsStore) store = NULL;
+
+	store = as_store_new ();
+	as_store_set_add_flags (store,
+				AS_STORE_ADD_FLAG_USE_UNIQUE_ID |
+				AS_STORE_ADD_FLAG_USE_MERGE_HEURISTIC);
+
+	/* add app */
+	app1 = as_app_new ();
+	as_app_set_id (app1, "org.gnome.Software.desktop");
+	as_app_set_branch (app1, "master");
+	as_app_set_source_kind (app1, AS_APP_SOURCE_KIND_APPDATA);
+	as_app_add_pkgname (app1, "gnome-software");
+	g_assert_cmpstr (as_app_get_unique_id (app1), ==,
+			 "*/package/*/*/org.gnome.Software.desktop/*/master/*");
+	as_store_add_app (store, app1);
+
+	/* add merge component */
+	app_merge = as_app_new ();
+	as_app_set_kind (app_merge, AS_APP_KIND_DESKTOP);
+	as_app_set_id (app_merge, "org.gnome.Software.desktop");
+	as_app_set_source_kind (app_merge, AS_APP_SOURCE_KIND_APPSTREAM);
+	as_app_add_category (app_merge, "special");
+	g_assert_cmpstr (as_app_get_unique_id (app_merge), ==,
+			 "*/*/*/desktop/org.gnome.Software.desktop/*/*/*");
+	as_store_add_app (store, app_merge);
+
+	/* add app */
+	app2 = as_app_new ();
+	as_app_set_id (app2, "org.gnome.Software.desktop");
+	as_app_set_branch (app2, "stable");
+	as_app_set_source_kind (app2, AS_APP_SOURCE_KIND_APPSTREAM);
+	as_app_add_pkgname (app2, "gnome-software");
+	g_assert_cmpstr (as_app_get_unique_id (app2), ==,
+			 "*/package/*/*/org.gnome.Software.desktop/*/stable/*");
+	as_store_add_app (store, app2);
+
+	/* verify that both apps have the category */
+	g_assert (as_app_has_category (app1, "special"));
+	g_assert (as_app_has_category (app2, "special"));
+}
+
 int
 main (int argc, char **argv)
 {
@@ -5117,6 +5165,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/yaml", as_test_yaml_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
 	g_test_add_func ("/AppStream/store{unique}", as_test_store_unique_func);
+	g_test_add_func ("/AppStream/store{merge}", as_test_store_merge_func);
 	g_test_add_func ("/AppStream/store{empty}", as_test_store_empty_func);
 	if (g_test_slow ()) {
 		g_test_add_func ("/AppStream/store{auto-reload-dir}", as_test_store_auto_reload_dir_func);

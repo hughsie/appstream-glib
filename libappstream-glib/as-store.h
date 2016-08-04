@@ -90,13 +90,15 @@ typedef enum {
  * @AS_STORE_ADD_FLAG_NONE:				No extra flags to use
  * @AS_STORE_ADD_FLAG_PREFER_LOCAL:			Local files will be used by default
  * @AS_STORE_ADD_FLAG_USE_UNIQUE_ID:			Allow multiple apps with the same AppStream ID
+ * @AS_STORE_ADD_FLAG_USE_MERGE_HEURISTIC:		Use a heuristic when adding merge components
  *
  * The flags to use when adding applications to the store.
  **/
 typedef enum {
-	AS_STORE_ADD_FLAG_NONE			= 0,	/* Since: 0.2.2 */
-	AS_STORE_ADD_FLAG_PREFER_LOCAL		= 1,	/* Since: 0.2.2 */
-	AS_STORE_ADD_FLAG_USE_UNIQUE_ID		= 2,	/* Since: 0.6.1 */
+	AS_STORE_ADD_FLAG_NONE			= 0,		/* Since: 0.2.2 */
+	AS_STORE_ADD_FLAG_PREFER_LOCAL		= 1 << 0,	/* Since: 0.2.2 */
+	AS_STORE_ADD_FLAG_USE_UNIQUE_ID		= 1 << 1,	/* Since: 0.6.1 */
+	AS_STORE_ADD_FLAG_USE_MERGE_HEURISTIC	= 1 << 2,	/* Since: 0.6.1 */
 	/*< private >*/
 	AS_STORE_ADD_FLAG_LAST
 } AsStoreAddFlags;

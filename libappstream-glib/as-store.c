@@ -65,6 +65,7 @@ typedef struct
 	gdouble			 api_version;
 	GPtrArray		*array;		/* of AsApp */
 	GHashTable		*hash_id;	/* of GPtrArray of AsApp{id} */
+	GHashTable		*hash_merge_id;	/* of GPtrArray of AsApp{id} */
 	GHashTable		*hash_unique_id;	/* of AsApp{unique_id} */
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
 	AsMonitor		*monitor;
@@ -125,6 +126,7 @@ as_store_finalize (GObject *object)
 	g_object_unref (priv->monitor);
 	g_object_unref (priv->profile);
 	g_hash_table_unref (priv->hash_id);
+	g_hash_table_unref (priv->hash_merge_id);
 	g_hash_table_unref (priv->hash_unique_id);
 	g_hash_table_unref (priv->hash_pkgname);
 	g_hash_table_unref (priv->metadata_indexes);
@@ -296,6 +298,7 @@ as_store_remove_all (AsStore *store)
 	g_return_if_fail (AS_IS_STORE (store));
 	g_ptr_array_set_size (priv->array, 0);
 	g_hash_table_remove_all (priv->hash_id);
+	g_hash_table_remove_all (priv->hash_merge_id);
 	g_hash_table_remove_all (priv->hash_unique_id);
 	g_hash_table_remove_all (priv->hash_pkgname);
 }
@@ -879,6 +882,20 @@ as_store_remove_app_by_id (AsStore *store, const gchar *id)
 	as_store_perhaps_emit_changed (store, "remove-app-by-id");
 }
 
+static gboolean
+_as_app_is_perhaps_merge_component (AsApp *app)
+{
+	if (as_app_get_kind (app) != AS_APP_KIND_DESKTOP)
+		return FALSE;
+	if (as_app_get_source_kind (app) != AS_APP_SOURCE_KIND_APPSTREAM)
+		return FALSE;
+	if (as_app_get_bundle_kind (app) != AS_BUNDLE_KIND_UNKNOWN)
+		return FALSE;
+	if (as_app_get_name (app, NULL) != NULL)
+		return FALSE;
+	return TRUE;
+}
+
 /**
  * as_store_add_app:
  * @store: a #AsStore instance.
@@ -907,6 +924,46 @@ as_store_add_app (AsStore *store, AsApp *app)
 	if (id == NULL) {
 		g_warning ("application has no ID set");
 		return;
+	}
+
+	/* this is a special merge component */
+	if ((priv->add_flags & AS_STORE_ADD_FLAG_USE_MERGE_HEURISTIC) > 0 &&
+	    _as_app_is_perhaps_merge_component (app)) {
+		apps = g_hash_table_lookup (priv->hash_merge_id, id);
+		if (apps == NULL) {
+			apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+			g_hash_table_insert (priv->hash_merge_id,
+					     (gpointer) as_app_get_id (app),
+					     apps);
+		}
+		g_debug ("added merge component: %s",
+			 as_app_get_unique_id (app));
+		g_ptr_array_add (apps, g_object_ref (app));
+
+		/* apply to existing components */
+		for (i = 0; i < priv->array->len; i++) {
+			AsApp *app_tmp = g_ptr_array_index (priv->array, i);
+			if (g_strcmp0 (as_app_get_id (app_tmp), id) != 0)
+				continue;
+			g_debug ("using merge component %s on %s",
+				 id, as_app_get_unique_id (app_tmp));
+			as_app_subsume_full (app_tmp, app,
+					     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
+		}
+		return;
+	}
+
+	/* is there any merge components to add to this app */
+	apps = g_hash_table_lookup (priv->hash_merge_id, id);
+	if (apps != NULL) {
+		for (i = 0; i < apps->len; i++) {
+			AsApp *app_tmp = g_ptr_array_index (apps, i);
+			g_debug ("using merge component %s on %s",
+				 as_app_get_unique_id (app_tmp),
+				 as_app_get_unique_id (app));
+			as_app_subsume_full (app, app_tmp,
+					     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
+		}
 	}
 
 	/* find the item */
@@ -3044,6 +3101,10 @@ as_store_init (AsStore *store)
 					       g_str_equal,
 					       NULL,
 					       (GDestroyNotify) g_ptr_array_unref);
+	priv->hash_merge_id = g_hash_table_new_full (g_str_hash,
+						     g_str_equal,
+						     NULL,
+						     (GDestroyNotify) g_ptr_array_unref);
 	priv->hash_unique_id = g_hash_table_new_full (g_str_hash,
 						      g_str_equal,
 						      NULL,

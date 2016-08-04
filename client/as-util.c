@@ -1200,7 +1200,9 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* load system database */
 	store = as_store_new ();
-	as_store_set_add_flags (store, AS_STORE_ADD_FLAG_USE_UNIQUE_ID);
+	as_store_set_add_flags (store,
+				AS_STORE_ADD_FLAG_USE_UNIQUE_ID |
+				AS_STORE_ADD_FLAG_USE_MERGE_HEURISTIC);
 	if (!as_store_load (store,
 			    AS_STORE_LOAD_FLAG_IGNORE_INVALID |
 			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
@@ -1254,6 +1256,9 @@ as_util_search_pkgname (AsUtilPrivate *priv, gchar **values, GError **error)
 
 	/* load system database */
 	store = as_store_new ();
+	as_store_set_add_flags (store,
+				AS_STORE_ADD_FLAG_USE_UNIQUE_ID |
+				AS_STORE_ADD_FLAG_USE_MERGE_HEURISTIC);
 	if (!as_store_load (store,
 			    AS_STORE_LOAD_FLAG_IGNORE_INVALID |
 			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
@@ -1269,6 +1274,55 @@ as_util_search_pkgname (AsUtilPrivate *priv, gchar **values, GError **error)
 		if (app == NULL)
 			continue;
 		g_print ("%s\n", as_app_get_id (app));
+	}
+	return TRUE;
+}
+
+static gboolean
+as_util_search_category (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	GPtrArray *apps;
+	guint i, j;
+	g_autoptr(AsStore) store = NULL;
+
+	/* check args */
+	if (g_strv_length (values) < 1) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected search terms");
+		return FALSE;
+	}
+
+	/* load system database */
+	store = as_store_new ();
+	as_store_set_add_flags (store,
+				AS_STORE_ADD_FLAG_USE_UNIQUE_ID |
+				AS_STORE_ADD_FLAG_USE_MERGE_HEURISTIC);
+	if (!as_store_load (store,
+			    AS_STORE_LOAD_FLAG_IGNORE_INVALID |
+			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
+			    AS_STORE_LOAD_FLAG_APP_INFO_USER |
+			    AS_STORE_LOAD_FLAG_APPDATA |
+			    AS_STORE_LOAD_FLAG_DESKTOP,
+			    NULL, error))
+		return FALSE;
+
+	/* find by source */
+	apps = as_store_get_apps (store);
+	for (j = 0; j < apps->len; j++) {
+		gboolean found = FALSE;
+		AsApp *app = g_ptr_array_index (apps, j);
+		for (i = 0; values[i] != NULL; i++) {
+			if (as_app_has_category (app, values[i])) {
+				found = TRUE;
+				break;
+			}
+		}
+		if (!found)
+			continue;
+		g_print ("%s\n", as_app_get_unique_id (app));
 	}
 	return TRUE;
 }
@@ -3875,6 +3929,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Search for AppStream applications by package name"),
 		     as_util_search_pkgname);
+	as_util_add (priv->cmd_array,
+		     "search-category",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Search for AppStream applications by category name"),
+		     as_util_search_category);
 	as_util_add (priv->cmd_array,
 		     "show-search-tokens",
 		     NULL,
