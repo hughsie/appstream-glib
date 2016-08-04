@@ -1763,3 +1763,67 @@ as_utils_unique_id_build (AsAppScope scope,
 				_as_utils_fix_unique_id_part (branch),
 				_as_utils_fix_unique_id_part (version));
 }
+
+static inline guint
+as_utils_unique_id_find_part (const gchar *str)
+{
+	guint i;
+	for (i = 0; str[i] != '/' && str[i] != '\0'; i++);
+	return i;
+}
+
+/**
+ * as_utils_unique_id_equal:
+ * @unique_id1: a unique ID
+ * @unique_id2: another unique ID
+ *
+ * Checks two unique IDs for equality allowing globs to match.
+ *
+ * Returns: %TRUE if the ID's should be considered equal.
+ *
+ * Since: 0.6.1
+ */
+gboolean
+as_utils_unique_id_equal (const gchar *unique_id1, const gchar *unique_id2)
+{
+	guint i;
+	guint last1 = 0;
+	guint last2 = 0;
+	guint len1;
+	guint len2;
+
+	/* trivial */
+	if (unique_id1 == unique_id2)
+		return TRUE;
+
+	/* invalid */
+	if (unique_id1 == NULL || unique_id2 == NULL)
+		return FALSE;
+
+	/* look at each part */
+	for (i = 0; i < 8; i++) {
+		const gchar *tmp1 = unique_id1 + last1;
+		const gchar *tmp2 = unique_id2 + last2;
+
+		/* find the slash or the end of the string */
+		len1 = as_utils_unique_id_find_part (tmp1);
+		len2 = as_utils_unique_id_find_part (tmp2);
+
+		/* either string was a wildcard */
+		if (len1 == 1 && tmp1[0] == '*')
+			continue;
+		if (len2 == 1 && tmp2[0] == '*')
+			continue;
+
+		/* are substrings the same */
+		if (len1 != len2)
+			return FALSE;
+		if (memcmp (tmp1, tmp2, len1) != 0)
+			return FALSE;
+
+		/* advance to next section */
+		last1 += len1 + 1;
+		last2 += len2 + 1;
+	}
+	return TRUE;
+}

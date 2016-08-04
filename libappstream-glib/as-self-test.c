@@ -5017,6 +5017,28 @@ as_test_markup_import_html (void)
 	g_assert_cmpstr (out_list, ==, "<ul><li>First line of the list</li><li>Second line of the list</li></ul>");
 }
 
+static void
+as_test_utils_unique_id_func (void)
+{
+	const guint loops = 100000;
+	guint i;
+	gdouble duration_ns;
+	g_autoptr(GTimer) timer = g_timer_new ();
+
+	for (i = 0; i < loops; i++) {
+		g_assert (as_utils_unique_id_equal ("aa/bb/cc/dd/ee/ff/gg/hh",
+						    "aa/bb/cc/dd/ee/ff/gg/hh"));
+		g_assert (as_utils_unique_id_equal ("aa/bb/cc/dd/ee/ff/gg/hh",
+						    "aa/*/cc/dd/ee/ff/gg/hh"));
+		g_assert (as_utils_unique_id_equal ("user/flatpak/utopia/desktop/gimp.desktop/i386/master/1.2.3",
+						    "*/*/*/*/*/*/*/*"));
+		g_assert (!as_utils_unique_id_equal ("zz/zz/zz/zz/zz/zz/zz/zz",
+						    "aa/bb/cc/dd/ee/ff/gg/hh"));
+	}
+	duration_ns = g_timer_elapsed (timer, NULL) * 1000000000.f;
+	g_print ("%.0f ns: ", duration_ns / (loops * 4));
+}
+
 int
 main (int argc, char **argv)
 {
@@ -5026,6 +5048,7 @@ main (int argc, char **argv)
 	g_log_set_fatal_mask (NULL, G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL);
 
 	/* tests go here */
+	g_test_add_func ("/AppStream/utils{unique_id}", as_test_utils_unique_id_func);
 	g_test_add_func ("/AppStream/utils{locale-compat}", as_test_utils_locale_compat_func);
 	g_test_add_func ("/AppStream/utils{string-replace}", as_test_utils_string_replace_func);
 	g_test_add_func ("/AppStream/tag", as_test_tag_func);
