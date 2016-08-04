@@ -5037,7 +5037,9 @@ as_test_utils_unique_id_func (void)
 		g_assert (as_utils_unique_id_equal ("user/flatpak/utopia/desktop/gimp.desktop/i386/master/1.2.3",
 						    "*/*/*/*/*/*/*/*"));
 		g_assert (!as_utils_unique_id_equal ("zz/zz/zz/zz/zz/zz/zz/zz",
-						    "aa/bb/cc/dd/ee/ff/gg/hh"));
+						     "aa/bb/cc/dd/ee/ff/gg/hh"));
+		g_assert (!as_utils_unique_id_equal ("user/*/*/shell-extension/gmail_notify@jablona123.pl.shell-extension/*/*/*",
+						     "*/*/*/desktop/org.gnome.accerciser.desktop/*/*/*"));
 	}
 	duration_ns = g_timer_elapsed (timer, NULL) * 1000000000.f;
 	g_print ("%.0f ns: ", duration_ns / (loops * 4));

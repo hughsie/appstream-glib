@@ -1797,6 +1797,12 @@ as_utils_unique_id_valid (const gchar *unique_id)
 	return sections == 8;
 }
 
+static inline gboolean
+as_utils_unique_id_is_wildcard_part (const gchar *str, guint len)
+{
+	return len == 1 && str[0] == '*';
+}
+
 /**
  * as_utils_unique_id_equal:
  * @unique_id1: a unique ID
@@ -1836,16 +1842,14 @@ as_utils_unique_id_equal (const gchar *unique_id1, const gchar *unique_id2)
 		len2 = as_utils_unique_id_find_part (tmp2);
 
 		/* either string was a wildcard */
-		if (len1 == 1 && tmp1[0] == '*')
-			continue;
-		if (len2 == 1 && tmp2[0] == '*')
-			continue;
-
-		/* are substrings the same */
-		if (len1 != len2)
-			return FALSE;
-		if (memcmp (tmp1, tmp2, len1) != 0)
-			return FALSE;
+		if (!as_utils_unique_id_is_wildcard_part (tmp1, len1) &&
+		    !as_utils_unique_id_is_wildcard_part (tmp2, len2)) {
+			/* are substrings the same */
+			if (len1 != len2)
+				return FALSE;
+			if (memcmp (tmp1, tmp2, len1) != 0)
+				return FALSE;
+		}
 
 		/* advance to next section */
 		last1 += len1 + 1;
