@@ -3350,18 +3350,120 @@ as_app_subsume_icon (AsApp *app, AsIcon *icon)
 }
 
 static void
+as_app_subsume_merge (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
+{
+	AsAppPrivate *papp = GET_PRIVATE (app);
+	AsAppPrivate *priv = GET_PRIVATE (donor);
+	gboolean overwrite;
+	guint i;
+
+	/* categories */
+	for (i = 0; i < priv->categories->len; i++) {
+		const gchar *tmp = g_ptr_array_index (priv->categories, i);
+		as_app_add_category (app, tmp);
+	}
+
+	/* translations */
+	for (i = 0; i < priv->translations->len; i++) {
+		AsTranslation *tr = g_ptr_array_index (priv->translations, i);
+		as_app_add_translation (app, tr);
+	}
+
+	/* releases */
+	for (i = 0; i < priv->releases->len; i++) {
+		AsRelease *rel= g_ptr_array_index (priv->releases, i);
+		as_app_add_release (app, rel);
+	}
+
+	/* kudos */
+	for (i = 0; i < priv->kudos->len; i++) {
+		const gchar *tmp = g_ptr_array_index (priv->kudos, i);
+		as_app_add_kudo (app, tmp);
+	}
+
+	/* permissions */
+	for (i = 0; i < priv->permissions->len; i++) {
+		const gchar *tmp = g_ptr_array_index (priv->permissions, i);
+		as_app_add_permission (app, tmp);
+	}
+
+	/* extends */
+	for (i = 0; i < priv->extends->len; i++) {
+		const gchar *tmp = g_ptr_array_index (priv->extends, i);
+		as_app_add_extends (app, tmp);
+	}
+
+	/* compulsory_for_desktops */
+	for (i = 0; i < priv->compulsory_for_desktops->len; i++) {
+		const gchar *tmp = g_ptr_array_index (priv->compulsory_for_desktops, i);
+		as_app_add_compulsory_for_desktop (app, tmp);
+	}
+
+	/* screenshots */
+	for (i = 0; i < priv->screenshots->len; i++) {
+		AsScreenshot *ss = g_ptr_array_index (priv->screenshots, i);
+		as_app_add_screenshot (app, ss);
+	}
+
+	/* reviews */
+	for (i = 0; i < priv->reviews->len; i++) {
+		AsReview *review = g_ptr_array_index (priv->reviews, i);
+		as_app_add_review (app, review);
+	}
+
+	/* content_ratings */
+	for (i = 0; i < priv->content_ratings->len; i++) {
+		AsContentRating *cr = g_ptr_array_index (priv->content_ratings, i);
+		as_app_add_content_rating (app, cr);
+	}
+
+	/* provides */
+	for (i = 0; i < priv->provides->len; i++) {
+		AsProvide *pr = g_ptr_array_index (priv->provides, i);
+		as_app_add_provide (app, pr);
+	}
+
+	/* icons */
+	for (i = 0; i < priv->icons->len; i++) {
+		AsIcon *ic = g_ptr_array_index (priv->icons, i);
+		as_app_subsume_icon (app, ic);
+	}
+
+	/* mimetypes */
+	for (i = 0; i < priv->mimetypes->len; i++) {
+		const gchar *tmp = g_ptr_array_index (priv->mimetypes, i);
+		as_app_add_mimetype (app, tmp);
+	}
+
+	/* vetos */
+	for (i = 0; i < priv->vetos->len; i++) {
+		const gchar *tmp = g_ptr_array_index (priv->vetos, i);
+		as_app_add_veto (app, "%s", tmp);
+	}
+
+	/* dictionaries */
+	overwrite = (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) == 0;
+	as_app_subsume_dict (papp->names, priv->names, overwrite);
+	as_app_subsume_dict (papp->comments, priv->comments, overwrite);
+	as_app_subsume_dict (papp->developer_names, priv->developer_names, overwrite);
+	as_app_subsume_dict (papp->descriptions, priv->descriptions, overwrite);
+	as_app_subsume_dict (papp->metadata, priv->metadata, overwrite);
+	as_app_subsume_dict (papp->urls, priv->urls, overwrite);
+	as_app_subsume_keywords (app, donor, overwrite);
+
+	/* project_group */
+	if (priv->project_group != NULL)
+		as_app_set_project_group (app, priv->project_group);
+}
+
+static void
 as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 {
 	AsAppPrivate *priv = GET_PRIVATE (donor);
 	AsAppPrivate *papp = GET_PRIVATE (app);
 	AsBundle *bundle;
-	AsTranslation *translation;
-	AsReview *review;
-	AsScreenshot *ss;
-	AsProvide *pr;
 	const gchar *tmp;
 	const gchar *key;
-	gboolean overwrite;
 	guint i;
 	gint percentage;
 	GList *l;
@@ -3370,7 +3472,10 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	/* stop us shooting ourselves in the foot */
 	papp->trust_flags |= AS_APP_TRUST_FLAG_CHECK_DUPLICATES;
 
-	overwrite = (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) == 0;
+	/* safe things that can be done from merge components */
+	as_app_subsume_merge (app, donor, flags);
+	if (flags & AS_APP_SUBSUME_FLAG_ONLY_MERGE)
+		return;
 
 	/* id-kind */
 	if (papp->kind == AS_APP_KIND_UNKNOWN)
@@ -3379,7 +3484,7 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	/* AppData or AppStream can overwrite the id-kind of desktop files */
 	if ((priv->source_kind == AS_APP_SOURCE_KIND_APPDATA ||
 	     priv->source_kind == AS_APP_SOURCE_KIND_APPSTREAM) &&
-	    papp->source_kind == AS_APP_SOURCE_KIND_DESKTOP)
+	     papp->source_kind == AS_APP_SOURCE_KIND_DESKTOP)
 		as_app_set_kind (app, priv->kind);
 
 	/* state */
@@ -3398,94 +3503,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		as_app_add_bundle (app, bundle);
 	}
 
-	/* translations */
-	for (i = 0; i < priv->translations->len; i++) {
-		translation = g_ptr_array_index (priv->translations, i);
-		as_app_add_translation (app, translation);
-	}
-
-	/* releases */
-	for (i = 0; i < priv->releases->len; i++) {
-		AsRelease *rel= g_ptr_array_index (priv->releases, i);
-		as_app_add_release (app, rel);
-	}
-
-	/* kudos */
-	for (i = 0; i < priv->kudos->len; i++) {
-		tmp = g_ptr_array_index (priv->kudos, i);
-		as_app_add_kudo (app, tmp);
-	}
-
-	/* categories */
-	for (i = 0; i < priv->categories->len; i++) {
-		tmp = g_ptr_array_index (priv->categories, i);
-		as_app_add_category (app, tmp);
-	}
-
-	/* permissions */
-	for (i = 0; i < priv->permissions->len; i++) {
-		tmp = g_ptr_array_index (priv->permissions, i);
-		as_app_add_permission (app, tmp);
-	}
-
-	/* extends */
-	for (i = 0; i < priv->extends->len; i++) {
-		tmp = g_ptr_array_index (priv->extends, i);
-		as_app_add_extends (app, tmp);
-	}
-
-	/* compulsory_for_desktops */
-	for (i = 0; i < priv->compulsory_for_desktops->len; i++) {
-		tmp = g_ptr_array_index (priv->compulsory_for_desktops, i);
-		as_app_add_compulsory_for_desktop (app, tmp);
-	}
-
-	/* screenshots */
-	for (i = 0; i < priv->screenshots->len; i++) {
-		ss = g_ptr_array_index (priv->screenshots, i);
-		as_app_add_screenshot (app, ss);
-	}
-
-	/* reviews */
-	for (i = 0; i < priv->reviews->len; i++) {
-		review = g_ptr_array_index (priv->reviews, i);
-		as_app_add_review (app, review);
-	}
-
-	/* content_ratings */
-	for (i = 0; i < priv->content_ratings->len; i++) {
-		AsContentRating *content_rating;
-		content_rating = g_ptr_array_index (priv->content_ratings, i);
-		as_app_add_content_rating (app, content_rating);
-	}
-
-	/* provides */
-	for (i = 0; i < priv->provides->len; i++) {
-		pr = g_ptr_array_index (priv->provides, i);
-		as_app_add_provide (app, pr);
-	}
-
-	/* icons */
-	for (i = 0; i < priv->icons->len; i++) {
-		AsIcon *ic = g_ptr_array_index (priv->icons, i);
-		as_app_subsume_icon (app, ic);
-	}
-
-	/* mimetypes */
-	for (i = 0; i < priv->mimetypes->len; i++) {
-		tmp = g_ptr_array_index (priv->mimetypes, i);
-		as_app_add_mimetype (app, tmp);
-	}
-
 	/* do not subsume all properties */
 	if ((flags & AS_APP_SUBSUME_FLAG_PARTIAL) > 0)
 		return;
-
-	/* vetos */
-	for (i = 0; i < priv->vetos->len; i++) {
-		tmp = g_ptr_array_index (priv->vetos, i);
-		as_app_add_veto (app, "%s", tmp);
-	}
 
 	/* languages */
 	keys = g_hash_table_get_keys (priv->languages);
@@ -3499,15 +3519,6 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		percentage = GPOINTER_TO_INT (g_hash_table_lookup (priv->languages, key));
 		as_app_add_language (app, percentage, key);
 	}
-
-	/* dictionaries */
-	as_app_subsume_dict (papp->names, priv->names, overwrite);
-	as_app_subsume_dict (papp->comments, priv->comments, overwrite);
-	as_app_subsume_dict (papp->developer_names, priv->developer_names, overwrite);
-	as_app_subsume_dict (papp->descriptions, priv->descriptions, overwrite);
-	as_app_subsume_dict (papp->metadata, priv->metadata, overwrite);
-	as_app_subsume_dict (papp->urls, priv->urls, overwrite);
-	as_app_subsume_keywords (app, donor, overwrite);
 
 	/* source */
 	if (priv->source_file != NULL)
@@ -3534,10 +3545,6 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		as_app_set_project_license (app, priv->project_license);
 	if (priv->metadata_license != NULL)
 		as_app_set_metadata_license (app, priv->metadata_license);
-
-	/* project_group */
-	if (priv->project_group != NULL)
-		as_app_set_project_group (app, priv->project_group);
 }
 
 /**

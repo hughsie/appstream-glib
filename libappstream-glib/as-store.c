@@ -953,7 +953,8 @@ as_store_add_app (AsStore *store, AsApp *app)
 			g_debug ("using merge component %s on %s",
 				 id, as_app_get_unique_id (app_tmp));
 			as_app_subsume_full (app_tmp, app,
-					     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
+					     AS_APP_SUBSUME_FLAG_NO_OVERWRITE |
+					     AS_APP_SUBSUME_FLAG_ONLY_MERGE);
 		}
 		return;
 	}
@@ -967,7 +968,8 @@ as_store_add_app (AsStore *store, AsApp *app)
 				 as_app_get_unique_id (app_tmp),
 				 as_app_get_unique_id (app));
 			as_app_subsume_full (app, app_tmp,
-					     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
+					     AS_APP_SUBSUME_FLAG_NO_OVERWRITE |
+					     AS_APP_SUBSUME_FLAG_ONLY_MERGE);
 		}
 	}
 

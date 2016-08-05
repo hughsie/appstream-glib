@@ -89,14 +89,16 @@ typedef enum {
  * @AS_APP_SUBSUME_FLAG_NO_OVERWRITE:	Do not overwrite already set properties
  * @AS_APP_SUBSUME_FLAG_BOTH_WAYS:	Copy unset properties both ways
  * @AS_APP_SUBSUME_FLAG_PARTIAL:	Only subsume a safe subset
+ * @AS_APP_SUBSUME_FLAG_ONLY_MERGE:	Only copy properties allowed in merge components
  *
  * The flags to use when subsuming applications.
  **/
 typedef enum {
-	AS_APP_SUBSUME_FLAG_NONE,
-	AS_APP_SUBSUME_FLAG_NO_OVERWRITE = 1,	/* Since: 0.1.4 */
-	AS_APP_SUBSUME_FLAG_BOTH_WAYS	 = 2,	/* Since: 0.1.4 */
-	AS_APP_SUBSUME_FLAG_PARTIAL	 = 4,	/* Since: 0.2.2 */
+	AS_APP_SUBSUME_FLAG_NONE		= 0,
+	AS_APP_SUBSUME_FLAG_NO_OVERWRITE	= 1 << 0,	/* Since: 0.1.4 */
+	AS_APP_SUBSUME_FLAG_BOTH_WAYS		= 1 << 1,	/* Since: 0.1.4 */
+	AS_APP_SUBSUME_FLAG_PARTIAL		= 1 << 2,	/* Since: 0.2.2 */
+	AS_APP_SUBSUME_FLAG_ONLY_MERGE		= 1 << 3,	/* Since: 0.6.1 */
 	/*< private >*/
 	AS_APP_SUBSUME_FLAG_LAST,
 } AsAppSubsumeFlags;

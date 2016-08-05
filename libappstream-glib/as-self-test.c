@@ -5105,6 +5105,7 @@ as_test_store_merge_func (void)
 	as_app_set_origin (app_merge, "utopia");
 	as_app_set_scope (app_merge, AS_APP_SCOPE_USER);
 	as_app_add_category (app_merge, "special");
+	as_app_set_source_file (app_merge, "DO-NOT-SUBSUME.xml");
 	as_store_add_app (store, app_merge);
 	g_assert_cmpstr (as_app_get_unique_id (app_merge), ==,
 			 "*/*/*/desktop/org.gnome.Software.desktop/*/*/*");
@@ -5122,6 +5123,10 @@ as_test_store_merge_func (void)
 	/* verify that both apps have the category */
 	g_assert (as_app_has_category (app1, "special"));
 	g_assert (as_app_has_category (app2, "special"));
+
+	/* verify we didn't inherit the private bits */
+	g_assert_cmpstr (as_app_get_source_file (app1), ==, NULL);
+	g_assert_cmpstr (as_app_get_source_file (app2), ==, NULL);
 }
 
 int
