@@ -224,6 +224,7 @@ typedef enum {
  * @AS_APP_QUIRK_NOT_REVIEWABLE:	The app is not reviewable
  * @AS_APP_QUIRK_HAS_SHORTCUT:		The app has a shortcut in the system
  * @AS_APP_QUIRK_NOT_LAUNCHABLE:	The app is not launchable (run-able)
+ * @AS_APP_QUIRK_METADATA_MERGE:	The metadata should be merged with existing apps
  *
  * The component attributes.
  **/
@@ -237,6 +238,7 @@ typedef enum {
 	AS_APP_QUIRK_NOT_REVIEWABLE	= 1 << 5,	/* Since: 0.5.14 */
 	AS_APP_QUIRK_HAS_SHORTCUT	= 1 << 6,	/* Since: 0.5.15 */
 	AS_APP_QUIRK_NOT_LAUNCHABLE	= 1 << 7,	/* Since: 0.5.15 */
+	AS_APP_QUIRK_METADATA_MERGE	= 1 << 8,	/* Since: 0.6.1 */
 	/*< private >*/
 	AS_APP_QUIRK_LAST
 } AsAppQuirk;

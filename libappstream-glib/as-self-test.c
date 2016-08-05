@@ -5073,10 +5073,12 @@ as_test_store_merge_func (void)
 	as_app_set_kind (app_merge, AS_APP_KIND_DESKTOP);
 	as_app_set_id (app_merge, "org.gnome.Software.desktop");
 	as_app_set_source_kind (app_merge, AS_APP_SOURCE_KIND_APPSTREAM);
+	as_app_set_origin (app_merge, "utopia");
+	as_app_set_scope (app_merge, AS_APP_SCOPE_USER);
 	as_app_add_category (app_merge, "special");
+	as_store_add_app (store, app_merge);
 	g_assert_cmpstr (as_app_get_unique_id (app_merge), ==,
 			 "*/*/*/desktop/org.gnome.Software.desktop/*/*/*");
-	as_store_add_app (store, app_merge);
 
 	/* add app */
 	app2 = as_app_new ();

@@ -605,17 +605,28 @@ as_app_get_unique_id (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	if (priv->unique_id == NULL) {
-		const gchar *arch_str = NULL;
-		if (priv->architectures->len == 1)
-			arch_str = g_ptr_array_index (priv->architectures, 0);
-		priv->unique_id = as_utils_unique_id_build (priv->scope,
-							    as_app_get_bundle_kind (app),
-							    priv->origin,
-							    priv->kind,
-							    as_app_get_id_no_prefix (app),
-							    arch_str,
-							    priv->branch,
-							    priv->version);
+		if (as_app_has_quirk (app, AS_APP_QUIRK_METADATA_MERGE)) {
+			priv->unique_id = as_utils_unique_id_build (AS_APP_SCOPE_UNKNOWN,
+								    AS_BUNDLE_KIND_UNKNOWN,
+								    NULL,
+								    priv->kind,
+								    as_app_get_id_no_prefix (app),
+								    NULL,
+								    NULL,
+								    NULL);
+		} else {
+			const gchar *arch_str = NULL;
+			if (priv->architectures->len == 1)
+				arch_str = g_ptr_array_index (priv->architectures, 0);
+			priv->unique_id = as_utils_unique_id_build (priv->scope,
+								    as_app_get_bundle_kind (app),
+								    priv->origin,
+								    priv->kind,
+								    as_app_get_id_no_prefix (app),
+								    arch_str,
+								    priv->branch,
+								    priv->version);
+		}
 	}
 	return priv->unique_id;
 }

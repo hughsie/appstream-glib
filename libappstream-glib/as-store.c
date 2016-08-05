@@ -926,9 +926,14 @@ as_store_add_app (AsStore *store, AsApp *app)
 		return;
 	}
 
-	/* this is a special merge component */
+	/* use some hacky logic to support older files */
 	if ((priv->add_flags & AS_STORE_ADD_FLAG_USE_MERGE_HEURISTIC) > 0 &&
 	    _as_app_is_perhaps_merge_component (app)) {
+		as_app_add_quirk (app, AS_APP_QUIRK_METADATA_MERGE);
+	}
+
+	/* this is a special merge component */
+	if (as_app_has_quirk (app, AS_APP_QUIRK_METADATA_MERGE)) {
 		apps = g_hash_table_lookup (priv->hash_merge_id, id);
 		if (apps == NULL) {
 			apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
