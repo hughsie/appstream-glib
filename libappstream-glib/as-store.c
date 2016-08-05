@@ -468,12 +468,12 @@ _as_app_new_from_unique_id (const gchar *unique_id)
 	if (g_strv_length (split) != 8)
 		return NULL;
 	if (g_strcmp0 (split[0], AS_APP_UNIQUE_WILDCARD) != 0)
-		as_app_set_scope (app, as_app_scope_from_string (split[1]));
-	if (g_strcmp0 (split[2], AS_APP_UNIQUE_WILDCARD) != 0) {
-		if (g_strcmp0 (split[2], "package") == 0) {
+		as_app_set_scope (app, as_app_scope_from_string (split[0]));
+	if (g_strcmp0 (split[1], AS_APP_UNIQUE_WILDCARD) != 0) {
+		if (g_strcmp0 (split[1], "package") == 0) {
 			as_app_add_pkgname (app, "");
 		} else {
-			AsBundleKind kind = as_bundle_kind_from_string (split[2]);
+			AsBundleKind kind = as_bundle_kind_from_string (split[1]);
 			if (kind != AS_BUNDLE_KIND_UNKNOWN) {
 				AsBundle *bundle = as_bundle_new ();
 				as_bundle_set_kind (bundle, kind);

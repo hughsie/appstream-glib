@@ -3006,6 +3006,35 @@ as_test_store_prefix_func (void)
 	g_assert (app_tmp != NULL);
 }
 
+static void
+as_test_store_wildcard_func (void)
+{
+	AsApp *app_tmp;
+	g_autoptr (AsApp) app1 = as_app_new ();
+	g_autoptr (AsApp) app2 = as_app_new ();
+	g_autoptr (AsStore) store = as_store_new ();
+
+	/* package from fedora */
+	as_app_set_id (app1, "gimp.desktop");
+	as_app_set_origin (app1, "fedora");
+	as_app_add_pkgname (app1, "polari");
+	as_store_add_app (store, app1);
+
+	/* package from updates */
+	as_app_set_id (app2, "gimp.desktop");
+	as_app_set_origin (app2, "updates");
+	as_app_add_pkgname (app2, "polari");
+	as_store_add_app (store, app2);
+
+	/* check negative match */
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/xxx/*/gimp.desktop/*/*/*",
+						 AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
+	g_assert (app_tmp == NULL);
+	app_tmp = as_store_get_app_by_unique_id (store, "*/snap/*/*/gimp.desktop/*/*/*",
+						 AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
+	g_assert (app_tmp == NULL);
+}
+
 /* load a store with a origin and scope encoded in the symlink name */
 static void
 as_test_store_flatpak_func (void)
@@ -5175,6 +5204,7 @@ main (int argc, char **argv)
 	}
 	g_test_add_func ("/AppStream/store{flatpak}", as_test_store_flatpak_func);
 	g_test_add_func ("/AppStream/store{prefix}", as_test_store_prefix_func);
+	g_test_add_func ("/AppStream/store{wildcard}", as_test_store_wildcard_func);
 	g_test_add_func ("/AppStream/store{demote}", as_test_store_demote_func);
 	g_test_add_func ("/AppStream/store{cab}", as_test_store_cab_func);
 	g_test_add_func ("/AppStream/store{merges}", as_test_store_merges_func);
