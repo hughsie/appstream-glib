@@ -2963,6 +2963,30 @@ as_app_add_icon (AsApp *app, AsIcon *icon)
 	g_ptr_array_add (priv->icons, g_object_ref (icon));
 }
 
+static void
+as_app_parse_flatpak_id (AsApp *app, const gchar *bundle_id)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_auto(GStrv) split = NULL;
+
+	/* not set */
+	if (bundle_id == NULL)
+		return;
+
+	/* split into type/id/arch/branch */
+	split = g_strsplit (bundle_id, "/", -1);
+	if (g_strv_length (split) != 4) {
+		g_warning ("invalid flatpak bundle ID: %s", bundle_id);
+		return;
+	}
+
+	/* only set if not already set */
+	if (priv->architectures->len == 0)
+		as_app_add_arch (app, split[2]);
+	if (priv->branch == NULL)
+		as_app_set_branch (app, split[3]);
+}
+
 /**
  * as_app_add_bundle:
  * @app: a #AsApp instance.
@@ -2989,12 +3013,12 @@ as_app_add_bundle (AsApp *app, AsBundle *bundle)
 	}
 
 	/* set the architecture and branch */
-	if (as_bundle_get_kind (bundle) == AS_BUNDLE_KIND_FLATPAK) {
-		g_auto(GStrv) split = g_strsplit (as_bundle_get_id (bundle), "/", -1);
-		if (priv->architectures->len == 0)
-			as_app_add_arch (app, split[2]);
-		if (priv->branch == NULL)
-			as_app_set_branch (app, split[3]);
+	switch (as_bundle_get_kind (bundle)) {
+	case AS_BUNDLE_KIND_FLATPAK:
+		as_app_parse_flatpak_id (app, as_bundle_get_id (bundle));
+		break;
+	default:
+		break;
 	}
 
 	g_ptr_array_add (priv->bundles, g_object_ref (bundle));
