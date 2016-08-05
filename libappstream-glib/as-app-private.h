@@ -51,6 +51,8 @@ G_BEGIN_DECLS
  * @AS_APP_PROBLEM_UPDATECONTACT_FALLBACK:	The file used <updatecontact> without a space
  * @AS_APP_PROBLEM_INVALID_PROJECT_GROUP:	Invalid project group detected
  * @AS_APP_PROBLEM_INVALID_XML_TAG:		Invalid XML tag name detected
+ * @AS_APP_PROBLEM_EXPECTED_CHILDREN:		Children tags expected
+ * @AS_APP_PROBLEM_INVALID_KEYWORDS:		One or more keywords was invalid
  *
  * The application problems detected when loading.
  **/
@@ -71,6 +73,8 @@ typedef enum {
 	AS_APP_PROBLEM_UPDATECONTACT_FALLBACK	= 1 << 12,
 	AS_APP_PROBLEM_INVALID_PROJECT_GROUP	= 1 << 13,
 	AS_APP_PROBLEM_INVALID_XML_TAG		= 1 << 14,
+	AS_APP_PROBLEM_EXPECTED_CHILDREN	= 1 << 15,
+	AS_APP_PROBLEM_INVALID_KEYWORDS		= 1 << 16,
 	/*< private >*/
 	AS_APP_PROBLEM_LAST
 } AsAppProblems;

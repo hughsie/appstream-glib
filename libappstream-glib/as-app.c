@@ -4115,6 +4115,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 				continue;
 			as_app_add_category (app, tmp);
 		}
+		if (n->children == NULL)
+			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
 		break;
 
 	/* <architectures> */
@@ -4129,6 +4131,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 				continue;
 			g_ptr_array_add (priv->architectures, taken);
 		}
+		if (n->children == NULL)
+			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
 		break;
 
 	/* <keywords> */
@@ -4144,9 +4148,13 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			taken = as_node_fix_locale (as_node_get_attribute (c, "xml:lang"));
 			if (taken == NULL)
 				continue;
+			if (g_strstr_len (tmp, -1, ",") != NULL)
+				priv->problems |= AS_APP_PROBLEM_INVALID_KEYWORDS;
 			as_app_add_keyword (app, taken, tmp);
 			g_free (taken);
 		}
+		if (n->children == NULL)
+			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
 		break;
 
 	/* <kudos> */
@@ -4161,6 +4169,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 				continue;
 			g_ptr_array_add (priv->kudos, taken);
 		}
+		if (n->children == NULL)
+			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
 		break;
 
 	/* <permissions> */
@@ -4175,6 +4185,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 				continue;
 			g_ptr_array_add (priv->permissions, taken);
 		}
+		if (n->children == NULL)
+			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
 		break;
 
 	/* <vetos> */
@@ -4189,6 +4201,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 				continue;
 			g_ptr_array_add (priv->vetos, taken);
 		}
+		if (n->children == NULL)
+			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
 		break;
 
 	/* <mimetypes> */
@@ -4203,6 +4217,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 				continue;
 			g_ptr_array_add (priv->mimetypes, taken);
 		}
+		if (n->children == NULL)
+			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
 		break;
 
 	/* <project_license> */
@@ -4283,6 +4299,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 				return FALSE;
 			as_app_add_screenshot (app, ss);
 		}
+		if (n->children == NULL)
+			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
 		break;
 
 	/* <reviews> */
@@ -4324,6 +4342,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 				return FALSE;
 			as_app_add_release (app, r);
 		}
+		if (n->children == NULL)
+			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
 		break;
 
 	/* <provides> */
@@ -4353,6 +4373,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			as_app_add_language (app, percent,
 					     as_node_get_data (c));
 		}
+		if (n->children == NULL)
+			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
 		break;
 
 	/* <metadata> */
@@ -4369,6 +4391,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 				taken = g_strdup ("");
 			g_hash_table_insert (priv->metadata, key, taken);
 		}
+		if (n->children == NULL)
+			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
 		break;
 	default:
 		priv->problems |= AS_APP_PROBLEM_INVALID_XML_TAG;

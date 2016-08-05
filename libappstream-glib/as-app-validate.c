@@ -1297,6 +1297,20 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 				     "XML data contains unknown tag");
 	}
 
+	/* only allow XML in the specification */
+	if (problems & AS_APP_PROBLEM_EXPECTED_CHILDREN) {
+		ai_app_validate_add (&helper,
+				     AS_PROBLEM_KIND_TAG_INVALID,
+				     "Expected children for tag");
+	}
+
+	/* only allow XML in the specification */
+	if (problems & AS_APP_PROBLEM_INVALID_KEYWORDS) {
+		ai_app_validate_add (&helper,
+				     AS_PROBLEM_KIND_TAG_INVALID,
+				     "<keyword> invalid contents");
+	}
+
 	/* check for things that have to exist */
 	if (as_app_get_id (app) == NULL) {
 		ai_app_validate_add (&helper,
