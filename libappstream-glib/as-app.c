@@ -605,7 +605,7 @@ as_app_get_unique_id (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	if (priv->unique_id == NULL) {
-		if (as_app_has_quirk (app, AS_APP_QUIRK_METADATA_MERGE)) {
+		if (as_app_has_quirk (app, AS_APP_QUIRK_MATCH_ANY_PREFIX)) {
 			priv->unique_id = as_utils_unique_id_build (AS_APP_SCOPE_UNKNOWN,
 								    AS_BUNDLE_KIND_UNKNOWN,
 								    NULL,
