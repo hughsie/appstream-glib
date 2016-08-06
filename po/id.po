@@ -3,222 +3,221 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Jiri Grönroos <jiri.gronroos@iki.fi>, 2014
-# Ville Skyttä <ville.skytta@iki.fi>, 2016
+# Andika Triwidada <andika@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
 "POT-Creation-Date: 2016-07-13 11:57+0100\n"
-"PO-Revision-Date: 2016-08-04 21:04+0000\n"
-"Last-Translator: Ville Skyttä <ville.skytta@iki.fi>\n"
-"Language-Team: Finnish (http://www.transifex.com/freedesktop/appstream-glib/language/fi/)\n"
+"PO-Revision-Date: 2016-07-31 04:56+0000\n"
+"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
+"Language-Team: Indonesian (http://www.transifex.com/freedesktop/appstream-glib/language/id/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: fi\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: id\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. TRANSLATORS: command line option
 msgid "Show extra debugging information"
-msgstr ""
+msgstr "Tampilkan informasi debug ekstra"
 
 #. TRANSLATORS: command line option
 msgid "Add a cache ID to each component"
-msgstr ""
+msgstr "Tambahkan ID singgahan ke setiap komponen"
 
 #. TRANSLATORS: command line option
 msgid "Include failed results in the output"
-msgstr ""
+msgstr "Sertakan hasil gagal dalam keluaran"
 
 #. TRANSLATORS: command line option
 msgid "Add HiDPI icons to the tarball"
-msgstr ""
+msgstr "Tambah ikon HiDPI ke tarball"
 
 #. TRANSLATORS: command line option
 msgid "Add encoded icons to the XML"
-msgstr ""
+msgstr "Tambah ikon terenkode ke XML"
 
 #. TRANSLATORS: command line option
 msgid "Do not compress the icons into a tarball"
-msgstr ""
+msgstr "Jangan mampatkan ikon ke dalam tarball"
 
 #. TRANSLATORS: command line option
 msgid "Set the logging directory"
-msgstr ""
+msgstr "Tata direktori log"
 
 #. TRANSLATORS: command line option
 msgid "Set the packages directory"
-msgstr ""
+msgstr "Atur direktori paket"
 
 #. TRANSLATORS: command line option
 msgid "Set the temporary directory"
-msgstr ""
+msgstr "Atur direktori temporer"
 
 #. TRANSLATORS: command line option
 msgid "Set the output directory"
-msgstr ""
+msgstr "Atur direktori keluaran"
 
 #. TRANSLATORS: command line option
 msgid "Set the icons directory"
-msgstr ""
+msgstr "Atur direktori ikon"
 
 #. TRANSLATORS: command line option
 msgid "Set the cache directory"
-msgstr ""
+msgstr "Atur direktori singgahan"
 
 #. TRANSLATORS: command line option
 msgid "Set the basenames of the output files"
-msgstr ""
+msgstr "Atur nama basis dari berkas keluaran"
 
 #. TRANSLATORS: command line option
 msgid "Set the origin name"
-msgstr ""
+msgstr "Atur nama asli"
 
 #. TRANSLATORS: command line option
 msgid "Set the number of threads"
-msgstr ""
+msgstr "Atur cacah thread"
 
 #. TRANSLATORS: command line option
 msgid "Set the minimum icon size in pixels"
-msgstr ""
+msgstr "Atur ukuran ikon minimum dalam piksel"
 
 #. TRANSLATORS: command line option
 msgid "Set the old metadata location"
-msgstr ""
+msgstr "Atur lokasi metadata lama"
 
 #. TRANSLATORS: command line option
 msgid "Ignore certain types of veto"
-msgstr ""
+msgstr "Abaikan tipe veto tertentu"
 
 #. TRANSLATORS: error message
 msgid "Failed to parse arguments"
-msgstr ""
+msgstr "Gagal mengurai argumen"
 
 #. TRANSLATORS: error message
 msgid "Failed to set up builder"
-msgstr ""
+msgstr "Gagal menyiapkan builder"
 
 #. TRANSLATORS: error message
 msgid "Failed to open packages"
-msgstr ""
+msgstr "Gagal membuka paket"
 
 #. TRANSLATORS: information message
 msgid "Scanning packages..."
-msgstr ""
+msgstr "Memindai paket..."
 
 #. TRANSLATORS: error message
 msgid "Failed to add package"
-msgstr "Paketin lisääminen epäonnistui"
+msgstr "Gagal menambah paket"
 
 #. TRANSLATORS: information message
 #, c-format
 msgid "Parsed %i/%i files..."
-msgstr ""
+msgstr "Diurai %i/%i berkas..."
 
 #. TRANSLATORS: error message
 msgid "Failed to generate metadata"
-msgstr ""
+msgstr "Gagal menghasilkan metadata"
 
 #. success
 #. TRANSLATORS: information message
 msgid "Done!"
-msgstr "Valmis!"
+msgstr "Selesai!"
 
 #. TRANSLATORS: we've saving the icon file to disk
 msgid "Saving icon"
-msgstr ""
+msgstr "Menyimpan ikon"
 
 #. TRANSLATORS: command line option
 msgid "Set the prefix"
-msgstr ""
+msgstr "Atur prefiks"
 
 #. TRANSLATORS: we're generating the AppStream data
 msgid "Processing application"
-msgstr ""
+msgstr "Memroses aplikasi"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "Kesalahan saat memuat berkas AppData"
 
 #. TRANSLATORS: the .mo files could not be parsed
 msgid "Error parsing translations"
-msgstr ""
+msgstr "Kesalahan saat mengurai terjemahan"
 
 #. TRANSLATORS: we could not auto-add the kudo
 msgid "Error parsing kudos"
-msgstr ""
+msgstr "Kesalahan mengurai pujian"
 
 #. TRANSLATORS: we could not auto-add the provides
 msgid "Error parsing provides"
-msgstr ""
+msgstr "Kesalahan saat mengurai penyedia"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "Kesalahan saat memuat berkas desktop"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 msgid "Error creating output directory"
-msgstr ""
+msgstr "Kesalahan saat membuat direktori keluaran"
 
 #. TRANSLATORS: we've saving the XML file to disk
 msgid "Saving AppStream"
-msgstr ""
+msgstr "Menyimpan AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "Kesalahan saat menyimpan berkas AppStream"
 
 #. TRANSLATORS: this is a command alias
 #, c-format
 msgid "Alias to %s"
-msgstr ""
+msgstr "Alias untuk %s"
 
 msgid "Command not found, valid commands are:"
-msgstr ""
+msgstr "Perintah tak ditemukan, perintah yang valid adalah:"
 
 #. TRANSLATORS: any manual changes required?
 #. * also note: FIXME is a hardcoded string
 msgid "Please review the file and fix any 'FIXME' items"
-msgstr ""
+msgstr "Harap periksa berkas dan perbaiki sebarang butir 'FIXME'"
 
 #. TRANSLATORS: information message
 msgid "Old API version"
-msgstr "Vanha API-versio"
+msgstr "Versi API lama"
 
 #. TRANSLATORS: information message
 msgid "New API version"
-msgstr "Uusi API-versio"
+msgstr "Versi API baru"
 
 msgid "Not enough arguments, expected old.xml new.xml version"
-msgstr ""
+msgstr "Argumen tidak cukup, yang diharapkan lama.xml baru.xml versi"
 
 #. TRANSLATORS: the %s and %s are file types,
 #. * e.g. "appdata" to "appstream"
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "Konversi %s ke %s tidak diimplementasi"
 
 msgid "Not enough arguments, expected file.xml"
-msgstr ""
+msgstr "Argumen tidak cukup yang diharapkan berkas.xml"
 
 #. TRANSLATORS: %s is a file type,
 #. * e.g. 'appdata'
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr ""
+msgstr "Format berkas '%s' tidak bisa ditingkatkan"
 
 #. TRANSLATORS: not a recognised file type
 msgid "Format not recognised"
-msgstr ""
+msgstr "Format tidak dikenali"
 
 #. TRANSLATORS: probably wrong XML
 msgid "No desktop applications found"
-msgstr ""
+msgstr "Tidak ditemukan aplikasi desktop"
 
 #. TRANSLATORS: the file is valid
 msgid "OK"
@@ -226,157 +225,157 @@ msgstr "OK"
 
 #. list failures
 msgid "FAILED"
-msgstr "EPÄONNISTUI"
+msgstr "GAGAL"
 
 msgid "Validation failed"
-msgstr ""
+msgstr "Validasi gagal"
 
 msgid "Validation of files failed"
-msgstr ""
+msgstr "Validasi berkas gagal"
 
 #. TRANSLATORS: application was removed
 msgid "Removed"
-msgstr ""
+msgstr "Dihapus"
 
 #. TRANSLATORS: application was added
 msgid "Added"
-msgstr ""
+msgstr "Ditambahkan"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"
-msgstr ""
+msgstr "Jangan pakai akses jaringan"
 
 #. TRANSLATORS: command line option
 msgid "Show version"
-msgstr "Näytä versio"
+msgstr "Tampilkan versi"
 
 #. TRANSLATORS: command line option
 msgid "Enable profiling"
-msgstr ""
+msgstr "Fungsikan pemrofilan"
 
 #. TRANSLATORS: command description
 msgid "Converts AppStream metadata from one version to another"
-msgstr ""
+msgstr "Konversikan metadata AppStream dari satu versi ke lainnya"
 
 #. TRANSLATORS: command description
 msgid "Upgrade AppData metadata to the latest version"
-msgstr ""
+msgstr "Tingkatkan metadata AppData ke versi terakhir"
 
 #. TRANSLATORS: command description
 msgid "Creates an example Appdata file from a .desktop file"
-msgstr ""
+msgstr "Membuat contoh berkas Appdata dari suatu berkas .desktop"
 
 #. TRANSLATORS: command description
 msgid "Dumps the applications in the AppStream metadata"
-msgstr ""
+msgstr "Mencurahkan aplikasi dalam metadata AppStream"
 
 #. TRANSLATORS: command description
 msgid "Search for AppStream applications"
-msgstr ""
+msgstr "Mencari aplikasi AppStream"
 
 #. TRANSLATORS: command description
 msgid "Search for AppStream applications by package name"
-msgstr ""
+msgstr "Mencari aplikasi AppStream menurut namanya"
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"
-msgstr ""
+msgstr "Tampilkan token pencarian aplikasi"
 
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata"
-msgstr ""
+msgstr "Pasang metadata AppStream"
 
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata with new origin"
-msgstr ""
+msgstr "Pasang metadata AppStream dengan origin baru"
 
 #. TRANSLATORS: command description
 msgid "Uninstalls AppStream metadata"
-msgstr ""
+msgstr "Bongkar metadata AppStream"
 
 #. TRANSLATORS: command description
 msgid "Create an HTML status page"
-msgstr "Luo HTML-tilasivu"
+msgstr "Buat sebuah halaman status HTML"
 
 #. TRANSLATORS: command description
 msgid "Create an CSV status document"
-msgstr "Luo CSV-tila-asiakirja"
+msgstr "Buat sebuah dokumen status CSV"
 
 #. TRANSLATORS: command description
 msgid "Create an HTML matrix page"
-msgstr ""
+msgstr "Buat sebuah halaman matriks HTML"
 
 #. TRANSLATORS: command description
 msgid "List applications not backed by packages"
-msgstr ""
+msgstr "Daftar aplikasi yang tidak didukung oleh paket"
 
 #. TRANSLATORS: command description
 msgid "Validate an AppData or AppStream file"
-msgstr ""
+msgstr "Validasikan sebuah berkas AppData atau AppStream"
 
 #. TRANSLATORS: command description
 msgid "Validate an AppData or AppStream file (relaxed)"
-msgstr ""
+msgstr "Validasikan sebuah berkas AppData atau AppStream (longgar)"
 
 #. TRANSLATORS: command description
 msgid "Validate an AppData or AppStream file (strict)"
-msgstr ""
+msgstr "Validasikan sebuah berkas AppData atau AppSteram (ketat)"
 
 #. TRANSLATORS: command description
 msgid "Convert an AppData file to NEWS format"
-msgstr ""
+msgstr "Konversikan berkas AppData ke format NEWS"
 
 #. TRANSLATORS: command description
 msgid "Convert an NEWS file to AppData format"
-msgstr ""
+msgstr "Konversikan berkas NEWS ke format AppData"
 
 #. TRANSLATORS: command description
 msgid "Check installed application data"
-msgstr ""
+msgstr "Periksa data aplikasi yang terpasang"
 
 #. TRANSLATORS: command description
 msgid "Replace screenshots in source file"
-msgstr ""
+msgstr "Gantikan cuplikan layar dalam berkas sumber"
 
 #. TRANSLATORS: command description
 msgid "Mirror upstream screenshots"
-msgstr ""
+msgstr "Cerminkan cuplikan layar upstream"
 
 #. TRANSLATORS: command description
 msgid "Mirror local firmware files"
-msgstr ""
+msgstr "Cerminkan berkas firmware lokal"
 
 #. TRANSLATORS: command description
 msgid "Incorporate extra metadata from an external file"
-msgstr ""
+msgstr "Sertakan medatada ekstra dari berkas eksternal"
 
 #. TRANSLATORS: command description
 msgid "Compare the contents of two AppStream files"
-msgstr ""
+msgstr "Bandingkan isi dari dua berkas AppStream"
 
 #. TRANSLATORS: command description
 msgid "Generate a GUID from an input string"
-msgstr ""
+msgstr "Buat suatu GUID dari string masukan"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"
-msgstr ""
+msgstr "Ubah berkas AppData"
 
 #. TRANSLATORS: command description
 msgid "Split an AppStream file to AppData and Metainfo files"
-msgstr ""
+msgstr "Pecah berkas AppData ke berkas Metainfo dan AppData"
 
 #. TRANSLATORS: command description
 msgid "Merge several files to an AppStream file"
-msgstr ""
+msgstr "Gabungkan beberapa berkas ke sebuh berkas AppStream"
 
 #. TRANSLATORS: command description
 msgid "Import a file to AppStream markup"
-msgstr ""
+msgstr "Impor sebuah berkas ke markup AppStream"
 
 #. TRANSLATORS: program name
 msgid "AppStream Utility"
-msgstr ""
+msgstr "Utilitas AppStream"
 
 msgid "Version:"
-msgstr "Versio:"
+msgstr "Versi:"
