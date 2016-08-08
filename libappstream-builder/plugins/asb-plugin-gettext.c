@@ -34,6 +34,7 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
 	asb_plugin_add_glob (globs, "/usr/share/locale/*/LC_MESSAGES/*.mo");
 	asb_plugin_add_glob (globs, "/usr/share/*/translations/*.qm");
+	asb_plugin_add_glob (globs, "/usr/lib64/*/locales/*.pak");
 }
 
 gboolean
