@@ -593,6 +593,7 @@ as_utils_license_to_spdx (const gchar *license)
 		{ "ZPLv2.0",			"ZPL-2.0" },
 		{ "Unlicense",			"CC0-1.0" },
 		{ "Public Domain",		"LicenseRef-public-domain" },
+		{ "SUSE-Public-Domain",		"LicenseRef-public-domain" },
 		{ "Copyright only",		"LicenseRef-public-domain" },
 		{ "Proprietary",		"LicenseRef-proprietary" },
 		{ "Commercial",			"LicenseRef-proprietary" },
