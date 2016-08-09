@@ -2646,7 +2646,9 @@ as_test_app_subsume_func (void)
 	app = as_app_new ();
 	as_app_add_metadata (app, "overwrite", "2222");
 	as_app_add_metadata (app, "recipient", "true");
-	as_app_subsume_full (app, donor, AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
+	as_app_subsume_full (app, donor,
+			     AS_APP_SUBSUME_FLAG_NO_OVERWRITE |
+			     AS_APP_SUBSUME_FLAG_DEDUPE);
 	as_app_add_screenshot (app, ss);
 
 	g_assert_cmpstr (as_app_get_metadata_item (app, "donor"), ==, "true");
@@ -2670,7 +2672,9 @@ as_test_app_subsume_func (void)
 	g_assert_cmpint (as_icon_get_height (ic), ==, 0);
 
 	/* test both ways */
-	as_app_subsume_full (app, donor, AS_APP_SUBSUME_FLAG_BOTH_WAYS);
+	as_app_subsume_full (app, donor,
+			     AS_APP_SUBSUME_FLAG_BOTH_WAYS |
+			     AS_APP_SUBSUME_FLAG_METADATA);
 	g_assert_cmpstr (as_app_get_metadata_item (app, "donor"), ==, "true");
 	g_assert_cmpstr (as_app_get_metadata_item (app, "recipient"), ==, "true");
 	g_assert_cmpstr (as_app_get_metadata_item (donor, "donor"), ==, "true");

@@ -768,7 +768,8 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 			continue;
 		}
 		as_app_subsume_full (found, app,
-				     AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
+				     AS_APP_SUBSUME_FLAG_NO_OVERWRITE |
+				     AS_APP_SUBSUME_FLAG_DEDUPE);
 		as_app_add_veto (app,
 				 "%s was merged into %s",
 				 as_app_get_id (app),

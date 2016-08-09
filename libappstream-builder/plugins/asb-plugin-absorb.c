@@ -116,6 +116,9 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 		/* partially absorb */
 		as_app_add_veto (app, "partially absorbing %s into %s",
 				 as_app_get_id (app), as_app_get_id (found));
-		as_app_subsume_full (found, app, AS_APP_SUBSUME_FLAG_PARTIAL);
+		as_app_subsume_full (found, app,
+				     AS_APP_SUBSUME_FLAG_NO_OVERWRITE |
+				     AS_APP_SUBSUME_FLAG_MERGE);
+		as_app_remove_metadata (found, "X-Merge-With-Parent");
 	}
 }

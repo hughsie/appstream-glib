@@ -950,7 +950,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 				 id, as_app_get_unique_id (app_tmp));
 			as_app_subsume_full (app_tmp, app,
 					     AS_APP_SUBSUME_FLAG_NO_OVERWRITE |
-					     AS_APP_SUBSUME_FLAG_ONLY_MERGE);
+					     AS_APP_SUBSUME_FLAG_MERGE);
 		}
 		return;
 	}
@@ -965,7 +965,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 				 as_app_get_unique_id (app));
 			as_app_subsume_full (app, app_tmp,
 					     AS_APP_SUBSUME_FLAG_NO_OVERWRITE |
-					     AS_APP_SUBSUME_FLAG_ONLY_MERGE);
+					     AS_APP_SUBSUME_FLAG_MERGE);
 		}
 	}
 
@@ -1001,7 +1001,9 @@ as_store_add_app (AsStore *store, AsApp *app)
 				g_debug ("merging duplicate AppData:desktop entries: %s:%s",
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
-				as_app_subsume_full (app, item, AS_APP_SUBSUME_FLAG_BOTH_WAYS);
+				as_app_subsume_full (app, item,
+						     AS_APP_SUBSUME_FLAG_BOTH_WAYS |
+						     AS_APP_SUBSUME_FLAG_DEDUPE);
 				/* promote the desktop source to AppData */
 				as_app_set_source_kind (item, AS_APP_SOURCE_KIND_APPDATA);
 				return;
@@ -1011,7 +1013,9 @@ as_store_add_app (AsStore *store, AsApp *app)
 				g_debug ("merging duplicate desktop:AppData entries: %s:%s",
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
-				as_app_subsume_full (app, item, AS_APP_SUBSUME_FLAG_BOTH_WAYS);
+				as_app_subsume_full (app, item,
+						     AS_APP_SUBSUME_FLAG_BOTH_WAYS |
+						     AS_APP_SUBSUME_FLAG_DEDUPE);
 				return;
 			}
 
@@ -1053,7 +1057,8 @@ as_store_add_app (AsStore *store, AsApp *app)
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
 				as_app_subsume_full (app, item,
-						     AS_APP_SUBSUME_FLAG_BOTH_WAYS);
+						     AS_APP_SUBSUME_FLAG_BOTH_WAYS |
+						     AS_APP_SUBSUME_FLAG_DEDUPE);
 
 				/* promote the desktop source to AppData */
 				if (as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_DESKTOP &&

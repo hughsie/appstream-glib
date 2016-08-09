@@ -88,20 +88,118 @@ typedef enum {
  * @AS_APP_SUBSUME_FLAG_NONE:		No special actions to use
  * @AS_APP_SUBSUME_FLAG_NO_OVERWRITE:	Do not overwrite already set properties
  * @AS_APP_SUBSUME_FLAG_BOTH_WAYS:	Copy unset properties both ways
- * @AS_APP_SUBSUME_FLAG_PARTIAL:	Only subsume a safe subset
- * @AS_APP_SUBSUME_FLAG_ONLY_MERGE:	Only copy properties allowed in merge components
+ * @AS_APP_SUBSUME_FLAG_PARTIAL:	Only subsume a safe subset (obsolete)
+ * @AS_APP_SUBSUME_FLAG_KIND:		Copy the kind
+ * @AS_APP_SUBSUME_FLAG_STATE:		Copy the state
+ * @AS_APP_SUBSUME_FLAG_BUNDLES:	Copy the bundles
+ * @AS_APP_SUBSUME_FLAG_TRANSLATIONS	Copy the translations
+ * @AS_APP_SUBSUME_FLAG_RELEASES:	Copy the releases
+ * @AS_APP_SUBSUME_FLAG_KUDOS:		Copy the kudos
+ * @AS_APP_SUBSUME_FLAG_CATEGORIES:	Copy the categories
+ * @AS_APP_SUBSUME_FLAG_PERMISSIONS:	Copy the permissions
+ * @AS_APP_SUBSUME_FLAG_EXTENDS:	Copy the extends
+ * @AS_APP_SUBSUME_FLAG_COMPULSORY:	Copy the compulsory-for-desktop
+ * @AS_APP_SUBSUME_FLAG_SCREENSHOTS:	Copy the screenshots
+ * @AS_APP_SUBSUME_FLAG_REVIEWS:	Copy the reviews
+ * @AS_APP_SUBSUME_FLAG_CONTENT_RATINGS	Copy the content ratings
+ * @AS_APP_SUBSUME_FLAG_PROVIDES:	Copy the provides
+ * @AS_APP_SUBSUME_FLAG_ICONS:		Copy the icons
+ * @AS_APP_SUBSUME_FLAG_MIMETYPES:	Copy the mimetypes
+ * @AS_APP_SUBSUME_FLAG_VETOS:		Copy the vetos
+ * @AS_APP_SUBSUME_FLAG_LANGUAGES:	Copy the languages
+ * @AS_APP_SUBSUME_FLAG_NAME:		Copy the name
+ * @AS_APP_SUBSUME_FLAG_COMMENT:	Copy the comment
+ * @AS_APP_SUBSUME_FLAG_DEVELOPER_NAME	Copy the developer name
+ * @AS_APP_SUBSUME_FLAG_DESCRIPTION:	Copy the description
+ * @AS_APP_SUBSUME_FLAG_METADATA:	Copy the metadata
+ * @AS_APP_SUBSUME_FLAG_URL:		Copy the urls
+ * @AS_APP_SUBSUME_FLAG_KEYWORDS:	Copy the keywords
+ * @AS_APP_SUBSUME_FLAG_SOURCE_FILE:	Copy the source file
+ * @AS_APP_SUBSUME_FLAG_BRANCH:		Copy the branch
+ * @AS_APP_SUBSUME_FLAG_ORIGIN:		Copy the origin
+ * @AS_APP_SUBSUME_FLAG_METADATA_LICENSE: Copy the metadata license
+ * @AS_APP_SUBSUME_FLAG_PROJECT_LICENSE	Copy the project license
+ * @AS_APP_SUBSUME_FLAG_PROJECT_GROUP	Copy the project group
+ * @AS_APP_SUBSUME_FLAG_SOURCE_KIND:	Copy the source kind
  *
  * The flags to use when subsuming applications.
  **/
 typedef enum {
 	AS_APP_SUBSUME_FLAG_NONE		= 0,
-	AS_APP_SUBSUME_FLAG_NO_OVERWRITE	= 1 << 0,	/* Since: 0.1.4 */
-	AS_APP_SUBSUME_FLAG_BOTH_WAYS		= 1 << 1,	/* Since: 0.1.4 */
-	AS_APP_SUBSUME_FLAG_PARTIAL		= 1 << 2,	/* Since: 0.2.2 */
-	AS_APP_SUBSUME_FLAG_ONLY_MERGE		= 1 << 3,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_NO_OVERWRITE	= 1lu << 0,	/* Since: 0.1.4 */
+	AS_APP_SUBSUME_FLAG_BOTH_WAYS		= 1lu << 1,	/* Since: 0.1.4 */
+	AS_APP_SUBSUME_FLAG_PARTIAL		= 1lu << 2,	/* Since: 0.2.2 */
+	AS_APP_SUBSUME_FLAG_KIND		= 1lu << 3,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_STATE		= 1lu << 4,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_BUNDLES		= 1lu << 5,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_TRANSLATIONS	= 1lu << 6,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_RELEASES		= 1lu << 7,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_KUDOS		= 1lu << 8,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_CATEGORIES		= 1lu << 9,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_PERMISSIONS		= 1lu << 10,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_EXTENDS		= 1lu << 11,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_COMPULSORY		= 1lu << 12,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_SCREENSHOTS		= 1lu << 13,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_REVIEWS		= 1lu << 14,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_CONTENT_RATINGS	= 1lu << 15,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_PROVIDES		= 1lu << 16,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_ICONS		= 1lu << 17,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_MIMETYPES		= 1lu << 18,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_VETOS		= 1lu << 19,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_LANGUAGES		= 1lu << 20,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_NAME		= 1lu << 21,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_COMMENT		= 1lu << 22,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_DEVELOPER_NAME	= 1lu << 23,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_DESCRIPTION		= 1lu << 24,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_METADATA		= 1lu << 25,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_URL			= 1lu << 26,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_KEYWORDS		= 1lu << 27,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_SOURCE_FILE		= 1lu << 28,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_BRANCH		= 1lu << 29,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_ORIGIN		= 1lu << 30,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_METADATA_LICENSE	= 1lu << 31,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_PROJECT_LICENSE	= 1lu << 32,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_PROJECT_GROUP	= 1lu << 33,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_SOURCE_KIND		= 1lu << 34,	/* Since: 0.6.1 */
 	/*< private >*/
 	AS_APP_SUBSUME_FLAG_LAST,
 } AsAppSubsumeFlags;
+
+/* safe to do from a merge <component> */
+#define AS_APP_SUBSUME_FLAG_MERGE	(AS_APP_SUBSUME_FLAG_CATEGORIES | \
+					 AS_APP_SUBSUME_FLAG_COMMENT | \
+					 AS_APP_SUBSUME_FLAG_COMPULSORY | \
+					 AS_APP_SUBSUME_FLAG_CONTENT_RATINGS | \
+					 AS_APP_SUBSUME_FLAG_DESCRIPTION | \
+					 AS_APP_SUBSUME_FLAG_DEVELOPER_NAME | \
+					 AS_APP_SUBSUME_FLAG_EXTENDS | \
+					 AS_APP_SUBSUME_FLAG_ICONS | \
+					 AS_APP_SUBSUME_FLAG_KEYWORDS | \
+					 AS_APP_SUBSUME_FLAG_KUDOS | \
+					 AS_APP_SUBSUME_FLAG_LANGUAGES | \
+					 AS_APP_SUBSUME_FLAG_MIMETYPES | \
+					 AS_APP_SUBSUME_FLAG_NAME | \
+					 AS_APP_SUBSUME_FLAG_PERMISSIONS | \
+					 AS_APP_SUBSUME_FLAG_PROJECT_GROUP | \
+					 AS_APP_SUBSUME_FLAG_PROVIDES | \
+					 AS_APP_SUBSUME_FLAG_RELEASES | \
+					 AS_APP_SUBSUME_FLAG_REVIEWS | \
+					 AS_APP_SUBSUME_FLAG_SCREENSHOTS | \
+					 AS_APP_SUBSUME_FLAG_TRANSLATIONS | \
+					 AS_APP_SUBSUME_FLAG_URL)
+
+/* all properties */
+#define AS_APP_SUBSUME_FLAG_DEDUPE	(AS_APP_SUBSUME_FLAG_BRANCH | \
+					 AS_APP_SUBSUME_FLAG_BUNDLES | \
+					 AS_APP_SUBSUME_FLAG_KIND | \
+					 AS_APP_SUBSUME_FLAG_MERGE | \
+					 AS_APP_SUBSUME_FLAG_METADATA | \
+					 AS_APP_SUBSUME_FLAG_ORIGIN | \
+					 AS_APP_SUBSUME_FLAG_PROJECT_LICENSE | \
+					 AS_APP_SUBSUME_FLAG_SOURCE_FILE | \
+					 AS_APP_SUBSUME_FLAG_SOURCE_KIND | \
+					 AS_APP_SUBSUME_FLAG_STATE | \
+					 AS_APP_SUBSUME_FLAG_VETOS)
 
 /**
  * AsAppError:

@@ -268,6 +268,6 @@ asb_plugin_merge (AsbPlugin *plugin, GList *list)
 				 "main package %s",
 				 as_app_get_id (app),
 				 as_app_get_pkgname_default (app));
-		as_app_subsume_full (found, app, AS_APP_SUBSUME_FLAG_PARTIAL);
+		as_app_subsume_full (found, app, AS_APP_SUBSUME_FLAG_MERGE);
 	}
 }

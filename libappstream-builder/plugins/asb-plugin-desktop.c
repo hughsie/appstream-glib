@@ -190,7 +190,9 @@ asb_plugin_desktop_refine (AsbPlugin *plugin,
 		return FALSE;
 
 	/* copy all metadata */
-	as_app_subsume_full (AS_APP (app), desktop_app, AS_APP_SUBSUME_FLAG_NO_OVERWRITE);
+	as_app_subsume_full (AS_APP (app), desktop_app,
+			     AS_APP_SUBSUME_FLAG_NO_OVERWRITE |
+			     AS_APP_SUBSUME_FLAG_MERGE);
 
 	/* is the icon a stock-icon-name? */
 	icon = as_app_get_icon_default (AS_APP (app));
