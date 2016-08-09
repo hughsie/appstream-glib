@@ -1721,7 +1721,6 @@ _as_utils_fix_unique_id_part (const gchar *tmp)
  * @origin: Origin, e.g. 'fedora' or 'gnome-apps-nightly'
  * @kind: #AsAppKind, e.g. %AS_APP_KIND_DESKTOP
  * @id: AppStream ID, e.g. 'gimp.desktop'
- * @arch: Arch, e.g. 'x86_64' or 'i386'
  * @branch: Branch, e.g. '3-20' or 'master'
  *
  * Builds a valid unique ID using available data.
@@ -1736,7 +1735,6 @@ as_utils_unique_id_build (AsAppScope scope,
 			  const gchar *origin,
 			  AsAppKind kind,
 			  const gchar *id,
-			  const gchar *arch,
 			  const gchar *branch)
 {
 	const gchar *bundle_str = NULL;
@@ -1751,13 +1749,12 @@ as_utils_unique_id_build (AsAppScope scope,
 		scope_str = as_app_scope_to_string (scope);
 	if (bundle_kind != AS_BUNDLE_KIND_UNKNOWN)
 		bundle_str = as_bundle_kind_to_string (bundle_kind);
-	return g_strdup_printf ("%s/%s/%s/%s/%s/%s/%s",
+	return g_strdup_printf ("%s/%s/%s/%s/%s/%s",
 				_as_utils_fix_unique_id_part (scope_str),
 				_as_utils_fix_unique_id_part (bundle_str),
 				_as_utils_fix_unique_id_part (origin),
 				_as_utils_fix_unique_id_part (kind_str),
 				_as_utils_fix_unique_id_part (id),
-				_as_utils_fix_unique_id_part (arch),
 				_as_utils_fix_unique_id_part (branch));
 }
 

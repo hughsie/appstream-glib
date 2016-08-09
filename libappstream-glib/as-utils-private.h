@@ -32,7 +32,7 @@
 
 G_BEGIN_DECLS
 
-#define		AS_UTILS_UNIQUE_ID_PARTS	7
+#define		AS_UTILS_UNIQUE_ID_PARTS	6
 
 const gchar	*as_hash_lookup_by_locale	(GHashTable	*hash,
 						 const gchar	*locale);

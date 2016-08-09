@@ -548,8 +548,7 @@ as_app_get_bundle_kind (AsApp *app)
  *  3. origin, e.g. `fedora` or `gnome-apps-nightly`
  *  4. kind, e.g. `app` or `runtime`
  *  5. AppStream ID, e.g. `gimp.desktop`
- *  6. arch, e.g. `x86_64` or `i386`
- *  7. branch, e.g. `stable` or `master`
+ *  6. branch, e.g. `stable` or `master`
  *
  * Returns: %TRUE if the applications are equal
  *
@@ -591,7 +590,7 @@ as_app_equal (AsApp *app1, AsApp *app2)
  *
  * Gets the unique ID value to represent the component.
  *
- * Returns: the unique ID, e.g. `system/package/fedora/desktop/gimp.desktop/i386/master`
+ * Returns: the unique ID, e.g. `system/package/fedora/desktop/gimp.desktop/master`
  *
  * Since: 0.6.1
  **/
@@ -606,18 +605,13 @@ as_app_get_unique_id (AsApp *app)
 								    NULL,
 								    priv->kind,
 								    as_app_get_id_no_prefix (app),
-								    NULL,
 								    NULL);
 		} else {
-			const gchar *arch_str = NULL;
-			if (priv->architectures->len == 1)
-				arch_str = g_ptr_array_index (priv->architectures, 0);
 			priv->unique_id = as_utils_unique_id_build (priv->scope,
 								    as_app_get_bundle_kind (app),
 								    priv->origin,
 								    priv->kind,
 								    as_app_get_id_no_prefix (app),
-								    arch_str,
 								    priv->branch);
 		}
 	}

@@ -488,9 +488,7 @@ _as_app_new_from_unique_id (const gchar *unique_id)
 	if (g_strcmp0 (split[4], AS_APP_UNIQUE_WILDCARD) != 0)
 		as_app_set_id (app, split[4]);
 	if (g_strcmp0 (split[5], AS_APP_UNIQUE_WILDCARD) != 0)
-		as_app_add_arch (app, split[5]);
-	if (g_strcmp0 (split[6], AS_APP_UNIQUE_WILDCARD) != 0)
-		as_app_set_branch (app, split[6]);
+		as_app_set_branch (app, split[5]);
 
 	return g_steal_pointer (&app);
 }
@@ -513,7 +511,7 @@ as_store_get_app_by_app (AsStore *store, AsApp *app)
  * as_store_get_app_by_unique_id:
  * @store: a #AsStore instance.
  * @unique_id: the application unique ID, e.g.
- *      `user/flatpak/gnome-apps-nightly/app/gimp.desktop/i386/master`
+ *      `user/flatpak/gnome-apps-nightly/app/gimp.desktop/master`
  * @search_flags: the search flags, e.g. %AS_STORE_SEARCH_FLAG_USE_WILDCARDS
  *
  * Finds an application in the store by matching the unique ID.
@@ -537,7 +535,7 @@ as_store_get_app_by_unique_id (AsStore *store,
 	if ((search_flags & AS_STORE_SEARCH_FLAG_USE_WILDCARDS) == 0)
 		return g_hash_table_lookup (priv->hash_unique_id, unique_id);
 
-	/* create virtual app using scope/system/origin/kind/id/arch/branch */
+	/* create virtual app using scope/system/origin/kind/id/branch */
 	app_tmp = _as_app_new_from_unique_id (unique_id);
 	if (app_tmp == NULL)
 		return NULL;
