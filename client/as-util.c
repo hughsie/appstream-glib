@@ -395,6 +395,26 @@ as_util_convert_appdata (GFile *file_input,
 					     "can find help");
 		}
 	}
+	if (as_node_find_with_attribute (n, "url", "type", "translate") == NULL) {
+		if (g_strcmp0 (project_group, "GNOME") == 0) {
+			n3 = as_node_insert (n, "url", "https://wiki.gnome.org/TranslationProject",
+					     AS_NODE_INSERT_FLAG_NONE,
+					     "type", "translate", NULL);
+		} else if (g_strcmp0 (project_group, "KDE") == 0) {
+			n3 = as_node_insert (n, "url", "http://i18n.kde.org/",
+					     AS_NODE_INSERT_FLAG_NONE,
+					     "type", "translate", NULL);
+		} else if (g_strcmp0 (project_group, "XFCE") == 0) {
+			n3 = as_node_insert (n, "url", "https://wiki.xfce.org/translations",
+					     AS_NODE_INSERT_FLAG_NONE,
+					     "type", "translate", NULL);
+		} else {
+			n3 = as_node_insert (n, "url", "<!-- http://www.homepage.com/how-to-submit-translations.html -->",
+					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
+					     "type", "translate", NULL);
+		}
+		as_node_set_comment (n3, "FIXME: where to submit translations");
+	}
 
 	/* fix old <update_contact> name */
 	n2 = as_node_find (n, "updatecontact");
