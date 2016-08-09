@@ -92,7 +92,7 @@ typedef enum {
  * @AS_APP_SUBSUME_FLAG_KIND:		Copy the kind
  * @AS_APP_SUBSUME_FLAG_STATE:		Copy the state
  * @AS_APP_SUBSUME_FLAG_BUNDLES:	Copy the bundles
- * @AS_APP_SUBSUME_FLAG_TRANSLATIONS	Copy the translations
+ * @AS_APP_SUBSUME_FLAG_TRANSLATIONS:	Copy the translations
  * @AS_APP_SUBSUME_FLAG_RELEASES:	Copy the releases
  * @AS_APP_SUBSUME_FLAG_KUDOS:		Copy the kudos
  * @AS_APP_SUBSUME_FLAG_CATEGORIES:	Copy the categories
@@ -101,7 +101,7 @@ typedef enum {
  * @AS_APP_SUBSUME_FLAG_COMPULSORY:	Copy the compulsory-for-desktop
  * @AS_APP_SUBSUME_FLAG_SCREENSHOTS:	Copy the screenshots
  * @AS_APP_SUBSUME_FLAG_REVIEWS:	Copy the reviews
- * @AS_APP_SUBSUME_FLAG_CONTENT_RATINGS	Copy the content ratings
+ * @AS_APP_SUBSUME_FLAG_CONTENT_RATINGS: Copy the content ratings
  * @AS_APP_SUBSUME_FLAG_PROVIDES:	Copy the provides
  * @AS_APP_SUBSUME_FLAG_ICONS:		Copy the icons
  * @AS_APP_SUBSUME_FLAG_MIMETYPES:	Copy the mimetypes
@@ -118,8 +118,8 @@ typedef enum {
  * @AS_APP_SUBSUME_FLAG_BRANCH:		Copy the branch
  * @AS_APP_SUBSUME_FLAG_ORIGIN:		Copy the origin
  * @AS_APP_SUBSUME_FLAG_METADATA_LICENSE: Copy the metadata license
- * @AS_APP_SUBSUME_FLAG_PROJECT_LICENSE	Copy the project license
- * @AS_APP_SUBSUME_FLAG_PROJECT_GROUP	Copy the project group
+ * @AS_APP_SUBSUME_FLAG_PROJECT_LICENSE: Copy the project license
+ * @AS_APP_SUBSUME_FLAG_PROJECT_GROUP:	Copy the project group
  * @AS_APP_SUBSUME_FLAG_SOURCE_KIND:	Copy the source kind
  *
  * The flags to use when subsuming applications.
