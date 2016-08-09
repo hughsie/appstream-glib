@@ -71,6 +71,7 @@ typedef enum {
  * @AS_URL_KIND_DONATION:		Application donation page
  * @AS_URL_KIND_HELP:			Application help manual
  * @AS_URL_KIND_MISSING:		The package is available, but missing
+ * @AS_URL_KIND_TRANSLATE:		Application translation page
  *
  * The URL type.
  **/
@@ -82,6 +83,7 @@ typedef enum {
 	AS_URL_KIND_DONATION,		/* Since: 0.1.1 */
 	AS_URL_KIND_HELP,		/* Since: 0.1.5 */
 	AS_URL_KIND_MISSING,		/* Since: 0.2.2 */
+	AS_URL_KIND_TRANSLATE,		/* Since: 0.6.1 */
 	/*< private >*/
 	AS_URL_KIND_LAST
 } AsUrlKind;
