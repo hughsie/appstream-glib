@@ -867,11 +867,6 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 		return TRUE;
 
 	releases = as_app_get_releases (app);
-	if (releases->len > 10) {
-		ai_app_validate_add (helper,
-				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "Too many <release> tags");
-	}
 	for (i = 0; i < releases->len; i++) {
 		release = g_ptr_array_index (releases, i);
 		if (!as_app_validate_release (app, release, helper, error))
