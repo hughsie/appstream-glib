@@ -1723,7 +1723,6 @@ _as_utils_fix_unique_id_part (const gchar *tmp)
  * @id: AppStream ID, e.g. 'gimp.desktop'
  * @arch: Arch, e.g. 'x86_64' or 'i386'
  * @branch: Branch, e.g. '3-20' or 'master'
- * @version: Version, e.g. '1.2.3'
  *
  * Builds a valid unique ID using available data.
  *
@@ -1738,8 +1737,7 @@ as_utils_unique_id_build (AsAppScope scope,
 			  AsAppKind kind,
 			  const gchar *id,
 			  const gchar *arch,
-			  const gchar *branch,
-			  const gchar *version)
+			  const gchar *branch)
 {
 	const gchar *bundle_str = NULL;
 	const gchar *kind_str = NULL;
@@ -1753,15 +1751,14 @@ as_utils_unique_id_build (AsAppScope scope,
 		scope_str = as_app_scope_to_string (scope);
 	if (bundle_kind != AS_BUNDLE_KIND_UNKNOWN)
 		bundle_str = as_bundle_kind_to_string (bundle_kind);
-	return g_strdup_printf ("%s/%s/%s/%s/%s/%s/%s/%s",
+	return g_strdup_printf ("%s/%s/%s/%s/%s/%s/%s",
 				_as_utils_fix_unique_id_part (scope_str),
 				_as_utils_fix_unique_id_part (bundle_str),
 				_as_utils_fix_unique_id_part (origin),
 				_as_utils_fix_unique_id_part (kind_str),
 				_as_utils_fix_unique_id_part (id),
 				_as_utils_fix_unique_id_part (arch),
-				_as_utils_fix_unique_id_part (branch),
-				_as_utils_fix_unique_id_part (version));
+				_as_utils_fix_unique_id_part (branch));
 }
 
 static inline guint
@@ -1794,7 +1791,7 @@ as_utils_unique_id_valid (const gchar *unique_id)
 		if (unique_id[i] == '/')
 			sections++;
 	}
-	return sections == 8;
+	return sections == AS_UTILS_UNIQUE_ID_PARTS;
 }
 
 static inline gboolean
@@ -1833,7 +1830,7 @@ as_utils_unique_id_equal (const gchar *unique_id1, const gchar *unique_id2)
 		return FALSE;
 
 	/* look at each part */
-	for (i = 0; i < 8; i++) {
+	for (i = 0; i < AS_UTILS_UNIQUE_ID_PARTS; i++) {
 		const gchar *tmp1 = unique_id1 + last1;
 		const gchar *tmp2 = unique_id2 + last2;
 

@@ -353,7 +353,6 @@ const gchar	*as_app_get_metadata_license	(AsApp		*app);
 const gchar	*as_app_get_update_contact	(AsApp		*app);
 const gchar	*as_app_get_source_file		(AsApp		*app);
 const gchar	*as_app_get_branch		(AsApp		*app);
-const gchar	*as_app_get_version		(AsApp		*app);
 const gchar	*as_app_get_name		(AsApp		*app,
 						 const gchar	*locale);
 const gchar	*as_app_get_comment		(AsApp		*app,
@@ -425,8 +424,6 @@ void		 as_app_set_source_file		(AsApp		*app,
 						 const gchar	*source_file);
 void		 as_app_set_branch		(AsApp		*app,
 						 const gchar	*branch);
-void		 as_app_set_version		(AsApp		*app,
-						 const gchar	*version);
 void		 as_app_set_priority		(AsApp		*app,
 						 gint		 priority);
 void		 as_app_add_category		(AsApp		*app,

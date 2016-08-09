@@ -32,6 +32,8 @@
 
 G_BEGIN_DECLS
 
+#define		AS_UTILS_UNIQUE_ID_PARTS	7
+
 const gchar	*as_hash_lookup_by_locale	(GHashTable	*hash,
 						 const gchar	*locale);
 void		 as_pixbuf_sharpen		(GdkPixbuf	*src,

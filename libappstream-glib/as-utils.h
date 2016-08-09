@@ -138,8 +138,7 @@ gchar		*as_utils_unique_id_build	(AsAppScope	 scope,
 						 AsAppKind	 kind,
 						 const gchar	*id,
 						 const gchar	*arch,
-						 const gchar	*branch,
-						 const gchar	*version);
+						 const gchar	*branch);
 gboolean	 as_utils_unique_id_equal	(const gchar	*unique_id1,
 						 const gchar	*unique_id2);
 gboolean	 as_utils_unique_id_valid	(const gchar	*unique_id);

@@ -1537,7 +1537,7 @@ as_test_app_func (void)
 	/* verify */
 	g_assert_cmpstr (as_app_get_id (app), ==, "org.gnome.Software.desktop");
 	g_assert_cmpstr (as_app_get_id_filename (app), ==, "org.gnome.Software");
-	g_assert_cmpstr (as_app_get_unique_id (app), ==, "*/flatpak/*/desktop/org.gnome.Software.desktop/i386/master/*");
+	g_assert_cmpstr (as_app_get_unique_id (app), ==, "*/flatpak/*/desktop/org.gnome.Software.desktop/i386/master");
 	g_assert_cmpstr (as_app_get_name (app, "pl"), ==, "Oprogramowanie");
 	g_assert_cmpstr (as_app_get_comment (app, NULL), ==, "Application manager");
 	g_assert_cmpstr (as_app_get_description (app, NULL), ==, "<p>Software allows you to find stuff</p>");
@@ -2989,19 +2989,19 @@ as_test_store_prefix_func (void)
 			 "flatpak-user:org.gnome.Software.desktop");
 
 	/* exact unique match */
-	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/test/*/*/*",
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/test/*/*",
 						 AS_STORE_SEARCH_FLAG_NONE);
 	g_assert (app_tmp == NULL);
-	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/test/*/*/*",
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/test/*/*",
 						 AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
 	g_assert (app_tmp == NULL);
-	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/org.gnome.Software.desktop/*/*/*",
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/org.gnome.Software.desktop/*/*",
 						 AS_STORE_SEARCH_FLAG_NONE);
 	g_assert (app_tmp != NULL);
-	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/org.gnome.Software.desktop/*/*/*",
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/org.gnome.Software.desktop/*/*",
 						 AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
 	g_assert (app_tmp != NULL);
-	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/*/*/*/*",
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/*/*/*/*/*",
 						 AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
 	g_assert (app_tmp != NULL);
 }
@@ -3027,10 +3027,10 @@ as_test_store_wildcard_func (void)
 	as_store_add_app (store, app2);
 
 	/* check negative match */
-	app_tmp = as_store_get_app_by_unique_id (store, "*/*/xxx/*/gimp.desktop/*/*/*",
+	app_tmp = as_store_get_app_by_unique_id (store, "*/*/xxx/*/gimp.desktop/*/*",
 						 AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
 	g_assert (app_tmp == NULL);
-	app_tmp = as_store_get_app_by_unique_id (store, "*/snap/*/*/gimp.desktop/*/*/*",
+	app_tmp = as_store_get_app_by_unique_id (store, "*/snap/*/*/gimp.desktop/*/*",
 						 AS_STORE_SEARCH_FLAG_USE_WILDCARDS);
 	g_assert (app_tmp == NULL);
 }
@@ -3071,7 +3071,7 @@ as_test_store_flatpak_func (void)
 	g_assert_cmpint (apps->len, ==, 1);
 	app = g_ptr_array_index (apps, 0);
 	g_assert_cmpstr (as_app_get_id (app), ==, "flatpak:test.desktop");
-	g_assert_cmpstr (as_app_get_unique_id (app), ==, "system/flatpak/remote-name/desktop/test.desktop/x86_64/master/*");
+	g_assert_cmpstr (as_app_get_unique_id (app), ==, "system/flatpak/remote-name/desktop/test.desktop/x86_64/master");
 	g_assert_cmpstr (as_app_get_id_filename (app), ==, "test");
 	g_assert_cmpstr (as_app_get_origin (app), ==, "remote-name");
 	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
@@ -3457,16 +3457,16 @@ as_test_store_unique_func (void)
 	g_assert_cmpint (apps->len, ==, 3);
 	app = g_ptr_array_index (apps, 0);
 	g_assert_cmpstr (as_app_get_unique_id (app), ==,
-			 "*/package/*/desktop/org.gnome.Software.desktop/*/*/*");
+			 "*/package/*/desktop/org.gnome.Software.desktop/*/*");
 	app = g_ptr_array_index (apps, 1);
 	g_assert_cmpstr (as_app_get_unique_id (app), ==,
-			 "*/flatpak/*/desktop/org.gnome.Software.desktop/i386/3-18/*");
+			 "*/flatpak/*/desktop/org.gnome.Software.desktop/i386/3-18");
 	app = g_ptr_array_index (apps, 2);
 	g_assert_cmpstr (as_app_get_unique_id (app), ==,
-			 "*/flatpak/*/desktop/org.gnome.Software.desktop/i386/master/*");
+			 "*/flatpak/*/desktop/org.gnome.Software.desktop/i386/master");
 	app = as_store_get_app_by_unique_id (store,
 					     "*/flatpak/*/desktop/"
-					     "org.gnome.Software.desktop/i386/master/*",
+					     "org.gnome.Software.desktop/i386/master",
 					     AS_STORE_SEARCH_FLAG_NONE);
 	g_assert (app != NULL);
 }
@@ -5059,16 +5059,16 @@ as_test_utils_unique_id_func (void)
 	g_assert (!as_utils_unique_id_equal ("foo/bar/baz", "foo/bar"));
 
 	for (i = 0; i < loops; i++) {
-		g_assert (as_utils_unique_id_equal ("aa/bb/cc/dd/ee/ff/gg/hh",
-						    "aa/bb/cc/dd/ee/ff/gg/hh"));
-		g_assert (as_utils_unique_id_equal ("aa/bb/cc/dd/ee/ff/gg/hh",
-						    "aa/*/cc/dd/ee/ff/gg/hh"));
-		g_assert (as_utils_unique_id_equal ("user/flatpak/utopia/desktop/gimp.desktop/i386/master/1.2.3",
-						    "*/*/*/*/*/*/*/*"));
-		g_assert (!as_utils_unique_id_equal ("zz/zz/zz/zz/zz/zz/zz/zz",
-						     "aa/bb/cc/dd/ee/ff/gg/hh"));
-		g_assert (!as_utils_unique_id_equal ("user/*/*/shell-extension/gmail_notify@jablona123.pl.shell-extension/*/*/*",
-						     "*/*/*/desktop/org.gnome.accerciser.desktop/*/*/*"));
+		g_assert (as_utils_unique_id_equal ("aa/bb/cc/dd/ee/ff/gg",
+						    "aa/bb/cc/dd/ee/ff/gg"));
+		g_assert (as_utils_unique_id_equal ("aa/bb/cc/dd/ee/ff/gg",
+						    "aa/*/cc/dd/ee/ff/gg"));
+		g_assert (as_utils_unique_id_equal ("user/flatpak/utopia/desktop/gimp.desktop/i386/master",
+						    "*/*/*/*/*/*/*"));
+		g_assert (!as_utils_unique_id_equal ("zz/zz/zz/zz/zz/zz/zz",
+						     "aa/bb/cc/dd/ee/ff/gg"));
+		g_assert (!as_utils_unique_id_equal ("user/*/*/shell-extension/gmail_notify@jablona123.pl.shell-extension/*/*",
+						     "*/*/*/desktop/org.gnome.accerciser.desktop/*/*"));
 	}
 	duration_ns = g_timer_elapsed (timer, NULL) * 1000000000.f;
 	g_print ("%.0f ns: ", duration_ns / (loops * 4));
@@ -5094,7 +5094,7 @@ as_test_store_merge_func (void)
 	as_app_set_source_kind (app1, AS_APP_SOURCE_KIND_APPDATA);
 	as_app_add_pkgname (app1, "gnome-software");
 	g_assert_cmpstr (as_app_get_unique_id (app1), ==,
-			 "*/package/*/*/org.gnome.Software.desktop/*/master/*");
+			 "*/package/*/*/org.gnome.Software.desktop/*/master");
 	as_store_add_app (store, app1);
 
 	/* add merge component */
@@ -5108,7 +5108,7 @@ as_test_store_merge_func (void)
 	as_app_set_source_file (app_merge, "DO-NOT-SUBSUME.xml");
 	as_store_add_app (store, app_merge);
 	g_assert_cmpstr (as_app_get_unique_id (app_merge), ==,
-			 "*/*/*/desktop/org.gnome.Software.desktop/*/*/*");
+			 "*/*/*/desktop/org.gnome.Software.desktop/*/*");
 
 	/* add app */
 	app2 = as_app_new ();
@@ -5117,7 +5117,7 @@ as_test_store_merge_func (void)
 	as_app_set_source_kind (app2, AS_APP_SOURCE_KIND_APPSTREAM);
 	as_app_add_pkgname (app2, "gnome-software");
 	g_assert_cmpstr (as_app_get_unique_id (app2), ==,
-			 "*/package/*/*/org.gnome.Software.desktop/*/stable/*");
+			 "*/package/*/*/org.gnome.Software.desktop/*/stable");
 	as_store_add_app (store, app2);
 
 	/* verify that both apps have the category */

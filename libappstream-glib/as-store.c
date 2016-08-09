@@ -465,7 +465,7 @@ _as_app_new_from_unique_id (const gchar *unique_id)
 	g_autoptr(AsApp) app = as_app_new ();
 
 	split = g_strsplit (unique_id, "/", -1);
-	if (g_strv_length (split) != 8)
+	if (g_strv_length (split) != AS_UTILS_UNIQUE_ID_PARTS)
 		return NULL;
 	if (g_strcmp0 (split[0], AS_APP_UNIQUE_WILDCARD) != 0)
 		as_app_set_scope (app, as_app_scope_from_string (split[0]));
@@ -491,8 +491,6 @@ _as_app_new_from_unique_id (const gchar *unique_id)
 		as_app_add_arch (app, split[5]);
 	if (g_strcmp0 (split[6], AS_APP_UNIQUE_WILDCARD) != 0)
 		as_app_set_branch (app, split[6]);
-	if (g_strcmp0 (split[7], AS_APP_UNIQUE_WILDCARD) != 0)
-		as_app_set_version (app, split[7]);
 
 	return g_steal_pointer (&app);
 }

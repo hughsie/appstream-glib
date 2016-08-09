@@ -102,7 +102,6 @@ typedef struct
 	gchar		*unique_id;
 	gchar		*source_file;
 	gchar		*branch;
-	gchar		*version;
 	gint		 priority;
 	gsize		 token_cache_valid;
 	GHashTable	*token_cache;			/* of string:AsAppTokenType* */
@@ -414,7 +413,6 @@ as_app_finalize (GObject *object)
 	g_free (priv->unique_id);
 	g_free (priv->source_file);
 	g_free (priv->branch);
-	g_free (priv->version);
 	g_hash_table_unref (priv->comments);
 	g_hash_table_unref (priv->developer_names);
 	g_hash_table_unref (priv->descriptions);
@@ -552,7 +550,6 @@ as_app_get_bundle_kind (AsApp *app)
  *  5. AppStream ID, e.g. `gimp.desktop`
  *  6. arch, e.g. `x86_64` or `i386`
  *  7. branch, e.g. `stable` or `master`
- *  8. version, e.g. `3.20.3` or `0.0.1`
  *
  * Returns: %TRUE if the applications are equal
  *
@@ -579,8 +576,6 @@ as_app_equal (AsApp *app1, AsApp *app2)
 		return FALSE;
 	if (!as_app_equal_str (priv1->branch, priv2->branch))
 		return FALSE;
-	if (!as_app_equal_str (priv1->version, priv2->version))
-		return FALSE;
 	if (!as_app_equal_array_str (priv1->architectures,
 				     priv2->architectures))
 		return FALSE;
@@ -596,7 +591,7 @@ as_app_equal (AsApp *app1, AsApp *app2)
  *
  * Gets the unique ID value to represent the component.
  *
- * Returns: the unique ID, e.g. "system/package/fedora/desktop/gimp.desktop/i386/master/1.2.3"
+ * Returns: the unique ID, e.g. `system/package/fedora/desktop/gimp.desktop/i386/master`
  *
  * Since: 0.6.1
  **/
@@ -612,7 +607,6 @@ as_app_get_unique_id (AsApp *app)
 								    priv->kind,
 								    as_app_get_id_no_prefix (app),
 								    NULL,
-								    NULL,
 								    NULL);
 		} else {
 			const gchar *arch_str = NULL;
@@ -624,8 +618,7 @@ as_app_get_unique_id (AsApp *app)
 								    priv->kind,
 								    as_app_get_id_no_prefix (app),
 								    arch_str,
-								    priv->branch,
-								    priv->version);
+								    priv->branch);
 		}
 	}
 	return priv->unique_id;
@@ -1841,23 +1834,6 @@ as_app_get_branch (AsApp *app)
 	return priv->branch;
 }
 
-/**
- * as_app_get_version:
- * @app: a #AsApp instance.
- *
- * Gets the version for the application.
- *
- * Returns: string, or %NULL if unset
- *
- * Since: 0.6.1
- **/
-const gchar *
-as_app_get_version (AsApp *app)
-{
-	AsAppPrivate *priv = GET_PRIVATE (app);
-	return priv->version;
-}
-
 static gboolean
 as_app_validate_utf8 (const gchar *text)
 {
@@ -2201,23 +2177,6 @@ as_app_set_branch (AsApp *app, const gchar *branch)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_free (priv->branch);
 	priv->branch = g_strdup (branch);
-}
-
-/**
- * as_app_set_version:
- * @app: a #AsApp instance.
- * @version: the version, e.g. "1.2.3".
- *
- * Set the version number of this application.
- *
- * Since: 0.6.1
- **/
-void
-as_app_set_version (AsApp *app, const gchar *version)
-{
-	AsAppPrivate *priv = GET_PRIVATE (app);
-	g_free (priv->version);
-	priv->version = g_strdup (version);
 }
 
 /**
@@ -3527,10 +3486,6 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	/* branch */
 	if (priv->branch != NULL)
 		as_app_set_branch (app, priv->branch);
-
-	/* version */
-	if (priv->version != NULL)
-		as_app_set_version (app, priv->version);
 
 	/* source_pkgname */
 	if (priv->source_pkgname != NULL)
