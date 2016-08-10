@@ -213,12 +213,30 @@ as_node_add_padding (GString *xml, guint depth)
 		g_string_append (xml, "  ");
 }
 
+static gint
+as_node_sort_attr_by_name_cb (gconstpointer a, gconstpointer b)
+{
+	AsNodeAttr *attr1 = (AsNodeAttr *) a;
+	AsNodeAttr *attr2 = (AsNodeAttr *) b;
+
+	/* this is always first */
+	if (g_strcmp0 (attr1->key, "type") == 0)
+		return -1;
+	if (g_strcmp0 (attr2->key, "type") == 0)
+		return 1;
+
+	return g_strcmp0 (attr1->key, attr2->key);
+}
+
 static gchar *
 as_node_get_attr_string (AsNodeData *data)
 {
 	AsNodeAttr *attr;
 	GList *l;
 	GString *str;
+
+	/* ensure predictable output order */
+	data->attrs = g_list_sort (data->attrs, as_node_sort_attr_by_name_cb);
 
 	str = g_string_new ("");
 	for (l = data->attrs; l != NULL; l = l->next) {

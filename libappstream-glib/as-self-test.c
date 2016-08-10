@@ -449,7 +449,7 @@ as_test_release_func (void)
 	AsNode *n;
 	AsNode *root;
 	GString *xml;
-	const gchar *src = "<release version=\"0.1.2\" urgency=\"critical\" timestamp=\"123\"/>";
+	const gchar *src = "<release timestamp=\"123\" urgency=\"critical\" version=\"0.1.2\"/>";
 	gboolean ret;
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autoptr(AsRelease) release = NULL;
@@ -572,11 +572,11 @@ as_test_release_appstream_func (void)
 	gboolean ret;
 	guint64 sz;
 	const gchar *src =
-		"<release version=\"0.1.2\" timestamp=\"123\">\n"
+		"<release timestamp=\"123\" version=\"0.1.2\">\n"
 		"<location>http://foo.com/bar.zip</location>\n"
 		"<location>http://baz.com/bar.cab</location>\n"
-		"<checksum filename=\"firmware.cab\" target=\"container\" type=\"sha1\">12345</checksum>\n"
-		"<checksum filename=\"firmware.cab\" target=\"container\" type=\"md5\">deadbeef</checksum>\n"
+		"<checksum type=\"sha1\" filename=\"firmware.cab\" target=\"container\">12345</checksum>\n"
+		"<checksum type=\"md5\" filename=\"firmware.cab\" target=\"container\">deadbeef</checksum>\n"
 		"<description><p>This is a new release</p><ul><li>Point</li></ul></description>\n"
 		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>\n"
 		"<size type=\"installed\">123456</size>\n"
@@ -947,7 +947,7 @@ as_test_checksum_func (void)
 	AsNode *n;
 	AsNode *root;
 	GString *xml;
-	const gchar *src = "<checksum filename=\"fn.cab\" target=\"container\" type=\"sha1\">12345</checksum>";
+	const gchar *src = "<checksum type=\"sha1\" filename=\"fn.cab\" target=\"container\">12345</checksum>";
 	gboolean ret;
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autoptr(AsChecksum) csum = NULL;
@@ -1106,7 +1106,7 @@ as_test_image_func (void)
 	AsNode *root;
 	GString *xml;
 	const gchar *src =
-		"<image xml:lang=\"en_GB\" type=\"thumbnail\" height=\"12\" width=\"34\">"
+		"<image type=\"thumbnail\" height=\"12\" width=\"34\" xml:lang=\"en_GB\">"
 		"http://www.hughsie.com/a.jpg</image>";
 	gboolean ret;
 	g_autofree AsNodeContext *ctx = NULL;
@@ -1181,7 +1181,7 @@ as_test_review_func (void)
 	AsNode *root;
 	GString *xml;
 	const gchar *src =
-		"<review date=\"2016-09-15\" rating=\"80\" id=\"17\">\n"
+		"<review date=\"2016-09-15\" id=\"17\" rating=\"80\">\n"
 		"<priority>5</priority>\n"
 		"<summary>Hello world</summary>\n"
 		"<description><p>Mighty Fine</p></description>\n"
@@ -1243,7 +1243,7 @@ as_test_bundle_func (void)
 	AsNode *root;
 	GString *xml;
 	const gchar *src =
-		"<bundle sdk=\"2\" runtime=\"1\" type=\"limba\">gnome-3-16</bundle>";
+		"<bundle type=\"limba\" runtime=\"1\" sdk=\"2\">gnome-3-16</bundle>";
 	gboolean ret;
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autoptr(AsBundle) bundle = NULL;
@@ -1446,7 +1446,7 @@ as_test_app_func (void)
 	GString *xml;
 	gboolean ret;
 	const gchar *src =
-		"<component priority=\"-4\" type=\"desktop\">\n"
+		"<component type=\"desktop\" priority=\"-4\">\n"
 		"<id>org.gnome.Software.desktop</id>\n"
 		"<pkgname>gnome-software</pkgname>\n"
 		"<source_pkgname>gnome-software-src</source_pkgname>\n"
@@ -1458,8 +1458,8 @@ as_test_app_func (void)
 		"<developer_name>GNOME Foundation</developer_name>\n"
 		"<description><p>Software allows you to find stuff</p></description>\n"
 		"<description xml:lang=\"pt_BR\"><p>O aplicativo Software.</p></description>\n"
-		"<icon height=\"64\" width=\"64\" type=\"cached\">org.gnome.Software1.png</icon>\n"
-		"<icon height=\"64\" width=\"64\" type=\"cached\">org.gnome.Software2.png</icon>\n"
+		"<icon type=\"cached\" height=\"64\" width=\"64\">org.gnome.Software1.png</icon>\n"
+		"<icon type=\"cached\" height=\"64\" width=\"64\">org.gnome.Software2.png</icon>\n"
 		"<categories>\n"
 		"<category>System</category>\n"
 		"</categories>\n"
@@ -1502,8 +1502,8 @@ as_test_app_func (void)
 		"<content_attribute id=\"drugs-alcohol\">moderate</content_attribute>\n"
 		"</content_rating>\n"
 		"<releases>\n"
-		"<release version=\"3.11.91\" timestamp=\"1392724801\"/>\n"
-		"<release version=\"3.11.90\" timestamp=\"1392724800\"/>\n"
+		"<release timestamp=\"1392724801\" version=\"3.11.91\"/>\n"
+		"<release timestamp=\"1392724800\" version=\"3.11.90\"/>\n"
 		"</releases>\n"
 		"<provides>\n"
 		"<binary>/usr/bin/gnome-shell</binary>\n"
@@ -2733,7 +2733,7 @@ as_test_store_embedded_func (void)
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GString) xml = NULL;
 	const gchar *xml_src =
-"<components version=\"0.6\" origin=\"origin\">"
+"<components origin=\"origin\" version=\"0.6\">"
 "<component type=\"desktop\">"
 "<id>eog.desktop</id>"
 "<pkgname>eog</pkgname>"
@@ -2807,7 +2807,9 @@ as_test_store_embedded_func (void)
 
 	/* convert back to a file */
 	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_NONE);
-	g_assert_cmpstr (xml->str, ==, xml_src);
+	ret = as_test_compare_lines (xml->str, xml_src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 
 	/* strip out the embedded icons */
 	ret = as_store_convert_icons (store, AS_ICON_KIND_CACHED, &error);
@@ -3282,7 +3284,7 @@ as_test_store_cab_func (void)
 
 	/* check output */
 	src =
-	"<components version=\"0.9\" origin=\"colorhug-als-2.0.2.cab\">\n"
+	"<components origin=\"colorhug-als-2.0.2.cab\" version=\"0.9\">\n"
 	"<component type=\"firmware\">\n"
 	"<id>com.hughski.ColorHug2.firmware</id>\n"
 	"<name>ColorHug Firmware</name>\n"
@@ -3293,10 +3295,10 @@ as_test_store_cab_func (void)
 	"<project_license>GPL-2.0+</project_license>\n"
 	"<url type=\"homepage\">http://www.hughski.com/</url>\n"
 	"<releases>\n"
-	"<release version=\"2.0.2\" timestamp=\"1424116753\">\n"
+	"<release timestamp=\"1424116753\" version=\"2.0.2\">\n"
 	"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.2.cab</location>\n"
-	"<checksum filename=\"colorhug-als-2.0.2.cab\" target=\"container\" type=\"sha1\">" AS_TEST_WILDCARD_SHA1 "</checksum>\n"
-	"<checksum filename=\"firmware.bin\" target=\"content\" type=\"sha1\">" AS_TEST_WILDCARD_SHA1 "</checksum>\n"
+	"<checksum type=\"sha1\" filename=\"colorhug-als-2.0.2.cab\" target=\"container\">" AS_TEST_WILDCARD_SHA1 "</checksum>\n"
+	"<checksum type=\"sha1\" filename=\"firmware.bin\" target=\"content\">" AS_TEST_WILDCARD_SHA1 "</checksum>\n"
 	"<description><p>This unstable release adds the following features:</p>"
 	"<ul><li>Add TakeReadingArray to enable panel latency measurements</li>"
 	"<li>Speed up the auto-scaled measurements considerably, using 256ms as"
@@ -3519,7 +3521,7 @@ as_test_store_versions_func (void)
 	AsStore *store;
 	GError *error = NULL;
 	gboolean ret;
-	GString *str;
+	GString *xml;
 
 	/* load a file to the store */
 	store = as_store_new ();
@@ -3549,39 +3551,43 @@ as_test_store_versions_func (void)
 	as_store_set_api_version (store, 0.6);
 	g_assert_cmpfloat (as_store_get_api_version (store), <, 0.6 + 0.01);
 	g_assert_cmpfloat (as_store_get_api_version (store), >, 0.6 - 0.01);
-	str = as_store_to_xml (store, 0);
-	g_assert_cmpstr (str->str, ==,
-		"<components version=\"0.6\">"
-		"<component type=\"desktop\">"
-		"<id>test.desktop</id>"
-		"<description><p>Hello world</p></description>"
-		"<architectures><arch>i386</arch></architectures>"
-		"<releases>"
-		"<release version=\"0.1.2\" timestamp=\"123\">"
-		"<description><p>Hello</p></description>"
-		"</release>"
-		"</releases>"
-		"</component>"
-		"</components>");
-	g_string_free (str, TRUE);
+	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	ret = as_test_compare_lines (xml->str,
+		"<components version=\"0.6\">\n"
+		"<component type=\"desktop\">\n"
+		"<id>test.desktop</id>\n"
+		"<description><p>Hello world</p></description>\n"
+		"<architectures>\n"
+		"<arch>i386</arch>\n"
+		"</architectures>\n"
+		"<releases>\n"
+		"<release timestamp=\"123\" version=\"0.1.2\">\n"
+		"<description><p>Hello</p></description>\n"
+		"</release>\n"
+		"</releases>\n"
+		"</component>\n"
+		"</components>\n", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_string_free (xml, TRUE);
 
 	/* test with legacy options */
 	as_store_set_api_version (store, 0.6);
-	str = as_store_to_xml (store, 0);
-	g_assert_cmpstr (str->str, ==,
+	xml = as_store_to_xml (store, 0);
+	g_assert_cmpstr (xml->str, ==,
 		"<components version=\"0.6\">"
 		"<component type=\"desktop\">"
 		"<id>test.desktop</id>"
 		"<description><p>Hello world</p></description>"
 		"<architectures><arch>i386</arch></architectures>"
 		"<releases>"
-		"<release version=\"0.1.2\" timestamp=\"123\">"
+		"<release timestamp=\"123\" version=\"0.1.2\">"
 		"<description><p>Hello</p></description>"
 		"</release>"
 		"</releases>"
 		"</component>"
 		"</components>");
-	g_string_free (str, TRUE);
+	g_string_free (xml, TRUE);
 
 	g_object_unref (store);
 
@@ -3597,14 +3603,14 @@ as_test_store_versions_func (void)
 	g_assert (ret);
 
 	/* test latest spec version */
-	str = as_store_to_xml (store, 0);
-	g_assert_cmpstr (str->str, ==,
+	xml = as_store_to_xml (store, 0);
+	g_assert_cmpstr (xml->str, ==,
 		"<components version=\"0.6\">"
 		"<component type=\"desktop\">"
 		"<id>test.desktop</id>"
 		"</component>"
 		"</components>");
-	g_string_free (str, TRUE);
+	g_string_free (xml, TRUE);
 
 	g_object_unref (store);
 }
@@ -3658,9 +3664,9 @@ as_test_store_addons_func (void)
 
 	/* check it marshals back to the same XML */
 	str = as_store_to_xml (store, 0);
-	if (g_strcmp0 (str->str, xml) != 0)
-		g_warning ("Expected:\n%s\nGot:\n%s", xml, str->str);
-	g_assert_cmpstr (str->str, ==, xml);
+	ret = as_test_compare_lines (str->str, xml, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 }
 
 /*
@@ -4446,7 +4452,7 @@ as_test_store_yaml_func (void)
 	g_autoptr(GFile) file = NULL;
 	g_autoptr(GString) str = NULL;
 	const gchar *xml =
-		"<components version=\"0.6\" origin=\"aequorea\">\n"
+		"<components origin=\"aequorea\" version=\"0.6\">\n"
 		"<component type=\"desktop\">\n"
 		"<id>dave.desktop</id>\n"
 		"<name>dave</name>\n"
@@ -4479,9 +4485,9 @@ as_test_store_yaml_func (void)
 
 	/* test it matches expected XML */
 	str = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
-	if (g_strcmp0 (str->str, xml) != 0)
-		g_warning ("Expected:\n%s\nGot:\n%s", xml, str->str);
-	g_assert_cmpstr (str->str, ==, xml);
+	ret = as_test_compare_lines (str->str, xml, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 
 	/* test store properties */
 	g_assert_cmpstr (as_store_get_origin (store), ==, "aequorea");
