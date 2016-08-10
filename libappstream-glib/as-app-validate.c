@@ -650,12 +650,16 @@ as_app_validate_screenshot (AsScreenshot *ss, AsAppValidateHelper *helper)
 		if (str_len < length_caption_min) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<caption> is too short [%s]", tmp);
+					     "<caption> is too short [%s];"
+					     "shortest allowed is %u chars",
+					     tmp, length_caption_min);
 		}
 		if (str_len > length_caption_max) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<caption> is too long [%s]", tmp);
+					     "<caption> is too long [%s];"
+					     "longest allowed is %u chars",
+					     tmp, length_caption_max);
 		}
 		if (ai_app_validate_fullstop_ending (tmp)) {
 			ai_app_validate_add (helper,
