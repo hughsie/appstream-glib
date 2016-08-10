@@ -1,3 +1,20 @@
+Version 0.5.18
+~~~~~~~~~~~~~~
+Released: 2016-10-10
+
+New Features:
+ - Add the translate URL kind (Richard Hughes)
+
+Bugfixes:
+ - Add Sugar as a valid desktop environment (#118) (Sam)
+ - Add SUSE-Public-Domain to License map (#126) (Dominique Leuenberger)
+ - Avoid unsatisfiable dependency when built without libgcab (Simon McVittie)
+ - Do not save the 'X-' prefixed keys to the AppStream metadata (Richard Hughes)
+ - Do not split up the main AudioVideo category (Richard Hughes)
+ - Don't redundantly monitor files (Simon McVittie)
+ - No validation failure for lots of releases (Richard Hughes)
+ - Skip DEP-11 tests when DEP-11 is not enabled (Simon McVittie)
+
 Version 0.5.17
 ~~~~~~~~~~~~~~
 Released: 2016-07-13
