@@ -1927,6 +1927,7 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 	AsNode *node_apps;
 	AsNode *node_root;
 	GString *xml;
+	gboolean output_trusted = FALSE;
 	guint i;
 	gchar version[6];
 	g_autofree AsNodeContext *ctx = NULL;
@@ -1956,10 +1957,15 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 	/* sort by ID */
 	g_ptr_array_sort (priv->array, as_store_apps_sort_cb);
 
+	/* output is trusted, so include update_contact */
+	if (g_getenv ("APPSTREAM_GLIB_OUTPUT_TRUSTED") != NULL)
+		output_trusted = TRUE;
+
 	/* add applications */
 	ctx = as_node_context_new ();
 	as_node_context_set_version (ctx, priv->api_version);
 	as_node_context_set_output (ctx, AS_APP_SOURCE_KIND_APPSTREAM);
+	as_node_context_set_output_trusted (ctx, output_trusted);
 	for (i = 0; i < priv->array->len; i++) {
 		app = g_ptr_array_index (priv->array, i);
 		as_app_node_insert (app, node_apps, ctx);
