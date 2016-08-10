@@ -391,8 +391,8 @@ as_util_convert_appdata (GFile *file_input,
 			n3 = as_node_insert (n, "url", "<!-- http://www.homepage.com/docs/ -->",
 					     AS_NODE_INSERT_FLAG_PRE_ESCAPED,
 					     "type", "help", NULL);
-			as_node_set_comment (n3, "FIXME: where to report bugs for "
-					     "the application");
+			as_node_set_comment (n3, "FIXME: where on the internet users "
+					     "can find help");
 		}
 	}
 
