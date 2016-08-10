@@ -295,6 +295,8 @@ as_util_convert_appdata (GFile *file_input,
 
 	/* add <developer_name> */
 	n2 = as_node_find (n, "_developer_name");
+	if (n2 == NULL)
+		n2 = as_node_find (n, "developer_name");
 	if (n2 == NULL) {
 		n3 = as_node_find (n, "project_group");
 		if (n3 != NULL) {
