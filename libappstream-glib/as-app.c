@@ -193,7 +193,7 @@ as_app_kind_to_string (AsAppKind kind)
 AsAppKind
 as_app_kind_from_string (const gchar *kind)
 {
-	if (g_strcmp0 (kind, "desktop") == 0)
+	if (g_strcmp0 (kind, "desktop-application") == 0)
 		return AS_APP_KIND_DESKTOP;
 	if (g_strcmp0 (kind, "codec") == 0)
 		return AS_APP_KIND_CODEC;
@@ -201,7 +201,7 @@ as_app_kind_from_string (const gchar *kind)
 		return AS_APP_KIND_FONT;
 	if (g_strcmp0 (kind, "inputmethod") == 0)
 		return AS_APP_KIND_INPUT_METHOD;
-	if (g_strcmp0 (kind, "webapp") == 0)
+	if (g_strcmp0 (kind, "web-application") == 0)
 		return AS_APP_KIND_WEB_APP;
 	if (g_strcmp0 (kind, "source") == 0)
 		return AS_APP_KIND_SOURCE;
@@ -221,6 +221,15 @@ as_app_kind_from_string (const gchar *kind)
 		return AS_APP_KIND_SHELL_EXTENSION;
 	if (g_strcmp0 (kind, "localization") == 0)
 		return AS_APP_KIND_LOCALIZATION;
+
+	/* legacy */
+	if (g_strcmp0 (kind, "desktop") == 0)
+		return AS_APP_KIND_DESKTOP;
+	if (g_strcmp0 (kind, "desktop-app") == 0)
+		return AS_APP_KIND_DESKTOP;
+	if (g_strcmp0 (kind, "webapp") == 0)
+		return AS_APP_KIND_WEB_APP;
+
 	return AS_APP_KIND_UNKNOWN;
 }
 
