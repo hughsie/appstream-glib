@@ -177,6 +177,8 @@ as_app_kind_to_string (AsAppKind kind)
 		return "shell-extension";
 	if (kind == AS_APP_KIND_LOCALIZATION)
 		return "localization";
+	if (kind == AS_APP_KIND_CONSOLE)
+		return "console-application";
 	return "unknown";
 }
 
@@ -221,6 +223,8 @@ as_app_kind_from_string (const gchar *kind)
 		return AS_APP_KIND_SHELL_EXTENSION;
 	if (g_strcmp0 (kind, "localization") == 0)
 		return AS_APP_KIND_LOCALIZATION;
+	if (g_strcmp0 (kind, "console-application") == 0)
+		return AS_APP_KIND_CONSOLE;
 
 	/* legacy */
 	if (g_strcmp0 (kind, "desktop") == 0)

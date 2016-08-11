@@ -310,6 +310,7 @@ typedef enum {
 	AS_APP_KIND_OS_UPGRADE,		/* Since: 0.5.10 */
 	AS_APP_KIND_SHELL_EXTENSION,	/* Since: 0.5.10 */
 	AS_APP_KIND_LOCALIZATION,	/* Since: 0.5.11 */
+	AS_APP_KIND_CONSOLE,		/* Since: 0.6.1 */
 	/*< private >*/
 	AS_APP_KIND_LAST
 } AsAppKind;
