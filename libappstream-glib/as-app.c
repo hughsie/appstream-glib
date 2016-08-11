@@ -87,6 +87,7 @@ typedef struct
 	GPtrArray	*vetos;				/* of string */
 	AsAppSourceKind	 source_kind;
 	AsAppScope	 scope;
+	AsAppMergeKind	 merge_kind;
 	AsAppState	 state;
 	AsAppTrustFlags	 trust_flags;
 	AsAppQuirk	 quirk;
@@ -350,6 +351,50 @@ as_app_scope_to_string (AsAppScope scope)
 		return "user";
 	if (scope == AS_APP_SCOPE_SYSTEM)
 		return "system";
+	return NULL;
+}
+
+/**
+ * as_app_merge_kind_from_string:
+ * @merge_kind: a source kind string
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Return value: A #AsAppMergeKind, e.g. %AS_APP_MERGE_KIND_REPLACE.
+ *
+ * Since: 0.6.1
+ **/
+AsAppMergeKind
+as_app_merge_kind_from_string (const gchar *merge_kind)
+{
+	if (g_strcmp0 (merge_kind, "none") == 0)
+		return AS_APP_MERGE_KIND_NONE;
+	if (g_strcmp0 (merge_kind, "replace") == 0)
+		return AS_APP_MERGE_KIND_REPLACE;
+	if (g_strcmp0 (merge_kind, "append") == 0)
+		return AS_APP_MERGE_KIND_APPEND;
+	return AS_APP_MERGE_KIND_NONE;
+}
+
+/**
+ * as_app_merge_kind_to_string:
+ * @merge_kind: the #AsAppMergeKind, e.g. %AS_APP_MERGE_KIND_REPLACE
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @merge_kind, or %NULL for unknown
+ *
+ * Since: 0.6.1
+ **/
+const gchar *
+as_app_merge_kind_to_string (AsAppMergeKind merge_kind)
+{
+	if (merge_kind == AS_APP_MERGE_KIND_NONE)
+		return "none";
+	if (merge_kind == AS_APP_MERGE_KIND_REPLACE)
+		return "replace";
+	if (merge_kind == AS_APP_MERGE_KIND_APPEND)
+		return "append";
 	return NULL;
 }
 
@@ -1419,6 +1464,23 @@ as_app_get_scope (AsApp *app)
 }
 
 /**
+ * as_app_get_merge_kind:
+ * @app: a #AsApp instance.
+ *
+ * Gets the merge_kind of the application.
+ *
+ * Returns: enumerated value
+ *
+ * Since: 0.6.1
+ **/
+AsAppMergeKind
+as_app_get_merge_kind (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->merge_kind;
+}
+
+/**
  * as_app_get_state:
  * @app: a #AsApp instance.
  *
@@ -1925,6 +1987,22 @@ as_app_set_scope (AsApp *app, AsAppScope scope)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->scope = scope;
+}
+
+/**
+ * as_app_set_merge_kind:
+ * @app: a #AsApp instance.
+ * @merge_kind: the #AsAppMergeKind.
+ *
+ * Sets the merge kind of the application.
+ *
+ * Since: 0.6.1
+ **/
+void
+as_app_set_merge_kind (AsApp *app, AsAppMergeKind merge_kind)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	priv->merge_kind = merge_kind;
 }
 
 /**
@@ -3747,6 +3825,14 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 				       as_app_kind_to_string (priv->kind));
 	}
 
+	/* merge type */
+	if (priv->merge_kind != AS_APP_MERGE_KIND_UNKNOWN &&
+	    priv->merge_kind != AS_APP_MERGE_KIND_NONE) {
+		as_node_add_attribute (node_app,
+				       "merge",
+				       as_app_merge_kind_to_string (priv->merge_kind));
+	}
+
 	/* <id> */
 	as_node_insert (node_app, "id", priv->id, 0, NULL);
 
@@ -4473,6 +4559,9 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags,
 			as_app_set_kind (app, AS_APP_KIND_GENERIC);
 		else
 			as_app_set_kind (app, as_app_kind_from_string (tmp));
+		tmp = as_node_get_attribute (node, "merge");
+		if (tmp != NULL)
+			as_app_set_merge_kind (app, as_app_merge_kind_from_string (tmp));
 		prio = as_node_get_attribute_as_int (node, "priority");
 		if (prio != G_MAXINT && prio != 0)
 			as_app_set_priority (app, prio);

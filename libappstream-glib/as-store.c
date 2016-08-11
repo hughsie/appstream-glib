@@ -925,8 +925,13 @@ as_store_add_app (AsStore *store, AsApp *app)
 	/* use some hacky logic to support older files */
 	if ((priv->add_flags & AS_STORE_ADD_FLAG_USE_MERGE_HEURISTIC) > 0 &&
 	    _as_app_is_perhaps_merge_component (app)) {
-		as_app_add_quirk (app, AS_APP_QUIRK_MATCH_ANY_PREFIX);
+		as_app_set_merge_kind (app, AS_APP_MERGE_KIND_APPEND);
 	}
+
+	/* FIXME: deal with the differences between append and replace */
+	if (as_app_get_merge_kind (app) == AS_APP_MERGE_KIND_APPEND ||
+	    as_app_get_merge_kind (app) == AS_APP_MERGE_KIND_REPLACE)
+		as_app_add_quirk (app, AS_APP_QUIRK_MATCH_ANY_PREFIX);
 
 	/* this is a special merge component */
 	if (as_app_has_quirk (app, AS_APP_QUIRK_MATCH_ANY_PREFIX)) {

@@ -391,6 +391,24 @@ typedef enum {
 	AS_APP_SCOPE_LAST
 } AsAppScope;
 
+/**
+ * AsAppMergeKind:
+ * @AS_APP_MERGE_KIND_UNKNOWN:			Unknown merge type
+ * @AS_APP_MERGE_KIND_NONE:			No merge to be done
+ * @AS_APP_MERGE_KIND_REPLACE:			Merge components, replacing
+ * @AS_APP_MERGE_KIND_APPEND:			Merge components, appending
+ *
+ * The component merge kind.
+ **/
+typedef enum {
+	AS_APP_MERGE_KIND_UNKNOWN,			/* Since: 0.6.1 */
+	AS_APP_MERGE_KIND_NONE,				/* Since: 0.6.1 */
+	AS_APP_MERGE_KIND_REPLACE,			/* Since: 0.6.1 */
+	AS_APP_MERGE_KIND_APPEND,			/* Since: 0.6.1 */
+	/*< private >*/
+	AS_APP_MERGE_KIND_LAST
+} AsAppMergeKind;
+
 #define	AS_APP_ERROR				as_app_error_quark ()
 
 AsApp		*as_app_new			(void);
@@ -403,11 +421,14 @@ const gchar	*as_app_kind_to_string		(AsAppKind	 kind);
 AsAppKind	 as_app_kind_from_string	(const gchar	*kind);
 AsAppScope	 as_app_scope_from_string	(const gchar	*scope);
 const gchar	*as_app_scope_to_string		(AsAppScope	 scope);
+AsAppMergeKind	 as_app_merge_kind_from_string	(const gchar	*merge_kind);
+const gchar	*as_app_merge_kind_to_string	(AsAppMergeKind	 merge_kind);
 
 /* getters */
 AsAppKind	 as_app_get_kind		(AsApp		*app);
 AsAppSourceKind	 as_app_get_source_kind		(AsApp		*app);
 AsAppScope	 as_app_get_scope		(AsApp		*app);
+AsAppMergeKind	 as_app_get_merge_kind		(AsApp		*app);
 AsAppState	 as_app_get_state		(AsApp		*app);
 AsAppTrustFlags	 as_app_get_trust_flags		(AsApp		*app);
 GList		*as_app_get_languages		(AsApp		*app);
@@ -488,6 +509,8 @@ void		 as_app_set_source_kind		(AsApp		*app,
 						 AsAppSourceKind source_kind);
 void		 as_app_set_scope		(AsApp		*app,
 						 AsAppScope	 scope);
+void		 as_app_set_merge_kind		(AsApp		*app,
+						 AsAppMergeKind	 merge_kind);
 void		 as_app_set_state		(AsApp		*app,
 						 AsAppState	 state);
 void		 as_app_set_trust_flags		(AsApp		*app,

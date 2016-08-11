@@ -1446,7 +1446,7 @@ as_test_app_func (void)
 	GString *xml;
 	gboolean ret;
 	const gchar *src =
-		"<component type=\"desktop\" priority=\"-4\">\n"
+		"<component type=\"desktop\" merge=\"replace\" priority=\"-4\">\n"
 		"<id>org.gnome.Software.desktop</id>\n"
 		"<pkgname>gnome-software</pkgname>\n"
 		"<source_pkgname>gnome-software-src</source_pkgname>\n"
