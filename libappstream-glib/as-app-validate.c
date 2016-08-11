@@ -1119,12 +1119,9 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		if (g_str_has_suffix (id, ".firmware"))
 			ret = TRUE;
 		break;
-	case AS_APP_KIND_FONT:
-	case AS_APP_KIND_ADDON:
-	case AS_APP_KIND_SOURCE:
+	default:
 		/* anything goes */
 		ret = TRUE;
-	default:
 		break;
 	}
 	if (!ret) {
