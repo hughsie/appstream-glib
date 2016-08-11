@@ -4801,10 +4801,10 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 			continue;
 		}
 		if (g_strcmp0 (tmp, "Type") == 0) {
-			if (g_strcmp0 (as_yaml_node_get_value (n), "desktop-app") == 0) {
-				as_app_set_kind (app, AS_APP_KIND_DESKTOP);
+			tmp = as_yaml_node_get_value (n);
+			if (tmp == NULL)
 				continue;
-			}
+			as_app_set_kind (app, as_app_kind_from_string (tmp));
 			continue;
 		}
 		if (g_strcmp0 (tmp, "Package") == 0) {
