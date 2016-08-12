@@ -110,7 +110,7 @@ typedef enum {
  * @AS_APP_SUBSUME_FLAG_LANGUAGES:	Copy the languages
  * @AS_APP_SUBSUME_FLAG_NAME:		Copy the name
  * @AS_APP_SUBSUME_FLAG_COMMENT:	Copy the comment
- * @AS_APP_SUBSUME_FLAG_DEVELOPER_NAME	Copy the developer name
+ * @AS_APP_SUBSUME_FLAG_DEVELOPER_NAME:	Copy the developer name
  * @AS_APP_SUBSUME_FLAG_DESCRIPTION:	Copy the description
  * @AS_APP_SUBSUME_FLAG_METADATA:	Copy the metadata
  * @AS_APP_SUBSUME_FLAG_URL:		Copy the urls
