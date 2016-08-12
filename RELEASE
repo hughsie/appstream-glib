@@ -18,11 +18,10 @@ Bugfixes:
 
 1.5 Update translations:
 
-cd po
-make appstream-glib.pot
-tx push --source
-tx pull --all --minimum-perc=5
-git add *.po
+make -C po appstream-glib.pot
+zanata-cli push
+zanata-cli pull --min-doc-percent=5
+git add po/*.po
 
 3. Update library version if new ABI or API in configure.ac
 

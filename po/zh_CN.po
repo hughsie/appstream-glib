@@ -8,378 +8,468 @@
 # Mingye Wang <arthur200126@gmail.com>, 2016
 # Mingcong Bai <jeffbai@aosc.xyz>, 2015-2016
 # Mingcong Bai <jeffbai@aosc.xyz>, 2015
+# Richard Hughes <richard@hughsie.com>, 2016. #zanata
 msgid ""
 msgstr ""
-"Project-Id-Version: appstream-glib\n"
+"Project-Id-Version: appstream-glib 0.6.1\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-05-23 09:40+0100\n"
-"PO-Revision-Date: 2016-04-28 01:00+0000\n"
-"Last-Translator: Mingye Wang <arthur200126@gmail.com>\n"
-"Language-Team: Chinese (China) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_CN/)\n"
+"POT-Creation-Date: 2016-07-29 09:28+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: zh_CN\n"
+"PO-Revision-Date: 2016-08-06 02:59-0400\n"
+"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
+"Language-Team: Chinese (China) (http://www.transifex.com/freedesktop/"
+"appstream-glib/language/zh_CN/)\n"
+"Language: zh-CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Zanata 3.9.3\n"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:90 client/as-compose.c:336 client/as-util.c:3820
 msgid "Show extra debugging information"
 msgstr "显示额外的调试信息"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:93
 msgid "Add a cache ID to each component"
 msgstr "向每一个组件添加一个缓存 ID"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:96
 msgid "Include failed results in the output"
 msgstr "在输出中列出失败的结果"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:99
 msgid "Add HiDPI icons to the tarball"
 msgstr "将高分辨率（HiDPI）图标添加进 tarball"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:102
 msgid "Add encoded icons to the XML"
 msgstr "将已编码的图标加入 XML"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:105
 msgid "Do not compress the icons into a tarball"
 msgstr "不要将图标压缩至 tarball 中"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:108
 msgid "Set the logging directory"
 msgstr "设置日志用目录"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:111
 msgid "Set the packages directory"
 msgstr "设置软件包目录"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:114
 msgid "Set the temporary directory"
 msgstr "设置临时目录"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:117 client/as-compose.c:342
 msgid "Set the output directory"
 msgstr "设置输出目录"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:120 client/as-compose.c:345
 msgid "Set the icons directory"
 msgstr "设置图标用目录"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:123
 msgid "Set the cache directory"
 msgstr "设置缓存目录"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:126 client/as-compose.c:354
 msgid "Set the basenames of the output files"
 msgstr "设置输出文件的基础名称"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:129 client/as-compose.c:348
 msgid "Set the origin name"
 msgstr "设置来源名称"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:132
 msgid "Set the number of threads"
 msgstr "设置线程的数目"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:135 client/as-compose.c:351
 msgid "Set the minimum icon size in pixels"
 msgstr "设置图标的最小像素大小"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:138
 msgid "Set the old metadata location"
 msgstr "设置旧的元数据位置"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:141
 msgid "Ignore certain types of veto"
 msgstr "忽略特定类型的否认值"
 
 #. TRANSLATORS: error message
+#: client/as-builder.c:155 client/as-compose.c:368 client/as-util.c:4038
 msgid "Failed to parse arguments"
 msgstr "参数解析失败"
 
 #. TRANSLATORS: error message
+#: client/as-builder.c:259
 msgid "Failed to set up builder"
 msgstr "设置构建程序失败"
 
 #. TRANSLATORS: error message
+#: client/as-builder.c:278
 msgid "Failed to open packages"
 msgstr "软件包打开失败"
 
 #. TRANSLATORS: information message
+#: client/as-builder.c:288
 msgid "Scanning packages..."
 msgstr "正在扫描软件包……"
 
 #. TRANSLATORS: error message
+#: client/as-builder.c:298
 msgid "Failed to add package"
 msgstr "软件包添加失败"
 
 #. TRANSLATORS: information message
+#: client/as-builder.c:304
 #, c-format
-msgid "Parsed %i/%i files..."
-msgstr "已解析 %i/%i 份文件..."
+msgid "Parsed %u/%u files..."
+msgstr ""
 
 #. TRANSLATORS: error message
+#: client/as-builder.c:314
 msgid "Failed to generate metadata"
 msgstr "元数据生成失败"
 
-#. success
 #. TRANSLATORS: information message
+#: client/as-builder.c:321 client/as-compose.c:503
 msgid "Done!"
 msgstr "完成！"
 
 #. TRANSLATORS: we've saving the icon file to disk
+#: client/as-compose.c:124 client/as-compose.c:179
 msgid "Saving icon"
 msgstr "正在保存图标"
 
 #. TRANSLATORS: command line option
+#: client/as-compose.c:339
 msgid "Set the prefix"
 msgstr "设置前缀"
 
 #. TRANSLATORS: we're generating the AppStream data
+#: client/as-compose.c:408
 msgid "Processing application"
 msgstr "正在处理应用程序"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
+#: client/as-compose.c:414
 msgid "Error loading AppData file"
 msgstr "载入 AppData 文件出错"
 
 #. TRANSLATORS: the .mo files could not be parsed
+#: client/as-compose.c:427
 msgid "Error parsing translations"
 msgstr "解析翻译出错"
 
 #. TRANSLATORS: we could not auto-add the kudo
+#: client/as-compose.c:438
 msgid "Error parsing kudos"
 msgstr "解析 kudos 值出错"
 
 #. TRANSLATORS: we could not auto-add the provides
+#: client/as-compose.c:449
 msgid "Error parsing provides"
 msgstr "解析 provides 值出错"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
+#: client/as-compose.c:465
 msgid "Error loading desktop file"
 msgstr "载入 desktop 文件出错"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
+#: client/as-compose.c:478
 msgid "Error creating output directory"
 msgstr "创建输出目录出错"
 
 #. TRANSLATORS: we've saving the XML file to disk
+#: client/as-compose.c:487
 msgid "Saving AppStream"
 msgstr "正在保存 AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
+#: client/as-compose.c:497
 msgid "Error saving AppStream file"
 msgstr "保存 AppStream 文件出错"
 
 #. TRANSLATORS: this is a command alias
+#: client/as-util.c:100
 #, c-format
 msgid "Alias to %s"
 msgstr "%s 的别名"
 
+#: client/as-util.c:182
 msgid "Command not found, valid commands are:"
 msgstr "命令未找到，有效的命令有："
 
 #. TRANSLATORS: any manual changes required?
 #. * also note: FIXME is a hardcoded string
+#: client/as-util.c:452
 msgid "Please review the file and fix any 'FIXME' items"
 msgstr "请检查文件并修复任何标有“FIXME”的项目"
 
 #. TRANSLATORS: information message
+#: client/as-util.c:470
 msgid "Old API version"
 msgstr "旧 API 版本"
 
 #. TRANSLATORS: information message
+#: client/as-util.c:482
 msgid "New API version"
 msgstr "新 API 版本"
 
+#: client/as-util.c:501
 msgid "Not enough arguments, expected old.xml new.xml version"
 msgstr "参数不够，预期为 old.xml new.xml [版本]"
 
 #. TRANSLATORS: the %s and %s are file types,
 #. * e.g. "appdata" to "appstream"
+#: client/as-util.c:537
 #, c-format
 msgid "Conversion %s to %s is not implemented"
 msgstr "将 %s 转换成 %s 还未执行"
 
+#: client/as-util.c:554
 msgid "Not enough arguments, expected file.xml"
 msgstr "参数不足，预期 file.xml"
 
 #. TRANSLATORS: %s is a file type,
 #. * e.g. 'appdata'
+#: client/as-util.c:581
 #, c-format
 msgid "File format '%s' cannot be upgraded"
 msgstr "文件格式 “%s” 无法被升级"
 
 #. TRANSLATORS: not a recognised file type
+#: client/as-util.c:623 client/as-util.c:1021 client/as-util.c:1122
 msgid "Format not recognised"
 msgstr "格式未识别"
 
 #. TRANSLATORS: probably wrong XML
+#: client/as-util.c:1738
 msgid "No desktop applications found"
 msgstr "未发现桌面应用程序"
 
 #. TRANSLATORS: the file is valid
+#: client/as-util.c:2469
 msgid "OK"
 msgstr "成功"
 
-#. list failures
+#: client/as-util.c:2474
 msgid "FAILED"
 msgstr "失败"
 
+#: client/as-util.c:2570
 msgid "Validation failed"
 msgstr "验证失败"
 
+#: client/as-util.c:2614
 msgid "Validation of files failed"
 msgstr "文件验证失败"
 
 #. TRANSLATORS: application was removed
+#: client/as-util.c:3545
 msgid "Removed"
 msgstr "已移除"
 
 #. TRANSLATORS: application was added
+#: client/as-util.c:3558
 msgid "Added"
 msgstr "已添加"
 
 #. TRANSLATORS: this is the --nonet argument
+#: client/as-util.c:3817
 msgid "Do not use network access"
 msgstr "不要使用网络连接"
 
 #. TRANSLATORS: command line option
+#: client/as-util.c:3823
 msgid "Show version"
 msgstr "显示版本"
 
 #. TRANSLATORS: command line option
+#: client/as-util.c:3826
 msgid "Enable profiling"
 msgstr "启用性能分析"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3845
 msgid "Converts AppStream metadata from one version to another"
 msgstr "将 AppStream 元数据从一个版本转换成另一个版本"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3851
 msgid "Upgrade AppData metadata to the latest version"
 msgstr "升级 AppData 元数据至最新版本"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3857
 msgid "Creates an example Appdata file from a .desktop file"
 msgstr "从一个 .desktop 文件创建一个示例 Appdata 文件"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3863
 msgid "Dumps the applications in the AppStream metadata"
 msgstr "将应用程序转储到 AppStream 元数据中"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3869
 msgid "Search for AppStream applications"
 msgstr "搜索 AppStream 应用程序"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3875
 msgid "Search for AppStream applications by package name"
 msgstr "按包名搜索 AppStream 应用程序"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3881
 msgid "Display application search tokens"
 msgstr "显示应用程序搜索令牌"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3887
 msgid "Installs AppStream metadata"
 msgstr "安装 AppStream 元数据"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3893
 msgid "Installs AppStream metadata with new origin"
 msgstr "从新的来源安装 AppStream 元数据"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3899
 msgid "Uninstalls AppStream metadata"
 msgstr "卸载 AppStream 元数据"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3905
 msgid "Create an HTML status page"
 msgstr "创建一个 HTML 状态页面"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3911
 msgid "Create an CSV status document"
 msgstr "创建一个 CSV 状态文档"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3917
 msgid "Create an HTML matrix page"
 msgstr "创建 HTML matrix 表格页面"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3923
 msgid "List applications not backed by packages"
 msgstr "列出未受软件包支持的应用程序"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3929
 msgid "Validate an AppData or AppStream file"
 msgstr "验证 AppData 或 AppStream 文件"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3935
 msgid "Validate an AppData or AppStream file (relaxed)"
 msgstr "验证 AppData 或 AppStream 文件 (宽松检验)"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3941
 msgid "Validate an AppData or AppStream file (strict)"
 msgstr "验证 AppData 或 AppStream 文件 (严格检验)"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3947
 msgid "Convert an AppData file to NEWS format"
 msgstr "将 AppData 文件转换成 NEWS 格式"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3953
 msgid "Convert an NEWS file to AppData format"
 msgstr "将 NEWS 文件转换成 AppData 格式"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3959
 msgid "Check installed application data"
 msgstr "检查安装的应用程序数据"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3965
 msgid "Replace screenshots in source file"
 msgstr "替换源文件内的画面快照"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3971
 msgid "Mirror upstream screenshots"
 msgstr "镜像上游快照"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3977
 msgid "Mirror local firmware files"
 msgstr "镜像本地固件文件"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3983
 msgid "Incorporate extra metadata from an external file"
 msgstr "从外部文件集成额外元数据"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3989
 msgid "Compare the contents of two AppStream files"
 msgstr "比较两份 AppStream 文件的内容"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:3995
 msgid "Generate a GUID from an input string"
 msgstr "从输入字符串创建 GUID"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:4001
 msgid "Modify an AppData file"
 msgstr "编辑 AppData 文件"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:4007
 msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr "将 AppStream 文件分割为 AppData 和 Metainfo 文件"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:4013
 msgid "Merge several files to an AppStream file"
 msgstr "合并多个文件到一 AppStream 文件上"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:4019
 msgid "Import a file to AppStream markup"
 msgstr "导入文件到 AppStream 标记"
 
 #. TRANSLATORS: program name
+#: client/as-util.c:4032
 msgid "AppStream Utility"
 msgstr "AppStream 实用工具"
 
+#: client/as-util.c:4055
 msgid "Version:"
 msgstr "版本："

@@ -1,3 +1,38 @@
+Version 0.6.1
+~~~~~~~~~~~~~~
+Released: 2016-10-12
+
+New Features:
+ - Add as_app_set_branch() (Richard Hughes)
+ - Add as_review_new() (Richard Hughes)
+ - Add as_utils_unique_id_equal() to compare IDs for equality (Richard Hughes)
+ - Add support for application suggestions (Richard Hughes)
+ - Add support for AppStream merge components (Richard Hughes)
+ - Add support for Google .PAK files (Richard Hughes)
+ - Add the TRANSLATE URL kind (Richard Hughes)
+ - Allow multiple components with the same ID in the AsStore (Richard Hughes)
+ - Allow subsuming each property individually (Richard Hughes)
+
+Bugfixes:
+ - Add some more validation checks for keywords (Richard Hughes)
+ - Add Sugar as a valid desktop environment (#118) (Sam)
+ - Add SUSE-Public-Domain to License map (#126) (Dominique Leuenberger)
+ - Add two new GCC warnings and fix up signed/unsigned issues (Richard Hughes)
+ - Avoid dependency when built without libgcab (#122) (Simon McVittie)
+ - Convert all current component-type names (Matthias Klumpp)
+ - Correct minor issue in transifex link (Jean-Baptiste)
+ - Do not save the 'X-' prefixed keys to the AppStream metadata (Richard Hughes)
+ - Do not split up the main AudioVideo category (Richard Hughes)
+ - Don't change ABI when built with/without gperf (#123) (Simon McVittie)
+ - Don't redundantly monitor files (Simon McVittie)
+ - Ensure predictable output order of XML attributes (Richard Hughes)
+ - No validation failure for lots of releases (Richard Hughes)
+ - Port away from intltool (Richard Hughes)
+ - Print max caption length when validating (Richard Hughes)
+ - Remove specific support for flatpak (Richard Hughes)
+ - Restrict addons to the same scope and bundle kind (Richard Hughes)
+ - Skip DEP-11 tests when DEP-11 is not enabled (Simon McVittie)
+
 Version 0.5.17
 ~~~~~~~~~~~~~~
 Released: 2016-07-13
