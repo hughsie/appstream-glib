@@ -43,7 +43,7 @@ asb_package_cab_init (AsbPackageCab *pkg)
 static gboolean
 asb_package_cab_ensure_simple (AsbPackage *pkg, GError **error)
 {
-	g_autofree gchar *basename;
+	g_autofree gchar *basename = NULL;
 	gchar *tmp;
 
 	/* get basename minus the .cab extension */
