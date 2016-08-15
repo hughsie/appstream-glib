@@ -1970,6 +1970,12 @@ as_app_set_id (AsApp *app, const gchar *id)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	gchar *tmp;
+	guint i;
+	const gchar *suffixes[] = {
+		".desktop",
+		".addon",
+		".firmware",
+		NULL };
 
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
@@ -1986,9 +1992,11 @@ as_app_set_id (AsApp *app, const gchar *id)
 	g_free (priv->id_filename);
 	priv->id_filename = g_strdup (as_app_get_id_no_prefix (app));
 	g_strdelimit (priv->id_filename, "&<>", '-');
-	tmp = g_strrstr_len (priv->id_filename, -1, ".");
-	if (tmp != NULL)
-		*tmp = '\0';
+	for (i = 0; suffixes[i] != NULL; i++) {
+		tmp = g_strrstr_len (priv->id_filename, -1, suffixes[i]);
+		if (tmp != NULL)
+			*tmp = '\0';
+	}
 }
 
 /**
