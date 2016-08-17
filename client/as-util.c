@@ -44,6 +44,7 @@ typedef struct {
 	GOptionContext		*context;
 	GPtrArray		*cmd_array;
 	gboolean		 nonet;
+	gboolean		 verbose;
 	AsProfile		*profile;
 } AsUtilPrivate;
 
@@ -1256,6 +1257,26 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 			 as_app_get_metadata_item (app, "SortKey"),
 			 as_app_get_unique_id (app));
 	}
+
+	/* dump XML */
+	if (priv->verbose) {
+		g_autoptr(GString) xml = NULL;
+		g_autoptr(AsStore) store_results = as_store_new ();
+		as_store_set_add_flags (store_results,
+					AS_STORE_ADD_FLAG_USE_UNIQUE_ID);
+		for (i = 0; i < array->len; i++) {
+			app = g_ptr_array_index (array, i);
+			as_app_remove_metadata (app, "SortKey");
+			as_store_add_app (store_results, app);
+		}
+		xml = as_store_to_xml (store_results,
+				       AS_NODE_TO_XML_FLAG_ADD_HEADER |
+				       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+				       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE |
+				       AS_NODE_TO_XML_FLAG_SORT_CHILDREN);
+		g_print ("%s\n", xml->str);
+	}
+
 	return TRUE;
 }
 
@@ -4127,6 +4148,7 @@ main (int argc, char *argv[])
 
 	/* set verbose? */
 	if (verbose) {
+		priv->verbose = TRUE;
 		g_setenv ("G_MESSAGES_DEBUG", "all", FALSE);
 	} else {
 		g_log_set_handler (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG,
