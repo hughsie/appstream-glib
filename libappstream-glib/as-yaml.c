@@ -211,8 +211,7 @@ as_node_yaml_process_layer (yaml_parser_t *parser, AsNode *parent)
 	gboolean valid = TRUE;
 	yaml_event_t event;
 
-	while (valid) {
-		yaml_parser_parse (parser, &event);
+	while (valid && yaml_parser_parse (parser, &event)) {
 		switch (event.type) {
 		case YAML_SCALAR_EVENT:
 			tmp = (const gchar *) event.data.scalar.value;
