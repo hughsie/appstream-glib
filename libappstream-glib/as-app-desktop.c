@@ -90,24 +90,6 @@ as_app_infer_file_key (AsApp *app,
 	return TRUE;
 }
 
-static gboolean
-_as_utils_is_stock_icon_name_fallback (const gchar *name)
-{
-	guint i;
-	const gchar *names[] = {
-		"fedora-logo-sprite",
-		"gtk-preferences",
-		"hwinfo",
-		"trash-empty",
-		"utilities-log-viewer",
-		NULL };
-	for (i = 0; names[i] != NULL; i++) {
-		if (g_strcmp0 (name, names[i]) == 0)
-			return TRUE;
-	}
-	return FALSE;
-}
-
 static void
 as_app_parse_file_metadata (AsApp *app, GKeyFile *kf, const gchar *key)
 {
@@ -186,7 +168,13 @@ as_app_parse_file_key (AsApp *app,
 			icon = as_icon_new ();
 
 			if (g_path_is_absolute (tmp)) {
+				g_autofree gchar *basename = NULL;
+
+				basename = g_path_get_basename (tmp);
+				as_icon_set_name (icon, basename);
+
 				as_icon_set_filename (icon, tmp);
+				as_icon_set_kind (icon, AS_ICON_KIND_LOCAL);
 			} else {
 				/* work around a common mistake in desktop files */
 				dot = g_strstr_len (tmp, -1, ".");
@@ -196,19 +184,11 @@ as_app_parse_file_key (AsApp *app,
 				     g_strcmp0 (dot, ".svg") == 0)) {
 					*dot = '\0';
 				}
-			}
-			as_icon_set_name (icon, tmp);
 
-			if (as_utils_is_stock_icon_name (tmp)) {
 				as_icon_set_name (icon, tmp);
 				as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
-			} else if ((flags & AS_APP_PARSE_FLAG_USE_FALLBACKS) > 0 &&
-				   _as_utils_is_stock_icon_name_fallback (tmp)) {
-				as_icon_set_name (icon, tmp);
-				as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
-			} else {
-				as_icon_set_kind (icon, AS_ICON_KIND_LOCAL);
 			}
+
 			as_app_add_icon (app, icon);
 		}
 
