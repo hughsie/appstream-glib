@@ -4377,6 +4377,22 @@ as_test_store_metadata_index_func (void)
 }
 
 static void
+as_test_yaml_broken_func (void)
+{
+#if AS_BUILD_DEP11
+	g_autoptr(AsYaml) node = NULL;
+	g_autoptr(GError) error = NULL;
+	node = as_yaml_from_data ("s---\n"
+				  "File: DEP-11\n",
+				  -1, &error);
+	g_assert_error (error, AS_NODE_ERROR, AS_NODE_ERROR_INVALID_MARKUP);
+	g_assert (node == NULL);
+#else
+	g_test_skip ("Compiled without YAML (DEP-11) support");
+#endif
+}
+
+static void
 as_test_yaml_func (void)
 {
 #if AS_BUILD_DEP11
@@ -4410,6 +4426,7 @@ as_test_yaml_func (void)
 
 	/* simple list */
 	node = as_yaml_from_data (
+		"---\n"
 		"Mimetypes:\n"
 		"  - text/html\n"
 		"  - text/xml\n"
@@ -5263,6 +5280,7 @@ main (int argc, char **argv)
 		g_test_add_func ("/AppStream/monitor{file}", as_test_monitor_file_func);
 	}
 	g_test_add_func ("/AppStream/yaml", as_test_yaml_func);
+	g_test_add_func ("/AppStream/yaml{broken}", as_test_yaml_broken_func);
 	g_test_add_func ("/AppStream/store", as_test_store_func);
 	g_test_add_func ("/AppStream/store{unique}", as_test_store_unique_func);
 	g_test_add_func ("/AppStream/store{merge}", as_test_store_merge_func);
