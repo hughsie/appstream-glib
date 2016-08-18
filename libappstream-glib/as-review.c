@@ -84,6 +84,7 @@ as_review_finalize (GObject *object)
 	g_free (priv->summary);
 	g_free (priv->description);
 	g_free (priv->locale);
+	g_free (priv->version);
 	g_free (priv->reviewer_id);
 	g_free (priv->reviewer_name);
 	g_hash_table_unref (priv->metadata);
