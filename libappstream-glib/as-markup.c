@@ -213,13 +213,13 @@ static gchar *
 as_markup_import_html (const gchar *text, GError **error)
 {
 	AsMarkupImportHelper helper;
-	GMarkupParseContext *ctx;
 	GMarkupParser parser = {
 		as_markup_import_html_start_cb,
 		as_markup_import_html_end_cb,
 		as_markup_import_html_text_cb,
 		NULL,
 		NULL };
+	g_autoptr(GMarkupParseContext) ctx = NULL;
 	g_autoptr(GString) str = NULL;
 	g_autoptr(GString) helper_output = NULL;
 	g_autoptr(GString) helper_temp = NULL;
