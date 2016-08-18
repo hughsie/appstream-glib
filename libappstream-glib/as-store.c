@@ -475,7 +475,7 @@ _as_app_new_from_unique_id (const gchar *unique_id)
 		} else {
 			AsBundleKind kind = as_bundle_kind_from_string (split[1]);
 			if (kind != AS_BUNDLE_KIND_UNKNOWN) {
-				AsBundle *bundle = as_bundle_new ();
+				g_autoptr(AsBundle) bundle = as_bundle_new ();
 				as_bundle_set_kind (bundle, kind);
 				as_app_add_bundle (app, bundle);
 			}
