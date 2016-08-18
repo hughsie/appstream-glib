@@ -709,7 +709,8 @@ as_app_validate_icons (AsApp *app, AsAppValidateHelper *helper)
 		break;
 	case AS_ICON_KIND_LOCAL:
 		icon_name = as_icon_get_filename (icon);
-		if (!g_str_has_prefix (icon_name, "/")) {
+		if (icon_name == NULL ||
+		    !g_str_has_prefix (icon_name, "/")) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_TAG_INVALID,
 					     "local icon is not a filename [%s]",
@@ -718,7 +719,8 @@ as_app_validate_icons (AsApp *app, AsAppValidateHelper *helper)
 		break;
 	case AS_ICON_KIND_CACHED:
 		icon_name = as_icon_get_name (icon);
-		if (g_str_has_prefix (icon_name, "/")) {
+		if (icon_name == NULL ||
+		    g_str_has_prefix (icon_name, "/")) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_TAG_INVALID,
 					     "cached icon is a filename [%s]",
