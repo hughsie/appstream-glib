@@ -103,6 +103,7 @@ typedef struct
 	gchar		*source_pkgname;
 	gchar		*update_contact;
 	gchar		*unique_id;
+	gboolean	 unique_id_valid;
 	gchar		*source_file;
 	gchar		*branch;
 	gint		 priority;
@@ -660,7 +661,8 @@ const gchar *
 as_app_get_unique_id (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	if (priv->unique_id == NULL) {
+	if (priv->unique_id == NULL || !priv->unique_id_valid) {
+		g_free (priv->unique_id);
 		if (as_app_has_quirk (app, AS_APP_QUIRK_MATCH_ANY_PREFIX)) {
 			priv->unique_id = as_utils_unique_id_build (AS_APP_SCOPE_UNKNOWN,
 								    AS_BUNDLE_KIND_UNKNOWN,
@@ -676,6 +678,7 @@ as_app_get_unique_id (AsApp *app)
 								    as_app_get_id_no_prefix (app),
 								    priv->branch);
 		}
+		priv->unique_id_valid = TRUE;
 	}
 	return priv->unique_id;
 }
@@ -1997,6 +2000,9 @@ as_app_set_id (AsApp *app, const gchar *id)
 		if (tmp != NULL)
 			*tmp = '\0';
 	}
+
+	/* no longer valid */
+	priv->unique_id_valid = FALSE;
 }
 
 /**
@@ -2029,6 +2035,9 @@ as_app_set_scope (AsApp *app, AsAppScope scope)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->scope = scope;
+
+	/* no longer valid */
+	priv->unique_id_valid = FALSE;
 }
 
 /**
@@ -2128,6 +2137,9 @@ as_app_set_kind (AsApp *app, AsAppKind kind)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->kind = kind;
+
+	/* no longer valid */
+	priv->unique_id_valid = FALSE;
 }
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
@@ -2291,6 +2303,9 @@ as_app_set_branch (AsApp *app, const gchar *branch)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_free (priv->branch);
 	priv->branch = g_strdup (branch);
+
+	/* no longer valid */
+	priv->unique_id_valid = FALSE;
 }
 
 /**
@@ -2369,6 +2384,9 @@ as_app_set_origin (AsApp *app, const gchar *origin)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_free (priv->origin);
 	priv->origin = g_strdup (origin);
+
+	/* no longer valid */
+	priv->unique_id_valid = FALSE;
 }
 
 /**
@@ -3095,6 +3113,9 @@ as_app_add_bundle (AsApp *app, AsBundle *bundle)
 	}
 
 	g_ptr_array_add (priv->bundles, g_object_ref (bundle));
+
+	/* no longer valid */
+	priv->unique_id_valid = FALSE;
 }
 
 /**
@@ -3168,6 +3189,9 @@ as_app_add_pkgname (AsApp *app, const gchar *pkgname)
 	}
 
 	g_ptr_array_add (priv->pkgnames, g_strdup (pkgname));
+
+	/* no longer valid */
+	priv->unique_id_valid = FALSE;
 }
 
 /**
