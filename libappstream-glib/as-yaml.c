@@ -201,8 +201,122 @@ as_yaml_node_new (AsYamlNodeKind kind, const gchar *id)
 	return ym;
 }
 
-static void
-as_node_yaml_process_layer (yaml_parser_t *parser, AsNode *parent)
+static gchar *
+as_yaml_mark_to_str (yaml_mark_t *mark)
+{
+	return g_strdup_printf ("ln:%" G_GSIZE_FORMAT " col:%" G_GSIZE_FORMAT,
+				mark->line + 1,
+				mark->column + 1);
+}
+
+static gboolean
+as_yaml_parser_error_to_gerror (yaml_parser_t *parser, GError **error)
+{
+	g_autofree gchar *problem_str = NULL;
+	g_autofree gchar *context_str = NULL;
+
+	switch (parser->error) {
+	case YAML_MEMORY_ERROR:
+		g_set_error_literal (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_INVALID_MARKUP,
+				     "not enough memory for parsing");
+		break;
+
+	case YAML_READER_ERROR:
+		if (parser->problem_value != -1) {
+			g_set_error (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_INVALID_MARKUP,
+				     "reader error: %s: #%X at %" G_GSIZE_FORMAT "",
+				     parser->problem,
+				     (guint) parser->problem_value,
+				     parser->problem_offset);
+		} else {
+			g_set_error (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_INVALID_MARKUP,
+				     "reader error: %s at %" G_GSIZE_FORMAT "",
+				     parser->problem,
+				     parser->problem_offset);
+		}
+		break;
+
+	case YAML_SCANNER_ERROR:
+		problem_str = as_yaml_mark_to_str (&parser->problem_mark);
+		if (parser->context) {
+			context_str = as_yaml_mark_to_str (&parser->context_mark);
+			g_set_error (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_INVALID_MARKUP,
+				     "scanner error: %s at %s, %s at %s",
+				     parser->context,
+				     context_str,
+				     parser->problem,
+				     problem_str);
+		} else {
+			g_set_error (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_INVALID_MARKUP,
+				     "scanner error: %s at %s ",
+				     parser->problem,
+				     problem_str);
+		}
+		break;
+	case YAML_PARSER_ERROR:
+		problem_str = as_yaml_mark_to_str (&parser->problem_mark);
+		if (parser->context) {
+			context_str = as_yaml_mark_to_str (&parser->context_mark);
+			g_set_error (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_INVALID_MARKUP,
+				     "parser error: %s at %s, %s at %s",
+				     parser->context,
+				     context_str,
+				     parser->problem,
+				     problem_str);
+		} else {
+			g_set_error (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_INVALID_MARKUP,
+				     "parser error: %s at %s ",
+				     parser->problem,
+				     problem_str);
+		}
+		break;
+	case YAML_COMPOSER_ERROR:
+		problem_str = as_yaml_mark_to_str (&parser->problem_mark);
+		if (parser->context) {
+			context_str = as_yaml_mark_to_str (&parser->context_mark);
+			g_set_error (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_INVALID_MARKUP,
+				     "composer error: %s at %s, %s at %s",
+				     parser->context,
+				     context_str,
+				     parser->problem,
+				     problem_str);
+		} else {
+			g_set_error (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_INVALID_MARKUP,
+				     "composer error: %s at %s ",
+				     parser->problem, problem_str);
+		}
+		break;
+	default:
+		/* can't happen */
+		g_set_error_literal (error,
+				     AS_NODE_ERROR,
+				     AS_NODE_ERROR_INVALID_MARKUP,
+				     "internal error");
+		break;
+	}
+	return FALSE;
+}
+
+static gboolean
+as_node_yaml_process_layer (yaml_parser_t *parser, AsNode *parent, GError **error)
 {
 	AsYamlNode *ym;
 	AsNode *last_scalar = NULL;
@@ -211,7 +325,12 @@ as_node_yaml_process_layer (yaml_parser_t *parser, AsNode *parent)
 	gboolean valid = TRUE;
 	yaml_event_t event;
 
-	while (valid && yaml_parser_parse (parser, &event)) {
+	while (valid) {
+
+		/* process event */
+		if (!yaml_parser_parse (parser, &event))
+			return as_yaml_parser_error_to_gerror (parser, error);
+
 		switch (event.type) {
 		case YAML_SCALAR_EVENT:
 			tmp = (const gchar *) event.data.scalar.value;
@@ -235,7 +354,8 @@ as_node_yaml_process_layer (yaml_parser_t *parser, AsNode *parent)
 				ym->kind = AS_YAML_NODE_KIND_MAP;
 				new = last_scalar;
 			}
-			as_node_yaml_process_layer (parser, new);
+			if (!as_node_yaml_process_layer (parser, new, error))
+				return FALSE;
 			last_scalar = NULL;
 			break;
 		case YAML_SEQUENCE_START_EVENT:
@@ -247,7 +367,8 @@ as_node_yaml_process_layer (yaml_parser_t *parser, AsNode *parent)
 				ym->kind = AS_YAML_NODE_KIND_SEQ;
 				new = last_scalar;
 			}
-			as_node_yaml_process_layer (parser, new);
+			if (!as_node_yaml_process_layer (parser, new, error))
+				return FALSE;
 			last_scalar = NULL;
 			break;
 		case YAML_STREAM_START_EVENT:
@@ -262,15 +383,21 @@ as_node_yaml_process_layer (yaml_parser_t *parser, AsNode *parent)
 		}
 		yaml_event_delete (&event);
 	}
+	return TRUE;
 }
+
+typedef yaml_parser_t* AsYamlParser;
+G_DEFINE_AUTO_CLEANUP_FREE_FUNC(AsYamlParser, yaml_parser_delete, NULL);
+
 #endif
 
 AsNode *
 as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 {
-	AsNode *node = NULL;
+	g_autoptr(AsNode) node = NULL;
 #if AS_BUILD_DEP11
 	yaml_parser_t parser;
+	g_auto(AsYamlParser) parser_cleanup = NULL;
 	g_autofree gchar *prefix = NULL;
 
 	/* sanity check */
@@ -288,20 +415,24 @@ as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 	}
 
 	/* parse */
-	yaml_parser_initialize (&parser);
+	if (!yaml_parser_initialize (&parser)) {
+		as_yaml_parser_error_to_gerror (&parser, error);
+		return NULL;
+	}
+	parser_cleanup = &parser;
 	if (data_len < 0)
 		data_len = (guint) strlen (data);
 	yaml_parser_set_input_string (&parser, (guchar *) data, (gsize) data_len);
 	node = g_node_new (NULL);
-	as_node_yaml_process_layer (&parser, node);
-	yaml_parser_delete (&parser);
+	if (!as_node_yaml_process_layer (&parser, node, error))
+		return NULL;
 #else
 	g_set_error_literal (error,
 			     AS_NODE_ERROR,
 			     AS_NODE_ERROR_NO_SUPPORT,
 			     "No DEP-11 support, needs libyaml");
 #endif
-	return node;
+	return g_steal_pointer (&node);
 }
 
 #if AS_BUILD_DEP11
@@ -325,10 +456,11 @@ as_yaml_read_handler_cb (void *data,
 AsNode *
 as_yaml_from_file (GFile *file, GCancellable *cancellable, GError **error)
 {
-	AsNode *node = NULL;
+	g_autoptr(AsNode) node = NULL;
 #if AS_BUILD_DEP11
 	const gchar *content_type = NULL;
 	yaml_parser_t parser;
+	g_auto(AsYamlParser) parser_cleanup = NULL;
 	g_autofree gchar *data = NULL;
 	g_autoptr(GConverter) conv = NULL;
 	g_autoptr(GFileInfo) info = NULL;
@@ -365,16 +497,20 @@ as_yaml_from_file (GFile *file, GCancellable *cancellable, GError **error)
 	}
 
 	/* parse */
-	yaml_parser_initialize (&parser);
+	if (!yaml_parser_initialize (&parser)) {
+		as_yaml_parser_error_to_gerror (&parser, error);
+		return NULL;
+	}
+	parser_cleanup = &parser;
 	yaml_parser_set_input (&parser, as_yaml_read_handler_cb, stream_data);
 	node = g_node_new (NULL);
-	as_node_yaml_process_layer (&parser, node);
-	yaml_parser_delete (&parser);
+	if (!as_node_yaml_process_layer (&parser, node, error))
+		return NULL;
 #else
 	g_set_error_literal (error,
 			     AS_NODE_ERROR,
 			     AS_NODE_ERROR_NO_SUPPORT,
 			     "No DEP-11 support, needs libyaml");
 #endif
-	return node;
+	return g_steal_pointer (&node);
 }
