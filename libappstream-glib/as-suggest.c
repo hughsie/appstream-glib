@@ -120,7 +120,7 @@ as_suggest_kind_to_string (AsSuggestKind kind)
  *
  * Gets the suggest ids if set.
  *
- * Returns: (transfer none) (element-type utf-8): the #GPtrArray, or %NULL
+ * Returns: (transfer none) (element-type utf8): the #GPtrArray, or %NULL
  *
  * Since: 0.6.1
  **/
