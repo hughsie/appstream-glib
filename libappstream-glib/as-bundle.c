@@ -100,6 +100,8 @@ as_bundle_kind_from_string (const gchar *kind)
 		return AS_BUNDLE_KIND_SNAP;
 	if (g_strcmp0 (kind, "package") == 0)
 		return AS_BUNDLE_KIND_PACKAGE;
+	if (g_strcmp0 (kind, "cabinet") == 0)
+		return AS_BUNDLE_KIND_CABINET;
 	return AS_BUNDLE_KIND_UNKNOWN;
 }
 
@@ -124,6 +126,8 @@ as_bundle_kind_to_string (AsBundleKind kind)
 		return "snap";
 	if (kind == AS_BUNDLE_KIND_PACKAGE)
 		return "package";
+	if (kind == AS_BUNDLE_KIND_CABINET)
+		return "cabinet";
 	return NULL;
 }
 
