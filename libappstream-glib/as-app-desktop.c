@@ -296,6 +296,16 @@ as_app_parse_file_key (AsApp *app,
 		if (tmp != NULL && tmp[0] != '\0')
 			as_app_add_pkgname (app, tmp);
 
+	/* NotShowIn */
+	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_NOT_SHOW_IN) == 0) {
+		list = g_key_file_get_string_list (kf,
+						   G_KEY_FILE_DESKTOP_GROUP,
+						   key,
+						   NULL, NULL);
+
+		for (i = 0; list[i] != NULL; i++)
+			as_app_add_noshow_project_group (app, list[i]);
+
 	/* OnlyShowIn */
 	} else if (g_strcmp0 (key, G_KEY_FILE_DESKTOP_KEY_ONLY_SHOW_IN) == 0) {
 		/* if an app has only one entry, it's that desktop */
