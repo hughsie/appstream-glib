@@ -281,9 +281,9 @@ as_util_convert_appdata (GFile *file_input,
 		as_node_set_comment (n2, "FIXME: Use https://spdx.org/licenses/");
 	} else {
 		/* ensure in SPDX format */
-		if (!as_utils_is_spdx_license_id (as_node_get_data (n2))) {
+		if (!as_utils_is_spdx_license (as_node_get_data (n2))) {
 			action_required = TRUE;
-			as_node_set_comment (n2, "FIXME: convert to an SPDX ID");
+			as_node_set_comment (n2, "FIXME: convert to an SPDX license string");
 		}
 	}
 
