@@ -394,7 +394,7 @@ G_DEFINE_AUTO_CLEANUP_FREE_FUNC(AsYamlParser, yaml_parser_delete, NULL);
 AsNode *
 as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 {
-	g_autoptr(AsNode) node = NULL;
+	g_autoptr(AsYaml) node = NULL;
 #if AS_BUILD_DEP11
 	yaml_parser_t parser;
 	g_auto(AsYamlParser) parser_cleanup = NULL;
