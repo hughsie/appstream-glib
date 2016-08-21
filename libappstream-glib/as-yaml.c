@@ -374,25 +374,10 @@ G_DEFINE_AUTO_CLEANUP_FREE_FUNC(AsYamlParser, yaml_parser_delete, NULL);
 AsNode *
 as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 {
-	g_autoptr(AsNode) node = NULL;
+	g_autoptr(AsYaml) node = NULL;
 #if AS_BUILD_DEP11
 	yaml_parser_t parser;
 	g_auto(AsYamlParser) parser_cleanup = NULL;
-	g_autofree gchar *prefix = NULL;
-
-	/* sanity check */
-	prefix = g_strndup (data, 64);
-	g_strdelimit  (prefix, "\n", '\0');
-	if (!g_str_has_prefix (prefix, "---") &&
-	    !g_str_has_prefix (prefix, "#") &&
-	    !g_str_has_prefix (prefix, "File: ")) {
-		g_set_error (error,
-			     AS_NODE_ERROR,
-			     AS_NODE_ERROR_INVALID_MARKUP,
-			     "YAML prefix invalid: %s expected '---' or '#'",
-			     prefix);
-		return NULL;
-	}
 
 	/* parse */
 	if (!yaml_parser_initialize (&parser)) {
