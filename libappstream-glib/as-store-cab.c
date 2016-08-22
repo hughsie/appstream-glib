@@ -330,68 +330,6 @@ as_store_cab_from_bytes_with_origin (AsStore *store,
 		as_store_add_app (store, app);
 	}
 
-	/* if we provided an .inf file check the values matched */
-	for (i = 0; i < filelist->len; i++) {
-		AsApp *app_tmp;
-		AsChecksum *csum_inf;
-		AsChecksum *csum_metainfo;
-		AsRelease *rel_inf;
-		AsRelease *rel_metainfo;
-		const gchar *fn;
-		g_autoptr(AsApp) app_inf = NULL;
-		g_autofree gchar *tmp_fn = NULL;
-
-		fn = g_ptr_array_index (filelist, i);
-		if (as_app_guess_source_kind (fn) != AS_APP_SOURCE_KIND_INF)
-			continue;
-
-		/* get the id from the store */
-		app_inf = as_app_new ();
-		tmp_fn = g_build_filename (tmp_path, fn, NULL);
-		if (!as_app_parse_file (app_inf, tmp_fn, AS_APP_PARSE_FLAG_NONE, error))
-			return FALSE;
-		app_tmp = as_store_get_app_by_provide (store,
-						       AS_PROVIDE_KIND_FIRMWARE_FLASHED,
-						       as_app_get_id (app_inf));
-		if (app_tmp == NULL) {
-			g_set_error (error,
-				     AS_STORE_ERROR,
-				     AS_STORE_ERROR_FAILED,
-				     "no metainfo file with provide %s",
-				     as_app_get_id (app_inf));
-			return FALSE;
-		}
-
-		/* check the version matches */
-		rel_inf = as_app_get_release_default (app_inf);
-		rel_metainfo = as_app_get_release_default (app_tmp);
-		if (as_release_get_version (rel_inf) != NULL &&
-		    as_utils_vercmp (as_release_get_version (rel_inf),
-				     as_release_get_version (rel_metainfo)) != 0) {
-			g_set_error (error,
-				     AS_STORE_ERROR,
-				     AS_STORE_ERROR_FAILED,
-				     "metainfo version is %s while inf has %s",
-				     as_release_get_version (rel_metainfo),
-				     as_release_get_version (rel_inf));
-			return FALSE;
-		}
-
-		/* verify Firmware_CopyFiles matches */
-		csum_inf = as_release_get_checksum_by_target (rel_inf, AS_CHECKSUM_TARGET_CONTENT);
-		csum_metainfo = as_release_get_checksum_by_target (rel_metainfo, AS_CHECKSUM_TARGET_CONTENT);
-		if (g_strcmp0 (as_checksum_get_filename (csum_inf),
-			       as_checksum_get_filename (csum_metainfo)) != 0) {
-			g_set_error (error,
-				     AS_STORE_ERROR,
-				     AS_STORE_ERROR_FAILED,
-				     "metainfo filename is %s while inf has %s",
-				     as_checksum_get_filename (csum_metainfo),
-				     as_checksum_get_filename (csum_inf));
-			return FALSE;
-		}
-	}
-
 	/* delete temp files */
 	for (i = 0; i < filelist->len; i++) {
 		const gchar *fn;

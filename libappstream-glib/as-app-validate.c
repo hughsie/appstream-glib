@@ -764,8 +764,7 @@ as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 		number_screenshots_min = 0;
 
 	/* metainfo and inf do not require any screenshots */
-	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO ||
-	    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_INF)
+	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO)
 		number_screenshots_min = 0;
 
 	/* only for AppData and AppStream */

@@ -5533,10 +5533,6 @@ as_app_parse_file (AsApp *app,
 		if (!as_app_parse_appdata_file (app, filename, flags, error))
 			return FALSE;
 		break;
-	case AS_APP_SOURCE_KIND_INF:
-		if (!as_app_parse_inf_file (app, filename, flags, error))
-			return FALSE;
-		break;
 	default:
 		g_set_error (error,
 			     AS_APP_ERROR,
