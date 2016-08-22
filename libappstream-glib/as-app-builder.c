@@ -102,18 +102,19 @@ as_app_builder_parse_file_gettext (AsAppBuilderContext *ctx,
 				   GError **error)
 {
 	AsAppBuilderEntry *entry;
-	AsAppBuilderGettextHeader *h;
+	AsAppBuilderGettextHeader h;
 	g_autofree gchar *data = NULL;
 	gboolean swapped;
 
-	/* read data, although we only strictly need the header */
+	/* read data */
 	if (!g_file_get_contents (filename, &data, NULL, error))
 		return FALSE;
 
-	h = (AsAppBuilderGettextHeader *) data;
-	if (h->magic == 0x950412de)
+	/* we only strictly need the header */
+	memcpy (&h, data, sizeof (AsAppBuilderGettextHeader));
+	if (h.magic == 0x950412de)
 		swapped = FALSE;
-	else if (h->magic == 0xde120495)
+	else if (h.magic == 0xde120495)
 		swapped = TRUE;
 	else {
 		g_set_error_literal (error,
@@ -125,9 +126,9 @@ as_app_builder_parse_file_gettext (AsAppBuilderContext *ctx,
 	entry = as_app_builder_entry_new ();
 	entry->locale = g_strdup (locale);
 	if (swapped)
-		entry->nstrings = GUINT32_SWAP_LE_BE (h->nstrings);
+		entry->nstrings = GUINT32_SWAP_LE_BE (h.nstrings);
 	else
-		entry->nstrings = h->nstrings;
+		entry->nstrings = h.nstrings;
 	if (entry->nstrings > ctx->max_nstrings)
 		ctx->max_nstrings = entry->nstrings;
 	ctx->data = g_list_prepend (ctx->data, entry);
