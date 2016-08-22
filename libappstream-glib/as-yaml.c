@@ -406,7 +406,7 @@ as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 	}
 	parser_cleanup = &parser;
 	if (data_len < 0)
-		data_len = (guint) strlen (data);
+		data_len = (gssize) strlen (data);
 	yaml_parser_set_input_string (&parser, (guchar *) data, (gsize) data_len);
 	node = g_node_new (NULL);
 	if (!as_node_yaml_process_layer (&parser, node, error))

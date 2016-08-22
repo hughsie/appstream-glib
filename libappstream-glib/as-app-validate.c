@@ -486,7 +486,7 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 
 	/* create a buffer with the data */
 	stream = g_memory_input_stream_new_from_data (msg->response_body->data,
-						      msg->response_body->length,
+						      (gssize) msg->response_body->length,
 						      NULL);
 	if (stream == NULL) {
 		ai_app_validate_add (helper,

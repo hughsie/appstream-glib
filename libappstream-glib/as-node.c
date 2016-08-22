@@ -1324,17 +1324,17 @@ as_node_insert_line_breaks (const gchar *text, guint break_len)
 {
 	GString *str;
 	guint i;
-	guint new_len;
+	gssize new_len;
 
 	/* allocate long enough for the string, plus the extra newlines */
-	new_len = (guint) strlen (text) * (break_len + 1) / break_len;
+	new_len = (gssize) (strlen (text) * (break_len + 1) / break_len);
 	str = g_string_new_len (NULL, new_len + 2);
 	g_string_append (str, "\n");
 	g_string_append (str, text);
 
 	/* insert a newline every break length */
 	for (i = break_len + 1; i < str->len; i += break_len + 1)
-		g_string_insert (str, i, "\n");
+		g_string_insert (str, (gssize) i, "\n");
 	g_string_append (str, "\n");
 	return g_string_free (str, FALSE);
 }

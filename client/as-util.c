@@ -3087,7 +3087,7 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 		/* save new file */
 		ret = g_file_set_contents (cache_filename,
 					   msg->response_body->data,
-					   msg->response_body->length,
+					   (gssize) msg->response_body->length,
 					   error);
 		if (!ret)
 			goto out;

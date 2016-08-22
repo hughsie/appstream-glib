@@ -461,7 +461,7 @@ as_store_cab_from_file (AsStore *store,
 
 	/* slurp it all */
 	size = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_STANDARD_SIZE);
-	bytes = g_input_stream_read_bytes (input_stream, size,
+	bytes = g_input_stream_read_bytes (input_stream, (gsize) size,
 					   cancellable, &error_local);
 	if (bytes == NULL) {
 		filename = g_file_get_path (file);
