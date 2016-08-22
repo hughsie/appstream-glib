@@ -441,7 +441,7 @@ as_yaml_read_handler_cb (void *data,
 AsNode *
 as_yaml_from_file (GFile *file, GCancellable *cancellable, GError **error)
 {
-	g_autoptr(AsNode) node = NULL;
+	g_autoptr(AsYaml) node = NULL;
 #if AS_BUILD_DEP11
 	const gchar *content_type = NULL;
 	yaml_parser_t parser;
