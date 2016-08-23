@@ -2550,6 +2550,13 @@ as_store_load_installed (AsStore *store,
 			return FALSE;
 		}
 
+		/* don't match against non-package apps in the store */
+		if (scope == AS_APP_SCOPE_SYSTEM &&
+		    g_str_has_prefix (path, "/usr/share")) {
+			as_app_set_trust_flags (app, AS_APP_TRUST_FLAG_COMPLETE);
+			as_app_add_pkgname (app, "");
+		}
+
 		/* set the ID prefix */
 		if ((priv->add_flags & AS_STORE_ADD_FLAG_USE_UNIQUE_ID) == 0)
 			as_store_fixup_id_prefix (app, as_app_scope_to_string (scope));
