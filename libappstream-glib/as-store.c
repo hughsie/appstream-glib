@@ -2536,6 +2536,7 @@ as_store_load_installed (AsStore *store,
 			}
 		}
 		app = as_app_new ();
+		as_app_set_scope (app, scope);
 		if (!as_app_parse_file (app, filename, parse_flags, &error_local)) {
 			if (g_error_matches (error_local,
 					     AS_APP_ERROR,
