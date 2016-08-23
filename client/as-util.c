@@ -1253,9 +1253,18 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 	g_ptr_array_sort (array, as_util_sort_apps_by_sort_key_cb);
 	for (i = 0; i < array->len; i++) {
 		app = g_ptr_array_index (array, i);
-		g_print ("[%s] %s\n",
-			 as_app_get_metadata_item (app, "SortKey"),
-			 as_app_get_unique_id (app));
+		switch (as_app_get_state (app)) {
+		case AS_APP_STATE_INSTALLED:
+			g_print ("[%s] %s (installed)\n",
+				 as_app_get_metadata_item (app, "SortKey"),
+				 as_app_get_unique_id (app));
+			break;
+		default:
+			g_print ("[%s] %s\n",
+				 as_app_get_metadata_item (app, "SortKey"),
+				 as_app_get_unique_id (app));
+			break;
+		}
 	}
 
 	/* dump XML */
