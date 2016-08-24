@@ -1,0 +1,5 @@
+option('enable-dep11', type : 'boolean', value : true, description : 'enable DEP-11')
+option('enable-builder', type : 'boolean', value : true, description : 'enable AppStream builder')
+option('enable-rpm', type : 'boolean', value : true, description : 'enable RPM support')
+option('enable-alpm', type : 'boolean', value : true, description : 'enable ALPM support')
+option('enable-fonts', type : 'boolean', value : true, description : 'enable font support')

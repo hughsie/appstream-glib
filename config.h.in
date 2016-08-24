@@ -1,0 +1,22 @@
+/* config.h.in. */
+
+/* Build DEP-11 code */
+#mesondefine AS_BUILD_DEP11
+
+/* Package name for gettext */
+#mesondefine GETTEXT_PACKAGE
+
+/* define if ALPM is installed */
+#mesondefine HAVE_ALPM
+
+/* Use gperf */
+#mesondefine HAVE_GPERF
+
+/* define if RPM is installed */
+#mesondefine HAVE_RPM
+
+/* Define to the version of this package */
+#mesondefine PACKAGE_VERSION
+
+/* Font support */
+#mesondefine HAVE_FONTS
