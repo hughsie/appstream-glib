@@ -1,29 +1,12 @@
 <?xml version="1.0"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
-               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
-<!ENTITY version SYSTEM "version.xml">
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+[
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
 ]>
-<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+<book id="index">
   <bookinfo>
     <title>AppStream-glib Reference Manual</title>
-    <releaseinfo>
-      for AppStream-glib &version;
-    </releaseinfo>
-    <authorgroup>
-      <author>
-        <firstname>Richard</firstname>
-        <surname>Hughes</surname>
-        <affiliation>
-          <address>
-            <email>richard@hughsie.com</email>
-          </address>
-        </affiliation>
-      </author>
-    </authorgroup>
-    <copyright>
-      <year>2014</year>
-      <holder>Richard Hughes</holder>
-    </copyright>
   </bookinfo>
 
   <reference id="libappstream-glib">
@@ -53,12 +36,16 @@
     <xi:include href="xml/as-tag.xml"/>
     <xi:include href="xml/as-translation.xml"/>
     <xi:include href="xml/as-utils.xml"/>
+<!--
     <xi:include href="xml/as-version.xml"/>
+-->
   </reference>
 
+<!--
   <xi:include href="xml/annotation-glossary.xml">
     <xi:fallback />
   </xi:include>
+-->
 
 </book>
 

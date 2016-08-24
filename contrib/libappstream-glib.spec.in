@@ -13,7 +13,6 @@ URL:       http://people.freedesktop.org/~hughsient/appstream-glib/
 Source0:   http://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-%{version}.tar.xz
 
 BuildRequires: glib2-devel >= %{glib2_version}
-BuildRequires: libtool
 BuildRequires: docbook-utils
 BuildRequires: gtk-doc
 BuildRequires: gobject-introspection-devel
@@ -27,6 +26,7 @@ BuildRequires: libgcab1-devel
 BuildRequires: libuuid-devel
 BuildRequires: libstemmer-devel
 BuildRequires: json-glib-devel >= %{json_glib_version}
+BuildRequires: meson
 
 # for the builder component
 BuildRequires: fontconfig-devel
@@ -85,18 +85,14 @@ GLib headers and libraries for appstream-builder.
 %setup -q -n appstream-glib-%{version}
 
 %build
-%configure \
-        --enable-gtk-doc \
-        --enable-stemmer \
-        --disable-dep11 \
-        --disable-static \
-        --disable-silent-rules \
-        --disable-dependency-tracking
-
-make %{?_smp_mflags}
+%meson \
+    -Denable-gtk-doc=true \
+    -Denable-stemmer=true \
+    -Denable-dep11=false
+%meson_build
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT
+%meson_install
 
 %__rm -f %{buildroot}%{_libdir}/libappstream-glib*.la
 %__rm -f %{buildroot}%{_libdir}/libappstream-builder*.la

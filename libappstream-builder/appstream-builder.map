@@ -1,0 +1,6 @@
+{
+global:
+    asb_*;
+local:
+    *;
+};

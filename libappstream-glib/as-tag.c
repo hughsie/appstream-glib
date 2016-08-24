@@ -35,7 +35,6 @@
 
 #include "as-tag.h"
 
-const struct tag_data *_as_tag_from_gperf (const char *tag, GPERF_LEN_TYPE etag);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
@@ -81,7 +80,7 @@ as_tag_from_string_full (const gchar *tag, AsTagFlags flags)
 		return AS_TAG_UNKNOWN;
 
 	/* use a perfect hash */
-	ky = _as_tag_from_gperf (tag, (GPERF_LEN_TYPE) strlen (tag));
+	ky = _as_tag_from_gperf (tag, strlen (tag));
 	if (ky != NULL)
 		etag = ky->etag;
 

@@ -38,9 +38,9 @@
 
 /* compile time version
  */
-#define AS_MAJOR_VERSION				(@AS_MAJOR_VERSION@)
-#define AS_MINOR_VERSION				(@AS_MINOR_VERSION@)
-#define AS_MICRO_VERSION				(@AS_MICRO_VERSION@)
+#define AS_MAJOR_VERSION				(@AS_MAJOR_VERSION_CONF@)
+#define AS_MINOR_VERSION				(@AS_MINOR_VERSION_CONF@)
+#define AS_MICRO_VERSION				(@AS_MICRO_VERSION_CONF@)
 
 /* check whether a As version equal to or greater than
  * major.minor.micro.
