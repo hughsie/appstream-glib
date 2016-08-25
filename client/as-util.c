@@ -1378,6 +1378,59 @@ as_util_search_category (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
+static gboolean
+as_util_query_installed (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsApp *app;
+	GPtrArray *array;
+	guint i;
+	g_autoptr(AsStore) store = NULL;
+
+	/* load system database */
+	store = as_store_new ();
+	as_store_set_add_flags (store,
+				AS_STORE_ADD_FLAG_USE_UNIQUE_ID |
+				AS_STORE_ADD_FLAG_USE_MERGE_HEURISTIC);
+	if (!as_store_load (store,
+			    AS_STORE_LOAD_FLAG_IGNORE_INVALID |
+			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
+			    AS_STORE_LOAD_FLAG_APP_INFO_USER |
+			    AS_STORE_LOAD_FLAG_APPDATA |
+			    AS_STORE_LOAD_FLAG_DESKTOP,
+			    NULL, error))
+		return FALSE;
+
+	/* add matches to an array */
+	array = as_store_get_apps (store);
+	for (i = 0; i < array->len; i++) {
+		app = g_ptr_array_index (array, i);
+		if (as_app_get_state (app) != AS_APP_STATE_INSTALLED)
+			continue;
+		g_print ("%s\n", as_app_get_unique_id (app));
+	}
+
+	/* dump XML */
+	if (priv->verbose) {
+		g_autoptr(GString) xml = NULL;
+		g_autoptr(AsStore) store_results = as_store_new ();
+		as_store_set_add_flags (store_results,
+					AS_STORE_ADD_FLAG_USE_UNIQUE_ID);
+		for (i = 0; i < array->len; i++) {
+			app = g_ptr_array_index (array, i);
+			if (as_app_get_state (app) != AS_APP_STATE_INSTALLED)
+				continue;
+			as_store_add_app (store_results, app);
+		}
+		xml = as_store_to_xml (store_results,
+				       AS_NODE_TO_XML_FLAG_ADD_HEADER |
+				       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+				       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+		g_print ("%s\n", xml->str);
+	}
+
+	return TRUE;
+}
+
 static gint
 as_util_search_token_sort_cb (gconstpointer a, gconstpointer b, gpointer user_data)
 {
@@ -3980,6 +4033,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Search for AppStream applications by package name"),
 		     as_util_search_pkgname);
+	as_util_add (priv->cmd_array,
+		     "query-installed",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Show all installed AppStream applications"),
+		     as_util_query_installed);
 	as_util_add (priv->cmd_array,
 		     "search-category",
 		     NULL,
