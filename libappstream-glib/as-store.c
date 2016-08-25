@@ -1026,7 +1026,8 @@ as_store_add_app (AsStore *store, AsApp *app)
 
 		} else {
 			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
-			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM) {
+			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM &&
+			    as_app_get_scope (app) == AS_APP_SCOPE_SYSTEM) {
 				as_app_set_state (item, AS_APP_STATE_INSTALLED);
 				g_debug ("ignoring AppData entry as AppStream exists: %s:%s",
 					 as_app_get_unique_id (app),
@@ -1034,7 +1035,8 @@ as_store_add_app (AsStore *store, AsApp *app)
 				return;
 			}
 			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP &&
-			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM) {
+			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM &&
+			    as_app_get_scope (app) == AS_APP_SCOPE_SYSTEM) {
 				as_app_set_state (item, AS_APP_STATE_INSTALLED);
 				g_debug ("ignoring desktop entry as AppStream exists: %s:%s",
 					 as_app_get_unique_id (app),
