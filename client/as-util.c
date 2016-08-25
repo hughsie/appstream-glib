@@ -1281,8 +1281,7 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 		xml = as_store_to_xml (store_results,
 				       AS_NODE_TO_XML_FLAG_ADD_HEADER |
 				       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
-				       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE |
-				       AS_NODE_TO_XML_FLAG_SORT_CHILDREN);
+				       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 		g_print ("%s\n", xml->str);
 	}
 
