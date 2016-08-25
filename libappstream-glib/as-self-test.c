@@ -4866,6 +4866,73 @@ as_test_store_merge_func (void)
 	g_assert_cmpstr (as_app_get_source_file (app2), ==, NULL);
 }
 
+/* shows the unique-id globbing functions at work */
+static void
+as_test_utils_unique_id_hash_func (void)
+{
+	AsApp *found;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GHashTable) hash = NULL;
+
+	/* create new app */
+	app = as_app_new ();
+	as_app_set_id (app, "org.gnome.Software.desktop");
+	as_app_set_branch (app, "master");
+	g_assert_cmpstr (as_app_get_unique_id (app), ==,
+			 "*/*/*/*/org.gnome.Software.desktop/master");
+
+	/* add to hash table using the unique ID as a key */
+	hash = g_hash_table_new ((GHashFunc) as_utils_unique_id_hash,
+				 (GEqualFunc) as_utils_unique_id_equal);
+	g_hash_table_insert (hash, (gpointer) as_app_get_unique_id (app), app);
+
+	/* get with exact key */
+	found = g_hash_table_lookup (hash, "*/*/*/*/org.gnome.Software.desktop/master");
+	g_assert (found != NULL);
+
+	/* get with more details specified */
+	found = g_hash_table_lookup (hash, "system/*/*/*/org.gnome.Software.desktop/master");
+	g_assert (found != NULL);
+
+	/* get with less details specified */
+	found = g_hash_table_lookup (hash, "*/*/*/*/org.gnome.Software.desktop/*");
+	g_assert (found != NULL);
+
+	/* different key */
+	found = g_hash_table_lookup (hash, "*/*/*/*/gimp.desktop/*");
+	g_assert (found == NULL);
+
+	/* different branch */
+	found = g_hash_table_lookup (hash, "*/*/*/*/org.gnome.Software.desktop/stable");
+	g_assert (found == NULL);
+}
+
+/* shows the as_utils_unique_id_*_safe functions are safe with bare text */
+static void
+as_test_utils_unique_id_hash_safe_func (void)
+{
+	AsApp *found;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GHashTable) hash = NULL;
+
+	/* create new app */
+	app = as_app_new ();
+	as_app_set_id (app, "org.gnome.Software.desktop");
+
+	/* add to hash table using the unique ID as a key */
+	hash = g_hash_table_new ((GHashFunc) as_utils_unique_id_hash,
+				 (GEqualFunc) as_utils_unique_id_equal);
+	g_hash_table_insert (hash, "dave", app);
+
+	/* get with exact key */
+	found = g_hash_table_lookup (hash, "dave");
+	g_assert (found != NULL);
+
+	/* different key */
+	found = g_hash_table_lookup (hash, "frank");
+	g_assert (found == NULL);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -4875,6 +4942,8 @@ main (int argc, char **argv)
 	g_log_set_fatal_mask (NULL, G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL);
 
 	/* tests go here */
+	g_test_add_func ("/AppStream/utils{unique_id-hash}", as_test_utils_unique_id_hash_func);
+	g_test_add_func ("/AppStream/utils{unique_id-hash2}", as_test_utils_unique_id_hash_safe_func);
 	g_test_add_func ("/AppStream/utils{unique_id}", as_test_utils_unique_id_func);
 	g_test_add_func ("/AppStream/utils{locale-compat}", as_test_utils_locale_compat_func);
 	g_test_add_func ("/AppStream/utils{string-replace}", as_test_utils_string_replace_func);

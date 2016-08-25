@@ -1828,7 +1828,7 @@ as_utils_unique_id_equal (const gchar *unique_id1, const gchar *unique_id2)
 	/* invalid */
 	if (!as_utils_unique_id_valid (unique_id1) ||
 	    !as_utils_unique_id_valid (unique_id2))
-		return FALSE;
+		return g_strcmp0 (unique_id1, unique_id2) == 0;
 
 	/* look at each part */
 	for (i = 0; i < AS_UTILS_UNIQUE_ID_PARTS; i++) {
@@ -1854,4 +1854,45 @@ as_utils_unique_id_equal (const gchar *unique_id1, const gchar *unique_id2)
 		last2 += len2 + 1;
 	}
 	return TRUE;
+}
+
+/**
+ * as_utils_unique_id_hash:
+ * @unique_id: a unique ID
+ *
+ * Converts a unique-id to a hash value.
+ *
+ * This function implements the widely used DJB hash on the ID subset of the
+ * unique-id string.
+ *
+ * It can be passed to g_hash_table_new() as the hash_func parameter,
+ * when using non-NULL strings or unique_ids as keys in a GHashTable.
+ *
+ * Returns: a hash value corresponding to the key
+ *
+ * Since: 0.6.2
+ */
+guint
+as_utils_unique_id_hash (const gchar *unique_id)
+{
+	gsize i;
+	guint hash = 5381;
+	guint section_cnt = 0;
+
+	/* not a unique ID */
+	if (!as_utils_unique_id_valid (unique_id))
+		return g_str_hash (unique_id);
+
+	/* only include the app-id */
+	for (i = 0; unique_id[i] != '\0'; i++) {
+		if (unique_id[i] == '/') {
+			if (++section_cnt > 4)
+				break;
+			continue;
+		}
+		if (section_cnt < 4)
+			continue;
+		hash = (guint) ((hash << 5) + hash) + (guint) (unique_id[i]);
+	}
+	return hash;
 }
