@@ -3164,6 +3164,7 @@ as_test_store_merges_func (void)
 	as_app_set_comment (app_desktop, NULL, "GNU Bla Bla");
 	as_app_set_priority (app_desktop, -1);
 	as_app_set_state (app_desktop, AS_APP_STATE_INSTALLED);
+	as_app_set_scope (app_desktop, AS_APP_SCOPE_SYSTEM);
 
 	app_appdata = as_app_new ();
 	as_app_set_id (app_appdata, "gimp.desktop");
@@ -3172,6 +3173,7 @@ as_test_store_merges_func (void)
 	as_app_add_pkgname (app_appdata, "gimp");
 	as_app_set_priority (app_appdata, -1);
 	as_app_set_state (app_appdata, AS_APP_STATE_INSTALLED);
+	as_app_set_scope (app_desktop, AS_APP_SCOPE_SYSTEM);
 
 	as_store_add_app (store_desktop_appdata, app_desktop);
 	as_store_add_app (store_desktop_appdata, app_appdata);
