@@ -3,12 +3,13 @@
 #
 # Licensed under the GNU Lesser General Public License Version 2.1
 
-project('appstream-glib', 'c')
+project('appstream-glib', 'c', version : '0.6.2')
 
-as_major_version = '0'
-as_minor_version = '6'
-as_micro_version = '2'
-as_version = '@0@.@1@.@2@'.format(as_major_version, as_minor_version, as_micro_version)
+as_version = meson.project_version()
+varr = as_version.split('.')
+as_major_version = varr[0]
+as_minor_version = varr[1]
+as_micro_version = varr[2]
 
 conf = configuration_data()
 conf.set('AS_MAJOR_VERSION', as_major_version)

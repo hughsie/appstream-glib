@@ -11,7 +11,6 @@ deps = [glib, gdkpixbuf, giounix, libarchive, soup, yaml, uuid, libgcab]
 
 asresources = gnome.compile_resources(
   'as-resources', 'appstream-glib.gresource.xml',
-  source_dir : '.',
   c_name : 'as')
 
 configure_file(input : 'as-version.h.in',
@@ -124,8 +123,8 @@ asglib = shared_library(
   version : lt_version,
   dependencies : deps,
   c_args : cargs,
-  include_directories : include_directories('@0@/..'.format(meson.current_build_dir())),
-  link_args : ['-Wl,--no-undefined', vflag],
+  include_directories : include_directories('..'),
+  link_args : vflag,
   link_depends : mapfile,
   install : true)
 asglib_incdir = include_directories('.')

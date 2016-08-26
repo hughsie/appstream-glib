@@ -8,7 +8,7 @@ if get_option('enable-builder')
     'appstream-builder',
     sources : appstream_builder_srcs,
     include_directories : [
-      include_directories('@0@/..'.format(meson.current_build_dir())),
+      include_directories('..),
       asglib_incdir,
       asbuilder_incdir,
     ],

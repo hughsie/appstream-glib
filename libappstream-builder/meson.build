@@ -70,7 +70,7 @@ asbuilder = shared_library(
     top_build_incdir,
     asglib_incdir,
   ],
-  link_args : ['-Wl,--no-undefined', vflag],
+  link_args : vflag,
   link_depends : mapfile,
   link_with : asglib,
   install : true)
