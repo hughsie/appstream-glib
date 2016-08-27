@@ -450,7 +450,7 @@ asb_package_rpm_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	ts = rpmtsCreate ();
 	rpmtsSetVSFlags (ts, _RPMVSF_NODIGESTS | _RPMVSF_NOSIGNATURES);
 	fd = Fopen (filename, "r");
-	if (fd <= 0) {
+	if (fd == NULL) {
 		ret = FALSE;
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
