@@ -1,3 +1,24 @@
+Version 0.6.2
+~~~~~~~~~~~~~
+Released: 2016-10-29
+
+New Features:
+ - Add a hash function specifically designed for unique-ids (Richard Hughes)
+ - Add AS_BUNDLE_KIND_CABINET (Richard Hughes)
+ - Remove the inf parsing from appstream-glib (Richard Hughes)
+
+Bugfixes:
+ - Check if icon name is unset before checking the prefix (Justin J. Kim)
+ - Do not merge all LangPack entries (Richard Hughes)
+ - Do not require an icon from LOCALIZATION kind (Richard Hughes)
+ - Do not use the deprecated GNOME_COMPILE_WARNINGS (Richard Hughes)
+ - Do not use the prefix check when parsing YAML (Richard Hughes)
+ - Fix gcc shift warnings on 32 bit platforms (Kalev Lember)
+ - Ignore system datadirs that are actually per-user (Richard Hughes)
+ - Invalidate the unique-id if any of the parts are changed (Richard Hughes)
+ - Make upgrade check for SPDX license string (Kai Willadsen)
+ - Pay attention to errors from libyaml (#129) (Anders Kaseorg, Richard Hughes)
+
 Version 0.6.1
 ~~~~~~~~~~~~~~
 Released: 2016-10-12
