@@ -471,11 +471,11 @@ asb_context_add_filename (AsbContext *ctx, const gchar *filename, GError **error
 	}
 
 	/* open */
-#if HAVE_RPM
+#ifdef HAVE_RPM
 	if (g_str_has_suffix (filename, ".rpm"))
 		pkg = asb_package_rpm_new ();
 #endif
-#if HAVE_ALPM
+#ifdef HAVE_ALPM
 	if (g_str_has_suffix (filename, ".pkg.tar.xz"))
 		pkg = asb_package_alpm_new ();
 #endif
