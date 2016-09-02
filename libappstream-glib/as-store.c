@@ -935,6 +935,9 @@ as_store_add_app (AsStore *store, AsApp *app)
 
 	/* this is a special merge component */
 	if (as_app_has_quirk (app, AS_APP_QUIRK_MATCH_ANY_PREFIX)) {
+		AsAppSubsumeFlags flags = AS_APP_SUBSUME_FLAG_MERGE;
+		AsAppMergeKind merge_kind = as_app_get_merge_kind (app);
+
 		apps = g_hash_table_lookup (priv->hash_merge_id, id);
 		if (apps == NULL) {
 			apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -942,20 +945,23 @@ as_store_add_app (AsStore *store, AsApp *app)
 					     (gpointer) as_app_get_id (app),
 					     apps);
 		}
-		g_debug ("added merge component: %s",
+		g_debug ("added %s merge component: %s",
+			 as_app_merge_kind_to_string (merge_kind),
 			 as_app_get_unique_id (app));
 		g_ptr_array_add (apps, g_object_ref (app));
 
 		/* apply to existing components */
+		flags |= AS_APP_SUBSUME_FLAG_NO_OVERWRITE;
+		if (merge_kind == AS_APP_MERGE_KIND_REPLACE)
+			flags |= AS_APP_SUBSUME_FLAG_REPLACE;
 		for (i = 0; i < priv->array->len; i++) {
 			AsApp *app_tmp = g_ptr_array_index (priv->array, i);
 			if (g_strcmp0 (as_app_get_id (app_tmp), id) != 0)
 				continue;
-			g_debug ("using merge component %s on %s",
+			g_debug ("using %s merge component %s on %s",
+				 as_app_merge_kind_to_string (merge_kind),
 				 id, as_app_get_unique_id (app_tmp));
-			as_app_subsume_full (app_tmp, app,
-					     AS_APP_SUBSUME_FLAG_NO_OVERWRITE |
-					     AS_APP_SUBSUME_FLAG_MERGE);
+			as_app_subsume_full (app_tmp, app, flags);
 		}
 		return;
 	}
@@ -965,12 +971,16 @@ as_store_add_app (AsStore *store, AsApp *app)
 	if (apps != NULL) {
 		for (i = 0; i < apps->len; i++) {
 			AsApp *app_tmp = g_ptr_array_index (apps, i);
-			g_debug ("using merge component %s on %s",
+			AsAppMergeKind merge_kind = as_app_get_merge_kind (app_tmp);
+			AsAppSubsumeFlags flags = AS_APP_SUBSUME_FLAG_MERGE;
+			g_debug ("using %s merge component %s on %s",
+				 as_app_merge_kind_to_string (merge_kind),
 				 as_app_get_unique_id (app_tmp),
 				 as_app_get_unique_id (app));
-			as_app_subsume_full (app, app_tmp,
-					     AS_APP_SUBSUME_FLAG_NO_OVERWRITE |
-					     AS_APP_SUBSUME_FLAG_MERGE);
+			flags |= AS_APP_SUBSUME_FLAG_NO_OVERWRITE;
+			if (merge_kind == AS_APP_MERGE_KIND_REPLACE)
+				flags |= AS_APP_SUBSUME_FLAG_REPLACE;
+			as_app_subsume_full (app, app_tmp, flags);
 		}
 	}
 

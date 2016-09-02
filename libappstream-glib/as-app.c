@@ -3383,7 +3383,7 @@ as_app_add_addon (AsApp *app, AsApp *addon)
 
 
 static void
-as_app_subsume_dict (GHashTable *dest, GHashTable *src, gboolean overwrite)
+as_app_subsume_dict (GHashTable *dest, GHashTable *src, AsAppSubsumeFlags flags)
 {
 	GList *l;
 	const gchar *tmp;
@@ -3392,9 +3392,11 @@ as_app_subsume_dict (GHashTable *dest, GHashTable *src, gboolean overwrite)
 	g_autoptr(GList) keys = NULL;
 
 	keys = g_hash_table_get_keys (src);
+	if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 && keys != NULL)
+		g_hash_table_remove_all (dest);
 	for (l = keys; l != NULL; l = l->next) {
 		key = l->data;
-		if (!overwrite) {
+		if (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) {
 			tmp = g_hash_table_lookup (dest, key);
 			if (tmp != NULL)
 				continue;
@@ -3469,13 +3471,10 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	AsAppPrivate *papp = GET_PRIVATE (app);
 	const gchar *tmp;
 	const gchar *key;
-	gboolean overwrite;
 	guint i;
 
 	/* stop us shooting ourselves in the foot */
 	papp->trust_flags |= AS_APP_TRUST_FLAG_CHECK_DUPLICATES;
-
-	overwrite = (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) == 0;
 
 	/* id-kind */
 	if (flags & AS_APP_SUBSUME_FLAG_KIND) {
@@ -3499,6 +3498,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* pkgnames */
 	if (flags & AS_APP_SUBSUME_FLAG_BUNDLES) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->pkgnames->len > 0)
+			g_ptr_array_set_size (papp->pkgnames, 0);
 		for (i = 0; i < priv->pkgnames->len; i++) {
 			tmp = g_ptr_array_index (priv->pkgnames, i);
 			as_app_add_pkgname (app, tmp);
@@ -3507,6 +3509,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* bundles */
 	if (flags & AS_APP_SUBSUME_FLAG_BUNDLES) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->bundles->len > 0)
+			g_ptr_array_set_size (papp->bundles, 0);
 		for (i = 0; i < priv->bundles->len; i++) {
 			AsBundle *bundle = g_ptr_array_index (priv->bundles, i);
 			as_app_add_bundle (app, bundle);
@@ -3515,6 +3520,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* translations */
 	if (flags & AS_APP_SUBSUME_FLAG_TRANSLATIONS) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->translations->len > 0)
+			g_ptr_array_set_size (papp->translations, 0);
 		for (i = 0; i < priv->translations->len; i++) {
 			AsTranslation *tr = g_ptr_array_index (priv->translations, i);
 			as_app_add_translation (app, tr);
@@ -3522,13 +3530,21 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	}
 
 	/* suggests */
-	for (i = 0; i < priv->suggests->len; i++) {
-		AsSuggest *suggest = g_ptr_array_index (priv->suggests, i);
-		as_app_add_suggest (app, suggest);
+	if (flags & AS_APP_SUBSUME_FLAG_SUGGESTS) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->suggests->len > 0)
+			g_ptr_array_set_size (papp->suggests, 0);
+		for (i = 0; i < priv->suggests->len; i++) {
+			AsSuggest *suggest = g_ptr_array_index (priv->suggests, i);
+			as_app_add_suggest (app, suggest);
+		}
 	}
 
 	/* releases */
 	if (flags & AS_APP_SUBSUME_FLAG_RELEASES) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->releases->len > 0)
+			g_ptr_array_set_size (papp->releases, 0);
 		for (i = 0; i < priv->releases->len; i++) {
 			AsRelease *rel= g_ptr_array_index (priv->releases, i);
 			as_app_add_release (app, rel);
@@ -3537,6 +3553,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* kudos */
 	if (flags & AS_APP_SUBSUME_FLAG_KUDOS) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->kudos->len > 0)
+			g_ptr_array_set_size (papp->kudos, 0);
 		for (i = 0; i < priv->kudos->len; i++) {
 			tmp = g_ptr_array_index (priv->kudos, i);
 			as_app_add_kudo (app, tmp);
@@ -3545,6 +3564,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* categories */
 	if (flags & AS_APP_SUBSUME_FLAG_CATEGORIES) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->categories->len > 0)
+			g_ptr_array_set_size (papp->categories, 0);
 		for (i = 0; i < priv->categories->len; i++) {
 			tmp = g_ptr_array_index (priv->categories, i);
 			as_app_add_category (app, tmp);
@@ -3553,6 +3575,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* permissions */
 	if (flags & AS_APP_SUBSUME_FLAG_PERMISSIONS) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->permissions->len > 0)
+			g_ptr_array_set_size (papp->permissions, 0);
 		for (i = 0; i < priv->permissions->len; i++) {
 			tmp = g_ptr_array_index (priv->permissions, i);
 			as_app_add_permission (app, tmp);
@@ -3561,6 +3586,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* extends */
 	if (flags & AS_APP_SUBSUME_FLAG_EXTENDS) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->extends->len > 0)
+			g_ptr_array_set_size (papp->extends, 0);
 		for (i = 0; i < priv->extends->len; i++) {
 			tmp = g_ptr_array_index (priv->extends, i);
 			as_app_add_extends (app, tmp);
@@ -3569,6 +3597,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* compulsory_for_desktops */
 	if (flags & AS_APP_SUBSUME_FLAG_COMPULSORY) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->compulsory_for_desktops->len > 0)
+			g_ptr_array_set_size (papp->compulsory_for_desktops, 0);
 		for (i = 0; i < priv->compulsory_for_desktops->len; i++) {
 			tmp = g_ptr_array_index (priv->compulsory_for_desktops, i);
 			as_app_add_compulsory_for_desktop (app, tmp);
@@ -3577,6 +3608,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* screenshots */
 	if (flags & AS_APP_SUBSUME_FLAG_SCREENSHOTS) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->screenshots->len > 0)
+			g_ptr_array_set_size (papp->screenshots, 0);
 		for (i = 0; i < priv->screenshots->len; i++) {
 			AsScreenshot *ss = g_ptr_array_index (priv->screenshots, i);
 			as_app_add_screenshot (app, ss);
@@ -3585,6 +3619,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* reviews */
 	if (flags & AS_APP_SUBSUME_FLAG_REVIEWS) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->reviews->len > 0)
+			g_ptr_array_set_size (papp->reviews, 0);
 		for (i = 0; i < priv->reviews->len; i++) {
 			AsReview *review = g_ptr_array_index (priv->reviews, i);
 			as_app_add_review (app, review);
@@ -3593,6 +3630,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* content_ratings */
 	if (flags & AS_APP_SUBSUME_FLAG_CONTENT_RATINGS) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->content_ratings->len > 0)
+			g_ptr_array_set_size (papp->content_ratings, 0);
 		for (i = 0; i < priv->content_ratings->len; i++) {
 			AsContentRating *content_rating;
 			content_rating = g_ptr_array_index (priv->content_ratings, i);
@@ -3602,6 +3642,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* provides */
 	if (flags & AS_APP_SUBSUME_FLAG_PROVIDES) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->provides->len > 0)
+			g_ptr_array_set_size (papp->provides, 0);
 		for (i = 0; i < priv->provides->len; i++) {
 			AsProvide *pr = g_ptr_array_index (priv->provides, i);
 			as_app_add_provide (app, pr);
@@ -3610,6 +3653,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* icons */
 	if (flags & AS_APP_SUBSUME_FLAG_ICONS) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->icons->len > 0)
+			g_ptr_array_set_size (papp->icons, 0);
 		for (i = 0; i < priv->icons->len; i++) {
 			AsIcon *ic = g_ptr_array_index (priv->icons, i);
 			as_app_subsume_icon (app, ic);
@@ -3618,6 +3664,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* mimetypes */
 	if (flags & AS_APP_SUBSUME_FLAG_MIMETYPES) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->mimetypes->len > 0)
+			g_ptr_array_set_size (papp->mimetypes, 0);
 		for (i = 0; i < priv->mimetypes->len; i++) {
 			tmp = g_ptr_array_index (priv->mimetypes, i);
 			as_app_add_mimetype (app, tmp);
@@ -3626,6 +3675,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* vetos */
 	if (flags & AS_APP_SUBSUME_FLAG_VETOS) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->vetos->len > 0)
+			g_ptr_array_set_size (papp->vetos, 0);
 		for (i = 0; i < priv->vetos->len; i++) {
 			tmp = g_ptr_array_index (priv->vetos, i);
 			as_app_add_veto (app, "%s", tmp);
@@ -3636,6 +3688,8 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	if (flags & AS_APP_SUBSUME_FLAG_LANGUAGES) {
 		GList *l;
 		g_autoptr(GList) keys = g_hash_table_get_keys (priv->languages);
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 && keys != NULL)
+			g_hash_table_remove_all (papp->languages);
 		for (l = keys; l != NULL; l = l->next) {
 			gint percentage;
 			key = l->data;
@@ -3651,19 +3705,19 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* dictionaries */
 	if (flags & AS_APP_SUBSUME_FLAG_NAME)
-		as_app_subsume_dict (papp->names, priv->names, overwrite);
+		as_app_subsume_dict (papp->names, priv->names, flags);
 	if (flags & AS_APP_SUBSUME_FLAG_COMMENT)
-		as_app_subsume_dict (papp->comments, priv->comments, overwrite);
+		as_app_subsume_dict (papp->comments, priv->comments, flags);
 	if (flags & AS_APP_SUBSUME_FLAG_DEVELOPER_NAME)
-		as_app_subsume_dict (papp->developer_names, priv->developer_names, overwrite);
+		as_app_subsume_dict (papp->developer_names, priv->developer_names, flags);
 	if (flags & AS_APP_SUBSUME_FLAG_DESCRIPTION)
-		as_app_subsume_dict (papp->descriptions, priv->descriptions, overwrite);
+		as_app_subsume_dict (papp->descriptions, priv->descriptions, flags);
 	if (flags & AS_APP_SUBSUME_FLAG_METADATA)
-		as_app_subsume_dict (papp->metadata, priv->metadata, overwrite);
+		as_app_subsume_dict (papp->metadata, priv->metadata, flags);
 	if (flags & AS_APP_SUBSUME_FLAG_URL)
-		as_app_subsume_dict (papp->urls, priv->urls, overwrite);
+		as_app_subsume_dict (papp->urls, priv->urls, flags);
 	if (flags & AS_APP_SUBSUME_FLAG_KEYWORDS)
-		as_app_subsume_keywords (app, donor, overwrite);
+		as_app_subsume_keywords (app, donor, flags);
 
 	/* source */
 	if (flags & AS_APP_SUBSUME_FLAG_SOURCE_FILE) {
@@ -3720,12 +3774,6 @@ void
 as_app_subsume_full (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 {
 	g_assert (app != donor);
-
-	/* legacy value */
-	if (flags & AS_APP_SUBSUME_FLAG_PARTIAL) {
-		g_warning ("using AS_APP_SUBSUME_FLAG_PARTIAL fallback");
-		flags |= AS_APP_SUBSUME_FLAG_MERGE;
-	}
 
 	/* two way sync implies no overwriting */
 	if ((flags & AS_APP_SUBSUME_FLAG_BOTH_WAYS) > 0)

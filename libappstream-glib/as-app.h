@@ -129,7 +129,7 @@ typedef enum {
 	AS_APP_SUBSUME_FLAG_NONE		= 0,
 	AS_APP_SUBSUME_FLAG_NO_OVERWRITE	= 1ull << 0,	/* Since: 0.1.4 */
 	AS_APP_SUBSUME_FLAG_BOTH_WAYS		= 1ull << 1,	/* Since: 0.1.4 */
-	AS_APP_SUBSUME_FLAG_PARTIAL		= 1ull << 2,	/* Since: 0.2.2 */
+	AS_APP_SUBSUME_FLAG_REPLACE		= 1ull << 2,	/* Since: 0.6.3 */
 	AS_APP_SUBSUME_FLAG_KIND		= 1ull << 3,	/* Since: 0.6.1 */
 	AS_APP_SUBSUME_FLAG_STATE		= 1ull << 4,	/* Since: 0.6.1 */
 	AS_APP_SUBSUME_FLAG_BUNDLES		= 1ull << 5,	/* Since: 0.6.1 */
@@ -162,6 +162,7 @@ typedef enum {
 	AS_APP_SUBSUME_FLAG_PROJECT_LICENSE	= 1ull << 32,	/* Since: 0.6.1 */
 	AS_APP_SUBSUME_FLAG_PROJECT_GROUP	= 1ull << 33,	/* Since: 0.6.1 */
 	AS_APP_SUBSUME_FLAG_SOURCE_KIND		= 1ull << 34,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_SUGGESTS		= 1ull << 35,	/* Since: 0.6.3 */
 	/*< private >*/
 	AS_APP_SUBSUME_FLAG_LAST,
 } AsAppSubsumeFlags;
@@ -186,8 +187,12 @@ typedef enum {
 					 AS_APP_SUBSUME_FLAG_RELEASES | \
 					 AS_APP_SUBSUME_FLAG_REVIEWS | \
 					 AS_APP_SUBSUME_FLAG_SCREENSHOTS | \
+					 AS_APP_SUBSUME_FLAG_SUGGESTS | \
 					 AS_APP_SUBSUME_FLAG_TRANSLATIONS | \
 					 AS_APP_SUBSUME_FLAG_URL)
+
+/* deprecated name */
+#define AS_APP_SUBSUME_FLAG_PARTIAL	AS_APP_SUBSUME_FLAG_MERGE
 
 /* all properties */
 #define AS_APP_SUBSUME_FLAG_DEDUPE	(AS_APP_SUBSUME_FLAG_BRANCH | \

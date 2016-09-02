@@ -4866,6 +4866,57 @@ as_test_store_merge_func (void)
 	g_assert_cmpstr (as_app_get_source_file (app2), ==, NULL);
 }
 
+static void
+as_test_store_merge_replace_func (void)
+{
+	g_autoptr (AsApp) app1 = NULL;
+	g_autoptr (AsApp) app2 = NULL;
+	g_autoptr (AsApp) app_merge = NULL;
+	g_autoptr (AsStore) store = NULL;
+
+	store = as_store_new ();
+	as_store_set_add_flags (store, AS_STORE_ADD_FLAG_USE_UNIQUE_ID);
+
+	/* add app */
+	app1 = as_app_new ();
+	as_app_set_id (app1, "org.gnome.Software.desktop");
+	as_app_set_branch (app1, "master");
+	as_app_set_source_kind (app1, AS_APP_SOURCE_KIND_APPDATA);
+	as_app_add_pkgname (app1, "gnome-software");
+	as_app_add_category (app1, "Family");
+	as_store_add_app (store, app1);
+
+	/* add merge component */
+	app_merge = as_app_new ();
+	as_app_set_kind (app_merge, AS_APP_KIND_DESKTOP);
+	as_app_set_id (app_merge, "org.gnome.Software.desktop");
+	as_app_set_source_kind (app_merge, AS_APP_SOURCE_KIND_APPSTREAM);
+	as_app_set_origin (app_merge, "utopia");
+	as_app_set_scope (app_merge, AS_APP_SCOPE_USER);
+	as_app_set_merge_kind (app_merge, AS_APP_MERGE_KIND_REPLACE);
+	as_app_add_category (app_merge, "Horror");
+	as_store_add_app (store, app_merge);
+	g_assert_cmpstr (as_app_get_unique_id (app_merge), ==,
+			 "*/*/*/desktop/org.gnome.Software.desktop/*");
+
+	/* add app */
+	app2 = as_app_new ();
+	as_app_set_id (app2, "org.gnome.Software.desktop");
+	as_app_set_branch (app2, "stable");
+	as_app_set_source_kind (app2, AS_APP_SOURCE_KIND_APPSTREAM);
+	as_app_add_pkgname (app2, "gnome-software");
+	as_app_add_category (app2, "Family");
+	as_store_add_app (store, app2);
+
+	/* verify that both apps have the category */
+	g_assert (as_app_has_category (app1, "Horror"));
+	g_assert (as_app_has_category (app2, "Horror"));
+
+	/* verify we replaced rather than appended */
+	g_assert (!as_app_has_category (app1, "Family"));
+	g_assert (!as_app_has_category (app2, "Family"));
+}
+
 /* shows the unique-id globbing functions at work */
 static void
 as_test_utils_unique_id_hash_func (void)
@@ -5008,6 +5059,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store", as_test_store_func);
 	g_test_add_func ("/AppStream/store{unique}", as_test_store_unique_func);
 	g_test_add_func ("/AppStream/store{merge}", as_test_store_merge_func);
+	g_test_add_func ("/AppStream/store{merge-replace}", as_test_store_merge_replace_func);
 	g_test_add_func ("/AppStream/store{empty}", as_test_store_empty_func);
 	if (g_test_slow ()) {
 		g_test_add_func ("/AppStream/store{auto-reload-dir}", as_test_store_auto_reload_dir_func);
