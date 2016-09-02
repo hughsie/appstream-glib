@@ -760,6 +760,7 @@ as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 
 	/* firmware does not need screenshots */
 	if (as_app_get_kind (app) == AS_APP_KIND_FIRMWARE ||
+	    as_app_get_kind (app) == AS_APP_KIND_DRIVER ||
 	    as_app_get_kind (app) == AS_APP_KIND_LOCALIZATION)
 		number_screenshots_min = 0;
 

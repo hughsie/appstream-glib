@@ -296,6 +296,7 @@ typedef enum {
  * @AS_APP_KIND_OS_UPGRADE:		Operating system upgrade
  * @AS_APP_KIND_SHELL_EXTENSION:	GNOME Shell extension
  * @AS_APP_KIND_LOCALIZATION:		Localization data
+ * @AS_APP_KIND_DRIVER:			Driver for hardware support
  *
  * The component type.
  **/
@@ -316,6 +317,7 @@ typedef enum {
 	AS_APP_KIND_SHELL_EXTENSION,	/* Since: 0.5.10 */
 	AS_APP_KIND_LOCALIZATION,	/* Since: 0.5.11 */
 	AS_APP_KIND_CONSOLE,		/* Since: 0.6.1 */
+	AS_APP_KIND_DRIVER,		/* Since: 0.6.3 */
 	/*< private >*/
 	AS_APP_KIND_LAST
 } AsAppKind;

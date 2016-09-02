@@ -180,6 +180,8 @@ as_app_kind_to_string (AsAppKind kind)
 		return "localization";
 	if (kind == AS_APP_KIND_CONSOLE)
 		return "console-application";
+	if (kind == AS_APP_KIND_DRIVER)
+		return "driver";
 	return "unknown";
 }
 
@@ -226,6 +228,8 @@ as_app_kind_from_string (const gchar *kind)
 		return AS_APP_KIND_LOCALIZATION;
 	if (g_strcmp0 (kind, "console-application") == 0)
 		return AS_APP_KIND_CONSOLE;
+	if (g_strcmp0 (kind, "driver") == 0)
+		return AS_APP_KIND_DRIVER;
 
 	/* legacy */
 	if (g_strcmp0 (kind, "desktop") == 0)

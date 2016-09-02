@@ -929,6 +929,7 @@ asb_context_detect_missing_data (AsbContext *ctx, GError **error)
 		switch (as_app_get_kind (AS_APP (app))) {
 		case AS_APP_KIND_ADDON:
 		case AS_APP_KIND_FIRMWARE:
+		case AS_APP_KIND_DRIVER:
 		case AS_APP_KIND_GENERIC:
 		case AS_APP_KIND_LOCALIZATION:
 			break;
