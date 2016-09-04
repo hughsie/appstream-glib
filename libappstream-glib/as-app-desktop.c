@@ -138,6 +138,51 @@ as_app_parse_file_metadata (AsApp *app, GKeyFile *kf, const gchar *key)
 	as_app_add_metadata (app, key, value);
 }
 
+static AsIcon *
+as_app_desktop_create_icon (AsApp *app, const gchar *name, AsAppParseFlags flags)
+{
+	AsIcon *icon = as_icon_new ();
+	gchar *dot;
+	g_autofree gchar *name_fixed = NULL;
+
+	/* local */
+	if (g_path_is_absolute (name)) {
+		as_icon_set_kind (icon, AS_ICON_KIND_LOCAL);
+		as_icon_set_filename (icon, name);
+		return icon;
+	}
+
+	/* work around a common mistake in desktop files */
+	name_fixed = g_strdup (name);
+	dot = g_strstr_len (name_fixed, -1, ".");
+	if (dot != NULL &&
+	    (g_strcmp0 (dot, ".png") == 0 ||
+	     g_strcmp0 (dot, ".xpm") == 0 ||
+	     g_strcmp0 (dot, ".svg") == 0)) {
+		*dot = '\0';
+	}
+
+	/* stock */
+	if (as_utils_is_stock_icon_name (name_fixed)) {
+		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+		as_icon_set_name (icon, name_fixed);
+		return icon;
+	}
+
+	/* stock, but kinda sneaky */
+	if ((flags & AS_APP_PARSE_FLAG_USE_FALLBACKS) > 0 &&
+	    _as_utils_is_stock_icon_name_fallback (name_fixed)) {
+		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+		as_icon_set_name (icon, name_fixed);
+		return icon;
+	}
+
+	/* just use default: FIXME, this is the wrong kind, use UNKNOWN */
+	as_icon_set_kind (icon, AS_ICON_KIND_LOCAL);
+	as_icon_set_name (icon, name_fixed);
+	return icon;
+}
+
 static gboolean
 as_app_parse_file_key (AsApp *app,
 		       GKeyFile *kf,
@@ -183,32 +228,7 @@ as_app_parse_file_key (AsApp *app,
 					     NULL);
 		if (tmp != NULL && tmp[0] != '\0') {
 			g_autoptr(AsIcon) icon = NULL;
-			icon = as_icon_new ();
-
-			if (g_path_is_absolute (tmp)) {
-				as_icon_set_filename (icon, tmp);
-			} else {
-				/* work around a common mistake in desktop files */
-				dot = g_strstr_len (tmp, -1, ".");
-				if (dot != NULL &&
-				    (g_strcmp0 (dot, ".png") == 0 ||
-				     g_strcmp0 (dot, ".xpm") == 0 ||
-				     g_strcmp0 (dot, ".svg") == 0)) {
-					*dot = '\0';
-				}
-			}
-			as_icon_set_name (icon, tmp);
-
-			if (as_utils_is_stock_icon_name (tmp)) {
-				as_icon_set_name (icon, tmp);
-				as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
-			} else if ((flags & AS_APP_PARSE_FLAG_USE_FALLBACKS) > 0 &&
-				   _as_utils_is_stock_icon_name_fallback (tmp)) {
-				as_icon_set_name (icon, tmp);
-				as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
-			} else {
-				as_icon_set_kind (icon, AS_ICON_KIND_LOCAL);
-			}
+			icon = as_app_desktop_create_icon (app, tmp, flags);
 			as_app_add_icon (app, icon);
 		}
 
