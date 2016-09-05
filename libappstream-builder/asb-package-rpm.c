@@ -333,6 +333,10 @@ asb_package_rpm_ensure_deps (AsbPackage *pkg, GError **error)
 			*tmp = '\0';
 		asb_package_add_dep (pkg, dep_no_qual);
 	}
+        /* Add the corresponding -lang package as a dependency */
+        tmp = g_strconcat (asb_package_get_name (pkg), "-lang", NULL);
+        asb_package_add_dep (pkg, tmp);
+        g_free (tmp);
 out:
 	rpmtdFreeData (td);
 	rpmtdFree (td);

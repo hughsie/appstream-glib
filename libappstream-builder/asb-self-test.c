@@ -131,10 +131,11 @@ asb_test_package_rpm_func (void)
 
 	/* deps */
 	deps = asb_package_get_deps (pkg);
-	g_assert_cmpint (deps->len, ==, 3);
+	g_assert_cmpint (deps->len, ==, 4);
 	g_assert_cmpstr (g_ptr_array_index (deps, 0), ==, "bar");
 	g_assert_cmpstr (g_ptr_array_index (deps, 1), ==, "baz");
 	g_assert_cmpstr (g_ptr_array_index (deps, 2), ==, "foo");
+	g_assert_cmpstr (g_ptr_array_index (deps, 3), ==, "test-lang");
 
 	/* releases */
 	releases = asb_package_get_releases (pkg);
@@ -168,13 +169,13 @@ asb_test_package_rpm_func (void)
 	ret = asb_package_ensure (pkg, ASB_PACKAGE_ENSURE_DEPS, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (asb_package_get_deps(pkg)->len, ==, 3);
+	g_assert_cmpint (asb_package_get_deps(pkg)->len, ==, 4);
 	ret = asb_package_ensure (pkg, ASB_PACKAGE_ENSURE_DEPS, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (asb_package_get_deps(pkg)->len, ==, 3);
+	g_assert_cmpint (asb_package_get_deps(pkg)->len, ==, 4);
 	asb_package_clear (pkg, ASB_PACKAGE_ENSURE_DEPS);
-	g_assert_cmpint (asb_package_get_deps(pkg)->len, ==, 3);
+	g_assert_cmpint (asb_package_get_deps(pkg)->len, ==, 4);
 	asb_package_clear (pkg, ASB_PACKAGE_ENSURE_DEPS);
 	g_assert_cmpint (asb_package_get_deps(pkg)->len, ==, 0);
 
