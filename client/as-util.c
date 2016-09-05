@@ -3457,6 +3457,57 @@ as_util_replace_screenshots (AsUtilPrivate *priv, gchar **values, GError **error
 	return TRUE;
 }
 
+static gboolean
+as_util_add_provide (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	GPtrArray *screenshots;
+	guint i;
+	AsProvideKind provide_kind;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GFile) file = NULL;
+
+	/* check args */
+	if (g_strv_length (values) < 3) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, expected: file provide-type provide-value");
+		return FALSE;
+	}
+
+	/* get provide type */
+	provide_kind = as_provide_kind_from_string (values[1]);
+	if (provide_kind == AS_PROVIDE_KIND_UNKNOWN) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Provide type not supported");
+		return FALSE;
+	}
+
+	/* parse file */
+	app = as_app_new ();
+	if (!as_app_parse_file (app, values[0],
+				AS_APP_PARSE_FLAG_KEEP_COMMENTS, error))
+		return FALSE;
+
+	/* create and add provides */
+	for (i = 2; values[i] != NULL; i++) {
+		g_autoptr(AsProvide) provide = NULL;
+		provide = as_provide_new ();
+		as_provide_set_kind (provide, provide_kind);
+		as_provide_set_value (provide, values[i]);
+		as_app_add_provide (app, provide);
+	}
+
+	/* save */
+	file = g_file_new_for_path (values[0]);
+	if (!as_app_to_file (app, file, NULL, error))
+		return FALSE;
+
+	return TRUE;
+}
+
 static void
 as_util_pad_strings (const gchar *id, const gchar *msg, guint align)
 {
@@ -4135,6 +4186,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Replace screenshots in source file"),
 		     as_util_replace_screenshots);
+	as_util_add (priv->cmd_array,
+		     "add-provide",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Add a provide to a source file"),
+		     as_util_add_provide);
 	as_util_add (priv->cmd_array,
 		     "mirror-screenshots",
 		     NULL,
