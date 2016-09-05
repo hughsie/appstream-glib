@@ -177,8 +177,7 @@ as_app_desktop_create_icon (AsApp *app, const gchar *name, AsAppParseFlags flags
 		return icon;
 	}
 
-	/* just use default: FIXME, this is the wrong kind, use UNKNOWN */
-	as_icon_set_kind (icon, AS_ICON_KIND_LOCAL);
+	/* just use default of UNKNOWN */
 	as_icon_set_name (icon, name_fixed);
 	return icon;
 }

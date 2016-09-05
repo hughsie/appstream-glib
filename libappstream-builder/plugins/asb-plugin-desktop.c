@@ -176,7 +176,9 @@ asb_plugin_desktop_refine (AsbPlugin *plugin,
 	AsIcon *icon;
 	AsAppParseFlags parse_flags = AS_APP_PARSE_FLAG_USE_HEURISTICS |
 				      AS_APP_PARSE_FLAG_ALLOW_VETO;
+	GPtrArray *icons;
 	gboolean ret;
+	guint i;
 	g_autoptr(AsApp) desktop_app = NULL;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
@@ -188,6 +190,14 @@ asb_plugin_desktop_refine (AsbPlugin *plugin,
 	desktop_app = as_app_new ();
 	if (!as_app_parse_file (desktop_app, filename, parse_flags, error))
 		return FALSE;
+
+	/* convert any UNKNOWN icons to CACHED */
+	icons = as_app_get_icons (AS_APP (desktop_app));
+	for (i = 0; i < icons->len; i++) {
+		icon = g_ptr_array_index (icons, i);
+		if (as_icon_get_kind (icon) == AS_ICON_KIND_UNKNOWN)
+			as_icon_set_kind (icon, AS_ICON_KIND_CACHED);
+	}
 
 	/* copy all metadata */
 	as_app_subsume_full (AS_APP (app), desktop_app,

@@ -2532,6 +2532,8 @@ as_store_load_installed (AsStore *store,
 
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
 		AsApp *app_tmp;
+		GPtrArray *icons;
+		guint i;
 		g_autofree gchar *filename = NULL;
 		g_autoptr(AsApp) app = NULL;
 		filename = g_build_filename (path, tmp, NULL);
@@ -2560,6 +2562,14 @@ as_store_load_installed (AsStore *store,
 			}
 			g_propagate_error (error, error_local);
 			return FALSE;
+		}
+
+		/* convert any UNKNOWN icons to LOCAL */
+		icons = as_app_get_icons (app);
+		for (i = 0; i < icons->len; i++) {
+			AsIcon *icon = g_ptr_array_index (icons, i);
+			if (as_icon_get_kind (icon) == AS_ICON_KIND_UNKNOWN)
+				as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
 		}
 
 		/* don't match against non-package apps in the store */
