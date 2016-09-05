@@ -530,9 +530,11 @@ as_icon_node_insert (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 		}
 		break;
 	default:
-		n = as_node_insert (parent, "icon", priv->name, 0,
-				    "type", as_icon_kind_to_string (priv->kind),
-				    NULL);
+		n = as_node_insert (parent, "icon", priv->name, 0, NULL);
+		if (priv->kind != AS_ICON_KIND_UNKNOWN) {
+			as_node_add_attribute (n, "type",
+					       as_icon_kind_to_string (priv->kind));
+		}
 		break;
 	}
 	if (priv->kind == AS_ICON_KIND_CACHED &&
