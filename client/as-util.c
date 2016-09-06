@@ -3508,6 +3508,48 @@ as_util_add_provide (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
+static gboolean
+as_util_add_language (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	GPtrArray *screenshots;
+	guint i;
+	gint percentage = 0;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GFile) file = NULL;
+
+	/* check args */
+	if (g_strv_length (values) < 2) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, expected: file locale [value]");
+		return FALSE;
+	}
+
+	/* parse file */
+	app = as_app_new ();
+	if (!as_app_parse_file (app, values[0],
+				AS_APP_PARSE_FLAG_KEEP_COMMENTS, error))
+		return FALSE;
+
+	/* parse optional percentage and add locale */
+	if (g_strv_length (values) > 2) {
+		guint64 tmp = g_ascii_strtoull (values[2], NULL, 10);
+		if (tmp == 0 || tmp > 100) {
+			g_set_error (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "failed to parse percentage: %s",
+				     values[2]);
+			return FALSE;
+		}
+		percentage = (gint) tmp;
+	}
+	as_app_add_language (app, percentage, values[1]);
+	file = g_file_new_for_path (values[0]);
+	return as_app_to_file (app, file, NULL, error);
+}
+
 static void
 as_util_pad_strings (const gchar *id, const gchar *msg, guint align)
 {
@@ -4192,6 +4234,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Add a provide to a source file"),
 		     as_util_add_provide);
+	as_util_add (priv->cmd_array,
+		     "add-language",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Add a language to a source file"),
+		     as_util_add_language);
 	as_util_add (priv->cmd_array,
 		     "mirror-screenshots",
 		     NULL,
