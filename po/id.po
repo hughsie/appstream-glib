@@ -7,9 +7,9 @@
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
 msgid ""
 msgstr ""
-"Project-Id-Version: appstream-glib 0.6.2\n"
+"Project-Id-Version: appstream-glib 0.6.3\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-08-25 11:24+0100\n"
+"POT-Creation-Date: 2016-08-31 15:19+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,10 +19,10 @@ msgstr ""
 "glib/language/id/)\n"
 "Language: id\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Zanata 3.9.3\n"
+"X-Generator: Zanata 3.9.5\n"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:90 client/as-compose.c:336 client/as-util.c:3927
+#: client/as-builder.c:90 client/as-compose.c:336 client/as-util.c:3979
 msgid "Show extra debugging information"
 msgstr "Tampilkan informasi debug ekstra"
 
@@ -112,7 +112,7 @@ msgid "Ignore certain types of veto"
 msgstr "Abaikan tipe veto tertentu"
 
 #. TRANSLATORS: error message
-#: client/as-builder.c:155 client/as-compose.c:368 client/as-util.c:4151
+#: client/as-builder.c:155 client/as-compose.c:368 client/as-util.c:4209
 msgid "Failed to parse arguments"
 msgstr "Gagal mengurai argumen"
 
@@ -265,212 +265,217 @@ msgid "Format not recognised"
 msgstr "Format tidak dikenali"
 
 #. TRANSLATORS: probably wrong XML
-#: client/as-util.c:1845
+#: client/as-util.c:1897
 msgid "No desktop applications found"
 msgstr "Tidak ditemukan aplikasi desktop"
 
 #. TRANSLATORS: the file is valid
-#: client/as-util.c:2576
+#: client/as-util.c:2628
 msgid "OK"
 msgstr "OK"
 
-#: client/as-util.c:2581
+#: client/as-util.c:2633
 msgid "FAILED"
 msgstr "GAGAL"
 
-#: client/as-util.c:2677
+#: client/as-util.c:2729
 msgid "Validation failed"
 msgstr "Validasi gagal"
 
-#: client/as-util.c:2721
+#: client/as-util.c:2773
 msgid "Validation of files failed"
 msgstr "Validasi berkas gagal"
 
 #. TRANSLATORS: application was removed
-#: client/as-util.c:3652
+#: client/as-util.c:3704
 msgid "Removed"
 msgstr "Dihapus"
 
 #. TRANSLATORS: application was added
-#: client/as-util.c:3665
+#: client/as-util.c:3717
 msgid "Added"
 msgstr "Ditambahkan"
 
 #. TRANSLATORS: this is the --nonet argument
-#: client/as-util.c:3924
+#: client/as-util.c:3976
 msgid "Do not use network access"
 msgstr "Jangan pakai akses jaringan"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:3930
+#: client/as-util.c:3982
 msgid "Show version"
 msgstr "Tampilkan versi"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:3933
+#: client/as-util.c:3985
 msgid "Enable profiling"
 msgstr "Fungsikan pemrofilan"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:3952
+#: client/as-util.c:4004
 msgid "Converts AppStream metadata from one version to another"
 msgstr "Konversikan metadata AppStream dari satu versi ke lainnya"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:3958
+#: client/as-util.c:4010
 msgid "Upgrade AppData metadata to the latest version"
 msgstr "Tingkatkan metadata AppData ke versi terakhir"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:3964
+#: client/as-util.c:4016
 msgid "Creates an example Appdata file from a .desktop file"
 msgstr "Membuat contoh berkas Appdata dari suatu berkas .desktop"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:3970
+#: client/as-util.c:4022
 msgid "Dumps the applications in the AppStream metadata"
 msgstr "Mencurahkan aplikasi dalam metadata AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:3976
+#: client/as-util.c:4028
 msgid "Search for AppStream applications"
 msgstr "Mencari aplikasi AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:3982
+#: client/as-util.c:4034
 msgid "Search for AppStream applications by package name"
 msgstr "Mencari aplikasi AppStream menurut namanya"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:3988
+#: client/as-util.c:4040
+msgid "Show all installed AppStream applications"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4046
 msgid "Search for AppStream applications by category name"
 msgstr ""
 
 #. TRANSLATORS: command description
-#: client/as-util.c:3994
+#: client/as-util.c:4052
 msgid "Display application search tokens"
 msgstr "Tampilkan token pencarian aplikasi"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4000
+#: client/as-util.c:4058
 msgid "Installs AppStream metadata"
 msgstr "Pasang metadata AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4006
+#: client/as-util.c:4064
 msgid "Installs AppStream metadata with new origin"
 msgstr "Pasang metadata AppStream dengan origin baru"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4012
+#: client/as-util.c:4070
 msgid "Uninstalls AppStream metadata"
 msgstr "Bongkar metadata AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4018
+#: client/as-util.c:4076
 msgid "Create an HTML status page"
 msgstr "Buat sebuah halaman status HTML"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4024
+#: client/as-util.c:4082
 msgid "Create an CSV status document"
 msgstr "Buat sebuah dokumen status CSV"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4030
+#: client/as-util.c:4088
 msgid "Create an HTML matrix page"
 msgstr "Buat sebuah halaman matriks HTML"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4036
+#: client/as-util.c:4094
 msgid "List applications not backed by packages"
 msgstr "Daftar aplikasi yang tidak didukung oleh paket"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4042
+#: client/as-util.c:4100
 msgid "Validate an AppData or AppStream file"
 msgstr "Validasikan sebuah berkas AppData atau AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4048
+#: client/as-util.c:4106
 msgid "Validate an AppData or AppStream file (relaxed)"
 msgstr "Validasikan sebuah berkas AppData atau AppStream (longgar)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4054
+#: client/as-util.c:4112
 msgid "Validate an AppData or AppStream file (strict)"
 msgstr "Validasikan sebuah berkas AppData atau AppSteram (ketat)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4060
+#: client/as-util.c:4118
 msgid "Convert an AppData file to NEWS format"
 msgstr "Konversikan berkas AppData ke format NEWS"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4066
+#: client/as-util.c:4124
 msgid "Convert an NEWS file to AppData format"
 msgstr "Konversikan berkas NEWS ke format AppData"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4072
+#: client/as-util.c:4130
 msgid "Check installed application data"
 msgstr "Periksa data aplikasi yang terpasang"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4078
+#: client/as-util.c:4136
 msgid "Replace screenshots in source file"
 msgstr "Gantikan cuplikan layar dalam berkas sumber"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4084
+#: client/as-util.c:4142
 msgid "Mirror upstream screenshots"
 msgstr "Cerminkan cuplikan layar upstream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4090
+#: client/as-util.c:4148
 msgid "Mirror local firmware files"
 msgstr "Cerminkan berkas firmware lokal"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4096
+#: client/as-util.c:4154
 msgid "Incorporate extra metadata from an external file"
 msgstr "Sertakan medatada ekstra dari berkas eksternal"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4102
+#: client/as-util.c:4160
 msgid "Compare the contents of two AppStream files"
 msgstr "Bandingkan isi dari dua berkas AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4108
+#: client/as-util.c:4166
 msgid "Generate a GUID from an input string"
 msgstr "Buat suatu GUID dari string masukan"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4114
+#: client/as-util.c:4172
 msgid "Modify an AppData file"
 msgstr "Ubah berkas AppData"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4120
+#: client/as-util.c:4178
 msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr "Pecah berkas AppData ke berkas Metainfo dan AppData"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4126
+#: client/as-util.c:4184
 msgid "Merge several files to an AppStream file"
 msgstr "Gabungkan beberapa berkas ke sebuh berkas AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4132
+#: client/as-util.c:4190
 msgid "Import a file to AppStream markup"
 msgstr "Impor sebuah berkas ke markup AppStream"
 
 #. TRANSLATORS: program name
-#: client/as-util.c:4145
+#: client/as-util.c:4203
 msgid "AppStream Utility"
 msgstr "Utilitas AppStream"
 
-#: client/as-util.c:4169
+#: client/as-util.c:4227
 msgid "Version:"
 msgstr "Versi:"

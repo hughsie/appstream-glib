@@ -1,3 +1,17 @@
+Version 0.6.3
+~~~~~~~~~~~~~
+Released: 2016-09-06
+
+New Features:
+ - Add a component kind of 'driver' (Richard Hughes)
+ - Add an easy way to add a language to an existing file (Richard Hughes)
+ - Add an easy way to add a modalias to an existing file (Richard Hughes)
+ - Support components with merge=replace rules (Richard Hughes)
+
+Bugfixes:
+ - Add -lang as a dep in order to detect translations (Dominique Leuenberger)
+ - Convert the built unknown icons to the correct kind (Richard Hughes)
+
 Version 0.6.2
 ~~~~~~~~~~~~~
 Released: 2016-10-29
