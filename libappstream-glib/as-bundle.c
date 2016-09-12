@@ -102,6 +102,8 @@ as_bundle_kind_from_string (const gchar *kind)
 		return AS_BUNDLE_KIND_PACKAGE;
 	if (g_strcmp0 (kind, "cabinet") == 0)
 		return AS_BUNDLE_KIND_CABINET;
+	if (g_strcmp0 (kind, "appimage") == 0)
+		return AS_BUNDLE_KIND_APPIMAGE;
 	return AS_BUNDLE_KIND_UNKNOWN;
 }
 
@@ -128,6 +130,8 @@ as_bundle_kind_to_string (AsBundleKind kind)
 		return "package";
 	if (kind == AS_BUNDLE_KIND_CABINET)
 		return "cabinet";
+	if (kind == AS_BUNDLE_KIND_APPIMAGE)
+		return "appimage";
 	return NULL;
 }
 

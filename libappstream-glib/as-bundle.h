@@ -55,6 +55,7 @@ struct _AsBundleClass
  * @AS_BUNDLE_KIND_SNAP:		Snap application deployment
  * @AS_BUNDLE_KIND_PACKAGE:		Package-based application deployment
  * @AS_BUNDLE_KIND_CABINET:		Cabinet firmware deployment
+ * @AS_BUNDLE_KIND_APPIMAGE:		AppImage application bundle
  *
  * The bundle type.
  **/
@@ -65,6 +66,7 @@ typedef enum {
 	AS_BUNDLE_KIND_SNAP,			/* Since: 0.6.1 */
 	AS_BUNDLE_KIND_PACKAGE,			/* Since: 0.6.1 */
 	AS_BUNDLE_KIND_CABINET,			/* Since: 0.6.2 */
+	AS_BUNDLE_KIND_APPIMAGE,		/* Since: 0.6.4 */
 	/*< private >*/
 	AS_BUNDLE_KIND_LAST
 } AsBundleKind;
