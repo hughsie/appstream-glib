@@ -201,6 +201,8 @@ AsApp		*as_store_get_app_by_provide	(AsStore	*store,
 						 const gchar	*value);
 void		 as_store_add_app		(AsStore	*store,
 						 AsApp		*app);
+void		 as_store_add_apps		(AsStore	*store,
+						 GPtrArray	*apps);
 void		 as_store_remove_app		(AsStore	*store,
 						 AsApp		*app);
 void		 as_store_remove_app_by_id	(AsStore	*store,

@@ -893,6 +893,37 @@ _as_app_is_perhaps_merge_component (AsApp *app)
 }
 
 /**
+ * as_store_add_apps:
+ * @store: a #AsStore instance.
+ * @apps: (element-type AsApp): an array of apps
+ *
+ * Adds several applications to the store.
+ *
+ * Additionally only applications where the kind is known will be added.
+ *
+ * Since: 0.6.4
+ **/
+void
+as_store_add_apps (AsStore *store, GPtrArray *apps)
+{
+	guint i;
+	_cleanup_uninhibit_ guint32 *tok = NULL;
+
+	g_return_if_fail (AS_IS_STORE (store));
+
+	/* emit once when finished */
+	tok = as_store_changed_inhibit (store);
+	for (i = 0; i < apps->len; i++) {
+		AsApp *app = g_ptr_array_index (apps, i);
+		as_store_add_app (store, app);
+	}
+
+	/* this store has changed */
+	as_store_changed_uninhibit (&tok);
+	as_store_perhaps_emit_changed (store, "add-apps");
+}
+
+/**
  * as_store_add_app:
  * @store: a #AsStore instance.
  * @app: a #AsApp instance.
