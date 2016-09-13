@@ -1111,38 +1111,51 @@ asb_context_disable_older_pkgs (AsbContext *ctx)
 	}
 }
 
+/* return the first package in the repo that matches the name and arch */
+static AsbPackage *
+asb_context_get_package_by_name_arch (AsbContext *ctx,
+				      const gchar *name,
+				      const gchar *arch)
+{
+	AsbContextPrivate *priv = GET_PRIVATE (ctx);
+	guint i;
+	for (i = 0; i < priv->packages->len; i++) {
+		AsbPackage *pkg = ASB_PACKAGE (g_ptr_array_index (priv->packages, i));
+		if (g_strcmp0 (asb_package_get_name (pkg), name) == 0 &&
+		    g_strcmp0 (asb_package_get_arch (pkg), arch) == 0) {
+			return pkg;
+		}
+	}
+	return NULL;
+}
+
 static void
 asb_context_disable_multiarch_pkgs (AsbContext *ctx)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	AsbPackage *pkg;
-	const gchar *arch;
-	gboolean found_arch = FALSE;
 	guint i;
 
-	/* are there any 64-bit packages in the repo? */
+	/* are there any non 64-bit packages in the repo with 64-bit versions */
 	for (i = 0; i < priv->packages->len; i++) {
-		pkg = ASB_PACKAGE (g_ptr_array_index (priv->packages, i));
-		if (g_strcmp0 (asb_package_get_arch (pkg), "x86_64") == 0) {
-			found_arch = TRUE;
-			break;
-		}
-	}
-	if (!found_arch)
-		return;
-
-	/* disable any alternate-arch packages */
-	for (i = 0; i < priv->packages->len; i++) {
-		pkg = ASB_PACKAGE (g_ptr_array_index (priv->packages, i));
-		arch = asb_package_get_arch (pkg);
+		AsbPackage *pkg = ASB_PACKAGE (g_ptr_array_index (priv->packages, i));
+		AsbPackage *pkg64;
+		const gchar *arch = asb_package_get_arch (pkg);
+		const gchar *name = asb_package_get_name (pkg);
 		if (arch == NULL)
 			continue;
-		if (g_strcmp0 (arch, "x86_64") != 0 &&
-		    g_strcmp0 (arch, "noarch") != 0) {
-			g_debug ("disabling alternate-arch %s",
-				 asb_package_get_filename (pkg));
-			asb_package_set_enabled (pkg, FALSE);
-		}
+		if (g_strcmp0 (arch, "x86_64") == 0)
+			continue;
+		if (g_strcmp0 (arch, "noarch") == 0)
+			continue;
+		pkg64 = asb_context_get_package_by_name_arch (ctx,
+							      name,
+							      "x86_64");
+		if (pkg64 == NULL)
+			continue;
+		g_debug ("disabling alternate-arch %s as native exists %s",
+			 asb_package_get_filename (pkg),
+			 asb_package_get_filename (pkg64));
+		asb_package_set_enabled (pkg, FALSE);
 	}
 }
 
