@@ -42,6 +42,8 @@ AsProfileTask	*as_profile_start		(AsProfile	*profile,
 						 G_GNUC_PRINTF (2, 3)
 						 G_GNUC_WARN_UNUSED_RESULT;
 void		 as_profile_clear		(AsProfile	*profile);
+void		 as_profile_prune		(AsProfile	*profile,
+						 guint		 duration);
 void		 as_profile_dump		(AsProfile	*profile);
 void		 as_profile_set_autodump	(AsProfile	*profile,
 						 guint		 delay);

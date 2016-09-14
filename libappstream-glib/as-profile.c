@@ -238,6 +238,38 @@ as_profile_clear (AsProfile *profile)
 }
 
 /**
+ * as_profile_prune:
+ * @profile: A #AsProfile
+ * @duration: A time in ms
+ *
+ * Clears the list of profiled events older than @duration.
+ *
+ * Since: 0.6.4
+ **/
+void
+as_profile_prune (AsProfile *profile, guint duration)
+{
+	gint64 now;
+	guint i;
+	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&profile->mutex);
+	g_autoptr(GPtrArray) removal = g_ptr_array_new ();
+
+	/* find all events older than duration */
+	now = g_get_real_time () / 1000;
+	for (i = 0; i < profile->archived->len; i++) {
+		AsProfileItem *item = g_ptr_array_index (profile->archived, i);
+		if (now - item->time_start / 1000 > duration)
+			g_ptr_array_add (removal, item);
+	}
+
+	/* remove each one */
+	for (i = 0; i < removal->len; i++) {
+		AsProfileItem *item = g_ptr_array_index (removal, i);
+		g_ptr_array_remove (profile->archived, item);
+	}
+}
+
+/**
  * as_profile_dump:
  * @profile: A #AsProfile
  *
