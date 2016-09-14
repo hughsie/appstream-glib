@@ -1695,10 +1695,12 @@ as_store_from_file_internal (AsStore *store,
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
 	/* profile */
-	ptask = as_profile_start_literal (priv->profile, "AsStore:store-from-file");
+	filename = g_file_get_path (file);
+	ptask = as_profile_start (priv->profile,
+				  "AsStore:store-from-file{%s}",
+				  filename);
 
 	/* a DEP-11 file */
-	filename = g_file_get_path (file);
 	if (g_strstr_len (filename, -1, ".yml") != NULL)
 		return as_store_load_yaml_file (store, file, cancellable, error);
 
@@ -2390,18 +2392,13 @@ as_store_load_app_info_file (AsStore *store,
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_autoptr(GFile) file = NULL;
-	g_autoptr(AsProfileTask) ptask = NULL;
-
-	/* profile */
-	ptask = as_profile_start (priv->profile, "AsStore:app-info{%s}", path_xml);
 
 	/* guess this based on the name */
 	if (!as_store_guess_origin_fallback (store, path_xml, error))
 		return FALSE;
 
+	/* load without adding monitor */
 	file = g_file_new_for_path (path_xml);
-	/* Do not monitor the file: assume we are already monitoring its
-	 * directory */
 	return as_store_from_file_internal (store,
 					    file,
 					    scope,
