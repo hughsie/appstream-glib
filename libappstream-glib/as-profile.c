@@ -233,6 +233,7 @@ as_profile_sort_cb (gconstpointer a, gconstpointer b)
 void
 as_profile_clear (AsProfile *profile)
 {
+	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&profile->mutex);
 	g_ptr_array_set_size (profile->archived, 0);
 }
 
