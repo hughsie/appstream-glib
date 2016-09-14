@@ -47,6 +47,8 @@ void		 as_profile_prune		(AsProfile	*profile,
 void		 as_profile_dump		(AsProfile	*profile);
 void		 as_profile_set_autodump	(AsProfile	*profile,
 						 guint		 delay);
+void		 as_profile_set_autoprune	(AsProfile	*profile,
+						 guint		 duration);
 void		 as_profile_task_free		(AsProfileTask	*ptask);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsProfileTask, as_profile_task_free)

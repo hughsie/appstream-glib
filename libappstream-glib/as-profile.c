@@ -33,6 +33,7 @@ struct _AsProfile
 	GMutex		 mutex;
 	GThread		*unthreaded;
 	guint		 autodump_id;
+	guint		 autoprune_duration;
 };
 
 typedef struct {
@@ -119,6 +120,10 @@ as_profile_start_literal (AsProfile *profile, const gchar *id)
 
 	g_return_val_if_fail (AS_IS_PROFILE (profile), NULL);
 	g_return_val_if_fail (id != NULL, NULL);
+
+	/* autoprune old data */
+	if (profile->autoprune_duration != 0)
+		as_profile_prune (profile, profile->autoprune_duration);
 
 	/* only use the thread ID when not using the main thread */
 	self = g_thread_self ();
@@ -267,6 +272,22 @@ as_profile_prune (AsProfile *profile, guint duration)
 		AsProfileItem *item = g_ptr_array_index (removal, i);
 		g_ptr_array_remove (profile->archived, item);
 	}
+}
+
+/**
+ * as_profile_set_autoprune:
+ * @profile: A #AsProfile
+ * @duration: A time in ms
+ *
+ * Automatically prunes events older than @duration when new ones are added.
+ *
+ * Since: 0.6.4
+ **/
+void
+as_profile_set_autoprune (AsProfile *profile, guint duration)
+{
+	profile->autoprune_duration = duration;
+	as_profile_prune (profile, duration);
 }
 
 /**
