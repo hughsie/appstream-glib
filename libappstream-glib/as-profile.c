@@ -258,6 +258,7 @@ as_profile_dump (AsProfile *profile)
 	gdouble scale;
 	guint bar_offset;
 	guint bar_length;
+	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&profile->mutex);
 
 	g_return_if_fail (AS_IS_PROFILE (profile));
 
