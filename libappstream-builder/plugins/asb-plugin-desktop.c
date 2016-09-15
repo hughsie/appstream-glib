@@ -207,14 +207,22 @@ asb_plugin_desktop_refine (AsbPlugin *plugin,
 	/* is the icon a stock-icon-name? */
 	icon = as_app_get_icon_default (AS_APP (app));
 	if (icon != NULL) {
-		g_autofree gchar *key = NULL;
-		key = g_strdup (as_icon_get_name (icon));
 		if (as_icon_get_kind (icon) == AS_ICON_KIND_STOCK) {
 			asb_package_log (pkg,
 					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
-					 "using stock icon %s", key);
+					 "using stock icon %s",
+					 as_icon_get_name (icon));
 		} else {
+			g_autofree gchar *key = NULL;
 			g_autoptr(GError) error_local = NULL;
+			switch (as_icon_get_kind (icon)) {
+			case AS_ICON_KIND_LOCAL:
+				key = g_strdup (as_icon_get_filename (icon));
+				break;
+			default:
+				key = g_strdup (as_icon_get_name (icon));
+				break;
+			}
 			g_ptr_array_set_size (as_app_get_icons (AS_APP (app)), 0);
 			ret = asb_plugin_desktop_add_icons (plugin,
 							    app,

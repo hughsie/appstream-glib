@@ -892,6 +892,9 @@ as_utils_find_icon_filename_full (const gchar *destdir,
 				 NULL };
 	g_autofree gchar *prefix = NULL;
 
+	g_return_val_if_fail (destdir != NULL, NULL);
+	g_return_val_if_fail (search != NULL, NULL);
+
 	/* fallback */
 	if (destdir == NULL)
 		destdir = "";
