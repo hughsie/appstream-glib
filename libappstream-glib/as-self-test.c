@@ -4922,27 +4922,38 @@ static void
 as_test_utils_unique_id_hash_func (void)
 {
 	AsApp *found;
-	g_autoptr(AsApp) app = NULL;
+	g_autoptr(AsApp) app1 = NULL;
+	g_autoptr(AsApp) app2 = NULL;
 	g_autoptr(GHashTable) hash = NULL;
 
-	/* create new app */
-	app = as_app_new ();
-	as_app_set_id (app, "org.gnome.Software.desktop");
-	as_app_set_branch (app, "master");
-	g_assert_cmpstr (as_app_get_unique_id (app), ==,
+	/* create new couple of apps */
+	app1 = as_app_new ();
+	as_app_set_id (app1, "org.gnome.Software.desktop");
+	as_app_set_branch (app1, "master");
+	g_assert_cmpstr (as_app_get_unique_id (app1), ==,
 			 "*/*/*/*/org.gnome.Software.desktop/master");
+	app2 = as_app_new ();
+	as_app_set_id (app2, "org.gnome.Software.desktop");
+	as_app_set_branch (app2, "stable");
+	g_assert_cmpstr (as_app_get_unique_id (app2), ==,
+			 "*/*/*/*/org.gnome.Software.desktop/stable");
 
 	/* add to hash table using the unique ID as a key */
 	hash = g_hash_table_new ((GHashFunc) as_utils_unique_id_hash,
 				 (GEqualFunc) as_utils_unique_id_equal);
-	g_hash_table_insert (hash, (gpointer) as_app_get_unique_id (app), app);
+	g_hash_table_insert (hash, (gpointer) as_app_get_unique_id (app1), app1);
+	g_hash_table_insert (hash, (gpointer) as_app_get_unique_id (app2), app2);
 
 	/* get with exact key */
 	found = g_hash_table_lookup (hash, "*/*/*/*/org.gnome.Software.desktop/master");
 	g_assert (found != NULL);
+	found = g_hash_table_lookup (hash, "*/*/*/*/org.gnome.Software.desktop/stable");
+	g_assert (found != NULL);
 
 	/* get with more details specified */
 	found = g_hash_table_lookup (hash, "system/*/*/*/org.gnome.Software.desktop/master");
+	g_assert (found != NULL);
+	found = g_hash_table_lookup (hash, "system/*/*/*/org.gnome.Software.desktop/stable");
 	g_assert (found != NULL);
 
 	/* get with less details specified */
@@ -4954,8 +4965,12 @@ as_test_utils_unique_id_hash_func (void)
 	g_assert (found == NULL);
 
 	/* different branch */
-	found = g_hash_table_lookup (hash, "*/*/*/*/org.gnome.Software.desktop/stable");
+	found = g_hash_table_lookup (hash, "*/*/*/*/org.gnome.Software.desktop/obsolete");
 	g_assert (found == NULL);
+
+	/* check hash function */
+	g_assert_cmpint (as_utils_unique_id_hash ("*/*/*/*/gimp.desktop/master"), ==,
+			 as_utils_unique_id_hash ("system/*/*/*/gimp.desktop/stable"));
 }
 
 /* shows the as_utils_unique_id_*_safe functions are safe with bare text */
