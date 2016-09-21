@@ -76,6 +76,8 @@ AsContentRatingValue	 as_content_rating_value_from_string	(const gchar	*value);
 /* getters */
 const gchar	*as_content_rating_get_kind	(AsContentRating	*content_rating);
 guint		 as_content_rating_get_minimum_age (AsContentRating	*content_rating);
+AsContentRatingValue as_content_rating_get_value (AsContentRating	*content_rating,
+						 const gchar		*id);
 
 /* setters */
 void		 as_content_rating_set_kind	(AsContentRating	*content_rating,

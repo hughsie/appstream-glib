@@ -1465,6 +1465,12 @@ as_test_content_rating_func (void)
 
 	/* verify */
 	g_assert_cmpstr (as_content_rating_get_kind (content_rating), ==, "oars-1.0");
+	g_assert_cmpint (as_content_rating_get_value (content_rating, "drugs-alcohol"), ==,
+			 AS_CONTENT_RATING_VALUE_MODERATE);
+	g_assert_cmpint (as_content_rating_get_value (content_rating, "violence-cartoon"), ==,
+			 AS_CONTENT_RATING_VALUE_MILD);
+	g_assert_cmpint (as_content_rating_get_value (content_rating, "violence-bloodshed"), ==,
+			 AS_CONTENT_RATING_VALUE_UNKNOWN);
 	as_node_unref (root);
 
 	/* check CSM */

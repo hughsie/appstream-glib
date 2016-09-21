@@ -85,6 +85,30 @@ as_content_rating_class_init (AsContentRatingClass *klass)
 }
 
 /**
+ * as_content_rating_get_value:
+ * @content_rating: a #AsContentRating
+ * @id: A ratings ID, e.g. `violence-bloodshed`.
+ *
+ * Gets the set value of a content rating key.
+ *
+ * Returns: the #AsContentRatingValue, or %AS_CONTENT_RATING_VALUE_UNKNOWN
+ *
+ * Since: 0.6.4
+ **/
+AsContentRatingValue
+as_content_rating_get_value (AsContentRating *content_rating, const gchar *id)
+{
+	AsContentRatingPrivate *priv = GET_PRIVATE (content_rating);
+	guint i;
+	for (i = 0; i < priv->keys->len; i++) {
+		AsContentRatingKey *key = g_ptr_array_index (priv->keys, i);
+		if (g_strcmp0 (key->id, id) == 0)
+			return key->value;
+	}
+	return AS_CONTENT_RATING_VALUE_UNKNOWN;
+}
+
+/**
  * as_content_rating_value_to_string:
  * @value: the #AsContentRatingValue.
  *
