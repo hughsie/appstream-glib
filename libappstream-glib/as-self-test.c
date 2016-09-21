@@ -1444,6 +1444,7 @@ as_test_content_rating_func (void)
 	const gchar *src =
 		"<content_rating type=\"oars-1.0\">\n"
 		"<content_attribute id=\"drugs-alcohol\">moderate</content_attribute>\n"
+		"<content_attribute id=\"violence-cartoon\">mild</content_attribute>\n"
 		"</content_rating>\n";
 	gboolean ret;
 	g_autofree AsNodeContext *ctx = NULL;
