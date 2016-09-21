@@ -243,7 +243,7 @@ as_content_rating_id_value_to_csm_age (const gchar *id, AsContentRatingValue val
  * here. Some 13 year olds mey be fine with the concept of mutilation of body
  * parts, others may get nightmares.
  *
- * Returns: The age in years, or G_MAXUINT for no details.
+ * Returns: The age in years, 0 for no rating, or G_MAXUINT for no details.
  *
  * Since: 0.5.12
  **/
@@ -252,7 +252,7 @@ as_content_rating_get_minimum_age (AsContentRating *content_rating)
 {
 	AsContentRatingPrivate *priv = GET_PRIVATE (content_rating);
 	guint i;
-	guint csm_age = G_MAXUINT;
+	guint csm_age = 0;
 
 	/* check kind */
 	if (g_strcmp0 (priv->kind, "oars-1.0") != 0)
@@ -263,7 +263,7 @@ as_content_rating_get_minimum_age (AsContentRating *content_rating)
 		guint csm_tmp;
 		key = g_ptr_array_index (priv->keys, i);
 		csm_tmp = as_content_rating_id_value_to_csm_age (key->id, key->value);
-		if (csm_tmp > 0 && csm_tmp < csm_age)
+		if (csm_tmp > 0 && csm_tmp > csm_age)
 			csm_age = csm_tmp;
 	}
 	return csm_age;
