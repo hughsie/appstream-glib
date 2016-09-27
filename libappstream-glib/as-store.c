@@ -1309,7 +1309,6 @@ as_store_from_root (AsStore *store,
 		str = g_strrstr (source_basename, ".xml");
 		if (str != NULL) {
 			str[0] = '\0';
-			origin_app = g_strdup (source_basename + 8);
 			origin_app_icons = g_strdup (source_basename);
 		}
 
@@ -1317,6 +1316,7 @@ as_store_from_root (AsStore *store,
 		str = g_strstr_len (source_basename, -1, origin_delim);
 		if (str != NULL) {
 			str[0] = '\0';
+			origin_app = g_strdup (str + 1);
 			id_prefix_app = g_strdup (source_basename);
 		}
 
