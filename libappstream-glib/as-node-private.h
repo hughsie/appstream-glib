@@ -33,6 +33,7 @@ G_BEGIN_DECLS
 
 typedef struct _AsNodeContext	AsNodeContext;
 AsNodeContext	*as_node_context_new		(void);
+void		 as_node_context_free		(AsNodeContext	*ctx);
 gdouble		 as_node_context_get_version	(AsNodeContext	*ctx);
 void		 as_node_context_set_version	(AsNodeContext	*ctx,
 						 gdouble	 version);
@@ -55,6 +56,8 @@ gchar		*as_node_take_attribute		(const GNode	*node,
 gchar		*as_node_reflow_text		(const gchar	*text,
 						 gssize		 text_len);
 gchar		*as_node_fix_locale		(const gchar	*locale);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsNodeContext, as_node_context_free)
 
 G_END_DECLS
 

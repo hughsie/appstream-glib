@@ -1239,7 +1239,7 @@ as_store_from_root (AsStore *store,
 	const gchar *tmp;
 	const gchar *origin_delim = ":";
 	gchar *str;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autofree gchar *icon_path = NULL;
 	g_autofree gchar *id_prefix_app = NULL;
 	g_autofree gchar *origin_app = NULL;
@@ -1428,7 +1428,7 @@ as_store_load_yaml_file (AsStore *store,
 	AsNode *app_n;
 	AsNode *n;
 	const gchar *tmp;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autofree gchar *icon_path = NULL;
 	g_autoptr(AsYaml) root = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
@@ -1980,7 +1980,7 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 	gboolean output_trusted = FALSE;
 	guint i;
 	gchar version[6];
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 
 	/* check categories of apps about to be written */
 	as_store_check_apps_for_veto (store);

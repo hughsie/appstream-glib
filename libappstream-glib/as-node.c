@@ -1949,6 +1949,23 @@ as_node_context_new (void)
 }
 
 /**
+ * as_node_context_free: (skip)
+ * @ctx: a #AsNodeContext.
+ *
+ * Frees the node context.
+ *
+ * Since: 0.6.4
+ **/
+void
+as_node_context_free (AsNodeContext *ctx)
+{
+	if (ctx == NULL)
+		return;
+	g_free (ctx->media_base_url);
+	g_free (ctx);
+}
+
+/**
  * as_node_context_get_version: (skip)
  * @ctx: a #AsNodeContext.
  *

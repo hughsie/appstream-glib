@@ -5451,7 +5451,7 @@ as_app_parse_appdata_file (AsApp *app,
 	gchar *tmp;
 	gsize len;
 	g_autoptr(GError) error_local = NULL;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autofree gchar *data = NULL;
 	g_autoptr(AsNode) root = NULL;
 
@@ -5639,7 +5639,7 @@ as_app_to_file (AsApp *app,
 		GCancellable *cancellable,
 		GError **error)
 {
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsNode) root = NULL;
 	g_autoptr(GString) xml = NULL;
 

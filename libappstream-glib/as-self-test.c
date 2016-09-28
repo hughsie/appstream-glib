@@ -451,7 +451,7 @@ as_test_release_func (void)
 	GString *xml;
 	const gchar *src = "<release timestamp=\"123\" urgency=\"critical\" version=\"0.1.2\"/>";
 	gboolean ret;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsRelease) release = NULL;
 
 	release = as_release_new ();
@@ -498,7 +498,7 @@ as_test_release_date_func (void)
 	AsNode *root;
 	const gchar *src = "<release date=\"2016-01-18\"/>";
 	gboolean ret;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsRelease) release = NULL;
 
 	release = as_release_new ();
@@ -528,7 +528,7 @@ as_test_provide_func (void)
 	GString *xml;
 	const gchar *src = "<binary>/usr/bin/gnome-shell</binary>";
 	gboolean ret;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsProvide) provide = NULL;
 
 	provide = as_provide_new ();
@@ -582,7 +582,7 @@ as_test_release_appstream_func (void)
 		"<size type=\"installed\">123456</size>\n"
 		"<size type=\"download\">654321</size>\n"
 		"</release>\n";
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsRelease) release = NULL;
 
 	release = as_release_new ();
@@ -660,7 +660,7 @@ as_test_release_appdata_func (void)
 		"<p xml:lang=\"pl\">Oprogramowanie</p>\n"
 		"</description>\n"
 		"</release>\n";
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsRelease) release = NULL;
 
 	release = as_release_new ();
@@ -886,7 +886,7 @@ as_test_icon_func (void)
 	GString *xml;
 	const gchar *src = "<icon type=\"cached\">app.png</icon>";
 	gboolean ret;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autofree gchar *prefix = NULL;
 	g_autoptr(AsIcon) icon = NULL;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
@@ -949,7 +949,7 @@ as_test_checksum_func (void)
 	GString *xml;
 	const gchar *src = "<checksum type=\"sha1\" filename=\"fn.cab\" target=\"container\">12345</checksum>";
 	gboolean ret;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsChecksum) csum = NULL;
 
 	/* helpers */
@@ -1046,7 +1046,7 @@ as_test_icon_embedded_func (void)
 "</filecontent>"
 "</icon>";
 	gboolean ret;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsIcon) icon = NULL;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
@@ -1109,7 +1109,7 @@ as_test_image_func (void)
 		"<image type=\"thumbnail\" height=\"12\" width=\"34\" xml:lang=\"en_GB\">"
 		"http://www.hughsie.com/a.jpg</image>";
 	gboolean ret;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autofree gchar *filename = NULL;
 	g_autoptr(AsImage) image = NULL;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
@@ -1195,7 +1195,7 @@ as_test_review_func (void)
 		"</metadata>\n"
 		"</review>\n";
 	gboolean ret;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsReview) review = NULL;
 
 	review = as_review_new ();
@@ -1249,7 +1249,7 @@ as_test_suggest_func (void)
 		"<id>mypaint.desktop</id>\n"
 		"</suggests>\n";
 	gboolean ret;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsSuggest) suggest = NULL;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
@@ -1293,7 +1293,7 @@ as_test_bundle_func (void)
 	const gchar *src =
 		"<bundle type=\"limba\" runtime=\"1\" sdk=\"2\">gnome-3-16</bundle>";
 	gboolean ret;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsBundle) bundle = NULL;
 
 	bundle = as_bundle_new ();
@@ -1338,7 +1338,7 @@ as_test_translation_func (void)
 	const gchar *src =
 		"<translation type=\"gettext\">gnome-software</translation>";
 	gboolean ret;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsTranslation) translation = NULL;
 
 	translation = as_translation_new ();
@@ -1387,7 +1387,7 @@ as_test_screenshot_func (void)
 		"<image type=\"thumbnail\" height=\"100\" width=\"100\">http://2.png</image>\n"
 		"</screenshot>\n";
 	gboolean ret;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsScreenshot) screenshot = NULL;
 
 	screenshot = as_screenshot_new ();
@@ -1447,7 +1447,7 @@ as_test_content_rating_func (void)
 		"<content_attribute id=\"violence-cartoon\">mild</content_attribute>\n"
 		"</content_rating>\n";
 	gboolean ret;
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsContentRating) content_rating = NULL;
 
 	content_rating = as_content_rating_new ();
@@ -1577,7 +1577,7 @@ as_test_app_func (void)
 		"<value key=\"SomethingRandom\"/>\n"
 		"</metadata>\n"
 		"</component>\n";
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsApp) app = NULL;
 
 	app = as_app_new ();
@@ -2191,7 +2191,7 @@ as_test_app_no_markup_func (void)
 		"<id>org.gnome.Software.desktop</id>\n"
 		"<description>Software is awesome:\n\n * Bada\n * Boom!</description>\n"
 		"</component>\n";
-	g_autofree AsNodeContext *ctx = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsApp) app = NULL;
 
 	app = as_app_new ();
@@ -3701,8 +3701,8 @@ as_test_node_no_dup_c_func (void)
 		"<name>Krita</name>"
 		"<name xml:lang=\"pl\">Krita</name>"
 		"</component>";
-	g_autofree AsNodeContext *ctx = NULL;
 	g_autoptr(AsApp) app = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
 
 	/* to object */
 	app = as_app_new ();
