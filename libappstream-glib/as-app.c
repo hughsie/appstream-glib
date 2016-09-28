@@ -4194,6 +4194,7 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 	GNode *c;
 	GNode *c2;
 	GNode *n;
+	const gchar *nonfatal_str = NULL;
 	const gchar *tmp;
 
 	for (n = node->children; n != NULL; n = n->next) {
@@ -4250,8 +4251,14 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 			continue;
 		}
 		if (g_strcmp0 (tmp, "Categories") == 0) {
-			for (c = n->children; c != NULL; c = c->next)
-				as_app_add_category (app, as_yaml_node_get_key (c));
+			for (c = n->children; c != NULL; c = c->next) {
+				tmp = as_yaml_node_get_key (c);
+				if (tmp == NULL) {
+					nonfatal_str = "contained empty category";
+					continue;
+				}
+				as_app_add_category (app, tmp);
+			}
 			continue;
 		}
 		if (g_strcmp0 (tmp, "Icon") == 0) {
@@ -4351,6 +4358,10 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 			as_app_set_project_group (app, as_yaml_node_get_value (n));
 			continue;
 		}
+	}
+	if (nonfatal_str != NULL) {
+		g_debug ("nonfatal warning from %s: %s",
+			 as_app_get_id (app), nonfatal_str);
 	}
 	return TRUE;
 }
