@@ -239,6 +239,10 @@ load_desktop (const gchar *prefix,
 		}
 	}
 
+	/* never inherit from the desktop file (they may be prefixed) */
+	g_hash_table_remove_all (as_app_get_names (app));
+	g_hash_table_remove_all (as_app_get_comments (app));
+
 	return g_steal_pointer (&app);
 }
 
