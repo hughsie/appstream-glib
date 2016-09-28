@@ -178,7 +178,7 @@ as_yaml_to_string (AsNode *node)
 	return str;
 }
 
-#if AS_BUILD_DEP11
+#ifdef AS_BUILD_DEP11
 static AsYamlNodeKind
 as_yaml_node_get_kind (AsNode *node)
 {
@@ -395,7 +395,7 @@ AsNode *
 as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 {
 	g_autoptr(AsYaml) node = NULL;
-#if AS_BUILD_DEP11
+#ifdef AS_BUILD_DEP11
 	yaml_parser_t parser;
 	g_auto(AsYamlParser) parser_cleanup = NULL;
 
@@ -420,7 +420,7 @@ as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 	return g_steal_pointer (&node);
 }
 
-#if AS_BUILD_DEP11
+#ifdef AS_BUILD_DEP11
 static int
 as_yaml_read_handler_cb (void *data,
 			 unsigned char *buffer,
@@ -442,7 +442,7 @@ AsNode *
 as_yaml_from_file (GFile *file, GCancellable *cancellable, GError **error)
 {
 	g_autoptr(AsYaml) node = NULL;
-#if AS_BUILD_DEP11
+#ifdef AS_BUILD_DEP11
 	const gchar *content_type = NULL;
 	yaml_parser_t parser;
 	g_auto(AsYamlParser) parser_cleanup = NULL;

@@ -4341,7 +4341,7 @@ as_test_store_metadata_index_func (void)
 static void
 as_test_yaml_broken_func (void)
 {
-#if AS_BUILD_DEP11
+#ifdef AS_BUILD_DEP11
 	g_autoptr(AsYaml) node = NULL;
 	g_autoptr(GError) error1 = NULL;
 	g_autoptr(GError) error2 = NULL;
@@ -4366,7 +4366,7 @@ as_test_yaml_broken_func (void)
 static void
 as_test_yaml_func (void)
 {
-#if AS_BUILD_DEP11
+#ifdef AS_BUILD_DEP11
 	AsYaml *node;
 	GError *error = NULL;
 	GString *str;
@@ -4484,7 +4484,7 @@ as_test_yaml_func (void)
 static void
 as_test_store_yaml_func (void)
 {
-#if AS_BUILD_DEP11
+#ifdef AS_BUILD_DEP11
 	AsApp *app;
 	GError *error = NULL;
 	gboolean ret;
@@ -4552,7 +4552,7 @@ as_test_store_yaml_func (void)
 static void
 as_test_store_speed_yaml_func (void)
 {
-#if AS_BUILD_DEP11
+#ifdef AS_BUILD_DEP11
 	GError *error = NULL;
 	gboolean ret;
 	guint i;
