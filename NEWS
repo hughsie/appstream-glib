@@ -1,3 +1,24 @@
+Version 0.6.4
+~~~~~~~~~~~~~
+Released: 2016-10-12
+
+New Features:
+ - Add as_content_rating_get_value() (Richard Hughes)
+ - Add as_profile_prune() for limiting the profiling output (Richard Hughes)
+ - Add as_store_add_apps() (Richard Hughes)
+ - Add flag to only load uncompressed files into a store (Richard Hughes)
+ - Add functions to build and validate an AppStream ID (Richard Hughes)
+ - Add support for AppImage bundles (Richard Hughes)
+ - Allow filtering applications based on merge type (Richard Hughes)
+
+Bugfixes:
+ - Don't show a critical warning on invalid yaml file (Richard Hughes)
+ - Fix a small memory leak when parsing yaml files (Richard Hughes)
+ - Fix building metadata on repos with mixed architecture content (Richard Hughes)
+ - Fix setting the origin for Flatpak user repos (Joaquim Rocha)
+ - Fix the CSM rating age calculation (Richard Hughes)
+ - Never inhierit Name and Comment when using appstream-compose (Richard Hughes)
+
 Version 0.6.3
 ~~~~~~~~~~~~~
 Released: 2016-09-06

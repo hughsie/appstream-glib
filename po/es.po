@@ -15,7 +15,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-09-03 01:07-0400\n"
+"PO-Revision-Date: 2016-09-07 07:31-0400\n"
 "Last-Translator: William  Moreno Reyes <williamjmorenor@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/freedesktop/appstream-glib/"
 "language/es/)\n"
@@ -332,22 +332,22 @@ msgstr ""
 #. TRANSLATORS: command description
 #: client/as-util.c:4022
 msgid "Dumps the applications in the AppStream metadata"
-msgstr "Respalda las aplicaciones en la metadata AppStream"
+msgstr "Respalda las aplicaciones en la metadata de AppStream"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4028
 msgid "Search for AppStream applications"
-msgstr "Buscando las aplicaciones AppStream"
+msgstr "Buscar las aplicaciones AppStream"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4034
 msgid "Search for AppStream applications by package name"
-msgstr "Buscando las aplicaciones AppStream por nombre de paquete"
+msgstr "Buscar las aplicaciones AppStream por nombre de paquete"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4040
 msgid "Show all installed AppStream applications"
-msgstr ""
+msgstr "Mostras todas las aplicaciones AppStream instaladas"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4046
@@ -362,12 +362,12 @@ msgstr "Mostrando tokens de búsqueda de aplicaciones"
 #. TRANSLATORS: command description
 #: client/as-util.c:4058
 msgid "Installs AppStream metadata"
-msgstr "Instalando los metadatos de AppStream"
+msgstr "Instala los metadatos de AppStream"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4064
 msgid "Installs AppStream metadata with new origin"
-msgstr "Instalando metadata AppStream con nuevo origen"
+msgstr "Instala metadata AppStream con nuevo origen"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4070
