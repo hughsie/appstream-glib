@@ -2,10 +2,10 @@ Appstream-Glib Release Notes
 
 1. Write NEWS entries for appstream_glib in the same format as usual.
 
-git shortlog appstream_glib_0_6_3.. | grep -i -v trivial | grep -v Merge > NEWS.new
+git shortlog appstream_glib_0_6_4.. | grep -i -v trivial | grep -v Merge > NEWS.new
 
 --------------------------------------------------------------------------------
-Version 0.6.4
+Version 0.6.5
 ~~~~~~~~~~~~~
 Released: 2016-xx-xx
 
@@ -27,8 +27,8 @@ git add po/*.po
 
 4. Commit changes in git:
 
-git commit -a -m "Release version 0.6.4"
-git tag -s -f -m "Release 0.6.4" appstream_glib_0_6_4
+git commit -a -m "Release version 0.6.5"
+git tag -s -f -m "Release 0.6.5" appstream_glib_0_6_5
 <gpg password>
 git push --tags
 git push
