@@ -109,6 +109,7 @@ static gboolean	as_store_from_file_internal (AsStore *store,
 					     GFile *file,
 					     AsAppScope scope,
 					     const gchar *arch,
+					     AsStoreLoadFlags load_flags,
 					     AsStoreWatchFlags watch_flags,
 					     GCancellable *cancellable,
 					     GError **error);
@@ -1231,6 +1232,7 @@ as_store_from_root (AsStore *store,
 		    const gchar *icon_prefix,
 		    const gchar *source_filename,
 		    const gchar *arch,
+		    AsStoreLoadFlags load_flags,
 		    GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
@@ -1395,6 +1397,14 @@ as_store_from_root (AsStore *store,
 				     "Failed to parse root: %s",
 				     error_local->message);
 			return FALSE;
+		}
+
+		/* filter out non-merge types */
+		if (load_flags & AS_STORE_LOAD_FLAG_ONLY_MERGE_APPS) {
+			if (as_app_get_merge_kind (app) != AS_APP_MERGE_KIND_APPEND &&
+			    as_app_get_merge_kind (app) != AS_APP_MERGE_KIND_APPEND) {
+				continue;
+			}
 		}
 
 		/* set the ID prefix */
@@ -1567,6 +1577,7 @@ as_store_watch_source_added (AsStore *store, const gchar *filename)
 					  file,
 					  path_data->scope,
 					  path_data->arch,
+					  AS_STORE_LOAD_FLAG_NONE,
 					  AS_STORE_WATCH_FLAG_NONE,
 					  NULL, /* cancellable */
 					  &error)){
@@ -1681,6 +1692,7 @@ as_store_from_file_internal (AsStore *store,
 			     GFile *file,
 			     AsAppScope scope,
 			     const gchar *arch,
+			     AsStoreLoadFlags load_flags,
 			     AsStoreWatchFlags watch_flags,
 			     GCancellable *cancellable,
 			     GError **error)
@@ -1737,7 +1749,8 @@ as_store_from_file_internal (AsStore *store,
 	/* icon prefix is the directory the XML has been found in */
 	icon_prefix = g_path_get_dirname (filename);
 	return as_store_from_root (store, root, scope,
-				   icon_prefix, filename, arch, error);
+				   icon_prefix, filename, arch, load_flags,
+				   error);
 }
 
 /**
@@ -1771,6 +1784,7 @@ as_store_from_file (AsStore *store,
 	return as_store_from_file_internal (store, file,
 					    AS_APP_SCOPE_UNKNOWN,
 					    NULL, /* arch */
+					    AS_STORE_LOAD_FLAG_NONE,
 					    priv->watch_flags,
 					    cancellable, error);
 }
@@ -1880,6 +1894,7 @@ as_store_from_xml (AsStore *store,
 				   icon_root,
 				   NULL, /* filename */
 				   NULL, /* arch */
+				   AS_STORE_LOAD_FLAG_NONE,
 				   error);
 }
 
@@ -2411,6 +2426,7 @@ as_store_load_app_info_file (AsStore *store,
 					    file,
 					    scope,
 					    arch,
+					    flags,
 					    AS_STORE_WATCH_FLAG_NONE,
 					    cancellable,
 					    error);
@@ -2466,6 +2482,7 @@ as_store_load_app_info (AsStore *store,
 						  scope,
 						  filename_md,
 						  arch,
+						  flags,
 						  cancellable,
 						  &error_store)) {
 			if (flags & AS_STORE_LOAD_FLAG_IGNORE_INVALID) {

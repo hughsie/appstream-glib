@@ -80,6 +80,7 @@ typedef enum {
 	AS_STORE_LOAD_FLAG_FLATPAK_SYSTEM	= 1 << 7,	/* Since: 0.5.7 */
 	AS_STORE_LOAD_FLAG_IGNORE_INVALID	= 1 << 8,	/* Since: 0.5.8 */
 	AS_STORE_LOAD_FLAG_ONLY_UNCOMPRESSED	= 1 << 9,	/* Since: 0.6.4 */
+	AS_STORE_LOAD_FLAG_ONLY_MERGE_APPS	= 1 << 10,	/* Since: 0.6.4 */
 	/*< private >*/
 	AS_STORE_LOAD_FLAG_LAST
 } AsStoreLoadFlags;
