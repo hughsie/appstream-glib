@@ -63,20 +63,23 @@ struct _AsStoreClass
  * @AS_STORE_LOAD_FLAG_FLATPAK_USER:		Add flatpak user applications (obsolete)
  * @AS_STORE_LOAD_FLAG_FLATPAK_SYSTEM:		Add flatpak system applications (obsolete)
  * @AS_STORE_LOAD_FLAG_IGNORE_INVALID:		Ignore invalid files
+ * @AS_STORE_LOAD_FLAG_ONLY_UNCOMPRESSED:	Ignore compressed files
+ * @AS_STORE_LOAD_FLAG_ONLY_MERGE_APPS:		Ignore non-wildcard matches
  *
  * The flags to use when loading the store.
  **/
 typedef enum {
-	AS_STORE_LOAD_FLAG_NONE			= 0,	/* Since: 0.1.2 */
-	AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM	= 1,	/* Since: 0.1.2 */
-	AS_STORE_LOAD_FLAG_APP_INFO_USER	= 2,	/* Since: 0.1.2 */
-	AS_STORE_LOAD_FLAG_APP_INSTALL		= 4,	/* Since: 0.1.2 */
-	AS_STORE_LOAD_FLAG_APPDATA		= 8,	/* Since: 0.2.2 */
-	AS_STORE_LOAD_FLAG_DESKTOP		= 16,	/* Since: 0.2.2 */
-	AS_STORE_LOAD_FLAG_ALLOW_VETO		= 32,	/* Since: 0.2.5 */
-	AS_STORE_LOAD_FLAG_FLATPAK_USER		= 64,	/* Since: 0.5.7 */
-	AS_STORE_LOAD_FLAG_FLATPAK_SYSTEM	= 128,	/* Since: 0.5.7 */
-	AS_STORE_LOAD_FLAG_IGNORE_INVALID	= 256,	/* Since: 0.5.8 */
+	AS_STORE_LOAD_FLAG_NONE			= 0,		/* Since: 0.1.2 */
+	AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM	= 1 << 0,	/* Since: 0.1.2 */
+	AS_STORE_LOAD_FLAG_APP_INFO_USER	= 1 << 1,	/* Since: 0.1.2 */
+	AS_STORE_LOAD_FLAG_APP_INSTALL		= 1 << 2,	/* Since: 0.1.2 */
+	AS_STORE_LOAD_FLAG_APPDATA		= 1 << 3,	/* Since: 0.2.2 */
+	AS_STORE_LOAD_FLAG_DESKTOP		= 1 << 4,	/* Since: 0.2.2 */
+	AS_STORE_LOAD_FLAG_ALLOW_VETO		= 1 << 5,	/* Since: 0.2.5 */
+	AS_STORE_LOAD_FLAG_FLATPAK_USER		= 1 << 6,	/* Since: 0.5.7 */
+	AS_STORE_LOAD_FLAG_FLATPAK_SYSTEM	= 1 << 7,	/* Since: 0.5.7 */
+	AS_STORE_LOAD_FLAG_IGNORE_INVALID	= 1 << 8,	/* Since: 0.5.8 */
+	AS_STORE_LOAD_FLAG_ONLY_UNCOMPRESSED	= 1 << 9,	/* Since: 0.6.4 */
 	/*< private >*/
 	AS_STORE_LOAD_FLAG_LAST
 } AsStoreLoadFlags;

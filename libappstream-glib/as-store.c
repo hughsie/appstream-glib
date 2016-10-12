@@ -2387,11 +2387,19 @@ as_store_load_app_info_file (AsStore *store,
 			     AsAppScope scope,
 			     const gchar *path_xml,
 			     const gchar *arch,
+			     AsStoreLoadFlags flags,
 			     GCancellable *cancellable,
 			     GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_autoptr(GFile) file = NULL;
+
+	/* ignore large compressed files */
+	if (flags & AS_STORE_LOAD_FLAG_ONLY_UNCOMPRESSED &&
+	    g_str_has_suffix (path_xml, ".gz")) {
+		g_debug ("ignoring compressed file %s", path_xml);
+		return TRUE;
+	}
 
 	/* guess this based on the name */
 	if (!as_store_guess_origin_fallback (store, path_xml, error))
