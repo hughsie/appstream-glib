@@ -3886,6 +3886,16 @@ as_test_store_speed_desktop_func (void)
 }
 
 static void
+as_test_utils_appstream_id_func (void)
+{
+	g_autofree gchar *id = NULL;
+	g_assert (as_utils_appstream_id_valid ("org.gnome.Software"));
+	g_assert (!as_utils_appstream_id_valid ("xml:gravatar@jr.rlabs.io"));
+	id = as_utils_appstream_id_build ("gravatar@jr.rlabs.io");
+	g_assert_cmpstr (id, ==, "gravatar_jr.rlabs.io");
+}
+
+static void
 as_test_utils_guid_func (void)
 {
 	g_autofree gchar *guid1 = NULL;
@@ -5068,6 +5078,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils{markup-import}", as_test_utils_markup_import_func);
 	g_test_add_func ("/AppStream/utils{version}", as_test_utils_version_func);
 	g_test_add_func ("/AppStream/utils{guid}", as_test_utils_guid_func);
+	g_test_add_func ("/AppStream/utils{appstream-id}", as_test_utils_appstream_id_func);
 	g_test_add_func ("/AppStream/utils{icons}", as_test_utils_icons_func);
 	g_test_add_func ("/AppStream/utils{spdx-token}", as_test_utils_spdx_token_func);
 	g_test_add_func ("/AppStream/utils{install-filename}", as_test_utils_install_filename_func);

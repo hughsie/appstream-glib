@@ -1899,3 +1899,69 @@ as_utils_unique_id_hash (const gchar *unique_id)
 	}
 	return hash;
 }
+
+static gboolean
+as_utils_appstream_id_is_valid_char (gchar ch)
+{
+	if (g_ascii_isalnum (ch))
+		return TRUE;
+	if (ch == '.')
+		return TRUE;
+	if (ch == '-')
+		return TRUE;
+	return FALSE;
+}
+
+/**
+ * as_utils_appstream_id_build:
+ * @str: a string to build the AppStream ID from
+ *
+ * Fixes a string to be a valid AppStream ID.
+ *
+ * This function replaces any invalid chars with an underscore.
+ *
+ * Returns: a valid AppStream ID, or %NULL if @str is invalid
+ *
+ * Since: 0.6.4
+ */
+gchar *
+as_utils_appstream_id_build (const gchar *str)
+{
+	gchar *tmp;
+	guint i;
+
+	/* invalid */
+	if (str == NULL)
+		return NULL;
+	if (str[0] == '\0')
+		return NULL;
+
+	tmp = g_strdup (str);
+	for (i = 0; tmp[i] != '\0'; i++) {
+		if (!as_utils_appstream_id_is_valid_char (tmp[i]))
+			tmp[i] = '_';
+	}
+	return tmp;
+}
+
+/**
+ * as_utils_appstream_id_valid:
+ * @str: a string
+ *
+ * Checks to see if a string is a valid AppStream ID. A valid AppStream ID only
+ * contains alpha-numeric chars, dots and dashes.
+ *
+ * Returns: %TRUE if the string is a valid AppStream ID
+ *
+ * Since: 0.6.4
+ */
+gboolean
+as_utils_appstream_id_valid (const gchar *str)
+{
+	guint i;
+	for (i = 0; str[i] != '\0'; i++) {
+		if (!as_utils_appstream_id_is_valid_char (str[i]))
+			return FALSE;
+	}
+	return TRUE;
+}

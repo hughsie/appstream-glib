@@ -142,6 +142,8 @@ gboolean	 as_utils_unique_id_equal	(const gchar	*unique_id1,
 						 const gchar	*unique_id2);
 gboolean	 as_utils_unique_id_valid	(const gchar	*unique_id);
 guint		 as_utils_unique_id_hash	(const gchar	*unique_id);
+gchar		*as_utils_appstream_id_build	(const gchar	*str);
+gboolean	 as_utils_appstream_id_valid	(const gchar	*str);
 
 G_END_DECLS
 
