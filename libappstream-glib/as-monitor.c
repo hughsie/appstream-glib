@@ -282,12 +282,12 @@ as_monitor_process_pending_trigger_cb (gpointer user_data)
 }
 
 static void
-as_monitor_process_pending_trigger (AsMonitor *monitor)
+as_monitor_process_pending_trigger (AsMonitor *monitor, guint timeout_ms)
 {
 	AsMonitorPrivate *priv = GET_PRIVATE (monitor);
 	if (priv->pending_id)
 		g_source_remove (priv->pending_id);
-	priv->pending_id = g_timeout_add (800,
+	priv->pending_id = g_timeout_add (timeout_ms,
 					  as_monitor_process_pending_trigger_cb,
 					  monitor);
 }
@@ -336,7 +336,7 @@ as_monitor_file_changed_cb (GFileMonitor *mon,
 
 	switch (event_type) {
 	case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
-		as_monitor_process_pending (monitor);
+		as_monitor_process_pending_trigger (monitor, 50);
 		break;
 	case G_FILE_MONITOR_EVENT_CREATED:
 		if (!is_temp) {
@@ -345,7 +345,7 @@ as_monitor_file_changed_cb (GFileMonitor *mon,
 			_g_ptr_array_str_add (priv->queue_temp, filename);
 		}
 		/* file monitors do not send CHANGES_DONE_HINT */
-		as_monitor_process_pending_trigger (monitor);
+		as_monitor_process_pending_trigger (monitor, 800);
 		break;
 	case G_FILE_MONITOR_EVENT_DELETED:
 		/* only emit notifications for files we know about */
@@ -356,11 +356,13 @@ as_monitor_file_changed_cb (GFileMonitor *mon,
 		}
 		break;
 	case G_FILE_MONITOR_EVENT_CHANGED:
+	case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
 		/* if the file is not pending and not a temp file, add */
 		if (_g_ptr_array_str_find (priv->queue_add, filename) == NULL &&
 		    _g_ptr_array_str_find (priv->queue_temp, filename) == NULL) {
 			_g_ptr_array_str_add (priv->queue_changed, filename);
 		}
+		as_monitor_process_pending_trigger (monitor, 800);
 		break;
 	case G_FILE_MONITOR_EVENT_RENAMED:
 		/* a temp file that was just created and atomically

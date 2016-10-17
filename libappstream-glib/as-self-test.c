@@ -187,7 +187,7 @@ as_test_monitor_dir_func (void)
 	as_test_loop_quit ();
 	g_assert_cmpint (cnt_added, ==, 0);
 	g_assert_cmpint (cnt_removed, ==, 0);
-	g_assert_cmpint (cnt_changed, ==, 0);
+	g_assert_cmpint (cnt_changed, ==, 1);
 
 	/* delete it */
 	cnt_added = cnt_removed = cnt_changed = 0;
@@ -283,7 +283,7 @@ as_test_monitor_file_func (void)
 	as_test_loop_quit ();
 	g_assert_cmpint (cnt_added, ==, 0);
 	g_assert_cmpint (cnt_removed, ==, 0);
-	g_assert_cmpint (cnt_changed, ==, 0);
+	g_assert_cmpint (cnt_changed, ==, 1);
 
 	/* delete it */
 	cnt_added = cnt_removed = cnt_changed = 0;
