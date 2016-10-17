@@ -348,7 +348,12 @@ as_monitor_file_changed_cb (GFileMonitor *mon,
 		as_monitor_process_pending_trigger (monitor);
 		break;
 	case G_FILE_MONITOR_EVENT_DELETED:
-		as_monitor_emit_removed (monitor, filename);
+		/* only emit notifications for files we know about */
+		if (_g_ptr_array_str_find (priv->files, filename)) {
+			as_monitor_emit_removed (monitor, filename);
+		} else {
+			g_debug ("ignoring deleted file %s", filename);
+		}
 		break;
 	case G_FILE_MONITOR_EVENT_CHANGED:
 		/* if the file is not pending and not a temp file, add */
