@@ -171,6 +171,11 @@ _g_file_monitor_to_string (GFileMonitorEvent ev)
 		return "MOVED";
 	if (ev == G_FILE_MONITOR_EVENT_RENAMED)
 		return "RENAMED";
+	if (ev == G_FILE_MONITOR_EVENT_MOVED_IN)
+		return "MOVED_IN";
+	if (ev == G_FILE_MONITOR_EVENT_MOVED_OUT)
+		return "MOVED_OUT";
+	g_warning ("Failed to convert GFileMonitorEvent %u", ev);
 	return NULL;
 }
 
@@ -339,6 +344,7 @@ as_monitor_file_changed_cb (GFileMonitor *mon,
 		as_monitor_process_pending_trigger (monitor, 50);
 		break;
 	case G_FILE_MONITOR_EVENT_CREATED:
+	case G_FILE_MONITOR_EVENT_MOVED_IN:
 		if (!is_temp) {
 			_g_ptr_array_str_add (priv->queue_add, filename);
 		} else {
@@ -348,6 +354,7 @@ as_monitor_file_changed_cb (GFileMonitor *mon,
 		as_monitor_process_pending_trigger (monitor, 800);
 		break;
 	case G_FILE_MONITOR_EVENT_DELETED:
+	case G_FILE_MONITOR_EVENT_MOVED_OUT:
 		/* only emit notifications for files we know about */
 		if (_g_ptr_array_str_find (priv->files, filename)) {
 			as_monitor_emit_removed (monitor, filename);
