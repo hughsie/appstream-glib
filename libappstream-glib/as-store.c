@@ -1122,6 +1122,8 @@ as_store_add_app (AsStore *store, AsApp *app)
 		g_debug ("removing %s entry: %s",
 			 as_app_source_kind_to_string (as_app_get_source_kind (item)),
 			 as_app_get_unique_id (item));
+		if (as_app_get_state (item) == AS_APP_STATE_INSTALLED)
+			as_app_set_state (app, AS_APP_STATE_INSTALLED);
 		as_store_remove_app (store, item);
 	}
 
