@@ -23,6 +23,7 @@
 
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
+#include <glib-unix.h>
 #include <gio/gio.h>
 
 #include <appstream-glib.h>
@@ -45,6 +46,8 @@ typedef struct {
 	GPtrArray		*cmd_array;
 	gboolean		 nonet;
 	gboolean		 verbose;
+	GMainLoop		*loop;
+	GCancellable		*cancellable;
 	AsProfile		*profile;
 } AsUtilPrivate;
 
@@ -1189,6 +1192,42 @@ as_util_dump (AsUtilPrivate *priv, gchar **values, GError **error)
 			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
 			       AS_NODE_TO_XML_FLAG_ADD_HEADER);
 	g_print ("%s", xml->str);
+	return TRUE;
+}
+
+static void
+as_util_watch_store_changed_cb (AsStore *store, AsUtilPrivate *priv)
+{
+	g_print ("Store changed, now have %u components\n",
+		 as_store_get_size (store));
+}
+
+static gboolean
+as_util_watch (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	guint i;
+	g_autoptr(GString) xml = NULL;
+	g_autoptr(AsStore) store = NULL;
+
+	/* magic value */
+	store = as_store_new ();
+	as_store_set_watch_flags (store,
+				  AS_STORE_WATCH_FLAG_ADDED |
+				  AS_STORE_WATCH_FLAG_REMOVED);
+	if (!as_store_load (store,
+			    AS_STORE_LOAD_FLAG_IGNORE_INVALID |
+			    AS_STORE_LOAD_FLAG_APPDATA |
+			    AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM |
+			    AS_STORE_LOAD_FLAG_APP_INFO_USER |
+			    AS_STORE_LOAD_FLAG_DESKTOP,
+			    priv->cancellable, error)) {
+		return FALSE;
+	}
+	g_signal_connect (store, "changed",
+			  G_CALLBACK (as_util_watch_store_changed_cb), priv);
+
+	/* wait */
+	g_main_loop_run (priv->loop);
 	return TRUE;
 }
 
@@ -4051,6 +4090,24 @@ as_util_ignore_cb (const gchar *log_domain, GLogLevelFlags log_level,
 {
 }
 
+static void
+as_util_watch_cancelled_cb (GCancellable *cancellable, gpointer user_data)
+{
+	AsUtilPrivate *priv = (AsUtilPrivate *) user_data;
+	/* TRANSLATORS: this is when a device ctrl+c's a watch */
+	g_print ("%s\n", _("Cancelled"));
+	g_main_loop_quit (priv->loop);
+}
+
+static gboolean
+as_util_sigint_cb (gpointer user_data)
+{
+	AsUtilPrivate *priv = (AsUtilPrivate *) user_data;
+	g_debug ("Handling SIGINT");
+	g_cancellable_cancel (priv->cancellable);
+	return FALSE;
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -4087,6 +4144,17 @@ main (int argc, char *argv[])
 	/* create helper object */
 	priv = g_new0 (AsUtilPrivate, 1);
 	priv->profile = as_profile_new ();
+
+	/* do stuff on ctrl+c */
+	priv->loop = g_main_loop_new (NULL, FALSE);
+	priv->cancellable = g_cancellable_new ();
+	g_unix_signal_add_full (G_PRIORITY_DEFAULT,
+				SIGINT,
+				as_util_sigint_cb,
+				priv,
+				NULL);
+	g_signal_connect (priv->cancellable, "cancelled",
+			  G_CALLBACK (as_util_watch_cancelled_cb), priv);
 
 	/* add commands */
 	priv->cmd_array = g_ptr_array_new_with_free_func ((GDestroyNotify) as_util_item_free);
@@ -4294,6 +4362,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Import a file to AppStream markup"),
 		     as_util_markup_import);
+	as_util_add (priv->cmd_array,
+		     "watch",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Watch AppStream locations for changes"),
+		     as_util_watch);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
@@ -4359,6 +4433,8 @@ out:
 		if (priv->cmd_array != NULL)
 			g_ptr_array_unref (priv->cmd_array);
 		g_object_unref (priv->profile);
+		g_object_unref (priv->cancellable);
+		g_main_loop_unref (priv->loop);
 		g_option_context_free (priv->context);
 		g_free (priv);
 	}
