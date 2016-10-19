@@ -1431,6 +1431,7 @@ as_store_from_root (AsStore *store,
 static gboolean
 as_store_load_yaml_file (AsStore *store,
 			 GFile *file,
+			 AsAppScope scope,
 			 GCancellable *cancellable,
 			 GError **error)
 {
@@ -1499,6 +1500,7 @@ as_store_load_yaml_file (AsStore *store,
 
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path);
+		as_app_set_scope (app, scope);
 		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
 		if (!as_app_node_parse_dep11 (app, app_n, ctx, error))
 			return FALSE;
@@ -1713,9 +1715,13 @@ as_store_from_file_internal (AsStore *store,
 				  filename);
 
 	/* a DEP-11 file */
-	if (g_strstr_len (filename, -1, ".yml") != NULL)
-		return as_store_load_yaml_file (store, file, cancellable, error);
-
+	if (g_strstr_len (filename, -1, ".yml") != NULL) {
+		return as_store_load_yaml_file (store,
+						file,
+						scope,
+						cancellable,
+						error);
+	}
 #ifdef HAVE_GCAB
 	/* a cab archive */
 	if (g_str_has_suffix (filename, ".cab"))
