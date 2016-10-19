@@ -419,14 +419,16 @@ as_monitor_add_directory (AsMonitor *monitor,
 	g_autoptr(GDir) dir = NULL;
 
 	/* find the files already in the directory */
-	dir = g_dir_open (filename, 0, error);
-	if (dir == NULL)
-		return FALSE;
-	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		g_autofree gchar *fn = NULL;
-		fn = g_build_filename (filename, tmp, NULL);
-		g_debug ("adding existing file: %s", fn);
-		_g_ptr_array_str_add (priv->files, fn);
+	if (g_file_test (filename, G_FILE_TEST_EXISTS)) {
+		dir = g_dir_open (filename, 0, error);
+		if (dir == NULL)
+			return FALSE;
+		while ((tmp = g_dir_read_name (dir)) != NULL) {
+			g_autofree gchar *fn = NULL;
+			fn = g_build_filename (filename, tmp, NULL);
+			g_debug ("adding existing file: %s", fn);
+			_g_ptr_array_str_add (priv->files, fn);
+		}
 	}
 
 	/* create new file monitor */

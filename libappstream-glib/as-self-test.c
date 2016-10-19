@@ -162,10 +162,12 @@ as_test_monitor_dir_func (void)
 			  G_CALLBACK (monitor_test_cb), &cnt_changed);
 
 	/* add watch */
-	g_mkdir_with_parents (tmpdir, 0700);
 	ret = as_monitor_add_directory (mon, tmpdir, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
+
+	/* create directory */
+	g_mkdir_with_parents (tmpdir, 0700);
 
 	/* touch file */
 	cmd_touch = g_strdup_printf ("touch %s", tmpfile);

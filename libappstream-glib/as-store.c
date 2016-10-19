@@ -2442,9 +2442,6 @@ as_store_load_app_info (AsStore *store,
 			GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	const gchar *tmp;
-	g_autoptr(GDir) dir = NULL;
-	g_autoptr(GError) error_local = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
 	/* Don't add the same dir twice, we're monitoring it for changes anyway */
@@ -2454,49 +2451,52 @@ as_store_load_app_info (AsStore *store,
 	/* emit once when finished */
 	tok = as_store_changed_inhibit (store);
 
-	/* search all files */
-	if (!g_file_test (path, G_FILE_TEST_EXISTS))
-		return TRUE;
-	dir = g_dir_open (path, 0, &error_local);
-	if (dir == NULL) {
-		if (flags & AS_STORE_LOAD_FLAG_IGNORE_INVALID) {
-			g_warning ("ignoring invalid AppStream path %s: %s",
-				   path, error_local->message);
-			return TRUE;
-		}
-		g_set_error (error,
-			     AS_STORE_ERROR,
-			     AS_STORE_ERROR_FAILED,
-			     "Failed to open %s: %s",
-			     path, error_local->message);
-		return FALSE;
-	}
-
-	while ((tmp = g_dir_read_name (dir)) != NULL) {
-		GError *error_store = NULL;
-		g_autofree gchar *filename_md = NULL;
-		if (g_strcmp0 (tmp, "icons") == 0)
-			continue;
-		filename_md = g_build_filename (path, tmp, NULL);
-		if (!as_store_load_app_info_file (store,
-						  scope,
-						  filename_md,
-						  arch,
-						  flags,
-						  cancellable,
-						  &error_store)) {
+	/* search all files, if the location already exists */
+	if (g_file_test (path, G_FILE_TEST_IS_DIR)) {
+		const gchar *tmp;
+		g_autoptr(GDir) dir = NULL;
+		g_autoptr(GError) error_local = NULL;
+		dir = g_dir_open (path, 0, &error_local);
+		if (dir == NULL) {
 			if (flags & AS_STORE_LOAD_FLAG_IGNORE_INVALID) {
-				g_warning ("Ignoring invalid AppStream file %s: %s",
-					   filename_md, error_store->message);
-				g_clear_error (&error_store);
-			} else {
-				g_propagate_error (error, error_store);
-				return FALSE;
+				g_warning ("ignoring invalid AppStream path %s: %s",
+					   path, error_local->message);
+				return TRUE;
+			}
+			g_set_error (error,
+				     AS_STORE_ERROR,
+				     AS_STORE_ERROR_FAILED,
+				     "Failed to open %s: %s",
+				     path, error_local->message);
+			return FALSE;
+		}
+
+		while ((tmp = g_dir_read_name (dir)) != NULL) {
+			GError *error_store = NULL;
+			g_autofree gchar *filename_md = NULL;
+			if (g_strcmp0 (tmp, "icons") == 0)
+				continue;
+			filename_md = g_build_filename (path, tmp, NULL);
+			if (!as_store_load_app_info_file (store,
+							  scope,
+							  filename_md,
+							  arch,
+							  flags,
+							  cancellable,
+							  &error_store)) {
+				if (flags & AS_STORE_LOAD_FLAG_IGNORE_INVALID) {
+					g_warning ("Ignoring invalid AppStream file %s: %s",
+						   filename_md, error_store->message);
+					g_clear_error (&error_store);
+				} else {
+					g_propagate_error (error, error_store);
+					return FALSE;
+				}
 			}
 		}
 	}
 
-	/* watch the directories for changes */
+	/* watch the directories for changes, even if it does not exist yet */
 	as_store_add_path_data (store, path, scope, arch);
 	if (!as_monitor_add_directory (priv->monitor,
 				       path,
@@ -2715,8 +2715,6 @@ as_store_search_app_info (AsStore *store,
 					 path,
 					 supported_kinds[i],
 					 NULL);
-		if (!g_file_test (dest, G_FILE_TEST_EXISTS))
-			continue;
 		if (!as_store_load_app_info (store, scope, dest, NULL,
 					     flags, cancellable, error))
 			return FALSE;
