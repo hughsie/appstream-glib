@@ -2843,6 +2843,12 @@ store_changed_cb (AsStore *store, guint *cnt)
 	g_debug ("changed callback, now #%u", *cnt);
 }
 
+static void
+store_app_changed_cb (AsStore *store, AsApp *app, guint *cnt)
+{
+	(*cnt)++;
+}
+
 /* automatically reload changed directories */
 static void
 as_test_store_auto_reload_dir_func (void)
@@ -2850,6 +2856,8 @@ as_test_store_auto_reload_dir_func (void)
 	AsApp *app;
 	gboolean ret;
 	guint cnt = 0;
+	guint cnt_added = 0;
+	guint cnt_removed = 0;
 	g_autoptr(GError) error = NULL;
 	g_autoptr(AsStore) store = NULL;
 
@@ -2857,6 +2865,10 @@ as_test_store_auto_reload_dir_func (void)
 	store = as_store_new ();
 	g_signal_connect (store, "changed",
 			  G_CALLBACK (store_changed_cb), &cnt);
+	g_signal_connect (store, "app-added",
+			  G_CALLBACK (store_app_changed_cb), &cnt_added);
+	g_signal_connect (store, "app-removed",
+			  G_CALLBACK (store_app_changed_cb), &cnt_removed);
 	as_store_set_watch_flags (store, AS_STORE_WATCH_FLAG_ADDED |
 					   AS_STORE_WATCH_FLAG_REMOVED);
 
@@ -2869,6 +2881,8 @@ as_test_store_auto_reload_dir_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_assert_cmpint (cnt, ==, 1);
+	g_assert_cmpint (cnt_added, ==, 0);
+	g_assert_cmpint (cnt_removed, ==, 0);
 
 	/* create file */
 	ret = g_file_set_contents ("/tmp/repo-tmp/usr/share/app-info/xmls/foo.xml",
@@ -2883,6 +2897,8 @@ as_test_store_auto_reload_dir_func (void)
 
 	as_test_loop_run_with_timeout (2000);
 	g_assert_cmpint (cnt, ==, 2);
+	g_assert_cmpint (cnt_added, ==, 1);
+	g_assert_cmpint (cnt_removed, ==, 0);
 
 	/* verify */
 	app = as_store_get_app_by_id (store, "test.desktop");
@@ -2892,6 +2908,8 @@ as_test_store_auto_reload_dir_func (void)
 	g_unlink ("/tmp/repo-tmp/usr/share/app-info/xmls/foo.xml");
 	as_test_loop_run_with_timeout (2000);
 	g_assert_cmpint (cnt, ==, 3);
+	g_assert_cmpint (cnt_added, ==, 1);
+	g_assert_cmpint (cnt_removed, ==, 1);
 	app = as_store_get_app_by_id (store, "test.desktop");
 	g_assert (app == NULL);
 }
@@ -2904,6 +2922,8 @@ as_test_store_auto_reload_file_func (void)
 	AsRelease *rel;
 	gboolean ret;
 	guint cnt = 0;
+	guint cnt_added = 0;
+	guint cnt_removed = 0;
 	g_autoptr(GError) error = NULL;
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GFile) file = NULL;
@@ -2927,6 +2947,10 @@ as_test_store_auto_reload_file_func (void)
 	store = as_store_new ();
 	g_signal_connect (store, "changed",
 			  G_CALLBACK (store_changed_cb), &cnt);
+	g_signal_connect (store, "app-added",
+			  G_CALLBACK (store_app_changed_cb), &cnt_added);
+	g_signal_connect (store, "app-removed",
+			  G_CALLBACK (store_app_changed_cb), &cnt_added);
 	as_store_set_watch_flags (store, AS_STORE_WATCH_FLAG_ADDED |
 					   AS_STORE_WATCH_FLAG_REMOVED);
 	file = g_file_new_for_path ("/tmp/foo.xml");

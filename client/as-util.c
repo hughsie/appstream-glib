@@ -1202,6 +1202,27 @@ as_util_watch_store_changed_cb (AsStore *store, AsUtilPrivate *priv)
 		 as_store_get_size (store));
 }
 
+static void
+as_util_watch_store_app_added_cb (AsStore *store, AsApp *app, AsUtilPrivate *priv)
+{
+	g_print ("Component added to store: %s\n",
+		 as_app_get_unique_id (app));
+}
+
+static void
+as_util_watch_store_app_removed_cb (AsStore *store, AsApp *app, AsUtilPrivate *priv)
+{
+	g_print ("Component removed from store: %s\n",
+		 as_app_get_unique_id (app));
+}
+
+static void
+as_util_watch_store_app_changed_cb (AsStore *store, AsApp *app, AsUtilPrivate *priv)
+{
+	g_print ("Component changed in store: %s\n",
+		 as_app_get_unique_id (app));
+}
+
 static gboolean
 as_util_watch (AsUtilPrivate *priv, gchar **values, GError **error)
 {
@@ -1225,6 +1246,12 @@ as_util_watch (AsUtilPrivate *priv, gchar **values, GError **error)
 	}
 	g_signal_connect (store, "changed",
 			  G_CALLBACK (as_util_watch_store_changed_cb), priv);
+	g_signal_connect (store, "app-added",
+			  G_CALLBACK (as_util_watch_store_app_added_cb), priv);
+	g_signal_connect (store, "app-removed",
+			  G_CALLBACK (as_util_watch_store_app_removed_cb), priv);
+	g_signal_connect (store, "app-changed",
+			  G_CALLBACK (as_util_watch_store_app_changed_cb), priv);
 
 	/* wait */
 	g_main_loop_run (priv->loop);

@@ -41,14 +41,17 @@ struct _AsStoreClass
 {
 	GObjectClass		parent_class;
 	void			(*changed)	(AsStore	*store);
+	void			(*app_added)	(AsStore	*store,
+						 AsApp		*app);
+	void			(*app_removed)	(AsStore	*store,
+						 AsApp		*app);
+	void			(*app_changed)	(AsStore	*store,
+						 AsApp		*app);
 	/*< private >*/
 	void (*_as_reserved1)	(void);
 	void (*_as_reserved2)	(void);
 	void (*_as_reserved3)	(void);
 	void (*_as_reserved4)	(void);
-	void (*_as_reserved5)	(void);
-	void (*_as_reserved6)	(void);
-	void (*_as_reserved7)	(void);
 };
 
 /**

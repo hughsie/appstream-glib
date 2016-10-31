@@ -89,6 +89,9 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsStore, as_store, G_TYPE_OBJECT)
 
 enum {
 	SIGNAL_CHANGED,
+	SIGNAL_APP_ADDED,
+	SIGNAL_APP_REMOVED,
+	SIGNAL_APP_CHANGED,
 	SIGNAL_LAST
 };
 
@@ -143,7 +146,7 @@ as_store_class_init (AsStoreClass *klass)
 
 	/**
 	 * AsStore::changed:
-	 * @device: the #AsStore instance that emitted the signal
+	 * @store: the #AsStore instance that emitted the signal
 	 *
 	 * The ::changed signal is emitted when components have been added
 	 * or removed from the store.
@@ -156,6 +159,57 @@ as_store_class_init (AsStoreClass *klass)
 			      G_STRUCT_OFFSET (AsStoreClass, changed),
 			      NULL, NULL, g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
+
+	/**
+	 * AsStore::app-added:
+	 * @store: the #AsStore instance that emitted the signal
+	 * @app: the #AsApp instance
+	 *
+	 * The ::app-added signal is emitted when a component has been added to
+	 * the store.
+	 *
+	 * Since: 0.6.5
+	 **/
+	signals [SIGNAL_APP_ADDED] =
+		g_signal_new ("app-added",
+			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (AsStoreClass, app_added),
+			      NULL, NULL, g_cclosure_marshal_VOID__OBJECT,
+			      G_TYPE_NONE, 1, AS_TYPE_APP);
+
+	/**
+	 * AsStore::app-removed:
+	 * @store: the #AsStore instance that emitted the signal
+	 * @app: the #AsApp instance
+	 *
+	 * The ::app-removed signal is emitted when a component has been removed
+	 * from the store.
+	 *
+	 * Since: 0.6.5
+	 **/
+	signals [SIGNAL_APP_REMOVED] =
+		g_signal_new ("app-removed",
+			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (AsStoreClass, app_removed),
+			      NULL, NULL, g_cclosure_marshal_VOID__OBJECT,
+			      G_TYPE_NONE, 1, AS_TYPE_APP);
+
+	/**
+	 * AsStore::app-changed:
+	 * @store: the #AsStore instance that emitted the signal
+	 * @app: the #AsApp instance
+	 *
+	 * The ::app-changed signal is emitted when a component has been changed
+	 * in the store.
+	 *
+	 * Since: 0.6.5
+	 **/
+	signals [SIGNAL_APP_CHANGED] =
+		g_signal_new ("app-changed",
+			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (AsStoreClass, app_changed),
+			      NULL, NULL, g_cclosure_marshal_VOID__OBJECT,
+			      G_TYPE_NONE, 1, AS_TYPE_APP);
 
 	object_class->finalize = as_store_finalize;
 }
@@ -834,6 +888,9 @@ as_store_remove_app (AsStore *store, AsApp *app)
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	GPtrArray *apps;
 
+	/* emit before removal */
+	g_signal_emit (store, signals[SIGNAL_APP_REMOVED], 0, app);
+
 	/* only remove this specific unique app */
 	apps = g_hash_table_lookup (priv->hash_id, as_app_get_id (app));
 	if (apps != NULL)
@@ -869,6 +926,10 @@ as_store_remove_app_by_id (AsStore *store, const gchar *id)
 		app = g_ptr_array_index (priv->array, i);
 		if (g_strcmp0 (id, as_app_get_id (app)) != 0)
 			continue;
+
+		/* emit before removal */
+		g_signal_emit (store, signals[SIGNAL_APP_REMOVED], 0, app);
+
 		g_ptr_array_remove (priv->array, app);
 		g_hash_table_remove (priv->hash_unique_id,
 				     as_app_get_unique_id (app));
@@ -994,6 +1055,10 @@ as_store_add_app (AsStore *store, AsApp *app)
 				 as_app_merge_kind_to_string (merge_kind),
 				 id, as_app_get_unique_id (app_tmp));
 			as_app_subsume_full (app_tmp, app, flags);
+
+			/* emit after changes have been made */
+			g_signal_emit (store, signals[SIGNAL_APP_CHANGED],
+				       0, app_tmp);
 		}
 		return;
 	}
@@ -1151,6 +1216,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 	}
 
 	/* added */
+	g_signal_emit (store, signals[SIGNAL_APP_ADDED], 0, app);
 	as_store_perhaps_emit_changed (store, "add-app");
 }
 
