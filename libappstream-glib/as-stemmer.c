@@ -32,6 +32,7 @@
 struct _AsStemmer
 {
 	GObject			 parent_instance;
+	gboolean		 enabled;
 	struct sb_stemmer	*ctx;
 	GMutex			 ctx_mutex;
 };
@@ -57,7 +58,7 @@ as_stemmer_process (AsStemmer *stemmer, const gchar *value)
 #ifdef HAVE_LIBSTEMMER
 	gchar *new;
 	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&stemmer->ctx_mutex);
-	if (stemmer->ctx == NULL)
+	if (stemmer->ctx == NULL || !stemmer->enabled)
 		return g_strdup (value);
 	new = g_strdup ((gchar *) sb_stemmer_stem (stemmer->ctx,
 						   (guchar *) value,
@@ -96,6 +97,7 @@ as_stemmer_init (AsStemmer *stemmer)
 	stemmer->ctx = sb_stemmer_new ("en", NULL);
 	g_mutex_init (&stemmer->ctx_mutex);
 #endif
+	stemmer->enabled = g_getenv ("APPSTREAM_GLIB_DISABLE_STEMMER") == NULL;
 }
 
 /**
