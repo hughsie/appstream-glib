@@ -4553,15 +4553,15 @@ as_app_search_matches (AsApp *app, const gchar *search)
 	g_autoptr(GList) keys = NULL;
 	g_autofree gchar *search_stem = NULL;
 
-	/* nothing to do */
-	if (search == NULL)
-		return 0;
-
 	/* ensure the token cache is created */
 	if (g_once_init_enter (&priv->token_cache_valid)) {
 		as_app_create_token_cache (app);
 		g_once_init_leave (&priv->token_cache_valid, TRUE);
 	}
+
+	/* nothing to do */
+	if (search == NULL)
+		return 0;
 
 	/* find the exact match (which is more awesome than a partial match) */
 	search_stem = as_stemmer_process (priv->stemmer, search);
