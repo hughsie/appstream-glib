@@ -2925,6 +2925,38 @@ as_store_search_per_user (AsStore *store,
 }
 
 /**
+ * as_store_load_search_cache:
+ * @store: a #AsStore instance.
+ *
+ * Populates the token cache for all applications in the store. This allows
+ * all the search keywords for all applications in the store to be
+ * pre-processed at one time rather than on demand.
+ *
+ * Note: Calling as_app_search_matches() automatically generates the search
+ * cache for the #AsApp object if it has not already been generated.
+ *
+ * Since: 0.6.5
+ **/
+void
+as_store_load_search_cache (AsStore *store)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	guint i;
+	g_autoptr(AsProfileTask) ptask = NULL;
+
+	/* profile */
+	ptask = as_profile_start_literal (priv->profile,
+					  "AsStore:load-token-cache");
+	g_assert (ptask != NULL);
+
+	/* load the token cache for each app */
+	for (i = 0; i < priv->array->len; i++) {
+		AsApp *app = g_ptr_array_index (priv->array, i);
+		as_app_search_matches (app, NULL);
+	}
+}
+
+/**
  * as_store_load:
  * @store: a #AsStore instance.
  * @flags: #AsStoreLoadFlags, e.g. %AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM

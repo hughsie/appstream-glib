@@ -1301,6 +1301,9 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 			    NULL, error))
 		return FALSE;
 
+	/* prime the search cache */
+	as_store_load_search_cache (store);
+
 	/* add matches to an array */
 	apps = as_store_get_apps (store);
 	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
