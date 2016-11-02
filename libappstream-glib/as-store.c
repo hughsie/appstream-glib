@@ -2933,13 +2933,20 @@ as_store_search_per_user (AsStore *store,
 	return TRUE;
 }
 
+static void
+as_store_load_search_cache_cb (gpointer data, gpointer user_data)
+{
+	AsApp *app = AS_APP (data);
+	as_app_search_matches (app, NULL);
+}
+
 /**
  * as_store_load_search_cache:
  * @store: a #AsStore instance.
  *
  * Populates the token cache for all applications in the store. This allows
  * all the search keywords for all applications in the store to be
- * pre-processed at one time rather than on demand.
+ * pre-processed at one time in multiple threads rather than on demand.
  *
  * Note: Calling as_app_search_matches() automatically generates the search
  * cache for the #AsApp object if it has not already been generated.
@@ -2951,6 +2958,7 @@ as_store_load_search_cache (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	guint i;
+	GThreadPool *pool;
 	g_autoptr(AsProfileTask) ptask = NULL;
 
 	/* profile */
@@ -2958,11 +2966,15 @@ as_store_load_search_cache (AsStore *store)
 					  "AsStore:load-token-cache");
 	g_assert (ptask != NULL);
 
-	/* load the token cache for each app */
+	/* load the token cache for each app in multiple threads */
+	pool = g_thread_pool_new (as_store_load_search_cache_cb,
+				  store, 4, TRUE, NULL);
+	g_assert (pool != NULL);
 	for (i = 0; i < priv->array->len; i++) {
 		AsApp *app = g_ptr_array_index (priv->array, i);
-		as_app_search_matches (app, NULL);
+		g_thread_pool_push (pool, app, NULL);
 	}
+	g_thread_pool_free (pool, FALSE, TRUE);
 }
 
 /**
