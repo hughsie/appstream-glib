@@ -151,17 +151,17 @@ as_profile_dump_safe (AsProfile *profile)
 		bar_offset = (guint) (scale * (gdouble) (item->time_start -
 							 time_start) / 1000);
 		for (j = 0; j < bar_offset; j++)
-			g_print (" ");
+			g_printerr (" ");
 		bar_length = (guint) (scale * (gdouble) time_ms);
 		if (bar_length == 0)
 			bar_length = 1;
 		for (j = 0; j < bar_length; j++)
-			g_print ("#");
+			g_printerr ("#");
 		for (j = bar_offset + bar_length; j < console_width + 1; j++)
-			g_print (" ");
-		g_print ("@%04" G_GINT64_FORMAT "ms ",
-			 (item->time_stop - time_start) / 1000);
-		g_print ("%s %" G_GINT64_FORMAT "ms\n", item->id, time_ms);
+			g_printerr (" ");
+		g_printerr ("@%04" G_GINT64_FORMAT "ms ",
+			    (item->time_stop - time_start) / 1000);
+		g_printerr ("%s %" G_GINT64_FORMAT "ms\n", item->id, time_ms);
 	}
 
 	/* not all complete */
@@ -172,8 +172,8 @@ as_profile_dump_safe (AsProfile *profile)
 			for (j = 0; j < console_width; j++)
 				g_print ("$");
 			time_ms = (item->time_stop - item->time_start) / 1000;
-			g_print (" @????ms %s %" G_GINT64_FORMAT "ms\n",
-				 item->id, time_ms);
+			g_printerr (" @????ms %s %" G_GINT64_FORMAT "ms\n",
+				    item->id, time_ms);
 		}
 	}
 }
