@@ -5075,18 +5075,10 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 static gchar **
 as_app_value_tokenize (const gchar *value)
 {
-	gchar **values;
-	guint i;
 	g_autofree gchar *delim = NULL;
-	g_auto(GStrv) tmp = NULL;
-
-	delim = g_strdup (value);
+	delim = g_utf8_strdown (value, -1);
 	g_strdelimit (delim, "/,.;:", ' ');
-	tmp = g_strsplit (delim, " ", -1);
-	values = g_new0 (gchar *, g_strv_length (tmp) + 1);
-	for (i = 0; tmp[i] != NULL; i++)
-		values[i] = g_utf8_strdown (tmp[i], -1);
-	return values;
+	return g_strsplit (delim, " ", -1);
 }
 
 static void
