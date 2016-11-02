@@ -40,6 +40,7 @@ typedef struct {
 	gchar		*id;
 	gint64		 time_start;
 	gint64		 time_stop;
+	gboolean	 threaded;
 } AsProfileItem;
 
 G_DEFINE_TYPE (AsProfile, as_profile, G_TYPE_OBJECT)
@@ -73,6 +74,26 @@ as_profile_item_find (GPtrArray *array, const gchar *id)
 			return tmp;
 	}
 	return NULL;
+}
+
+/**
+ * as_profile_task_set_threaded:
+ * @ptask: A #AsProfileTask
+ * @threaded: boolean
+ *
+ * Sets if the profile task is threaded so it can be printed differently in
+ * in the profile output.
+ *
+ * Since: 0.6.5
+ **/
+void
+as_profile_task_set_threaded (AsProfileTask *ptask, gboolean threaded)
+{
+	AsProfileItem *item;
+	item = as_profile_item_find (ptask->profile->current, ptask->id);
+	if (item == NULL)
+		return;
+	item->threaded = threaded;
 }
 
 static void
@@ -109,6 +130,14 @@ as_profile_sort_cb (gconstpointer a, gconstpointer b)
 	return 0;
 }
 
+static const gchar *
+as_profile_get_item_printable (AsProfileItem *item)
+{
+	if (item->threaded)
+		return "\033[1m#\033[0m";
+	return "#";
+}
+
 static void
 as_profile_dump_safe (AsProfile *profile)
 {
@@ -142,6 +171,7 @@ as_profile_dump_safe (AsProfile *profile)
 
 	/* dump a list of what happened when */
 	for (i = 0; i < profile->archived->len; i++) {
+		const gchar *printable;
 		item = g_ptr_array_index (profile->archived, i);
 		time_ms = (item->time_stop - item->time_start) / 1000;
 		if (time_ms < 5)
@@ -155,8 +185,9 @@ as_profile_dump_safe (AsProfile *profile)
 		bar_length = (guint) (scale * (gdouble) time_ms);
 		if (bar_length == 0)
 			bar_length = 1;
+		printable = as_profile_get_item_printable (item);
 		for (j = 0; j < bar_length; j++)
-			g_printerr ("#");
+			g_printerr ("%s", printable);
 		for (j = bar_offset + bar_length; j < console_width + 1; j++)
 			g_printerr (" ");
 		g_printerr ("@%04" G_GINT64_FORMAT "ms ",

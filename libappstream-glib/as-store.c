@@ -2964,7 +2964,7 @@ as_store_load_search_cache (AsStore *store)
 	/* profile */
 	ptask = as_profile_start_literal (priv->profile,
 					  "AsStore:load-token-cache");
-	g_assert (ptask != NULL);
+	as_profile_task_set_threaded (ptask, TRUE);
 
 	/* load the token cache for each app in multiple threads */
 	pool = g_thread_pool_new (as_store_load_search_cache_cb,
