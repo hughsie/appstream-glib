@@ -39,8 +39,6 @@ struct _AsStemmer
 
 G_DEFINE_TYPE (AsStemmer, as_stemmer, G_TYPE_OBJECT)
 
-static gpointer as_stemmer_object = NULL;
-
 /**
  * as_stemmer_process:
  * @stemmer: A #AsStemmer
@@ -112,11 +110,6 @@ as_stemmer_init (AsStemmer *stemmer)
 AsStemmer *
 as_stemmer_new (void)
 {
-	if (as_stemmer_object != NULL) {
-		g_object_ref (as_stemmer_object);
-	} else {
-		as_stemmer_object = g_object_new (AS_TYPE_STEMMER, NULL);
-		g_object_add_weak_pointer (as_stemmer_object, &as_stemmer_object);
-	}
-	return AS_STEMMER (as_stemmer_object);
+	AsStemmer *stemmer = g_object_new (AS_TYPE_STEMMER, NULL);
+	return AS_STEMMER (stemmer);
 }

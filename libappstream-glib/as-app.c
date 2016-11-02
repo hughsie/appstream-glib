@@ -466,6 +466,9 @@ as_app_finalize (GObject *object)
 	AsApp *app = AS_APP (object);
 	AsAppPrivate *priv = GET_PRIVATE (app);
 
+	if (priv->stemmer != NULL)
+		g_object_unref (priv->stemmer);
+
 	g_free (priv->icon_path);
 	g_free (priv->id_filename);
 	g_free (priv->id);
@@ -487,7 +490,6 @@ as_app_finalize (GObject *object)
 	g_hash_table_unref (priv->names);
 	g_hash_table_unref (priv->urls);
 	g_hash_table_unref (priv->token_cache);
-	g_object_unref (priv->stemmer);
 	g_ptr_array_unref (priv->addons);
 	g_ptr_array_unref (priv->categories);
 	g_ptr_array_unref (priv->compulsory_for_desktops);
@@ -515,7 +517,6 @@ static void
 as_app_init (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	priv->stemmer = as_stemmer_new ();
 	priv->categories = g_ptr_array_new_with_free_func (g_free);
 	priv->compulsory_for_desktops = g_ptr_array_new_with_free_func (g_free);
 	priv->content_ratings = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -5095,7 +5096,10 @@ as_app_add_token_internal (AsApp *app,
 		return;
 
 	/* does the token already exist */
-	value_stem = as_stemmer_process (priv->stemmer, value);
+	if (priv->stemmer != NULL)
+		value_stem = as_stemmer_process (priv->stemmer, value);
+	if (value_stem == NULL)
+		value_stem = g_strdup (value);
 	match_pval = g_hash_table_lookup (priv->token_cache, value_stem);
 	if (match_pval != NULL) {
 		*match_pval |= match_flag;
@@ -5275,7 +5279,10 @@ as_app_search_matches (AsApp *app, const gchar *search)
 		return 0;
 
 	/* find the exact match (which is more awesome than a partial match) */
-	search_stem = as_stemmer_process (priv->stemmer, search);
+	if (priv->stemmer != NULL)
+		search_stem = as_stemmer_process (priv->stemmer, search);
+	if (search_stem == NULL)
+		search_stem = g_strdup (search);
 	match_pval = g_hash_table_lookup (priv->token_cache, search_stem);
 	if (match_pval != NULL)
 		return (guint) *match_pval << 2;
@@ -5856,6 +5863,16 @@ as_app_remove_veto (AsApp *app, const gchar *description)
 			break;
 		}
 	}
+}
+
+/**
+ * as_app_set_stemmer: (skip)
+ **/
+void
+as_app_set_stemmer (AsApp *app, AsStemmer *stemmer)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_set_object (&priv->stemmer, stemmer);
 }
 
 /**

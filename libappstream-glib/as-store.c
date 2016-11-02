@@ -41,6 +41,7 @@
 #include "as-problem.h"
 #include "as-profile.h"
 #include "as-monitor.h"
+#include "as-stemmer.h"
 #include "as-store.h"
 #include "as-utils-private.h"
 #include "as-yaml.h"
@@ -78,6 +79,7 @@ typedef struct
 	guint			 changed_block_refcnt;
 	gboolean		 is_pending_changed_signal;
 	AsProfile		*profile;
+	AsStemmer		*stemmer;
 } AsStorePrivate;
 
 typedef struct {
@@ -129,6 +131,7 @@ as_store_finalize (GObject *object)
 	g_ptr_array_unref (priv->array);
 	g_object_unref (priv->monitor);
 	g_object_unref (priv->profile);
+	g_object_unref (priv->stemmer);
 	g_hash_table_unref (priv->hash_id);
 	g_hash_table_unref (priv->hash_merge_id);
 	g_hash_table_unref (priv->hash_unique_id);
@@ -1214,6 +1217,9 @@ as_store_add_app (AsStore *store, AsApp *app)
 				     g_strdup (pkgname),
 				     g_object_ref (app));
 	}
+
+	/* add helper objects */
+	as_app_set_stemmer (app, priv->stemmer);
 
 	/* added */
 	g_signal_emit (store, signals[SIGNAL_APP_ADDED], 0, app);
@@ -3297,6 +3303,7 @@ as_store_init (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	priv->profile = as_profile_new ();
+	priv->stemmer = as_stemmer_new ();
 	priv->api_version = AS_API_VERSION_NEWEST;
 	priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->watch_flags = AS_STORE_WATCH_FLAG_NONE;

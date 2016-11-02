@@ -30,6 +30,7 @@
 
 #include "as-app.h"
 #include "as-node-private.h"
+#include "as-stemmer.h"
 
 G_BEGIN_DECLS
 
@@ -112,6 +113,8 @@ gboolean	 as_app_parse_inf_file		(AsApp		*app,
 						 const gchar	*filename,
 						 AsAppParseFlags flags,
 						 GError		**error);
+void		 as_app_set_stemmer		(AsApp		*app,
+						 AsStemmer	*stemmer);
 
 G_END_DECLS
 
