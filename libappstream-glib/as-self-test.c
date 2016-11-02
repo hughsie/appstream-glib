@@ -2704,6 +2704,7 @@ as_test_app_search_func (void)
 	const gchar *none[] = { "gnome", "xxx", "software", NULL };
 	const gchar *mime[] = { "application/vnd.oasis.opendocument.text", NULL };
 	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GHashTable) search_blacklist = NULL;
 
 	app = as_app_new ();
 	as_app_set_id (app, "gnome-software");
@@ -2714,6 +2715,12 @@ as_test_app_search_func (void)
 	as_app_add_keyword (app, NULL, "awesome");
 	as_app_add_keyword (app, NULL, "c++");
 	as_app_add_keyword (app, NULL, "d-feet");
+
+	search_blacklist = g_hash_table_new (g_str_hash, g_str_equal);
+	g_hash_table_insert (search_blacklist,
+			     (gpointer) "and",
+			     GUINT_TO_POINTER (1));
+	as_app_set_search_blacklist (app, search_blacklist);
 
 	g_assert_cmpint (as_app_search_matches (app, "software"), ==, 96);
 	g_assert_cmpint (as_app_search_matches (app, "soft"), ==, 24);
@@ -4241,8 +4248,6 @@ as_test_utils_func (void)
 
 	/* valid tokens */
 	g_assert (as_utils_search_token_valid ("battery"));
-	g_assert (!as_utils_search_token_valid ("and"));
-	g_assert (!as_utils_search_token_valid ("is"));
 	g_assert (!as_utils_search_token_valid ("<b>"));
 
 	/* check tokenisation */
@@ -4250,8 +4255,9 @@ as_test_utils_func (void)
 	g_assert (tokens == NULL);
 	tokens = as_utils_search_tokenize ("batteries are (really) stupid");
 	g_assert_cmpstr (tokens[0], ==, "batteries");
-	g_assert_cmpstr (tokens[1], ==, "stupid");
-	g_assert_cmpstr (tokens[2], ==, NULL);
+	g_assert_cmpstr (tokens[1], ==, "are");
+	g_assert_cmpstr (tokens[2], ==, "stupid");
+	g_assert_cmpstr (tokens[3], ==, NULL);
 	g_strfreev (tokens);
 }
 

@@ -115,6 +115,8 @@ gboolean	 as_app_parse_inf_file		(AsApp		*app,
 						 GError		**error);
 void		 as_app_set_stemmer		(AsApp		*app,
 						 AsStemmer	*stemmer);
+void		 as_app_set_search_blacklist	(AsApp		*app,
+						 GHashTable	*search_blacklist);
 
 G_END_DECLS
 

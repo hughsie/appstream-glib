@@ -72,6 +72,7 @@ typedef struct
 	AsMonitor		*monitor;
 	GHashTable		*metadata_indexes;	/* GHashTable{key} */
 	GHashTable		*appinfo_dirs;	/* GHashTable{path:AsStorePathData} */
+	GHashTable		*search_blacklist;	/* GHashTable{string:1} */
 	AsStoreAddFlags		 add_flags;
 	AsStoreWatchFlags	 watch_flags;
 	AsStoreProblems		 problems;
@@ -138,6 +139,7 @@ as_store_finalize (GObject *object)
 	g_hash_table_unref (priv->hash_pkgname);
 	g_hash_table_unref (priv->metadata_indexes);
 	g_hash_table_unref (priv->appinfo_dirs);
+	g_hash_table_unref (priv->search_blacklist);
 
 	G_OBJECT_CLASS (as_store_parent_class)->finalize (object);
 }
@@ -1220,6 +1222,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 
 	/* add helper objects */
 	as_app_set_stemmer (app, priv->stemmer);
+	as_app_set_search_blacklist (app, priv->search_blacklist);
 
 	/* added */
 	g_signal_emit (store, signals[SIGNAL_APP_ADDED], 0, app);
@@ -3299,6 +3302,33 @@ as_store_path_data_free (AsStorePathData *path_data)
 }
 
 static void
+as_store_create_search_blacklist (AsStore *store)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	guint i;
+	const gchar *blacklist[] = {
+		"and", "the", "application", "for", "you", "your",
+		"with", "can", "are", "from", "that", "use", "allows", "also",
+		"this", "other", "all", "using", "has", "some", "like", "them",
+		"well", "not", "using", "not", "but", "set", "its", "into",
+		"such", "was", "they", "where", "want", "only", "about",
+		"uses", "font", "features", "designed", "provides", "which",
+		"many", "used", "org", "fonts", "open", "more", "based",
+		"different", "including", "will", "multiple", "out", "have",
+		"each", "when", "need", "most", "both", "their", "even",
+		"way", "several", "been", "while", "very", "add", "under",
+		"what", "those", "much", "either", "currently", "one",
+		"support", "make", "over", "these", "there", "without", "etc",
+		"main",
+		NULL };
+	for (i = 0; blacklist[i] != NULL; i++)  {
+		g_hash_table_insert (priv->search_blacklist,
+				     as_stemmer_process (priv->stemmer, blacklist[i]),
+				     GUINT_TO_POINTER (1));
+	}
+}
+
+static void
 as_store_init (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
@@ -3307,6 +3337,10 @@ as_store_init (AsStore *store)
 	priv->api_version = AS_API_VERSION_NEWEST;
 	priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->watch_flags = AS_STORE_WATCH_FLAG_NONE;
+	priv->search_blacklist = g_hash_table_new_full (g_str_hash,
+							g_str_equal,
+							g_free,
+							NULL);
 	priv->hash_id = g_hash_table_new_full (g_str_hash,
 					       g_str_equal,
 					       NULL,
@@ -3341,6 +3375,9 @@ as_store_init (AsStore *store)
 							  g_str_equal,
 							  g_free,
 							  (GDestroyNotify) g_hash_table_unref);
+
+	/* add stemmed keywords to the search blacklist */
+	as_store_create_search_blacklist (store);
 }
 
 /**

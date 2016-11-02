@@ -109,6 +109,7 @@ typedef struct
 	gint		 priority;
 	gsize		 token_cache_valid;
 	GHashTable	*token_cache;			/* of string:AsAppTokenType* */
+	GHashTable	*search_blacklist;		/* of stemmed-string:1 */
 } AsAppPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsApp, as_app, G_TYPE_OBJECT)
@@ -468,6 +469,8 @@ as_app_finalize (GObject *object)
 
 	if (priv->stemmer != NULL)
 		g_object_unref (priv->stemmer);
+	if (priv->search_blacklist != NULL)
+		g_hash_table_unref (priv->search_blacklist);
 
 	g_free (priv->icon_path);
 	g_free (priv->id_filename);
@@ -5095,11 +5098,18 @@ as_app_add_token_internal (AsApp *app,
 	if (!as_utils_search_token_valid (value))
 		return;
 
-	/* does the token already exist */
+	/* get the most suitable value */
 	if (priv->stemmer != NULL)
 		value_stem = as_stemmer_process (priv->stemmer, value);
 	if (value_stem == NULL)
-		value_stem = g_strdup (value);
+		value_stem = g_utf8_strdown (value, -1);
+
+	/* blacklisted */
+	if (priv->search_blacklist != NULL &&
+	    g_hash_table_lookup (priv->search_blacklist, value_stem) != NULL)
+		return;
+
+	/* does the token already exist */
 	match_pval = g_hash_table_lookup (priv->token_cache, value_stem);
 	if (match_pval != NULL) {
 		*match_pval |= match_flag;
@@ -5282,7 +5292,7 @@ as_app_search_matches (AsApp *app, const gchar *search)
 	if (priv->stemmer != NULL)
 		search_stem = as_stemmer_process (priv->stemmer, search);
 	if (search_stem == NULL)
-		search_stem = g_strdup (search);
+		search_stem = g_utf8_strdown (search, -1);
 	match_pval = g_hash_table_lookup (priv->token_cache, search_stem);
 	if (match_pval != NULL)
 		return (guint) *match_pval << 2;
@@ -5873,6 +5883,18 @@ as_app_set_stemmer (AsApp *app, AsStemmer *stemmer)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_set_object (&priv->stemmer, stemmer);
+}
+
+/**
+ * as_app_set_search_blacklist: (skip)
+ **/
+void
+as_app_set_search_blacklist (AsApp *app, GHashTable *search_blacklist)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	if (priv->search_blacklist != NULL)
+		g_hash_table_unref (priv->search_blacklist);
+	priv->search_blacklist = g_hash_table_ref (search_blacklist);
 }
 
 /**
