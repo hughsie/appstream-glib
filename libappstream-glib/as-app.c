@@ -5128,6 +5128,18 @@ as_app_add_token (AsApp *app,
 	as_app_add_token_internal (app, value, match_flag);
 }
 
+static gboolean
+as_app_needs_transliteration (const gchar *locale)
+{
+	if (g_strcmp0 (locale, "C") == 0)
+		return FALSE;
+	if (g_strcmp0 (locale, "en") == 0)
+		return FALSE;
+	if (g_str_has_prefix (locale, "en_"))
+		return FALSE;
+	return TRUE;
+}
+
 static void
 as_app_add_tokens (AsApp *app,
 		   const gchar *value,
@@ -5148,7 +5160,8 @@ as_app_add_tokens (AsApp *app,
 
 #if GLIB_CHECK_VERSION(2,39,1)
 	/* tokenize with UTF-8 fallbacks */
-	if (g_strstr_len (value, -1, "+") == NULL &&
+	if (as_app_needs_transliteration (locale) &&
+	    g_strstr_len (value, -1, "+") == NULL &&
 	    g_strstr_len (value, -1, "-") == NULL) {
 		values_utf8 = g_str_tokenize_and_fold (value, locale, &values_ascii);
 	}
