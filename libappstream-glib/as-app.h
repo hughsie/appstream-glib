@@ -68,18 +68,20 @@ struct _AsAppClass
  * @AS_APP_PARSE_FLAG_ALLOW_VETO:	Do not return errors for vetoed apps
  * @AS_APP_PARSE_FLAG_USE_FALLBACKS:	Fall back to suboptimal data where required
  * @AS_APP_PARSE_FLAG_ADD_ALL_METADATA:	Add all extra metadata from the source file
+ * @AS_APP_PARSE_FLAG_ONLY_NATIVE_LANGS:	Only load native languages
  *
  * The flags to use when parsing resources.
  **/
 typedef enum {
-	AS_APP_PARSE_FLAG_NONE,
-	AS_APP_PARSE_FLAG_USE_HEURISTICS	= 1,	/* Since: 0.1.2 */
-	AS_APP_PARSE_FLAG_KEEP_COMMENTS		= 2,	/* Since: 0.1.6 */
-	AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE	= 4,	/* Since: 0.1.6 */
-	AS_APP_PARSE_FLAG_APPEND_DATA		= 8,	/* Since: 0.1.8 */
-	AS_APP_PARSE_FLAG_ALLOW_VETO		= 16,	/* Since: 0.2.5 */
-	AS_APP_PARSE_FLAG_USE_FALLBACKS		= 32,	/* Since: 0.4.1 */
-	AS_APP_PARSE_FLAG_ADD_ALL_METADATA	= 64,	/* Since: 0.6.1 */
+	AS_APP_PARSE_FLAG_NONE			= 0,
+	AS_APP_PARSE_FLAG_USE_HEURISTICS	= 1 << 0,	/* Since: 0.1.2 */
+	AS_APP_PARSE_FLAG_KEEP_COMMENTS		= 1 << 1,	/* Since: 0.1.6 */
+	AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE	= 1 << 2,	/* Since: 0.1.6 */
+	AS_APP_PARSE_FLAG_APPEND_DATA		= 1 << 3,	/* Since: 0.1.8 */
+	AS_APP_PARSE_FLAG_ALLOW_VETO		= 1 << 4,	/* Since: 0.2.5 */
+	AS_APP_PARSE_FLAG_USE_FALLBACKS		= 1 << 5,	/* Since: 0.4.1 */
+	AS_APP_PARSE_FLAG_ADD_ALL_METADATA	= 1 << 6,	/* Since: 0.6.1 */
+	AS_APP_PARSE_FLAG_ONLY_NATIVE_LANGS	= 1 << 7,	/* Since: 0.6.3 */
 	/*< private >*/
 	AS_APP_PARSE_FLAG_LAST,
 } AsAppParseFlags;

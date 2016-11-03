@@ -284,6 +284,9 @@ as_app_parse_file_key (AsApp *app,
 
 	} else if (g_str_has_prefix (key, "Keywords")) {
 		locale = as_app_desktop_key_get_locale (key);
+		if (flags & AS_APP_PARSE_FLAG_ONLY_NATIVE_LANGS &&
+		    !g_strv_contains (g_get_language_names (), locale))
+			return TRUE;
 		list = g_key_file_get_locale_string_list (kf,
 							  G_KEY_FILE_DESKTOP_GROUP,
 							  key,
@@ -338,6 +341,9 @@ as_app_parse_file_key (AsApp *app,
 	/* Name[] */
 	} else if (g_str_has_prefix (key, G_KEY_FILE_DESKTOP_KEY_NAME)) {
 		locale = as_app_desktop_key_get_locale (key);
+		if (flags & AS_APP_PARSE_FLAG_ONLY_NATIVE_LANGS &&
+		    !g_strv_contains (g_get_language_names (), locale))
+			return TRUE;
 		tmp = g_key_file_get_locale_string (kf,
 						    G_KEY_FILE_DESKTOP_GROUP,
 						    G_KEY_FILE_DESKTOP_KEY_NAME,
@@ -359,6 +365,9 @@ as_app_parse_file_key (AsApp *app,
 	/* Comment[] */
 	} else if (g_str_has_prefix (key, G_KEY_FILE_DESKTOP_KEY_COMMENT)) {
 		locale = as_app_desktop_key_get_locale (key);
+		if (flags & AS_APP_PARSE_FLAG_ONLY_NATIVE_LANGS &&
+		    !g_strv_contains (g_get_language_names (), locale))
+			return TRUE;
 		tmp = g_key_file_get_locale_string (kf,
 						    G_KEY_FILE_DESKTOP_GROUP,
 						    G_KEY_FILE_DESKTOP_KEY_COMMENT,
@@ -377,6 +386,9 @@ as_app_parse_file_key (AsApp *app,
 			as_app_set_name (app, "C", tmp);
 	} else if (g_str_has_prefix (key, "X-Ubuntu-Software-Center-Name")) {
 		locale = as_app_desktop_key_get_locale (key);
+		if (flags & AS_APP_PARSE_FLAG_ONLY_NATIVE_LANGS &&
+		    !g_strv_contains (g_get_language_names (), locale))
+			return TRUE;
 		tmp = g_key_file_get_locale_string (kf,
 						    G_KEY_FILE_DESKTOP_GROUP,
 						    "X-Ubuntu-Software-Center-Name",

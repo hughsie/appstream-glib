@@ -2669,6 +2669,10 @@ as_store_load_installed (AsStore *store,
 	if (flags & AS_STORE_LOAD_FLAG_ALLOW_VETO)
 		parse_flags |= AS_APP_PARSE_FLAG_ALLOW_VETO;
 
+	/* propagate flag */
+	if (priv->add_flags & AS_STORE_ADD_FLAG_ONLY_NATIVE_LANGS)
+		parse_flags |= AS_APP_PARSE_FLAG_ONLY_NATIVE_LANGS;
+
 	while ((tmp = g_dir_read_name (dir)) != NULL) {
 		AsApp *app_tmp;
 		GPtrArray *icons;
