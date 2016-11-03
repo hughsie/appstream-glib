@@ -1777,6 +1777,7 @@ as_store_from_file_internal (AsStore *store,
 			     GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	AsNodeFromXmlFlags flags = AS_NODE_FROM_XML_FLAG_LITERAL_TEXT;
 	g_autofree gchar *filename = NULL;
 	g_autofree gchar *icon_prefix = NULL;
 	g_autoptr(GError) error_local = NULL;
@@ -1806,10 +1807,9 @@ as_store_from_file_internal (AsStore *store,
 #endif
 
 	/* an AppStream XML file */
-	root = as_node_from_file (file,
-				  AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
-				  cancellable,
-				  &error_local);
+	if (priv->add_flags & AS_STORE_ADD_FLAG_ONLY_NATIVE_LANGS)
+		flags |= AS_NODE_FROM_XML_FLAG_ONLY_NATIVE_LANGS;
+	root = as_node_from_file (file, flags, cancellable, &error_local);
 	if (root == NULL) {
 		g_set_error (error,
 			     AS_STORE_ERROR,
@@ -1951,6 +1951,8 @@ as_store_from_xml (AsStore *store,
 		   const gchar *icon_root,
 		   GError **error)
 {
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	AsNodeFromXmlFlags flags = AS_NODE_FROM_XML_FLAG_LITERAL_TEXT;
 	g_autoptr(GError) error_local = NULL;
 	g_autoptr(AsNode) root = NULL;
 
@@ -1961,9 +1963,10 @@ as_store_from_xml (AsStore *store,
 	if (data[0] == '\0')
 		return TRUE;
 
-	root = as_node_from_xml (data,
-				 AS_NODE_FROM_XML_FLAG_LITERAL_TEXT,
-				 &error_local);
+	/* load XML data */
+	if (priv->add_flags & AS_STORE_ADD_FLAG_ONLY_NATIVE_LANGS)
+		flags |= AS_NODE_FROM_XML_FLAG_ONLY_NATIVE_LANGS;
+	root = as_node_from_xml (data, flags, &error_local);
 	if (root == NULL) {
 		g_set_error (error,
 			     AS_STORE_ERROR,

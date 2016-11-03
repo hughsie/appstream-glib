@@ -1291,6 +1291,7 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 	store = as_store_new ();
 	as_store_set_add_flags (store,
 				AS_STORE_ADD_FLAG_USE_UNIQUE_ID |
+				AS_STORE_ADD_FLAG_ONLY_NATIVE_LANGS |
 				AS_STORE_ADD_FLAG_USE_MERGE_HEURISTIC);
 	if (!as_store_load (store,
 			    AS_STORE_LOAD_FLAG_IGNORE_INVALID |

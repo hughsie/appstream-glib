@@ -61,13 +61,15 @@ typedef enum {
  * @AS_NODE_FROM_XML_FLAG_NONE:			No extra flags to use
  * @AS_NODE_FROM_XML_FLAG_LITERAL_TEXT:		Treat the text as an exact string
  * @AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS:	Retain comments in the XML file
+ * @AS_NODE_FROM_XML_FLAG_ONLY_NATIVE_LANGS:	Only load native languages
  *
  * The flags for converting from XML.
  **/
 typedef enum {
-	AS_NODE_FROM_XML_FLAG_NONE		= 0,	/* Since: 0.1.0 */
-	AS_NODE_FROM_XML_FLAG_LITERAL_TEXT	= 1,	/* Since: 0.1.3 */
-	AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS	= 2,	/* Since: 0.1.6 */
+	AS_NODE_FROM_XML_FLAG_NONE		= 0,		/* Since: 0.1.0 */
+	AS_NODE_FROM_XML_FLAG_LITERAL_TEXT	= 1 << 0,	/* Since: 0.1.3 */
+	AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS	= 1 << 1,	/* Since: 0.1.6 */
+	AS_NODE_FROM_XML_FLAG_ONLY_NATIVE_LANGS	= 1 << 2,	/* Since: 0.6.5 */
 	/*< private >*/
 	AS_NODE_FROM_XML_FLAG_LAST
 } AsNodeFromXmlFlags;

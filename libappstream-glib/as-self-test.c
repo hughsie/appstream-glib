@@ -3814,6 +3814,7 @@ as_test_store_speed_appstream_func (void)
 	for (i = 0; i < loops; i++) {
 		g_autoptr(AsStore) store = NULL;
 		store = as_store_new ();
+		as_store_set_add_flags (store, AS_STORE_ADD_FLAG_ONLY_NATIVE_LANGS);
 		ret = as_store_from_file (store, file, NULL, NULL, &error);
 		g_assert_no_error (error);
 		g_assert (ret);

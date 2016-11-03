@@ -46,7 +46,8 @@ typedef struct
 	GList		*attrs;
 	gchar		*name;		/* only used if tag == AS_TAG_UNKNOWN */
 	gchar		*cdata;
-	gboolean	 cdata_escaped;
+	guint8		 cdata_escaped:1;
+	guint8		 cdata_ignore:1;
 	AsTag		 tag;
 } AsNodeData;
 
@@ -443,6 +444,7 @@ as_node_reflow_text (const gchar *text, gssize text_len)
 typedef struct {
 	AsNode			*current;
 	AsNodeFromXmlFlags	 flags;
+	const gchar * const	*locales;
 } AsNodeToXmlHelper;
 
 /**
@@ -488,6 +490,7 @@ as_node_start_element_cb (GMarkupParseContext *context,
 {
 	AsNodeToXmlHelper *helper = (AsNodeToXmlHelper *) user_data;
 	AsNodeData *data;
+	AsNodeData *data_parent;
 	AsNode *current;
 	gchar *tmp;
 	guint i;
@@ -499,6 +502,19 @@ as_node_start_element_cb (GMarkupParseContext *context,
 		as_node_attr_insert (data,
 				     attribute_names[i],
 				     attribute_values[i]);
+	}
+
+	/* parent node is being ignored */
+	data_parent = helper->current->data;
+	if (data_parent->cdata_ignore)
+		data->cdata_ignore = TRUE;
+
+	/* check if we should ignore the locale */
+	if (helper->flags & AS_NODE_FROM_XML_FLAG_ONLY_NATIVE_LANGS) {
+		const gchar *lang = as_node_attr_lookup (data, "xml:lang");
+		if (lang != NULL && !g_strv_contains (helper->locales, lang))
+			data->cdata_ignore = TRUE;
+
 	}
 
 	/* add the node to the DOM */
@@ -540,6 +556,11 @@ as_node_text_cb (GMarkupParseContext *context,
 	if (text_len == 0)
 		return;
 
+	/* ignoring */
+	data = helper->current->data;
+	if (data->cdata_ignore)
+		return;
+
 	/* all whitespace? */
 	for (i = 0; i < text_len; i++) {
 		if (!g_ascii_isspace(text[i]))
@@ -549,7 +570,6 @@ as_node_text_cb (GMarkupParseContext *context,
 		return;
 
 	/* split up into lines and add each with spaces stripped */
-	data = helper->current->data;
 	if (data->cdata != NULL) {
 		g_set_error (error,
 			     AS_NODE_ERROR,
@@ -649,6 +669,7 @@ as_node_from_xml (const gchar *data,
 	root = as_node_new ();
 	helper.flags = flags;
 	helper.current = root;
+	helper.locales = g_get_language_names ();
 	ctx = g_markup_parse_context_new (&parser,
 					  G_MARKUP_PREFIX_ERROR_POSITION,
 					  &helper,
@@ -784,6 +805,7 @@ as_node_from_file (GFile *file,
 	root = as_node_new ();
 	helper.flags = flags;
 	helper.current = root;
+	helper.locales = g_get_language_names ();
 	ctx = g_markup_parse_context_new (&parser,
 					  G_MARKUP_PREFIX_ERROR_POSITION,
 					  &helper,
