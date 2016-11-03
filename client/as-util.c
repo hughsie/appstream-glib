@@ -1303,6 +1303,13 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 		return FALSE;
 
 	/* prime the search cache */
+	as_store_set_search_match (store,
+				   AS_APP_SEARCH_MATCH_MIMETYPE |
+				   AS_APP_SEARCH_MATCH_PKGNAME |
+				   AS_APP_SEARCH_MATCH_COMMENT |
+				   AS_APP_SEARCH_MATCH_NAME |
+				   AS_APP_SEARCH_MATCH_KEYWORD |
+				   AS_APP_SEARCH_MATCH_ID);
 	as_store_load_search_cache (store);
 
 	/* add matches to an array */

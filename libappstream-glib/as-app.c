@@ -93,6 +93,7 @@ typedef struct
 	AsAppState	 state;
 	AsAppTrustFlags	 trust_flags;
 	AsAppQuirk	 quirk;
+	AsAppSearchMatch search_match;
 	gchar		*icon_path;
 	gchar		*id_filename;
 	gchar		*id;
@@ -116,17 +117,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsApp, as_app, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (as_app_get_instance_private (o))
 
-#define AS_APP_TOKEN_MATCH_NONE		(0u)		/* 0x00 */
-#define AS_APP_TOKEN_MATCH_MIMETYPE	(1u << 0)	/* 0x01 */
-#define AS_APP_TOKEN_MATCH_PKGNAME	(1u << 1)	/* 0x02 */
-#define AS_APP_TOKEN_MATCH_DESCRIPTION	(1u << 2)	/* 0x04 */
-#define AS_APP_TOKEN_MATCH_COMMENT	(1u << 3)	/* 0x08 */
-#define AS_APP_TOKEN_MATCH_NAME		(1u << 4)	/* 0x10 */
-#define AS_APP_TOKEN_MATCH_KEYWORD	(1u << 5)	/* 0x20 */
-#define AS_APP_TOKEN_MATCH_ID		(1u << 6)	/* 0x40 */
-#define AS_APP_TOKEN_MATCH_LAST
-
-typedef guint16 AsAppTokenMatch;
 typedef guint16	AsAppTokenType;	/* big enough for both bitshifts */
 
 /**
@@ -550,6 +540,7 @@ as_app_init (AsApp *app)
 	priv->names = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->urls = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	priv->token_cache = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+	priv->search_match = AS_APP_SEARCH_MATCH_LAST;
 }
 
 static void
@@ -5088,7 +5079,7 @@ as_app_value_tokenize (const gchar *value)
 static void
 as_app_add_token_internal (AsApp *app,
 			   const gchar *value,
-			   AsAppTokenMatch match_flag)
+			   AsAppSearchMatch match_flag)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsAppTokenType *match_pval;
@@ -5128,7 +5119,7 @@ static void
 as_app_add_token (AsApp *app,
 		  const gchar *value,
 		  gboolean allow_split,
-		  AsAppTokenMatch match_flag)
+		  AsAppSearchMatch match_flag)
 {
 	/* add extra tokens for names like x-plane or half-life */
 	if (allow_split && g_strstr_len (value, -1, "-") != NULL) {
@@ -5159,7 +5150,7 @@ as_app_add_tokens (AsApp *app,
 		   const gchar *value,
 		   const gchar *locale,
 		   gboolean allow_split,
-		   AsAppTokenMatch match_flag)
+		   AsAppSearchMatch match_flag)
 {
 	guint i;
 	g_auto(GStrv) values_utf8 = NULL;
@@ -5201,45 +5192,59 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 	guint j;
 
 	/* add all the data we have */
-	if (priv->id_filename != NULL) {
-		as_app_add_token (app, priv->id_filename, FALSE,
-				  AS_APP_TOKEN_MATCH_ID);
+	if (priv->search_match & AS_APP_SEARCH_MATCH_ID) {
+		if (priv->id_filename != NULL) {
+			as_app_add_token (app, priv->id_filename, FALSE,
+					  AS_APP_SEARCH_MATCH_ID);
+		}
 	}
 	locales = g_get_language_names ();
 	for (i = 0; locales[i] != NULL; i++) {
 		if (g_str_has_suffix (locales[i], ".UTF-8"))
 			continue;
-		tmp = as_app_get_name (app, locales[i]);
-		if (tmp != NULL) {
-			as_app_add_tokens (app, tmp, locales[i], TRUE,
-					   AS_APP_TOKEN_MATCH_NAME);
+		if (priv->search_match & AS_APP_SEARCH_MATCH_NAME) {
+			tmp = as_app_get_name (app, locales[i]);
+			if (tmp != NULL) {
+				as_app_add_tokens (app, tmp, locales[i], TRUE,
+						   AS_APP_SEARCH_MATCH_NAME);
+			}
 		}
-		tmp = as_app_get_comment (app, locales[i]);
-		if (tmp != NULL) {
-			as_app_add_tokens (app, tmp, locales[i], TRUE,
-					   AS_APP_TOKEN_MATCH_COMMENT);
+		if (priv->search_match & AS_APP_SEARCH_MATCH_COMMENT) {
+			tmp = as_app_get_comment (app, locales[i]);
+			if (tmp != NULL) {
+				as_app_add_tokens (app, tmp, locales[i], TRUE,
+						   AS_APP_SEARCH_MATCH_COMMENT);
+			}
 		}
-		tmp = as_app_get_description (app, locales[i]);
-		if (tmp != NULL) {
-			as_app_add_tokens (app, tmp, locales[i], FALSE,
-					   AS_APP_TOKEN_MATCH_DESCRIPTION);
-		}
-		array = as_app_get_keywords (app, locales[i]);
-		if (array != NULL) {
-			for (j = 0; j < array->len; j++) {
-				tmp = g_ptr_array_index (array, j);
+		if (priv->search_match & AS_APP_SEARCH_MATCH_DESCRIPTION) {
+			tmp = as_app_get_description (app, locales[i]);
+			if (tmp != NULL) {
 				as_app_add_tokens (app, tmp, locales[i], FALSE,
-						   AS_APP_TOKEN_MATCH_KEYWORD);
+						   AS_APP_SEARCH_MATCH_DESCRIPTION);
+			}
+		}
+		if (priv->search_match & AS_APP_SEARCH_MATCH_KEYWORD) {
+			array = as_app_get_keywords (app, locales[i]);
+			if (array != NULL) {
+				for (j = 0; j < array->len; j++) {
+					tmp = g_ptr_array_index (array, j);
+					as_app_add_tokens (app, tmp, locales[i], FALSE,
+							   AS_APP_SEARCH_MATCH_KEYWORD);
+				}
 			}
 		}
 	}
-	for (i = 0; i < priv->mimetypes->len; i++) {
-		tmp = g_ptr_array_index (priv->mimetypes, i);
-		as_app_add_token (app, tmp, FALSE, AS_APP_TOKEN_MATCH_MIMETYPE);
+	if (priv->search_match & AS_APP_SEARCH_MATCH_MIMETYPE) {
+		for (i = 0; i < priv->mimetypes->len; i++) {
+			tmp = g_ptr_array_index (priv->mimetypes, i);
+			as_app_add_token (app, tmp, FALSE, AS_APP_SEARCH_MATCH_MIMETYPE);
+		}
 	}
-	for (i = 0; i < priv->pkgnames->len; i++) {
-		tmp = g_ptr_array_index (priv->pkgnames, i);
-		as_app_add_token (app, tmp, FALSE, AS_APP_TOKEN_MATCH_PKGNAME);
+	if (priv->search_match & AS_APP_SEARCH_MATCH_PKGNAME) {
+		for (i = 0; i < priv->pkgnames->len; i++) {
+			tmp = g_ptr_array_index (priv->pkgnames, i);
+			as_app_add_token (app, tmp, FALSE, AS_APP_SEARCH_MATCH_PKGNAME);
+		}
 	}
 }
 
@@ -5274,7 +5279,7 @@ as_app_search_matches (AsApp *app, const gchar *search)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsAppTokenType *match_pval;
 	GList *l;
-	AsAppTokenMatch result = 0;
+	AsAppSearchMatch result = 0;
 	g_autoptr(GList) keys = NULL;
 	g_autofree gchar *search_stem = NULL;
 
@@ -5895,6 +5900,16 @@ as_app_set_search_blacklist (AsApp *app, GHashTable *search_blacklist)
 	if (priv->search_blacklist != NULL)
 		g_hash_table_unref (priv->search_blacklist);
 	priv->search_blacklist = g_hash_table_ref (search_blacklist);
+}
+
+/**
+ * as_app_set_search_match: (skip)
+ **/
+void
+as_app_set_search_match (AsApp *app, AsAppSearchMatch search_match)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	priv->search_match = search_match;
 }
 
 /**

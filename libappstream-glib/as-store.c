@@ -76,6 +76,7 @@ typedef struct
 	AsStoreAddFlags		 add_flags;
 	AsStoreWatchFlags	 watch_flags;
 	AsStoreProblems		 problems;
+	AsAppSearchMatch	 search_match;
 	guint32			 filter;
 	guint			 changed_block_refcnt;
 	gboolean		 is_pending_changed_signal;
@@ -1223,6 +1224,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 	/* add helper objects */
 	as_app_set_stemmer (app, priv->stemmer);
 	as_app_set_search_blacklist (app, priv->search_blacklist);
+	as_app_set_search_match (app, priv->search_match);
 
 	/* added */
 	g_signal_emit (store, signals[SIGNAL_APP_ADDED], 0, app);
@@ -3345,6 +3347,23 @@ as_store_create_search_blacklist (AsStore *store)
 				     as_stemmer_process (priv->stemmer, blacklist[i]),
 				     GUINT_TO_POINTER (1));
 	}
+}
+
+/**
+ * as_store_set_search_match:
+ * @store: a #AsStore instance.
+ * @search_match: the API version
+ *
+ * Sets the token match fields. The bitfield given here is used to choose what
+ * is included in the token cache.
+ *
+ * Since: 0.6.5
+ **/
+void
+as_store_set_search_match (AsStore *store, AsAppSearchMatch search_match)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	priv->search_match = search_match;
 }
 
 static void

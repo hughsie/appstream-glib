@@ -117,6 +117,8 @@ void		 as_app_set_stemmer		(AsApp		*app,
 						 AsStemmer	*stemmer);
 void		 as_app_set_search_blacklist	(AsApp		*app,
 						 GHashTable	*search_blacklist);
+void		 as_app_set_search_match	(AsApp		*app,
+						 AsAppSearchMatch search_match);
 
 G_END_DECLS
 
