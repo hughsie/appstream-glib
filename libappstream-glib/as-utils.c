@@ -1272,15 +1272,15 @@ as_utils_install_filename (AsUtilsLocation location,
 gboolean
 as_utils_search_token_valid (const gchar *token)
 {
-	if (strlen (token) < 3)
-		return FALSE;
-	if (g_strstr_len (token, -1, "<") != NULL)
-		return FALSE;
-	if (g_strstr_len (token, -1, ">") != NULL)
-		return FALSE;
-	if (g_strstr_len (token, -1, "(") != NULL)
-		return FALSE;
-	if (g_strstr_len (token, -1, ")") != NULL)
+	guint i;
+	for (i = 0; token[i] != '\0'; i++) {
+		if (token[i] == '<' ||
+		    token[i] == '>' ||
+		    token[i] == '(' ||
+		    token[i] == ')')
+			return FALSE;
+	}
+	if (i < 3)
 		return FALSE;
 	return TRUE;
 }
