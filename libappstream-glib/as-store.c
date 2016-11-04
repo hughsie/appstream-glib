@@ -3375,6 +3375,7 @@ as_store_init (AsStore *store)
 	priv->api_version = AS_API_VERSION_NEWEST;
 	priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->watch_flags = AS_STORE_WATCH_FLAG_NONE;
+	priv->search_match = AS_APP_SEARCH_MATCH_LAST;
 	priv->search_blacklist = g_hash_table_new_full (g_str_hash,
 							g_str_equal,
 							g_free,
