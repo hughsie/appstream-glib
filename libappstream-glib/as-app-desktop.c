@@ -189,7 +189,6 @@ as_app_parse_file_key (AsApp *app,
 		       AsAppParseFlags flags,
 		       GError **error)
 {
-	gchar *dot = NULL;
 	guint i;
 	guint j;
 	g_autofree gchar *locale = NULL;

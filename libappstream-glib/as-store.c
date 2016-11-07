@@ -2494,7 +2494,6 @@ as_store_load_app_info_file (AsStore *store,
 			     GCancellable *cancellable,
 			     GError **error)
 {
-	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_autoptr(GFile) file = NULL;
 
 	/* ignore large compressed files */
