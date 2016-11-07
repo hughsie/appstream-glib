@@ -34,6 +34,7 @@ struct _AsProfile
 	GThread		*unthreaded;
 	guint		 autodump_id;
 	guint		 autoprune_duration;
+	guint		 duration_min;
 };
 
 typedef struct {
@@ -174,7 +175,7 @@ as_profile_dump_safe (AsProfile *profile)
 		const gchar *printable;
 		item = g_ptr_array_index (profile->archived, i);
 		time_ms = (item->time_stop - item->time_start) / 1000;
-		if (time_ms < 5)
+		if (time_ms < profile->duration_min)
 			continue;
 
 		/* print a timechart of what we've done */
@@ -398,6 +399,21 @@ as_profile_set_autoprune (AsProfile *profile, guint duration)
 }
 
 /**
+ * as_profile_set_duration_min:
+ * @profile: A #AsProfile
+ * @duration_min: A time in ms
+ *
+ * Sets the smallest recordable task duration.
+ *
+ * Since: 0.6.5
+ **/
+void
+as_profile_set_duration_min (AsProfile *profile, guint duration_min)
+{
+	profile->duration_min = duration_min;
+}
+
+/**
  * as_profile_dump:
  * @profile: A #AsProfile
  *
@@ -463,6 +479,7 @@ as_profile_class_init (AsProfileClass *klass)
 static void
 as_profile_init (AsProfile *profile)
 {
+	profile->duration_min = 5;
 	profile->current = g_ptr_array_new ();
 	profile->unthreaded = g_thread_self ();
 	profile->archived = g_ptr_array_new_with_free_func ((GDestroyNotify) as_profile_item_free);

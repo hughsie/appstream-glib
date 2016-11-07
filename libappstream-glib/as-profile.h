@@ -49,6 +49,8 @@ void		 as_profile_set_autodump	(AsProfile	*profile,
 						 guint		 delay);
 void		 as_profile_set_autoprune	(AsProfile	*profile,
 						 guint		 duration);
+void		 as_profile_set_duration_min	(AsProfile	*profile,
+						 guint		 duration_min);
 void		 as_profile_task_set_threaded	(AsProfileTask	*ptask,
 						 gboolean	 threaded);
 void		 as_profile_task_free		(AsProfileTask	*ptask);
