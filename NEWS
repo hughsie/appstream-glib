@@ -1,3 +1,24 @@
+Version 0.6.5
+~~~~~~~~~~~~~
+Released: 2016-11-07
+
+New Features:
+ - Add app-removed, app-added and app-changed signals to AsStore (Richard Hughes)
+ - Add as_store_load_search_cache() (Richard Hughes)
+ - Add a 'watch' command to appstream-util (Richard Hughes)
+ - Allow only loading native languages when parsing AppStream (Richard Hughes)
+ - Allow the client to control what search fields are indexed (Richard Hughes)
+
+Bugfixes:
+ - Always copy the state when replacing AppData with AppStream (Richard Hughes)
+ - Do not sent a REMOVED signal when deleting a transient temp file (Richard Hughes)
+ - Ensure the component scope is set when loading yaml files (Richard Hughes)
+ - Handle files being moved into monitored AppStream directories (Richard Hughes)
+ - Load the search token blacklist into a hash table (Richard Hughes)
+ - Monitor missing AppStream directories (Richard Hughes)
+ - Only transliterate when the locale requires it (Richard Hughes)
+ - Process file changes when an attribute changes (Joaquim Rocha)
+
 Version 0.6.4
 ~~~~~~~~~~~~~
 Released: 2016-10-12

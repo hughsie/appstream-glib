@@ -42,6 +42,8 @@ MAINTAINERCLEANFILES =					\
 	po/Rules-quot					\
 	po/*.sed					\
 	po/*.sin					\
+	po/*.po~					\
+	.zanata-cache					\
 	test-driver
 
 EXTRA_DIST =						\
