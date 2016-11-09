@@ -444,8 +444,10 @@ asb_utils_write_archive (const gchar *filename,
 		archive_entry_set_perm (entry, 0644);
 		archive_write_header (a, entry);
 		ret = g_file_get_contents (filename_full, &data, &len, error);
-		if (!ret)
-			goto out;
+		if (!ret) {
+			archive_entry_free (entry);
+			break;
+		}
 		archive_write_data (a, data, len);
 		archive_entry_free (entry);
 	}
