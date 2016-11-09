@@ -435,7 +435,8 @@ asb_utils_write_archive (const gchar *filename,
 
 		tmp = g_ptr_array_index (files, i);
 		filename_full = g_build_filename (path_orig, tmp, NULL);
-		stat (filename_full, &st);
+		if (stat (filename_full, &st) != 0)
+			continue;
 		entry = archive_entry_new ();
 		archive_entry_set_pathname (entry, tmp);
 		archive_entry_set_size (entry, st.st_size);
