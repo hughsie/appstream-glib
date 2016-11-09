@@ -3159,13 +3159,13 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	gboolean is_default;
 	gboolean ret = TRUE;
 	SoupStatus status;
-	SoupURI *uri = NULL;
 	g_autofree gchar *basename = NULL;
 	g_autofree gchar *cache_filename = NULL;
 	g_autoptr(AsImage) im = NULL;
 	g_autoptr(AsScreenshot) ss = NULL;
 	g_autoptr(SoupMessage) msg = NULL;
 	g_autoptr(SoupSession) session = NULL;
+	g_autoptr(SoupURI) uri = NULL;
 
 	/* fonts screenshots are auto-generated */
 	if (as_app_get_kind (app) == AS_APP_KIND_FONT) {
@@ -3202,24 +3202,22 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	} else {
 		uri = soup_uri_new (url);
 		if (uri == NULL) {
-			ret = FALSE;
 			g_set_error (error,
 				     AS_ERROR,
 				     AS_ERROR_FAILED,
 				     "Could not parse '%s' as a URL", url);
-			goto out;
+			return FALSE;
 		}
 		msg = soup_message_new_from_uri (SOUP_METHOD_GET, uri);
 		as_util_app_log (app, "Downloading %s", url);
 		status = soup_session_send_message (session, msg);
 		if (status != SOUP_STATUS_OK) {
-			ret = FALSE;
 			g_set_error (error,
 				     AS_ERROR,
 				     AS_ERROR_FAILED,
 				     "Downloading failed: %s",
 				     soup_status_get_phrase (status));
-			goto out;
+			return FALSE;
 		}
 
 		/* save new file */
@@ -3228,7 +3226,7 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 					   (gssize) msg->response_body->length,
 					   error);
 		if (!ret)
-			goto out;
+			return FALSE;
 		as_util_app_log (app, "Saved to cache %s", cache_filename);
 	}
 
@@ -3244,18 +3242,12 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	as_app_add_screenshot (app, ss);
 
 	/* mirror the filename */
-	ret = as_util_mirror_screenshots_app_file (app,
-						   ss,
-						   cache_filename,
-						   mirror_uri,
-						   output_dir,
-						   error);
-	if (!ret)
-		goto out;
-out:
-	if (uri != NULL)
-		soup_uri_free (uri);
-	return ret;
+	return as_util_mirror_screenshots_app_file (app,
+						    ss,
+						    cache_filename,
+						    mirror_uri,
+						    output_dir,
+						    error);
 }
 
 static gboolean
