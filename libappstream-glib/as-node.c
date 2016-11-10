@@ -495,14 +495,8 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	gchar *tmp;
 	guint i;
 
-	/* create the new node data */
+	/* check if we should ignore the locale */
 	data = g_slice_new0 (AsNodeData);
-	as_node_data_set_name (data, element_name, AS_NODE_INSERT_FLAG_NONE);
-	for (i = 0; attribute_names[i] != NULL; i++) {
-		as_node_attr_insert (data,
-				     attribute_names[i],
-				     attribute_values[i]);
-	}
 
 	/* parent node is being ignored */
 	data_parent = helper->current->data;
@@ -510,11 +504,25 @@ as_node_start_element_cb (GMarkupParseContext *context,
 		data->cdata_ignore = TRUE;
 
 	/* check if we should ignore the locale */
-	if (helper->flags & AS_NODE_FROM_XML_FLAG_ONLY_NATIVE_LANGS) {
-		const gchar *lang = as_node_attr_lookup (data, "xml:lang");
-		if (lang != NULL && !g_strv_contains (helper->locales, lang))
-			data->cdata_ignore = TRUE;
+	if (!data->cdata_ignore &&
+	    helper->flags & AS_NODE_FROM_XML_FLAG_ONLY_NATIVE_LANGS) {
+		for (i = 0; attribute_names[i] != NULL; i++) {
+			if (g_strcmp0 (attribute_names[i], "xml:lang") == 0) {
+				const gchar *lang = attribute_values[i];
+				if (lang != NULL && !g_strv_contains (helper->locales, lang))
+					data->cdata_ignore = TRUE;
+			}
+		}
+	}
 
+	/* create the new node data */
+	if (!data->cdata_ignore) {
+		as_node_data_set_name (data, element_name, AS_NODE_INSERT_FLAG_NONE);
+		for (i = 0; attribute_names[i] != NULL; i++) {
+			as_node_attr_insert (data,
+					     attribute_names[i],
+					     attribute_values[i]);
+		}
 	}
 
 	/* add the node to the DOM */
