@@ -541,6 +541,8 @@ as_markup_convert_full (const gchar *markup,
 	for (tmp = root->children; tmp != NULL; tmp = tmp->next) {
 
 		tag = as_node_get_name (tmp);
+		if (g_strcmp0 (tag, "unknown") == 0)
+			continue;
 		if (g_strcmp0 (tag, "p") == 0) {
 			as_markup_render_para (str, format, as_node_get_data (tmp));
 			continue;
@@ -552,6 +554,8 @@ as_markup_convert_full (const gchar *markup,
 			as_markup_render_ul_start (str, format);
 			for (tmp_c = tmp->children; tmp_c != NULL; tmp_c = tmp_c->next) {
 				tag_c = as_node_get_name (tmp_c);
+				if (g_strcmp0 (tag_c, "unknown") == 0)
+					continue;
 				if (g_strcmp0 (tag_c, "li") == 0) {
 					as_markup_render_li (str, format,
 							     as_node_get_data (tmp_c));
