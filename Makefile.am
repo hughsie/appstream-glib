@@ -81,6 +81,12 @@ DISTCHECK_CONFIGURE_FLAGS =				\
 	--enable-builder				\
 	--with-bashcompletiondir=/${prefix}/share/bash-completion/completions
 
+massif:
+	make && \
+	time ./client/appstream-util search gimp --help > /dev/null && \
+	valgrind --massif-out-file=massif.out --tool=massif ./client/.libs/lt-appstream-util search gimp --profile && \
+	ms_print massif.out | head -n 30
+
 .PHONY: ChangeLog
 
 -include $(top_srcdir)/git.mk
