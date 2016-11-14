@@ -54,9 +54,11 @@ typedef struct
 	};
 	union {
 		AsNodeRoot	*root;	/* only used if is_root_node = TRUE */
+		const gchar	*cdata_const; /* only if is_cdata_const = TRUE */
 		gchar		*cdata;
 	};
 	guint8			 is_root_node:1;
+	guint8			 is_cdata_const:1;
 	guint8			 cdata_escaped:1;
 	guint8			 cdata_ignore:1;
 	guint8			 tag_is_valid:1;
@@ -161,7 +163,8 @@ as_node_destroy_node_cb (AsNode *node, gpointer user_data)
 		g_hash_table_unref (data->root->interned_hash);
 		g_free (data->root);
 	} else {
-		g_free (data->cdata);
+		if (!data->is_cdata_const)
+			g_free (data->cdata);
 	}
 	g_list_free_full (data->attrs, (GDestroyNotify) as_node_attr_free);
 	g_slice_free (AsNodeData, data);
@@ -220,12 +223,36 @@ as_node_string_replace_inplace (gchar *text,
 }
 
 static void
+as_node_cdata_to_heap (AsNodeData *data)
+{
+	if (!data->is_cdata_const)
+		return;
+	data->cdata = g_strdup (data->cdata);
+	data->is_cdata_const = FALSE;
+}
+
+static void
+as_node_cdata_to_intern (AsNode *root, AsNodeData *data)
+{
+	AsNodeRoot *root_data = ((AsNodeData *)root->data)->root;
+	const gchar *tmp;
+	if (data->is_cdata_const)
+		return;
+	tmp = as_node_intern (root_data->interned_hash, data->cdata);
+	g_free (data->cdata);
+	data->cdata_const = tmp;
+	data->is_cdata_const = TRUE;
+}
+
+static void
 as_node_cdata_to_raw (AsNodeData *data)
 {
 	if (data->is_root_node)
 		return;
 	if (!data->cdata_escaped)
 		return;
+	if (data->is_cdata_const)
+		as_node_cdata_to_heap (data);
 	as_node_string_replace_inplace (data->cdata, "&amp;", '&');
 	as_node_string_replace_inplace (data->cdata, "&lt;", '<');
 	as_node_string_replace_inplace (data->cdata, "&gt;", '>');
@@ -642,6 +669,32 @@ as_node_text_cb (GMarkupParseContext *context,
 		data->cdata = g_strndup (text, text_len);
 	} else {
 		data->cdata = as_node_reflow_text (text, (gssize) text_len);
+	}
+
+	/* intern commonly duplicated tag values and save a bit of memory */
+	if (data->tag_is_valid && data->cdata != NULL) {
+		AsNode *root = g_node_get_root (helper->current);
+		switch (data->tag) {
+		case AS_TAG_CATEGORY:
+		case AS_TAG_COMPULSORY_FOR_DESKTOP:
+		case AS_TAG_CONTENT_ATTRIBUTE:
+		case AS_TAG_DEVELOPER_NAME:
+		case AS_TAG_EXTENDS:
+		case AS_TAG_ICON:
+		case AS_TAG_ID:
+		case AS_TAG_KUDO:
+		case AS_TAG_LANG:
+		case AS_TAG_METADATA_LICENSE:
+		case AS_TAG_MIMETYPE:
+		case AS_TAG_PROJECT_GROUP:
+		case AS_TAG_PROJECT_LICENSE:
+		case AS_TAG_SOURCE_PKGNAME:
+		case AS_TAG_URL:
+			as_node_cdata_to_intern (root, data);
+			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -1129,8 +1182,12 @@ as_node_take_data (const AsNode *node)
 	if (data->cdata == NULL || data->cdata[0] == '\0')
 		return NULL;
 	as_node_cdata_to_raw (data);
-	tmp = data->cdata;
-	data->cdata = NULL;
+	if (data->is_cdata_const) {
+		tmp = g_strdup (data->cdata);
+	} else {
+		tmp = data->cdata;
+		data->cdata = NULL;
+	}
 	return tmp;
 }
 
