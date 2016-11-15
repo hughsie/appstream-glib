@@ -42,7 +42,8 @@
 #include "as-utils-private.h"
 
 typedef struct {
-	GHashTable		*interned_hash;
+	GHashTable		*intern_attr;
+	GHashTable		*intern_name;
 } AsNodeRoot;
 
 typedef struct
@@ -50,18 +51,20 @@ typedef struct
 	GList			*attrs;
 	union {
 		AsTag		 tag;
-		gchar		*name;	/* only used if tag_is_valid = FALSE */
+		const gchar	*name_const;	/* only if is_name_const = TRUE */
+		gchar		*name;		/* only if is_tag_valid = FALSE */
 	};
 	union {
-		AsNodeRoot	*root;	/* only used if is_root_node = TRUE */
-		const gchar	*cdata_const; /* only if is_cdata_const = TRUE */
+		AsNodeRoot	*root;		/* only if is_root_node = TRUE */
+		const gchar	*cdata_const;	/* only if is_cdata_const = TRUE */
 		gchar		*cdata;
 	};
 	guint8			 is_root_node:1;
 	guint8			 is_cdata_const:1;
-	guint8			 cdata_escaped:1;
-	guint8			 cdata_ignore:1;
-	guint8			 tag_is_valid:1;
+	guint8			 is_name_const:1;
+	guint8			 is_cdata_escaped:1;
+	guint8			 is_cdata_ignore:1;
+	guint8			 is_tag_valid:1;
 } AsNodeData;
 
 typedef struct {
@@ -84,13 +87,17 @@ as_node_new (void)
 	AsNodeData *data;
 	data = g_slice_new0 (AsNodeData);
 	data->tag = AS_TAG_LAST;
-	data->tag_is_valid = TRUE;
+	data->is_tag_valid = TRUE;
 	data->is_root_node = TRUE;
 	data->root = g_new0 (AsNodeRoot, 1);
-	data->root->interned_hash = g_hash_table_new_full (g_str_hash,
-							   g_str_equal,
-							   g_free,
-							   NULL);
+	data->root->intern_attr = g_hash_table_new_full (g_str_hash,
+							 g_str_equal,
+							 g_free,
+							 NULL);
+	data->root->intern_name = g_hash_table_new_full (g_str_hash,
+							 g_str_equal,
+							 g_free,
+							 NULL);
 	return g_node_new (data);
 }
 
@@ -121,8 +128,8 @@ as_node_attr_insert (AsNode *root,
 	AsNodeRoot *root_data = ((AsNodeData *)root->data)->root;
 
 	attr = g_slice_new0 (AsNodeAttr);
-	attr->key = as_node_intern (root_data->interned_hash, key);
-	attr->value = as_node_intern (root_data->interned_hash, value);
+	attr->key = as_node_intern (root_data->intern_attr, key);
+	attr->value = as_node_intern (root_data->intern_attr, value);
 	data->attrs = g_list_prepend (data->attrs, attr);
 	return attr;
 }
@@ -157,10 +164,11 @@ as_node_destroy_node_cb (AsNode *node, gpointer user_data)
 	AsNodeData *data = node->data;
 	if (data == NULL)
 		return FALSE;
-	if (!data->tag_is_valid)
+	if (!data->is_tag_valid && !data->is_name_const)
 		g_free (data->name);
 	if (data->is_root_node) {
-		g_hash_table_unref (data->root->interned_hash);
+		g_hash_table_unref (data->root->intern_attr);
+		g_hash_table_unref (data->root->intern_name);
 		g_free (data->root);
 	} else {
 		if (!data->is_cdata_const)
@@ -238,7 +246,7 @@ as_node_cdata_to_intern (AsNode *root, AsNodeData *data)
 	const gchar *tmp;
 	if (data->is_cdata_const)
 		return;
-	tmp = as_node_intern (root_data->interned_hash, data->cdata);
+	tmp = as_node_intern (root_data->intern_attr, data->cdata);
 	g_free (data->cdata);
 	data->cdata_const = tmp;
 	data->is_cdata_const = TRUE;
@@ -249,14 +257,14 @@ as_node_cdata_to_raw (AsNodeData *data)
 {
 	if (data->is_root_node)
 		return;
-	if (!data->cdata_escaped)
+	if (!data->is_cdata_escaped)
 		return;
 	if (data->is_cdata_const)
 		as_node_cdata_to_heap (data);
 	as_node_string_replace_inplace (data->cdata, "&amp;", '&');
 	as_node_string_replace_inplace (data->cdata, "&lt;", '<');
 	as_node_string_replace_inplace (data->cdata, "&gt;", '>');
-	data->cdata_escaped = FALSE;
+	data->is_cdata_escaped = FALSE;
 }
 
 static void
@@ -265,7 +273,7 @@ as_node_cdata_to_escaped (AsNodeData *data)
 	GString *str;
 	if (data->is_root_node)
 		return;
-	if (data->cdata_escaped)
+	if (data->is_cdata_escaped)
 		return;
 	str = g_string_new (data->cdata);
 	g_free (data->cdata);
@@ -273,7 +281,7 @@ as_node_cdata_to_escaped (AsNodeData *data)
 	as_utils_string_replace (str, "<", "&lt;");
 	as_utils_string_replace (str, ">", "&gt;");
 	data->cdata = g_string_free (str, FALSE);
-	data->cdata_escaped = TRUE;
+	data->is_cdata_escaped = TRUE;
 }
 
 static void
@@ -324,28 +332,33 @@ as_node_get_attr_string (AsNodeData *data)
 static const gchar *
 as_tag_data_get_name (AsNodeData *data)
 {
-	if (data->tag_is_valid)
+	if (data->is_tag_valid)
 		return as_tag_to_string (data->tag);
 	return data->name;
 }
 
 static void
-as_node_data_set_name (AsNodeData *data, const gchar *name, AsNodeInsertFlags flags)
+as_node_data_set_name (AsNode *root,
+		       AsNodeData *data,
+		       const gchar *name,
+		       AsNodeInsertFlags flags)
 {
 	if ((flags & AS_NODE_INSERT_FLAG_MARK_TRANSLATABLE) == 0) {
 		/* only store the name if the tag is not recognised */
 		AsTag tag = as_tag_from_string (name);
 		if (tag == AS_TAG_UNKNOWN) {
-			data->name = g_strdup (name);
-			data->tag_is_valid = FALSE;
+			AsNodeRoot *root_data = ((AsNodeData *)root->data)->root;
+			data->name_const = as_node_intern (root_data->intern_name, name);
+			data->is_name_const = TRUE;
+			data->is_tag_valid = FALSE;
 		} else {
 			data->tag = tag;
-			data->tag_is_valid = TRUE;
+			data->is_tag_valid = TRUE;
 		}
 	} else {
 		/* always store the translated tag */
 		data->name = g_strdup_printf ("_%s", name);
-		data->tag_is_valid = FALSE;
+		data->is_tag_valid = FALSE;
 	}
 }
 
@@ -576,26 +589,28 @@ as_node_start_element_cb (GMarkupParseContext *context,
 
 	/* parent node is being ignored */
 	data_parent = helper->current->data;
-	if (data_parent->cdata_ignore)
-		data->cdata_ignore = TRUE;
+	if (data_parent->is_cdata_ignore)
+		data->is_cdata_ignore = TRUE;
 
 	/* check if we should ignore the locale */
-	if (!data->cdata_ignore &&
+	if (!data->is_cdata_ignore &&
 	    helper->flags & AS_NODE_FROM_XML_FLAG_ONLY_NATIVE_LANGS) {
 		for (i = 0; attribute_names[i] != NULL; i++) {
 			if (g_strcmp0 (attribute_names[i], "xml:lang") == 0) {
 				const gchar *lang = attribute_values[i];
 				if (lang != NULL && !g_strv_contains (helper->locales, lang))
-					data->cdata_ignore = TRUE;
+					data->is_cdata_ignore = TRUE;
 			}
 		}
 	}
 
 	/* create the new node data */
-	if (!data->cdata_ignore) {
+	if (!data->is_cdata_ignore) {
 		AsNode *root = g_node_get_root (helper->current);
-		g_assert (root != NULL);
-		as_node_data_set_name (data, element_name, AS_NODE_INSERT_FLAG_NONE);
+		as_node_data_set_name (root,
+				       data,
+				       element_name,
+				       AS_NODE_INSERT_FLAG_NONE);
 		for (i = 0; attribute_names[i] != NULL; i++) {
 			as_node_attr_insert (root, data,
 					     attribute_names[i],
@@ -644,7 +659,7 @@ as_node_text_cb (GMarkupParseContext *context,
 
 	/* ignoring */
 	data = helper->current->data;
-	if (data->cdata_ignore)
+	if (data->is_cdata_ignore)
 		return;
 
 	/* all whitespace? */
@@ -672,7 +687,7 @@ as_node_text_cb (GMarkupParseContext *context,
 	}
 
 	/* intern commonly duplicated tag values and save a bit of memory */
-	if (data->tag_is_valid && data->cdata != NULL) {
+	if (data->is_tag_valid && data->cdata != NULL) {
 		AsNode *root = g_node_get_root (helper->current);
 		switch (data->tag) {
 		case AS_TAG_CATEGORY:
@@ -1023,6 +1038,7 @@ void
 as_node_set_name (AsNode *node, const gchar *name)
 {
 	AsNodeData *data;
+	AsNode *root = g_node_get_root (node);
 
 	g_return_if_fail (node != NULL);
 
@@ -1033,11 +1049,12 @@ as_node_set_name (AsNode *node, const gchar *name)
 		return;
 
 	/* overwrite */
-	if (!data->tag_is_valid) {
-		g_free (data->name);
+	if (!data->is_tag_valid) {
+		if (!data->is_name_const)
+			g_free (data->name);
 		data->name = NULL;
 	}
-	as_node_data_set_name (data, name, AS_NODE_INSERT_FLAG_NONE);
+	as_node_data_set_name (root, data, name, AS_NODE_INSERT_FLAG_NONE);
 }
 
 /**
@@ -1105,7 +1122,7 @@ as_node_get_tag (const AsNode *node)
 		return AS_TAG_UNKNOWN;
 
 	/* try to match with a fallback */
-	if (!data->tag_is_valid) {
+	if (!data->is_tag_valid) {
 		tmp = as_tag_data_get_name (data);
 		return as_tag_from_string_full (tmp, AS_TAG_FLAG_USE_FALLBACKS);
 	}
@@ -1140,7 +1157,7 @@ as_node_set_data (AsNode *node,
 		return;
 	g_free (data->cdata);
 	data->cdata = g_strdup (cdata);
-	data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
+	data->is_cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 }
 
 /**
@@ -1513,14 +1530,14 @@ as_node_insert (AsNode *parent,
 	g_return_val_if_fail (name != NULL, NULL);
 
 	data = g_slice_new0 (AsNodeData);
-	as_node_data_set_name (data, name, insert_flags);
+	as_node_data_set_name (root, data, name, insert_flags);
 	if (cdata != NULL) {
 		if (insert_flags & AS_NODE_INSERT_FLAG_BASE64_ENCODED)
 			data->cdata = as_node_insert_line_breaks (cdata, 76);
 		else
 			data->cdata = g_strdup (cdata);
 	}
-	data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
+	data->is_cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 
 	/* process the attrs valist */
 	va_start (args, insert_flags);
@@ -1576,13 +1593,13 @@ as_node_insert_localized (AsNode *parent,
 	if (value_c == NULL)
 		return;
 	data = g_slice_new0 (AsNodeData);
-	as_node_data_set_name (data, name, insert_flags);
+	as_node_data_set_name (root, data, name, insert_flags);
 	if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
 		data->cdata = as_markup_convert_simple (value_c, NULL);
-		data->cdata_escaped = FALSE;
+		data->is_cdata_escaped = FALSE;
 	} else {
 		data->cdata = g_strdup (value_c);
-		data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
+		data->is_cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 	}
 	g_node_insert_data (parent, -1, data);
 
@@ -1601,13 +1618,13 @@ as_node_insert_localized (AsNode *parent,
 			continue;
 		data = g_slice_new0 (AsNodeData);
 		as_node_attr_insert (root, data, "xml:lang", key);
-		as_node_data_set_name (data, name, insert_flags);
+		as_node_data_set_name (root, data, name, insert_flags);
 		if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
 			data->cdata = as_markup_convert_simple (value, NULL);
-			data->cdata_escaped = FALSE;
+			data->is_cdata_escaped = FALSE;
 		} else {
 			data->cdata = g_strdup (value);
-			data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
+			data->is_cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 		}
 		g_node_insert_data (parent, -1, data);
 	}
@@ -1648,9 +1665,9 @@ as_node_insert_hash (AsNode *parent,
 		key = l->data;
 		value = g_hash_table_lookup (hash, key);
 		data = g_slice_new0 (AsNodeData);
-		as_node_data_set_name (data, name, insert_flags);
+		as_node_data_set_name (root, data, name, insert_flags);
 		data->cdata = g_strdup (!swapped ? value : key);
-		data->cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
+		data->is_cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 		if (!swapped) {
 			if (key != NULL && key[0] != '\0')
 				as_node_attr_insert (root, data, attr_key, key);
