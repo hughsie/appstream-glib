@@ -124,6 +124,8 @@ libappstream_glib_la_SOURCES =					\
 	as-profile.h						\
 	as-provide.c						\
 	as-provide-private.h					\
+	as-ref-string.c						\
+	as-ref-string.h						\
 	as-release.c						\
 	as-release-private.h					\
 	as-review.c						\

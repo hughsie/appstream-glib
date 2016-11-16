@@ -41,6 +41,7 @@
 #include "as-node-private.h"
 #include "as-problem.h"
 #include "as-provide-private.h"
+#include "as-ref-string.h"
 #include "as-release-private.h"
 #include "as-suggest-private.h"
 #include "as-screenshot-private.h"
@@ -5045,6 +5046,32 @@ as_test_utils_unique_id_hash_safe_func (void)
 	g_assert (found == NULL);
 }
 
+static void
+as_test_ref_string_func (void)
+{
+	const gchar *tmp;
+	AsRefString *rstr;
+	AsRefString *rstr2;
+
+	/* basic refcounting */
+	rstr = as_ref_string_new ("test");
+	g_assert (rstr != NULL);
+	g_assert_cmpstr (rstr, ==, "test");
+	g_assert (as_ref_string_ref (rstr) != NULL);
+	g_assert (as_ref_string_unref (rstr) != NULL);
+	g_assert (as_ref_string_unref (rstr) == NULL);
+
+	/* adopting const string */
+	tmp = "test";
+	rstr = as_ref_string_new (tmp);
+	g_assert_cmpstr (rstr, ==, tmp);
+	rstr2 = as_ref_string_new (rstr);
+	g_assert_cmpstr (rstr2, ==, tmp);
+	g_assert (rstr == rstr2);
+	g_assert (as_ref_string_unref (rstr) != NULL);
+	g_assert (as_ref_string_unref (rstr2) == NULL);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -5054,6 +5081,7 @@ main (int argc, char **argv)
 	g_log_set_fatal_mask (NULL, G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL);
 
 	/* tests go here */
+	g_test_add_func ("/AppStream/ref-string", as_test_ref_string_func);
 	g_test_add_func ("/AppStream/utils{unique_id-hash}", as_test_utils_unique_id_hash_func);
 	g_test_add_func ("/AppStream/utils{unique_id-hash2}", as_test_utils_unique_id_hash_safe_func);
 	g_test_add_func ("/AppStream/utils{unique_id}", as_test_utils_unique_id_func);
