@@ -34,6 +34,7 @@
 
 #include "as-checksum-private.h"
 #include "as-node-private.h"
+#include "as-ref-string.h"
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
@@ -41,8 +42,8 @@ typedef struct
 {
 	AsChecksumTarget	 target;
 	GChecksumType		 kind;
-	gchar			*filename;
-	gchar			*value;
+	AsRefString		*filename;
+	AsRefString		*value;
 } AsChecksumPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsChecksum, as_checksum, G_TYPE_OBJECT)
@@ -57,8 +58,10 @@ as_checksum_finalize (GObject *object)
 	AsChecksum *checksum = AS_CHECKSUM (object);
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
 
-	g_free (priv->filename);
-	g_free (priv->value);
+	if (priv->filename != NULL)
+		as_ref_string_unref (priv->filename);
+	if (priv->value != NULL)
+		as_ref_string_unref (priv->value);
 
 	G_OBJECT_CLASS (as_checksum_parent_class)->finalize (object);
 }
@@ -199,8 +202,7 @@ as_checksum_set_filename (AsChecksum *checksum,
 			  const gchar *filename)
 {
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
-	g_free (priv->filename);
-	priv->filename = g_strdup (filename);
+	as_ref_string_assign_safe (&priv->filename, filename);
 }
 
 /**
@@ -216,8 +218,7 @@ void
 as_checksum_set_value (AsChecksum *checksum, const gchar *value)
 {
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
-	g_free (priv->value);
-	priv->value = g_strdup (value);
+	as_ref_string_assign_safe (&priv->value, value);
 }
 
 /**
@@ -333,7 +334,6 @@ as_checksum_node_parse (AsChecksum *checksum, GNode *node,
 {
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
 	const gchar *tmp;
-	gchar *taken;
 
 	tmp = as_node_get_attribute (node, "type");
 	if (tmp != NULL)
@@ -341,16 +341,8 @@ as_checksum_node_parse (AsChecksum *checksum, GNode *node,
 	tmp = as_node_get_attribute (node, "target");
 	if (tmp != NULL)
 		priv->target = as_checksum_target_from_string (tmp);
-	taken = as_node_take_attribute (node, "filename");
-	if (taken != NULL) {
-		g_free (priv->filename);
-		priv->filename = taken;
-	}
-	taken = as_node_take_data (node);
-	if (taken != NULL) {
-		g_free (priv->value);
-		priv->value = taken;
-	}
+	as_ref_string_assign (&priv->filename, as_node_get_attribute (node, "filename"));
+	as_ref_string_assign (&priv->value, as_node_get_data (node));
 	return TRUE;
 }
 

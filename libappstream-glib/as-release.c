@@ -41,6 +41,7 @@
 
 #include "as-checksum-private.h"
 #include "as-node-private.h"
+#include "as-ref-string.h"
 #include "as-release-private.h"
 #include "as-tag.h"
 #include "as-utils-private.h"
@@ -51,11 +52,11 @@ typedef struct
 	AsUrgencyKind		 urgency;
 	AsReleaseState		 state;
 	guint64			 size[AS_SIZE_KIND_LAST];
-	gchar			*version;
+	AsRefString		*version;
 	GHashTable		*blobs; /* of gchar*:GBytes */
 	GHashTable		*descriptions;
 	guint64			 timestamp;
-	GPtrArray		*locations;
+	GPtrArray		*locations;	/* of AsRefString */
 	GPtrArray		*checksums;
 } AsReleasePrivate;
 
@@ -69,7 +70,8 @@ as_release_finalize (GObject *object)
 	AsRelease *release = AS_RELEASE (object);
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 
-	g_free (priv->version);
+	if (priv->version != NULL)
+		as_ref_string_unref (priv->version);
 	g_hash_table_unref (priv->blobs);
 	g_ptr_array_unref (priv->checksums);
 	g_ptr_array_unref (priv->locations);
@@ -87,10 +89,11 @@ as_release_init (AsRelease *release)
 
 	priv->urgency = AS_URGENCY_KIND_UNKNOWN;
 	priv->state = AS_RELEASE_STATE_UNKNOWN;
-	priv->locations = g_ptr_array_new_with_free_func (g_free);
+	priv->locations = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 	priv->checksums = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->blobs = g_hash_table_new_full (g_str_hash, g_str_equal,
-					     g_free, (GDestroyNotify) g_bytes_unref);
+					     (GDestroyNotify) as_ref_string_unref,
+					     (GDestroyNotify) g_bytes_unref);
 	for (i = 0; i < AS_SIZE_KIND_LAST; i++)
 		priv->size[i] = 0;
 }
@@ -397,8 +400,7 @@ void
 as_release_set_version (AsRelease *release, const gchar *version)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
-	g_free (priv->version);
-	priv->version = g_strdup (version);
+	as_ref_string_assign_safe (&priv->version, version);
 }
 
 /**
@@ -419,7 +421,9 @@ as_release_set_blob (AsRelease *release, const gchar *filename, GBytes *blob)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	g_return_if_fail (filename != NULL);
 	g_return_if_fail (blob != NULL);
-	g_hash_table_insert (priv->blobs, g_strdup (filename), g_bytes_ref (blob));
+	g_hash_table_insert (priv->blobs,
+			     as_ref_string_new (filename),
+			     g_bytes_ref (blob));
 }
 
 /**
@@ -472,7 +476,7 @@ as_release_add_location (AsRelease *release, const gchar *location)
 	if (as_ptr_array_find_string (priv->locations, location))
 		return;
 
-	g_ptr_array_add (priv->locations, g_strdup (location));
+	g_ptr_array_add (priv->locations, as_ref_string_new (location));
 }
 
 /**
@@ -528,12 +532,12 @@ as_release_set_description (AsRelease *release,
 	if (priv->descriptions == NULL) {
 		priv->descriptions = g_hash_table_new_full (g_str_hash,
 							    g_str_equal,
-							    g_free,
-							    g_free);
+							    (GDestroyNotify) as_ref_string_unref,
+							    (GDestroyNotify) as_ref_string_unref);
 	}
 	g_hash_table_insert (priv->descriptions,
-			     g_strdup (locale),
-			     g_strdup (description));
+			     as_ref_string_new (locale),
+			     as_ref_string_new (description));
 }
 
 /**
@@ -646,7 +650,10 @@ as_release_node_parse (AsRelease *release, GNode *node,
 	for (n = node->children; n != NULL; n = n->next) {
 		if (as_node_get_tag (n) != AS_TAG_LOCATION)
 			continue;
-		g_ptr_array_add (priv->locations, as_node_take_data (n));
+		tmp = as_node_get_data (n);
+		if (tmp == NULL)
+			continue;
+		g_ptr_array_add (priv->locations, as_ref_string_ref (tmp));
 	}
 
 	/* get optional checksums */

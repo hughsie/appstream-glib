@@ -37,13 +37,14 @@
 
 #include "as-translation-private.h"
 #include "as-node-private.h"
+#include "as-ref-string.h"
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
 typedef struct
 {
 	AsTranslationKind	 kind;
-	gchar			*id;
+	AsRefString		*id;
 } AsTranslationPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsTranslation, as_translation, G_TYPE_OBJECT)
@@ -56,7 +57,8 @@ as_translation_finalize (GObject *object)
 	AsTranslation *translation = AS_TRANSLATION (object);
 	AsTranslationPrivate *priv = GET_PRIVATE (translation);
 
-	g_free (priv->id);
+	if (priv->id != NULL)
+		as_ref_string_unref (priv->id);
 
 	G_OBJECT_CLASS (as_translation_parent_class)->finalize (object);
 }
@@ -161,8 +163,7 @@ void
 as_translation_set_id (AsTranslation *translation, const gchar *id)
 {
 	AsTranslationPrivate *priv = GET_PRIVATE (translation);
-	g_free (priv->id);
-	priv->id = g_strdup (id);
+	as_ref_string_assign_safe (&priv->id, id);
 }
 
 /**
@@ -229,15 +230,10 @@ as_translation_node_parse (AsTranslation *translation, GNode *node,
 {
 	AsTranslationPrivate *priv = GET_PRIVATE (translation);
 	const gchar *tmp;
-	gchar *taken;
 
 	tmp = as_node_get_attribute (node, "type");
 	as_translation_set_kind (translation, as_translation_kind_from_string (tmp));
-	taken = as_node_take_data (node);
-	if (taken != NULL) {
-		g_free (priv->id);
-		priv->id = taken;
-	}
+	as_ref_string_assign (&priv->id, as_node_get_data (node));
 	return TRUE;
 }
 

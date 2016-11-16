@@ -35,13 +35,14 @@
 
 #include "as-node-private.h"
 #include "as-provide-private.h"
+#include "as-ref-string.h"
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
 typedef struct
 {
 	AsProvideKind		 kind;
-	gchar			*value;
+	AsRefString		*value;
 } AsProvidePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsProvide, as_provide, G_TYPE_OBJECT)
@@ -54,7 +55,8 @@ as_provide_finalize (GObject *object)
 	AsProvide *provide = AS_PROVIDE (object);
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
 
-	g_free (priv->value);
+	if (priv->value != NULL)
+		as_ref_string_unref (priv->value);
 
 	G_OBJECT_CLASS (as_provide_parent_class)->finalize (object);
 }
@@ -191,8 +193,7 @@ void
 as_provide_set_value (AsProvide *provide, const gchar *value)
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
-	g_free (priv->value);
-	priv->value = g_strdup (value);
+	as_ref_string_assign_safe (&priv->value, value);
 }
 
 /**
@@ -325,8 +326,7 @@ as_provide_node_parse (AsProvide *provide, GNode *node,
 	} else {
 		priv->kind = as_provide_kind_from_string (as_node_get_name (node));
 	}
-	g_free (priv->value);
-	priv->value = as_node_take_data (node);
+	as_ref_string_assign (&priv->value, as_node_get_data (node));
 	return TRUE;
 }
 

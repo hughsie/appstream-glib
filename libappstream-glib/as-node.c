@@ -39,11 +39,12 @@
 
 #include "as-markup.h"
 #include "as-node-private.h"
+#include "as-ref-string.h"
 #include "as-utils-private.h"
 
 typedef struct {
-	GHashTable		*intern_attr;
-	GHashTable		*intern_name;
+	GHashTable		*intern_attr;	/* key=value of AsRefString */
+	GHashTable		*intern_name;	/* key=value of AsRefString */
 } AsNodeRoot;
 
 typedef struct
@@ -52,12 +53,12 @@ typedef struct
 	union {
 		AsTag		 tag;
 		const gchar	*name_const;	/* only if is_name_const = TRUE */
-		gchar		*name;		/* only if is_tag_valid = FALSE */
+		AsRefString	*name;		/* only if is_tag_valid = FALSE */
 	};
 	union {
 		AsNodeRoot	*root;		/* only if is_root_node = TRUE */
 		const gchar	*cdata_const;	/* only if is_cdata_const = TRUE */
-		gchar		*cdata;
+		AsRefString	*cdata;
 	};
 	guint8			 is_root_node:1;
 	guint8			 is_cdata_const:1;
@@ -68,8 +69,8 @@ typedef struct
 } AsNodeData;
 
 typedef struct {
-	const gchar		*key;
-	const gchar		*value;
+	AsRefString		*key;
+	AsRefString		*value;
 } AsNodeAttr;
 
 /**
@@ -92,11 +93,11 @@ as_node_new (void)
 	data->root = g_new0 (AsNodeRoot, 1);
 	data->root->intern_attr = g_hash_table_new_full (g_str_hash,
 							 g_str_equal,
-							 g_free,
+							 (GDestroyNotify) as_ref_string_unref,
 							 NULL);
 	data->root->intern_name = g_hash_table_new_full (g_str_hash,
 							 g_str_equal,
-							 g_free,
+							 (GDestroyNotify) as_ref_string_unref,
 							 NULL);
 	return g_node_new (data);
 }
@@ -107,15 +108,15 @@ as_node_attr_free (AsNodeAttr *attr)
 	g_slice_free (AsNodeAttr, attr);
 }
 
-static const gchar *
+static AsRefString *
 as_node_intern (GHashTable *hash, const gchar *key)
 {
-	gchar *value = g_hash_table_lookup (hash, key);
-	if (value == NULL) {
-		value = g_strdup (key);
-		g_hash_table_insert (hash, value, value);
+	AsRefString *rstr = g_hash_table_lookup (hash, key);
+	if (rstr == NULL) {
+		rstr = as_ref_string_new (key);
+		g_hash_table_insert (hash, rstr, rstr);
 	}
-	return value;
+	return rstr;
 }
 
 static AsNodeAttr *
@@ -164,15 +165,15 @@ as_node_destroy_node_cb (AsNode *node, gpointer user_data)
 	AsNodeData *data = node->data;
 	if (data == NULL)
 		return FALSE;
-	if (!data->is_tag_valid && !data->is_name_const)
-		g_free (data->name);
+	if (!data->is_tag_valid && !data->is_name_const && data->name != NULL)
+		as_ref_string_unref (data->name);
 	if (data->is_root_node) {
 		g_hash_table_unref (data->root->intern_attr);
 		g_hash_table_unref (data->root->intern_name);
 		g_free (data->root);
 	} else {
-		if (!data->is_cdata_const)
-			g_free (data->cdata);
+		if (!data->is_cdata_const && data->cdata != NULL)
+			as_ref_string_unref (data->cdata);
 	}
 	g_list_free_full (data->attrs, (GDestroyNotify) as_node_attr_free);
 	g_slice_free (AsNodeData, data);
@@ -235,7 +236,7 @@ as_node_cdata_to_heap (AsNodeData *data)
 {
 	if (!data->is_cdata_const)
 		return;
-	data->cdata = g_strdup (data->cdata);
+	data->cdata = as_ref_string_new (data->cdata);
 	data->is_cdata_const = FALSE;
 }
 
@@ -243,11 +244,11 @@ static void
 as_node_cdata_to_intern (AsNode *root, AsNodeData *data)
 {
 	AsNodeRoot *root_data = ((AsNodeData *)root->data)->root;
-	const gchar *tmp;
+	AsRefString *tmp;
 	if (data->is_cdata_const)
 		return;
 	tmp = as_node_intern (root_data->intern_attr, data->cdata);
-	g_free (data->cdata);
+	as_ref_string_unref (data->cdata);
 	data->cdata_const = tmp;
 	data->is_cdata_const = TRUE;
 }
@@ -271,16 +272,22 @@ static void
 as_node_cdata_to_escaped (AsNodeData *data)
 {
 	GString *str;
+	g_autofree gchar *tmp = NULL;
+
 	if (data->is_root_node)
 		return;
 	if (data->is_cdata_escaped)
 		return;
-	str = g_string_new (data->cdata);
-	g_free (data->cdata);
-	as_utils_string_replace (str, "&", "&amp;");
-	as_utils_string_replace (str, "<", "&lt;");
-	as_utils_string_replace (str, ">", "&gt;");
-	data->cdata = g_string_free (str, FALSE);
+	if (g_strstr_len (data->cdata, -1, "&") != NULL ||
+	    g_strstr_len (data->cdata, -1, "<") != NULL ||
+	    g_strstr_len (data->cdata, -1, ">") != NULL) {
+		str = g_string_new (data->cdata);
+		as_ref_string_unref (data->cdata);
+		as_utils_string_replace (str, "&", "&amp;");
+		as_utils_string_replace (str, "<", "&lt;");
+		as_utils_string_replace (str, ">", "&gt;");
+		data->cdata = as_ref_string_new_copy_with_length (str->str, str->len);
+	}
 	data->is_cdata_escaped = TRUE;
 }
 
@@ -352,12 +359,14 @@ as_node_data_set_name (AsNode *root,
 			data->is_name_const = TRUE;
 			data->is_tag_valid = FALSE;
 		} else {
+			data->name = NULL;
 			data->tag = tag;
 			data->is_tag_valid = TRUE;
 		}
 	} else {
 		/* always store the translated tag */
-		data->name = g_strdup_printf ("_%s", name);
+		g_autofree gchar *name_tmp = g_strdup_printf ("_%s", name);
+		data->name = as_ref_string_new (name_tmp);
 		data->is_tag_valid = FALSE;
 	}
 }
@@ -489,13 +498,13 @@ as_node_to_xml_string (GString *xml,
  *
  * Since: 0.1.4
  **/
-gchar *
+AsRefString *
 as_node_reflow_text (const gchar *text, gssize text_len)
 {
-	GString *tmp;
 	guint i;
 	guint newline_count = 0;
 	g_auto(GStrv) split = NULL;
+	g_autoptr(GString) tmp = NULL;
 
 	/* split the text into lines */
 	tmp = g_string_sized_new ((gsize) text_len + 1);
@@ -529,7 +538,7 @@ as_node_reflow_text (const gchar *text, gssize text_len)
 		/* this last section was paragraph */
 		newline_count = 1;
 	}
-	return g_string_free (tmp, FALSE);
+	return as_ref_string_new_copy_with_length (tmp->str, tmp->len);
 }
 
 typedef struct {
@@ -583,7 +592,7 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	AsNodeData *data;
 	AsNodeData *data_parent;
 	AsNode *current;
-	gchar *tmp;
+	AsRefString *tmp;
 	guint i;
 
 	/* check if we should ignore the locale */
@@ -624,10 +633,10 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	current = g_node_append_data (helper->current, data);
 
 	/* transfer the ownership of the comment to the new child */
-	tmp = as_node_take_attribute (helper->current, "@comment-tmp");
+	tmp = as_node_get_attribute (helper->current, "@comment-tmp");
 	if (tmp != NULL) {
 		as_node_add_attribute (current, "@comment", tmp);
-		g_free (tmp);
+		as_node_remove_attribute (helper->current, "@comment-tmp");
 	}
 
 	/* the child is now the node to be processed */
@@ -683,7 +692,7 @@ as_node_text_cb (GMarkupParseContext *context,
 		return;
 	}
 	if ((helper->flags & AS_NODE_FROM_XML_FLAG_LITERAL_TEXT) > 0) {
-		data->cdata = g_strndup (text, text_len);
+		data->cdata = as_ref_string_new_with_length (text, text_len + 1);
 	} else {
 		data->cdata = as_node_reflow_text (text, (gssize) text_len);
 	}
@@ -1053,7 +1062,7 @@ as_node_set_name (AsNode *node, const gchar *name)
 	/* overwrite */
 	if (!data->is_tag_valid) {
 		if (!data->is_name_const)
-			g_free (data->name);
+			as_ref_string_unref (data->name);
 		data->name = NULL;
 	}
 	as_node_data_set_name (root, data, name, AS_NODE_INSERT_FLAG_NONE);
@@ -1157,8 +1166,7 @@ as_node_set_data (AsNode *node,
 	data = (AsNodeData *) node->data;
 	if (data->is_root_node)
 		return;
-	g_free (data->cdata);
-	data->cdata = g_strdup (cdata);
+	as_ref_string_assign_safe (&data->cdata, cdata);
 	data->is_cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 }
 
@@ -1175,39 +1183,6 @@ void
 as_node_set_comment (AsNode *node, const gchar *comment)
 {
 	as_node_add_attribute (node, "@comment", comment);
-}
-
-/**
- * as_node_take_data:
- * @node: a #AsNode
- *
- * Gets the node data, e.g. "paragraph text"
- *
- * Return value: string value
- *
- * Since: 0.1.0
- **/
-gchar *
-as_node_take_data (const AsNode *node)
-{
-	AsNodeData *data;
-	gchar *tmp;
-
-	if (node->data == NULL)
-		return NULL;
-	data = (AsNodeData *) node->data;
-	if (data->is_root_node)
-		return NULL;
-	if (data->cdata == NULL || data->cdata[0] == '\0')
-		return NULL;
-	as_node_cdata_to_raw (data);
-	if (data->is_cdata_const) {
-		tmp = g_strdup (data->cdata);
-	} else {
-		tmp = data->cdata;
-		data->cdata = NULL;
-	}
-	return tmp;
 }
 
 /**
@@ -1291,36 +1266,6 @@ as_node_get_attribute (const AsNode *node, const gchar *key)
 		return NULL;
 	data = (AsNodeData *) node->data;
 	return as_node_attr_lookup (data, key);
-}
-
-/**
- * as_node_take_attribute: (skip)
- * @node: a #AsNode
- * @key: the attribute key
- *
- * Gets a node attribute, e.g. "false"
- *
- * Return value: string value
- *
- * Since: 0.1.2
- **/
-gchar *
-as_node_take_attribute (const AsNode *node, const gchar *key)
-{
-	AsNodeAttr *attr;
-	AsNodeData *data;
-	gchar *tmp;
-
-	g_return_val_if_fail (node != NULL, NULL);
-	g_return_val_if_fail (key != NULL, NULL);
-
-	if (node->data == NULL)
-		return NULL;
-	data = (AsNodeData *) node->data;
-	attr = as_node_attr_find (data, key);
-	if (attr == NULL)
-		return NULL;
-	return g_strdup (attr->value);
 }
 
 /**
@@ -1484,9 +1429,9 @@ as_node_find_with_attribute (AsNode *root, const gchar *path,
 static gchar *
 as_node_insert_line_breaks (const gchar *text, guint break_len)
 {
-	GString *str;
 	guint i;
 	gssize new_len;
+	g_autoptr(GString) str = NULL;
 
 	/* allocate long enough for the string, plus the extra newlines */
 	new_len = (gssize) (strlen (text) * (break_len + 1) / break_len);
@@ -1498,7 +1443,7 @@ as_node_insert_line_breaks (const gchar *text, guint break_len)
 	for (i = break_len + 1; i < str->len; i += break_len + 1)
 		g_string_insert (str, (gssize) i, "\n");
 	g_string_append (str, "\n");
-	return g_string_free (str, FALSE);
+	return as_ref_string_new_copy_with_length (str->str, str->len);;
 }
 
 /**
@@ -1537,7 +1482,7 @@ as_node_insert (AsNode *parent,
 		if (insert_flags & AS_NODE_INSERT_FLAG_BASE64_ENCODED)
 			data->cdata = as_node_insert_line_breaks (cdata, 76);
 		else
-			data->cdata = g_strdup (cdata);
+			data->cdata = as_ref_string_new (cdata);
 	}
 	data->is_cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 
@@ -1597,10 +1542,11 @@ as_node_insert_localized (AsNode *parent,
 	data = g_slice_new0 (AsNodeData);
 	as_node_data_set_name (root, data, name, insert_flags);
 	if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
-		data->cdata = as_markup_convert_simple (value_c, NULL);
+		g_autofree gchar *tmp = as_markup_convert_simple (value_c, NULL);
+		data->cdata = as_ref_string_new_copy (tmp);
 		data->is_cdata_escaped = FALSE;
 	} else {
-		data->cdata = g_strdup (value_c);
+		data->cdata = as_ref_string_new (value_c);
 		data->is_cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 	}
 	g_node_insert_data (parent, -1, data);
@@ -1622,10 +1568,11 @@ as_node_insert_localized (AsNode *parent,
 		as_node_attr_insert (root, data, "xml:lang", key);
 		as_node_data_set_name (root, data, name, insert_flags);
 		if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
-			data->cdata = as_markup_convert_simple (value, NULL);
+			g_autofree gchar *tmp = as_markup_convert_simple (value, NULL);
+			data->cdata = as_ref_string_new_copy (tmp);
 			data->is_cdata_escaped = FALSE;
 		} else {
-			data->cdata = g_strdup (value);
+			data->cdata = as_ref_string_new (value);
 			data->is_cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 		}
 		g_node_insert_data (parent, -1, data);
@@ -1668,7 +1615,7 @@ as_node_insert_hash (AsNode *parent,
 		value = g_hash_table_lookup (hash, key);
 		data = g_slice_new0 (AsNodeData);
 		as_node_data_set_name (root, data, name, insert_flags);
-		data->cdata = g_strdup (!swapped ? value : key);
+		data->cdata = as_ref_string_new (!swapped ? value : key);
 		data->is_cdata_escaped = insert_flags & AS_NODE_INSERT_FLAG_PRE_ESCAPED;
 		if (!swapped) {
 			if (key != NULL && key[0] != '\0')
@@ -1977,16 +1924,16 @@ as_node_get_localized_unwrap_type_ul (const AsNode *node,
 gchar *
 as_node_fix_locale (const gchar *locale)
 {
-	gchar *tmp;
+	AsRefString *tmp;
 
 	if (locale == NULL)
-		return g_strdup ("C");
+		return as_ref_string_new ("C");
 	if (g_strcmp0 (locale, "xx") == 0)
 		return NULL;
 	if (g_strcmp0 (locale, "x-test") == 0)
 		return NULL;
-	tmp = g_strdup (locale);
-	g_strdelimit (tmp, "-", '_');
+	tmp = as_ref_string_new (locale);
+	g_strdelimit (tmp, "-", '_'); // FIXME: might be evil
 	return tmp;
 }
 
@@ -2068,7 +2015,9 @@ as_node_get_localized_unwrap (const AsNode *node, GError **error)
 	}
 
 	/* copy into a hash table of the correct size */
-	results = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+	results = g_hash_table_new_full (g_str_hash, g_str_equal,
+					 (GDestroyNotify) as_ref_string_unref,
+					 (GDestroyNotify) as_ref_string_unref);
 	keys = g_hash_table_get_keys (hash);
 	for (l = keys; l != NULL; l = l->next) {
 		gchar *locale_fixed;
@@ -2079,7 +2028,7 @@ as_node_get_localized_unwrap (const AsNode *node, GError **error)
 		str = g_hash_table_lookup (hash, xml_lang);
 		g_hash_table_insert (results,
 				     locale_fixed,
-				     g_strdup (str->str));
+				     as_ref_string_new (str->str));
 	}
 	return results;
 }
@@ -2090,7 +2039,7 @@ struct _AsNodeContext {
 	AsAppSourceKind	 output;
 	gdouble		 version;
 	gboolean	 output_trusted;
-	gchar		*media_base_url;
+	AsRefString	*media_base_url;
 };
 
 /**
@@ -2126,7 +2075,8 @@ as_node_context_free (AsNodeContext *ctx)
 {
 	if (ctx == NULL)
 		return;
-	g_free (ctx->media_base_url);
+	if (ctx->media_base_url != NULL)
+		as_ref_string_unref (ctx->media_base_url);
 	g_free (ctx);
 }
 
@@ -2280,6 +2230,5 @@ as_node_context_get_media_base_url (AsNodeContext *ctx)
 void
 as_node_context_set_media_base_url (AsNodeContext *ctx, const gchar *url)
 {
-	g_free (ctx->media_base_url);
-	ctx->media_base_url = g_strdup (url);
+	as_ref_string_assign_safe (&ctx->media_base_url, url);
 }

@@ -35,6 +35,7 @@
 
 #include "as-image-private.h"
 #include "as-node-private.h"
+#include "as-ref-string.h"
 #include "as-screenshot-private.h"
 #include "as-tag.h"
 #include "as-utils-private.h"
@@ -70,7 +71,10 @@ as_screenshot_init (AsScreenshot *screenshot)
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	priv->kind = AS_SCREENSHOT_KIND_NORMAL;
 	priv->images = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
-	priv->captions = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+	priv->captions = g_hash_table_new_full (g_str_hash,
+						g_str_equal,
+						(GDestroyNotify) as_ref_string_unref,
+						(GDestroyNotify) as_ref_string_unref);
 }
 
 static void
@@ -383,8 +387,8 @@ as_screenshot_set_caption (AsScreenshot *screenshot,
 	if (locale == NULL)
 		locale = "C";
 	g_hash_table_insert (priv->captions,
-			     g_strdup (locale),
-			     g_strdup (caption));
+			     as_ref_string_new (locale),
+			     as_ref_string_new (caption));
 }
 
 /**

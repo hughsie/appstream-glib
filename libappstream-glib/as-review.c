@@ -36,23 +36,24 @@
 
 #include "as-review-private.h"
 #include "as-node-private.h"
+#include "as-ref-string.h"
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
 typedef struct
 {
 	AsReviewFlags		 flags;
-	gchar			*id;
-	gchar			*summary;
-	gchar			*description;
-	gchar			*locale;
+	AsRefString		*id;
+	AsRefString		*summary;
+	AsRefString		*description;
+	AsRefString		*locale;
 	gint			 priority;
 	gint			 rating;
-	gchar			*version;
-	gchar			*reviewer_id;
-	gchar			*reviewer_name;
+	AsRefString		*version;
+	AsRefString		*reviewer_id;
+	AsRefString		*reviewer_name;
 	GDateTime		*date;
-	GHashTable		*metadata;
+	GHashTable		*metadata;	/* AsRefString : AsRefString */
 } AsReviewPrivate;
 
 enum {
@@ -80,13 +81,20 @@ as_review_finalize (GObject *object)
 	AsReview *review = AS_REVIEW (object);
 	AsReviewPrivate *priv = GET_PRIVATE (review);
 
-	g_free (priv->id);
-	g_free (priv->summary);
-	g_free (priv->description);
-	g_free (priv->locale);
-	g_free (priv->version);
-	g_free (priv->reviewer_id);
-	g_free (priv->reviewer_name);
+	if (priv->id != NULL)
+		as_ref_string_unref (priv->id);
+	if (priv->summary != NULL)
+		as_ref_string_unref (priv->summary);
+	if (priv->description != NULL)
+		as_ref_string_unref (priv->description);
+	if (priv->locale != NULL)
+		as_ref_string_unref (priv->locale);
+	if (priv->version != NULL)
+		as_ref_string_unref (priv->version);
+	if (priv->reviewer_id != NULL)
+		as_ref_string_unref (priv->reviewer_id);
+	if (priv->reviewer_name != NULL)
+		as_ref_string_unref (priv->reviewer_name);
 	g_hash_table_unref (priv->metadata);
 	if (priv->date != NULL)
 		g_date_time_unref (priv->date);
@@ -298,7 +306,8 @@ as_review_init (AsReview *review)
 {
 	AsReviewPrivate *priv = GET_PRIVATE (review);
 	priv->metadata = g_hash_table_new_full (g_str_hash, g_str_equal,
-						g_free, g_free);
+						(GDestroyNotify) as_ref_string_unref,
+						(GDestroyNotify) as_ref_string_unref);
 }
 
 /**
@@ -388,8 +397,7 @@ as_review_set_id (AsReview *review, const gchar *id)
 {
 	AsReviewPrivate *priv = GET_PRIVATE (review);
 	g_return_if_fail (AS_IS_REVIEW (review));
-	g_free (priv->id);
-	priv->id = g_strdup (id);
+	as_ref_string_assign_safe (&priv->id, id);
 }
 
 /**
@@ -406,8 +414,7 @@ as_review_set_summary (AsReview *review, const gchar *summary)
 {
 	AsReviewPrivate *priv = GET_PRIVATE (review);
 	g_return_if_fail (AS_IS_REVIEW (review));
-	g_free (priv->summary);
-	priv->summary = g_strdup (summary);
+	as_ref_string_assign_safe (&priv->summary, summary);
 }
 
 /**
@@ -442,8 +449,7 @@ as_review_set_description (AsReview *review, const gchar *description)
 {
 	AsReviewPrivate *priv = GET_PRIVATE (review);
 	g_return_if_fail (AS_IS_REVIEW (review));
-	g_free (priv->description);
-	priv->description = g_strdup (description);
+	as_ref_string_assign_safe (&priv->description, description);
 }
 
 /**
@@ -478,8 +484,7 @@ as_review_set_locale (AsReview *review, const gchar *locale)
 {
 	AsReviewPrivate *priv = GET_PRIVATE (review);
 	g_return_if_fail (AS_IS_REVIEW (review));
-	g_free (priv->locale);
-	priv->locale = g_strdup (locale);
+	as_ref_string_assign_safe (&priv->locale, locale);
 }
 
 /**
@@ -621,8 +626,7 @@ as_review_set_reviewer_id (AsReview *review, const gchar *reviewer_id)
 {
 	AsReviewPrivate *priv = GET_PRIVATE (review);
 	g_return_if_fail (AS_IS_REVIEW (review));
-	g_free (priv->reviewer_id);
-	priv->reviewer_id = g_strdup (reviewer_id);
+	as_ref_string_assign_safe (&priv->reviewer_id, reviewer_id);
 }
 
 /**
@@ -639,8 +643,7 @@ as_review_set_reviewer_name (AsReview *review, const gchar *reviewer_name)
 {
 	AsReviewPrivate *priv = GET_PRIVATE (review);
 	g_return_if_fail (AS_IS_REVIEW (review));
-	g_free (priv->reviewer_name);
-	priv->reviewer_name = g_strdup (reviewer_name);
+	as_ref_string_assign_safe (&priv->reviewer_name, reviewer_name);
 }
 
 /**
@@ -657,8 +660,7 @@ as_review_set_version (AsReview *review, const gchar *version)
 {
 	AsReviewPrivate *priv = GET_PRIVATE (review);
 	g_return_if_fail (AS_IS_REVIEW (review));
-	g_free (priv->version);
-	priv->version = g_strdup (version);
+	as_ref_string_assign_safe (&priv->version, version);
 }
 
 /**
@@ -755,7 +757,9 @@ as_review_add_metadata (AsReview *review, const gchar *key, const gchar *value)
 {
 	AsReviewPrivate *priv = GET_PRIVATE (review);
 	g_return_if_fail (AS_IS_REVIEW (review));
-	g_hash_table_insert (priv->metadata, g_strdup (key), g_strdup (value));
+	g_hash_table_insert (priv->metadata,
+			     as_ref_string_new (key),
+			     as_ref_string_new (value));
 }
 
 /**
@@ -950,14 +954,21 @@ as_review_node_parse (AsReview *review, GNode *node,
 			AsNode *c2;
 			gchar *taken;
 			for (c2 = c->children; c2 != NULL; c2 = c2->next) {
-				gchar *key;
+				AsRefString *key;
+				AsRefString *value;
 				if (as_node_get_tag (c2) != AS_TAG_VALUE)
 					continue;
-				key = as_node_take_attribute (c2, "key");
-				taken = as_node_take_data (c2);
-				if (taken == NULL)
-					taken = g_strdup ("");
-				g_hash_table_insert (priv->metadata, key, taken);
+				key = as_node_get_attribute (c2, "key");
+				value = as_node_get_data (c2);
+				if (value == NULL) {
+					g_hash_table_insert (priv->metadata,
+							     as_ref_string_ref (key),
+							     as_ref_string_new (""));
+				} else {
+					g_hash_table_insert (priv->metadata,
+							     as_ref_string_ref (key),
+							     as_ref_string_ref (value));
+				}
 			}
 			continue;
 		}

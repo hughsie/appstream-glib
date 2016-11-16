@@ -28,6 +28,7 @@
 
 #include "as-app.h"
 #include "as-node.h"
+#include "as-ref-string.h"
 
 G_BEGIN_DECLS
 
@@ -50,10 +51,7 @@ const gchar	*as_node_context_get_media_base_url (AsNodeContext	*ctx);
 void		 as_node_context_set_media_base_url (AsNodeContext	*ctx,
 						     const gchar	*url);
 
-gchar		*as_node_take_data		(const GNode	*node);
-gchar		*as_node_take_attribute		(const GNode	*node,
-						 const gchar	*key);
-gchar		*as_node_reflow_text		(const gchar	*text,
+AsRefString	*as_node_reflow_text		(const gchar	*text,
 						 gssize		 text_len);
 gchar		*as_node_fix_locale		(const gchar	*locale);
 

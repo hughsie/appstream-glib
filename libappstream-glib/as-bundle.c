@@ -36,15 +36,16 @@
 
 #include "as-bundle-private.h"
 #include "as-node-private.h"
+#include "as-ref-string.h"
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
 typedef struct
 {
 	AsBundleKind		 kind;
-	gchar			*id;
-	gchar			*runtime;
-	gchar			*sdk;
+	AsRefString		*id;
+	AsRefString		*runtime;
+	AsRefString		*sdk;
 } AsBundlePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsBundle, as_bundle, G_TYPE_OBJECT)
@@ -57,9 +58,12 @@ as_bundle_finalize (GObject *object)
 	AsBundle *bundle = AS_BUNDLE (object);
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
 
-	g_free (priv->id);
-	g_free (priv->runtime);
-	g_free (priv->sdk);
+	if (priv->id != NULL)
+		as_ref_string_unref (priv->id);
+	if (priv->runtime != NULL)
+		as_ref_string_unref (priv->runtime);
+	if (priv->sdk != NULL)
+		as_ref_string_unref (priv->sdk);
 
 	G_OBJECT_CLASS (as_bundle_parent_class)->finalize (object);
 }
@@ -216,8 +220,7 @@ void
 as_bundle_set_id (AsBundle *bundle, const gchar *id)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
-	g_free (priv->id);
-	priv->id = g_strdup (id);
+	as_ref_string_assign_safe (&priv->id, id);
 }
 
 /**
@@ -233,8 +236,7 @@ void
 as_bundle_set_runtime (AsBundle *bundle, const gchar *runtime)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
-	g_free (priv->runtime);
-	priv->runtime = g_strdup (runtime);
+	as_ref_string_assign_safe (&priv->runtime, runtime);
 }
 
 /**
@@ -250,8 +252,7 @@ void
 as_bundle_set_sdk (AsBundle *bundle, const gchar *sdk)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
-	g_free (priv->sdk);
-	priv->sdk = g_strdup (sdk);
+	as_ref_string_assign_safe (&priv->sdk, sdk);
 }
 
 /**
@@ -319,21 +320,15 @@ as_bundle_node_parse (AsBundle *bundle, GNode *node,
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
 	const gchar *tmp;
-	gchar *taken;
 
 	tmp = as_node_get_attribute (node, "type");
 	as_bundle_set_kind (bundle, as_bundle_kind_from_string (tmp));
-	taken = as_node_take_data (node);
-	if (taken != NULL) {
-		g_free (priv->id);
-		priv->id = taken;
-	}
+
+	as_ref_string_assign (&priv->id, as_node_get_data (node));
 
 	/* optional */
-	g_free (priv->runtime);
-	priv->runtime = as_node_take_attribute (node, "runtime");
-	g_free (priv->sdk);
-	priv->sdk = as_node_take_attribute (node, "sdk");
+	as_ref_string_assign (&priv->runtime, as_node_get_attribute (node, "runtime"));
+	as_ref_string_assign (&priv->sdk, as_node_get_attribute (node, "sdk"));
 
 	return TRUE;
 }

@@ -34,16 +34,17 @@
 
 #include "as-node-private.h"
 #include "as-content-rating-private.h"
+#include "as-ref-string.h"
 #include "as-tag.h"
 
 typedef struct {
-	gchar			*id;
+	AsRefString		*id;
 	AsContentRatingValue	 value;
 } AsContentRatingKey;
 
 typedef struct
 {
-	gchar			*kind;
+	AsRefString		*kind;
 	GPtrArray		*keys; /* of AsContentRatingKey */
 } AsContentRatingPrivate;
 
@@ -57,7 +58,8 @@ as_content_rating_finalize (GObject *object)
 	AsContentRating *content_rating = AS_CONTENT_RATING (object);
 	AsContentRatingPrivate *priv = GET_PRIVATE (content_rating);
 
-	g_free (priv->kind);
+	if (priv->kind != NULL)
+		as_ref_string_unref (priv->kind);
 	g_ptr_array_unref (priv->keys);
 
 	G_OBJECT_CLASS (as_content_rating_parent_class)->finalize (object);
@@ -66,8 +68,9 @@ as_content_rating_finalize (GObject *object)
 static void
 as_content_rating_key_free (AsContentRatingKey *key)
 {
-	g_free (key->id);
-	g_free (key);
+	if (key->id != NULL)
+		as_ref_string_unref (key->id);
+	g_slice_free (AsContentRatingKey, key);
 }
 
 static void
@@ -323,8 +326,7 @@ void
 as_content_rating_set_kind (AsContentRating *content_rating, const gchar *kind)
 {
 	AsContentRatingPrivate *priv = GET_PRIVATE (content_rating);
-	g_free (priv->kind);
-	priv->kind = g_strdup (kind);
+	as_ref_string_assign_safe (&priv->kind, kind);
 }
 
 /**
@@ -399,8 +401,8 @@ as_content_rating_node_parse (AsContentRating *content_rating, GNode *node,
 		g_autoptr(AsImage) image = NULL;
 		if (as_node_get_tag (c) != AS_TAG_CONTENT_ATTRIBUTE)
 			continue;
-		key = g_new0 (AsContentRatingKey, 1);
-		key->id = as_node_take_attribute (c, "id");
+		key = g_slice_new0 (AsContentRatingKey);
+		as_ref_string_assign (&key->id, as_node_get_attribute (c, "id"));
 		key->value = as_content_rating_value_from_string (as_node_get_data (c));
 		g_ptr_array_add (priv->keys, key);
 	}

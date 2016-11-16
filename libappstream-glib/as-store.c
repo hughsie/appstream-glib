@@ -41,6 +41,7 @@
 #include "as-problem.h"
 #include "as-profile.h"
 #include "as-monitor.h"
+#include "as-ref-string.h"
 #include "as-stemmer.h"
 #include "as-store.h"
 #include "as-utils-private.h"
@@ -1327,6 +1328,9 @@ as_store_from_root (AsStore *store,
 	g_autofree gchar *origin_app_icons = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 	g_autoptr(AsProfileTask) ptask = NULL;
+	g_autoptr(AsRefString) icon_path_str = NULL;
+	g_autoptr(AsRefString) origin_str = NULL;
+	g_autoptr(AsRefString) source_filename_str = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
@@ -1444,6 +1448,14 @@ as_store_from_root (AsStore *store,
 	if (tmp != NULL)
 		as_store_set_builder_id (store, tmp);
 
+	/* create refcounted versions */
+	if (source_filename != NULL)
+		source_filename_str = as_ref_string_new (source_filename);
+	if (origin_app != NULL)
+		origin_str = as_ref_string_new (origin_app);
+	if (icon_path != NULL)
+		icon_path_str = as_ref_string_new (icon_path);
+
 	ctx = as_node_context_new ();
 	for (n = apps->children; n != NULL; n = n->next) {
 		g_autoptr(GError) error_local = NULL;
@@ -1463,8 +1475,8 @@ as_store_from_root (AsStore *store,
 		}
 
 		app = as_app_new ();
-		if (icon_path != NULL)
-			as_app_set_icon_path (app, icon_path);
+		if (icon_path_str != NULL)
+			as_app_set_icon_path (app, icon_path_str);
 		if (arch != NULL)
 			as_app_add_arch (app, arch);
 		as_app_set_scope (app, scope);
@@ -1490,10 +1502,10 @@ as_store_from_root (AsStore *store,
 		if ((priv->add_flags & AS_STORE_ADD_FLAG_USE_UNIQUE_ID) == 0)
 			as_store_fixup_id_prefix (app, id_prefix_app);
 
-		if (origin_app != NULL)
-			as_app_set_origin (app, origin_app);
-		if (source_filename != NULL)
-			as_app_set_source_file (app, source_filename);
+		if (origin_str != NULL)
+			as_app_set_origin (app, origin_str);
+		if (source_filename_str != NULL)
+			as_app_set_source_file (app, source_filename_str);
 		as_store_add_app (store, app);
 	}
 

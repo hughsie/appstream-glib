@@ -36,6 +36,7 @@
 
 #include "as-suggest-private.h"
 #include "as-node-private.h"
+#include "as-ref-string.h"
 #include "as-utils-private.h"
 
 typedef struct
@@ -63,7 +64,7 @@ static void
 as_suggest_init (AsSuggest *suggest)
 {
 	AsSuggestPrivate *priv = GET_PRIVATE (suggest);
-	priv->ids = g_ptr_array_new_with_free_func (g_free);
+	priv->ids = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 }
 
 static void
@@ -177,7 +178,7 @@ void
 as_suggest_add_id (AsSuggest *suggest, const gchar *id)
 {
 	AsSuggestPrivate *priv = GET_PRIVATE (suggest);
-	g_ptr_array_add (priv->ids, g_strdup (id));
+	g_ptr_array_add (priv->ids, as_ref_string_new (id));
 }
 
 /**

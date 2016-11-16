@@ -36,17 +36,18 @@
 
 #include "as-icon-private.h"
 #include "as-node-private.h"
+#include "as-ref-string.h"
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
 typedef struct
 {
 	AsIconKind		 kind;
-	gchar			*name;
-	gchar			*url;
-	gchar			*filename;
-	gchar			*prefix;
-	gchar			*prefix_private;
+	AsRefString		*name;
+	AsRefString		*url;
+	AsRefString		*filename;
+	AsRefString		*prefix;
+	AsRefString		*prefix_private;
 	guint			 width;
 	guint			 height;
 	GdkPixbuf		*pixbuf;
@@ -76,11 +77,16 @@ as_icon_finalize (GObject *object)
 		g_object_unref (priv->pixbuf);
 	if (priv->data != NULL)
 		g_bytes_unref (priv->data);
-	g_free (priv->name);
-	g_free (priv->url);
-	g_free (priv->filename);
-	g_free (priv->prefix);
-	g_free (priv->prefix_private);
+	if (priv->name != NULL)
+		as_ref_string_unref (priv->name);
+	if (priv->url != NULL)
+		as_ref_string_unref (priv->url);
+	if (priv->filename != NULL)
+		as_ref_string_unref (priv->filename);
+	if (priv->prefix != NULL)
+		as_ref_string_unref (priv->prefix);
+	if (priv->prefix_private != NULL)
+		as_ref_string_unref (priv->prefix_private);
 
 	G_OBJECT_CLASS (as_icon_parent_class)->finalize (object);
 }
@@ -320,8 +326,7 @@ void
 as_icon_set_name (AsIcon *icon, const gchar *name)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
-	g_free (priv->name);
-	priv->name = g_strdup (name);
+	as_ref_string_assign_safe (&priv->name, name);
 }
 
 /**
@@ -337,8 +342,7 @@ void
 as_icon_set_prefix (AsIcon *icon, const gchar *prefix)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
-	g_free (priv->prefix);
-	priv->prefix = g_strdup (prefix);
+	as_ref_string_assign_safe (&priv->prefix, prefix);
 }
 
 /**
@@ -354,8 +358,7 @@ void
 as_icon_set_url (AsIcon *icon, const gchar *url)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
-	g_free (priv->url);
-	priv->url = g_strdup (url);
+	as_ref_string_assign_safe (&priv->url, url);
 }
 
 /**
@@ -371,8 +374,7 @@ void
 as_icon_set_filename (AsIcon *icon, const gchar *filename)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
-	g_free (priv->filename);
-	priv->filename = g_strdup (filename);
+	as_ref_string_assign_safe (&priv->filename, filename);
 }
 
 /**
@@ -566,8 +568,7 @@ as_icon_node_parse_embedded (AsIcon *icon, GNode *n, GError **error)
 				     "embedded icons needs <name>");
 		return FALSE;
 	}
-	g_free (priv->name);
-	priv->name = as_node_take_data (c);
+	as_ref_string_assign (&priv->name, as_node_get_data (c));
 
 	/* parse the Base64 data */
 	c = as_node_find (n, "filecontent");
@@ -675,11 +676,11 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 
 		/* only use the size if the metadata has width and height */
 		if (prepend_size) {
-			g_free (priv->prefix_private);
-			priv->prefix_private = g_strdup_printf ("%s/%ux%u",
+			g_autofree gchar *sz = g_strdup_printf ("%s/%ux%u",
 								priv->prefix,
 								priv->width,
 								priv->height);
+			as_ref_string_assign_safe (&priv->prefix_private, sz);
 		}
 		break;
 	}

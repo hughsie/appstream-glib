@@ -2233,22 +2233,22 @@ as_test_app_no_markup_func (void)
 static void
 as_test_node_reflow_text_func (void)
 {
-	gchar *tmp;
+	AsRefString *tmp;
 
 	/* plain text */
 	tmp = as_node_reflow_text ("Dave", -1);
 	g_assert_cmpstr (tmp, ==, "Dave");
-	g_free (tmp);
+	as_ref_string_unref (tmp);
 
 	/* stripping */
 	tmp = as_node_reflow_text ("    Dave    ", -1);
 	g_assert_cmpstr (tmp, ==, "Dave");
-	g_free (tmp);
+	as_ref_string_unref (tmp);
 
 	/* paragraph */
 	tmp = as_node_reflow_text ("Dave\n\nSoftware", -1);
 	g_assert_cmpstr (tmp, ==, "Dave\n\nSoftware");
-	g_free (tmp);
+	as_ref_string_unref (tmp);
 
 	/* pathological */
 	tmp = as_node_reflow_text (
@@ -2258,7 +2258,7 @@ as_test_node_reflow_text_func (void)
 		"  awesome.\n\n\n"
 		"  Okay!\n", -1);
 	g_assert_cmpstr (tmp, ==, "Dave: Software is awesome.\n\nOkay!");
-	g_free (tmp);
+	as_ref_string_unref (tmp);
 }
 
 static void

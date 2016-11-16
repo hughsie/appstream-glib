@@ -36,16 +36,17 @@
 
 #include "as-image-private.h"
 #include "as-node-private.h"
+#include "as-ref-string.h"
 #include "as-utils-private.h"
 #include "as-yaml.h"
 
 typedef struct
 {
 	AsImageKind		 kind;
-	gchar			*locale;
-	gchar			*url;
-	gchar			*md5;
-	gchar			*basename;
+	AsRefString		*locale;
+	AsRefString		*url;
+	AsRefString		*md5;
+	AsRefString		*basename;
 	guint			 width;
 	guint			 height;
 	GdkPixbuf		*pixbuf;
@@ -63,10 +64,14 @@ as_image_finalize (GObject *object)
 
 	if (priv->pixbuf != NULL)
 		g_object_unref (priv->pixbuf);
-	g_free (priv->url);
-	g_free (priv->md5);
-	g_free (priv->basename);
-	g_free (priv->locale);
+	if (priv->url != NULL)
+		as_ref_string_unref (priv->url);
+	if (priv->md5 != NULL)
+		as_ref_string_unref (priv->md5);
+	if (priv->basename != NULL)
+		as_ref_string_unref (priv->basename);
+	if (priv->locale != NULL)
+		as_ref_string_unref (priv->locale);
 
 	G_OBJECT_CLASS (as_image_parent_class)->finalize (object);
 }
@@ -273,8 +278,7 @@ void
 as_image_set_url (AsImage *image, const gchar *url)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
-	g_free (priv->url);
-	priv->url = g_strdup (url);
+	as_ref_string_assign_safe (&priv->url, url);
 }
 
 /**
@@ -290,8 +294,7 @@ void
 as_image_set_basename (AsImage *image, const gchar *basename)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
-	g_free (priv->basename);
-	priv->basename = g_strdup (basename);
+	as_ref_string_assign_safe (&priv->basename, basename);
 }
 
 /**
@@ -307,8 +310,7 @@ void
 as_image_set_locale (AsImage *image, const gchar *locale)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
-	g_free (priv->locale);
-	priv->locale = g_strdup (locale);
+	as_ref_string_assign_safe (&priv->locale, locale);
 }
 
 /**
@@ -379,9 +381,11 @@ as_image_set_pixbuf (AsImage *image, GdkPixbuf *pixbuf)
 	if (pixbuf == NULL)
 		return;
 	if (priv->md5 == NULL) {
+		g_autofree gchar *md5_tmp = NULL;
 		data = gdk_pixbuf_get_pixels_with_length (pixbuf, &len);
-		priv->md5 = g_compute_checksum_for_data (G_CHECKSUM_MD5,
-							 data, len);
+		md5_tmp = g_compute_checksum_for_data (G_CHECKSUM_MD5,
+						       data, len);
+		as_ref_string_assign_safe (&priv->md5, md5_tmp);
 	}
 	priv->width = (guint) gdk_pixbuf_get_width (pixbuf);
 	priv->height = (guint) gdk_pixbuf_get_height (pixbuf);
@@ -437,7 +441,6 @@ as_image_node_parse (AsImage *image, GNode *node,
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	const gchar *tmp;
-	gchar *taken;
 	guint size;
 
 	size = as_node_get_attribute_as_uint (node, "width");
@@ -451,16 +454,8 @@ as_image_node_parse (AsImage *image, GNode *node,
 		as_image_set_kind (image, AS_IMAGE_KIND_SOURCE);
 	else
 		as_image_set_kind (image, as_image_kind_from_string (tmp));
-	taken = as_node_take_data (node);
-	if (taken != NULL) {
-		g_free (priv->url);
-		priv->url = taken;
-	}
-	taken = as_node_take_attribute (node, "xml:lang");
-	if (taken != NULL) {
-		g_free (priv->locale);
-		priv->locale = taken;
-	}
+	as_ref_string_assign (&priv->url, as_node_get_data (node));
+	as_ref_string_assign (&priv->locale, as_node_get_attribute (node, "xml:lang"));
 	return TRUE;
 }
 
@@ -570,14 +565,15 @@ as_image_load_filename_full (AsImage *image,
 	if (flags & AS_IMAGE_LOAD_FLAG_SET_CHECKSUM) {
 		gsize len;
 		g_autofree gchar *data = NULL;
+		g_autofree gchar *md5_tmp = NULL;
 
 		/* get the contents so we can hash the predictable file data,
 		 * rather than the unpredicatable (for JPEG) pixel data */
 		if (!g_file_get_contents (filename, &data, &len, error))
 			return FALSE;
-		g_free (priv->md5);
-		priv->md5 = g_compute_checksum_for_data (G_CHECKSUM_MD5,
-							 (guchar * )data, len);
+		md5_tmp = g_compute_checksum_for_data (G_CHECKSUM_MD5,
+						       (guchar * )data, len);
+		as_ref_string_assign_safe (&priv->md5, md5_tmp);
 	}
 
 	/* load the image of the native size */
