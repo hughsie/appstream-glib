@@ -261,3 +261,98 @@ as_ref_string_assign_safe (AsRefString **rstr_ptr, const gchar *str)
 	if (str != NULL)
 		*rstr_ptr = as_ref_string_new (str);
 }
+
+static gint
+as_ref_string_sort_by_refcnt_cb (gconstpointer a, gconstpointer b)
+{
+	AsRefStringHeader *hdr1 = AS_REFPTR_TO_HEADER (a);
+	AsRefStringHeader *hdr2 = AS_REFPTR_TO_HEADER (b);
+	if (hdr1->refcnt > hdr2->refcnt)
+		return -1;
+	if (hdr1->refcnt < hdr2->refcnt)
+		return 1;
+	return 0;
+}
+
+/**
+ * as_ref_string_debug:
+ * @flags: some #AsRefStringDebugFlags, e.g. %AS_REF_STRING_DEBUG_DUPES
+ *
+ * This function outputs some debugging information to a string.
+ *
+ * Returns: a string describing the current state of the dedupe hash.
+ *
+ * Since: 0.6.6
+ */
+gchar *
+as_ref_string_debug (AsRefStringDebugFlags flags)
+{
+	GHashTable *hash = as_ref_string_get_hash ();
+	GString *tmp = g_string_new (NULL);
+
+	/* overview */
+	g_string_append_printf (tmp, "Size of hash table: %u\n",
+				g_hash_table_size (hash));
+
+	/* success: deduped */
+	if (flags & AS_REF_STRING_DEBUG_DEDUPED) {
+		GList *l;
+		g_autoptr(GList) keys = g_hash_table_get_keys (hash);
+
+		/* split up sections */
+		if (tmp->len > 0)
+			g_string_append (tmp, "\n\n");
+
+		/* sort by refcount number */
+		keys = g_list_sort (keys, as_ref_string_sort_by_refcnt_cb);
+		g_string_append (tmp, "Deduplicated strings:\n");
+		for (l = keys; l != NULL; l = l->next) {
+			const gchar *str = l->data;
+			AsRefStringHeader *hdr = AS_REFPTR_TO_HEADER (str);
+			if (hdr->refcnt <= 1)
+				continue;
+			g_string_append_printf (tmp, "%i\t%s\n", hdr->refcnt, str);
+		}
+	}
+
+	/* failed: duplicate */
+	if (flags & AS_REF_STRING_DEBUG_DUPES) {
+		GList *l;
+		GList *l2;
+		g_autoptr(GHashTable) dupes = g_hash_table_new (g_direct_hash, g_direct_equal);
+		g_autoptr(GList) keys = g_hash_table_get_keys (hash);
+
+		/* split up sections */
+		if (tmp->len > 0)
+			g_string_append (tmp, "\n\n");
+
+		g_string_append (tmp, "Duplicated strings:\n");
+		for (l = keys; l != NULL; l = l->next) {
+			const gchar *str = l->data;
+			AsRefStringHeader *hdr = AS_REFPTR_TO_HEADER (str);
+			guint dupe_cnt = 0;
+
+			if (g_hash_table_contains (dupes, hdr))
+				continue;
+			g_hash_table_add (dupes, (gpointer) hdr);
+
+			for (l2 = l; l2 != NULL; l2 = l2->next) {
+				const gchar *str2 = l2->data;
+				AsRefStringHeader *hdr2 = AS_REFPTR_TO_HEADER (str2);
+				if (g_hash_table_contains (dupes, hdr2))
+					continue;
+				if (l == l2)
+					continue;
+				if (g_strcmp0 (str, str2) != 0)
+					continue;
+				g_hash_table_add (dupes, (gpointer) hdr2);
+				dupe_cnt += 1;
+			}
+			if (dupe_cnt > 0) {
+				g_string_append_printf (tmp, "%u\t%s\n",
+							dupe_cnt, str);
+			}
+		}
+	}
+	return g_string_free (tmp, FALSE);
+}

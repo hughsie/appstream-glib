@@ -32,6 +32,22 @@ G_BEGIN_DECLS
 
 typedef gchar AsRefString;
 
+/**
+ * AsRefStringDebugFlags:
+ * @AS_REF_STRING_DEBUG_NONE:			No detailed debugging
+ * @AS_REF_STRING_DEBUG_DEDUPED:		Show detailed dedupe stats
+ * @AS_REF_STRING_DEBUG_DUPES:			Show detailed duplication stats
+ *
+ * The debug type flags.
+ **/
+typedef enum {
+	AS_REF_STRING_DEBUG_NONE	= 0,		/* Since: 0.6.16 */
+	AS_REF_STRING_DEBUG_DEDUPED	= 1 << 0,	/* Since: 0.6.16 */
+	AS_REF_STRING_DEBUG_DUPES	= 1 << 1,	/* Since: 0.6.16 */
+	/*< private >*/
+	AS_REF_STRING_DEBUG_LAST
+} AsRefStringDebugFlags;
+
 AsRefString	*as_ref_string_new			(const gchar	*str);
 AsRefString	*as_ref_string_new_with_length		(const gchar	*str,
 							 gsize		 len);
@@ -44,6 +60,7 @@ void		 as_ref_string_assign			(AsRefString	**rstr_ptr,
 							 AsRefString	*rstr);
 void		 as_ref_string_assign_safe		(AsRefString	**rstr_ptr,
 							 const gchar	*str);
+gchar		*as_ref_string_debug			(AsRefStringDebugFlags flags);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsRefString, as_ref_string_unref)
 

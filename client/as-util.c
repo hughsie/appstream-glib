@@ -1362,6 +1362,13 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 		g_print ("%s\n", xml->str);
 	}
 
+	/* dump refcounted string debug data */
+	if (g_getenv ("AS_REF_STR_DEBUG") != NULL) {
+		g_autofree gchar *tmp = as_ref_string_debug (AS_REF_STRING_DEBUG_DEDUPED |
+							     AS_REF_STRING_DEBUG_DUPES);
+		g_print ("%s", tmp);
+	}
+
 	return TRUE;
 }
 
