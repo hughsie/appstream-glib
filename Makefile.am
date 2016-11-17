@@ -84,8 +84,10 @@ DISTCHECK_CONFIGURE_FLAGS =				\
 massif:
 	make && \
 	time ./client/appstream-util search gimp --help > /dev/null && \
-	valgrind --massif-out-file=massif.out --tool=massif ./client/.libs/lt-appstream-util search gimp --profile && \
-	ms_print massif.out | head -n 30
+	valgrind --massif-out-file=massif.out --threshold=0.1 --tool=massif \
+		./client/.libs/lt-appstream-util search gimp --profile && \
+	ms_print massif.out > massif.txt && \
+	head -n 30 massif.txt
 
 .PHONY: ChangeLog
 
