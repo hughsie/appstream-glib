@@ -60,7 +60,8 @@ as_screenshot_finalize (GObject *object)
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 
 	g_ptr_array_unref (priv->images);
-	g_hash_table_unref (priv->captions);
+	if (priv->captions != NULL)
+		g_hash_table_unref (priv->captions);
 
 	G_OBJECT_CLASS (as_screenshot_parent_class)->finalize (object);
 }
@@ -71,6 +72,14 @@ as_screenshot_init (AsScreenshot *screenshot)
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	priv->kind = AS_SCREENSHOT_KIND_NORMAL;
 	priv->images = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+}
+
+static void
+as_screenshot_ensure_captions (AsScreenshot *screenshot)
+{
+	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	if (priv->captions != NULL)
+		return;
 	priv->captions = g_hash_table_new_full (g_str_hash,
 						g_str_equal,
 						(GDestroyNotify) as_ref_string_unref,
@@ -317,6 +326,8 @@ const gchar *
 as_screenshot_get_caption (AsScreenshot *screenshot, const gchar *locale)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	if (priv->captions == NULL)
+		return NULL;
 	return as_hash_lookup_by_locale (priv->captions, locale);
 }
 
@@ -386,6 +397,7 @@ as_screenshot_set_caption (AsScreenshot *screenshot,
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	if (locale == NULL)
 		locale = "C";
+	as_screenshot_ensure_captions (screenshot);
 	g_hash_table_insert (priv->captions,
 			     as_ref_string_new (locale),
 			     as_ref_string_new (caption));
@@ -425,10 +437,12 @@ as_screenshot_node_insert (AsScreenshot *screenshot,
 				       as_screenshot_kind_to_string (priv->kind));
 	}
 	if (as_node_context_get_version (ctx) >= 0.41) {
-		as_node_insert_localized (n,
-					  "caption",
-					  priv->captions,
-					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
+		if (priv->captions != NULL) {
+			as_node_insert_localized (n,
+						  "caption",
+						  priv->captions,
+						  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
+		}
 	}
 	if (as_node_context_get_version (ctx) >= 0.8 && priv->priority != 0)
 		as_node_add_attribute_as_int (n, "priority", priv->priority);
