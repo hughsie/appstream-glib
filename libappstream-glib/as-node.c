@@ -1657,6 +1657,7 @@ as_node_get_localized (const AsNode *node, const gchar *key)
 	const gchar *data_localized;
 	GHashTable *hash = NULL;
 	AsNode *tmp;
+	g_autoptr(AsRefString) xml_lang_c = as_ref_string_new_copy ("C");
 
 	/* does it exist? */
 	tmp = as_node_get_child_node (node, key, NULL, NULL);
@@ -1665,7 +1666,8 @@ as_node_get_localized (const AsNode *node, const gchar *key)
 	data_unlocalized = as_node_get_data (tmp);
 
 	/* find a node called name */
-	hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
+				      (GDestroyNotify) as_ref_string_unref, NULL);
 	for (tmp = node->children; tmp != NULL; tmp = tmp->next) {
 		data = tmp->data;
 		if (data == NULL)
@@ -1683,7 +1685,7 @@ as_node_get_localized (const AsNode *node, const gchar *key)
 		if (xml_lang != NULL && g_strcmp0 (data_unlocalized, data_localized) == 0)
 			continue;
 		g_hash_table_insert (hash,
-				     g_strdup (xml_lang != NULL ? xml_lang : "C"),
+				     as_ref_string_ref (xml_lang != NULL ? xml_lang : xml_lang_c),
 				     (gpointer) data_localized);
 	}
 	return hash;
