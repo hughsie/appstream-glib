@@ -51,7 +51,7 @@ typedef struct
 {
 	AsUrgencyKind		 urgency;
 	AsReleaseState		 state;
-	guint64			 size[AS_SIZE_KIND_LAST];
+	guint64			*sizes;
 	AsRefString		*version;
 	GHashTable		*blobs;		/* of AsRefString:GBytes */
 	GHashTable		*descriptions;
@@ -70,6 +70,7 @@ as_release_finalize (GObject *object)
 	AsRelease *release = AS_RELEASE (object);
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 
+	g_free (priv->sizes);
 	if (priv->version != NULL)
 		as_ref_string_unref (priv->version);
 	if (priv->blobs != NULL)
@@ -88,12 +89,8 @@ static void
 as_release_init (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
-	guint i;
-
 	priv->urgency = AS_URGENCY_KIND_UNKNOWN;
 	priv->state = AS_RELEASE_STATE_UNKNOWN;
-	for (i = 0; i < AS_SIZE_KIND_LAST; i++)
-		priv->size[i] = 0;
 }
 
 static void
@@ -103,6 +100,15 @@ as_release_ensure_checksums  (AsRelease *release)
 	if (priv->checksums != NULL)
 		return;
 	priv->checksums = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+}
+
+static void
+as_release_ensure_sizes  (AsRelease *release)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	if (priv->sizes != NULL)
+		return;
+	priv->sizes = g_new0 (guint64, AS_SIZE_KIND_LAST);
 }
 
 static void
@@ -180,7 +186,9 @@ as_release_get_size (AsRelease *release, AsSizeKind kind)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	if (kind >= AS_SIZE_KIND_LAST)
 		return 0;
-	return priv->size[kind];
+	if (priv->sizes == NULL)
+		return 0;
+	return priv->sizes[kind];
 }
 
 /**
@@ -199,7 +207,8 @@ as_release_set_size (AsRelease *release, AsSizeKind kind, guint64 size)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	if (kind >= AS_SIZE_KIND_LAST)
 		return;
-	priv->size[kind] = size;
+	as_release_ensure_sizes (release);
+	priv->sizes[kind] = size;
 }
 
 /**
@@ -630,15 +639,17 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* add sizes */
-	for (i = 0; i < AS_SIZE_KIND_LAST; i++) {
-		g_autofree gchar *size_str = NULL;
-		if (priv->size[i] == 0)
-			continue;
-		size_str = g_strdup_printf ("%" G_GUINT64_FORMAT, priv->size[i]);
-		as_node_insert (n, "size", size_str,
-				AS_NODE_INSERT_FLAG_NONE,
-				"type", as_size_kind_to_string (i),
-				NULL);
+	if (priv->sizes != NULL) {
+		for (i = 0; i < AS_SIZE_KIND_LAST; i++) {
+			g_autofree gchar *size_str = NULL;
+			if (priv->sizes[i] == 0)
+				continue;
+			size_str = g_strdup_printf ("%" G_GUINT64_FORMAT, priv->sizes[i]);
+			as_node_insert (n, "size", size_str,
+					AS_NODE_INSERT_FLAG_NONE,
+					"type", as_size_kind_to_string (i),
+					NULL);
+		}
 	}
 	return n;
 }
@@ -719,7 +730,8 @@ as_release_node_parse (AsRelease *release, GNode *node,
 		tmp = as_node_get_data (n);
 		if (tmp == NULL)
 			continue;
-		priv->size[kind] = g_ascii_strtoull (tmp, NULL, 10);
+		as_release_ensure_sizes (release);
+		priv->sizes[kind] = g_ascii_strtoull (tmp, NULL, 10);
 	}
 
 	/* AppStream: multiple <description> tags */
