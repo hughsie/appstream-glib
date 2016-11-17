@@ -110,8 +110,8 @@ typedef struct
 	AsRefString	*branch;
 	gint		 priority;
 	gsize		 token_cache_valid;
-	GHashTable	*token_cache;			/* of string:AsAppTokenType* */
-	GHashTable	*search_blacklist;		/* of stemmed-string:1 */
+	GHashTable	*token_cache;			/* of AsRefString:AsAppTokenType* */
+	GHashTable	*search_blacklist;		/* of AsRefString:1 */
 } AsAppPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsApp, as_app, G_TYPE_OBJECT)
@@ -566,7 +566,9 @@ as_app_init (AsApp *app)
 	priv->urls = g_hash_table_new_full (g_str_hash, g_str_equal,
 					    (GDestroyNotify) as_ref_string_unref,
 					    (GDestroyNotify) as_ref_string_unref);
-	priv->token_cache = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+	priv->token_cache = g_hash_table_new_full (g_str_hash, g_str_equal,
+						   (GDestroyNotify) as_ref_string_unref,
+						   g_free);
 	priv->search_match = AS_APP_SEARCH_MATCH_LAST;
 }
 
@@ -5128,7 +5130,7 @@ as_app_add_token_internal (AsApp *app,
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsAppTokenType *match_pval;
-	g_autofree gchar *value_stem = NULL;
+	g_autoptr(AsRefString) value_stem = NULL;
 
 	/* invalid */
 	if (!as_utils_search_token_valid (value))
@@ -5138,7 +5140,7 @@ as_app_add_token_internal (AsApp *app,
 	if (priv->stemmer != NULL)
 		value_stem = as_stemmer_process (priv->stemmer, value);
 	if (value_stem == NULL)
-		value_stem = g_utf8_strdown (value, -1);
+		return;
 
 	/* blacklisted */
 	if (priv->search_blacklist != NULL &&
@@ -5156,7 +5158,7 @@ as_app_add_token_internal (AsApp *app,
 	match_pval = g_new0 (AsAppTokenType, 1);
 	*match_pval = match_flag;
 	g_hash_table_insert (priv->token_cache,
-			     g_steal_pointer (&value_stem),
+			     as_ref_string_ref (value_stem),
 			     match_pval);
 }
 
@@ -5326,7 +5328,7 @@ as_app_search_matches (AsApp *app, const gchar *search)
 	GList *l;
 	AsAppSearchMatch result = 0;
 	g_autoptr(GList) keys = NULL;
-	g_autofree gchar *search_stem = NULL;
+	g_autoptr(AsRefString) search_stem = NULL;
 
 	/* ensure the token cache is created */
 	if (g_once_init_enter (&priv->token_cache_valid)) {
@@ -5342,7 +5344,7 @@ as_app_search_matches (AsApp *app, const gchar *search)
 	if (priv->stemmer != NULL)
 		search_stem = as_stemmer_process (priv->stemmer, search);
 	if (search_stem == NULL)
-		search_stem = g_utf8_strdown (search, -1);
+		return 0;
 	match_pval = g_hash_table_lookup (priv->token_cache, search_stem);
 	if (match_pval != NULL)
 		return (guint) *match_pval << 2;

@@ -2706,8 +2706,10 @@ as_test_app_search_func (void)
 	const gchar *mime[] = { "application/vnd.oasis.opendocument.text", NULL };
 	g_autoptr(AsApp) app = NULL;
 	g_autoptr(GHashTable) search_blacklist = NULL;
+	g_autoptr(AsStemmer) stemmer = as_stemmer_new ();
 
 	app = as_app_new ();
+	as_app_set_stemmer (app, stemmer);
 	as_app_set_id (app, "gnome-software");
 	as_app_add_pkgname (app, "gnome-software");
 	as_app_set_name (app, NULL, "GNOME Software X-Plane");

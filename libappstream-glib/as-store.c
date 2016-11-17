@@ -73,7 +73,7 @@ typedef struct
 	AsMonitor		*monitor;
 	GHashTable		*metadata_indexes;	/* GHashTable{key} */
 	GHashTable		*appinfo_dirs;	/* GHashTable{path:AsStorePathData} */
-	GHashTable		*search_blacklist;	/* GHashTable{string:1} */
+	GHashTable		*search_blacklist;	/* GHashTable{AsRefString:1} */
 	AsStoreAddFlags		 add_flags;
 	AsStoreWatchFlags	 watch_flags;
 	AsStoreProblems		 problems;
@@ -3389,7 +3389,7 @@ as_store_init (AsStore *store)
 	priv->search_match = AS_APP_SEARCH_MATCH_LAST;
 	priv->search_blacklist = g_hash_table_new_full (g_str_hash,
 							g_str_equal,
-							g_free,
+							(GDestroyNotify) as_ref_string_unref,
 							NULL);
 	priv->hash_id = g_hash_table_new_full (g_str_hash,
 					       g_str_equal,

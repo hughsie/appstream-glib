@@ -28,11 +28,13 @@
 #endif
 
 #include "as-stemmer.h"
+#include "as-ref-string.h"
 
 struct _AsStemmer
 {
 	GObject			 parent_instance;
 	gboolean		 enabled;
+	GHashTable		*hash;
 	struct sb_stemmer	*ctx;
 	GMutex			 ctx_mutex;
 };
@@ -48,35 +50,54 @@ G_DEFINE_TYPE (AsStemmer, as_stemmer, G_TYPE_OBJECT)
  *
  * Since: 0.2.2
  *
- * Returns: A new string
+ * Returns: A new refcounted string
  **/
-gchar *
+const gchar *
 as_stemmer_process (AsStemmer *stemmer, const gchar *value)
 {
 #ifdef HAVE_LIBSTEMMER
-	gchar *new;
+	AsRefString *new;
+	const gchar *tmp;
+	gsize value_len;
 	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&stemmer->ctx_mutex);
+
+	/* look for word in the cache */
+	new = g_hash_table_lookup (stemmer->hash, value);
+	if (new != NULL)
+		return as_ref_string_ref (new);
+
+	/* not enabled */
 	if (stemmer->ctx == NULL || !stemmer->enabled)
-		return g_strdup (value);
-	new = g_strdup ((gchar *) sb_stemmer_stem (stemmer->ctx,
-						   (guchar *) value,
-						   strlen (value)));
-//	if (g_strcmp0 (value, new) != 0)
-//		g_debug ("stemmed %s->%s", value, new);
+		return as_ref_string_new (value);
+
+	/* stem, then add to the cache */
+	value_len = strlen (value);
+	tmp = (const gchar *) sb_stemmer_stem (stemmer->ctx,
+					       (guchar *) value,
+					       (gint) value_len);
+	if (value_len == (gsize) sb_stemmer_length (stemmer->ctx)) {
+		new = as_ref_string_new_with_length (value, value_len);
+	} else {
+		new = as_ref_string_new_copy (tmp);
+	}
+	g_hash_table_insert (stemmer->hash,
+			     as_ref_string_new (value),
+			     as_ref_string_ref (new));
 	return new;
 #else
-	return g_strdup (value);
+	return as_ref_string_new (value);
 #endif
 }
 
 static void
 as_stemmer_finalize (GObject *object)
 {
-#ifdef HAVE_LIBSTEMMER
 	AsStemmer *stemmer = AS_STEMMER (object);
+#ifdef HAVE_LIBSTEMMER
 	sb_stemmer_delete (stemmer->ctx);
 	g_mutex_clear (&stemmer->ctx_mutex);
 #endif
+	g_hash_table_unref (stemmer->hash);
 	G_OBJECT_CLASS (as_stemmer_parent_class)->finalize (object);
 }
 
@@ -96,6 +117,9 @@ as_stemmer_init (AsStemmer *stemmer)
 	g_mutex_init (&stemmer->ctx_mutex);
 #endif
 	stemmer->enabled = g_getenv ("APPSTREAM_GLIB_DISABLE_STEMMER") == NULL;
+	stemmer->hash = g_hash_table_new_full (g_str_hash, g_str_equal,
+					       (GDestroyNotify) as_ref_string_unref,
+					       (GDestroyNotify) as_ref_string_unref);
 }
 
 /**

@@ -31,7 +31,7 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (AsStemmer, as_stemmer, AS, STEMMER, GObject)
 
 AsStemmer	*as_stemmer_new			(void);
-gchar		*as_stemmer_process		(AsStemmer	*stemmer,
+const gchar	*as_stemmer_process		(AsStemmer	*stemmer,
 						 const gchar	*value);
 
 G_END_DECLS
