@@ -1657,7 +1657,7 @@ as_node_get_localized (const AsNode *node, const gchar *key)
 	const gchar *data_localized;
 	GHashTable *hash = NULL;
 	AsNode *tmp;
-	g_autoptr(AsRefString) xml_lang_c = as_ref_string_new_copy ("C");
+	g_autoptr(AsRefString) xml_lang_c = as_ref_string_new_static ("C");
 
 	/* does it exist? */
 	tmp = as_node_get_child_node (node, key, NULL, NULL);
@@ -1937,7 +1937,7 @@ as_node_fix_locale (const gchar *locale)
 	AsRefString *tmp;
 
 	if (locale == NULL)
-		return as_ref_string_new ("C");
+		return as_ref_string_new_static ("C");
 	if (g_strcmp0 (locale, "xx") == 0)
 		return NULL;
 	if (g_strcmp0 (locale, "x-test") == 0)

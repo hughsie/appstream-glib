@@ -4697,7 +4697,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			if (value == NULL) {
 				g_hash_table_insert (priv->metadata,
 						     as_ref_string_ref (key),
-						     as_ref_string_new (""));
+						     as_ref_string_new_static (""));
 			} else {
 				g_hash_table_insert (priv->metadata,
 						     as_ref_string_ref (key),

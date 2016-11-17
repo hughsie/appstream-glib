@@ -63,6 +63,18 @@ as_ref_string_get_hash (void)
 }
 
 /**
+ * as_ref_string_new_static:
+ * @str: a string
+ *
+ * Returns a refcounted string from a static string. The static string cannot
+ * be unloaded and freed.
+ *
+ * Returns: a %AsRefString
+ *
+ * Since: 0.6.6
+ */
+
+/**
  * as_ref_string_new_copy_with_length:
  * @str: a string
  * @len: length of @str, not including the NUL byte
@@ -136,6 +148,8 @@ as_ref_string_new_with_length (const gchar *str, gsize len)
 	/* already in hash */
 	if (g_hash_table_contains (hash, str)) {
 		hdr = AS_REFPTR_TO_HEADER (str);
+		if (hdr->refcnt < 0)
+			return str;
 		g_atomic_int_inc (&hdr->refcnt);
 		return str;
 	}
@@ -176,6 +190,8 @@ as_ref_string_ref (AsRefString *rstr)
 	AsRefStringHeader *hdr;
 	g_return_val_if_fail (rstr != NULL, NULL);
 	hdr = AS_REFPTR_TO_HEADER (rstr);
+	if (hdr->refcnt < 0)
+		return rstr;
 	g_atomic_int_inc (&hdr->refcnt);
 	return rstr;
 }
@@ -198,6 +214,8 @@ as_ref_string_unref (AsRefString *rstr)
 	g_return_val_if_fail (rstr != NULL, NULL);
 
 	hdr = AS_REFPTR_TO_HEADER (rstr);
+	if (hdr->refcnt < 0)
+		return rstr;
 	if (g_atomic_int_dec_and_test (&hdr->refcnt)) {
 		GHashTable *hash = as_ref_string_get_hash ();
 		g_hash_table_remove (hash, rstr);

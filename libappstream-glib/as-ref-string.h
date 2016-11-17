@@ -48,6 +48,8 @@ typedef enum {
 	AS_REF_STRING_DEBUG_LAST
 } AsRefStringDebugFlags;
 
+#define as_ref_string_new_static(o)			(("\xff\xff\xff\xff" o) + 4)
+
 AsRefString	*as_ref_string_new			(const gchar	*str);
 AsRefString	*as_ref_string_new_with_length		(const gchar	*str,
 							 gsize		 len);
