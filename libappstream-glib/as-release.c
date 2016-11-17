@@ -53,11 +53,11 @@ typedef struct
 	AsReleaseState		 state;
 	guint64			 size[AS_SIZE_KIND_LAST];
 	AsRefString		*version;
-	GHashTable		*blobs; /* of gchar*:GBytes */
+	GHashTable		*blobs;		/* of AsRefString:GBytes */
 	GHashTable		*descriptions;
 	guint64			 timestamp;
-	GPtrArray		*locations;	/* of AsRefString */
-	GPtrArray		*checksums;
+	GPtrArray		*locations;	/* of AsRefString, lazy */
+	GPtrArray		*checksums;	/* of AsChecksum, lazy */
 } AsReleasePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsRelease, as_release, G_TYPE_OBJECT)
@@ -72,9 +72,12 @@ as_release_finalize (GObject *object)
 
 	if (priv->version != NULL)
 		as_ref_string_unref (priv->version);
-	g_hash_table_unref (priv->blobs);
-	g_ptr_array_unref (priv->checksums);
-	g_ptr_array_unref (priv->locations);
+	if (priv->blobs != NULL)
+		g_hash_table_unref (priv->blobs);
+	if (priv->checksums != NULL)
+		g_ptr_array_unref (priv->checksums);
+	if (priv->locations != NULL)
+		g_ptr_array_unref (priv->locations);
 	if (priv->descriptions != NULL)
 		g_hash_table_unref (priv->descriptions);
 
@@ -89,13 +92,37 @@ as_release_init (AsRelease *release)
 
 	priv->urgency = AS_URGENCY_KIND_UNKNOWN;
 	priv->state = AS_RELEASE_STATE_UNKNOWN;
-	priv->locations = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
+	for (i = 0; i < AS_SIZE_KIND_LAST; i++)
+		priv->size[i] = 0;
+}
+
+static void
+as_release_ensure_checksums  (AsRelease *release)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	if (priv->checksums != NULL)
+		return;
 	priv->checksums = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+}
+
+static void
+as_release_ensure_locations  (AsRelease *release)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	if (priv->locations != NULL)
+		return;
+	priv->locations = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
+}
+
+static void
+as_release_ensure_blobs  (AsRelease *release)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	if (priv->blobs != NULL)
+		return;
 	priv->blobs = g_hash_table_new_full (g_str_hash, g_str_equal,
 					     (GDestroyNotify) as_ref_string_unref,
 					     (GDestroyNotify) g_bytes_unref);
-	for (i = 0; i < AS_SIZE_KIND_LAST; i++)
-		priv->size[i] = 0;
 }
 
 static void
@@ -242,6 +269,8 @@ as_release_get_blob (AsRelease *release, const gchar *filename)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	g_return_val_if_fail (filename != NULL, NULL);
+	if (priv->blobs == NULL)
+		return NULL;
 	return g_hash_table_lookup (priv->blobs, filename);
 }
 
@@ -259,6 +288,7 @@ GPtrArray *
 as_release_get_locations (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	as_release_ensure_locations (release);
 	return priv->locations;
 }
 
@@ -295,6 +325,7 @@ GPtrArray *
 as_release_get_checksums (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	as_release_ensure_checksums (release);
 	return priv->checksums;
 }
 
@@ -342,6 +373,8 @@ as_release_get_checksum_by_target (AsRelease *release, AsChecksumTarget target)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	guint i;
 
+	if (priv->checksums == NULL)
+		return NULL;
 	for (i = 0; i < priv->checksums->len; i++) {
 		checksum = g_ptr_array_index (priv->checksums, i);
 		if (as_checksum_get_target (checksum) == target)
@@ -421,6 +454,8 @@ as_release_set_blob (AsRelease *release, const gchar *filename, GBytes *blob)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	g_return_if_fail (filename != NULL);
 	g_return_if_fail (blob != NULL);
+
+	as_release_ensure_blobs (release);
 	g_hash_table_insert (priv->blobs,
 			     as_ref_string_new (filename),
 			     g_bytes_ref (blob));
@@ -492,6 +527,7 @@ void
 as_release_add_checksum (AsRelease *release, AsChecksum *checksum)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	as_release_ensure_checksums (release);
 	g_ptr_array_add (priv->checksums, g_object_ref (checksum));
 }
 
@@ -577,12 +613,12 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 		as_node_add_attribute (n, "version", priv->version);
 	if (as_node_context_get_version (ctx) >= 0.9) {
 		const gchar *tmp;
-		for (i = 0; i < priv->locations->len; i++) {
+		for (i = 0; priv->locations != NULL && i < priv->locations->len; i++) {
 			tmp = g_ptr_array_index (priv->locations, i);
 			as_node_insert (n, "location", tmp,
 					AS_NODE_INSERT_FLAG_NONE, NULL);
 		}
-		for (i = 0; i < priv->checksums->len; i++) {
+		for (i = 0; priv->checksums != NULL && i < priv->checksums->len; i++) {
 			checksum = g_ptr_array_index (priv->checksums, i);
 			as_checksum_node_insert (checksum, n, ctx);
 		}
@@ -646,13 +682,15 @@ as_release_node_parse (AsRelease *release, GNode *node,
 		as_release_set_version (release, tmp);
 
 	/* get optional locations */
-	g_ptr_array_set_size (priv->locations, 0);
+	if (priv->locations != NULL)
+		g_ptr_array_set_size (priv->locations, 0);
 	for (n = node->children; n != NULL; n = n->next) {
 		if (as_node_get_tag (n) != AS_TAG_LOCATION)
 			continue;
 		tmp = as_node_get_data (n);
 		if (tmp == NULL)
 			continue;
+		as_release_ensure_locations (release);
 		g_ptr_array_add (priv->locations, as_ref_string_ref (tmp));
 	}
 
