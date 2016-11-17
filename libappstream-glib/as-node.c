@@ -506,6 +506,14 @@ as_node_reflow_text (const gchar *text, gssize text_len)
 	g_auto(GStrv) split = NULL;
 	g_autoptr(GString) tmp = NULL;
 
+	/* all on one line */
+	if (g_strstr_len (text, text_len, "\n") == NULL &&
+	    !g_str_has_prefix (text, " ")) {
+		gsize len;
+		len = text_len >= 0 ? (gsize) text_len : strlen (text);
+		return as_ref_string_new_copy_with_length (text, len);
+	}
+
 	/* split the text into lines */
 	tmp = g_string_sized_new ((gsize) text_len + 1);
 	split = g_strsplit (text, "\n", -1);
