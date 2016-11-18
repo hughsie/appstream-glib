@@ -4141,6 +4141,7 @@ as_util_sigint_cb (gpointer user_data)
 int
 main (int argc, char *argv[])
 {
+	AsProfileTask *ptask;
 	AsUtilPrivate *priv = NULL;
 	gboolean ret;
 	gboolean enable_profiling = FALSE;
@@ -4438,7 +4439,9 @@ main (int argc, char *argv[])
 	}
 
 	/* run the specified command */
+	ptask = as_profile_start (priv->profile, "%s: %s", argv[0], argv[1]);
 	ret = as_util_run (priv, argv[1], (gchar**) &argv[2], &error);
+	as_profile_task_free (ptask);
 	if (!ret) {
 		if (g_error_matches (error, AS_ERROR, AS_ERROR_NO_SUCH_CMD)) {
 			gchar *tmp;
