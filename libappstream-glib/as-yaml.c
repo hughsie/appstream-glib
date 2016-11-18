@@ -428,12 +428,14 @@ as_yaml_read_handler_cb (void *data,
 			 size_t *size_read)
 {
 	GInputStream *stream = G_INPUT_STREAM (data);
-	*size_read = (gsize) g_input_stream_read (stream,
-						  buffer,
-						  (gsize)
-						  size,
-						  NULL,
-						  NULL);
+	gssize len = g_input_stream_read (stream,
+					  buffer,
+					  (gsize) size,
+					  NULL,
+					  NULL);
+	if (len < 0)
+		return 0;
+	*size_read = (gsize) len;
 	return 1;
 }
 #endif
