@@ -434,8 +434,10 @@ as_node_to_xml_string (GString *xml,
 	} else if (n->children == NULL) {
 		if ((flags & AS_NODE_TO_XML_FLAG_FORMAT_INDENT) > 0)
 			as_node_add_padding (xml, depth - depth_offset);
-		attrs = as_node_get_attr_string (data);
 		tag_str = as_tag_data_get_name (data);
+		if (tag_str == NULL)
+			return;
+		attrs = as_node_get_attr_string (data);
 		if (data->cdata == NULL || data->cdata[0] == '\0') {
 			g_string_append_printf (xml, "<%s%s/>",
 						tag_str, attrs);
