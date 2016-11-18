@@ -31,14 +31,31 @@
 
 G_BEGIN_DECLS
 
+
+/**
+ * AsYamlFromFlags:
+ * @AS_YAML_FROM_FLAG_NONE:			No extra flags to use
+ * @AS_YAML_FROM_FLAG_ONLY_NATIVE_LANGS:	Only load native languages
+ *
+ * The flags for converting from XML.
+ **/
+typedef enum {
+	AS_YAML_FROM_FLAG_NONE			= 0,		/* Since: 0.1.0 */
+	AS_YAML_FROM_FLAG_ONLY_NATIVE_LANGS	= 1 << 0,	/* Since: 0.6.6 */
+	/*< private >*/
+	AS_YAML_FROM_FLAG_LAST
+} AsYamlFromFlags;
+
 typedef GNode AsYaml;
 
 void		 as_yaml_unref			(AsYaml		*node);
 GString		*as_yaml_to_string		(AsYaml		*node);
 AsYaml		*as_yaml_from_data		(const gchar	*data,
 						 gssize		 data_len,
+						 AsYamlFromFlags flags,
 						 GError		**error);
 AsYaml		*as_yaml_from_file		(GFile		*file,
+						 AsYamlFromFlags flags,
 						 GCancellable	*cancellable,
 						 GError		**error);
 const gchar	*as_yaml_node_get_key		(const AsYaml	*node);

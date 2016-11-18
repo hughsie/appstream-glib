@@ -1529,6 +1529,7 @@ as_store_load_yaml_file (AsStore *store,
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	AsNode *app_n;
 	AsNode *n;
+	AsYamlFromFlags flags = AS_YAML_FROM_FLAG_NONE;
 	const gchar *tmp;
 	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autofree gchar *icon_path = NULL;
@@ -1536,7 +1537,9 @@ as_store_load_yaml_file (AsStore *store,
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
 	/* load file */
-	root = as_yaml_from_file (file, cancellable, error);
+	if (priv->add_flags & AS_STORE_ADD_FLAG_ONLY_NATIVE_LANGS)
+		flags |= AS_YAML_FROM_FLAG_ONLY_NATIVE_LANGS;
+	root = as_yaml_from_file (file, flags, cancellable, error);
 	if (root == NULL)
 		return FALSE;
 

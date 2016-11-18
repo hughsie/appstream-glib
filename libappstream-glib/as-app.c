@@ -4944,6 +4944,8 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 		}
 		if (g_strcmp0 (tmp, "Name") == 0) {
 			for (c = n->children; c != NULL; c = c->next) {
+				if (as_yaml_node_get_key (c) == NULL)
+					continue;
 				as_app_set_name (app,
 						 as_yaml_node_get_key (c),
 						 as_yaml_node_get_value (c));
@@ -4952,6 +4954,8 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 		}
 		if (g_strcmp0 (tmp, "Summary") == 0) {
 			for (c = n->children; c != NULL; c = c->next) {
+				if (as_yaml_node_get_key (c) == NULL)
+					continue;
 				as_app_set_comment (app,
 						    as_yaml_node_get_key (c),
 						    as_yaml_node_get_value (c));
@@ -4960,6 +4964,8 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 		}
 		if (g_strcmp0 (tmp, "Description") == 0) {
 			for (c = n->children; c != NULL; c = c->next) {
+				if (as_yaml_node_get_key (c) == NULL)
+					continue;
 				as_app_set_description (app,
 							as_yaml_node_get_key (c),
 							as_yaml_node_get_value (c));
@@ -4970,6 +4976,8 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 			for (c = n->children; c != NULL; c = c->next) {
 				for (c2 = c->children; c2 != NULL; c2 = c2->next) {
 					if (as_yaml_node_get_key (c2) == NULL)
+						continue;
+					if (as_yaml_node_get_key (c) == NULL)
 						continue;
 					as_app_add_keyword (app,
 							   as_yaml_node_get_key (c),

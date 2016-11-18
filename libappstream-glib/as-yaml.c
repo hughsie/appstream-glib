@@ -26,6 +26,7 @@
 #endif
 
 #include "as-node.h"
+#include "as-ref-string.h"
 #include "as-yaml.h"
 
 typedef enum {
@@ -38,8 +39,8 @@ typedef enum {
 } AsYamlNodeKind;
 
 typedef struct {
-	gchar		*key;
-	gchar		*value;
+	AsRefString	*key;
+	AsRefString	*value;
 	AsYamlNodeKind	 kind;
 } AsYamlNode;
 
@@ -113,8 +114,10 @@ as_node_yaml_destroy_node_cb (AsNode *node, gpointer data)
 	AsYamlNode *ym = node->data;
 	if (ym == NULL)
 		return FALSE;
-	g_free (ym->key);
-	g_free (ym->value);
+	if (ym->key != NULL)
+		as_ref_string_unref (ym->key);
+	if (ym->value != NULL)
+		as_ref_string_unref (ym->value);
 	g_slice_free (AsYamlNode, ym);
 	return FALSE;
 }
@@ -197,7 +200,8 @@ as_yaml_node_new (AsYamlNodeKind kind, const gchar *id)
 	AsYamlNode *ym;
 	ym = g_slice_new0 (AsYamlNode);
 	ym->kind = kind;
-	ym->key = g_strdup (id);
+	if (id != NULL)
+		ym->key = as_ref_string_ref (id);
 	return ym;
 }
 
@@ -315,8 +319,35 @@ as_yaml_parser_error_to_gerror (yaml_parser_t *parser, GError **error)
 	return FALSE;
 }
 
+typedef struct {
+	AsYamlFromFlags		 flags;
+	const gchar * const	*locales;
+	yaml_parser_t		*parser;
+} AsYamlContext;
+
 static gboolean
-as_node_yaml_process_layer (yaml_parser_t *parser, AsNode *parent, GError **error)
+as_yaml_node_valid (AsYamlContext *ctx, AsNode *parent, const gchar *key)
+{
+	const gchar *sections[] = { "Name", "Summary", "Description", NULL };
+	AsYamlNode *ym = parent->data;
+
+	/* if native filtering enabled */
+	if ((ctx->flags & AS_YAML_FROM_FLAG_ONLY_NATIVE_LANGS) == 0)
+		return TRUE;
+
+	/* filter by translatable sections */
+	if (!g_strv_contains (sections, ym->key))
+		return TRUE;
+
+	/* non-native language */
+	if (g_strv_contains (ctx->locales, key))
+		return TRUE;
+
+	return FALSE;
+}
+
+static gboolean
+as_node_yaml_process_layer (AsYamlContext *ctx, AsNode *parent, GError **error)
 {
 	AsYamlNode *ym;
 	AsNode *last_scalar = NULL;
@@ -324,12 +355,14 @@ as_node_yaml_process_layer (yaml_parser_t *parser, AsNode *parent, GError **erro
 	const gchar *tmp;
 	gboolean valid = TRUE;
 	yaml_event_t event;
+	AsRefString *map_str = as_ref_string_new_static ("{");
+	AsRefString *seq_str = as_ref_string_new_static ("[");
 
 	while (valid) {
 
 		/* process event */
-		if (!yaml_parser_parse (parser, &event))
-			return as_yaml_parser_error_to_gerror (parser, error);
+		if (!yaml_parser_parse (ctx->parser, &event))
+			return as_yaml_parser_error_to_gerror (ctx->parser, error);
 
 		switch (event.type) {
 		case YAML_SCALAR_EVENT:
@@ -337,37 +370,43 @@ as_node_yaml_process_layer (yaml_parser_t *parser, AsNode *parent, GError **erro
 			if (as_yaml_node_get_kind (parent) != AS_YAML_NODE_KIND_SEQ &&
 			    last_scalar != NULL) {
 				ym = last_scalar->data;
-				ym->value = g_strdup (tmp);
+				if (ym->key != NULL)
+					ym->value = as_ref_string_new_copy (tmp);
 				ym->kind = AS_YAML_NODE_KIND_KEY_VALUE;
 				last_scalar = NULL;
 			} else {
-				ym = as_yaml_node_new (AS_YAML_NODE_KIND_KEY, tmp);
+				if (as_yaml_node_valid (ctx, parent, tmp)) {
+					g_autoptr(AsRefString) rstr = as_ref_string_new_copy (tmp);
+					ym = as_yaml_node_new (AS_YAML_NODE_KIND_KEY, rstr);
+				} else {
+					ym = as_yaml_node_new (AS_YAML_NODE_KIND_KEY, NULL);
+				}
 				last_scalar = g_node_append_data (parent, ym);
 			}
 			break;
 		case YAML_MAPPING_START_EVENT:
 			if (last_scalar == NULL) {
-				ym = as_yaml_node_new (AS_YAML_NODE_KIND_MAP, "{");
+				ym = as_yaml_node_new (AS_YAML_NODE_KIND_MAP, map_str);
 				new = g_node_append_data (parent, ym);
 			} else {
 				ym = last_scalar->data;
 				ym->kind = AS_YAML_NODE_KIND_MAP;
 				new = last_scalar;
 			}
-			if (!as_node_yaml_process_layer (parser, new, error))
+			if (!as_node_yaml_process_layer (ctx, new, error))
 				return FALSE;
 			last_scalar = NULL;
 			break;
 		case YAML_SEQUENCE_START_EVENT:
 			if (last_scalar == NULL) {
-				ym = as_yaml_node_new (AS_YAML_NODE_KIND_SEQ, "[");
+				ym = as_yaml_node_new (AS_YAML_NODE_KIND_SEQ, seq_str);
 				new = g_node_append_data (parent, ym);
 			} else {
 				ym = last_scalar->data;
 				ym->kind = AS_YAML_NODE_KIND_SEQ;
 				new = last_scalar;
 			}
-			if (!as_node_yaml_process_layer (parser, new, error))
+			if (!as_node_yaml_process_layer (ctx, new, error))
 				return FALSE;
 			last_scalar = NULL;
 			break;
@@ -392,10 +431,14 @@ G_DEFINE_AUTO_CLEANUP_FREE_FUNC(AsYamlParser, yaml_parser_delete, NULL);
 #endif
 
 AsNode *
-as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
+as_yaml_from_data (const gchar *data,
+		   gssize data_len,
+		   AsYamlFromFlags flags,
+		   GError **error)
 {
 	g_autoptr(AsYaml) node = NULL;
 #ifdef AS_BUILD_DEP11
+	AsYamlContext ctx;
 	yaml_parser_t parser;
 	g_auto(AsYamlParser) parser_cleanup = NULL;
 
@@ -409,7 +452,10 @@ as_yaml_from_data (const gchar *data, gssize data_len, GError **error)
 		data_len = (gssize) strlen (data);
 	yaml_parser_set_input_string (&parser, (guchar *) data, (gsize) data_len);
 	node = g_node_new (NULL);
-	if (!as_node_yaml_process_layer (&parser, node, error))
+	ctx.parser = &parser;
+	ctx.flags = flags;
+	ctx.locales = g_get_language_names ();
+	if (!as_node_yaml_process_layer (&ctx, node, error))
 		return NULL;
 #else
 	g_set_error_literal (error,
@@ -441,7 +487,7 @@ as_yaml_read_handler_cb (void *data,
 #endif
 
 AsNode *
-as_yaml_from_file (GFile *file, GCancellable *cancellable, GError **error)
+as_yaml_from_file (GFile *file, AsYamlFromFlags flags, GCancellable *cancellable, GError **error)
 {
 	g_autoptr(AsYaml) node = NULL;
 #ifdef AS_BUILD_DEP11
@@ -453,6 +499,7 @@ as_yaml_from_file (GFile *file, GCancellable *cancellable, GError **error)
 	g_autoptr(GFileInfo) info = NULL;
 	g_autoptr(GInputStream) file_stream = NULL;
 	g_autoptr(GInputStream) stream_data = NULL;
+	AsYamlContext ctx;
 
 	/* what kind of file is this */
 	info = g_file_query_info (file,
@@ -491,7 +538,10 @@ as_yaml_from_file (GFile *file, GCancellable *cancellable, GError **error)
 	parser_cleanup = &parser;
 	yaml_parser_set_input (&parser, as_yaml_read_handler_cb, stream_data);
 	node = g_node_new (NULL);
-	if (!as_node_yaml_process_layer (&parser, node, error))
+	ctx.parser = &parser;
+	ctx.flags = flags;
+	ctx.locales = g_get_language_names ();
+	if (!as_node_yaml_process_layer (&ctx, node, error))
 		return NULL;
 #else
 	g_set_error_literal (error,

@@ -4389,12 +4389,16 @@ as_test_yaml_broken_func (void)
 	g_autoptr(GError) error2 = NULL;
 	node = as_yaml_from_data ("s---\n"
 				  "File: DEP-11\n",
-				  -1, &error1);
+				  -1,
+				  AS_YAML_FROM_FLAG_NONE,
+				  &error1);
 	g_assert_error (error1, AS_NODE_ERROR, AS_NODE_ERROR_INVALID_MARKUP);
 	g_assert (node == NULL);
 	node = as_yaml_from_data ("---\n"
 				  "%File: DEP-11\n",
-				  -1, &error2);
+				  -1,
+				  AS_YAML_FROM_FLAG_NONE,
+				  &error2);
 	g_assert_error (error2, AS_NODE_ERROR, AS_NODE_ERROR_INVALID_MARKUP);
 	g_assert_cmpstr (error2->message, ==,
 			 "scanner error: while scanning a directive at ln:2 col:1, "
@@ -4422,7 +4426,9 @@ as_test_yaml_func (void)
 		"File: DEP-11\n"
 		"Origin: aequorea\n"
 		"Version: '0.6'\n",
-		-1, &error);
+		-1,
+		AS_YAML_FROM_FLAG_NONE,
+		&error);
 	g_assert_no_error (error);
 	g_assert (node != NULL);
 	str = as_yaml_to_string (node);
@@ -4448,7 +4454,9 @@ as_test_yaml_func (void)
 		"  - AppMenu\n"
 		"  - SearchProvider\n"
 		"  - Notifications\n",
-		-1, &error);
+		-1,
+		AS_YAML_FROM_FLAG_NONE,
+		&error);
 	g_assert_no_error (error);
 	g_assert (node != NULL);
 	str = as_yaml_to_string (node);
@@ -4472,7 +4480,7 @@ as_test_yaml_func (void)
 	filename = as_test_get_filename ("usr/share/app-info/yaml/aequorea.yml");
 	g_assert (filename != NULL);
 	file = g_file_new_for_path (filename);
-	node = as_yaml_from_file (file, NULL, &error);
+	node = as_yaml_from_file (file, AS_YAML_FROM_FLAG_NONE, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (node != NULL);
 	str = as_yaml_to_string (node);
