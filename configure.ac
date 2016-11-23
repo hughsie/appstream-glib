@@ -66,6 +66,8 @@ LT_INIT
 AM_PROG_CC_C_O
 
 WARN_CFLAGS_EXTRA="
+	-D_FORTIFY_SOURCE=2
+	-fstack-protector-strong
 	-Waggregate-return
 	-Warray-bounds
 	-Wcast-align
