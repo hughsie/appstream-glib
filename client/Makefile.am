@@ -38,6 +38,7 @@ appstream_util_LDADD =					\
 	$(SOUP_LIBS)					\
 	$(LIBARCHIVE_LIBS)
 appstream_util_LDFLAGS =				\
+	$(RELRO_LDFLAGS)				\
 	$(PIE_LDFLAGS)
 appstream_util_CFLAGS =					\
 	$(WARN_CFLAGS)
@@ -53,6 +54,7 @@ appstream_builder_LDADD =				\
 	$(SOUP_LIBS)					\
 	$(LIBARCHIVE_LIBS)
 appstream_builder_LDFLAGS =				\
+	$(RELRO_LDFLAGS)				\
 	$(PIE_LDFLAGS)
 appstream_builder_CFLAGS =				\
 	$(WARN_CFLAGS)
@@ -67,6 +69,7 @@ appstream_compose_LDADD =				\
 	$(GDKPIXBUF_LIBS)				\
 	$(LIBARCHIVE_LIBS)
 appstream_compose_LDFLAGS =				\
+	$(RELRO_LDFLAGS)				\
 	$(PIE_LDFLAGS)
 appstream_compose_CFLAGS =				\
 	$(WARN_CFLAGS)
