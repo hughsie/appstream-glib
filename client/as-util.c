@@ -1226,7 +1226,6 @@ as_util_watch_store_app_changed_cb (AsStore *store, AsApp *app, AsUtilPrivate *p
 static gboolean
 as_util_watch (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	guint i;
 	g_autoptr(GString) xml = NULL;
 	g_autoptr(AsStore) store = NULL;
 
@@ -3536,7 +3535,6 @@ as_util_replace_screenshots (AsUtilPrivate *priv, gchar **values, GError **error
 static gboolean
 as_util_add_provide (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	GPtrArray *screenshots;
 	guint i;
 	AsProvideKind provide_kind;
 	g_autoptr(AsApp) app = NULL;
@@ -3587,8 +3585,6 @@ as_util_add_provide (AsUtilPrivate *priv, gchar **values, GError **error)
 static gboolean
 as_util_add_language (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	GPtrArray *screenshots;
-	guint i;
 	gint percentage = 0;
 	g_autoptr(AsApp) app = NULL;
 	g_autoptr(GFile) file = NULL;
