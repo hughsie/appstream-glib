@@ -176,7 +176,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 		g_autoptr(AsIcon) icon = NULL;
 		icon = as_icon_new ();
 		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
-		as_icon_set_name (icon, "application-x-executable");
+		as_icon_set_name (icon, "application-x-addon");
 		as_app_add_icon (AS_APP (app), icon);
 		as_app_add_category (AS_APP (app), "Addons");
 		as_app_add_category (AS_APP (app), "Codecs");
