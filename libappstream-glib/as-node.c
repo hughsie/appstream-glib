@@ -271,9 +271,6 @@ as_node_cdata_to_raw (AsNodeData *data)
 static void
 as_node_cdata_to_escaped (AsNodeData *data)
 {
-	GString *str;
-	g_autofree gchar *tmp = NULL;
-
 	if (data->is_root_node)
 		return;
 	if (data->is_cdata_escaped)
@@ -281,7 +278,7 @@ as_node_cdata_to_escaped (AsNodeData *data)
 	if (g_strstr_len (data->cdata, -1, "&") != NULL ||
 	    g_strstr_len (data->cdata, -1, "<") != NULL ||
 	    g_strstr_len (data->cdata, -1, ">") != NULL) {
-		str = g_string_new (data->cdata);
+		g_autoptr(GString) str = g_string_new (data->cdata);
 		as_ref_string_unref (data->cdata);
 		as_utils_string_replace (str, "&", "&amp;");
 		as_utils_string_replace (str, "<", "&lt;");
