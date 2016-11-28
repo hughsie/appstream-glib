@@ -48,18 +48,27 @@ as_ref_string_unref_from_str (gchar *str)
 	g_free (hdr);
 }
 
+static GHashTable	*as_ref_string_hash = NULL;
+static GMutex		 as_ref_string_mutex;
+
+static GHashTable *
+as_ref_string_get_hash_safe (void)
+{
+	if (as_ref_string_hash == NULL) {
+		/* gpointer to AsRefStringHeader */
+		as_ref_string_hash = g_hash_table_new_full (g_direct_hash,
+							    g_direct_equal,
+							    (GDestroyNotify) as_ref_string_unref_from_str,
+							    NULL);
+	}
+	return as_ref_string_hash;
+}
+
 static GHashTable *
 as_ref_string_get_hash (void)
 {
-	static GHashTable *hash = NULL;
-	if (hash == NULL) {
-		/* gpointer to AsRefStringHeader */
-		hash = g_hash_table_new_full (g_direct_hash,
-					      g_direct_equal,
-					      (GDestroyNotify) as_ref_string_unref_from_str,
-					      NULL);
-	}
-	return hash;
+	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&as_ref_string_mutex);
+	return as_ref_string_get_hash_safe ();
 }
 
 /**
@@ -91,7 +100,7 @@ as_ref_string_new_copy_with_length (const gchar *str, gsize len)
 {
 	AsRefStringHeader *hdr;
 	AsRefString *rstr_new;
-	GHashTable *hash = as_ref_string_get_hash ();
+	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&as_ref_string_mutex);
 
 	/* create object */
 	hdr = g_malloc (len + sizeof (AsRefStringHeader) + 1);
@@ -101,7 +110,7 @@ as_ref_string_new_copy_with_length (const gchar *str, gsize len)
 	rstr_new[len] = '\0';
 
 	/* add */
-	g_hash_table_add (hash, rstr_new);
+	g_hash_table_add (as_ref_string_get_hash_safe (), rstr_new);
 
 	/* return to data, not the header */
 	return rstr_new;
@@ -141,12 +150,11 @@ AsRefString *
 as_ref_string_new_with_length (const gchar *str, gsize len)
 {
 	AsRefStringHeader *hdr;
-	GHashTable *hash = as_ref_string_get_hash ();
 
 	g_return_val_if_fail (str != NULL, NULL);
 
 	/* already in hash */
-	if (g_hash_table_contains (hash, str)) {
+	if (g_hash_table_contains (as_ref_string_get_hash (), str)) {
 		hdr = AS_REFPTR_TO_HEADER (str);
 		if (hdr->refcnt < 0)
 			return str;
@@ -217,8 +225,8 @@ as_ref_string_unref (AsRefString *rstr)
 	if (hdr->refcnt < 0)
 		return rstr;
 	if (g_atomic_int_dec_and_test (&hdr->refcnt)) {
-		GHashTable *hash = as_ref_string_get_hash ();
-		g_hash_table_remove (hash, rstr);
+		g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&as_ref_string_mutex);
+		g_hash_table_remove (as_ref_string_get_hash_safe (), rstr);
 		return NULL;
 	}
 	return rstr;
@@ -305,10 +313,12 @@ as_ref_string_sort_by_refcnt_cb (gconstpointer a, gconstpointer b)
 gchar *
 as_ref_string_debug (AsRefStringDebugFlags flags)
 {
-	GHashTable *hash = as_ref_string_get_hash ();
+	GHashTable *hash = NULL;
 	GString *tmp = g_string_new (NULL);
+	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&as_ref_string_mutex);
 
 	/* overview */
+	hash = as_ref_string_get_hash_safe ();
 	g_string_append_printf (tmp, "Size of hash table: %u\n",
 				g_hash_table_size (hash));
 
