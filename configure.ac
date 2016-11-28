@@ -110,6 +110,7 @@ WARN_CFLAGS_EXTRA="
 	-Wtype-limits
 	-Wundef
 	-Wuninitialized
+	-Wunused
 	-Wunused-but-set-variable
 	-Wwrite-strings"
 AX_APPEND_COMPILE_FLAGS([$WARN_CFLAGS_EXTRA], [WARN_CFLAGS])
