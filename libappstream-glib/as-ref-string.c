@@ -64,13 +64,6 @@ as_ref_string_get_hash_safe (void)
 	return as_ref_string_hash;
 }
 
-static GHashTable *
-as_ref_string_get_hash (void)
-{
-	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&as_ref_string_mutex);
-	return as_ref_string_get_hash_safe ();
-}
-
 /**
  * as_ref_string_new_static:
  * @str: a string
@@ -150,17 +143,20 @@ AsRefString *
 as_ref_string_new_with_length (const gchar *str, gsize len)
 {
 	AsRefStringHeader *hdr;
+	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&as_ref_string_mutex);
 
 	g_return_val_if_fail (str != NULL, NULL);
 
 	/* already in hash */
-	if (g_hash_table_contains (as_ref_string_get_hash (), str)) {
+	if (g_hash_table_contains (as_ref_string_get_hash_safe (), str)) {
 		hdr = AS_REFPTR_TO_HEADER (str);
 		if (hdr->refcnt < 0)
 			return str;
 		g_atomic_int_inc (&hdr->refcnt);
 		return str;
 	}
+
+	g_clear_pointer (&locker, g_mutex_locker_free);
 	return as_ref_string_new_copy_with_length (str, len);
 }
 
