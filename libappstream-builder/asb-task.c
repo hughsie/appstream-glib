@@ -423,9 +423,11 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 
 		/* set all the releases on the app */
 		array = asb_package_get_releases (priv->pkg);
-		for (i = 0; i < array->len; i++) {
-			release = g_ptr_array_index (array, i);
-			as_app_add_release (AS_APP (app), release);
+		if (as_app_get_kind (AS_APP (app)) != AS_APP_KIND_ADDON) {
+			for (i = 0; i < array->len; i++) {
+				release = g_ptr_array_index (array, i);
+				as_app_add_release (AS_APP (app), release);
+			}
 		}
 
 		/* run each refine plugin on each app */
