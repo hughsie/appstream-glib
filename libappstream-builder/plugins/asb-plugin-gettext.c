@@ -46,6 +46,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	g_autofree gchar *prefix = NULL;
 	GPtrArray *translations;
 
+	/* skip for addons */
+	if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_ADDON)
+		return TRUE;
+
 	/* auto-add this */
 	translations = as_app_get_translations (AS_APP (app));
 	if (translations->len == 0) {
