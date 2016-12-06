@@ -51,6 +51,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	guint i;
 	g_autofree gchar *prefix = NULL;
 
+	/* skip for addons */
+	if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_ADDON)
+		return TRUE;
+
 	/* look for any installed docs */
 	filelist = asb_package_get_filelist (pkg);
 	for (i = 0; filelist[i] != NULL; i++) {
