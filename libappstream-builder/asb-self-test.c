@@ -414,9 +414,9 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	g_assert_no_error (error);
 	g_assert (ret);
 #ifdef HAVE_FONTS
-	g_assert_cmpint (as_store_get_size (store), ==, 4);
+	g_assert_cmpint (as_store_get_size (store), ==, 5);
 #else
-	g_assert_cmpint (as_store_get_size (store), ==, 3);
+	g_assert_cmpint (as_store_get_size (store), ==, 4);
 #endif
 	app = as_store_get_app_by_pkgname (store, "app");
 	g_assert (app != NULL);
@@ -465,28 +465,26 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"</component>\n"
 #endif
 		"<component type=\"addon\">\n"
+		"<id>app-core</id>\n"
+		"<pkgname>app</pkgname>\n"
+		"<name>Core</name>\n"
+		"<summary>Addons for core functionality</summary>\n"
+		"<project_license>GPL-2.0+</project_license>\n"
+		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
+		"<extends>app.desktop</extends>\n"
+		"<metadata>\n"
+		"<value key=\"X-CacheID\">app-1-1.fc21.x86_64.rpm</value>\n"
+		"</metadata>\n"
+		"</component>\n"
+		"<component type=\"addon\">\n"
 		"<id>app-extra</id>\n"
 		"<pkgname>app-extra</pkgname>\n"
 		"<source_pkgname>app</source_pkgname>\n"
 		"<name>Extra</name>\n"
 		"<summary>Addons for extra functionality</summary>\n"
-		"<kudos>\n"
-		"<kudo>ModernToolkit</kudo>\n"
-		"<kudo>SearchProvider</kudo>\n"
-		"</kudos>\n"
 		"<project_license>GPL-2.0+</project_license>\n"
 		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
 		"<extends>app.desktop</extends>\n"
-		"<releases>\n"
-		"<release timestamp=\"1407844800\" version=\"1\"/>\n"
-		"</releases>\n"
-		"<provides>\n"
-		"<dbus type=\"session\">org.freedesktop.AppStream</dbus>\n"
-		"</provides>\n"
-		"<languages>\n"
-		"<lang percentage=\"100\">en_GB</lang>\n"
-		"<lang percentage=\"33\">ru</lang>\n"
-		"</languages>\n"
 		"<metadata>\n"
 		"<value key=\"X-CacheID\">app-extra-1-1.fc21.noarch.rpm</value>\n"
 		"</metadata>\n"
@@ -574,7 +572,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	ret = as_store_from_file (store_failed, file_failed, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store_failed), ==, 2);
+	g_assert_cmpint (as_store_get_size (store_failed), ==, 1);
 //	app = as_store_get_app_by_id (store_failed, "console1.desktop");
 //	g_assert (app != NULL);
 //	app = as_store_get_app_by_id (store_failed, "console2.desktop");
@@ -623,37 +621,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"</metadata>\n"
 		"</component>\n"
 #endif
-		"<component type=\"addon\">\n"
-		"<id>app-core</id>\n"
-		"<pkgname>app</pkgname>\n"
-		"<name>Core</name>\n"
-		"<summary>Addons for core functionality</summary>\n"
-		"<kudos>\n"
-		"<kudo>ModernToolkit</kudo>\n"
-		"<kudo>SearchProvider</kudo>\n"
-		"<kudo>UserDocs</kudo>\n"
-		"</kudos>\n"
-		"<vetos>\n"
-		"<veto>partially absorbing app-core into app.desktop</veto>\n"
-		"</vetos>\n"
-		"<project_license>GPL-2.0+</project_license>\n"
-		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
-		"<extends>app.desktop</extends>\n"
-		"<releases>\n"
-		"<release timestamp=\"1407844800\" version=\"1\"/>\n"
-		"</releases>\n"
-		"<provides>\n"
-		"<dbus type=\"session\">org.freedesktop.AppStream</dbus>\n"
-		"</provides>\n"
-		"<languages>\n"
-		"<lang percentage=\"100\">en_GB</lang>\n"
-		"<lang percentage=\"33\">ru</lang>\n"
-		"</languages>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-1-1.fc21.x86_64.rpm</value>\n"
-		"<value key=\"X-Merge-With-Parent\">app.desktop</value>\n"
-		"</metadata>\n"
-		"</component>\n"
 		"</components>\n";
 	ret = asb_test_compare_lines (xml_failed->str, expected_xml, &error);
 	g_assert_no_error (error);
