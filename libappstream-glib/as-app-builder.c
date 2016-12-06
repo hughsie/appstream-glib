@@ -763,6 +763,10 @@ as_app_builder_search_provides (AsApp *app,
 				AsAppBuilderFlags flags,
 				GError **error)
 {
+	/* skip for addons */
+	if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_ADDON)
+		return TRUE;
+
 	if (!as_app_builder_search_dbus (app, prefix,
 					 "share/dbus-1/system-services",
 					 AS_PROVIDE_KIND_DBUS_SYSTEM,
