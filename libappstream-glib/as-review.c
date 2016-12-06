@@ -952,7 +952,6 @@ as_review_node_parse (AsReview *review, GNode *node,
 		}
 		if (as_node_get_tag (c) == AS_TAG_METADATA) {
 			AsNode *c2;
-			gchar *taken;
 			for (c2 = c->children; c2 != NULL; c2 = c2->next) {
 				AsRefString *key;
 				AsRefString *value;
