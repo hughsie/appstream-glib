@@ -3351,7 +3351,7 @@ as_test_store_cab_func (void)
 	"<li>Speed up the auto-scaled measurements considerably, using 256ms as"
 	" the smallest sample duration</li></ul></description>\n"
 	"<size type=\"installed\">14</size>\n"
-	"<size type=\"download\">2011</size>\n"
+	"<size type=\"download\">2015</size>\n"
 	"</release>\n"
 	"</releases>\n"
 	"<provides>\n"

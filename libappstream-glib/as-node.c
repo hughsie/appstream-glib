@@ -503,9 +503,10 @@ as_node_reflow_text (const gchar *text, gssize text_len)
 	g_auto(GStrv) split = NULL;
 	g_autoptr(GString) tmp = NULL;
 
-	/* all on one line */
+	/* all on one line, no trailing or leading whitespace */
 	if (g_strstr_len (text, text_len, "\n") == NULL &&
-	    !g_str_has_prefix (text, " ")) {
+	    !g_str_has_prefix (text, " ") &&
+	    !g_str_has_suffix (text, " ")) {
 		gsize len;
 		len = text_len >= 0 ? (gsize) text_len : strlen (text);
 		return as_ref_string_new_copy_with_length (text, len);
