@@ -451,7 +451,6 @@ asb_utils_write_archive (const gchar *filename,
 		archive_write_data (a, data, len);
 		archive_entry_free (entry);
 	}
-out:
 	archive_write_close (a);
 	archive_write_free (a);
 	return ret;
