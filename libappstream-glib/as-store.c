@@ -566,6 +566,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "file-roller.desktop",	"org.gnome.FileRoller.desktop" },
 		{ "font-manager.desktop",	"org.gnome.FontManager.desktop" },
 		{ "gcalctool.desktop",		"gnome-calculator.desktop" },
+		{ "geary.desktop",		"org.gnome.Geary.desktop" },
 		{ "gedit.desktop",		"org.gnome.gedit.desktop" },
 		{ "glchess.desktop",		"gnome-chess.desktop" },
 		{ "glines.desktop",		"five-or-more.desktop" },
