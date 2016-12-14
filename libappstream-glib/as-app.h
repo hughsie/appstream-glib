@@ -337,6 +337,7 @@ typedef enum {
  * @AS_APP_QUIRK_HAS_SHORTCUT:		The app has a shortcut in the system
  * @AS_APP_QUIRK_NOT_LAUNCHABLE:	The app is not launchable (run-able)
  * @AS_APP_QUIRK_NEEDS_USER_ACTION:	The component requires some kind of user action
+ * @AS_APP_QUIRK_IS_PROXY:		Is a proxy app that operates on other applications
  *
  * The component attributes.
  **/
@@ -351,6 +352,7 @@ typedef enum {
 	AS_APP_QUIRK_HAS_SHORTCUT	= 1 << 6,	/* Since: 0.5.15 */
 	AS_APP_QUIRK_NOT_LAUNCHABLE	= 1 << 7,	/* Since: 0.5.15 */
 	AS_APP_QUIRK_NEEDS_USER_ACTION	= 1 << 8,	/* Since: 0.6.2 */
+	AS_APP_QUIRK_IS_PROXY 		= 1 << 9,	/* Since: 0.6.6 */
 	/*< private >*/
 	AS_APP_QUIRK_LAST
 } AsAppQuirk;
