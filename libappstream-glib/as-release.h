@@ -69,6 +69,9 @@ AsRelease	*as_release_new			(void);
 gint		 as_release_vercmp		(AsRelease	*rel1,
 						 AsRelease	*rel2);
 
+AsReleaseState	 as_release_state_from_string	(const gchar	*state);
+const gchar	*as_release_state_to_string	(AsReleaseState	 state);
+
 /* getters */
 const gchar	*as_release_get_version		(AsRelease	*release);
 GBytes		*as_release_get_blob		(AsRelease	*release,

@@ -139,6 +139,46 @@ as_release_class_init (AsReleaseClass *klass)
 }
 
 /**
+ * as_release_state_from_string:
+ * @state: a string
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Return value: A #AsReleaseState, e.g. %AS_RELEASE_STATE_INSTALLED.
+ *
+ * Since: 0.6.6
+ **/
+AsReleaseState
+as_release_state_from_string (const gchar *state)
+{
+	if (g_strcmp0 (state, "installed") == 0)
+		return AS_RELEASE_STATE_INSTALLED;
+	if (g_strcmp0 (state, "available") == 0)
+		return AS_RELEASE_STATE_AVAILABLE;
+	return AS_APP_MERGE_KIND_NONE;
+}
+
+/**
+ * as_release_state_to_string:
+ * @state: the #AsReleaseState, e.g. %AS_RELEASE_STATE_INSTALLED
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @state, or %NULL for unknown
+ *
+ * Since: 0.6.6
+ **/
+const gchar *
+as_release_state_to_string (AsReleaseState state)
+{
+	if (state == AS_RELEASE_STATE_INSTALLED)
+		return "installed";
+	if (state == AS_RELEASE_STATE_AVAILABLE)
+		return "available";
+	return NULL;
+}
+
+/**
  * as_release_vercmp:
  * @rel1: a #AsRelease instance.
  * @rel2: a #AsRelease instance.
