@@ -1147,6 +1147,8 @@ as_store_add_app (AsStore *store, AsApp *app)
 				g_debug ("ignoring AppData entry as AppStream exists: %s:%s",
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
+				as_app_subsume_full (item, app,
+						     AS_APP_SUBSUME_FLAG_RELEASES);
 				return;
 			}
 			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP &&
