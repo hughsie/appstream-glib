@@ -1,3 +1,23 @@
+Version 0.6.6
+~~~~~~~~~~~~~
+Released: 2016-12-15
+
+New Features:
+ - Add a refcounted overloaded C string object and use in most objects (Richard Hughes)
+ - Add AS_APP_QUIRK_IS_PROXY (Richard Hughes)
+ - Add as_release_state_to_string() (Richard Hughes)
+ - Add Geary to the app id fallbacks (Niels De Graef)
+ - Add support for ONLY_NATIVE_LANGS when parsing yaml files (Richard Hughes)
+
+Bugfixes:
+ - Deduplicate the AsNode attribute key and value using a hash table (Richard Hughes)
+ - Detect invalid files in the libyaml read handler (Richard Hughes)
+ - Do not absorb core addons into the main application (Richard Hughes)
+ - Do not add <kudos>, <languages>, <provides> or <releases> for addons (Richard Hughes)
+ - Do not save the attributes if the node or parent node is ignored (Richard Hughes)
+ - Lazy load more structures in libappstream-glib (Richard Hughes)
+ - Set a better icon for codecs (Kalev Lember)
+
 Version 0.6.5
 ~~~~~~~~~~~~~
 Released: 2016-11-07

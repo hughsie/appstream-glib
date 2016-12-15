@@ -8,9 +8,9 @@
 # Yuri Chornoivan <yurchor@ukr.net>, 2016. #zanata
 msgid ""
 msgstr ""
-"Project-Id-Version: appstream-glib 0.6.3\n"
+"Project-Id-Version: appstream-glib 0.6.6\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-08-31 15:19+0100\n"
+"POT-Creation-Date: 2016-12-15 13:25+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,10 +21,10 @@ msgstr ""
 "Language: uk\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Zanata 3.9.5\n"
+"X-Generator: Zanata 3.9.6\n"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:90 client/as-compose.c:336 client/as-util.c:3979
+#: client/as-builder.c:90 client/as-compose.c:340 client/as-util.c:4163
 msgid "Show extra debugging information"
 msgstr "Показати додаткові діагностичні дані"
 
@@ -69,12 +69,12 @@ msgid "Set the temporary directory"
 msgstr "Встановити адресу тимчасового каталогу"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:117 client/as-compose.c:342
+#: client/as-builder.c:117 client/as-compose.c:346
 msgid "Set the output directory"
 msgstr "Встановити каталог для виведення даних"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:120 client/as-compose.c:345
+#: client/as-builder.c:120 client/as-compose.c:349
 msgid "Set the icons directory"
 msgstr "Встановити каталог піктограм"
 
@@ -84,12 +84,12 @@ msgid "Set the cache directory"
 msgstr "Встановити каталог кешу"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:126 client/as-compose.c:354
+#: client/as-builder.c:126 client/as-compose.c:358
 msgid "Set the basenames of the output files"
 msgstr "Встановити базові назви для виведених файлів"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:129 client/as-compose.c:348
+#: client/as-builder.c:129 client/as-compose.c:352
 msgid "Set the origin name"
 msgstr "Встановити назву походження"
 
@@ -99,7 +99,7 @@ msgid "Set the number of threads"
 msgstr "Встановити кількість потоків виконання"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:135 client/as-compose.c:351
+#: client/as-builder.c:135 client/as-compose.c:355
 msgid "Set the minimum icon size in pixels"
 msgstr "Встановити мінімальний розмір піктограми у пікселях"
 
@@ -114,7 +114,7 @@ msgid "Ignore certain types of veto"
 msgstr "Ігнорувати певні типи вето"
 
 #. TRANSLATORS: error message
-#: client/as-builder.c:155 client/as-compose.c:368 client/as-util.c:4209
+#: client/as-builder.c:155 client/as-compose.c:372 client/as-util.c:4422
 msgid "Failed to parse arguments"
 msgstr "Не вдалося обробити аргументи"
 
@@ -150,7 +150,7 @@ msgid "Failed to generate metadata"
 msgstr "Не вдалося створити метадані"
 
 #. TRANSLATORS: information message
-#: client/as-builder.c:321 client/as-compose.c:503
+#: client/as-builder.c:321 client/as-compose.c:507
 msgid "Done!"
 msgstr "Виконано!"
 
@@ -160,325 +160,345 @@ msgid "Saving icon"
 msgstr "Зберігаємо піктограму"
 
 #. TRANSLATORS: command line option
-#: client/as-compose.c:339
+#: client/as-compose.c:343
 msgid "Set the prefix"
 msgstr "Встановити префікс"
 
 #. TRANSLATORS: we're generating the AppStream data
-#: client/as-compose.c:408
+#: client/as-compose.c:412
 msgid "Processing application"
 msgstr "Обробляємо програму"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
-#: client/as-compose.c:414
+#: client/as-compose.c:418
 msgid "Error loading AppData file"
 msgstr "Помилка під час спроби завантажити файл AppData"
 
 #. TRANSLATORS: the .mo files could not be parsed
-#: client/as-compose.c:427
+#: client/as-compose.c:431
 msgid "Error parsing translations"
 msgstr "Помилка під час спроби обробити переклади"
 
 #. TRANSLATORS: we could not auto-add the kudo
-#: client/as-compose.c:438
+#: client/as-compose.c:442
 msgid "Error parsing kudos"
 msgstr "Помилка під час спроби обробити запис подяк"
 
 #. TRANSLATORS: we could not auto-add the provides
-#: client/as-compose.c:449
+#: client/as-compose.c:453
 msgid "Error parsing provides"
 msgstr "Помилка під час спроби обробити запис вмісту (provides)"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
-#: client/as-compose.c:465
+#: client/as-compose.c:469
 msgid "Error loading desktop file"
 msgstr "Помилка під час спроби завантажити файл desktop"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
-#: client/as-compose.c:478
+#: client/as-compose.c:482
 msgid "Error creating output directory"
 msgstr "Помилка під час спроби створення каталогу результатів"
 
 #. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:487
+#: client/as-compose.c:491
 msgid "Saving AppStream"
 msgstr "Зберігаємо AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
-#: client/as-compose.c:497
+#: client/as-compose.c:501
 msgid "Error saving AppStream file"
 msgstr "Помилка під час спроби зберегти файл AppStream"
 
 #. TRANSLATORS: this is a command alias
-#: client/as-util.c:101
+#: client/as-util.c:104
 #, c-format
 msgid "Alias to %s"
 msgstr "Псевдонім %s"
 
-#: client/as-util.c:183
+#: client/as-util.c:186
 msgid "Command not found, valid commands are:"
 msgstr "Такої команди не знайдено. Можливі команди:"
 
 #. TRANSLATORS: any manual changes required?
 #. * also note: FIXME is a hardcoded string
-#: client/as-util.c:475
+#: client/as-util.c:478
 msgid "Please review the file and fix any 'FIXME' items"
 msgstr ""
 "Будь ласка, перегляньте файл і виправте записи, до яких додано «FIXME»"
 
 #. TRANSLATORS: information message
-#: client/as-util.c:493
+#: client/as-util.c:496
 msgid "Old API version"
 msgstr "Стара версія програмного інтерфейсу"
 
 #. TRANSLATORS: information message
-#: client/as-util.c:505
+#: client/as-util.c:508
 msgid "New API version"
 msgstr "Нова версія програмного інтерфейсу"
 
-#: client/as-util.c:524
+#: client/as-util.c:527
 msgid "Not enough arguments, expected old.xml new.xml version"
 msgstr "Недостатньо аргументів: мало бути вказано старий.xml і новий.xml"
 
 #. TRANSLATORS: the %s and %s are file types,
 #. * e.g. "appdata" to "appstream"
-#: client/as-util.c:560
+#: client/as-util.c:563
 #, c-format
 msgid "Conversion %s to %s is not implemented"
 msgstr "Перетворення з %s у %s не реалізовано"
 
-#: client/as-util.c:577
+#: client/as-util.c:580
 msgid "Not enough arguments, expected file.xml"
 msgstr "Недостатньо аргументів: мало бути вказано файл.xml"
 
 #. TRANSLATORS: %s is a file type,
 #. * e.g. 'appdata'
-#: client/as-util.c:604
+#: client/as-util.c:607
 #, c-format
 msgid "File format '%s' cannot be upgraded"
 msgstr "Дані у форматі файлів «%s» не може бути оновлено"
 
 #. TRANSLATORS: not a recognised file type
-#: client/as-util.c:646 client/as-util.c:1044 client/as-util.c:1145
+#: client/as-util.c:649 client/as-util.c:1047 client/as-util.c:1148
 msgid "Format not recognised"
 msgstr "Нерозпізнаний формат"
 
 #. TRANSLATORS: probably wrong XML
-#: client/as-util.c:1897
+#: client/as-util.c:1980
 msgid "No desktop applications found"
 msgstr "Не знайдено стільничних програм"
 
 #. TRANSLATORS: the file is valid
-#: client/as-util.c:2628
+#: client/as-util.c:2711
 msgid "OK"
 msgstr "Гаразд"
 
-#: client/as-util.c:2633
+#: client/as-util.c:2716
 msgid "FAILED"
 msgstr "ПОМИЛКА"
 
-#: client/as-util.c:2729
+#: client/as-util.c:2812
 msgid "Validation failed"
 msgstr "Спроба перевірки зазнала невдачі"
 
-#: client/as-util.c:2773
+#: client/as-util.c:2856
 msgid "Validation of files failed"
 msgstr "Файли не пройшли перевірку"
 
 #. TRANSLATORS: application was removed
-#: client/as-util.c:3704
+#: client/as-util.c:3869
 msgid "Removed"
 msgstr "Вилучено"
 
 #. TRANSLATORS: application was added
-#: client/as-util.c:3717
+#: client/as-util.c:3882
 msgid "Added"
 msgstr "Додано"
 
+#. TRANSLATORS: this is when a device ctrl+c's a watch
+#: client/as-util.c:4131
+msgid "Cancelled"
+msgstr ""
+
 #. TRANSLATORS: this is the --nonet argument
-#: client/as-util.c:3976
+#: client/as-util.c:4160
 msgid "Do not use network access"
 msgstr "Не використовувати доступ до мережі"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:3982
+#: client/as-util.c:4166
 msgid "Show version"
 msgstr "Показати дані щодо версії"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:3985
+#: client/as-util.c:4169
 msgid "Enable profiling"
 msgstr "Увімкнути профілювання"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4004
+#: client/as-util.c:4199
 msgid "Converts AppStream metadata from one version to another"
 msgstr "Перетворити метадані AppStream з однієї версії до іншої"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4010
+#: client/as-util.c:4205
 msgid "Upgrade AppData metadata to the latest version"
 msgstr "Оновити метадані AppData до найсвіжішої версії"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4016
+#: client/as-util.c:4211
 msgid "Creates an example Appdata file from a .desktop file"
 msgstr "Створити приклад файла Appdata на основі файла .desktop"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4022
+#: client/as-util.c:4217
 msgid "Dumps the applications in the AppStream metadata"
 msgstr "Створити дамп програм у метаданих AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4028
+#: client/as-util.c:4223
 msgid "Search for AppStream applications"
 msgstr "Шукати програми AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4034
+#: client/as-util.c:4229
 msgid "Search for AppStream applications by package name"
 msgstr "Шукати програми AppStream за назвою пакунка"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4040
+#: client/as-util.c:4235
 msgid "Show all installed AppStream applications"
 msgstr "Показати усі встановлені програми AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4046
+#: client/as-util.c:4241
 msgid "Search for AppStream applications by category name"
 msgstr "Шукати програми AppStream за назвою категорії"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4052
+#: client/as-util.c:4247
 msgid "Display application search tokens"
 msgstr "Виводити ключі пошуку програм"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4058
+#: client/as-util.c:4253
 msgid "Installs AppStream metadata"
 msgstr "Встановити метадані AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4064
+#: client/as-util.c:4259
 msgid "Installs AppStream metadata with new origin"
 msgstr "Встановити метадані AppStream з новим походженням"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4070
+#: client/as-util.c:4265
 msgid "Uninstalls AppStream metadata"
 msgstr "Вилучити метадані AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4076
+#: client/as-util.c:4271
 msgid "Create an HTML status page"
 msgstr "Створити сторінку щодо стану у форматі HTML"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4082
+#: client/as-util.c:4277
 msgid "Create an CSV status document"
 msgstr "Створити документ щодо стану у форматі CSV"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4088
+#: client/as-util.c:4283
 msgid "Create an HTML matrix page"
 msgstr "Створити сторінку матриці у форматі HTML"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4094
+#: client/as-util.c:4289
 msgid "List applications not backed by packages"
 msgstr "Показати список програм, які не супроводжуються пакунками"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4100
+#: client/as-util.c:4295
 msgid "Validate an AppData or AppStream file"
 msgstr "Перевірити файл AppData або AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4106
+#: client/as-util.c:4301
 msgid "Validate an AppData or AppStream file (relaxed)"
 msgstr "Перевірити файл AppData або AppStream (нестрого)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4112
+#: client/as-util.c:4307
 msgid "Validate an AppData or AppStream file (strict)"
 msgstr "Перевірити файл AppData або AppStream (строго)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4118
+#: client/as-util.c:4313
 msgid "Convert an AppData file to NEWS format"
 msgstr "Перетворити файл AppData у формат NEWS"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4124
+#: client/as-util.c:4319
 msgid "Convert an NEWS file to AppData format"
 msgstr "Перетворити файл NEWS у формат AppData"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4130
+#: client/as-util.c:4325
 msgid "Check installed application data"
 msgstr "Перевірити дані встановлених програм"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4136
+#: client/as-util.c:4331
 msgid "Replace screenshots in source file"
 msgstr "Замінити знімки вікон у початковому файлі"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4142
+#: client/as-util.c:4337
+msgid "Add a provide to a source file"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4343
+msgid "Add a language to a source file"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4349
 msgid "Mirror upstream screenshots"
 msgstr "Віддзеркалити знімки вікон із основної гілки розробки"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4148
+#: client/as-util.c:4355
 msgid "Mirror local firmware files"
 msgstr "Віддзеркалити локальні файли мікрокоду"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4154
+#: client/as-util.c:4361
 msgid "Incorporate extra metadata from an external file"
 msgstr "Включити додаткові метадані із зовнішнього файла"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4160
+#: client/as-util.c:4367
 msgid "Compare the contents of two AppStream files"
 msgstr "Порівняти вміст двох файлів AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4166
+#: client/as-util.c:4373
 msgid "Generate a GUID from an input string"
 msgstr "Створити GUID на основі рядка вхідних даних"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4172
+#: client/as-util.c:4379
 msgid "Modify an AppData file"
 msgstr "Внести зміни до файла AppData"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4178
+#: client/as-util.c:4385
 msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr "Розділити файл AppStream на файли AppData і Metainfo"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4184
+#: client/as-util.c:4391
 msgid "Merge several files to an AppStream file"
 msgstr "Об’єднати декілька файлів до файла AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4190
+#: client/as-util.c:4397
 msgid "Import a file to AppStream markup"
 msgstr "Імпортувати файл до розмітки AppStream"
 
+#. TRANSLATORS: command description
+#: client/as-util.c:4403
+msgid "Watch AppStream locations for changes"
+msgstr ""
+
 #. TRANSLATORS: program name
-#: client/as-util.c:4203
+#: client/as-util.c:4416
 msgid "AppStream Utility"
 msgstr "Інструмент AppStream"
 
-#: client/as-util.c:4227
+#: client/as-util.c:4440
 msgid "Version:"
 msgstr "Версія:"

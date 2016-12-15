@@ -8,9 +8,9 @@
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
 msgid ""
 msgstr ""
-"Project-Id-Version: appstream-glib 0.6.3\n"
+"Project-Id-Version: appstream-glib 0.6.6\n"
 "Report-Msgid-Bugs-To: richard@hughsie.com\n"
-"POT-Creation-Date: 2016-08-31 15:19+0100\n"
+"POT-Creation-Date: 2016-12-15 13:25+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,10 +20,10 @@ msgstr ""
 "language/sk/)\n"
 "Language: sk\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Zanata 3.9.5\n"
+"X-Generator: Zanata 3.9.6\n"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:90 client/as-compose.c:336 client/as-util.c:3979
+#: client/as-builder.c:90 client/as-compose.c:340 client/as-util.c:4163
 msgid "Show extra debugging information"
 msgstr "Zobrazovať ďalšie ladiace informácie"
 
@@ -68,12 +68,12 @@ msgid "Set the temporary directory"
 msgstr "Nastaviť dočasný adresár"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:117 client/as-compose.c:342
+#: client/as-builder.c:117 client/as-compose.c:346
 msgid "Set the output directory"
 msgstr "Nastaviť výstupný adresár"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:120 client/as-compose.c:345
+#: client/as-builder.c:120 client/as-compose.c:349
 msgid "Set the icons directory"
 msgstr "Nastaví adresár s ikonami"
 
@@ -83,12 +83,12 @@ msgid "Set the cache directory"
 msgstr "Nastaviť adresár vyrovnávacej pamäte"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:126 client/as-compose.c:354
+#: client/as-builder.c:126 client/as-compose.c:358
 msgid "Set the basenames of the output files"
 msgstr "Nastaví základné názvy výstupných súborov"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:129 client/as-compose.c:348
+#: client/as-builder.c:129 client/as-compose.c:352
 msgid "Set the origin name"
 msgstr "Nastaviť pôvodné meno"
 
@@ -98,7 +98,7 @@ msgid "Set the number of threads"
 msgstr "Nastaviť počet vlákien"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:135 client/as-compose.c:351
+#: client/as-builder.c:135 client/as-compose.c:355
 msgid "Set the minimum icon size in pixels"
 msgstr "Nastaví minimálnu veľkosť ikony v pixeloch"
 
@@ -113,7 +113,7 @@ msgid "Ignore certain types of veto"
 msgstr "Bude ignorovať určité typy veta"
 
 #. TRANSLATORS: error message
-#: client/as-builder.c:155 client/as-compose.c:368 client/as-util.c:4209
+#: client/as-builder.c:155 client/as-compose.c:372 client/as-util.c:4422
 msgid "Failed to parse arguments"
 msgstr "Nepodarilo sa spracovať argumenty"
 
@@ -149,7 +149,7 @@ msgid "Failed to generate metadata"
 msgstr "Nepodarilo sa vytvoriť metadáta"
 
 #. TRANSLATORS: information message
-#: client/as-builder.c:321 client/as-compose.c:503
+#: client/as-builder.c:321 client/as-compose.c:507
 msgid "Done!"
 msgstr "Hotovo!"
 
@@ -159,325 +159,345 @@ msgid "Saving icon"
 msgstr "Ukladá sa ikona"
 
 #. TRANSLATORS: command line option
-#: client/as-compose.c:339
+#: client/as-compose.c:343
 msgid "Set the prefix"
 msgstr "Nastaviť predponu"
 
 #. TRANSLATORS: we're generating the AppStream data
-#: client/as-compose.c:408
+#: client/as-compose.c:412
 msgid "Processing application"
 msgstr "Spracováva sa aplikácia"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
-#: client/as-compose.c:414
+#: client/as-compose.c:418
 msgid "Error loading AppData file"
 msgstr "Chyba pri načítavaní súboru AppData"
 
 #. TRANSLATORS: the .mo files could not be parsed
-#: client/as-compose.c:427
+#: client/as-compose.c:431
 msgid "Error parsing translations"
 msgstr "Chyba pri analyzovaní prekladov"
 
 #. TRANSLATORS: we could not auto-add the kudo
-#: client/as-compose.c:438
+#: client/as-compose.c:442
 msgid "Error parsing kudos"
 msgstr "Chyba pri analýze systému kudos"
 
 #. TRANSLATORS: we could not auto-add the provides
-#: client/as-compose.c:449
+#: client/as-compose.c:453
 msgid "Error parsing provides"
 msgstr "Chyba pri analýze systému provides"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
-#: client/as-compose.c:465
+#: client/as-compose.c:469
 msgid "Error loading desktop file"
 msgstr "Chyba pri načítavaní süboru desktop"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
-#: client/as-compose.c:478
+#: client/as-compose.c:482
 msgid "Error creating output directory"
 msgstr "Chyba pri vytváraní výstupného adresára"
 
 #. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:487
+#: client/as-compose.c:491
 msgid "Saving AppStream"
 msgstr "Ukladá sa AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
-#: client/as-compose.c:497
+#: client/as-compose.c:501
 msgid "Error saving AppStream file"
 msgstr "Chyba pri ukladaní súboru AppStream"
 
 #. TRANSLATORS: this is a command alias
-#: client/as-util.c:101
+#: client/as-util.c:104
 #, c-format
 msgid "Alias to %s"
 msgstr "Alias pre %s"
 
-#: client/as-util.c:183
+#: client/as-util.c:186
 msgid "Command not found, valid commands are:"
 msgstr "Príkaz nebol nájdený, platné príkazy sú:"
 
 #. TRANSLATORS: any manual changes required?
 #. * also note: FIXME is a hardcoded string
-#: client/as-util.c:475
+#: client/as-util.c:478
 msgid "Please review the file and fix any 'FIXME' items"
 msgstr "Prosím, skontrolujte súbor a opravte prípadné položky „FIXME“"
 
 #. TRANSLATORS: information message
-#: client/as-util.c:493
+#: client/as-util.c:496
 msgid "Old API version"
 msgstr "Stará verzia API"
 
 #. TRANSLATORS: information message
-#: client/as-util.c:505
+#: client/as-util.c:508
 msgid "New API version"
 msgstr "Nová verzia API"
 
-#: client/as-util.c:524
+#: client/as-util.c:527
 msgid "Not enough arguments, expected old.xml new.xml version"
 msgstr ""
 "Nedostatočný počet argumentov. Očakávali sa: starý.xml nový.xml verzia"
 
 #. TRANSLATORS: the %s and %s are file types,
 #. * e.g. "appdata" to "appstream"
-#: client/as-util.c:560
+#: client/as-util.c:563
 #, c-format
 msgid "Conversion %s to %s is not implemented"
 msgstr "Konverzia %s na %s nie je implementovaná"
 
-#: client/as-util.c:577
+#: client/as-util.c:580
 msgid "Not enough arguments, expected file.xml"
 msgstr "Nedostatočný počet argumentov. Očakávali sa: súbor.xml"
 
 #. TRANSLATORS: %s is a file type,
 #. * e.g. 'appdata'
-#: client/as-util.c:604
+#: client/as-util.c:607
 #, c-format
 msgid "File format '%s' cannot be upgraded"
 msgstr "Formát súboru \"%s\" nemôže byť aktualizovaný"
 
 #. TRANSLATORS: not a recognised file type
-#: client/as-util.c:646 client/as-util.c:1044 client/as-util.c:1145
+#: client/as-util.c:649 client/as-util.c:1047 client/as-util.c:1148
 msgid "Format not recognised"
 msgstr "Formát nebol rozpoznaný"
 
 #. TRANSLATORS: probably wrong XML
-#: client/as-util.c:1897
+#: client/as-util.c:1980
 msgid "No desktop applications found"
 msgstr "Nenašli sa žiadne aplikácie pracovného prostredia"
 
 #. TRANSLATORS: the file is valid
-#: client/as-util.c:2628
+#: client/as-util.c:2711
 msgid "OK"
 msgstr "OK"
 
-#: client/as-util.c:2633
+#: client/as-util.c:2716
 msgid "FAILED"
 msgstr "ZLYHALO"
 
-#: client/as-util.c:2729
+#: client/as-util.c:2812
 msgid "Validation failed"
 msgstr "Overenie zlyhalo"
 
-#: client/as-util.c:2773
+#: client/as-util.c:2856
 msgid "Validation of files failed"
 msgstr "Overenie súborov zlyhalo"
 
 #. TRANSLATORS: application was removed
-#: client/as-util.c:3704
+#: client/as-util.c:3869
 msgid "Removed"
 msgstr "Odstránená"
 
 #. TRANSLATORS: application was added
-#: client/as-util.c:3717
+#: client/as-util.c:3882
 msgid "Added"
 msgstr "Pridaná"
 
+#. TRANSLATORS: this is when a device ctrl+c's a watch
+#: client/as-util.c:4131
+msgid "Cancelled"
+msgstr ""
+
 #. TRANSLATORS: this is the --nonet argument
-#: client/as-util.c:3976
+#: client/as-util.c:4160
 msgid "Do not use network access"
 msgstr "Nepoužívať prístup k sieti"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:3982
+#: client/as-util.c:4166
 msgid "Show version"
 msgstr "Zobraziť verziu"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:3985
+#: client/as-util.c:4169
 msgid "Enable profiling"
 msgstr "Povolí profilovanie"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4004
+#: client/as-util.c:4199
 msgid "Converts AppStream metadata from one version to another"
 msgstr "Konvertuje metadáta AppStream z jednej verzie na inú"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4010
+#: client/as-util.c:4205
 msgid "Upgrade AppData metadata to the latest version"
 msgstr "Aktualizovať metadáta AppStream na najnovšiu verziu"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4016
+#: client/as-util.c:4211
 msgid "Creates an example Appdata file from a .desktop file"
 msgstr "Vytvorí príklad súboru Appdata zo súboru .desktop"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4022
+#: client/as-util.c:4217
 msgid "Dumps the applications in the AppStream metadata"
 msgstr "Pridá aplikácie do metadát AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4028
+#: client/as-util.c:4223
 msgid "Search for AppStream applications"
 msgstr "Vyhľadá aplikácie AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4034
+#: client/as-util.c:4229
 msgid "Search for AppStream applications by package name"
 msgstr ""
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4040
+#: client/as-util.c:4235
 msgid "Show all installed AppStream applications"
 msgstr ""
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4046
+#: client/as-util.c:4241
 msgid "Search for AppStream applications by category name"
 msgstr ""
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4052
+#: client/as-util.c:4247
 msgid "Display application search tokens"
 msgstr "Zobrazí tokeny vyhľadávania aplikácií"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4058
+#: client/as-util.c:4253
 msgid "Installs AppStream metadata"
 msgstr "Nainštaluje metadáta AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4064
+#: client/as-util.c:4259
 msgid "Installs AppStream metadata with new origin"
 msgstr "Nainštaluje metadáta AppStream s novým pôvodom"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4070
+#: client/as-util.c:4265
 msgid "Uninstalls AppStream metadata"
 msgstr "Odinštaluje metadáta AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4076
+#: client/as-util.c:4271
 msgid "Create an HTML status page"
 msgstr "Vytvoriť stránku HTML so stavom"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4082
+#: client/as-util.c:4277
 msgid "Create an CSV status document"
 msgstr "Vytvoriť dokument CSV so stavom"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4088
+#: client/as-util.c:4283
 msgid "Create an HTML matrix page"
 msgstr "Vytvorí stránku HTML s maticou"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4094
+#: client/as-util.c:4289
 msgid "List applications not backed by packages"
 msgstr "Zoznam aplikácií, ktoré nepochádzajú z balíkov"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4100
+#: client/as-util.c:4295
 msgid "Validate an AppData or AppStream file"
 msgstr "Overiť súbor AppData alebo AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4106
+#: client/as-util.c:4301
 msgid "Validate an AppData or AppStream file (relaxed)"
 msgstr "Overiť (voľnejšie) súbor AppData alebo AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4112
+#: client/as-util.c:4307
 msgid "Validate an AppData or AppStream file (strict)"
 msgstr "Overiť (prísne) súbor AppData alebo AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4118
+#: client/as-util.c:4313
 msgid "Convert an AppData file to NEWS format"
 msgstr "Skonvertuje súbor AppData do formátu NEWS"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4124
+#: client/as-util.c:4319
 msgid "Convert an NEWS file to AppData format"
 msgstr "Skonvertuje súbor NEWS do formátu AppData"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4130
+#: client/as-util.c:4325
 msgid "Check installed application data"
 msgstr "Skontrolovať nainštalované dáta aplikácie"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4136
+#: client/as-util.c:4331
 msgid "Replace screenshots in source file"
 msgstr "Nahradí snímký obrazoviek v zdrojovom súbore"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4142
+#: client/as-util.c:4337
+msgid "Add a provide to a source file"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4343
+msgid "Add a language to a source file"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4349
 msgid "Mirror upstream screenshots"
 msgstr "Bude zrkadliť najnovšie snímky obrazoviek"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4148
+#: client/as-util.c:4355
 msgid "Mirror local firmware files"
 msgstr "Bude zrkadliť miestne súbory firmvérov"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4154
+#: client/as-util.c:4361
 msgid "Incorporate extra metadata from an external file"
 msgstr "Zahrnie metaúdaje navyše z externého súboru"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4160
+#: client/as-util.c:4367
 msgid "Compare the contents of two AppStream files"
 msgstr "Porovná obsahy dvoch súborov AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4166
+#: client/as-util.c:4373
 msgid "Generate a GUID from an input string"
 msgstr "Vygenerovať identifikátor GUID zo vstupného reťazca"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4172
+#: client/as-util.c:4379
 msgid "Modify an AppData file"
 msgstr "Upraviť súbor AppData"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4178
+#: client/as-util.c:4385
 msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr "Rozdelí súbor AppStream na súbory AppData a Metainfo"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4184
+#: client/as-util.c:4391
 msgid "Merge several files to an AppStream file"
 msgstr "Zlúči niekoľko súborov do súboru AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4190
+#: client/as-util.c:4397
 msgid "Import a file to AppStream markup"
 msgstr ""
 
+#. TRANSLATORS: command description
+#: client/as-util.c:4403
+msgid "Watch AppStream locations for changes"
+msgstr ""
+
 #. TRANSLATORS: program name
-#: client/as-util.c:4203
+#: client/as-util.c:4416
 msgid "AppStream Utility"
 msgstr "Nástroj AppStream"
 
-#: client/as-util.c:4227
+#: client/as-util.c:4440
 msgid "Version:"
 msgstr "Verzia:"
