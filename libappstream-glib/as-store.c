@@ -1274,6 +1274,7 @@ as_store_match_addons (AsStore *store)
 
 	/* profile */
 	ptask = as_profile_start_literal (priv->profile, "AsStore:match-addons");
+	g_assert (ptask != NULL);
 	for (i = 0; i < priv->array->len; i++) {
 		AsApp *app = g_ptr_array_index (priv->array, i);
 		if (as_app_get_kind (app) != AS_APP_KIND_ADDON)
@@ -1344,6 +1345,7 @@ as_store_from_root (AsStore *store,
 
 	/* profile */
 	ptask = as_profile_start_literal (priv->profile, "AsStore:store-from-root");
+	g_assert (ptask != NULL);
 
 	/* emit once when finished */
 	tok = as_store_changed_inhibit (store);
@@ -1811,6 +1813,7 @@ as_store_from_file_internal (AsStore *store,
 	ptask = as_profile_start (priv->profile,
 				  "AsStore:store-from-file{%s}",
 				  filename);
+	g_assert (ptask != NULL);
 
 	/* a DEP-11 file */
 	if (g_strstr_len (filename, -1, ".yml") != NULL) {
@@ -2665,6 +2668,7 @@ as_store_load_installed (AsStore *store,
 
 	/* profile */
 	ptask = as_profile_start (priv->profile, "AsStore:load-installed{%s}", path);
+	g_assert (ptask != NULL);
 
 	dir = g_dir_open (path, 0, error);
 	if (dir == NULL)
@@ -2837,6 +2841,7 @@ as_store_search_per_system (AsStore *store,
 
 	/* profile */
 	ptask = as_profile_start_literal (priv->profile, "AsStore:load{per-system}");
+	g_assert (ptask != NULL);
 
 	/* datadir AppStream, AppData and desktop */
 	data_dirs = g_get_system_data_dirs ();
@@ -2920,6 +2925,7 @@ as_store_search_per_user (AsStore *store,
 
 	/* profile */
 	ptask = as_profile_start_literal (priv->profile, "AsStore:load{per-user}");
+	g_assert (ptask != NULL);
 
 	/* AppStream */
 	if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_USER) > 0) {
@@ -3028,6 +3034,7 @@ as_store_load (AsStore *store,
 
 	/* profile */
 	ptask = as_profile_start_literal (priv->profile, "AsStore:load");
+	g_assert (ptask != NULL);
 	tok = as_store_changed_inhibit (store);
 
 	/* per-user locations */

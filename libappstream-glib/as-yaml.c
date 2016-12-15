@@ -448,6 +448,7 @@ as_yaml_from_data (const gchar *data,
 		return NULL;
 	}
 	parser_cleanup = &parser;
+	g_assert (parser_cleanup != NULL);
 	if (data_len < 0)
 		data_len = (gssize) strlen (data);
 	yaml_parser_set_input_string (&parser, (guchar *) data, (gsize) data_len);
@@ -536,6 +537,7 @@ as_yaml_from_file (GFile *file, AsYamlFromFlags flags, GCancellable *cancellable
 		return NULL;
 	}
 	parser_cleanup = &parser;
+	g_assert (parser_cleanup != NULL);
 	yaml_parser_set_input (&parser, as_yaml_read_handler_cb, stream_data);
 	node = g_node_new (NULL);
 	ctx.parser = &parser;
