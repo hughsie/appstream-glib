@@ -658,6 +658,11 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 		as_node_add_attribute (n, "urgency",
 				       as_urgency_kind_to_string (priv->urgency));
 	}
+	if (as_node_context_get_output_trusted (ctx) &&
+	    priv->state != AS_RELEASE_STATE_UNKNOWN) {
+		as_node_add_attribute (n, "state",
+				       as_release_state_to_string (priv->state));
+	}
 	if (priv->version != NULL)
 		as_node_add_attribute (n, "version", priv->version);
 	if (as_node_context_get_version (ctx) >= 0.9) {
