@@ -2929,7 +2929,6 @@ as_test_store_auto_reload_file_func (void)
 	gboolean ret;
 	guint cnt = 0;
 	guint cnt_added = 0;
-	guint cnt_removed = 0;
 	g_autoptr(GError) error = NULL;
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GFile) file = NULL;
