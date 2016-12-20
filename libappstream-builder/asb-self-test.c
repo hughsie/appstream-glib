@@ -324,10 +324,10 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	g_autoptr(GString) xml_ignore = NULL;
 	const gchar *filenames[] = {
 		"test-0.1-1.fc21.noarch.rpm",		/* a console app */
-		"app-1-1.fc21.x86_64.rpm",		/* a GUI app */
-		"app-extra-1-1.fc21.noarch.rpm",	/* addons for a GUI app */
-		"app-console-1-1.fc21.noarch.rpm",	/* app with no icon */
-		"app-1-1.fc21.i686.rpm",		/* GUI multiarch app */
+		"app-1-1.fc25.x86_64.rpm",		/* a GUI app */
+		"app-extra-1-1.fc25.noarch.rpm",	/* addons for a GUI app */
+		"app-console-1-1.fc25.noarch.rpm",	/* app with no icon */
+		"app-1-1.fc25.i686.rpm",		/* GUI multiarch app */
 		"composite-1-1.fc21.x86_64.rpm",	/* multiple GUI apps */
 		"font-1-1.fc21.noarch.rpm",		/* font */
 		"font-serif-1-1.fc21.noarch.rpm",	/* font that extends */
@@ -473,7 +473,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
 		"<extends>app.desktop</extends>\n"
 		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-1-1.fc21.x86_64.rpm</value>\n"
+		"<value key=\"X-CacheID\">app-1-1.fc25.x86_64.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
 		"<component type=\"addon\">\n"
@@ -486,7 +486,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
 		"<extends>app.desktop</extends>\n"
 		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-extra-1-1.fc21.noarch.rpm</value>\n"
+		"<value key=\"X-CacheID\">app-extra-1-1.fc25.noarch.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
 		"<component type=\"desktop\">\n"
@@ -495,6 +495,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<name>App</name>\n"
 		"<summary>A test application</summary>\n"
 		"<description><p>Long description goes here.</p></description>\n"
+		"<icon type=\"cached\" height=\"128\" width=\"128\">app.png</icon>\n"
 		"<icon type=\"cached\" height=\"64\" width=\"64\">app.png</icon>\n"
 		"<categories>\n"
 		"<category>Profiling</category>\n"
@@ -505,6 +506,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<keyword>Remote</keyword>\n"
 		"</keywords>\n"
 		"<kudos>\n"
+		"<kudo>HiDpiIcon</kudo>\n"
 		"<kudo>ModernToolkit</kudo>\n"
 		"<kudo>SearchProvider</kudo>\n"
 		"<kudo>UserDocs</kudo>\n"
@@ -527,7 +529,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<lang percentage=\"33\">ru</lang>\n"
 		"</languages>\n"
 		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-1-1.fc21.x86_64.rpm</value>\n"
+		"<value key=\"X-CacheID\">app-1-1.fc25.x86_64.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
 #ifdef HAVE_GCAB
@@ -641,14 +643,14 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<id>app-console.noarch</id>\n"
 		"<pkgname>app-console</pkgname>\n"
 		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-console-1-1.fc21.noarch.rpm</value>\n"
+		"<value key=\"X-CacheID\">app-console-1-1.fc25.noarch.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
 		"<component type=\"generic\">\n"
 		"<id>app.i686</id>\n"
 		"<pkgname>app</pkgname>\n"
 		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-1-1.fc21.i686.rpm</value>\n"
+		"<value key=\"X-CacheID\">app-1-1.fc25.i686.rpm</value>\n"
 		"</metadata>\n"
 		"</component>\n"
 		"<component type=\"generic\">\n"
@@ -679,8 +681,8 @@ asb_test_context_test_func (AsbTestContextMode mode)
 
 	/* check icon dir */
 	g_assert (g_file_test ("/tmp/asbuilder/temp/icons/64x64/app.png", G_FILE_TEST_EXISTS));
+	g_assert (g_file_test ("/tmp/asbuilder/temp/icons/128x128/app.png", G_FILE_TEST_EXISTS));
 	g_assert (!g_file_test ("/tmp/asbuilder/temp/icons/app.png", G_FILE_TEST_EXISTS));
-	g_assert (!g_file_test ("/tmp/asbuilder/temp/icons/128x128/app.png", G_FILE_TEST_EXISTS));
 }
 #endif
 

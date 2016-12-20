@@ -4,10 +4,10 @@ test_files =						\
 	alpha-internal1.png				\
 	alpha-internal2.png				\
 	alpha-vert.png					\
-	app-1-1.fc21.i686.rpm				\
-	app-1-1.fc21.x86_64.rpm				\
-	app-console-1-1.fc21.noarch.rpm			\
-	app-extra-1-1.fc21.noarch.rpm			\
+	app-1-1.fc25.i686.rpm				\
+	app-1-1.fc25.x86_64.rpm				\
+	app-console-1-1.fc25.noarch.rpm			\
+	app-extra-1-1.fc25.noarch.rpm			\
 	appstream.xml					\
 	asb-self-test.xml.gz				\
 	broken.appdata.xml				\
