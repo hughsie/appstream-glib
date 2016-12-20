@@ -18,6 +18,7 @@ plugin_LTLIBRARIES =					\
 	libasb_plugin_appdata.la			\
 	libasb_plugin_shell_extension.la		\
 	libasb_plugin_desktop.la			\
+	libasb_plugin_sugar-activity.la			\
 	libasb_plugin_gettext.la			\
 	libasb_plugin_hardcoded.la
 
@@ -40,6 +41,11 @@ libasb_plugin_desktop_la_SOURCES = asb-plugin-desktop.c
 libasb_plugin_desktop_la_LIBADD = $(GLIB_LIBS) $(GDKPIXBUF_LIBS)
 libasb_plugin_desktop_la_LDFLAGS = -module -avoid-version
 libasb_plugin_desktop_la_CFLAGS = $(GLIB_CFLAGS) $(WARN_CFLAGS)
+
+libasb_plugin_sugar_activity_la_SOURCES = asb-plugin-sugar-activity.c
+libasb_plugin_sugar_activity_la_LIBADD = $(GLIB_LIBS) $(GDKPIXBUF_LIBS)
+libasb_plugin_sugar_activity_la_LDFLAGS = -module -avoid-version
+libasb_plugin_sugar_activity_la_CFLAGS = $(GLIB_CFLAGS) $(WARNINGFLAGS_C)
 
 libasb_plugin_appdata_la_SOURCES = asb-plugin-appdata.c
 libasb_plugin_appdata_la_LIBADD = $(GLIB_LIBS) $(GDKPIXBUF_LIBS)
