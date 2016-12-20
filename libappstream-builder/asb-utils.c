@@ -249,8 +249,6 @@ asb_utils_explode_file (struct archive_entry *entry, const gchar *dir)
 		g_autofree gchar *buf_link = NULL;
 		symlink_depth = asb_utils_count_directories_deep (path) - 1;
 		back_up = asb_utils_get_back_to_root (symlink_depth);
-		if (tmp[0] == '/')
-			tmp++;
 		buf_link = g_build_filename (back_up, tmp, NULL);
 		archive_entry_update_symlink_utf8 (entry, buf_link);
 	}
