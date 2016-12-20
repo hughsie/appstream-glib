@@ -338,6 +338,7 @@ typedef enum {
  * @AS_APP_QUIRK_NOT_LAUNCHABLE:	The app is not launchable (run-able)
  * @AS_APP_QUIRK_NEEDS_USER_ACTION:	The component requires some kind of user action
  * @AS_APP_QUIRK_IS_PROXY:		Is a proxy app that operates on other applications
+ * @AS_APP_QUIRK_REMOVABLE_HARDWARE:	The device is unusable whilst the action is performed
  *
  * The component attributes.
  **/
@@ -353,6 +354,7 @@ typedef enum {
 	AS_APP_QUIRK_NOT_LAUNCHABLE	= 1 << 7,	/* Since: 0.5.15 */
 	AS_APP_QUIRK_NEEDS_USER_ACTION	= 1 << 8,	/* Since: 0.6.2 */
 	AS_APP_QUIRK_IS_PROXY 		= 1 << 9,	/* Since: 0.6.6 */
+	AS_APP_QUIRK_REMOVABLE_HARDWARE	= 1 << 10,	/* Since: 0.6.6 */
 	/*< private >*/
 	AS_APP_QUIRK_LAST
 } AsAppQuirk;
