@@ -203,19 +203,33 @@ asb_utils_sanitise_path (const gchar *path)
 		return g_strdup (path);
 
 	/* ./usr/share/README -> /usr/share/README */
-	if (path[0] == '.')
+	if (g_str_has_prefix (path, "./"))
 		return g_strdup (path + 1);
+
+	/* ../usr/share/README -> ../usr/share/README */
+	if (g_str_has_prefix (path, "../"))
+		return g_strdup (path);
 
 	/* usr/share/README -> /usr/share/README */
 	return g_strconcat ("/", path, NULL);
+}
+
+static gchar *
+asb_utils_resolve_relative_symlink (const gchar *dir_path,
+                                    const gchar *relative_path)
+{
+	g_autoptr(GFile) dir = NULL;
+	g_autoptr(GFile) symlink_dest = NULL;
+
+	dir = g_file_new_for_path (dir_path);
+	symlink_dest = g_file_resolve_relative_path (dir, relative_path);
+	return g_file_get_path (symlink_dest);
 }
 
 static gboolean
 asb_utils_explode_file (struct archive_entry *entry, const gchar *dir)
 {
 	const gchar *tmp;
-	guint symlink_depth;
-	g_autofree gchar *back_up = NULL;
 	g_autofree gchar *path = NULL;
 	g_autofree gchar *buf = NULL;
 
@@ -246,11 +260,22 @@ asb_utils_explode_file (struct archive_entry *entry, const gchar *dir)
 	/* update symlinks */
 	tmp = archive_entry_symlink (entry);
 	if (tmp != NULL) {
-		g_autofree gchar *buf_link = NULL;
-		symlink_depth = asb_utils_count_directories_deep (path) - 1;
-		back_up = asb_utils_get_back_to_root (symlink_depth);
-		buf_link = g_build_filename (back_up, tmp, NULL);
-		archive_entry_update_symlink_utf8 (entry, buf_link);
+		g_autofree gchar *path_link = NULL;
+
+		path_link = asb_utils_sanitise_path (tmp);
+		if (g_path_is_absolute (path_link)) {
+			guint symlink_depth;
+			g_autofree gchar *back_up = NULL;
+			g_autofree gchar *buf_link = NULL;
+
+			symlink_depth = asb_utils_count_directories_deep (path) - 1;
+			back_up = asb_utils_get_back_to_root (symlink_depth);
+			buf_link = g_build_filename (back_up, tmp, NULL);
+
+			archive_entry_update_symlink_utf8 (entry, buf_link);
+		} else {
+			archive_entry_update_symlink_utf8 (entry, path_link);
+		}
 	}
 	return TRUE;
 }
@@ -336,9 +361,16 @@ asb_utils_explode (const gchar *filename,
 		/* add symlink */
 		tmp = archive_entry_symlink (entry);
 		if (tmp != NULL) {
-			g_hash_table_insert (matches,
-					     asb_utils_sanitise_path (tmp),
-					     GINT_TO_POINTER (1));
+			if (g_path_is_absolute (tmp)) {
+				g_hash_table_insert (matches,
+						     asb_utils_sanitise_path (tmp),
+						     GINT_TO_POINTER (1));
+			} else {
+				g_autofree gchar *parent_dir = g_path_get_dirname (path);
+				g_hash_table_insert (matches,
+						     asb_utils_resolve_relative_symlink (parent_dir, tmp),
+						     GINT_TO_POINTER (1));
+			}
 		}
 	}
 
