@@ -178,7 +178,7 @@ AM_CONDITIONAL(HAVE_GCAB, test x$enable_firmware = xyes)
 AC_SUBST([GCAB_DEPENDENCY])
 
 # font support (default enabled)
-AC_ARG_ENABLE(firmware, AS_HELP_STRING([--disable-fonts],[Disable font support]), enable_fonts=$enableval)
+AC_ARG_ENABLE(fonts, AS_HELP_STRING([--disable-fonts],[Disable font support]), enable_fonts=$enableval)
 if test x$enable_fonts != xno; then
 	AC_DEFINE(HAVE_FONTS,[1], [Use fonts])
 	enable_fonts=yes
