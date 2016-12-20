@@ -6,7 +6,6 @@ URL:		http://people.freedesktop.org/
 License:	GPLv2+
 Source0:	README
 Source1:	app.desktop
-Source2:	app.png
 Source3:	app.appdata.xml
 Source4:	search-provider.ini
 Source5:	index.page
@@ -21,6 +20,8 @@ Source13:	app.notifyrc
 Source14:	app.bin
 Source15:	console1.desktop
 Source16:	console2.desktop
+Source17:	app.png
+Source18:	app-128x128.png
 
 %description
 This is a test application.
@@ -45,11 +46,18 @@ Sub package with console "application".
 install -Dp %{SOURCE0} $RPM_BUILD_ROOT/%{_datadir}/%{name}-%{version}/README
 install -Dp %{SOURCE1} $RPM_BUILD_ROOT/%{_datadir}/applications/app.desktop
 
-# test decompressing a symlink destination
-install -Dp %{SOURCE2} $RPM_BUILD_ROOT/%{_datadir}/app/app.png
-mkdir -p $RPM_BUILD_ROOT/%{_datadir}/pixmaps
+# test decompressing an absolute symlink destination
+install -Dp %{SOURCE17} $RPM_BUILD_ROOT%{_datadir}/app/app-48x48.png
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/48x48/apps
 cd $RPM_BUILD_ROOT
-ln -s %{_datadir}/app/app.png usr/share/pixmaps/app.png
+ln -s %{_datadir}/app/app-48x48.png usr/share/icons/hicolor/48x48/apps/app.png
+cd -
+
+# test decompressing a relative symlink destination
+install -Dp %{SOURCE18} $RPM_BUILD_ROOT%{_datadir}/app/app-128x128.png
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/128x128/apps
+cd $RPM_BUILD_ROOT
+ln -s ../../../../app/app-128x128.png usr/share/icons/hicolor/128x128/apps/app.png
 cd -
 
 install -Dp %{SOURCE3} $RPM_BUILD_ROOT/%{_datadir}/appdata/app.appdata.xml
@@ -82,8 +90,10 @@ install -Dp %{SOURCE16} $RPM_BUILD_ROOT/%{_datadir}/applications/console2.deskto
 %{_datadir}/kde4/apps/app/app.notifyrc
 %{_datadir}/locale/en_GB/LC_MESSAGES/app.mo
 %{_datadir}/locale/ru/LC_MESSAGES/app.mo
-%{_datadir}/app/app.png
-%{_datadir}/pixmaps/app.png
+%{_datadir}/app/app-48x48.png
+%{_datadir}/app/app-128x128.png
+%{_datadir}/icons/hicolor/48x48/apps/app.png
+%{_datadir}/icons/hicolor/128x128/apps/app.png
 
 %files extra
 %{_datadir}/appdata/app-extra.metainfo.xml
