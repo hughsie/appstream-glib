@@ -3992,7 +3992,8 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <id> */
-	as_node_insert (node_app, "id", priv->id, 0, NULL);
+	if (priv->id != NULL)
+		as_node_insert (node_app, "id", priv->id, 0, NULL);
 
 	/* <priority> */
 	if (priv->priority != 0)
