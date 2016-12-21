@@ -35,6 +35,7 @@
 #include "as-enums.h"
 #include "as-icon-private.h"
 #include "as-image-private.h"
+#include "as-require-private.h"
 #include "as-review-private.h"
 #include "as-markup.h"
 #include "as-monitor.h"
@@ -1237,6 +1238,81 @@ as_test_review_func (void)
 	g_assert (ret);
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
+}
+
+static void
+as_test_require_func (void)
+{
+	GError *error = NULL;
+	AsNode *n;
+	AsNode *root;
+	const gchar *src =
+		"<component type=\"desktop\">\n"
+		"<requires>\n"
+		"<id>gimp.desktop</id>\n"
+		"<firmware compare=\"ge\" version=\"0.1.2\">bootloader</firmware>\n"
+		"<firmware compare=\"eq\" version=\"1.0.0\">runtime</firmware>\n"
+		"</requires>\n"
+		"</component>\n";
+	gboolean ret;
+	GPtrArray *requires;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
+	g_autoptr(AsRequire) require = NULL;
+	g_autoptr(GString) xml = NULL;
+
+	/* to object */
+	root = as_node_from_xml (src, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "component");
+	g_assert (n != NULL);
+	ctx = as_node_context_new ();
+	app = as_app_new ();
+	ret = as_app_node_parse (app, n, ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	requires = as_app_get_requires (app);
+	g_assert_cmpint (requires->len, ==, 3);
+	require = g_ptr_array_index (requires, 0);
+	g_assert_cmpint (as_require_get_kind (require), ==, AS_REQUIRE_KIND_ID);
+	g_assert_cmpint (as_require_get_compare (require), ==, AS_REQUIRE_COMPARE_UNKNOWN);
+	g_assert_cmpstr (as_require_get_version (require), ==, NULL);
+	g_assert_cmpstr (as_require_get_value (require), ==, "gimp.desktop");
+	require = as_app_get_require_by_value (app, AS_REQUIRE_KIND_FIRMWARE, "bootloader");
+	g_assert_cmpint (as_require_get_kind (require), ==, AS_REQUIRE_KIND_FIRMWARE);
+	g_assert_cmpint (as_require_get_compare (require), ==, AS_REQUIRE_COMPARE_GE);
+	g_assert_cmpstr (as_require_get_version (require), ==, "0.1.2");
+	g_assert_cmpstr (as_require_get_value (require), ==, "bootloader");
+
+	/* back to node */
+	root = as_node_new ();
+	as_node_context_set_version (ctx, 0.4);
+	n = as_app_node_insert (app, root, ctx);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* test we can go back and forth */
+	for (guint i = 0; i < AS_REQUIRE_COMPARE_LAST; i++) {
+		const gchar *tmp = as_require_compare_to_string (i);
+		g_assert_cmpint (as_require_compare_from_string (tmp), ==, i);
+	}
+
+	/* check predicates */
+	require = as_require_new ();
+	as_require_set_version (require, "0.1.2");
+	as_require_set_compare (require, AS_REQUIRE_COMPARE_EQ);
+	g_assert (as_require_version_compare (require, "0.1.2", NULL));
+	as_require_set_compare (require, AS_REQUIRE_COMPARE_LT);
+	g_assert (as_require_version_compare (require, "0.1.1", NULL));
+	as_require_set_compare (require, AS_REQUIRE_COMPARE_LE);
+	g_assert (as_require_version_compare (require, "0.1.2", NULL));
 }
 
 static void
@@ -5098,6 +5174,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils{string-replace}", as_test_utils_string_replace_func);
 	g_test_add_func ("/AppStream/tag", as_test_tag_func);
 	g_test_add_func ("/AppStream/provide", as_test_provide_func);
+	g_test_add_func ("/AppStream/require", as_test_require_func);
 	g_test_add_func ("/AppStream/checksum", as_test_checksum_func);
 	g_test_add_func ("/AppStream/content_rating", as_test_content_rating_func);
 	g_test_add_func ("/AppStream/release", as_test_release_func);

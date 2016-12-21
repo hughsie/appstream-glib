@@ -46,6 +46,7 @@
 #include "as-provide-private.h"
 #include "as-release-private.h"
 #include "as-ref-string.h"
+#include "as-require-private.h"
 #include "as-review-private.h"
 #include "as-screenshot-private.h"
 #include "as-stemmer.h"
@@ -87,6 +88,7 @@ typedef struct
 	GPtrArray	*bundles;			/* of AsBundle */
 	GPtrArray	*translations;			/* of AsTranslation */
 	GPtrArray	*suggests;			/* of AsSuggest */
+	GPtrArray	*requires;			/* of AsRequire */
 	GPtrArray	*vetos;				/* of AsRefString */
 	AsAppSourceKind	 source_kind;
 	AsAppScope	 scope;
@@ -513,6 +515,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->bundles);
 	g_ptr_array_unref (priv->translations);
 	g_ptr_array_unref (priv->suggests);
+	g_ptr_array_unref (priv->requires);
 	g_ptr_array_unref (priv->vetos);
 
 	G_OBJECT_CLASS (as_app_parent_class)->finalize (object);
@@ -543,6 +546,7 @@ as_app_init (AsApp *app)
 	priv->bundles = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->translations = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->suggests = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	priv->requires = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->vetos = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 
 	priv->comments = g_hash_table_new_full (g_str_hash, g_str_equal,
@@ -1234,6 +1238,50 @@ as_app_get_suggests (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->suggests;
+}
+
+/**
+ * as_app_get_requires:
+ * @app: a #AsApp instance.
+ *
+ * Gets any requires the application has defined. A rquirement could be that
+ * a firmware version has to be below a defined version or that another
+ * application is required to be installed.
+ *
+ * Returns: (element-type AsRequire) (transfer none): an array
+ *
+ * Since: 0.6.7
+ **/
+GPtrArray *
+as_app_get_requires (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->requires;
+}
+
+/**
+ * as_app_get_require_by_value:
+ * @app: a #AsApp instance.
+ * @kind: a #AsRequireKind, e.g. %AS_REQUIRE_KIND_FIRMWARE
+ * @value: a string, or NULL, e.g. `bootloader`
+ *
+ * Gets a specific requirement for the application.
+ *
+ * Returns: (transfer none): A #AsRequire, or %NULL for not found
+ *
+ * Since: 0.6.7
+ **/
+AsRequire *
+as_app_get_require_by_value (AsApp *app, AsRequireKind kind, const gchar *value)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	for (guint i = 0; i < priv->requires->len; i++) {
+		AsRequire *req = g_ptr_array_index (priv->requires, i);
+		if (as_require_get_kind (req) == kind &&
+		    g_strcmp0 (as_require_get_value (req), value) == 0)
+			return req;
+	}
+	return NULL;
 }
 
 /**
@@ -3181,6 +3229,22 @@ as_app_add_suggest (AsApp *app, AsSuggest *suggest)
 }
 
 /**
+ * as_app_add_require:
+ * @app: a #AsApp instance.
+ * @require: a #AsRequire instance.
+ *
+ * Adds a require to an application.
+ *
+ * Since: 0.6.7
+ **/
+void
+as_app_add_require (AsApp *app, AsRequire *require)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_ptr_array_add (priv->requires, g_object_ref (require));
+}
+
+/**
  * as_app_add_pkgname:
  * @app: a #AsApp instance.
  * @pkgname: the package name.
@@ -3559,6 +3623,17 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		for (i = 0; i < priv->suggests->len; i++) {
 			AsSuggest *suggest = g_ptr_array_index (priv->suggests, i);
 			as_app_add_suggest (app, suggest);
+		}
+	}
+
+	/* requires */
+	if (flags & AS_APP_SUBSUME_FLAG_SUGGESTS) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->requires->len > 0)
+			g_ptr_array_set_size (papp->requires, 0);
+		for (i = 0; i < priv->requires->len; i++) {
+			AsRequire *require = g_ptr_array_index (priv->requires, i);
+			as_app_add_require (app, require);
 		}
 	}
 
@@ -4030,6 +4105,15 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		as_suggest_node_insert (suggest, node_app, ctx);
 	}
 
+	/* <requires> */
+	if (priv->requires->len > 0) {
+		node_tmp = as_node_insert (node_app, "requires", NULL, 0, NULL);
+		for (i = 0; i < priv->requires->len; i++) {
+			AsRequire *require = g_ptr_array_index (priv->requires, i);
+			as_require_node_insert (require, node_tmp, ctx);
+		}
+	}
+
 	/* <name> */
 	as_node_insert_localized (node_app, "name",
 				  priv->names,
@@ -4310,6 +4394,21 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		as_app_add_suggest (app, ic);
 		break;
 	}
+
+	/* <requires> */
+	case AS_TAG_REQUIRES:
+		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
+			g_ptr_array_set_size (priv->requires, 0);
+		for (c = n->children; c != NULL; c = c->next) {
+			g_autoptr(AsRequire) ic = NULL;
+			ic = as_require_new ();
+			if (!as_require_node_parse (ic, c, ctx, error))
+				return FALSE;
+			as_app_add_require (app, ic);
+		}
+		if (n->children == NULL)
+			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
+		break;
 
 	/* <name> */
 	case AS_TAG_NAME:
@@ -4777,6 +4876,7 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags,
 		g_ptr_array_set_size (priv->bundles, 0);
 		g_ptr_array_set_size (priv->translations, 0);
 		g_ptr_array_set_size (priv->suggests, 0);
+		g_ptr_array_set_size (priv->requires, 0);
 		g_ptr_array_set_size (priv->content_ratings, 0);
 		g_hash_table_remove_all (priv->keywords);
 	}

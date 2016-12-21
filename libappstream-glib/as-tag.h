@@ -89,6 +89,7 @@ G_BEGIN_DECLS
  * @AS_TAG_REVIEWER_NAME:		`reviewer_name`
  * @AS_TAG_REVIEWER_ID:			`reviewer_id`
  * @AS_TAG_SUGGESTS:			`suggests`
+ * @AS_TAG_REQUIRES:			`requires`
  *
  * The tag type.
  **/
@@ -150,6 +151,7 @@ typedef enum {
 	AS_TAG_REVIEWER_NAME,		/* Since: 0.6.1 */
 	AS_TAG_REVIEWER_ID,		/* Since: 0.6.1 */
 	AS_TAG_SUGGESTS,		/* Since: 0.6.1 */
+	AS_TAG_REQUIRES,		/* Since: 0.6.7 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;

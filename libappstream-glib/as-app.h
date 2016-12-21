@@ -34,6 +34,7 @@
 #include "as-provide.h"
 #include "as-release.h"
 #include "as-screenshot.h"
+#include "as-require.h"
 #include "as-review.h"
 #include "as-suggest.h"
 #include "as-content-rating.h"
@@ -497,6 +498,7 @@ GPtrArray	*as_app_get_icons		(AsApp		*app);
 GPtrArray	*as_app_get_bundles		(AsApp		*app);
 GPtrArray	*as_app_get_translations	(AsApp		*app);
 GPtrArray	*as_app_get_suggests		(AsApp		*app);
+GPtrArray	*as_app_get_requires		(AsApp		*app);
 GHashTable	*as_app_get_names		(AsApp		*app);
 GHashTable	*as_app_get_comments		(AsApp		*app);
 GHashTable	*as_app_get_developer_names	(AsApp		*app);
@@ -628,6 +630,8 @@ void		 as_app_add_translation		(AsApp		*app,
 						 AsTranslation	*translation);
 void		 as_app_add_suggest		(AsApp		*app,
 						 AsSuggest	*suggest);
+void		 as_app_add_require		(AsApp		*app,
+						 AsRequire	*require);
 void		 as_app_add_language		(AsApp		*app,
 						 gint		 percentage,
 						 const gchar	*locale);
@@ -685,6 +689,9 @@ AsBundle	*as_app_get_bundle_default	(AsApp		*app);
 AsRelease	*as_app_get_release		(AsApp		*app,
 						 const gchar	*version);
 AsRelease	*as_app_get_release_default	(AsApp		*app);
+AsRequire	*as_app_get_require_by_value	(AsApp		*app,
+						 AsRequireKind	 kind,
+						 const gchar	*value);
 gboolean	 as_app_convert_icons		(AsApp		*app,
 						 AsIconKind	 kind,
 						 GError		**error);

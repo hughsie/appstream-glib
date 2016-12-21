@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2016 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -19,37 +19,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef __APPSTREAM_GLIB_H
-#define __APPSTREAM_GLIB_H
+#if !defined (__APPSTREAM_GLIB_PRIVATE_H) && !defined (AS_COMPILATION)
+#error "Only <appstream-glib.h> can be included directly."
+#endif
 
-#define __APPSTREAM_GLIB_H_INSIDE__
+#ifndef __AS_REQUIRE_PRIVATE_H
+#define __AS_REQUIRE_PRIVATE_H
 
-#include <as-app.h>
-#include <as-app-builder.h>
-#include <as-bundle.h>
-#include <as-checksum.h>
-#include <as-content-rating.h>
-#include <as-enums.h>
-#include <as-icon.h>
-#include <as-image.h>
-#include <as-inf.h>
-#include <as-markup.h>
-#include <as-node.h>
-#include <as-problem.h>
-#include <as-profile.h>
-#include <as-provide.h>
-#include <as-release.h>
-#include <as-require.h>
-#include <as-review.h>
-#include <as-screenshot.h>
-#include <as-store.h>
-#include <as-suggest.h>
-#include <as-tag.h>
-#include <as-translation.h>
-#include <as-version.h>
-#include <as-utils.h>
+#include "as-require.h"
+#include "as-node-private.h"
 
-#undef __APPSTREAM_GLIB_H_INSIDE__
+G_BEGIN_DECLS
 
-#endif /* __APPSTREAM_GLIB_H */
+GNode		*as_require_node_insert		(AsRequire	*require,
+						 GNode		*parent,
+						 AsNodeContext	*ctx);
+gboolean	 as_require_node_parse		(AsRequire	*require,
+						 GNode		*node,
+						 AsNodeContext	*ctx,
+						 GError		**error);
+gboolean	 as_require_node_parse_dep11	(AsRequire	*require,
+						 GNode		*node,
+						 AsNodeContext	*ctx,
+						 GError		**error);
 
+G_END_DECLS
+
+#endif /* __AS_REQUIRE_PRIVATE_H */
