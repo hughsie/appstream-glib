@@ -1313,6 +1313,10 @@ as_test_require_func (void)
 	g_assert (as_require_version_compare (require, "0.1.1", NULL));
 	as_require_set_compare (require, AS_REQUIRE_COMPARE_LE);
 	g_assert (as_require_version_compare (require, "0.1.2", NULL));
+	as_require_set_compare (require, AS_REQUIRE_COMPARE_GLOB);
+	g_assert (as_require_version_compare (require, "0.?.*", NULL));
+	as_require_set_compare (require, AS_REQUIRE_COMPARE_REGEX);
+	g_assert (as_require_version_compare (require, "0.1.[0-9]", NULL));
 }
 
 static void

@@ -32,6 +32,8 @@
 
 #include "config.h"
 
+#include <fnmatch.h>
+
 #include "as-require-private.h"
 #include "as-node-private.h"
 #include "as-ref-string.h"
@@ -142,6 +144,10 @@ as_require_compare_from_string (const gchar *compare)
 		return AS_REQUIRE_COMPARE_GE;
 	if (g_strcmp0 (compare, "le") == 0)
 		return AS_REQUIRE_COMPARE_LE;
+	if (g_strcmp0 (compare, "glob") == 0)
+		return AS_REQUIRE_COMPARE_GLOB;
+	if (g_strcmp0 (compare, "regex") == 0)
+		return AS_REQUIRE_COMPARE_REGEX;
 	return AS_REQUIRE_COMPARE_UNKNOWN;
 }
 
@@ -170,6 +176,10 @@ as_require_compare_to_string (AsRequireCompare compare)
 		return "ge";
 	if (compare == AS_REQUIRE_COMPARE_LE)
 		return "le";
+	if (compare == AS_REQUIRE_COMPARE_GLOB)
+		return "glob";
+	if (compare == AS_REQUIRE_COMPARE_REGEX)
+		return "regex";
 	return NULL;
 }
 
@@ -328,27 +338,32 @@ as_require_version_compare (AsRequire *require,
 			    GError **error)
 {
 	AsRequirePrivate *priv = GET_PRIVATE (require);
-	gint tmp = as_utils_vercmp (version, priv->version);
 	gboolean ret = FALSE;
 
 	switch (priv->compare) {
 	case AS_REQUIRE_COMPARE_EQ:
-		ret = tmp == 0;
+		ret = as_utils_vercmp (version, priv->version) == 0;
 		break;
 	case AS_REQUIRE_COMPARE_NE:
-		ret = tmp != 0;
+		ret = as_utils_vercmp (version, priv->version) != 0;
 		break;
 	case AS_REQUIRE_COMPARE_LT:
-		ret = tmp < 0;
+		ret = as_utils_vercmp (version, priv->version) < 0;
 		break;
 	case AS_REQUIRE_COMPARE_GT:
-		ret = tmp > 0;
+		ret = as_utils_vercmp (version, priv->version) > 0;
 		break;
 	case AS_REQUIRE_COMPARE_LE:
-		ret = tmp <= 0;
+		ret = as_utils_vercmp (version, priv->version) <= 0;
 		break;
 	case AS_REQUIRE_COMPARE_GE:
-		ret = tmp >= 0;
+		ret = as_utils_vercmp (version, priv->version) >= 0;
+		break;
+	case AS_REQUIRE_COMPARE_GLOB:
+		ret = fnmatch (version, priv->version, 0) == 0;
+		break;
+	case AS_REQUIRE_COMPARE_REGEX:
+		ret = g_regex_match_simple (version, priv->version, 0, 0);
 		break;
 	default:
 		break;
