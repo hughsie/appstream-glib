@@ -951,19 +951,11 @@ as_app_validate_is_content_license_id (const gchar *license_id)
 		return TRUE;
 	if (g_strcmp0 (license_id, "@CC-BY-3.0") == 0)
 		return TRUE;
-	if (g_strcmp0 (license_id, "@CC-BY-3.0+") == 0)
-		return TRUE;
 	if (g_strcmp0 (license_id, "@CC-BY-4.0") == 0)
-		return TRUE;
-	if (g_strcmp0 (license_id, "@CC-BY-4.0+") == 0)
 		return TRUE;
 	if (g_strcmp0 (license_id, "@CC-BY-SA-3.0") == 0)
 		return TRUE;
-	if (g_strcmp0 (license_id, "@CC-BY-SA-3.0+") == 0)
-		return TRUE;
 	if (g_strcmp0 (license_id, "@CC-BY-SA-4.0") == 0)
-		return TRUE;
-	if (g_strcmp0 (license_id, "@CC-BY-SA-4.0+") == 0)
 		return TRUE;
 	if (g_strcmp0 (license_id, "@GFDL-1.1") == 0)
 		return TRUE;
