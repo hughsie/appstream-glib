@@ -218,7 +218,7 @@ as_utils_is_spdx_license_id (const gchar *license_id)
 	if (g_str_has_prefix (license_id, "LicenseRef-"))
 		return TRUE;
 
-	/* load the readonly data section and look for the icon name */
+	/* load the readonly data section and look for the license ID */
 	data = g_resource_lookup_data (as_get_resource (),
 				       "/org/freedesktop/appstream-glib/as-license-ids.txt",
 				       G_RESOURCE_LOOKUP_FLAGS_NONE,
@@ -261,7 +261,7 @@ as_utils_is_environment_id (const gchar *environment_id)
 	g_autoptr(GBytes) data = NULL;
 	g_autofree gchar *key = NULL;
 
-	/* load the readonly data section and look for the icon name */
+	/* load the readonly data section and look for the environment ID */
 	data = g_resource_lookup_data (as_get_resource (),
 				       "/org/freedesktop/appstream-glib/as-environment-ids.txt",
 				       G_RESOURCE_LOOKUP_FLAGS_NONE,
@@ -288,7 +288,7 @@ as_utils_is_category_id (const gchar *category_id)
 	g_autoptr(GBytes) data = NULL;
 	g_autofree gchar *key = NULL;
 
-	/* load the readonly data section and look for the icon name */
+	/* load the readonly data section and look for the category ID */
 	data = g_resource_lookup_data (as_get_resource (),
 				       "/org/freedesktop/appstream-glib/as-category-ids.txt",
 				       G_RESOURCE_LOOKUP_FLAGS_NONE,
@@ -482,7 +482,7 @@ as_utils_spdx_license_detokenize (gchar **license_tokens)
  * Checks the licence string to check it being a valid licence.
  * NOTE: SPDX licences can't typically contain brackets.
  *
- * Returns: %TRUE if the icon is a valid "SPDX license"
+ * Returns: %TRUE if the license is a valid "SPDX license"
  *
  * Since: 0.2.5
  **/
