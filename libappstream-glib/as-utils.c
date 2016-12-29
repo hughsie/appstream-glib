@@ -200,7 +200,7 @@ as_utils_is_stock_icon_name (const gchar *name)
  *
  * Searches the known list of SPDX license IDs.
  *
- * Returns: %TRUE if the icon is a valid "SPDX license ID"
+ * Returns: %TRUE if the license ID is a valid "SPDX license ID"
  *
  * Since: 0.1.5
  **/
