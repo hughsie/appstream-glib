@@ -342,6 +342,18 @@ as_utils_spdx_license_tokenize_drop (AsUtilsSpdxHelper *helper)
 		return;
 	}
 
+	/* is license enum with "+" */
+	if (g_str_has_suffix (tmp, "+")) {
+		g_autofree gchar *license_id = g_strndup (tmp, strlen (tmp) - 1);
+		if (as_utils_is_spdx_license_id (license_id)) {
+			g_ptr_array_add (helper->array, g_strdup_printf ("@%s", license_id));
+			g_ptr_array_add (helper->array, g_strdup ("+"));
+			helper->last_token_literal = FALSE;
+			g_string_truncate (helper->collect, 0);
+			return;
+		}
+	}
+
 	/* is old license enum */
 	for (i = 0; licenses[i].old != NULL; i++) {
 		if (g_strcmp0 (tmp, licenses[i].old) != 0)
@@ -466,6 +478,10 @@ as_utils_spdx_license_detokenize (gchar **license_tokens)
 			g_string_append (tmp, " OR ");
 			continue;
 		}
+		if (g_strcmp0 (license_tokens[i], "+") == 0) {
+			g_string_append (tmp, "+");
+			continue;
+		}
 		if (license_tokens[i][0] != '@') {
 			g_string_append (tmp, license_tokens[i]);
 			continue;
@@ -517,6 +533,8 @@ as_utils_is_spdx_license (const gchar *license)
 		if (g_strcmp0 (tokens[i], "&") == 0)
 			continue;
 		if (g_strcmp0 (tokens[i], "|") == 0)
+			continue;
+		if (g_strcmp0 (tokens[i], "+") == 0)
 			continue;
 		return FALSE;
 	}

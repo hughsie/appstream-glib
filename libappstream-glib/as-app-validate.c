@@ -928,6 +928,7 @@ as_app_validate_license (const gchar *license_text, GError **error)
 	for (i = 0; licenses[i] != NULL; i++) {
 		if (g_strcmp0 (licenses[i], "&") == 0 ||
 		    g_strcmp0 (licenses[i], "|") == 0 ||
+		    g_strcmp0 (licenses[i], "+") == 0 ||
 		    g_strcmp0 (licenses[i], "(") == 0 ||
 		    g_strcmp0 (licenses[i], ")") == 0)
 			continue;
@@ -951,19 +952,11 @@ as_app_validate_is_content_license_id (const gchar *license_id)
 		return TRUE;
 	if (g_strcmp0 (license_id, "@CC-BY-3.0") == 0)
 		return TRUE;
-	if (g_strcmp0 (license_id, "@CC-BY-3.0+") == 0)
-		return TRUE;
 	if (g_strcmp0 (license_id, "@CC-BY-4.0") == 0)
-		return TRUE;
-	if (g_strcmp0 (license_id, "@CC-BY-4.0+") == 0)
 		return TRUE;
 	if (g_strcmp0 (license_id, "@CC-BY-SA-3.0") == 0)
 		return TRUE;
-	if (g_strcmp0 (license_id, "@CC-BY-SA-3.0+") == 0)
-		return TRUE;
 	if (g_strcmp0 (license_id, "@CC-BY-SA-4.0") == 0)
-		return TRUE;
-	if (g_strcmp0 (license_id, "@CC-BY-SA-4.0+") == 0)
 		return TRUE;
 	if (g_strcmp0 (license_id, "@GFDL-1.1") == 0)
 		return TRUE;
@@ -976,6 +969,8 @@ as_app_validate_is_content_license_id (const gchar *license_id)
 	if (g_strcmp0 (license_id, "&") == 0)
 		return TRUE;
 	if (g_strcmp0 (license_id, "|") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "+") == 0)
 		return TRUE;
 	return FALSE;
 }
