@@ -91,6 +91,7 @@ void
 as_profile_task_set_threaded (AsProfileTask *ptask, gboolean threaded)
 {
 	AsProfileItem *item;
+	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&ptask->profile->mutex);
 	item = as_profile_item_find (ptask->profile->current, ptask->id);
 	if (item == NULL)
 		return;
