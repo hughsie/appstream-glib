@@ -50,6 +50,8 @@ asb_plugin_process_app (AsbPlugin *plugin,
 	/* skip for addons */
 	if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_ADDON)
 		return TRUE;
+	if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_GENERIC)
+		return TRUE;
 
 	/* auto-add this */
 	translations = as_app_get_translations (AS_APP (app));
