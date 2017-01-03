@@ -1361,6 +1361,8 @@ asb_context_find_by_pkgname (AsbContext *ctx, const gchar *pkgname)
 
 	for (i = 0; i < priv->packages->len; i++) {
 		pkg = g_ptr_array_index (priv->packages, i);
+		if (!asb_package_get_enabled (pkg))
+			continue;
 		if (g_strcmp0 (asb_package_get_name (pkg), pkgname) == 0)
 			return pkg;
 	}
