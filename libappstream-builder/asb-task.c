@@ -89,9 +89,6 @@ asb_task_explode_extra_package (AsbTask *task,
 {
 	AsbTaskPrivate *priv = GET_PRIVATE (task);
 	AsbPackage *pkg_extra;
-	GPtrArray *deps;
-	guint i;
-	const gchar *dep;
 
 	/* if not found, that's fine */
 	pkg_extra = asb_context_find_by_pkgname (priv->ctx, pkg_name);
@@ -123,19 +120,94 @@ asb_task_explode_extra_package (AsbTask *task,
 				  error))
 		return FALSE;
 
-	/* copy all the extra package requires into the main package too */
-	deps = asb_package_get_deps (pkg_extra);
-	for (i = 0; i < deps->len; i++) {
-		dep = g_ptr_array_index (deps, i);
-		asb_package_add_dep (priv->pkg, dep);
-	}
-
 	/* free resources */
 	if (!asb_package_close (pkg_extra, error))
 		return FALSE;
 	asb_package_clear (pkg_extra,
 			   ASB_PACKAGE_ENSURE_DEPS |
 			   ASB_PACKAGE_ENSURE_FILES);
+
+	return TRUE;
+}
+
+typedef struct {
+	GPtrArray	*results;
+	GHashTable	*results_hash;
+} AsbTaskExtraDeps;
+
+static void
+asb_task_extra_deps_free (AsbTaskExtraDeps *extra_deps)
+{
+	g_ptr_array_unref (extra_deps->results);
+	g_hash_table_unref (extra_deps->results_hash);
+	g_slice_free (AsbTaskExtraDeps, extra_deps);
+}
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsbTaskExtraDeps, asb_task_extra_deps_free);
+
+static gboolean
+asb_task_get_extra_deps_recursive (AsbTask *task,
+                                   const gchar *dep,
+                                   AsbTaskExtraDeps *extra_deps,
+                                   GError **error)
+{
+	AsbTaskPrivate *priv = GET_PRIVATE (task);
+	AsbPackage *subpkg;
+	GPtrArray *subpkg_deps;
+
+	subpkg = asb_context_find_by_pkgname (priv->ctx, dep);
+	if (subpkg == NULL)
+		return TRUE;
+
+	if (!asb_package_ensure (subpkg,
+				 ASB_PACKAGE_ENSURE_DEPS,
+				 error))
+		return FALSE;
+
+	subpkg_deps = asb_package_get_deps (subpkg);
+	for (guint i = 0; i < subpkg_deps->len; i++) {
+		const gchar *subpkg_dep = g_ptr_array_index (subpkg_deps, i);
+
+		/* already processed? */
+		if (g_hash_table_lookup (extra_deps->results_hash, subpkg_dep) != NULL)
+			continue;
+
+		/* process recursively */
+		if (!asb_task_get_extra_deps_recursive (task, subpkg_dep, extra_deps, error))
+			return FALSE;
+
+		/* add to results */
+		g_ptr_array_add (extra_deps->results, g_strdup (subpkg_dep));
+		g_hash_table_insert (extra_deps->results_hash, g_strdup (subpkg_dep), GINT_TO_POINTER (1));
+	}
+
+	return TRUE;
+}
+
+static gboolean
+asb_task_add_extra_deps (AsbTask *task, GError **error)
+{
+	AsbTaskPrivate *priv = GET_PRIVATE (task);
+	GPtrArray *deps;
+	g_autoptr(AsbTaskExtraDeps) extra_deps = NULL;
+
+	extra_deps = g_slice_new0 (AsbTaskExtraDeps);
+	extra_deps->results = g_ptr_array_new_with_free_func (g_free);
+	extra_deps->results_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+
+	/* recursively get extra package deps */
+	deps = asb_package_get_deps (priv->pkg);
+	for (guint i = 0; i < deps->len; i++) {
+		const gchar *dep = g_ptr_array_index (deps, i);
+		if (!asb_task_get_extra_deps_recursive (task, dep, extra_deps, error))
+			return FALSE;
+	}
+
+	/* copy all the extra package deps into the main package */
+	for (guint i = 0; i < extra_deps->results->len; i++) {
+		const gchar *extra_dep = g_ptr_array_index (extra_deps->results, i);
+		asb_package_add_dep (priv->pkg, extra_dep);
+	}
 
 	return TRUE;
 }
@@ -151,6 +223,10 @@ asb_task_explode_extra_packages (AsbTask *task, GError **error)
 	g_autoptr(GHashTable) hash = NULL;
 	g_autoptr(GPtrArray) array = NULL;
 	g_autoptr(GPtrArray) icon_themes = NULL;
+
+	/* recursively copy all the extra package deps into the main package */
+	if (!asb_task_add_extra_deps (task, error))
+		return FALSE;
 
 	/* anything the package requires */
 	hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
