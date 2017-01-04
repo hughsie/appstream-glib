@@ -177,12 +177,14 @@ asb_task_get_extra_deps_recursive (AsbTask *task,
 			continue;
 
 		/* process recursively */
+		g_hash_table_insert (extra_deps->results_hash,
+				     g_strdup (subpkg_dep),
+				     GINT_TO_POINTER (1));
 		if (!asb_task_get_extra_deps_recursive (task, subpkg_dep, extra_deps, error))
 			return FALSE;
 
 		/* add to results */
 		g_ptr_array_add (extra_deps->results, g_strdup (subpkg_dep));
-		g_hash_table_insert (extra_deps->results_hash, g_strdup (subpkg_dep), GINT_TO_POINTER (1));
 	}
 
 	return TRUE;
