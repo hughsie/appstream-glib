@@ -208,8 +208,7 @@ asb_package_log (AsbPackage *pkg,
 		break;
 	case ASB_PACKAGE_LOG_LEVEL_DEBUG:
 		g_debug ("DEBUG:   %s", tmp);
-		if (g_getenv ("ASB_PROFILE") != NULL)
-			g_string_append_printf (priv->log, "DEBUG:   %s\n", tmp);
+		g_string_append_printf (priv->log, "DEBUG:   %s\n", tmp);
 		break;
 	case ASB_PACKAGE_LOG_LEVEL_WARNING:
 		g_debug ("WARNING: %s", tmp);
