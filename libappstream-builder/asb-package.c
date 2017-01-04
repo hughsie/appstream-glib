@@ -82,8 +82,12 @@ asb_package_finalize (GObject *object)
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 
 	/* optional */
-	if (priv->output_stream != NULL)
+	if (priv->output_stream != NULL) {
+		g_autoptr(GError) error = NULL;
+		if (!g_output_stream_close (priv->output_stream, NULL, &error))
+			g_warning ("failed to close stream: %s", error->message);
 		g_object_unref (priv->output_stream);
+	}
 
 	g_mutex_clear (&priv->output_stream_mutex);
 	g_strfreev (priv->filelist);
@@ -150,7 +154,7 @@ asb_package_ensure_output_stream (AsbPackage *pkg, GError **error)
 
 	/* open log file */
 	fn = g_strdup_printf ("%s/%s.log", fn_dir, priv->name);
-	fd = g_open (fn, O_RDWR | O_CREAT, 0600);
+	fd = g_open (fn, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (fd < 0) {
 		g_set_error (error, 1, 0,
 			     "failed to open %s for writing", fn);
@@ -277,7 +281,8 @@ asb_package_log (AsbPackage *pkg,
 					NULL, /* bytes_written */
 					NULL,
 					&error)) {
-		g_warning ("failed to write to output stream: %s", error->message);
+		g_warning ("failed to write to output stream: %s",
+			   error->message);
 	}
 }
 
