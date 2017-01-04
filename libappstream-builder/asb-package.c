@@ -238,6 +238,10 @@ asb_package_log (AsbPackage *pkg,
 		return;
 	}
 
+	/* no logging enabled */
+	if (priv->output_stream == NULL)
+		return;
+
 	va_start (args, fmt);
 	tmp = g_strdup_vprintf (fmt, args);
 	va_end (args);
