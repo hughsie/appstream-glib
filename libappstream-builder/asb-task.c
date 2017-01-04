@@ -172,6 +172,14 @@ asb_task_get_extra_deps_recursive (AsbTask *task,
 		if (g_strcmp0 (subpkg_dep, dep) == 0)
 			continue;
 
+		/* ignore libraries */
+		if (g_strstr_len (subpkg_dep, -1, ".so.") != NULL)
+			continue;
+
+		/* ignore files */
+		if (g_str_has_prefix (subpkg_dep, "/"))
+			continue;
+
 		/* already processed? */
 		if (g_hash_table_lookup (extra_deps->results_hash, subpkg_dep) != NULL)
 			continue;
