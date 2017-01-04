@@ -544,6 +544,7 @@ as_image_load_filename_full (AsImage *image,
 		}
 		if (g_strcmp0 (gdk_pixbuf_format_get_name (fmt), "png") != 0 &&
 		    g_strcmp0 (gdk_pixbuf_format_get_name (fmt), "jpeg") != 0 &&
+		    g_strcmp0 (gdk_pixbuf_format_get_name (fmt), "xpm") != 0 &&
 		    g_strcmp0 (gdk_pixbuf_format_get_name (fmt), "svg") != 0) {
 			g_set_error (error,
 				     AS_UTILS_ERROR,
