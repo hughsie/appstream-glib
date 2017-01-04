@@ -29,7 +29,11 @@
 
 #include "config.h"
 
+#include <fcntl.h>
 #include <limits.h>
+
+#include <gio/gunixoutputstream.h>
+#include <glib/gstdio.h>
 
 #include "asb-package.h"
 #include "asb-plugin.h"
@@ -58,14 +62,13 @@ typedef struct
 	gchar		*vcs;
 	gchar		*source_nevra;
 	gchar		*source_pkgname;
-	gsize		 log_written_len;
-	GString		*log;
+	GOutputStream	*output_stream;
+	GMutex		 output_stream_mutex;
 	GHashTable	*configs;
 	GTimer		*timer;
 	gdouble		 last_log;
 	GPtrArray	*releases;
 	GHashTable	*releases_hash;
-	GMutex		 mutex_log;
 } AsbPackagePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbPackage, asb_package, G_TYPE_OBJECT)
@@ -78,7 +81,11 @@ asb_package_finalize (GObject *object)
 	AsbPackage *pkg = ASB_PACKAGE (object);
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 
-	g_mutex_clear (&priv->mutex_log);
+	/* optional */
+	if (priv->output_stream != NULL)
+		g_object_unref (priv->output_stream);
+
+	g_mutex_clear (&priv->output_stream_mutex);
 	g_strfreev (priv->filelist);
 	g_ptr_array_unref (priv->deps);
 	g_free (priv->filename);
@@ -95,7 +102,6 @@ asb_package_finalize (GObject *object)
 	g_free (priv->vcs);
 	g_free (priv->source_nevra);
 	g_free (priv->source_pkgname);
-	g_string_free (priv->log, TRUE);
 	g_timer_destroy (priv->timer);
 	g_hash_table_unref (priv->configs);
 	g_ptr_array_unref (priv->releases);
@@ -109,7 +115,6 @@ asb_package_init (AsbPackage *pkg)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
 	priv->enabled = TRUE;
-	priv->log = g_string_new (NULL);
 	priv->timer = g_timer_new ();
 	priv->deps = g_ptr_array_new_with_free_func (g_free);
 	priv->configs = g_hash_table_new_full (g_str_hash, g_str_equal,
@@ -117,7 +122,42 @@ asb_package_init (AsbPackage *pkg)
 	priv->releases = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->releases_hash = g_hash_table_new_full (g_str_hash, g_str_equal,
 						     g_free, (GDestroyNotify) g_object_unref);
-	g_mutex_init (&priv->mutex_log);
+	g_mutex_init (&priv->output_stream_mutex);
+}
+
+static gboolean
+asb_package_ensure_output_stream (AsbPackage *pkg, GError **error)
+{
+	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
+	gint fd;
+	g_autofree gchar *fn = NULL;
+	g_autofree gchar *fn_dir = NULL;
+
+	/* already set up */
+	if (priv->output_stream != NULL)
+		return TRUE;
+
+	/* don't write if unset */
+	if (asb_package_get_config (pkg, "LogDir") == NULL)
+		return TRUE;
+
+	/* ensure log dir exists */
+	fn_dir = g_strdup_printf ("%s/%c",
+				  asb_package_get_config (pkg, "LogDir"),
+				  g_ascii_tolower (priv->name[0]));
+	if (!asb_utils_ensure_exists (fn_dir, error))
+		return FALSE;
+
+	/* open log file */
+	fn = g_strdup_printf ("%s/%s.log", fn_dir, priv->name);
+	fd = g_open (fn, O_RDWR | O_CREAT, 0600);
+	if (fd < 0) {
+		g_set_error (error, 1, 0,
+			     "failed to open %s for writing", fn);
+		return FALSE;
+	}
+	priv->output_stream = g_unix_output_stream_new (fd, TRUE);
+	return TRUE;
 }
 
 /**
@@ -188,38 +228,53 @@ asb_package_log (AsbPackage *pkg,
 	va_list args;
 	gdouble now;
 	g_autofree gchar *tmp = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&priv->output_stream_mutex);
+	g_autoptr(GString) str = g_string_new (NULL);
 
-	g_mutex_lock (&priv->mutex_log);
+	/* ensure we have the writer set up */
+	if (!asb_package_ensure_output_stream (pkg, &error)) {
+		g_warning ("failed to create output stream: %s", error->message);
+		return;
+	}
 
 	va_start (args, fmt);
 	tmp = g_strdup_vprintf (fmt, args);
 	va_end (args);
 	if (g_getenv ("ASB_PROFILE") != NULL) {
 		now = g_timer_elapsed (priv->timer, NULL) * 1000;
-		g_string_append_printf (priv->log,
-					"%05.0f\t+%05.0f\t",
+		g_string_append_printf (str, "%05.0f\t+%05.0f\t",
 					now, now - priv->last_log);
 		priv->last_log = now;
 	}
 	switch (log_level) {
 	case ASB_PACKAGE_LOG_LEVEL_INFO:
 		g_debug ("INFO:    %s", tmp);
-		g_string_append_printf (priv->log, "INFO:    %s\n", tmp);
+		g_string_append_printf (str, "INFO:    %s\n", tmp);
 		break;
 	case ASB_PACKAGE_LOG_LEVEL_DEBUG:
 		g_debug ("DEBUG:   %s", tmp);
-		g_string_append_printf (priv->log, "DEBUG:   %s\n", tmp);
+		g_string_append_printf (str, "DEBUG:   %s\n", tmp);
 		break;
 	case ASB_PACKAGE_LOG_LEVEL_WARNING:
 		g_debug ("WARNING: %s", tmp);
-		g_string_append_printf (priv->log, "WARNING: %s\n", tmp);
+		g_string_append_printf (str, "WARNING: %s\n", tmp);
 		break;
 	default:
 		g_debug ("%s", tmp);
-		g_string_append_printf (priv->log, "%s\n", tmp);
+		g_string_append_printf (str, "%s\n", tmp);
 		break;
 	}
-	g_mutex_unlock (&priv->mutex_log);
+
+	/* write string to stream */
+	if (!g_output_stream_write_all (priv->output_stream,
+					str->str,
+					str->len,
+					NULL, /* bytes_written */
+					NULL,
+					&error)) {
+		g_warning ("failed to write to output stream: %s", error->message);
+	}
 }
 
 /**
@@ -237,26 +292,9 @@ gboolean
 asb_package_log_flush (AsbPackage *pkg, GError **error)
 {
 	AsbPackagePrivate *priv = GET_PRIVATE (pkg);
-	g_autofree gchar *logfile = NULL;
-	g_autofree gchar *logdir_char = NULL;
-
-	/* needs no update */
-	if (priv->log_written_len == priv->log->len)
+	if (priv->output_stream == NULL)
 		return TRUE;
-
-	/* don't write if unset */
-	if (asb_package_get_config (pkg, "LogDir") == NULL)
-		return TRUE;
-
-	/* overwrite old log */
-	logdir_char = g_strdup_printf ("%s/%c",
-				       asb_package_get_config (pkg, "LogDir"),
-				       g_ascii_tolower (priv->name[0]));
-	if (!asb_utils_ensure_exists (logdir_char, error))
-		return FALSE;
-	priv->log_written_len = priv->log->len;
-	logfile = g_strdup_printf ("%s/%s.log", logdir_char, priv->name);
-	return g_file_set_contents (logfile, priv->log->str, -1, error);
+	return g_output_stream_flush (priv->output_stream, NULL, error);
 }
 
 /**
