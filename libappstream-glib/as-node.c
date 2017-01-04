@@ -260,6 +260,8 @@ as_node_cdata_to_raw (AsNodeData *data)
 		return;
 	if (!data->is_cdata_escaped)
 		return;
+	if (data->cdata == NULL)
+		return;
 	if (data->is_cdata_const)
 		as_node_cdata_to_heap (data);
 	as_node_string_replace_inplace (data->cdata, "&amp;", '&');
@@ -274,6 +276,8 @@ as_node_cdata_to_escaped (AsNodeData *data)
 	if (data->is_root_node)
 		return;
 	if (data->is_cdata_escaped)
+		return;
+	if (data->cdata == NULL)
 		return;
 	if (g_strstr_len (data->cdata, -1, "&") != NULL ||
 	    g_strstr_len (data->cdata, -1, "<") != NULL ||
