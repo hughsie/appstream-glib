@@ -775,6 +775,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "rocs.desktop",		"org.kde.rocs.desktop" },
 		{ "skrooge.desktop",		"org.kde.skrooge.desktop" },
 		{ "step.desktop",		"org.kde.step.desktop" },
+		{ "yakuake.desktop",		"org.kde.yakuake.desktop" },
 
 		/* others */
 		{ "colorhug-ccmx.desktop",	"com.hughski.ColorHug.CcmxLoader.desktop" },
