@@ -2890,6 +2890,7 @@ static gboolean
 as_util_check_root_app_icon (AsApp *app, GError **error)
 {
 	AsIcon *icon_default;
+	const gchar *name;
 	g_autofree gchar *icon = NULL;
 	g_autoptr(GdkPixbuf) pb = NULL;
 
@@ -2922,9 +2923,18 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 		return TRUE;
 
 	/* can we find it */
-	icon = as_utils_find_icon_filename (g_getenv ("DESTDIR"),
-					    as_icon_get_name (icon_default),
-					    error);
+	name = as_icon_get_name (icon_default);
+	if (name == NULL)
+		name = as_icon_get_filename (icon_default);
+	if (name == NULL) {
+		g_set_error (error,
+			     AS_ERROR,
+			     AS_ERROR_FAILED,
+			     "%s has no icon set",
+			     as_app_get_id (app));
+		return FALSE;
+	}
+	icon = as_utils_find_icon_filename (g_getenv ("DESTDIR"), name, error);
 	if (icon == NULL) {
 		g_prefix_error (error,
 				"%s missing icon %s: ",
