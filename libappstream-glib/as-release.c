@@ -355,6 +355,8 @@ const gchar *
 as_release_get_location_default (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	if (priv->locations == NULL)
+		return NULL;
 	if (priv->locations->len == 0)
 		return NULL;
 	return g_ptr_array_index (priv->locations, 0);
