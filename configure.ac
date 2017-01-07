@@ -65,6 +65,10 @@ AC_HEADER_STDC
 LT_INIT
 AM_PROG_CC_C_O
 
+# We use C99 features
+AC_PROG_CC_C99
+AS_IF([test "$ac_cv_prog_cc_c99" = "no"],[AC_MSG_ERROR([C99 support is required])])
+
 WARN_CFLAGS_EXTRA="
 	-D_FORTIFY_SOURCE=2
 	-fstack-protector-strong
