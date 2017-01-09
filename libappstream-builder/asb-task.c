@@ -168,10 +168,6 @@ asb_task_get_extra_deps_recursive (AsbTask *task,
 	for (guint i = 0; i < subpkg_deps->len; i++) {
 		const gchar *subpkg_dep = g_ptr_array_index (subpkg_deps, i);
 
-		/* same as the parent? */
-		if (g_strcmp0 (subpkg_dep, dep) == 0)
-			continue;
-
 		/* already processed? */
 		if (g_hash_table_lookup (extra_deps->results_hash, subpkg_dep) != NULL)
 			continue;
