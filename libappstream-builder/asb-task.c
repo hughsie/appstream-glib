@@ -160,9 +160,15 @@ asb_task_get_extra_deps_recursive (AsbTask *task,
 		return TRUE;
 
 	if (!asb_package_ensure (subpkg,
-				 ASB_PACKAGE_ENSURE_DEPS,
-				 error))
+	                         ASB_PACKAGE_ENSURE_DEPS |
+	                         ASB_PACKAGE_ENSURE_SOURCE,
+	                         error))
 		return FALSE;
+
+	/* check it's from the same source package */
+	if (g_strcmp0 (asb_package_get_source (subpkg),
+	               asb_package_get_source (priv->pkg)) != 0)
+		return TRUE;
 
 	subpkg_deps = asb_package_get_deps (subpkg);
 	for (guint i = 0; i < subpkg_deps->len; i++) {
