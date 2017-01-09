@@ -430,6 +430,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 				 ASB_PACKAGE_LOG_LEVEL_WARNING,
 				 "Failed to explode extra file: %s",
 				 error->message);
+		g_clear_error (&error);
 		goto skip;
 	}
 
