@@ -1223,10 +1223,11 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 
 	/* appdata */
 	if (as_app_get_icon_default (app) != NULL &&
-	    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA) {
+	    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
+	    as_app_get_kind (app) == AS_APP_KIND_DESKTOP) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_TAG_INVALID,
-				     "<icon> not allowed in appdata");
+				     "<icon> not allowed in desktop appdata");
 	}
 
 	/* extends */
