@@ -5,6 +5,7 @@
 # Translators:
 # Adolfo Jayme Barrientos, 2014
 # Abdel G. Martínez L. <abdel.g.martinez.l@gmail.com>, 2016. #zanata
+# Emilio Herrera <ehespinosa57@gmail.com>, 2016. #zanata
 # Sylvia Sanchez <BHKohane@gmail.com>, 2016. #zanata
 # William  Moreno Reyes <williamjmorenor@gmail.com>, 2016. #zanata
 msgid ""
@@ -15,8 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-09-07 07:31-0400\n"
-"Last-Translator: William  Moreno Reyes <williamjmorenor@gmail.com>\n"
+"PO-Revision-Date: 2016-12-19 07:13-0500\n"
+"Last-Translator: Richard Hughes <richard@hughsie.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/freedesktop/appstream-glib/"
 "language/es/)\n"
 "Language: es\n"
@@ -301,7 +302,7 @@ msgstr "Añadida"
 #. TRANSLATORS: this is when a device ctrl+c's a watch
 #: client/as-util.c:4131
 msgid "Cancelled"
-msgstr ""
+msgstr "Cancelado"
 
 #. TRANSLATORS: this is the --nonet argument
 #: client/as-util.c:4160
@@ -437,12 +438,12 @@ msgstr "Sustituir las captura de pantalla en el archivo de origen"
 #. TRANSLATORS: command description
 #: client/as-util.c:4337
 msgid "Add a provide to a source file"
-msgstr ""
+msgstr "Agrega un suministro a un archivo de origen"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4343
 msgid "Add a language to a source file"
-msgstr ""
+msgstr "Añade un idioma a un archivo de origen"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4349
@@ -492,7 +493,7 @@ msgstr "Importar un fichero a marcado AppStream"
 #. TRANSLATORS: command description
 #: client/as-util.c:4403
 msgid "Watch AppStream locations for changes"
-msgstr ""
+msgstr "Espera las localizaciones de AppStream para los cambios"
 
 #. TRANSLATORS: program name
 #: client/as-util.c:4416

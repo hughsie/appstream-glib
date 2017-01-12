@@ -1,3 +1,22 @@
+Version 0.6.7
+~~~~~~~~~~~~~
+Released: 2017-01-12
+
+New Features:
+ - Add AsRequire as a way to store runtime requirements (Richard Hughes)
+ - Add support for "+" at the end of SPDX license identifiers (Kalev Lember)
+ - Scan /usr/share/metainfo as well when building appstream-data (Kalev Lember)
+
+Bugfixes:
+ - Allow loading application XPM icons (Richard Hughes)
+ - Enable C99 support in configure.ac (Philip Withnall)
+ - Fix a crash when using as_release_get_location_default() (Richard Hughes)
+ - Fix dep extraction when multiple versions are available (Kalev Lember)
+ - Only fail to validate <icon> in AppData desktop components (Richard Hughes)
+ - Recursively add subpackage deps into the main package (Kalev Lember)
+ - Resolve relative symlinks when extracting archives (Kalev Lember)
+ - Update the SPDX licence list to v2.5 (Kalev Lember)
+
 Version 0.6.6
 ~~~~~~~~~~~~~
 Released: 2016-12-15
