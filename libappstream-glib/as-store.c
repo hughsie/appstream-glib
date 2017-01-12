@@ -1498,7 +1498,7 @@ as_store_from_root (AsStore *store,
 
 		/* filter out non-merge types */
 		if (load_flags & AS_STORE_LOAD_FLAG_ONLY_MERGE_APPS) {
-			if (as_app_get_merge_kind (app) != AS_APP_MERGE_KIND_APPEND &&
+			if (as_app_get_merge_kind (app) != AS_APP_MERGE_KIND_REPLACE &&
 			    as_app_get_merge_kind (app) != AS_APP_MERGE_KIND_APPEND) {
 				continue;
 			}
