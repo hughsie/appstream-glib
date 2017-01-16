@@ -97,6 +97,8 @@ as_checksum_target_from_string (const gchar *target)
 		return AS_CHECKSUM_TARGET_CONTAINER;
 	if (g_strcmp0 (target, "content") == 0)
 		return AS_CHECKSUM_TARGET_CONTENT;
+	if (g_strcmp0 (target, "signature") == 0)
+		return AS_CHECKSUM_TARGET_SIGNATURE;
 	return AS_CHECKSUM_TARGET_UNKNOWN;
 }
 
@@ -117,6 +119,8 @@ as_checksum_target_to_string (AsChecksumTarget target)
 		return "container";
 	if (target == AS_CHECKSUM_TARGET_CONTENT)
 		return "content";
+	if (target == AS_CHECKSUM_TARGET_SIGNATURE)
+		return "signature";
 	return NULL;
 }
 
