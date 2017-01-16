@@ -467,7 +467,7 @@ as_app_parse_desktop_file (AsApp *app,
 					      G_KEY_FILE_DESKTOP_KEY_EXEC,
 					      NULL);
 		if (exec != NULL) {
-			if (g_str_has_prefix (exec, "epiphany"))
+			if (g_str_has_prefix (exec, "epiphany --application-mode"))
 				as_app_set_kind (app, AS_APP_KIND_WEB_APP);
 		}
 	}
