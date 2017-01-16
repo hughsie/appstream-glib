@@ -246,10 +246,33 @@ load_desktop (const gchar *prefix,
 	return g_steal_pointer (&app);
 }
 
+static gchar *
+get_appdata_filename (const gchar *prefix, const gchar *app_name)
+{
+	const gchar *dirs[] = { "metainfo", "appdata", NULL };
+	const gchar *exts[] = { ".metainfo.xml", ".appdata.xml", NULL };
+
+	/* fall back to the legacy path and extensions */
+	for (guint j = 0; dirs[j] != NULL; j++) {
+		for (guint i = 0; exts[i] != NULL; i++) {
+			g_autofree gchar *basename = NULL;
+			g_autofree gchar *tmp = NULL;
+			basename = g_strconcat (app_name, exts[i], NULL);
+			tmp = g_build_filename (prefix,
+						"share",
+						dirs[j],
+						basename,
+						NULL);
+			if (g_file_test (tmp, G_FILE_TEST_EXISTS))
+				return g_steal_pointer (&tmp);
+		}
+	}
+	return NULL;
+}
+
 static AsApp *
 load_appdata (const gchar *prefix, const gchar *app_name, GError **error)
 {
-	g_autofree gchar *appdata_basename = NULL;
 	g_autofree gchar *appdata_path = NULL;
 	g_autoptr(AsApp) app = NULL;
 	g_autoptr(GPtrArray) problems = NULL;
@@ -257,23 +280,7 @@ load_appdata (const gchar *prefix, const gchar *app_name, GError **error)
 	AsProblem *problem;
 	guint i;
 
-	appdata_basename = g_strconcat (app_name,
-					".appdata.xml",
-					NULL);
-	appdata_path = g_build_filename (prefix,
-					 "share",
-					 "metainfo",
-					 appdata_basename,
-					 NULL);
-	/* fall back to the legacy path */
-	if (!g_file_test (appdata_path, G_FILE_TEST_EXISTS)) {
-		g_free (appdata_path);
-		appdata_path = g_build_filename (prefix,
-						 "share",
-						 "appdata",
-						 appdata_basename,
-						 NULL);
-	}
+	appdata_path = get_appdata_filename (prefix, app_name);
 	g_debug ("Looking for %s", appdata_path);
 
 	app = as_app_new ();
