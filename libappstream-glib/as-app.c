@@ -4315,9 +4315,10 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		}
 	}
 
-	/* <metadata> */
+	/* <custom> or <metadata> */
 	if (g_hash_table_size (priv->metadata) > 0) {
-		node_tmp = as_node_insert (node_app, "metadata", NULL, 0, NULL);
+		tmp = as_node_context_get_version (ctx) > 0.9 ? "custom" : "metadata";
+		node_tmp = as_node_insert (node_app, tmp, NULL, 0, NULL);
 		as_node_insert_hash (node_tmp, "value", "key", priv->metadata, FALSE);
 	}
 
@@ -4785,8 +4786,9 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
 		break;
 
-	/* <metadata> */
+	/* <custom> or <metadata> */
 	case AS_TAG_METADATA:
+	case AS_TAG_CUSTOM:
 		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
 			g_hash_table_remove_all (priv->metadata);
 		for (c = n->children; c != NULL; c = c->next) {

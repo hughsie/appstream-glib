@@ -201,6 +201,7 @@ as_tag_to_string (AsTag tag)
 		"reviewer_id",
 		"suggests",
 		"requires",
+		"custom",
 		NULL };
 	if (tag > AS_TAG_LAST)
 		tag = AS_TAG_LAST;
