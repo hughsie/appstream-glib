@@ -1,3 +1,32 @@
+Version 0.5.19
+~~~~~~~~~~~~~~
+Released: 2017-01-17
+
+New Features:
+ - Update the SPDX licence list to v2.5 (Kalev Lember)
+
+Bugfixes:
+ - Add Geary to the app id fallbacks (Niels De Graef)
+ - Add -lang package as a dep to properly detect translation (Dominique Leuenberger)
+ - Allow loading application XPM icons (Richard Hughes)
+ - Check if icon_name is NULL when validating (Justin J. Kim)
+ - Check the return value of the stat call (Richard Hughes)
+ - Do not sent a REMOVED signal when deleting a transient temp file (Richard Hughes)
+ - Don't add kudos, languages, provides or releases for addons (Richard Hughes)
+ - Don't export NULL tags from AppData file (Richard Hughes)
+ - Don't require an icon from LOCALIZATION kind (Richard Hughes)
+ - Don't show a critical warning on invalid yaml file (Richard Hughes)
+ - Fix building metadata on repos with mixed architecture content (Richard Hughes)
+ - Fix dep extraction when multiple versions are available (Kalev Lember)
+ - Fix the CSM rating age calculation (Richard Hughes)
+ - Ignore system datadirs that are actually per-user (Richard Hughes)
+ - Never inhierit Name and Comment when using appstream-compose (Richard Hughes)
+ - Return proper warnings when using libyaml (Richard Hughes)
+ - Scan /usr/share/metainfo as well when building appstream-data (Kalev Lember)
+ - Set a better icon for codecs (Kalev Lember)
+ - Support reading metainfo.xml files when using appstream-compose (Richard Hughes)
+ - Tighten a rule that classifies apps as web-apps (Kalev Lember)
+
 Version 0.5.18
 ~~~~~~~~~~~~~~
 Released: 2016-10-10

@@ -7,7 +7,7 @@ git shortlog appstream_glib_0_5_18.. | grep -i -v trivial | grep -v Merge > NEWS
 --------------------------------------------------------------------------------
 Version 0.5.19
 ~~~~~~~~~~~~~~
-Released: 2016-xx-xx
+Released: 2017-xx-xx
 
 Notes:
 
