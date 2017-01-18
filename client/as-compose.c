@@ -187,19 +187,11 @@ load_desktop (const gchar *prefix,
 	      const gchar *icons_dir,
 	      guint        min_icon_size,
 	      const gchar *app_name,
-	      const gchar *appdata_id,
+	      const gchar *desktop_path,
 	      GError **error)
 {
 	AsIcon *icon;
-	g_autofree gchar *desktop_basename = NULL;
-	g_autofree gchar *desktop_path = NULL;
 	g_autoptr(AsApp) app = NULL;
-
-	if (appdata_id != NULL)
-		desktop_basename = g_strdup (appdata_id);
-	else
-		desktop_basename = g_strconcat (app_name, ".desktop", NULL);
-	desktop_path = g_build_filename (prefix, "share/applications", desktop_basename, NULL);
 
 	app = as_app_new ();
 	if (!as_app_parse_file (app, desktop_path,
@@ -414,6 +406,9 @@ main (int argc, char **argv)
 		g_auto(GStrv) intl_domains = NULL;
 		g_autoptr(AsApp) app_appdata = NULL;
 		g_autoptr(AsApp) app_desktop = NULL;
+		g_autofree gchar *desktop_basename = NULL;
+		g_autofree gchar *desktop_path = NULL;
+		const gchar *appdata_id;
 
 		/* TRANSLATORS: we're generating the AppStream data */
 		g_print ("%s %s\n", _("Processing application"), app_name);
@@ -464,20 +459,29 @@ main (int argc, char **argv)
 
 		as_store_add_app (store, app_appdata);
 
-		app_desktop = load_desktop (prefix,
-					    icons_dir,
-					    min_icon_size,
-					    app_name,
-					    as_app_get_id (app_appdata),
-					    &error);
-		if (app_desktop == NULL) {
-			/* TRANSLATORS: the .desktop file could not
-			 * be loaded */
-			g_print ("%s: %s\n", _("Error loading desktop file"),
-				 error->message);
-			return EXIT_FAILURE;
+		appdata_id = as_app_get_id (app_appdata);
+		if (appdata_id != NULL)
+			desktop_basename = g_strdup (appdata_id);
+		else
+			desktop_basename = g_strconcat (app_name, ".desktop", NULL);
+		desktop_path = g_build_filename (prefix, "share/applications", desktop_basename, NULL);
+
+		if (g_file_test (desktop_path, G_FILE_TEST_EXISTS)) {
+			app_desktop = load_desktop (prefix,
+						    icons_dir,
+						    min_icon_size,
+						    app_name,
+						    desktop_path,
+						    &error);
+			if (app_desktop == NULL) {
+				/* TRANSLATORS: the .desktop file could not
+				 * be loaded */
+				g_print ("%s: %s\n", _("Error loading desktop file"),
+					 error->message);
+				return EXIT_FAILURE;
+			}
+			as_store_add_app (store, app_desktop);
 		}
-		as_store_add_app (store, app_desktop);
 	}
 
 	/* create output directory */
