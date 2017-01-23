@@ -466,6 +466,7 @@ as_profile_finalize (GObject *object)
 	g_ptr_array_foreach (profile->current, (GFunc) as_profile_item_free, NULL);
 	g_ptr_array_unref (profile->current);
 	g_ptr_array_unref (profile->archived);
+	g_mutex_clear (&profile->mutex);
 
 	G_OBJECT_CLASS (as_profile_parent_class)->finalize (object);
 }
