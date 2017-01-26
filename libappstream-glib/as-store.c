@@ -1217,7 +1217,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 	g_ptr_array_add (priv->array, g_object_ref (app));
 	g_hash_table_insert (priv->hash_unique_id,
 			     (gpointer) as_app_get_unique_id (app),
-			     app);
+			     g_object_ref (app));
 	pkgnames = as_app_get_pkgnames (app);
 	for (i = 0; i < pkgnames->len; i++) {
 		pkgname = g_ptr_array_index (pkgnames, i);
@@ -3416,7 +3416,7 @@ as_store_init (AsStore *store)
 	priv->hash_unique_id = g_hash_table_new_full (g_str_hash,
 						      g_str_equal,
 						      NULL,
-						      NULL);
+						      g_object_unref);
 	priv->hash_pkgname = g_hash_table_new_full (g_str_hash,
 						    g_str_equal,
 						    g_free,
