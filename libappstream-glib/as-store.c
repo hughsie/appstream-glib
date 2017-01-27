@@ -927,6 +927,11 @@ as_store_remove_app (AsStore *store, AsApp *app)
 	if (apps != NULL)
 		g_ptr_array_remove (apps, app);
 
+	/* remove the array as well if it was the last app as the AsRefString
+	 * with the app ID may get freed now */
+	if (apps->len == 0)
+		g_hash_table_remove (priv->hash_id, as_app_get_id (app));
+
 	g_hash_table_remove (priv->hash_unique_id, as_app_get_unique_id (app));
 	g_ptr_array_remove (priv->array, app);
 	g_hash_table_remove_all (priv->metadata_indexes);
