@@ -64,6 +64,12 @@ as_ref_string_get_hash_safe (void)
 	return as_ref_string_hash;
 }
 
+static void __attribute__ ((destructor))
+as_ref_string_destructor (void)
+{
+	g_clear_pointer (&as_ref_string_hash, g_hash_table_unref);
+}
+
 /**
  * as_ref_string_new_static:
  * @str: a string
