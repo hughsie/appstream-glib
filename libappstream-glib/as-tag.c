@@ -35,8 +35,7 @@
 
 #include "as-tag.h"
 
-/* we need to define this now as gperf just writes a big header file */
-const struct tag_data *_as_tag_from_gperf (const char *tag, guint etag);
+const struct tag_data *_as_tag_from_gperf (const char *tag, GPERF_LEN_TYPE etag);
 #include "as-tag-private.h"
 
 /**
@@ -78,7 +77,7 @@ as_tag_from_string_full (const gchar *tag, AsTagFlags flags)
 		return AS_TAG_UNKNOWN;
 
 	/* use a perfect hash */
-	ky = _as_tag_from_gperf (tag, (guint) strlen (tag));
+	ky = _as_tag_from_gperf (tag, (GPERF_LEN_TYPE) strlen (tag));
 	if (ky != NULL)
 		etag = ky->etag;
 

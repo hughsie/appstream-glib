@@ -159,6 +159,26 @@ if test x$GPERF = xno ; then
 	AC_MSG_ERROR([gperf not found])
 fi
 
+GPERF_TEST="$(echo foo,bar | ${GPERF} -L ANSI-C)"
+AC_COMPILE_IFELSE(
+        [AC_LANG_PROGRAM([
+                #include <string.h>
+                const char * in_word_set(const char *, size_t);
+                $GPERF_TEST]
+        )],
+        [GPERF_LEN_TYPE=size_t],
+        [AC_COMPILE_IFELSE(
+                [AC_LANG_PROGRAM([
+                        #include <string.h>
+                        const char * in_word_set(const char *, unsigned);
+                        $GPERF_TEST]
+                )],
+                [GPERF_LEN_TYPE=unsigned],
+                [AC_MSG_ERROR([unable to determine gperf len type])]
+        )]
+)
+AC_DEFINE_UNQUOTED([GPERF_LEN_TYPE], [$GPERF_LEN_TYPE], [gperf len type])
+
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.45.8 gio-2.0 gobject-2.0 gthread-2.0 gio-unix-2.0 gmodule-2.0)
 PKG_CHECK_MODULES(UUID, uuid)
 PKG_CHECK_MODULES(LIBARCHIVE, libarchive)
