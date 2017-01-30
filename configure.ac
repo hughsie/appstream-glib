@@ -155,10 +155,9 @@ AC_SUBST([bashcompletiondir], [$with_bashcompletiondir])
 
 # use gperf for faster string -> enum matching
 AC_PATH_PROG(GPERF, [gperf], [no])
-if test x$GPERF != xno ; then
-	AC_DEFINE(HAVE_GPERF,[1], [Use gperf])
+if test x$GPERF = xno ; then
+	AC_MSG_ERROR([gperf not found])
 fi
-AM_CONDITIONAL(HAVE_GPERF, [test x$GPERF != xno])
 
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.45.8 gio-2.0 gobject-2.0 gthread-2.0 gio-unix-2.0 gmodule-2.0)
 PKG_CHECK_MODULES(UUID, uuid)

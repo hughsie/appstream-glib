@@ -35,11 +35,9 @@
 
 #include "as-tag.h"
 
-#ifdef HAVE_GPERF
-  /* we need to define this now as gperf just writes a big header file */
-  const struct tag_data *_as_tag_from_gperf (const char *tag, guint etag);
-  #include "as-tag-private.h"
-#endif
+/* we need to define this now as gperf just writes a big header file */
+const struct tag_data *_as_tag_from_gperf (const char *tag, guint etag);
+#include "as-tag-private.h"
 
 /**
  * as_tag_from_string:
@@ -72,30 +70,17 @@ as_tag_from_string (const gchar *tag)
 AsTag
 as_tag_from_string_full (const gchar *tag, AsTagFlags flags)
 {
-#ifdef HAVE_GPERF
 	const struct tag_data *ky;
-#else
-	guint i;
-#endif
 	AsTag etag = AS_TAG_UNKNOWN;
 
 	/* invalid */
 	if (tag == NULL)
 		return AS_TAG_UNKNOWN;
 
-#ifdef HAVE_GPERF
 	/* use a perfect hash */
 	ky = _as_tag_from_gperf (tag, (guint) strlen (tag));
 	if (ky != NULL)
 		etag = ky->etag;
-#else
-	for (i = 0; i < AS_TAG_LAST; i++) {
-		if (g_strcmp0 (tag, as_tag_to_string (i)) == 0) {
-			etag = i;
-			break;
-		}
-	}
-#endif
 
 	/* deprecated names */
 	if (etag == AS_TAG_UNKNOWN && (flags & AS_TAG_FLAG_USE_FALLBACKS)) {
