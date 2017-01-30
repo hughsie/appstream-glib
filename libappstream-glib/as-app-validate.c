@@ -1066,7 +1066,6 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		require_translation = FALSE;
 		switch (as_app_get_source_kind (app)) {
 		case AS_APP_SOURCE_KIND_METAINFO:
-		case AS_APP_SOURCE_KIND_APPDATA:
 			require_name = FALSE;
 			break;
 		default:
