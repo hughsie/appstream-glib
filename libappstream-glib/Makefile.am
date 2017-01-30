@@ -26,10 +26,8 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = 						\
 	appstream-glib.pc
 
-if HAVE_GPERF
 as-tag-private.h: as-tag.gperf
 	$(AM_V_GEN) gperf < $< > $@
-endif
 
 as-resources.c: appstream-glib.gresource.xml			\
 		as-stock-icons.txt				\
@@ -157,10 +155,8 @@ libappstream_glib_la_SOURCES +=					\
 	as-store-cab.h
 endif
 
-if HAVE_GPERF
 nodist_libappstream_glib_la_SOURCES += as-tag-private.h
 BUILT_SOURCES += as-tag-private.h
-endif
 
 CLEANFILES = $(BUILT_SOURCES)
 
