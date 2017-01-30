@@ -36,7 +36,11 @@
 #include "as-tag.h"
 
 const struct tag_data *_as_tag_from_gperf (const char *tag, GPERF_LEN_TYPE etag);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 #include "as-tag-private.h"
+#pragma GCC diagnostic pop
 
 /**
  * as_tag_from_string:
