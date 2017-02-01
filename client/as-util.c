@@ -1089,6 +1089,7 @@ as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **erro
 			"XXX: http://www.homepage.com/docs/");
 	as_app_set_project_license (app, "XXX: Insert SPDX value here");
 	as_app_set_metadata_license (app, "XXX: Insert SPDX value here");
+	as_app_set_update_contact (app, "XXX: upstream-contact_at_email.com");
 
 	/* add first screenshot */
 	ss1 = as_screenshot_new ();
