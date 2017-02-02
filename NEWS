@@ -1,3 +1,24 @@
+Version 0.6.8
+~~~~~~~~~~~~~
+Released: 2017-02-01
+
+New Features:
+ - Make gperf a hard dep (Kalev Lember)
+ - Read and write the <custom> tag (Richard Hughes)
+ - Support AppData components with no desktop files (Alexander Larsson)
+
+Bugfixes:
+ - Add a destructor for AsRefString (Kalev Lember)
+ - Add a dummy update_contact to appdata-from-desktop (Kalev Lember)
+ - Do not ignore type=replace merge components (Richard Hughes)
+ - Fix the build with gperf 3.1 (Kalev Lember)
+ - Fix use after free with hash table keys (Kalev Lember)
+ - Hold a ref in the store to avoid use-after-free (Simon McVittie)
+ - Ignore -Wconversion and -Wsign-conversion warnings from generated file (Kalev Lember)
+ - Require name and summary for validate-relax (Kalev Lember)
+ - Support reading metainfo.xml files when using appstream-compose (Richard Hughes)
+ - Tighten a rule that classifies apps as web-apps (Kalev Lember)
+
 Version 0.6.7
 ~~~~~~~~~~~~~
 Released: 2017-01-12
