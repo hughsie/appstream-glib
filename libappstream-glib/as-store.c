@@ -765,6 +765,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "kapptemplate.desktop",	"org.kde.kapptemplate.desktop" },
 		{ "kbruch.desktop",		"org.kde.kbruch.desktop" },
 		{ "kdevelop.desktop",		"org.kde.kdevelop.desktop" },
+		{ "kfind.desktop",		"org.kde.kfind.desktop" },
 		{ "kgeography.desktop",		"org.kde.kgeography.desktop" },
 		{ "kgpg.desktop",		"org.kde.kgpg.desktop" },
 		{ "khangman.desktop",		"org.kde.khangman.desktop" },
@@ -803,6 +804,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "colorhug-ccmx.desktop",	"com.hughski.ColorHug.CcmxLoader.desktop" },
 		{ "colorhug-flash.desktop",	"com.hughski.ColorHug.FlashLoader.desktop" },
 		{ "dconf-editor.desktop",	"ca.desrt.dconf-editor.desktop" },
+		{ "qtcreator.desktop",		"org.qt-project.qtcreator.desktop" },
 
 		{ NULL, NULL }
 	};
