@@ -2032,13 +2032,15 @@ as_test_app_validate_file_bad_func (void)
 				    "<release> timestamps are not in order");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<release> version was duplicated");
-	g_assert_cmpint (probs->len, ==, 34);
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
+				    "<release> timestamp is in the future");
+	g_assert_cmpint (probs->len, ==, 35);
 
 	/* again, harder */
 	probs2 = as_app_validate (app, AS_APP_VALIDATE_FLAG_STRICT, &error);
 	as_test_app_validate_check (probs2, AS_PROBLEM_KIND_TAG_INVALID,
 				    "XML data contains unknown tag");
-	g_assert_cmpint (probs2->len, ==, 40);
+	g_assert_cmpint (probs2->len, ==, 41);
 }
 
 static void

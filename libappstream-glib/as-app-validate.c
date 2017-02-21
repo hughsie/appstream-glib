@@ -840,6 +840,13 @@ as_app_validate_release (AsApp *app,
 				     "<release> timestamp should be a UNIX time");
 	}
 
+	/* check the timestamp is not in the future */
+	if (timestamp > (guint64) g_get_real_time () / G_USEC_PER_SEC) {
+		ai_app_validate_add (helper,
+				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
+				     "<release> timestamp is in the future");
+	}
+
 	/* for firmware, check urgency */
 	if (as_app_get_kind (app) == AS_APP_KIND_FIRMWARE &&
 	    as_release_get_urgency (release) == AS_URGENCY_KIND_UNKNOWN) {
