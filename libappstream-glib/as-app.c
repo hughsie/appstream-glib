@@ -2918,6 +2918,7 @@ as_app_add_release (AsApp *app, AsRelease *release)
 	if (release_old == release)
 		return;
 	if (release_old != NULL) {
+		priv->problems |= AS_APP_PROBLEM_DUPLICATE_RELEASE;
 		as_app_subsume_release (release_old, release);
 		return;
 	}

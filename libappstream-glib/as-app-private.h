@@ -54,6 +54,7 @@ G_BEGIN_DECLS
  * @AS_APP_PROBLEM_INVALID_XML_TAG:		Invalid XML tag name detected
  * @AS_APP_PROBLEM_EXPECTED_CHILDREN:		Children tags expected
  * @AS_APP_PROBLEM_INVALID_KEYWORDS:		One or more keywords was invalid
+ * @AS_APP_PROBLEM_DUPLICATE_RELEASE:		More than one release with the same version
  *
  * The application problems detected when loading.
  **/
@@ -76,6 +77,7 @@ typedef enum {
 	AS_APP_PROBLEM_INVALID_XML_TAG		= 1 << 14,
 	AS_APP_PROBLEM_EXPECTED_CHILDREN	= 1 << 15,
 	AS_APP_PROBLEM_INVALID_KEYWORDS		= 1 << 16,
+	AS_APP_PROBLEM_DUPLICATE_RELEASE	= 1 << 17,
 	/*< private >*/
 	AS_APP_PROBLEM_LAST
 } AsAppProblems;

@@ -872,9 +872,7 @@ as_app_validate_release (AsApp *app,
 static gboolean
 as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **error)
 {
-	AsRelease *release;
 	GPtrArray *releases;
-	guint i;
 
 	/* only for AppData */
 	if (as_app_get_source_kind (app) != AS_APP_SOURCE_KIND_APPDATA &&
@@ -882,11 +880,52 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 		return TRUE;
 
 	releases = as_app_get_releases (app);
-	for (i = 0; i < releases->len; i++) {
-		release = g_ptr_array_index (releases, i);
+	for (guint i = 0; i < releases->len; i++) {
+		AsRelease *release = g_ptr_array_index (releases, i);
 		if (!as_app_validate_release (app, release, helper, error))
 			return FALSE;
 	}
+
+	/* check the version numbers go down each time */
+	if (releases->len > 1) {
+		AsRelease *release_old = g_ptr_array_index (releases, 0);
+		for (guint i = 1; i < releases->len; i++) {
+			AsRelease *release = g_ptr_array_index (releases, i);
+			const gchar *version = as_release_get_version (release);
+			const gchar *version_old = as_release_get_version (release_old);
+			if (version == NULL || version_old == NULL)
+				continue;
+			if (as_utils_vercmp (version, version_old) > 0) {
+				ai_app_validate_add (helper,
+						     AS_PROBLEM_KIND_TAG_INVALID,
+						     "<release> versions are not in order "
+						     "[%s before %s]",
+						     version_old, version);
+			}
+			release_old = release;
+		}
+	}
+
+	/* check the timestamps go down each time */
+	if (releases->len > 1) {
+		AsRelease *release_old = g_ptr_array_index (releases, 0);
+		for (guint i = 1; i < releases->len; i++) {
+			AsRelease *release = g_ptr_array_index (releases, i);
+			guint64 timestamp = as_release_get_timestamp (release);
+			guint64 timestamp_old = as_release_get_timestamp (release_old);
+			if (timestamp == 0 || timestamp_old == 0)
+				continue;
+			if (timestamp > timestamp_old) {
+				ai_app_validate_add (helper,
+						     AS_PROBLEM_KIND_TAG_INVALID,
+						     "<release> timestamps are not in order "
+						     "[%" G_GUINT64_FORMAT " before %" G_GUINT64_FORMAT "]",
+						     timestamp_old, timestamp);
+			}
+			release_old = release;
+		}
+	}
+
 	return TRUE;
 }
 
@@ -1316,6 +1355,13 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_TAG_INVALID,
 				     "<keyword> invalid contents");
+	}
+
+	/* releases all have to have unique versions */
+	if (problems & AS_APP_PROBLEM_DUPLICATE_RELEASE) {
+		ai_app_validate_add (helper,
+				     AS_PROBLEM_KIND_TAG_INVALID,
+				     "<release> version was duplicated");
 	}
 
 	/* check for things that have to exist */
