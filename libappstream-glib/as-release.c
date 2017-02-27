@@ -782,7 +782,7 @@ as_release_node_parse (AsRelease *release, GNode *node,
 	}
 
 	/* AppStream: multiple <description> tags */
-	if (as_node_context_get_source_kind (ctx) == AS_FORMAT_KIND_APPSTREAM) {
+	if (as_node_context_get_format_kind (ctx) == AS_FORMAT_KIND_APPSTREAM) {
 		for (n = node->children; n != NULL; n = n->next) {
 			g_autoptr(GString) xml = NULL;
 			if (as_node_get_tag (n) != AS_TAG_DESCRIPTION)

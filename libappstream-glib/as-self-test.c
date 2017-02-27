@@ -639,7 +639,7 @@ as_test_release_appstream_func (void)
 	/* back to node */
 	root = as_node_new ();
 	as_node_context_set_version (ctx, 1.0);
-	as_node_context_set_source_kind (ctx, AS_FORMAT_KIND_APPSTREAM);
+	as_node_context_set_format_kind (ctx, AS_FORMAT_KIND_APPSTREAM);
 	n = as_release_node_insert (release, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	ret = as_test_compare_lines (xml->str, src, &error);
@@ -676,7 +676,7 @@ as_test_release_appdata_func (void)
 	n = as_node_find (root, "release");
 	g_assert (n != NULL);
 	ctx = as_node_context_new ();
-	as_node_context_set_source_kind (ctx, AS_FORMAT_KIND_APPDATA);
+	as_node_context_set_format_kind (ctx, AS_FORMAT_KIND_APPDATA);
 	ret = as_release_node_parse (release, n, ctx, &error);
 	g_assert_no_error (error);
 	g_assert (ret);

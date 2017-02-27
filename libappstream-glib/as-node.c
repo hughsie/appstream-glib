@@ -2047,7 +2047,7 @@ as_node_get_localized_unwrap (const AsNode *node, GError **error)
 
 /* helper struct */
 struct _AsNodeContext {
-	AsFormatKind	 source_kind;
+	AsFormatKind	 format_kind;
 	AsFormatKind	 output;
 	gdouble		 version;
 	gboolean	 output_trusted;
@@ -2069,7 +2069,7 @@ as_node_context_new (void)
 	AsNodeContext *ctx;
 	ctx = g_new0 (AsNodeContext, 1);
 	ctx->version = 0.f;
-	ctx->source_kind = AS_FORMAT_KIND_APPSTREAM;
+	ctx->format_kind = AS_FORMAT_KIND_APPSTREAM;
 	ctx->output = AS_FORMAT_KIND_UNKNOWN;
 	return ctx;
 }
@@ -2124,34 +2124,34 @@ as_node_context_set_version (AsNodeContext *ctx, gdouble version)
 }
 
 /**
- * as_node_context_get_source_kind: (skip)
+ * as_node_context_get_format_kind: (skip)
  * @ctx: a #AsNodeContext.
  *
- * Gets the AppStream API source_kind used when parsing nodes.
+ * Gets the AppStream API format kind used when parsing nodes.
  *
- * Returns: source_kind number
+ * Returns: format kind, e.g. %AS_FORMAT_KIND_APPDATA
  *
- * Since: 0.3.6
+ * Since: 0.6.9
  **/
 AsFormatKind
-as_node_context_get_source_kind (AsNodeContext *ctx)
+as_node_context_get_format_kind (AsNodeContext *ctx)
 {
-	return ctx->source_kind;
+	return ctx->format_kind;
 }
 
 /**
- * as_node_context_set_source_kind: (skip)
+ * as_node_context_set_format_kind: (skip)
  * @ctx: a #AsNodeContext.
- * @source_kind: an API source_kind number to target.
+ * @format_kind: an API format kind, e.g. %AS_FORMAT_KIND_APPDATA
  *
- * Sets the AppStream API source_kind used when parsing nodes.
+ * Sets the AppStream API format kind used when exporting nodes.
  *
- * Since: 0.3.6
+ * Since: 0.6.9
  **/
 void
-as_node_context_set_source_kind (AsNodeContext *ctx, AsFormatKind source_kind)
+as_node_context_set_format_kind (AsNodeContext *ctx, AsFormatKind format_kind)
 {
-	ctx->source_kind = source_kind;
+	ctx->format_kind = format_kind;
 }
 
 /**

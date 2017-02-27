@@ -38,9 +38,9 @@ void		 as_node_context_free		(AsNodeContext	*ctx);
 gdouble		 as_node_context_get_version	(AsNodeContext	*ctx);
 void		 as_node_context_set_version	(AsNodeContext	*ctx,
 						 gdouble	 version);
-AsFormatKind	 as_node_context_get_source_kind (AsNodeContext	*ctx);
-void		 as_node_context_set_source_kind (AsNodeContext	*ctx,
-						 AsFormatKind source_kind);
+AsFormatKind	 as_node_context_get_format_kind (AsNodeContext	*ctx);
+void		 as_node_context_set_format_kind (AsNodeContext	*ctx,
+						 AsFormatKind	 format_kind);
 gboolean	 as_node_context_get_output_trusted (AsNodeContext	*ctx);
 void		 as_node_context_set_output_trusted (AsNodeContext	*ctx,
 						 gboolean output_trusted);

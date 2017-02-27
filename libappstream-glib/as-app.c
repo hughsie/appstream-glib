@@ -5662,7 +5662,7 @@ as_app_parse_appdata_file (AsApp *app,
 		}
 	}
 	ctx = as_node_context_new ();
-	as_node_context_set_source_kind (ctx, AS_FORMAT_KIND_APPDATA);
+	as_node_context_set_format_kind (ctx, AS_FORMAT_KIND_APPDATA);
 	if (!as_app_node_parse_full (app, node, flags, ctx, error))
 		return FALSE;
 
