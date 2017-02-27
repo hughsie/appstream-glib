@@ -91,7 +91,6 @@ typedef struct
 	GPtrArray	*suggests;			/* of AsSuggest */
 	GPtrArray	*requires;			/* of AsRequire */
 	GPtrArray	*vetos;				/* of AsRefString */
-	AsFormatKind	 source_kind;
 	AsAppScope	 scope;
 	AsAppMergeKind	 merge_kind;
 	AsAppState	 state;
@@ -109,7 +108,6 @@ typedef struct
 	AsRefString	*update_contact;
 	gchar		*unique_id;
 	gboolean	 unique_id_valid;
-	AsRefString	*source_file;
 	AsRefString	*branch;
 	gint		 priority;
 	gsize		 token_cache_valid;
@@ -439,8 +437,6 @@ as_app_finalize (GObject *object)
 	if (priv->update_contact != NULL)
 		as_ref_string_unref (priv->update_contact);
 	g_free (priv->unique_id);
-	if (priv->source_file != NULL)
-		as_ref_string_unref (priv->source_file);
 	if (priv->branch != NULL)
 		as_ref_string_unref (priv->branch);
 	g_hash_table_unref (priv->comments);
@@ -1597,7 +1593,11 @@ AsFormatKind
 as_app_get_source_kind (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	return priv->source_kind;
+	if (priv->formats->len > 0) {
+		AsFormat *format = g_ptr_array_index (priv->formats, 0);
+		return as_format_get_kind (format);
+	}
+	return AS_FORMAT_KIND_UNKNOWN;
 }
 
 /**
@@ -2012,9 +2012,7 @@ as_app_get_origin (AsApp *app)
  * as_app_get_source_file:
  * @app: a #AsApp instance.
  *
- * Gets the source filename the instance was populated from.
- *
- * NOTE: this is not set for %AS_FORMAT_KIND_APPSTREAM entries.
+ * Gets the default source filename the instance was populated from.
  *
  * Returns: string, or %NULL if unset
  *
@@ -2024,7 +2022,11 @@ const gchar *
 as_app_get_source_file (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	return priv->source_file;
+	if (priv->formats->len > 0) {
+		AsFormat *format = g_ptr_array_index (priv->formats, 0);
+		return as_format_get_filename (format);
+	}
+	return NULL;
 }
 
 /**
@@ -2135,7 +2137,19 @@ void
 as_app_set_source_kind (AsApp *app, AsFormatKind source_kind)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	priv->source_kind = source_kind;
+	g_autoptr(AsFormat) format = NULL;
+
+	/* already exists */
+	if (priv->formats->len > 0) {
+		AsFormat *format_tmp = g_ptr_array_index (priv->formats, 0);
+		as_format_set_kind (format_tmp, source_kind);
+		return;
+	}
+
+	/* create something */
+	format = as_format_new ();
+	as_format_set_kind (format, source_kind);
+	as_app_add_format (app, format);
 }
 
 /**
@@ -2398,8 +2412,9 @@ as_app_set_source_pkgname (AsApp *app,
 void
 as_app_set_source_file (AsApp *app, const gchar *source_file)
 {
-	AsAppPrivate *priv = GET_PRIVATE (app);
-	as_ref_string_assign_safe (&priv->source_file, source_file);
+	g_autoptr(AsFormat) format = as_format_new ();
+	as_format_set_filename (format, source_file);
+	as_app_add_format (app, format);
 }
 
 /**
@@ -3691,9 +3706,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* AppData or AppStream can overwrite the id-kind of desktop files */
 	if (flags & AS_APP_SUBSUME_FLAG_SOURCE_KIND) {
-		if ((priv->source_kind == AS_FORMAT_KIND_APPDATA ||
-		     priv->source_kind == AS_FORMAT_KIND_APPSTREAM) &&
-		    papp->source_kind == AS_FORMAT_KIND_DESKTOP)
+		if ((as_app_get_format_by_kind (donor, AS_FORMAT_KIND_APPDATA) != NULL ||
+		     as_app_get_format_by_kind (donor, AS_FORMAT_KIND_APPSTREAM) != NULL) &&
+		    as_app_get_format_by_kind (app, AS_FORMAT_KIND_DESKTOP) != NULL)
 			as_app_set_kind (app, priv->kind);
 	}
 
@@ -3937,16 +3952,18 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 	if (flags & AS_APP_SUBSUME_FLAG_KEYWORDS)
 		as_app_subsume_keywords (app, donor, flags);
 
-	/* source */
-	if (flags & AS_APP_SUBSUME_FLAG_SOURCE_FILE) {
-		if (priv->source_file != NULL)
-			as_app_set_source_file (app, priv->source_file);
-	}
-
 	/* branch */
 	if (flags & AS_APP_SUBSUME_FLAG_BRANCH) {
 		if (priv->branch != NULL)
 			as_app_set_branch (app, priv->branch);
+	}
+
+	/* formats */
+	if (flags & AS_APP_SUBSUME_FLAG_FORMATS) {
+		for (i = 0; i < priv->formats->len; i++) {
+			AsFormat *fmt = g_ptr_array_index (priv->formats, i);
+			as_app_add_format (app, fmt);
+		}
 	}
 
 	/* source_pkgname */
@@ -4573,9 +4590,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 
 	/* <description> */
 	case AS_TAG_DESCRIPTION:
-
+	{
 		/* unwrap appdata inline */
-		if (priv->source_kind == AS_FORMAT_KIND_APPDATA) {
+		AsFormat *format = as_app_get_format_by_kind (app, AS_FORMAT_KIND_APPDATA);
+		if (format != NULL) {
 			GError *error_local = NULL;
 			g_autoptr(GHashTable) unwrapped = NULL;
 			unwrapped = as_node_get_localized_unwrap (n, &error_local);
@@ -4587,7 +4605,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 					debug = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 					g_warning ("ignoring description '%s' from %s: %s",
 						   debug->str,
-						   as_app_get_source_file (app),
+						   as_format_get_filename (format),
 						   error_local->message);
 					g_error_free (error_local);
 					break;
@@ -4614,6 +4632,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 						xml->str);
 		}
 		break;
+	}
 
 	/* <icon> */
 	case AS_TAG_ICON:
@@ -5862,21 +5881,20 @@ as_app_parse_file (AsApp *app,
 		   AsAppParseFlags flags,
 		   GError **error)
 {
-	AsAppPrivate *priv = GET_PRIVATE (app);
 	GPtrArray *vetos;
+	g_autoptr(AsFormat) format = as_format_new ();
 
 	/* autodetect */
-	if (priv->source_kind == AS_FORMAT_KIND_UNKNOWN) {
-		priv->source_kind = as_format_guess_kind (filename);
-		if (priv->source_kind == AS_FORMAT_KIND_UNKNOWN) {
-			g_set_error (error,
-				     AS_APP_ERROR,
-				     AS_APP_ERROR_INVALID_TYPE,
-				     "%s has an unrecognised extension",
-				     filename);
-			return FALSE;
-		}
+	as_format_set_filename (format, filename);
+	if (as_format_get_kind (format) == AS_FORMAT_KIND_UNKNOWN) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "%s has an unrecognised extension",
+			     filename);
+		return FALSE;
 	}
+	as_app_add_format (app, format);
 
 	/* convert <_p> into <p> for easy validation */
 	if (g_str_has_suffix (filename, ".appdata.xml.in") ||
@@ -5888,11 +5906,8 @@ as_app_parse_file (AsApp *app,
 				AS_APP_TRUST_FLAG_CHECK_DUPLICATES |
 				AS_APP_TRUST_FLAG_CHECK_VALID_UTF8);
 
-	/* set the source location */
-	as_app_set_source_file (app, filename);
-
 	/* parse */
-	switch (priv->source_kind) {
+	switch (as_format_get_kind (format)) {
 	case AS_FORMAT_KIND_DESKTOP:
 		if (!as_app_parse_desktop_file (app, filename, flags, error))
 			return FALSE;

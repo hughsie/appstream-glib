@@ -2970,14 +2970,16 @@ as_util_check_root_app_icon (AsApp *app, GError **error)
 static void
 as_util_check_root_app (AsApp *app, GPtrArray *problems)
 {
+	AsFormat *format;
 	g_autoptr(GError) error_local = NULL;
 
 	/* skip */
-	if (as_app_get_source_kind (app) == AS_FORMAT_KIND_METAINFO)
+	format = as_app_get_format_default (app);
+	if (as_format_get_kind (format) == AS_FORMAT_KIND_METAINFO)
 		return;
 
 	/* relax this for now */
-	if (as_app_get_source_kind (app) == AS_FORMAT_KIND_DESKTOP)
+	if (as_format_get_kind (format) == AS_FORMAT_KIND_DESKTOP)
 		return;
 
 	/* check one line summary */
@@ -2985,7 +2987,7 @@ as_util_check_root_app (AsApp *app, GPtrArray *problems)
 		g_ptr_array_add (problems,
 				 g_strdup_printf ("%s has no Comment\n - Source: %s",
 						  as_app_get_id (app),
-						  as_app_get_source_file (app)));
+						  as_format_get_filename (format)));
 	}
 
 	/* check icon exists and is large enough */
@@ -2993,7 +2995,7 @@ as_util_check_root_app (AsApp *app, GPtrArray *problems)
 		g_ptr_array_add (problems,
 				 g_strdup_printf ("%s\n - Source: %s",
 						  error_local->message,
-						  as_app_get_source_file (app)));
+						  as_format_get_filename (format)));
 	}
 }
 

@@ -984,7 +984,7 @@ _as_app_is_perhaps_merge_component (AsApp *app)
 {
 	if (as_app_get_kind (app) != AS_APP_KIND_DESKTOP)
 		return FALSE;
-	if (as_app_get_source_kind (app) != AS_FORMAT_KIND_APPSTREAM)
+	if (as_app_get_format_by_kind (app, AS_FORMAT_KIND_APPSTREAM) == NULL)
 		return FALSE;
 	if (as_app_get_bundle_kind (app) != AS_BUNDLE_KIND_UNKNOWN)
 		return FALSE;
@@ -1129,38 +1129,51 @@ as_store_add_app (AsStore *store, AsApp *app)
 			item = g_ptr_array_index (apps, 0);
 	}
 	if (item != NULL) {
+		AsFormat *app_format = as_app_get_format_default (app);
+		AsFormat *item_format = as_app_get_format_default (item);
+
+		/* sanity check */
+		if (app_format == NULL) {
+			g_warning ("no format specified in %s",
+				   as_app_get_unique_id (app));
+		}
+		if (item_format == NULL) {
+			g_warning ("no format specified in %s",
+				   as_app_get_unique_id (item));
+		}
 
 		/* the previously stored app is what we actually want */
 		if ((priv->add_flags & AS_STORE_ADD_FLAG_PREFER_LOCAL) > 0) {
 
-			if (as_app_get_source_kind (app) == AS_FORMAT_KIND_APPSTREAM &&
-			    as_app_get_source_kind (item) == AS_FORMAT_KIND_APPDATA) {
+			if (as_format_get_kind (app_format) == AS_FORMAT_KIND_APPSTREAM &&
+			    as_format_get_kind (item_format) == AS_FORMAT_KIND_APPDATA) {
 				g_debug ("ignoring AppStream entry as AppData exists: %s:%s",
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
+				as_app_subsume_full (app, item,
+						     AS_APP_SUBSUME_FLAG_FORMATS |
+						     AS_APP_SUBSUME_FLAG_RELEASES);
 				return;
 			}
-			if (as_app_get_source_kind (app) == AS_FORMAT_KIND_APPSTREAM &&
-			    as_app_get_source_kind (item) == AS_FORMAT_KIND_DESKTOP) {
+			if (as_format_get_kind (app_format) == AS_FORMAT_KIND_APPSTREAM &&
+			    as_format_get_kind (item_format) == AS_FORMAT_KIND_DESKTOP) {
 				g_debug ("ignoring AppStream entry as desktop exists: %s:%s",
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
 				return;
 			}
-			if (as_app_get_source_kind (app) == AS_FORMAT_KIND_APPDATA &&
-			    as_app_get_source_kind (item) == AS_FORMAT_KIND_DESKTOP) {
+			if (as_format_get_kind (app_format) == AS_FORMAT_KIND_APPDATA &&
+			    as_format_get_kind (item_format) == AS_FORMAT_KIND_DESKTOP) {
 				g_debug ("merging duplicate AppData:desktop entries: %s:%s",
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
 				as_app_subsume_full (app, item,
 						     AS_APP_SUBSUME_FLAG_BOTH_WAYS |
 						     AS_APP_SUBSUME_FLAG_DEDUPE);
-				/* promote the desktop source to AppData */
-				as_app_set_source_kind (item, AS_FORMAT_KIND_APPDATA);
 				return;
 			}
-			if (as_app_get_source_kind (app) == AS_FORMAT_KIND_DESKTOP &&
-			    as_app_get_source_kind (item) == AS_FORMAT_KIND_APPDATA) {
+			if (as_format_get_kind (app_format) == AS_FORMAT_KIND_DESKTOP &&
+			    as_format_get_kind (item_format) == AS_FORMAT_KIND_APPDATA) {
 				g_debug ("merging duplicate desktop:AppData entries: %s:%s",
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
@@ -1170,25 +1183,31 @@ as_store_add_app (AsStore *store, AsApp *app)
 				return;
 			}
 
+			/* xxx */
+			as_app_subsume_full (app, item,
+					     AS_APP_SUBSUME_FLAG_FORMATS |
+					     AS_APP_SUBSUME_FLAG_RELEASES);
+
 		} else {
-			if (as_app_get_source_kind (app) == AS_FORMAT_KIND_APPDATA &&
-			    as_app_get_source_kind (item) == AS_FORMAT_KIND_APPSTREAM &&
+			if (as_format_get_kind (app_format) == AS_FORMAT_KIND_APPDATA &&
+			    as_format_get_kind (item_format) == AS_FORMAT_KIND_APPSTREAM &&
 			    as_app_get_scope (app) == AS_APP_SCOPE_SYSTEM) {
-				as_app_set_state (item, AS_APP_STATE_INSTALLED);
 				g_debug ("ignoring AppData entry as AppStream exists: %s:%s",
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
 				as_app_subsume_full (item, app,
+						     AS_APP_SUBSUME_FLAG_FORMATS |
 						     AS_APP_SUBSUME_FLAG_RELEASES);
 				return;
 			}
-			if (as_app_get_source_kind (app) == AS_FORMAT_KIND_DESKTOP &&
-			    as_app_get_source_kind (item) == AS_FORMAT_KIND_APPSTREAM &&
+			if (as_format_get_kind (app_format) == AS_FORMAT_KIND_DESKTOP &&
+			    as_format_get_kind (item_format) == AS_FORMAT_KIND_APPSTREAM &&
 			    as_app_get_scope (app) == AS_APP_SCOPE_SYSTEM) {
-				as_app_set_state (item, AS_APP_STATE_INSTALLED);
 				g_debug ("ignoring desktop entry as AppStream exists: %s:%s",
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
+				as_app_subsume_full (item, app,
+						     AS_APP_SUBSUME_FLAG_FORMATS);
 				return;
 			}
 
@@ -1196,10 +1215,13 @@ as_store_add_app (AsStore *store, AsApp *app)
 			if (as_app_get_priority (item) >
 			    as_app_get_priority (app)) {
 				g_debug ("ignoring duplicate %s:%s entry: %s:%s",
-					 as_format_kind_to_string (as_app_get_source_kind (app)),
-					 as_format_kind_to_string (as_app_get_source_kind (item)),
+					 as_format_kind_to_string (as_format_get_kind (app_format)),
+					 as_format_kind_to_string (as_format_get_kind (item_format)),
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
+				as_app_subsume_full (item, app,
+						     AS_APP_SUBSUME_FLAG_FORMATS |
+						     AS_APP_SUBSUME_FLAG_RELEASES);
 				return;
 			}
 
@@ -1207,18 +1229,13 @@ as_store_add_app (AsStore *store, AsApp *app)
 			if (as_app_get_priority (item) ==
 			    as_app_get_priority (app)) {
 				g_debug ("merging duplicate %s:%s entries: %s:%s",
-					 as_format_kind_to_string (as_app_get_source_kind (app)),
-					 as_format_kind_to_string (as_app_get_source_kind (item)),
+					 as_format_kind_to_string (as_format_get_kind (app_format)),
+					 as_format_kind_to_string (as_format_get_kind (item_format)),
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
 				as_app_subsume_full (app, item,
 						     AS_APP_SUBSUME_FLAG_BOTH_WAYS |
 						     AS_APP_SUBSUME_FLAG_DEDUPE);
-
-				/* promote the desktop source to AppData */
-				if (as_app_get_source_kind (item) == AS_FORMAT_KIND_DESKTOP &&
-				    as_app_get_source_kind (app) == AS_FORMAT_KIND_APPDATA)
-					as_app_set_source_kind (item, AS_FORMAT_KIND_APPDATA);
 				return;
 			}
 		}
@@ -1226,10 +1243,11 @@ as_store_add_app (AsStore *store, AsApp *app)
 		/* this new item has a higher priority than the one we've
 		 * previously stored */
 		g_debug ("removing %s entry: %s",
-			 as_format_kind_to_string (as_app_get_source_kind (item)),
+			 as_format_kind_to_string (as_format_get_kind (item_format)),
 			 as_app_get_unique_id (item));
-		if (as_app_get_state (item) == AS_APP_STATE_INSTALLED)
-			as_app_set_state (app, AS_APP_STATE_INSTALLED);
+		as_app_subsume_full (app, item,
+				     AS_APP_SUBSUME_FLAG_FORMATS |
+				     AS_APP_SUBSUME_FLAG_RELEASES);
 		as_store_remove_app (store, item);
 	}
 
@@ -1362,10 +1380,10 @@ as_store_from_root (AsStore *store,
 	g_autofree gchar *origin_app = NULL;
 	g_autofree gchar *origin_app_icons = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
+	g_autoptr(AsFormat) format = NULL;
 	g_autoptr(AsProfileTask) ptask = NULL;
 	g_autoptr(AsRefString) icon_path_str = NULL;
 	g_autoptr(AsRefString) origin_str = NULL;
-	g_autoptr(AsRefString) source_filename_str = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
@@ -1485,12 +1503,16 @@ as_store_from_root (AsStore *store,
 		as_store_set_builder_id (store, tmp);
 
 	/* create refcounted versions */
-	if (source_filename != NULL)
-		source_filename_str = as_ref_string_new (source_filename);
 	if (origin_app != NULL)
 		origin_str = as_ref_string_new (origin_app);
 	if (icon_path != NULL)
 		icon_path_str = as_ref_string_new (icon_path);
+
+	/* create format for all added apps */
+	format = as_format_new ();
+	as_format_set_kind (format, AS_FORMAT_KIND_APPSTREAM);
+	if (source_filename != NULL)
+		as_format_set_filename (format, source_filename);
 
 	ctx = as_node_context_new ();
 	for (n = apps->children; n != NULL; n = n->next) {
@@ -1515,8 +1537,8 @@ as_store_from_root (AsStore *store,
 			as_app_set_icon_path (app, icon_path_str);
 		if (arch != NULL)
 			as_app_add_arch (app, arch);
+		as_app_add_format (app, format);
 		as_app_set_scope (app, scope);
-		as_app_set_source_kind (app, AS_FORMAT_KIND_APPSTREAM);
 		if (!as_app_node_parse (app, n, ctx, &error_local)) {
 			g_set_error (error,
 				     AS_STORE_ERROR,
@@ -1540,8 +1562,6 @@ as_store_from_root (AsStore *store,
 
 		if (origin_str != NULL)
 			as_app_set_origin (app, origin_str);
-		if (source_filename_str != NULL)
-			as_app_set_source_file (app, source_filename_str);
 		as_store_add_app (store, app);
 	}
 
@@ -1569,7 +1589,9 @@ as_store_load_yaml_file (AsStore *store,
 	const gchar *tmp;
 	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autofree gchar *icon_path = NULL;
+	g_autofree gchar *source_filename = NULL;
 	g_autoptr(AsYaml) root = NULL;
+	g_autoptr(AsFormat) format = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
 	/* load file */
@@ -1615,6 +1637,14 @@ as_store_load_yaml_file (AsStore *store,
 	/* emit once when finished */
 	tok = as_store_changed_inhibit (store);
 
+	/* add format to each app */
+	source_filename = g_file_get_path (file);
+	if (source_filename != NULL) {
+		format = as_format_new ();
+		as_format_set_kind (format, AS_FORMAT_KIND_APPSTREAM);
+		as_format_set_filename (format, source_filename);
+	}
+
 	/* parse applications */
 	for (app_n = root->children->next; app_n != NULL; app_n = app_n->next) {
 		g_autoptr(AsApp) app = NULL;
@@ -1631,7 +1661,7 @@ as_store_load_yaml_file (AsStore *store,
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path);
 		as_app_set_scope (app, scope);
-		as_app_set_source_kind (app, AS_FORMAT_KIND_APPSTREAM);
+		as_app_add_format (app, format);
 		if (!as_app_node_parse_dep11 (app, app_n, ctx, error))
 			return FALSE;
 		as_app_set_origin (app, priv->origin);
@@ -1660,10 +1690,19 @@ as_store_remove_by_source_file (AsStore *store, const gchar *filename)
 	ids = g_ptr_array_new_with_free_func (g_free);
 	apps = as_store_get_apps (store);
 	for (i = 0; i < apps->len; i++) {
+		AsFormat *format;
 		app = g_ptr_array_index (apps, i);
-		if (g_strcmp0 (as_app_get_source_file (app), filename) != 0)
+		format = as_app_get_format_by_filename (app, filename);
+		if (format == NULL)
 			continue;
-		g_ptr_array_add (ids, g_strdup (as_app_get_id (app)));
+		as_app_remove_format (app, format);
+
+		/* remove the app when all the formats have gone */
+		if (as_app_get_formats(app)->len == 0) {
+			g_debug ("no more formats for %s, deleting from store",
+				 as_app_get_unique_id (app));
+			g_ptr_array_add (ids, g_strdup (as_app_get_id (app)));
+		}
 	}
 
 	/* remove these from the store */
@@ -2731,7 +2770,7 @@ as_store_load_installed (AsStore *store,
 		if ((priv->add_flags & AS_STORE_ADD_FLAG_PREFER_LOCAL) == 0) {
 			app_tmp = as_store_get_app_by_id (store, tmp);
 			if (app_tmp != NULL &&
-			    as_app_get_source_kind (app_tmp) == AS_FORMAT_KIND_DESKTOP) {
+			    as_app_get_format_by_kind (app_tmp, AS_FORMAT_KIND_DESKTOP) != NULL) {
 				as_app_set_state (app_tmp, AS_APP_STATE_INSTALLED);
 				g_debug ("not parsing %s as %s already exists",
 					 filename, tmp);

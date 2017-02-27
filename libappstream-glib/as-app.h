@@ -119,7 +119,7 @@ typedef enum {
  * @AS_APP_SUBSUME_FLAG_METADATA:	Copy the metadata
  * @AS_APP_SUBSUME_FLAG_URL:		Copy the urls
  * @AS_APP_SUBSUME_FLAG_KEYWORDS:	Copy the keywords
- * @AS_APP_SUBSUME_FLAG_SOURCE_FILE:	Copy the source file
+ * @AS_APP_SUBSUME_FLAG_FORMATS:	Copy the source file
  * @AS_APP_SUBSUME_FLAG_BRANCH:		Copy the branch
  * @AS_APP_SUBSUME_FLAG_ORIGIN:		Copy the origin
  * @AS_APP_SUBSUME_FLAG_METADATA_LICENSE: Copy the metadata license
@@ -159,7 +159,7 @@ typedef enum {
 	AS_APP_SUBSUME_FLAG_METADATA		= 1ull << 25,	/* Since: 0.6.1 */
 	AS_APP_SUBSUME_FLAG_URL			= 1ull << 26,	/* Since: 0.6.1 */
 	AS_APP_SUBSUME_FLAG_KEYWORDS		= 1ull << 27,	/* Since: 0.6.1 */
-	AS_APP_SUBSUME_FLAG_SOURCE_FILE		= 1ull << 28,	/* Since: 0.6.1 */
+	AS_APP_SUBSUME_FLAG_FORMATS		= 1ull << 28,	/* Since: 0.6.1 */
 	AS_APP_SUBSUME_FLAG_BRANCH		= 1ull << 29,	/* Since: 0.6.1 */
 	AS_APP_SUBSUME_FLAG_ORIGIN		= 1ull << 30,	/* Since: 0.6.1 */
 	AS_APP_SUBSUME_FLAG_METADATA_LICENSE	= 1ull << 31,	/* Since: 0.6.1 */
@@ -170,6 +170,9 @@ typedef enum {
 	/*< private >*/
 	AS_APP_SUBSUME_FLAG_LAST,
 } AsAppSubsumeFlags;
+
+/* deprecated */
+#define AS_APP_SUBSUME_FLAG_SOURCE_FILE		AS_APP_SUBSUME_FLAG_FORMATS
 
 /* safe to do from a merge <component> */
 #define AS_APP_SUBSUME_FLAG_MERGE	(AS_APP_SUBSUME_FLAG_CATEGORIES | \
@@ -194,6 +197,7 @@ typedef enum {
 					 AS_APP_SUBSUME_FLAG_SCREENSHOTS | \
 					 AS_APP_SUBSUME_FLAG_SUGGESTS | \
 					 AS_APP_SUBSUME_FLAG_TRANSLATIONS | \
+					 AS_APP_SUBSUME_FLAG_SOURCE_KIND | \
 					 AS_APP_SUBSUME_FLAG_URL)
 
 /* deprecated name */
@@ -207,8 +211,7 @@ typedef enum {
 					 AS_APP_SUBSUME_FLAG_METADATA | \
 					 AS_APP_SUBSUME_FLAG_ORIGIN | \
 					 AS_APP_SUBSUME_FLAG_PROJECT_LICENSE | \
-					 AS_APP_SUBSUME_FLAG_SOURCE_FILE | \
-					 AS_APP_SUBSUME_FLAG_SOURCE_KIND | \
+					 AS_APP_SUBSUME_FLAG_FORMATS | \
 					 AS_APP_SUBSUME_FLAG_STATE | \
 					 AS_APP_SUBSUME_FLAG_VETOS)
 
@@ -460,9 +463,6 @@ typedef enum __attribute__((__packed__)) {
 
 AsApp		*as_app_new			(void);
 GQuark		 as_app_error_quark		(void);
-AsFormatKind	 as_app_guess_source_kind	(const gchar	*filename);
-AsFormatKind	 as_app_source_kind_from_string	(const gchar	*source_kind);
-const gchar	*as_app_source_kind_to_string	(AsFormatKind source_kind);
 const gchar	*as_app_state_to_string		(AsAppState	 state);
 const gchar	*as_app_kind_to_string		(AsAppKind	 kind);
 AsAppKind	 as_app_kind_from_string	(const gchar	*kind);
@@ -473,7 +473,6 @@ const gchar	*as_app_merge_kind_to_string	(AsAppMergeKind	 merge_kind);
 
 /* getters */
 AsAppKind	 as_app_get_kind		(AsApp		*app);
-AsFormatKind	 as_app_get_source_kind		(AsApp		*app);
 AsAppScope	 as_app_get_scope		(AsApp		*app);
 AsAppMergeKind	 as_app_get_merge_kind		(AsApp		*app);
 AsAppState	 as_app_get_state		(AsApp		*app);
@@ -520,7 +519,6 @@ const gchar	*as_app_get_project_group	(AsApp		*app);
 const gchar	*as_app_get_project_license	(AsApp		*app);
 const gchar	*as_app_get_metadata_license	(AsApp		*app);
 const gchar	*as_app_get_update_contact	(AsApp		*app);
-const gchar	*as_app_get_source_file		(AsApp		*app);
 const gchar	*as_app_get_branch		(AsApp		*app);
 const gchar	*as_app_get_name		(AsApp		*app,
 						 const gchar	*locale);
@@ -560,8 +558,6 @@ void		 as_app_set_id			(AsApp		*app,
 						 const gchar	*id);
 void		 as_app_set_kind		(AsApp		*app,
 						 AsAppKind	 kind);
-void		 as_app_set_source_kind		(AsApp		*app,
-						 AsFormatKind source_kind);
 void		 as_app_set_scope		(AsApp		*app,
 						 AsAppScope	 scope);
 void		 as_app_set_merge_kind		(AsApp		*app,
@@ -596,8 +592,6 @@ void		 as_app_set_developer_name	(AsApp		*app,
 void		 as_app_set_description		(AsApp		*app,
 						 const gchar	*locale,
 						 const gchar	*description);
-void		 as_app_set_source_file		(AsApp		*app,
-						 const gchar	*source_file);
 void		 as_app_set_branch		(AsApp		*app,
 						 const gchar	*branch);
 void		 as_app_set_priority		(AsApp		*app,
@@ -716,6 +710,27 @@ G_DEPRECATED_FOR(as_app_get_kind);
 void		 as_app_set_id_kind		(AsApp		*app,
 						 AsIdKind	 id_kind)
 G_DEPRECATED_FOR(as_app_set_kind);
+
+void		 as_app_set_source_file		(AsApp		*app,
+						 const gchar	*source_file)
+G_DEPRECATED_FOR(as_app_add_format);
+const gchar	*as_app_get_source_file		(AsApp		*app)
+G_DEPRECATED_FOR(as_app_get_formats);
+
+AsFormatKind	 as_app_get_source_kind		(AsApp		*app)
+G_DEPRECATED_FOR(as_format_get_kind);
+void		 as_app_set_source_kind		(AsApp		*app,
+						 AsFormatKind source_kind)
+G_DEPRECATED_FOR(as_format_set_kind);
+
+AsFormatKind	 as_app_source_kind_from_string	(const gchar	*source_kind)
+G_DEPRECATED_FOR(as_format_kind_from_string);
+const gchar	*as_app_source_kind_to_string	(AsFormatKind source_kind)
+G_DEPRECATED_FOR(as_format_kind_to_string);
+
+AsFormatKind	 as_app_guess_source_kind	(const gchar	*filename)
+G_DEPRECATED_FOR(as_format_guess_kind);
+
 G_GNUC_END_IGNORE_DEPRECATIONS
 
 G_END_DECLS

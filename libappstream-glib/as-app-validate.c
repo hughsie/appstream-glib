@@ -745,6 +745,7 @@ as_app_validate_icons (AsApp *app, AsAppValidateHelper *helper)
 static void
 as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 {
+	AsFormat *format;
 	AsScreenshot *ss;
 	GPtrArray *screenshots;
 	gboolean screenshot_has_default = FALSE;
@@ -765,11 +766,12 @@ as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 		number_screenshots_min = 0;
 
 	/* metainfo and inf do not require any screenshots */
-	if (as_app_get_source_kind (app) == AS_FORMAT_KIND_METAINFO)
+	format = as_app_get_format_default (app);
+	if (as_format_get_kind (format) == AS_FORMAT_KIND_METAINFO)
 		number_screenshots_min = 0;
 
 	/* only for AppData and AppStream */
-	if (as_app_get_source_kind (app) == AS_FORMAT_KIND_DESKTOP)
+	if (as_format_get_kind (format) == AS_FORMAT_KIND_DESKTOP)
 		return;
 
 	screenshots = as_app_get_screenshots (app);
@@ -880,10 +882,12 @@ static gboolean
 as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **error)
 {
 	GPtrArray *releases;
+	AsFormat *format;
 
 	/* only for AppData */
-	if (as_app_get_source_kind (app) != AS_FORMAT_KIND_APPDATA &&
-	    as_app_get_source_kind (app) != AS_FORMAT_KIND_METAINFO)
+	format = as_app_get_format_default (app);
+	if (as_format_get_kind (format) != AS_FORMAT_KIND_APPDATA &&
+	    as_format_get_kind (format) != AS_FORMAT_KIND_METAINFO)
 		return TRUE;
 
 	releases = as_app_get_releases (app);
@@ -1064,6 +1068,7 @@ GPtrArray *
 as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 {
 	AsAppProblems problems;
+	AsFormat *format;
 	GError *error_local = NULL;
 	GHashTable *urls;
 	GList *l;
@@ -1098,6 +1103,16 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	g_autoptr(GList) keys = NULL;
 	g_autoptr(AsAppValidateHelper) helper = g_new0 (AsAppValidateHelper, 1);
 
+	/* has to be set */
+	format = as_app_get_format_default (app);
+	if (format == NULL) {
+		g_set_error_literal (error,
+				     AS_APP_ERROR,
+				     AS_APP_ERROR_FAILED,
+				     "cannot validate without at least one format");
+		return NULL;
+	}
+
 	/* relax the requirements a bit */
 	if ((flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
 		length_name_max = 100;
@@ -1110,7 +1125,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		number_para_min = 1;
 		require_sentence_case = FALSE;
 		require_translation = FALSE;
-		switch (as_app_get_source_kind (app)) {
+		switch (as_format_get_kind (format)) {
 		case AS_FORMAT_KIND_METAINFO:
 		case AS_FORMAT_KIND_APPDATA:
 			require_name = FALSE;
@@ -1131,7 +1146,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	}
 
 	/* addons don't need such a long description */
-	switch (as_app_get_source_kind (app)) {
+	switch (as_format_get_kind (format)) {
 	case AS_FORMAT_KIND_METAINFO:
 	case AS_FORMAT_KIND_APPDATA:
 		number_para_min = 1;
@@ -1211,7 +1226,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		}
 	}
 	if (license == NULL) {
-		switch (as_app_get_source_kind (app)) {
+		switch (as_format_get_kind (format)) {
 		case AS_FORMAT_KIND_APPDATA:
 		case AS_FORMAT_KIND_METAINFO:
 			ai_app_validate_add (helper,
@@ -1238,7 +1253,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		}
 	}
 	if (require_project_license && license == NULL) {
-		switch (as_app_get_source_kind (app)) {
+		switch (as_format_get_kind (format)) {
 		case AS_FORMAT_KIND_APPDATA:
 		case AS_FORMAT_KIND_METAINFO:
 			ai_app_validate_add (helper,
@@ -1252,7 +1267,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 
 	/* translation */
 	if (require_translation &&
-	    as_app_get_source_kind (app) == AS_FORMAT_KIND_APPDATA &&
+	    as_format_get_kind (format) == AS_FORMAT_KIND_APPDATA &&
 	    as_app_get_translations (app)->len == 0) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_TAG_MISSING,
@@ -1261,7 +1276,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 
 	/* pkgname */
 	if (as_app_get_pkgname_default (app) != NULL &&
-	    as_app_get_source_kind (app) == AS_FORMAT_KIND_METAINFO) {
+	    as_format_get_kind (format) == AS_FORMAT_KIND_METAINFO) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_TAG_INVALID,
 				     "<pkgname> not allowed in metainfo");
@@ -1269,7 +1284,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 
 	/* appdata */
 	if (as_app_get_icon_default (app) != NULL &&
-	    as_app_get_source_kind (app) == AS_FORMAT_KIND_APPDATA &&
+	    as_format_get_kind (format) == AS_FORMAT_KIND_APPDATA &&
 	    as_app_get_kind (app) == AS_APP_KIND_DESKTOP) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_TAG_INVALID,
@@ -1279,7 +1294,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	/* extends */
 	if (as_app_get_extends(app)->len == 0 &&
 	    as_app_get_kind (app) == AS_APP_KIND_ADDON &&
-	    as_app_get_source_kind (app) == AS_FORMAT_KIND_METAINFO) {
+	    as_format_get_kind (format) == AS_FORMAT_KIND_METAINFO) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_TAG_MISSING,
 				     "<extends> is not present");
@@ -1300,7 +1315,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 				     update_contact);
 	}
 	if (require_contactdetails && update_contact == NULL) {
-		switch (as_app_get_source_kind (app)) {
+		switch (as_format_get_kind (format)) {
 		case AS_FORMAT_KIND_APPDATA:
 		case AS_FORMAT_KIND_METAINFO:
 			ai_app_validate_add (helper,
@@ -1314,8 +1329,8 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 
 	/* only found for files */
 	problems = as_app_get_problems (app);
-	if (as_app_get_source_kind (app) == AS_FORMAT_KIND_APPDATA ||
-	    as_app_get_source_kind (app) == AS_FORMAT_KIND_METAINFO) {
+	if (as_format_get_kind (format) == AS_FORMAT_KIND_APPDATA ||
+	    as_format_get_kind (format) == AS_FORMAT_KIND_METAINFO) {
 		if ((problems & AS_APP_PROBLEM_NO_XML_HEADER) > 0) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_MARKUP_INVALID,
@@ -1579,7 +1594,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 
 	/* require homepage */
 	if (require_url && as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE) == NULL) {
-		switch (as_app_get_source_kind (app)) {
+		switch (as_format_get_kind (format)) {
 		case AS_FORMAT_KIND_APPDATA:
 		case AS_FORMAT_KIND_METAINFO:
 			ai_app_validate_add (helper,

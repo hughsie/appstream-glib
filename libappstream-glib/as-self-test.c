@@ -1686,7 +1686,6 @@ as_test_app_func (void)
 	g_assert_cmpstr (as_app_get_description (app, "pt_BR"), ==, "<p>O aplicativo Software.</p>");
 	g_assert_cmpstr (as_app_get_developer_name (app, NULL), ==, "GNOME Foundation");
 	g_assert_cmpstr (as_app_get_source_pkgname (app), ==, "gnome-software-src");
-	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_FORMAT_KIND_UNKNOWN);
 	g_assert_cmpstr (as_app_get_project_group (app), ==, "GNOME");
 	g_assert_cmpstr (as_app_get_project_license (app), ==, "GPLv2+");
 	g_assert_cmpstr (as_app_get_branch (app), ==, "master");
@@ -2089,9 +2088,11 @@ static void
 as_test_store_local_appdata_func (void)
 {
 	AsApp *app;
+	AsFormat *format;
 	GError *error = NULL;
 	gboolean ret;
 	g_autofree gchar *filename = NULL;
+	g_autofree gchar *filename_full = NULL;
 	g_autoptr(AsStore) store = NULL;
 
 	/* this are the warnings expected */
@@ -2112,7 +2113,14 @@ as_test_store_local_appdata_func (void)
 	app = as_store_get_app_by_id (store, "broken.desktop");
 	g_assert (app != NULL);
 	g_assert_cmpstr (as_app_get_name (app, "C"), ==, "Broken");
-	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_FORMAT_KIND_APPDATA);
+
+	/* check format */
+	format = as_app_get_format_by_kind (app, AS_FORMAT_KIND_APPDATA);
+	g_assert (format != NULL);
+	filename_full = g_build_filename (filename,
+					  "usr/share/appdata/broken.appdata.xml",
+					  NULL);
+	g_assert_cmpstr (as_format_get_filename (format), ==, filename_full);
 }
 
 static void
@@ -2153,6 +2161,14 @@ as_test_store_validate_func (void)
 }
 
 static void
+_as_app_add_format_kind (AsApp *app, AsFormatKind kind)
+{
+	AsFormat *format = as_format_new ();
+	as_format_set_kind (format, kind);
+	as_app_add_format (app, format);
+}
+
+static void
 as_test_app_validate_style_func (void)
 {
 	AsProblem *problem;
@@ -2165,7 +2181,7 @@ as_test_app_validate_style_func (void)
 	as_app_add_url (app, AS_URL_KIND_UNKNOWN, "dave.com");
 	as_app_set_id (app, "dave.exe");
 	as_app_set_kind (app, AS_APP_KIND_DESKTOP);
-	as_app_set_source_kind (app, AS_FORMAT_KIND_APPDATA);
+	_as_app_add_format_kind (app, AS_FORMAT_KIND_APPDATA);
 	as_app_set_metadata_license (app, "BSD");
 	as_app_set_project_license (app, "GPL-2.0+");
 	as_app_set_name (app, "C", "Test app name that is very log indeed.");
@@ -2209,6 +2225,7 @@ as_test_app_validate_style_func (void)
 static void
 as_test_app_parse_file_desktop_func (void)
 {
+	AsFormat *format;
 	AsIcon *ic;
 	GError *error = NULL;
 	gboolean ret;
@@ -2234,12 +2251,17 @@ as_test_app_parse_file_desktop_func (void)
 		"Badanie i porównywanie zainstalowanych profilów kolorów");
 	g_assert_cmpint (as_app_get_vetos(app)->len, ==, 1);
 	g_assert_cmpstr (as_app_get_project_group (app), ==, NULL);
-	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
 	g_assert_cmpint (as_app_get_categories(app)->len, ==, 1);
 	g_assert_cmpint (as_app_get_keywords(app, NULL)->len, ==, 2);
 	g_assert_cmpint (as_app_get_keywords(app, "pl")->len, ==, 1);
 	g_assert (as_app_has_category (app, "System"));
 	g_assert (!as_app_has_category (app, "NotGoingToExist"));
+
+	/* check format */
+	g_assert_cmpint (as_app_get_formats(app)->len, ==, 1);
+	format = as_app_get_format_by_kind (app, AS_FORMAT_KIND_DESKTOP);
+	g_assert (format != NULL);
+	g_assert_cmpstr (as_format_get_filename (format), ==, filename);
 
 	/* check icons */
 	g_assert_cmpint (as_app_get_icons(app)->len, ==, 1);
@@ -3013,6 +3035,7 @@ static void
 as_test_store_auto_reload_file_func (void)
 {
 	AsApp *app;
+	AsFormat *format;
 	AsRelease *rel;
 	gboolean ret;
 	guint cnt = 0;
@@ -3057,7 +3080,11 @@ as_test_store_auto_reload_file_func (void)
 	g_assert (app != NULL);
 	rel = as_app_get_release_default (app);
 	g_assert_cmpstr (as_release_get_version (rel), ==, "0.1.2");
-	g_assert_cmpstr (as_app_get_source_file (app), ==, "/tmp/foo.xml");
+
+	/* check format */
+	format = as_app_get_format_by_kind (app, AS_FORMAT_KIND_APPSTREAM);
+	g_assert (format != NULL);
+	g_assert_cmpstr (as_format_get_filename (format), ==, "/tmp/foo.xml");
 
 	/* change the file, and ensure we get the callback */
 	g_debug ("changing file");
@@ -3156,12 +3183,14 @@ as_test_store_wildcard_func (void)
 	as_app_set_id (app1, "gimp.desktop");
 	as_app_set_origin (app1, "fedora");
 	as_app_add_pkgname (app1, "polari");
+	_as_app_add_format_kind (app1, AS_FORMAT_KIND_DESKTOP);
 	as_store_add_app (store, app1);
 
 	/* package from updates */
 	as_app_set_id (app2, "gimp.desktop");
 	as_app_set_origin (app2, "updates");
 	as_app_add_pkgname (app2, "polari");
+	_as_app_add_format_kind (app2, AS_FORMAT_KIND_DESKTOP);
 	as_store_add_app (store, app2);
 
 	/* check negative match */
@@ -3178,6 +3207,7 @@ static void
 as_test_store_flatpak_func (void)
 {
 	AsApp *app;
+	AsFormat *format;
 	GError *error = NULL;
 	GPtrArray *apps;
 	gboolean ret;
@@ -3212,7 +3242,11 @@ as_test_store_flatpak_func (void)
 	g_assert_cmpstr (as_app_get_unique_id (app), ==, "system/flatpak/remote-name/desktop/test.desktop/master");
 	g_assert_cmpstr (as_app_get_id_filename (app), ==, "test");
 	g_assert_cmpstr (as_app_get_origin (app), ==, "remote-name");
-	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
+
+	/* check format */
+	format = as_app_get_format_by_kind (app, AS_FORMAT_KIND_APPSTREAM);
+	g_assert (format != NULL);
+	g_assert_cmpstr (as_format_get_filename (format), ==, filename);
 
 	/* back to normality */
 	g_unsetenv ("AS_SELF_TEST_PREFIX_DELIM");
@@ -3285,7 +3319,7 @@ as_test_store_merges_func (void)
 
 	app_desktop = as_app_new ();
 	as_app_set_id (app_desktop, "gimp.desktop");
-	as_app_set_source_kind (app_desktop, AS_FORMAT_KIND_DESKTOP);
+	_as_app_add_format_kind (app_desktop, AS_FORMAT_KIND_DESKTOP);
 	as_app_set_name (app_desktop, NULL, "GIMP");
 	as_app_set_comment (app_desktop, NULL, "GNU Bla Bla");
 	as_app_set_priority (app_desktop, -1);
@@ -3294,7 +3328,7 @@ as_test_store_merges_func (void)
 
 	app_appdata = as_app_new ();
 	as_app_set_id (app_appdata, "gimp.desktop");
-	as_app_set_source_kind (app_appdata, AS_FORMAT_KIND_APPDATA);
+	_as_app_add_format_kind (app_appdata, AS_FORMAT_KIND_APPDATA);
 	as_app_set_description (app_appdata, NULL, "<p>Gimp is awesome</p>");
 	as_app_add_pkgname (app_appdata, "gimp");
 	as_app_set_priority (app_appdata, -1);
@@ -3310,7 +3344,8 @@ as_test_store_merges_func (void)
 	g_assert_cmpstr (as_app_get_comment (app_tmp, NULL), ==, "GNU Bla Bla");
 	g_assert_cmpstr (as_app_get_description (app_tmp, NULL), ==, "<p>Gimp is awesome</p>");
 	g_assert_cmpstr (as_app_get_pkgname_default (app_tmp), ==, "gimp");
-	g_assert_cmpint (as_app_get_source_kind (app_tmp), ==, AS_FORMAT_KIND_APPDATA);
+	g_assert (as_app_get_format_by_kind (app_tmp, AS_FORMAT_KIND_DESKTOP) != NULL);
+	g_assert (as_app_get_format_by_kind (app_tmp, AS_FORMAT_KIND_APPDATA) != NULL);
 	g_assert_cmpint (as_app_get_state (app_tmp), ==, AS_APP_STATE_INSTALLED);
 
 	/* test desktop + appdata + appstream */
@@ -3318,7 +3353,7 @@ as_test_store_merges_func (void)
 
 	app_appinfo = as_app_new ();
 	as_app_set_id (app_appinfo, "gimp.desktop");
-	as_app_set_source_kind (app_appinfo, AS_FORMAT_KIND_APPSTREAM);
+	_as_app_add_format_kind (app_appinfo, AS_FORMAT_KIND_APPSTREAM);
 	as_app_set_name (app_appinfo, NULL, "GIMP");
 	as_app_set_comment (app_appinfo, NULL, "GNU Bla Bla");
 	as_app_set_description (app_appinfo, NULL, "<p>Gimp is Distro</p>");
@@ -3336,7 +3371,10 @@ as_test_store_merges_func (void)
 	g_assert_cmpstr (as_app_get_comment (app_tmp, NULL), ==, "GNU Bla Bla");
 	g_assert_cmpstr (as_app_get_description (app_tmp, NULL), ==, "<p>Gimp is Distro</p>");
 	g_assert_cmpstr (as_app_get_pkgname_default (app_tmp), ==, "gimp");
-	g_assert_cmpint (as_app_get_source_kind (app_tmp), ==, AS_FORMAT_KIND_APPSTREAM);
+	g_assert (as_app_get_format_by_kind (app_tmp, AS_FORMAT_KIND_DESKTOP) != NULL);
+	g_assert (as_app_get_format_by_kind (app_tmp, AS_FORMAT_KIND_APPDATA) != NULL);
+	g_assert (as_app_get_format_by_kind (app_tmp, AS_FORMAT_KIND_APPSTREAM) != NULL);
+	g_assert_cmpint (as_app_get_formats(app_tmp)->len, ==, 3);
 	g_assert_cmpint (as_app_get_state (app_tmp), ==, AS_APP_STATE_INSTALLED);
 }
 
@@ -3355,7 +3393,7 @@ as_test_store_merges_local_func (void)
 
 	app_desktop = as_app_new ();
 	as_app_set_id (app_desktop, "gimp.desktop");
-	as_app_set_source_kind (app_desktop, AS_FORMAT_KIND_DESKTOP);
+	_as_app_add_format_kind (app_desktop, AS_FORMAT_KIND_DESKTOP);
 	as_app_set_name (app_desktop, NULL, "GIMP");
 	as_app_set_comment (app_desktop, NULL, "GNU Bla Bla");
 	as_app_set_priority (app_desktop, -1);
@@ -3363,7 +3401,7 @@ as_test_store_merges_local_func (void)
 
 	app_appdata = as_app_new ();
 	as_app_set_id (app_appdata, "gimp.desktop");
-	as_app_set_source_kind (app_appdata, AS_FORMAT_KIND_APPDATA);
+	_as_app_add_format_kind (app_appdata, AS_FORMAT_KIND_APPDATA);
 	as_app_set_description (app_appdata, NULL, "<p>Gimp is awesome</p>");
 	as_app_add_pkgname (app_appdata, "gimp");
 	as_app_set_priority (app_appdata, -1);
@@ -3371,7 +3409,7 @@ as_test_store_merges_local_func (void)
 
 	app_appinfo = as_app_new ();
 	as_app_set_id (app_appinfo, "gimp.desktop");
-	as_app_set_source_kind (app_appinfo, AS_FORMAT_KIND_APPSTREAM);
+	_as_app_add_format_kind (app_appinfo, AS_FORMAT_KIND_APPSTREAM);
 	as_app_set_name (app_appinfo, NULL, "GIMP");
 	as_app_set_comment (app_appinfo, NULL, "Fedora GNU Bla Bla");
 	as_app_set_description (app_appinfo, NULL, "<p>Gimp is Distro</p>");
@@ -3390,7 +3428,10 @@ as_test_store_merges_local_func (void)
 	g_assert_cmpstr (as_app_get_comment (app_tmp, NULL), ==, "GNU Bla Bla");
 	g_assert_cmpstr (as_app_get_description (app_tmp, NULL), ==, "<p>Gimp is awesome</p>");
 	g_assert_cmpstr (as_app_get_pkgname_default (app_tmp), ==, "gimp");
-	g_assert_cmpint (as_app_get_source_kind (app_tmp), ==, AS_FORMAT_KIND_APPDATA);
+	g_assert (as_app_get_format_by_kind (app_tmp, AS_FORMAT_KIND_DESKTOP) != NULL);
+	g_assert (as_app_get_format_by_kind (app_tmp, AS_FORMAT_KIND_APPDATA) != NULL);
+	g_assert (as_app_get_format_by_kind (app_tmp, AS_FORMAT_KIND_APPSTREAM) != NULL);
+	g_assert_cmpint (as_app_get_formats(app_tmp)->len, ==, 3);
 	g_assert_cmpint (as_app_get_state (app_tmp), ==, AS_APP_STATE_INSTALLED);
 }
 
@@ -3679,7 +3720,7 @@ as_test_store_versions_func (void)
 
 	/* verify source kind */
 	app = as_store_get_app_by_id (store, "test.desktop");
-	g_assert_cmpint (as_app_get_source_kind (app), ==, AS_FORMAT_KIND_APPSTREAM);
+	g_assert (as_app_get_format_by_kind (app, AS_FORMAT_KIND_APPSTREAM) != NULL);
 
 	/* test with latest features */
 	as_store_set_api_version (store, 0.6);
@@ -3858,6 +3899,7 @@ static void
 as_test_store_origin_func (void)
 {
 	AsApp *app;
+	AsFormat *format;
 	GError *error = NULL;
 	gboolean ret;
 	g_autofree gchar *filename = NULL;
@@ -3880,7 +3922,11 @@ as_test_store_origin_func (void)
 	g_assert_cmpstr (as_app_get_icon_path (app), !=, NULL);
 	g_assert (g_str_has_suffix (as_app_get_icon_path (app), "icons"));
 	g_assert_cmpstr (as_app_get_origin (app), ==, "fedora-21");
-	g_assert_cmpstr (as_app_get_source_file (app), ==, filename);
+
+	/* check format */
+	format = as_app_get_format_by_kind (app, AS_FORMAT_KIND_APPSTREAM);
+	g_assert (format != NULL);
+	g_assert_cmpstr (as_format_get_filename (format), ==, filename);
 }
 
 static void
@@ -4974,6 +5020,7 @@ as_test_store_merge_func (void)
 	g_autoptr (AsApp) app2 = NULL;
 	g_autoptr (AsApp) app_merge = NULL;
 	g_autoptr (AsStore) store = NULL;
+	g_autoptr (AsFormat) format = NULL;
 
 	store = as_store_new ();
 	as_store_set_add_flags (store,
@@ -4984,7 +5031,7 @@ as_test_store_merge_func (void)
 	app1 = as_app_new ();
 	as_app_set_id (app1, "org.gnome.Software.desktop");
 	as_app_set_branch (app1, "master");
-	as_app_set_source_kind (app1, AS_FORMAT_KIND_APPDATA);
+	_as_app_add_format_kind (app1, AS_FORMAT_KIND_APPDATA);
 	as_app_add_pkgname (app1, "gnome-software");
 	g_assert_cmpstr (as_app_get_unique_id (app1), ==,
 			 "*/package/*/*/org.gnome.Software.desktop/master");
@@ -4994,11 +5041,13 @@ as_test_store_merge_func (void)
 	app_merge = as_app_new ();
 	as_app_set_kind (app_merge, AS_APP_KIND_DESKTOP);
 	as_app_set_id (app_merge, "org.gnome.Software.desktop");
-	as_app_set_source_kind (app_merge, AS_FORMAT_KIND_APPSTREAM);
+	_as_app_add_format_kind (app_merge, AS_FORMAT_KIND_APPSTREAM);
 	as_app_set_origin (app_merge, "utopia");
 	as_app_set_scope (app_merge, AS_APP_SCOPE_USER);
 	as_app_add_category (app_merge, "special");
-	as_app_set_source_file (app_merge, "DO-NOT-SUBSUME.xml");
+	format = as_format_new ();
+	as_format_set_filename (format, "DO-NOT-SUBSUME.xml");
+	as_app_add_format (app_merge, format);
 	as_store_add_app (store, app_merge);
 	g_assert_cmpstr (as_app_get_unique_id (app_merge), ==,
 			 "*/*/*/desktop/org.gnome.Software.desktop/*");
@@ -5007,7 +5056,7 @@ as_test_store_merge_func (void)
 	app2 = as_app_new ();
 	as_app_set_id (app2, "org.gnome.Software.desktop");
 	as_app_set_branch (app2, "stable");
-	as_app_set_source_kind (app2, AS_FORMAT_KIND_APPSTREAM);
+	_as_app_add_format_kind (app2, AS_FORMAT_KIND_APPSTREAM);
 	as_app_add_pkgname (app2, "gnome-software");
 	g_assert_cmpstr (as_app_get_unique_id (app2), ==,
 			 "*/package/*/*/org.gnome.Software.desktop/stable");
@@ -5018,8 +5067,8 @@ as_test_store_merge_func (void)
 	g_assert (as_app_has_category (app2, "special"));
 
 	/* verify we didn't inherit the private bits */
-	g_assert_cmpstr (as_app_get_source_file (app1), ==, NULL);
-	g_assert_cmpstr (as_app_get_source_file (app2), ==, NULL);
+	g_assert (as_app_get_format_by_kind (app1, AS_FORMAT_KIND_UNKNOWN) == NULL);
+	g_assert (as_app_get_format_by_kind (app2, AS_FORMAT_KIND_UNKNOWN) == NULL);
 }
 
 static void
@@ -5037,7 +5086,7 @@ as_test_store_merge_replace_func (void)
 	app1 = as_app_new ();
 	as_app_set_id (app1, "org.gnome.Software.desktop");
 	as_app_set_branch (app1, "master");
-	as_app_set_source_kind (app1, AS_FORMAT_KIND_APPDATA);
+	_as_app_add_format_kind (app1, AS_FORMAT_KIND_APPDATA);
 	as_app_add_pkgname (app1, "gnome-software");
 	as_app_add_category (app1, "Family");
 	as_store_add_app (store, app1);
@@ -5046,7 +5095,7 @@ as_test_store_merge_replace_func (void)
 	app_merge = as_app_new ();
 	as_app_set_kind (app_merge, AS_APP_KIND_DESKTOP);
 	as_app_set_id (app_merge, "org.gnome.Software.desktop");
-	as_app_set_source_kind (app_merge, AS_FORMAT_KIND_APPSTREAM);
+	_as_app_add_format_kind (app_merge, AS_FORMAT_KIND_APPSTREAM);
 	as_app_set_origin (app_merge, "utopia");
 	as_app_set_scope (app_merge, AS_APP_SCOPE_USER);
 	as_app_set_merge_kind (app_merge, AS_APP_MERGE_KIND_REPLACE);
@@ -5059,7 +5108,7 @@ as_test_store_merge_replace_func (void)
 	app2 = as_app_new ();
 	as_app_set_id (app2, "org.gnome.Software.desktop");
 	as_app_set_branch (app2, "stable");
-	as_app_set_source_kind (app2, AS_FORMAT_KIND_APPSTREAM);
+	_as_app_add_format_kind (app2, AS_FORMAT_KIND_APPSTREAM);
 	as_app_add_pkgname (app2, "gnome-software");
 	as_app_add_category (app2, "Family");
 	as_store_add_app (store, app2);
