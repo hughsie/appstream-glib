@@ -30,6 +30,7 @@
 
 #include "as-bundle.h"
 #include "as-enums.h"
+#include "as-format.h"
 #include "as-icon.h"
 #include "as-provide.h"
 #include "as-release.h"
@@ -271,17 +272,16 @@ typedef enum {
  * @AS_APP_SOURCE_KIND_INF:			Sourced from a inf file
  *
  * The source kind.
+ *
+ * This has been deprecated since 0.6.9 in favour of using AsFormatKind.
  **/
-typedef enum {
-	AS_APP_SOURCE_KIND_UNKNOWN,		/* Since: 0.1.4 */
-	AS_APP_SOURCE_KIND_APPSTREAM,		/* Since: 0.1.4 */
-	AS_APP_SOURCE_KIND_DESKTOP,		/* Since: 0.1.4 */
-	AS_APP_SOURCE_KIND_APPDATA,		/* Since: 0.1.4 */
-	AS_APP_SOURCE_KIND_METAINFO,		/* Since: 0.1.7 */
-	AS_APP_SOURCE_KIND_INF,			/* Since: 0.3.5 (deprecated 0.6.2) */
-	/*< private >*/
-	AS_APP_SOURCE_KIND_LAST
-} AsAppSourceKind;
+typedef AsFormatKind AsAppSourceKind;
+#define	AS_APP_SOURCE_KIND_UNKNOWN	AS_FORMAT_KIND_UNKNOWN		/* Since: 0.1.4 */
+#define	AS_APP_SOURCE_KIND_APPSTREAM	AS_FORMAT_KIND_APPSTREAM	/* Since: 0.1.4 */
+#define	AS_APP_SOURCE_KIND_DESKTOP	AS_FORMAT_KIND_DESKTOP		/* Since: 0.1.4 */
+#define	AS_APP_SOURCE_KIND_APPDATA	AS_FORMAT_KIND_APPDATA		/* Since: 0.1.4 */
+#define	AS_APP_SOURCE_KIND_METAINFO	AS_FORMAT_KIND_METAINFO		/* Since: 0.1.7 */
+#define	AS_APP_SOURCE_KIND_INF		AS_FORMAT_KIND_UNKNOWN		/* Since: 0.3.5 */
 
 /**
  * AsAppKind:
@@ -460,9 +460,9 @@ typedef enum __attribute__((__packed__)) {
 
 AsApp		*as_app_new			(void);
 GQuark		 as_app_error_quark		(void);
-AsAppSourceKind	 as_app_guess_source_kind	(const gchar	*filename);
-AsAppSourceKind	 as_app_source_kind_from_string	(const gchar	*source_kind);
-const gchar	*as_app_source_kind_to_string	(AsAppSourceKind source_kind);
+AsFormatKind	 as_app_guess_source_kind	(const gchar	*filename);
+AsFormatKind	 as_app_source_kind_from_string	(const gchar	*source_kind);
+const gchar	*as_app_source_kind_to_string	(AsFormatKind source_kind);
 const gchar	*as_app_state_to_string		(AsAppState	 state);
 const gchar	*as_app_kind_to_string		(AsAppKind	 kind);
 AsAppKind	 as_app_kind_from_string	(const gchar	*kind);
@@ -473,7 +473,7 @@ const gchar	*as_app_merge_kind_to_string	(AsAppMergeKind	 merge_kind);
 
 /* getters */
 AsAppKind	 as_app_get_kind		(AsApp		*app);
-AsAppSourceKind	 as_app_get_source_kind		(AsApp		*app);
+AsFormatKind	 as_app_get_source_kind		(AsApp		*app);
 AsAppScope	 as_app_get_scope		(AsApp		*app);
 AsAppMergeKind	 as_app_get_merge_kind		(AsApp		*app);
 AsAppState	 as_app_get_state		(AsApp		*app);
@@ -555,7 +555,7 @@ void		 as_app_set_id			(AsApp		*app,
 void		 as_app_set_kind		(AsApp		*app,
 						 AsAppKind	 kind);
 void		 as_app_set_source_kind		(AsApp		*app,
-						 AsAppSourceKind source_kind);
+						 AsFormatKind source_kind);
 void		 as_app_set_scope		(AsApp		*app,
 						 AsAppScope	 scope);
 void		 as_app_set_merge_kind		(AsApp		*app,

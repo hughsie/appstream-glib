@@ -2047,8 +2047,8 @@ as_node_get_localized_unwrap (const AsNode *node, GError **error)
 
 /* helper struct */
 struct _AsNodeContext {
-	AsAppSourceKind	 source_kind;
-	AsAppSourceKind	 output;
+	AsFormatKind	 source_kind;
+	AsFormatKind	 output;
 	gdouble		 version;
 	gboolean	 output_trusted;
 	AsRefString	*media_base_url;
@@ -2069,8 +2069,8 @@ as_node_context_new (void)
 	AsNodeContext *ctx;
 	ctx = g_new0 (AsNodeContext, 1);
 	ctx->version = 0.f;
-	ctx->source_kind = AS_APP_SOURCE_KIND_APPSTREAM;
-	ctx->output = AS_APP_SOURCE_KIND_UNKNOWN;
+	ctx->source_kind = AS_FORMAT_KIND_APPSTREAM;
+	ctx->output = AS_FORMAT_KIND_UNKNOWN;
 	return ctx;
 }
 
@@ -2133,7 +2133,7 @@ as_node_context_set_version (AsNodeContext *ctx, gdouble version)
  *
  * Since: 0.3.6
  **/
-AsAppSourceKind
+AsFormatKind
 as_node_context_get_source_kind (AsNodeContext *ctx)
 {
 	return ctx->source_kind;
@@ -2149,7 +2149,7 @@ as_node_context_get_source_kind (AsNodeContext *ctx)
  * Since: 0.3.6
  **/
 void
-as_node_context_set_source_kind (AsNodeContext *ctx, AsAppSourceKind source_kind)
+as_node_context_set_source_kind (AsNodeContext *ctx, AsFormatKind source_kind)
 {
 	ctx->source_kind = source_kind;
 }
@@ -2191,11 +2191,11 @@ as_node_context_set_output_trusted (AsNodeContext *ctx, gboolean output_trusted)
  *
  * Gets the AppStream API destination kind used when inserting nodes.
  *
- * Returns: output format, e.g. %AS_APP_SOURCE_KIND_APPDATA
+ * Returns: output format, e.g. %AS_FORMAT_KIND_APPDATA
  *
  * Since: 0.3.6
  **/
-AsAppSourceKind
+AsFormatKind
 as_node_context_get_output (AsNodeContext *ctx)
 {
 	return ctx->output;
@@ -2204,14 +2204,14 @@ as_node_context_get_output (AsNodeContext *ctx)
 /**
  * as_node_context_set_output: (skip)
  * @ctx: a #AsNodeContext.
- * @output: an output kind, e.g. %AS_APP_SOURCE_KIND_APPDATA
+ * @output: an output kind, e.g. %AS_FORMAT_KIND_APPDATA
  *
  * Sets the AppStream API destination kind used when inserting nodes.
  *
  * Since: 0.3.6
  **/
 void
-as_node_context_set_output (AsNodeContext *ctx, AsAppSourceKind output)
+as_node_context_set_output (AsNodeContext *ctx, AsFormatKind output)
 {
 	ctx->output = output;
 }

@@ -260,7 +260,7 @@ as_store_cab_from_bytes_with_origin (AsStore *store,
 		g_debug ("found file %u\t%s", i, fn);
 
 		/* if inf or metainfo, add */
-		if (as_app_guess_source_kind (fn) != AS_APP_SOURCE_KIND_METAINFO)
+		if (as_format_guess_kind (fn) != AS_FORMAT_KIND_METAINFO)
 			continue;
 
 		tmp_fn = g_build_filename (tmp_path, fn, NULL);

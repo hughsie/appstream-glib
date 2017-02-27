@@ -512,8 +512,8 @@ as_util_convert_appstream (GFile *file_input,
 static gboolean
 as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 {
-	AsAppSourceKind input_kind;
-	AsAppSourceKind output_kind;
+	AsFormatKind input_kind;
+	AsFormatKind output_kind;
 	gdouble new_version;
 	g_autoptr(GFile) file_input = NULL;
 	g_autoptr(GFile) file_output = NULL;
@@ -530,15 +530,15 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 	}
 
 	/* work out what to do */
-	input_kind = as_app_guess_source_kind (values[0]);
-	output_kind = as_app_guess_source_kind (values[1]);
+	input_kind = as_format_guess_kind (values[0]);
+	output_kind = as_format_guess_kind (values[1]);
 	file_input = g_file_new_for_path (values[0]);
 	file_output = g_file_new_for_path (values[1]);
 	new_version = g_ascii_strtod (values[2], NULL);
 
 	/* AppData -> AppData */
-	if (input_kind == AS_APP_SOURCE_KIND_APPDATA &&
-	    output_kind == AS_APP_SOURCE_KIND_APPDATA) {
+	if (input_kind == AS_FORMAT_KIND_APPDATA &&
+	    output_kind == AS_FORMAT_KIND_APPDATA) {
 		return as_util_convert_appdata (file_input,
 						file_output,
 						new_version,
@@ -546,8 +546,8 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 	}
 
 	/* AppStream -> AppStream */
-	if (input_kind == AS_APP_SOURCE_KIND_APPSTREAM &&
-	    output_kind == AS_APP_SOURCE_KIND_APPSTREAM) {
+	if (input_kind == AS_FORMAT_KIND_APPSTREAM &&
+	    output_kind == AS_FORMAT_KIND_APPSTREAM) {
 		return as_util_convert_appstream (file_input,
 						  file_output,
 						  new_version,
@@ -561,8 +561,8 @@ as_util_convert (AsUtilPrivate *priv, gchar **values, GError **error)
 		     /* TRANSLATORS: the %s and %s are file types,
 		      * e.g. "appdata" to "appstream" */
 		     _("Conversion %s to %s is not implemented"),
-		     as_app_source_kind_to_string (input_kind),
-		     as_app_source_kind_to_string (output_kind));
+		     as_format_kind_to_string (input_kind),
+		     as_format_kind_to_string (output_kind));
 	return FALSE;
 }
 
@@ -585,15 +585,14 @@ as_util_upgrade (AsUtilPrivate *priv, gchar **values, GError **error)
 	/* process each file */
 	for (i = 0; values[i] != NULL; i++) {
 		g_autoptr(GFile) file = NULL;
-		AsAppSourceKind source_kind;
-		source_kind = as_app_guess_source_kind (values[i]);
-		switch (source_kind) {
-		case AS_APP_SOURCE_KIND_APPDATA:
+		AsFormatKind format_kind = as_format_guess_kind (values[i]);
+		switch (format_kind) {
+		case AS_FORMAT_KIND_APPDATA:
 			file = g_file_new_for_path (values[i]);
 			if (!as_util_convert_appdata (file, file, 0.8, error))
 				return FALSE;
 			break;
-		case AS_APP_SOURCE_KIND_APPSTREAM:
+		case AS_FORMAT_KIND_APPSTREAM:
 			file = g_file_new_for_path (values[i]);
 			if (!as_util_convert_appstream (file, file, 0.8, error))
 				return FALSE;
@@ -605,7 +604,7 @@ as_util_upgrade (AsUtilPrivate *priv, gchar **values, GError **error)
 				     /* TRANSLATORS: %s is a file type,
 				      * e.g. 'appdata' */
 				     _("File format '%s' cannot be upgraded"),
-				     as_app_source_kind_to_string (source_kind));
+				     as_format_kind_to_string (format_kind));
 			return FALSE;
 		}
 	}
@@ -641,7 +640,7 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 			g_print ("\n\n");
 
 		/* check types */
-		if (as_app_guess_source_kind (values[f]) != AS_APP_SOURCE_KIND_APPDATA) {
+		if (as_format_guess_kind (values[f]) != AS_FORMAT_KIND_APPDATA) {
 			g_set_error_literal (error,
 					     AS_ERROR,
 					     AS_ERROR_INVALID_ARGUMENTS,
@@ -1038,8 +1037,8 @@ as_util_appdata_from_desktop (AsUtilPrivate *priv, gchar **values, GError **erro
 	}
 
 	/* check types */
-	if (as_app_guess_source_kind (values[0]) != AS_APP_SOURCE_KIND_DESKTOP ||
-	    as_app_guess_source_kind (values[1]) != AS_APP_SOURCE_KIND_APPDATA) {
+	if (as_format_guess_kind (values[0]) != AS_FORMAT_KIND_DESKTOP ||
+	    as_format_guess_kind (values[1]) != AS_FORMAT_KIND_APPDATA) {
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
@@ -1124,18 +1123,17 @@ as_util_add_file_to_store (AsStore *store, const gchar *filename, GError **error
 	g_autoptr(AsApp) app = NULL;
 	g_autoptr(GFile) file_input = NULL;
 
-	switch (as_app_guess_source_kind (filename)) {
-	case AS_APP_SOURCE_KIND_APPDATA:
-	case AS_APP_SOURCE_KIND_METAINFO:
-	case AS_APP_SOURCE_KIND_DESKTOP:
-	case AS_APP_SOURCE_KIND_INF:
+	switch (as_format_guess_kind (filename)) {
+	case AS_FORMAT_KIND_APPDATA:
+	case AS_FORMAT_KIND_METAINFO:
+	case AS_FORMAT_KIND_DESKTOP:
 		app = as_app_new ();
 		if (!as_app_parse_file (app, filename,
 					AS_APP_PARSE_FLAG_USE_HEURISTICS, error))
 			return FALSE;
 		as_store_add_app (store, app);
 		break;
-	case AS_APP_SOURCE_KIND_APPSTREAM:
+	case AS_FORMAT_KIND_APPSTREAM:
 		/* load file */
 		file_input = g_file_new_for_path (filename);
 		if (!as_store_from_file (store, file_input, NULL, NULL, error))
@@ -2780,7 +2778,7 @@ as_util_validate_file (const gchar *filename,
 
 	/* is AppStream */
 	g_print ("%s: ", filename);
-	if (as_app_guess_source_kind (filename) == AS_APP_SOURCE_KIND_APPSTREAM) {
+	if (as_format_guess_kind (filename) == AS_FORMAT_KIND_APPSTREAM) {
 		gboolean ret;
 		g_autoptr(AsStore) store = NULL;
 		g_autoptr(GFile) file = NULL;
@@ -2975,11 +2973,11 @@ as_util_check_root_app (AsApp *app, GPtrArray *problems)
 	g_autoptr(GError) error_local = NULL;
 
 	/* skip */
-	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_METAINFO)
+	if (as_app_get_source_kind (app) == AS_FORMAT_KIND_METAINFO)
 		return;
 
 	/* relax this for now */
-	if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP)
+	if (as_app_get_source_kind (app) == AS_FORMAT_KIND_DESKTOP)
 		return;
 
 	/* check one line summary */

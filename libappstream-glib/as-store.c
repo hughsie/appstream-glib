@@ -984,7 +984,7 @@ _as_app_is_perhaps_merge_component (AsApp *app)
 {
 	if (as_app_get_kind (app) != AS_APP_KIND_DESKTOP)
 		return FALSE;
-	if (as_app_get_source_kind (app) != AS_APP_SOURCE_KIND_APPSTREAM)
+	if (as_app_get_source_kind (app) != AS_FORMAT_KIND_APPSTREAM)
 		return FALSE;
 	if (as_app_get_bundle_kind (app) != AS_BUNDLE_KIND_UNKNOWN)
 		return FALSE;
@@ -1133,22 +1133,22 @@ as_store_add_app (AsStore *store, AsApp *app)
 		/* the previously stored app is what we actually want */
 		if ((priv->add_flags & AS_STORE_ADD_FLAG_PREFER_LOCAL) > 0) {
 
-			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPSTREAM &&
-			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPDATA) {
+			if (as_app_get_source_kind (app) == AS_FORMAT_KIND_APPSTREAM &&
+			    as_app_get_source_kind (item) == AS_FORMAT_KIND_APPDATA) {
 				g_debug ("ignoring AppStream entry as AppData exists: %s:%s",
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
 				return;
 			}
-			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPSTREAM &&
-			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_DESKTOP) {
+			if (as_app_get_source_kind (app) == AS_FORMAT_KIND_APPSTREAM &&
+			    as_app_get_source_kind (item) == AS_FORMAT_KIND_DESKTOP) {
 				g_debug ("ignoring AppStream entry as desktop exists: %s:%s",
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
 				return;
 			}
-			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
-			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_DESKTOP) {
+			if (as_app_get_source_kind (app) == AS_FORMAT_KIND_APPDATA &&
+			    as_app_get_source_kind (item) == AS_FORMAT_KIND_DESKTOP) {
 				g_debug ("merging duplicate AppData:desktop entries: %s:%s",
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
@@ -1156,11 +1156,11 @@ as_store_add_app (AsStore *store, AsApp *app)
 						     AS_APP_SUBSUME_FLAG_BOTH_WAYS |
 						     AS_APP_SUBSUME_FLAG_DEDUPE);
 				/* promote the desktop source to AppData */
-				as_app_set_source_kind (item, AS_APP_SOURCE_KIND_APPDATA);
+				as_app_set_source_kind (item, AS_FORMAT_KIND_APPDATA);
 				return;
 			}
-			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP &&
-			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPDATA) {
+			if (as_app_get_source_kind (app) == AS_FORMAT_KIND_DESKTOP &&
+			    as_app_get_source_kind (item) == AS_FORMAT_KIND_APPDATA) {
 				g_debug ("merging duplicate desktop:AppData entries: %s:%s",
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
@@ -1171,8 +1171,8 @@ as_store_add_app (AsStore *store, AsApp *app)
 			}
 
 		} else {
-			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA &&
-			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM &&
+			if (as_app_get_source_kind (app) == AS_FORMAT_KIND_APPDATA &&
+			    as_app_get_source_kind (item) == AS_FORMAT_KIND_APPSTREAM &&
 			    as_app_get_scope (app) == AS_APP_SCOPE_SYSTEM) {
 				as_app_set_state (item, AS_APP_STATE_INSTALLED);
 				g_debug ("ignoring AppData entry as AppStream exists: %s:%s",
@@ -1182,8 +1182,8 @@ as_store_add_app (AsStore *store, AsApp *app)
 						     AS_APP_SUBSUME_FLAG_RELEASES);
 				return;
 			}
-			if (as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_DESKTOP &&
-			    as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_APPSTREAM &&
+			if (as_app_get_source_kind (app) == AS_FORMAT_KIND_DESKTOP &&
+			    as_app_get_source_kind (item) == AS_FORMAT_KIND_APPSTREAM &&
 			    as_app_get_scope (app) == AS_APP_SCOPE_SYSTEM) {
 				as_app_set_state (item, AS_APP_STATE_INSTALLED);
 				g_debug ("ignoring desktop entry as AppStream exists: %s:%s",
@@ -1196,8 +1196,8 @@ as_store_add_app (AsStore *store, AsApp *app)
 			if (as_app_get_priority (item) >
 			    as_app_get_priority (app)) {
 				g_debug ("ignoring duplicate %s:%s entry: %s:%s",
-					 as_app_source_kind_to_string (as_app_get_source_kind (app)),
-					 as_app_source_kind_to_string (as_app_get_source_kind (item)),
+					 as_format_kind_to_string (as_app_get_source_kind (app)),
+					 as_format_kind_to_string (as_app_get_source_kind (item)),
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
 				return;
@@ -1207,8 +1207,8 @@ as_store_add_app (AsStore *store, AsApp *app)
 			if (as_app_get_priority (item) ==
 			    as_app_get_priority (app)) {
 				g_debug ("merging duplicate %s:%s entries: %s:%s",
-					 as_app_source_kind_to_string (as_app_get_source_kind (app)),
-					 as_app_source_kind_to_string (as_app_get_source_kind (item)),
+					 as_format_kind_to_string (as_app_get_source_kind (app)),
+					 as_format_kind_to_string (as_app_get_source_kind (item)),
 					 as_app_get_unique_id (app),
 					 as_app_get_unique_id (item));
 				as_app_subsume_full (app, item,
@@ -1216,9 +1216,9 @@ as_store_add_app (AsStore *store, AsApp *app)
 						     AS_APP_SUBSUME_FLAG_DEDUPE);
 
 				/* promote the desktop source to AppData */
-				if (as_app_get_source_kind (item) == AS_APP_SOURCE_KIND_DESKTOP &&
-				    as_app_get_source_kind (app) == AS_APP_SOURCE_KIND_APPDATA)
-					as_app_set_source_kind (item, AS_APP_SOURCE_KIND_APPDATA);
+				if (as_app_get_source_kind (item) == AS_FORMAT_KIND_DESKTOP &&
+				    as_app_get_source_kind (app) == AS_FORMAT_KIND_APPDATA)
+					as_app_set_source_kind (item, AS_FORMAT_KIND_APPDATA);
 				return;
 			}
 		}
@@ -1226,7 +1226,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 		/* this new item has a higher priority than the one we've
 		 * previously stored */
 		g_debug ("removing %s entry: %s",
-			 as_app_source_kind_to_string (as_app_get_source_kind (item)),
+			 as_format_kind_to_string (as_app_get_source_kind (item)),
 			 as_app_get_unique_id (item));
 		if (as_app_get_state (item) == AS_APP_STATE_INSTALLED)
 			as_app_set_state (app, AS_APP_STATE_INSTALLED);
@@ -1516,7 +1516,7 @@ as_store_from_root (AsStore *store,
 		if (arch != NULL)
 			as_app_add_arch (app, arch);
 		as_app_set_scope (app, scope);
-		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
+		as_app_set_source_kind (app, AS_FORMAT_KIND_APPSTREAM);
 		if (!as_app_node_parse (app, n, ctx, &error_local)) {
 			g_set_error (error,
 				     AS_STORE_ERROR,
@@ -1631,7 +1631,7 @@ as_store_load_yaml_file (AsStore *store,
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path);
 		as_app_set_scope (app, scope);
-		as_app_set_source_kind (app, AS_APP_SOURCE_KIND_APPSTREAM);
+		as_app_set_source_kind (app, AS_FORMAT_KIND_APPSTREAM);
 		if (!as_app_node_parse_dep11 (app, app_n, ctx, error))
 			return FALSE;
 		as_app_set_origin (app, priv->origin);
@@ -2169,7 +2169,7 @@ as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
 	/* add applications */
 	ctx = as_node_context_new ();
 	as_node_context_set_version (ctx, priv->api_version);
-	as_node_context_set_output (ctx, AS_APP_SOURCE_KIND_APPSTREAM);
+	as_node_context_set_output (ctx, AS_FORMAT_KIND_APPSTREAM);
 	as_node_context_set_output_trusted (ctx, output_trusted);
 	for (i = 0; i < priv->array->len; i++) {
 		app = g_ptr_array_index (priv->array, i);
@@ -2739,7 +2739,7 @@ as_store_load_installed (AsStore *store,
 		if ((priv->add_flags & AS_STORE_ADD_FLAG_PREFER_LOCAL) == 0) {
 			app_tmp = as_store_get_app_by_id (store, tmp);
 			if (app_tmp != NULL &&
-			    as_app_get_source_kind (app_tmp) == AS_APP_SOURCE_KIND_DESKTOP) {
+			    as_app_get_source_kind (app_tmp) == AS_FORMAT_KIND_DESKTOP) {
 				as_app_set_state (app_tmp, AS_APP_STATE_INSTALLED);
 				g_debug ("not parsing %s as %s already exists",
 					 filename, tmp);

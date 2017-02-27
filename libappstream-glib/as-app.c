@@ -90,7 +90,7 @@ typedef struct
 	GPtrArray	*suggests;			/* of AsSuggest */
 	GPtrArray	*requires;			/* of AsRequire */
 	GPtrArray	*vetos;				/* of AsRefString */
-	AsAppSourceKind	 source_kind;
+	AsFormatKind	 source_kind;
 	AsAppScope	 scope;
 	AsAppMergeKind	 merge_kind;
 	AsAppState	 state;
@@ -242,29 +242,19 @@ as_app_kind_from_string (const gchar *kind)
  *
  * Converts the text representation to an enumerated value.
  *
- * Return value: A #AsAppSourceKind, e.g. %AS_APP_SOURCE_KIND_APPSTREAM.
+ * Return value: A #AsFormatKind, e.g. %AS_FORMAT_KIND_APPSTREAM.
  *
  * Since: 0.2.2
  **/
-AsAppSourceKind
+AsFormatKind
 as_app_source_kind_from_string (const gchar *source_kind)
 {
-	if (g_strcmp0 (source_kind, "appstream") == 0)
-		return AS_APP_SOURCE_KIND_APPSTREAM;
-	if (g_strcmp0 (source_kind, "appdata") == 0)
-		return AS_APP_SOURCE_KIND_APPDATA;
-	if (g_strcmp0 (source_kind, "metainfo") == 0)
-		return AS_APP_SOURCE_KIND_METAINFO;
-	if (g_strcmp0 (source_kind, "desktop") == 0)
-		return AS_APP_SOURCE_KIND_DESKTOP;
-	if (g_strcmp0 (source_kind, "inf") == 0)
-		return AS_APP_SOURCE_KIND_INF;
-	return AS_APP_SOURCE_KIND_UNKNOWN;
+	return as_format_kind_from_string (source_kind);
 }
 
 /**
  * as_app_source_kind_to_string:
- * @source_kind: the #AsAppSourceKind.
+ * @source_kind: the #AsFormatKind.
  *
  * Converts the enumerated value to an text representation.
  *
@@ -273,19 +263,9 @@ as_app_source_kind_from_string (const gchar *source_kind)
  * Since: 0.2.2
  **/
 const gchar *
-as_app_source_kind_to_string (AsAppSourceKind source_kind)
+as_app_source_kind_to_string (AsFormatKind source_kind)
 {
-	if (source_kind == AS_APP_SOURCE_KIND_APPSTREAM)
-		return "appstream";
-	if (source_kind == AS_APP_SOURCE_KIND_APPDATA)
-		return "appdata";
-	if (source_kind == AS_APP_SOURCE_KIND_METAINFO)
-		return "metainfo";
-	if (source_kind == AS_APP_SOURCE_KIND_DESKTOP)
-		return "desktop";
-	if (source_kind == AS_APP_SOURCE_KIND_INF)
-		return "inf";
-	return NULL;
+	return as_format_kind_to_string (source_kind);
 }
 
 /**
@@ -418,40 +398,14 @@ as_app_merge_kind_to_string (AsAppMergeKind merge_kind)
  *
  * Guesses the source kind based from the filename.
  *
- * Return value: A #AsAppSourceKind, e.g. %AS_APP_SOURCE_KIND_APPSTREAM.
+ * Return value: A #AsFormatKind, e.g. %AS_FORMAT_KIND_APPSTREAM.
  *
  * Since: 0.1.8
  **/
-AsAppSourceKind
+AsFormatKind
 as_app_guess_source_kind (const gchar *filename)
 {
-	if (g_str_has_suffix (filename, ".xml.gz"))
-		return AS_APP_SOURCE_KIND_APPSTREAM;
-	if (g_str_has_suffix (filename, ".yml"))
-		return AS_APP_SOURCE_KIND_APPSTREAM;
-	if (g_str_has_suffix (filename, ".yml.gz"))
-		return AS_APP_SOURCE_KIND_APPSTREAM;
-#ifdef HAVE_GCAB
-	if (g_str_has_suffix (filename, ".cab"))
-		return AS_APP_SOURCE_KIND_APPSTREAM;
-#endif
-	if (g_str_has_suffix (filename, ".desktop"))
-		return AS_APP_SOURCE_KIND_DESKTOP;
-	if (g_str_has_suffix (filename, ".desktop.in"))
-		return AS_APP_SOURCE_KIND_DESKTOP;
-	if (g_str_has_suffix (filename, ".appdata.xml"))
-		return AS_APP_SOURCE_KIND_APPDATA;
-	if (g_str_has_suffix (filename, ".appdata.xml.in"))
-		return AS_APP_SOURCE_KIND_APPDATA;
-	if (g_str_has_suffix (filename, ".metainfo.xml"))
-		return AS_APP_SOURCE_KIND_METAINFO;
-	if (g_str_has_suffix (filename, ".metainfo.xml.in"))
-		return AS_APP_SOURCE_KIND_METAINFO;
-	if (g_str_has_suffix (filename, ".xml"))
-		return AS_APP_SOURCE_KIND_APPSTREAM;
-	if (g_str_has_suffix (filename, ".inf"))
-		return AS_APP_SOURCE_KIND_INF;
-	return AS_APP_SOURCE_KIND_UNKNOWN;
+	return as_format_guess_kind (filename);
 }
 
 static void
@@ -1552,7 +1506,7 @@ as_app_get_description_size (AsApp *app)
  *
  * Since: 0.1.4
  **/
-AsAppSourceKind
+AsFormatKind
 as_app_get_source_kind (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
@@ -1973,7 +1927,7 @@ as_app_get_origin (AsApp *app)
  *
  * Gets the source filename the instance was populated from.
  *
- * NOTE: this is not set for %AS_APP_SOURCE_KIND_APPSTREAM entries.
+ * NOTE: this is not set for %AS_FORMAT_KIND_APPSTREAM entries.
  *
  * Returns: string, or %NULL if unset
  *
@@ -2084,14 +2038,14 @@ as_app_set_id (AsApp *app, const gchar *id)
 /**
  * as_app_set_source_kind:
  * @app: a #AsApp instance.
- * @source_kind: the #AsAppSourceKind.
+ * @source_kind: the #AsFormatKind.
  *
  * Sets the source kind.
  *
  * Since: 0.1.4
  **/
 void
-as_app_set_source_kind (AsApp *app, AsAppSourceKind source_kind)
+as_app_set_source_kind (AsApp *app, AsFormatKind source_kind)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->source_kind = source_kind;
@@ -3571,9 +3525,9 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 
 	/* AppData or AppStream can overwrite the id-kind of desktop files */
 	if (flags & AS_APP_SUBSUME_FLAG_SOURCE_KIND) {
-		if ((priv->source_kind == AS_APP_SOURCE_KIND_APPDATA ||
-		     priv->source_kind == AS_APP_SOURCE_KIND_APPSTREAM) &&
-		    papp->source_kind == AS_APP_SOURCE_KIND_DESKTOP)
+		if ((priv->source_kind == AS_FORMAT_KIND_APPDATA ||
+		     priv->source_kind == AS_FORMAT_KIND_APPSTREAM) &&
+		    papp->source_kind == AS_FORMAT_KIND_DESKTOP)
 			as_app_set_kind (app, priv->kind);
 	}
 
@@ -4210,8 +4164,8 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <metadata_license> */
-	if (as_node_context_get_output (ctx) == AS_APP_SOURCE_KIND_APPDATA ||
-	    as_node_context_get_output (ctx) == AS_APP_SOURCE_KIND_METAINFO) {
+	if (as_node_context_get_output (ctx) == AS_FORMAT_KIND_APPDATA ||
+	    as_node_context_get_output (ctx) == AS_FORMAT_KIND_METAINFO) {
 		if (priv->metadata_license != NULL) {
 			as_node_insert (node_app, "metadata_license",
 					priv->metadata_license, 0, NULL);
@@ -4307,8 +4261,8 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		as_app_node_insert_languages (app, node_app);
 
 	/* <update_contact> */
-	if (as_node_context_get_output (ctx) == AS_APP_SOURCE_KIND_APPDATA ||
-	    as_node_context_get_output (ctx) == AS_APP_SOURCE_KIND_METAINFO ||
+	if (as_node_context_get_output (ctx) == AS_FORMAT_KIND_APPDATA ||
+	    as_node_context_get_output (ctx) == AS_FORMAT_KIND_METAINFO ||
 	    as_node_context_get_output_trusted (ctx)) {
 		if (priv->update_contact != NULL) {
 			as_node_insert (node_app, "update_contact",
@@ -4455,7 +4409,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 	case AS_TAG_DESCRIPTION:
 
 		/* unwrap appdata inline */
-		if (priv->source_kind == AS_APP_SOURCE_KIND_APPDATA) {
+		if (priv->source_kind == AS_FORMAT_KIND_APPDATA) {
 			GError *error_local = NULL;
 			g_autoptr(GHashTable) unwrapped = NULL;
 			unwrapped = as_node_get_localized_unwrap (n, &error_local);
@@ -5708,7 +5662,7 @@ as_app_parse_appdata_file (AsApp *app,
 		}
 	}
 	ctx = as_node_context_new ();
-	as_node_context_set_source_kind (ctx, AS_APP_SOURCE_KIND_APPDATA);
+	as_node_context_set_source_kind (ctx, AS_FORMAT_KIND_APPDATA);
 	if (!as_app_node_parse_full (app, node, flags, ctx, error))
 		return FALSE;
 
@@ -5746,9 +5700,9 @@ as_app_parse_file (AsApp *app,
 	GPtrArray *vetos;
 
 	/* autodetect */
-	if (priv->source_kind == AS_APP_SOURCE_KIND_UNKNOWN) {
-		priv->source_kind = as_app_guess_source_kind (filename);
-		if (priv->source_kind == AS_APP_SOURCE_KIND_UNKNOWN) {
+	if (priv->source_kind == AS_FORMAT_KIND_UNKNOWN) {
+		priv->source_kind = as_format_guess_kind (filename);
+		if (priv->source_kind == AS_FORMAT_KIND_UNKNOWN) {
 			g_set_error (error,
 				     AS_APP_ERROR,
 				     AS_APP_ERROR_INVALID_TYPE,
@@ -5773,12 +5727,12 @@ as_app_parse_file (AsApp *app,
 
 	/* parse */
 	switch (priv->source_kind) {
-	case AS_APP_SOURCE_KIND_DESKTOP:
+	case AS_FORMAT_KIND_DESKTOP:
 		if (!as_app_parse_desktop_file (app, filename, flags, error))
 			return FALSE;
 		break;
-	case AS_APP_SOURCE_KIND_APPDATA:
-	case AS_APP_SOURCE_KIND_METAINFO:
+	case AS_FORMAT_KIND_APPDATA:
+	case AS_FORMAT_KIND_METAINFO:
 		if (!as_app_parse_appdata_file (app, filename, flags, error))
 			return FALSE;
 		break;
@@ -5832,7 +5786,7 @@ as_app_to_file (AsApp *app,
 	root = as_node_new ();
 	ctx = as_node_context_new ();
 	as_node_context_set_version (ctx, 1.0);
-	as_node_context_set_output (ctx, AS_APP_SOURCE_KIND_APPDATA);
+	as_node_context_set_output (ctx, AS_FORMAT_KIND_APPDATA);
 	as_app_node_insert (app, root, ctx);
 	xml = as_node_to_xml (root,
 			      AS_NODE_TO_XML_FLAG_ADD_HEADER |

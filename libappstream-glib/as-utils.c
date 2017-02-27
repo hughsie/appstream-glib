@@ -1225,8 +1225,8 @@ as_utils_install_filename (AsUtilsLocation location,
 	if (destdir == NULL)
 		destdir = "";
 
-	switch (as_app_guess_source_kind (filename)) {
-	case AS_APP_SOURCE_KIND_APPSTREAM:
+	switch (as_format_guess_kind (filename)) {
+	case AS_FORMAT_KIND_APPSTREAM:
 		if (g_strstr_len (filename, -1, ".yml.gz") != NULL) {
 			path = g_build_filename (as_utils_location_get_prefix (location),
 						 "app-info", "yaml", NULL);
@@ -1237,8 +1237,8 @@ as_utils_install_filename (AsUtilsLocation location,
 			ret = as_utils_install_xml (filename, origin, path, destdir, error);
 		}
 		break;
-	case AS_APP_SOURCE_KIND_APPDATA:
-	case AS_APP_SOURCE_KIND_METAINFO:
+	case AS_FORMAT_KIND_APPDATA:
+	case AS_FORMAT_KIND_METAINFO:
 		if (location == AS_UTILS_LOCATION_CACHE) {
 			g_set_error_literal (error,
 					     AS_UTILS_ERROR,
