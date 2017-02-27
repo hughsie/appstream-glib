@@ -5,6 +5,7 @@
 # Translators:
 # Andika Triwidada <andika@gmail.com>, 2016
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
+# Andika Triwidada <andika@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib 0.6.7\n"
@@ -13,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-08-06 03:04-0400\n"
-"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
+"PO-Revision-Date: 2017-02-13 04:52-0500\n"
+"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: Indonesian (http://www.transifex.com/freedesktop/appstream-"
 "glib/language/id/)\n"
 "Language: id\n"
@@ -140,7 +141,7 @@ msgstr "Gagal menambah paket"
 #: client/as-builder.c:304
 #, c-format
 msgid "Parsed %u/%u files..."
-msgstr ""
+msgstr "Diurai %u/%u berkas..."
 
 #. TRANSLATORS: error message
 #: client/as-builder.c:314
@@ -299,7 +300,7 @@ msgstr "Ditambahkan"
 #. TRANSLATORS: this is when a device ctrl+c's a watch
 #: client/as-util.c:4141
 msgid "Cancelled"
-msgstr ""
+msgstr "Dibatalkan"
 
 #. TRANSLATORS: this is the --nonet argument
 #: client/as-util.c:4170
@@ -349,12 +350,12 @@ msgstr "Mencari aplikasi AppStream menurut namanya"
 #. TRANSLATORS: command description
 #: client/as-util.c:4245
 msgid "Show all installed AppStream applications"
-msgstr ""
+msgstr "Tampilkan semua aplikasi AppStream yang terpasang"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4251
 msgid "Search for AppStream applications by category name"
-msgstr ""
+msgstr "Cari aplikasi AppStream berdasarkan nama kategori"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4257
@@ -434,12 +435,12 @@ msgstr "Gantikan cuplikan layar dalam berkas sumber"
 #. TRANSLATORS: command description
 #: client/as-util.c:4347
 msgid "Add a provide to a source file"
-msgstr ""
+msgstr "Tambahkan penyedia ke suatu berkas sumber"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4353
 msgid "Add a language to a source file"
-msgstr ""
+msgstr "Tambahkan bahasa ke suatu berkas sumber"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4359
@@ -489,7 +490,7 @@ msgstr "Impor sebuah berkas ke markup AppStream"
 #. TRANSLATORS: command description
 #: client/as-util.c:4413
 msgid "Watch AppStream locations for changes"
-msgstr ""
+msgstr "Amati lokasi AppStream atas adanya perubahan"
 
 #. TRANSLATORS: program name
 #: client/as-util.c:4426

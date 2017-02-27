@@ -6,6 +6,7 @@
 # Robert Antoni Buj i Gelonch <rbuj@fedoraproject.org>, 2015-2016
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
 # Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>, 2016. #zanata
+# Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib 0.6.7\n"
@@ -14,7 +15,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-10-02 07:05-0400\n"
+"PO-Revision-Date: 2017-02-22 02:11-0500\n"
 "Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (http://www.transifex.com/freedesktop/appstream-glib/"
 "language/ca/)\n"
@@ -301,7 +302,7 @@ msgstr "Afegit"
 #. TRANSLATORS: this is when a device ctrl+c's a watch
 #: client/as-util.c:4141
 msgid "Cancelled"
-msgstr ""
+msgstr "Cancel·lat"
 
 #. TRANSLATORS: this is the --nonet argument
 #: client/as-util.c:4170
@@ -437,12 +438,12 @@ msgstr "Substitueix les captures de pantalles en un fitxer d'origen"
 #. TRANSLATORS: command description
 #: client/as-util.c:4347
 msgid "Add a provide to a source file"
-msgstr ""
+msgstr "Afegeix un proporciona a un fitxer d'origen"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4353
 msgid "Add a language to a source file"
-msgstr ""
+msgstr "Afegeix un idioma a un fitxer d'origen"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4359
@@ -494,7 +495,7 @@ msgstr "Importa un fitxer al llenguatge de marques d'AppStream"
 #. TRANSLATORS: command description
 #: client/as-util.c:4413
 msgid "Watch AppStream locations for changes"
-msgstr ""
+msgstr "Observa les ubicacions AppStream per si hi ha canvis"
 
 #. TRANSLATORS: program name
 #: client/as-util.c:4426
