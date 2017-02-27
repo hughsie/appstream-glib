@@ -79,6 +79,7 @@ typedef struct
 	GPtrArray	*mimetypes;			/* of AsRefString */
 	GPtrArray	*pkgnames;			/* of AsRefString */
 	GPtrArray	*architectures;			/* of AsRefString */
+	GPtrArray	*formats;			/* of AsFormat */
 	GPtrArray	*releases;			/* of AsRelease */
 	GPtrArray	*provides;			/* of AsProvide */
 	GPtrArray	*screenshots;			/* of AsScreenshot */
@@ -458,6 +459,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->extends);
 	g_ptr_array_unref (priv->kudos);
 	g_ptr_array_unref (priv->permissions);
+	g_ptr_array_unref (priv->formats);
 	g_ptr_array_unref (priv->mimetypes);
 	g_ptr_array_unref (priv->pkgnames);
 	g_ptr_array_unref (priv->architectures);
@@ -488,6 +490,7 @@ as_app_init (AsApp *app)
 						(GDestroyNotify) g_ptr_array_unref);
 	priv->kudos = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 	priv->permissions = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
+	priv->formats = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->mimetypes = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 	priv->pkgnames = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 	priv->architectures = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
@@ -892,6 +895,73 @@ as_app_has_permission (AsApp *app, const gchar *permission)
 }
 
 /**
+ * as_app_get_format_default:
+ * @app: a #AsApp instance.
+ *
+ * Returns the default format.
+ *
+ * Returns: (transfer none): A #AsFormat, or %NULL if not found
+ *
+ * Since: 0.6.9
+ */
+AsFormat *
+as_app_get_format_default (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	if (priv->formats->len > 0) {
+		AsFormat *format = g_ptr_array_index (priv->formats, 0);
+		return format;
+	}
+	return NULL;
+}
+
+/**
+ * as_app_get_format_by_filename:
+ * @app: a #AsApp instance.
+ * @filename: a filename, e.g. "/home/hughsie/dave.desktop"
+ *
+ * Searches the list of formats for a specific filename.
+ *
+ * Returns: (transfer none): A #AsFormat, or %NULL if not found
+ *
+ * Since: 0.6.9
+ */
+AsFormat *
+as_app_get_format_by_filename (AsApp *app, const gchar *filename)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	for (guint i = 0; i < priv->formats->len; i++) {
+		AsFormat *format = g_ptr_array_index (priv->formats, i);
+		if (g_strcmp0 (as_format_get_filename (format), filename) == 0)
+			return format;
+	}
+	return NULL;
+}
+
+/**
+ * as_app_get_format_by_kind:
+ * @app: a #AsApp instance.
+ * @kind: a #AsFormatKind, e.g. %AS_FORMAT_KIND_APPDATA
+ *
+ * Searches the list of formats for a specific format kind.
+ *
+ * Returns: (transfer none): A #AsFormat, or %NULL if not found
+ *
+ * Since: 0.6.9
+ */
+AsFormat *
+as_app_get_format_by_kind (AsApp *app, AsFormatKind kind)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	for (guint i = 0; i < priv->formats->len; i++) {
+		AsFormat *format = g_ptr_array_index (priv->formats, i);
+		if (as_format_get_kind (format) == kind)
+			return format;
+	}
+	return NULL;
+}
+
+/**
  * as_app_get_keywords:
  * @app: a #AsApp instance.
  * @locale: the locale, or %NULL. e.g. "en_GB"
@@ -943,6 +1013,23 @@ as_app_get_permissions (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->permissions;
+}
+
+/**
+ * as_app_get_formats:
+ * @app: a #AsApp instance.
+ *
+ * Gets any formats that make up the application.
+ *
+ * Returns: (element-type utf8) (transfer none): an array
+ *
+ * Since: 0.6.9
+ **/
+GPtrArray *
+as_app_get_formats (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->formats;
 }
 
 /**
@@ -2755,6 +2842,51 @@ as_app_add_permission (AsApp *app, const gchar *permission)
 		return;
 	}
 	g_ptr_array_add (priv->permissions, as_ref_string_new (permission));
+}
+
+/**
+ * as_app_add_format:
+ * @app: a #AsApp instance.
+ * @format: the #AsFormat.
+ *
+ * Add a format the application has been built from.
+ *
+ * Since: 0.6.9
+ **/
+void
+as_app_add_format (AsApp *app, AsFormat *format)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_return_if_fail (AS_IS_APP (app));
+	g_return_if_fail (AS_IS_FORMAT (format));
+
+	/* check for duplicates */
+	for (guint i = 0; i < priv->formats->len; i++) {
+		AsFormat *fmt = g_ptr_array_index (priv->formats, i);
+		if (as_format_equal (fmt, format))
+			return;
+	}
+
+	/* add */
+	g_ptr_array_add (priv->formats, g_object_ref (format));
+}
+
+/**
+ * as_app_remove_format:
+ * @app: a #AsApp instance.
+ * @format: the #AsFormat.
+ *
+ * Removes a format the application has been built from.
+ *
+ * Since: 0.6.9
+ **/
+void
+as_app_remove_format (AsApp *app, AsFormat *format)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_return_if_fail (AS_IS_APP (app));
+	g_return_if_fail (AS_IS_FORMAT (format));
+	g_ptr_array_remove (priv->formats, format);
 }
 
 /**

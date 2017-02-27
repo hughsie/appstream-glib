@@ -487,6 +487,7 @@ GPtrArray	*as_app_get_keywords		(AsApp		*app,
 						 const gchar	*locale);
 GPtrArray	*as_app_get_kudos		(AsApp		*app);
 GPtrArray	*as_app_get_permissions		(AsApp		*app);
+GPtrArray	*as_app_get_formats		(AsApp		*app);
 GPtrArray	*as_app_get_mimetypes		(AsApp		*app);
 GPtrArray	*as_app_get_pkgnames		(AsApp		*app);
 GPtrArray	*as_app_get_architectures	(AsApp		*app);
@@ -544,6 +545,11 @@ gboolean	 as_app_has_kudo_kind		(AsApp		*app,
 						 AsKudoKind	 kudo);
 gboolean	 as_app_has_permission		(AsApp		*app,
 						 const gchar	*permission);
+AsFormat	*as_app_get_format_default	(AsApp		*app);
+AsFormat	*as_app_get_format_by_kind	(AsApp		*app,
+						 AsFormatKind	 kind);
+AsFormat	*as_app_get_format_by_filename	(AsApp		*app,
+						 const gchar	*filename);
 gboolean	 as_app_has_compulsory_for_desktop (AsApp	*app,
 						 const gchar	*desktop);
 gboolean	 as_app_has_quirk		(AsApp		*app,
@@ -607,6 +613,10 @@ void		 as_app_add_kudo_kind		(AsApp		*app,
 						 AsKudoKind	 kudo_kind);
 void		 as_app_add_permission		(AsApp		*app,
 						 const gchar	*permission);
+void		 as_app_add_format		(AsApp		*app,
+						 AsFormat	*format);
+void		 as_app_remove_format		(AsApp		*app,
+						 AsFormat	*format);
 void		 as_app_add_mimetype		(AsApp		*app,
 						 const gchar	*mimetype);
 void		 as_app_add_pkgname		(AsApp		*app,
