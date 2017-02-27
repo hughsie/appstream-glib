@@ -2844,6 +2844,38 @@ as_app_add_permission (AsApp *app, const gchar *permission)
 	g_ptr_array_add (priv->permissions, as_ref_string_new (permission));
 }
 
+static void
+as_app_recalculate_state (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	gboolean is_installed = FALSE;
+	gboolean is_available = FALSE;
+	for (guint i = 0; i < priv->formats->len; i++) {
+		AsFormat *format = g_ptr_array_index (priv->formats, i);
+		switch (as_format_get_kind (format)) {
+		case AS_FORMAT_KIND_APPDATA:
+		case AS_FORMAT_KIND_DESKTOP:
+		case AS_FORMAT_KIND_METAINFO:
+			is_installed = TRUE;
+			break;
+		case AS_FORMAT_KIND_APPSTREAM:
+			is_available = TRUE;
+			break;
+		default:
+			break;
+		}
+	}
+	if (is_installed) {
+		as_app_set_state (app, AS_APP_STATE_INSTALLED);
+		return;
+	}
+	if (is_available) {
+		as_app_set_state (app, AS_APP_STATE_AVAILABLE);
+		return;
+	}
+	as_app_set_state (app, AS_APP_STATE_UNKNOWN);
+}
+
 /**
  * as_app_add_format:
  * @app: a #AsApp instance.
@@ -2869,6 +2901,7 @@ as_app_add_format (AsApp *app, AsFormat *format)
 
 	/* add */
 	g_ptr_array_add (priv->formats, g_object_ref (format));
+	as_app_recalculate_state (app);
 }
 
 /**
@@ -2887,6 +2920,7 @@ as_app_remove_format (AsApp *app, AsFormat *format)
 	g_return_if_fail (AS_IS_APP (app));
 	g_return_if_fail (AS_IS_FORMAT (format));
 	g_ptr_array_remove (priv->formats, format);
+	as_app_recalculate_state (app);
 }
 
 /**
