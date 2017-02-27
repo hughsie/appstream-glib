@@ -2653,19 +2653,11 @@ as_store_load_app_info (AsStore *store,
 static void
 as_store_set_app_installed (AsApp *app)
 {
-	AsRelease *rel;
-	GPtrArray *releases;
-	guint i;
-
-	/* releases */
-	releases = as_app_get_releases (app);
-	for (i = 0; i < releases->len; i++) {
-		rel = g_ptr_array_index (releases, i);
+	GPtrArray *releases = as_app_get_releases (app);
+	for (guint i = 0; i < releases->len; i++) {
+		AsRelease *rel = g_ptr_array_index (releases, i);
 		as_release_set_state (rel, AS_RELEASE_STATE_INSTALLED);
 	}
-
-	/* app itself */
-	as_app_set_state (app, AS_APP_STATE_INSTALLED);
 }
 
 static gboolean
