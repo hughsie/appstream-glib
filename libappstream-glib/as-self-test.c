@@ -4319,7 +4319,7 @@ as_test_utils_func (void)
 	g_assert_no_error (error);
 	g_assert_cmpstr (tmp, ==, "Hello world!");
 	g_free (tmp);
-	tmp = as_markup_convert_simple ("<p>Hello world</p>"
+	tmp = as_markup_convert_simple ("<p>Hello world</p><p></p>"
 					"<ul><li>Item</li></ul>",
 					&error);
 	g_assert_no_error (error);

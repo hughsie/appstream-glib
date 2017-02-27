@@ -393,6 +393,10 @@ as_markup_render_para (GString *str, AsMarkupConvertFormat format, const gchar *
 	g_autofree gchar *tmp = NULL;
 	g_auto(GStrv) spl = NULL;
 
+	/* ignore <p></p> */
+	if (data == NULL)
+		return;
+
 	if (str->len > 0)
 		g_string_append (str, "\n");
 	switch (format) {
