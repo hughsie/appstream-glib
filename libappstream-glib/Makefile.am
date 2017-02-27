@@ -84,6 +84,7 @@ libappstream_glib_include_HEADERS =				\
 	as-require.h						\
 	as-review.h						\
 	as-screenshot.h						\
+	as-format.h						\
 	as-store.h						\
 	as-suggest.h						\
 	as-tag.h						\
@@ -106,6 +107,7 @@ libappstream_glib_la_SOURCES =					\
 	as-content-rating.c					\
 	as-content-rating-private.h				\
 	as-enums.c						\
+	as-format.c						\
 	as-icon.c						\
 	as-icon-private.h					\
 	as-image.c						\
@@ -207,6 +209,8 @@ introspection_sources =						\
 	as-checksum.h						\
 	as-content-rating.c					\
 	as-content-rating.h					\
+	as-format.c						\
+	as-format.h						\
 	as-enums.c						\
 	as-enums.h						\
 	as-icon.c						\
