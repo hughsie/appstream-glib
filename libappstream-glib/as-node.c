@@ -2140,6 +2140,23 @@ as_node_context_get_format_kind (AsNodeContext *ctx)
 }
 
 /**
+ * as_node_context_get_source_kind: (skip)
+ * @ctx: a #AsNodeContext.
+ *
+ * Gets the AppStream API format kind used when parsing nodes.
+ *
+ * Returns: format kind, e.g. %AS_FORMAT_KIND_APPDATA
+ *
+ * Since: 0.3.6
+ * Deprecated: 0.9.6: Use as_node_context_get_format_kind() instead.
+ **/
+AsFormatKind
+as_node_context_get_source_kind (AsNodeContext *ctx)
+{
+	return as_node_context_get_format_kind (ctx);
+}
+
+/**
  * as_node_context_set_format_kind: (skip)
  * @ctx: a #AsNodeContext.
  * @format_kind: an API format kind, e.g. %AS_FORMAT_KIND_APPDATA
@@ -2152,6 +2169,22 @@ void
 as_node_context_set_format_kind (AsNodeContext *ctx, AsFormatKind format_kind)
 {
 	ctx->format_kind = format_kind;
+}
+
+/**
+ * as_node_context_set_source_kind: (skip)
+ * @ctx: a #AsNodeContext.
+ * @format_kind: an API format kind, e.g. %AS_FORMAT_KIND_APPDATA
+ *
+ * Sets the AppStream API format kind used when exporting nodes.
+ *
+ * Since: 0.3.6
+ * Deprecated: 0.9.6: Use as_node_context_set_format_kind() instead.
+ **/
+void
+as_node_context_set_source_kind (AsNodeContext *ctx, AsFormatKind source_kind)
+{
+	return as_node_context_set_format_kind (ctx, source_kind);
 }
 
 /**

@@ -41,6 +41,13 @@ void		 as_node_context_set_version	(AsNodeContext	*ctx,
 AsFormatKind	 as_node_context_get_format_kind (AsNodeContext	*ctx);
 void		 as_node_context_set_format_kind (AsNodeContext	*ctx,
 						 AsFormatKind	 format_kind);
+/* Kept for ABI compatibility with as-glib < 0.9.6 */
+G_DEPRECATED_FOR(as_node_context_get_format_kind)
+AsFormatKind	 as_node_context_get_source_kind (AsNodeContext	*ctx);
+/* Kept for ABI compatibility with as-glib < 0.9.6 */
+G_DEPRECATED_FOR(as_node_context_set_format_kind)
+void		 as_node_context_set_source_kind (AsNodeContext	*ctx,
+						 AsFormatKind	 source_kind);
 gboolean	 as_node_context_get_output_trusted (AsNodeContext	*ctx);
 void		 as_node_context_set_output_trusted (AsNodeContext	*ctx,
 						 gboolean output_trusted);
