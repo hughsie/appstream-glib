@@ -719,6 +719,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "gnobots2.desktop",		"gnome-robots.desktop" },
 		{ "gnome-2048.desktop",		"org.gnome.gnome-2048.desktop" },
 		{ "gnome-boxes.desktop",	"org.gnome.Boxes.desktop" },
+		{ "gnome-calculator.desktop",	"org.gnome.Calculator.desktop" },
 		{ "gnome-clocks.desktop",	"org.gnome.clocks.desktop" },
 		{ "gnome-contacts.desktop",	"org.gnome.Contacts.desktop" },
 		{ "gnome-dictionary.desktop",	"org.gnome.Dictionary.desktop" },
@@ -743,6 +744,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "lollypop.desktop",		"org.gnome.Lollypop.desktop" },
 		{ "nautilus.desktop",		"org.gnome.Nautilus.desktop" },
 		{ "polari.desktop",		"org.gnome.Polari.desktop" },
+		{ "sound-juicer.desktop",	"org.gnome.SoundJuicer.desktop" },
 		{ "totem.desktop",		"org.gnome.Totem.desktop" },
 
 		/* KDE */
@@ -757,6 +759,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "filelight.desktop",		"org.kde.filelight.desktop" },
 		{ "gwenview.desktop",		"org.kde.gwenview.desktop" },
 		{ "juk.desktop",		"org.kde.juk.desktop" },
+		{ "kajongg.desktop",		"org.kde.kajongg.desktop" },
 		{ "kalgebra.desktop",		"org.kde.kalgebra.desktop" },
 		{ "kalzium.desktop",		"org.kde.kalzium.desktop" },
 		{ "kamoso.desktop",		"org.kde.kamoso.desktop" },
@@ -804,6 +807,7 @@ as_store_get_app_by_id_with_fallbacks (AsStore *store, const gchar *id)
 		{ "colorhug-ccmx.desktop",	"com.hughski.ColorHug.CcmxLoader.desktop" },
 		{ "colorhug-flash.desktop",	"com.hughski.ColorHug.FlashLoader.desktop" },
 		{ "dconf-editor.desktop",	"ca.desrt.dconf-editor.desktop" },
+		{ "feedreader.desktop",		"org.gnome.FeedReader.desktop" },
 		{ "qtcreator.desktop",		"org.qt-project.qtcreator.desktop" },
 
 		{ NULL, NULL }
