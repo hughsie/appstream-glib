@@ -5618,7 +5618,7 @@ as_app_search_matches (AsApp *app, const gchar *search)
  *
  * Returns all the search tokens for the application. These are unsorted.
  *
- * Returns: (transfer full): The string search tokens
+ * Returns: (transfer container): The string search tokens
  *
  * Since: 0.3.4
  */
@@ -5638,9 +5638,9 @@ as_app_get_search_tokens (AsApp *app)
 
 	/* return all the token cache */
 	keys = g_hash_table_get_keys (priv->token_cache);
-	array = g_ptr_array_new_with_free_func (g_free);
+	array = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 	for (l = keys; l != NULL; l = l->next)
-		g_ptr_array_add (array, as_ref_string_new (l->data));
+		g_ptr_array_add (array, as_ref_string_ref (l->data));
 	return array;
 }
 
