@@ -231,10 +231,6 @@ load_desktop (const gchar *prefix,
 		}
 	}
 
-	/* never inherit from the desktop file (they may be prefixed) */
-	g_hash_table_remove_all (as_app_get_names (app));
-	g_hash_table_remove_all (as_app_get_comments (app));
-
 	return g_steal_pointer (&app);
 }
 
@@ -480,6 +476,14 @@ main (int argc, char **argv)
 					 error->message);
 				return EXIT_FAILURE;
 			}
+
+			/* if the appdata <name> exists, do not inherit from
+			 * the desktop file as it may be prefixed */
+			if (g_hash_table_size (as_app_get_names (app_appdata)) > 0)
+				g_hash_table_remove_all (as_app_get_names (app_desktop));
+			if (g_hash_table_size (as_app_get_comments (app_appdata)) > 0)
+				g_hash_table_remove_all (as_app_get_comments (app_desktop));
+
 			as_store_add_app (store, app_desktop);
 		}
 	}
