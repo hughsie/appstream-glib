@@ -1091,6 +1091,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	gboolean require_content_license = TRUE;
 	gboolean require_name = TRUE;
 	gboolean require_translation = TRUE;
+	gboolean require_content_rating = TRUE;
 	gboolean validate_license = TRUE;
 	gboolean ret;
 	guint length_name_max = 30;
@@ -1125,6 +1126,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		number_para_min = 1;
 		require_sentence_case = FALSE;
 		require_translation = FALSE;
+		require_content_rating = FALSE;
 		switch (as_format_get_kind (format)) {
 		case AS_FORMAT_KIND_METAINFO:
 		case AS_FORMAT_KIND_APPDATA:
@@ -1391,6 +1393,17 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_TAG_MISSING,
 				     "<id> is not present");
+	}
+
+	/* games require a content rating */
+	if (require_content_rating && as_app_has_category (app, "Game")) {
+		GPtrArray *ratings = as_app_get_content_ratings (app);
+		if (ratings->len == 0) {
+			ai_app_validate_add (helper,
+					     AS_PROBLEM_KIND_TAG_MISSING,
+					     "<content_rating> required for game "
+					     "[use https://odrs.gnome.org/oars]");
+		}
 	}
 
 	/* url */
