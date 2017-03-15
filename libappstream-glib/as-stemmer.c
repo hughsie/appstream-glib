@@ -52,7 +52,7 @@ G_DEFINE_TYPE (AsStemmer, as_stemmer, G_TYPE_OBJECT)
  *
  * Returns: A new refcounted string
  **/
-const gchar *
+AsRefString *
 as_stemmer_process (AsStemmer *stemmer, const gchar *value)
 {
 #ifdef HAVE_LIBSTEMMER

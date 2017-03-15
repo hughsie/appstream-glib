@@ -402,7 +402,7 @@ as_content_rating_node_parse (AsContentRating *content_rating, GNode *node,
 		if (as_node_get_tag (c) != AS_TAG_CONTENT_ATTRIBUTE)
 			continue;
 		key = g_slice_new0 (AsContentRatingKey);
-		as_ref_string_assign (&key->id, as_node_get_attribute (c, "id"));
+		as_ref_string_assign (&key->id, as_node_get_attribute_as_refstr (c, "id"));
 		key->value = as_content_rating_value_from_string (as_node_get_data (c));
 		g_ptr_array_add (priv->keys, key);
 	}

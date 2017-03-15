@@ -233,7 +233,7 @@ as_translation_node_parse (AsTranslation *translation, GNode *node,
 
 	tmp = as_node_get_attribute (node, "type");
 	as_translation_set_kind (translation, as_translation_kind_from_string (tmp));
-	as_ref_string_assign (&priv->id, as_node_get_data (node));
+	as_ref_string_assign (&priv->id, as_node_get_data_as_refstr (node));
 	return TRUE;
 }
 

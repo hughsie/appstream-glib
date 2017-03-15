@@ -149,7 +149,7 @@ as_node_attr_find (AsNodeData *data, const gchar *key)
 	return NULL;
 }
 
-static const gchar *
+static AsRefString *
 as_node_attr_lookup (AsNodeData *data, const gchar *key)
 {
 	AsNodeAttr *attr;
@@ -643,7 +643,7 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	current = g_node_append_data (helper->current, data);
 
 	/* transfer the ownership of the comment to the new child */
-	tmp = as_node_get_attribute (helper->current, "@comment-tmp");
+	tmp = as_node_get_attribute_as_refstr (helper->current, "@comment-tmp");
 	if (tmp != NULL) {
 		as_node_add_attribute (current, "@comment", tmp);
 		as_node_remove_attribute (helper->current, "@comment-tmp");
@@ -1079,17 +1079,17 @@ as_node_set_name (AsNode *node, const gchar *name)
 }
 
 /**
- * as_node_get_data:
+ * as_node_get_data_as_refstr: (skip)
  * @node: a #AsNode
  *
  * Gets the node data, e.g. "paragraph text"
  *
  * Return value: string value
  *
- * Since: 0.1.0
+ * Since: 0.6.11
  **/
-const gchar *
-as_node_get_data (const AsNode *node)
+AsRefString *
+as_node_get_data_as_refstr (const AsNode *node)
 {
 	AsNodeData *data;
 	g_return_val_if_fail (node != NULL, NULL);
@@ -1102,6 +1102,22 @@ as_node_get_data (const AsNode *node)
 		return NULL;
 	as_node_cdata_to_raw (data);
 	return data->cdata;
+}
+
+/**
+ * as_node_get_data:
+ * @node: a #AsNode
+ *
+ * Gets the node data, e.g. "paragraph text"
+ *
+ * Return value: string value
+ *
+ * Since: 0.1.0
+ **/
+const gchar *
+as_node_get_data (const AsNode *node)
+{
+	return as_node_get_data_as_refstr (node);
 }
 
 /**
@@ -1254,6 +1270,31 @@ as_node_get_attribute_as_uint (const AsNode *node, const gchar *key)
 }
 
 /**
+ * as_node_get_attribute_as_refstr: (skip)
+ * @node: a #AsNode
+ * @key: the attribute key
+ *
+ * Gets a node attribute, e.g. "false"
+ *
+ * Return value: string value
+ *
+ * Since: 0.6.11
+ **/
+AsRefString *
+as_node_get_attribute_as_refstr (const AsNode *node, const gchar *key)
+{
+	AsNodeData *data;
+
+	g_return_val_if_fail (node != NULL, NULL);
+	g_return_val_if_fail (key != NULL, NULL);
+
+	if (node->data == NULL)
+		return NULL;
+	data = (AsNodeData *) node->data;
+	return as_node_attr_lookup (data, key);
+}
+
+/**
  * as_node_get_attribute:
  * @node: a #AsNode
  * @key: the attribute key
@@ -1267,15 +1308,7 @@ as_node_get_attribute_as_uint (const AsNode *node, const gchar *key)
 const gchar *
 as_node_get_attribute (const AsNode *node, const gchar *key)
 {
-	AsNodeData *data;
-
-	g_return_val_if_fail (node != NULL, NULL);
-	g_return_val_if_fail (key != NULL, NULL);
-
-	if (node->data == NULL)
-		return NULL;
-	data = (AsNodeData *) node->data;
-	return as_node_attr_lookup (data, key);
+	return as_node_get_attribute_as_refstr (node, key);
 }
 
 /**
@@ -1654,8 +1687,8 @@ GHashTable *
 as_node_get_localized (const AsNode *node, const gchar *key)
 {
 	AsNodeData *data;
-	const gchar *xml_lang;
-	const gchar *data_unlocalized;
+	AsRefString *data_unlocalized;
+	AsRefString *xml_lang;
 	const gchar *data_localized;
 	GHashTable *hash = NULL;
 	AsNode *tmp;
@@ -1665,7 +1698,7 @@ as_node_get_localized (const AsNode *node, const gchar *key)
 	tmp = as_node_get_child_node (node, key, NULL, NULL);
 	if (tmp == NULL)
 		return NULL;
-	data_unlocalized = as_node_get_data (tmp);
+	data_unlocalized = as_node_get_data_as_refstr (tmp);
 
 	/* find a node called name */
 	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
@@ -1933,7 +1966,7 @@ as_node_get_localized_unwrap_type_ul (const AsNode *node,
  *
  * Since: 0.5.2
  **/
-gchar *
+AsRefString *
 as_node_fix_locale (const gchar *locale)
 {
 	AsRefString *tmp;

@@ -4468,6 +4468,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			 AsNodeContext *ctx, GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	AsRefString *str;
 	GNode *c;
 	const gchar *tmp;
 	g_autoptr(AsRefString) xml_lang = NULL;
@@ -4496,9 +4497,9 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 
 	/* <pkgname> */
 	case AS_TAG_PKGNAME:
-		tmp = as_node_get_data (n);
-		if (tmp != NULL)
-			g_ptr_array_add (priv->pkgnames, as_ref_string_ref (tmp));
+		str = as_node_get_data_as_refstr (n);
+		if (str != NULL)
+			g_ptr_array_add (priv->pkgnames, as_ref_string_ref (str));
 		break;
 
 	/* <bundle> */
@@ -4554,11 +4555,11 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		xml_lang = as_node_fix_locale (as_node_get_attribute (n, "xml:lang"));
 		if (xml_lang == NULL)
 			break;
-		tmp = as_node_get_data (n);
-		if (tmp != NULL) {
+		str = as_node_get_data_as_refstr (n);
+		if (str != NULL) {
 			g_hash_table_insert (priv->names,
 					     as_ref_string_ref (xml_lang),
-					     as_ref_string_ref (tmp));
+					     as_ref_string_ref (str));
 		}
 		break;
 
@@ -4567,11 +4568,11 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		xml_lang = as_node_fix_locale (as_node_get_attribute (n, "xml:lang"));
 		if (xml_lang == NULL)
 			break;
-		tmp = as_node_get_data (n);
-		if (tmp != NULL) {
+		str = as_node_get_data_as_refstr (n);
+		if (str != NULL) {
 			g_hash_table_insert (priv->comments,
 					     as_ref_string_ref (xml_lang),
-					     as_ref_string_ref (tmp));
+					     as_ref_string_ref (str));
 		}
 		break;
 
@@ -4580,11 +4581,11 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		xml_lang = as_node_fix_locale (as_node_get_attribute (n, "xml:lang"));
 		if (xml_lang == NULL)
 			break;
-		tmp = as_node_get_data (n);
-		if (tmp != NULL) {
+		str = as_node_get_data_as_refstr (n);
+		if (str != NULL) {
 			g_hash_table_insert (priv->developer_names,
 					     as_ref_string_ref (xml_lang),
-					     as_ref_string_ref (tmp));
+					     as_ref_string_ref (str));
 		}
 		break;
 
@@ -4653,7 +4654,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_CATEGORY)
 				continue;
-			tmp = as_node_get_data (c);
+			tmp = as_node_get_data_as_refstr (c);
 			if (tmp == NULL)
 				continue;
 			as_app_add_category (app, tmp);
@@ -4669,11 +4670,11 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_ARCH)
 				continue;
-			tmp = as_node_get_data (c);
-			if (tmp == NULL)
+			str = as_node_get_data_as_refstr (c);
+			if (str == NULL)
 				continue;
 			g_ptr_array_add (priv->architectures,
-					 as_ref_string_ref (tmp));
+					 as_ref_string_ref (str));
 		}
 		if (n->children == NULL)
 			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
@@ -4708,10 +4709,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_KUDO)
 				continue;
-			tmp = as_node_get_data (c);
-			if (tmp == NULL)
+			str = as_node_get_data_as_refstr (c);
+			if (str == NULL)
 				continue;
-			g_ptr_array_add (priv->kudos, as_ref_string_ref (tmp));
+			g_ptr_array_add (priv->kudos, as_ref_string_ref (str));
 		}
 		if (n->children == NULL)
 			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
@@ -4724,10 +4725,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_PERMISSION)
 				continue;
-			tmp = as_node_get_data (c);
-			if (tmp == NULL)
+			str = as_node_get_data_as_refstr (c);
+			if (str == NULL)
 				continue;
-			g_ptr_array_add (priv->permissions, as_ref_string_ref (tmp));
+			g_ptr_array_add (priv->permissions, as_ref_string_ref (str));
 		}
 		if (n->children == NULL)
 			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
@@ -4740,10 +4741,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_VETO)
 				continue;
-			tmp = as_node_get_data (c);
-			if (tmp == NULL)
+			str = as_node_get_data_as_refstr (c);
+			if (str == NULL)
 				continue;
-			g_ptr_array_add (priv->vetos, as_ref_string_ref (tmp));
+			g_ptr_array_add (priv->vetos, as_ref_string_ref (str));
 		}
 		if (n->children == NULL)
 			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
@@ -4756,10 +4757,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_MIMETYPE)
 				continue;
-			tmp = as_node_get_data (c);
-			if (tmp == NULL)
+			str = as_node_get_data_as_refstr (c);
+			if (str == NULL)
 				continue;
-			g_ptr_array_add (priv->mimetypes, as_ref_string_ref (tmp));
+			g_ptr_array_add (priv->mimetypes, as_ref_string_ref (str));
 		}
 		if (n->children == NULL)
 			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
@@ -4771,7 +4772,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			priv->problems |= AS_APP_PROBLEM_TRANSLATED_LICENSE;
 			break;
 		}
-		as_ref_string_assign (&priv->project_license, as_node_get_data (n));
+		as_ref_string_assign (&priv->project_license, as_node_get_data_as_refstr (n));
 		break;
 
 	/* <project_license> */
@@ -4817,19 +4818,19 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 
 	/* <compulsory_for_desktop> */
 	case AS_TAG_COMPULSORY_FOR_DESKTOP:
-		tmp = as_node_get_data (n);
-		if (tmp == NULL)
+		str = as_node_get_data_as_refstr (n);
+		if (str == NULL)
 			break;
 		g_ptr_array_add (priv->compulsory_for_desktops,
-				 as_ref_string_ref (tmp));
+				 as_ref_string_ref (str));
 		break;
 
 	/* <extends> */
 	case AS_TAG_EXTENDS:
-		tmp = as_node_get_data (n);
-		if (tmp == NULL)
+		str = as_node_get_data_as_refstr (n);
+		if (str == NULL)
 			break;
-		g_ptr_array_add (priv->extends, as_ref_string_ref (tmp));
+		g_ptr_array_add (priv->extends, as_ref_string_ref (str));
 		break;
 
 	/* <screenshots> */
@@ -4936,8 +4937,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 			AsRefString *value;
 			if (as_node_get_tag (c) != AS_TAG_VALUE)
 				continue;
-			key = as_node_get_attribute (c, "key");
-			value = as_node_get_data (c);
+			key = as_node_get_attribute_as_refstr (c, "key");
+			value = as_node_get_data_as_refstr (c);
 			if (value == NULL) {
 				g_hash_table_insert (priv->metadata,
 						     as_ref_string_ref (key),

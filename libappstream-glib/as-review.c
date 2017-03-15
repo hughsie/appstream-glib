@@ -957,8 +957,8 @@ as_review_node_parse (AsReview *review, GNode *node,
 				AsRefString *value;
 				if (as_node_get_tag (c2) != AS_TAG_VALUE)
 					continue;
-				key = as_node_get_attribute (c2, "key");
-				value = as_node_get_data (c2);
+				key = as_node_get_attribute_as_refstr (c2, "key");
+				value = as_node_get_data_as_refstr (c2);
 				if (value == NULL) {
 					g_hash_table_insert (priv->metadata,
 							     as_ref_string_ref (key),

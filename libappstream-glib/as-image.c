@@ -454,8 +454,8 @@ as_image_node_parse (AsImage *image, GNode *node,
 		as_image_set_kind (image, AS_IMAGE_KIND_SOURCE);
 	else
 		as_image_set_kind (image, as_image_kind_from_string (tmp));
-	as_ref_string_assign (&priv->url, as_node_get_data (node));
-	as_ref_string_assign (&priv->locale, as_node_get_attribute (node, "xml:lang"));
+	as_ref_string_assign (&priv->url, as_node_get_data_as_refstr (node));
+	as_ref_string_assign (&priv->locale, as_node_get_attribute_as_refstr (node, "xml:lang"));
 	return TRUE;
 }
 

@@ -60,7 +60,11 @@ void		 as_node_context_set_media_base_url (AsNodeContext	*ctx,
 
 AsRefString	*as_node_reflow_text		(const gchar	*text,
 						 gssize		 text_len);
-gchar		*as_node_fix_locale		(const gchar	*locale);
+AsRefString	*as_node_fix_locale		(const gchar	*locale);
+
+AsRefString	*as_node_get_data_as_refstr	(const AsNode	*node);
+AsRefString	*as_node_get_attribute_as_refstr (const AsNode	*node,
+						const gchar	*key);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsNodeContext, as_node_context_free)
 

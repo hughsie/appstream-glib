@@ -341,8 +341,8 @@ as_checksum_node_parse (AsChecksum *checksum, GNode *node,
 	tmp = as_node_get_attribute (node, "target");
 	if (tmp != NULL)
 		priv->target = as_checksum_target_from_string (tmp);
-	as_ref_string_assign (&priv->filename, as_node_get_attribute (node, "filename"));
-	as_ref_string_assign (&priv->value, as_node_get_data (node));
+	as_ref_string_assign (&priv->filename, as_node_get_attribute_as_refstr (node, "filename"));
+	as_ref_string_assign (&priv->value, as_node_get_data_as_refstr (node));
 	return TRUE;
 }
 

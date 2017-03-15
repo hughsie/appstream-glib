@@ -743,13 +743,14 @@ as_release_node_parse (AsRelease *release, GNode *node,
 	if (priv->locations != NULL)
 		g_ptr_array_set_size (priv->locations, 0);
 	for (n = node->children; n != NULL; n = n->next) {
+		AsRefString *str;
 		if (as_node_get_tag (n) != AS_TAG_LOCATION)
 			continue;
-		tmp = as_node_get_data (n);
-		if (tmp == NULL)
+		str = as_node_get_data_as_refstr (n);
+		if (str == NULL)
 			continue;
 		as_release_ensure_locations (release);
-		g_ptr_array_add (priv->locations, as_ref_string_ref (tmp));
+		g_ptr_array_add (priv->locations, as_ref_string_ref (str));
 	}
 
 	/* get optional checksums */

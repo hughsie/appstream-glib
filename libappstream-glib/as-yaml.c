@@ -195,7 +195,7 @@ as_yaml_node_get_kind (AsNode *node)
 }
 
 static AsYamlNode *
-as_yaml_node_new (AsYamlNodeKind kind, const gchar *id)
+as_yaml_node_new (AsYamlNodeKind kind, AsRefString *id)
 {
 	AsYamlNode *ym;
 	ym = g_slice_new0 (AsYamlNode);

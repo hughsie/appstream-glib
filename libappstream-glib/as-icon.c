@@ -568,7 +568,7 @@ as_icon_node_parse_embedded (AsIcon *icon, GNode *n, GError **error)
 				     "embedded icons needs <name>");
 		return FALSE;
 	}
-	as_ref_string_assign (&priv->name, as_node_get_data (c));
+	as_ref_string_assign (&priv->name, as_node_get_data_as_refstr (c));
 
 	/* parse the Base64 data */
 	c = as_node_find (n, "filecontent");

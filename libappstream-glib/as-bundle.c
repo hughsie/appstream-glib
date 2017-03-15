@@ -324,11 +324,11 @@ as_bundle_node_parse (AsBundle *bundle, GNode *node,
 	tmp = as_node_get_attribute (node, "type");
 	as_bundle_set_kind (bundle, as_bundle_kind_from_string (tmp));
 
-	as_ref_string_assign (&priv->id, as_node_get_data (node));
+	as_ref_string_assign (&priv->id, as_node_get_data_as_refstr (node));
 
 	/* optional */
-	as_ref_string_assign (&priv->runtime, as_node_get_attribute (node, "runtime"));
-	as_ref_string_assign (&priv->sdk, as_node_get_attribute (node, "sdk"));
+	as_ref_string_assign (&priv->runtime, as_node_get_attribute_as_refstr (node, "runtime"));
+	as_ref_string_assign (&priv->sdk, as_node_get_attribute_as_refstr (node, "sdk"));
 
 	return TRUE;
 }

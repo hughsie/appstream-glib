@@ -326,7 +326,7 @@ as_provide_node_parse (AsProvide *provide, GNode *node,
 	} else {
 		priv->kind = as_provide_kind_from_string (as_node_get_name (node));
 	}
-	as_ref_string_assign (&priv->value, as_node_get_data (node));
+	as_ref_string_assign (&priv->value, as_node_get_data_as_refstr (node));
 	return TRUE;
 }
 

@@ -157,9 +157,9 @@ as_ref_string_new_with_length (const gchar *str, gsize len)
 	if (g_hash_table_contains (as_ref_string_get_hash_safe (), str)) {
 		hdr = AS_REFPTR_TO_HEADER (str);
 		if (hdr->refcnt < 0)
-			return str;
+			return (AsRefString *) str;
 		g_atomic_int_inc (&hdr->refcnt);
-		return str;
+		return (AsRefString *) str;
 	}
 
 	g_clear_pointer (&locker, g_mutex_locker_free);
