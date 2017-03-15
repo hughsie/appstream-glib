@@ -246,6 +246,7 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			const gchar *tmpdir,
 			GError **error)
 {
+	gboolean found = FALSE;
 	guint i;
 	const gchar *app_dirs[] = {
 		"/usr/share/applications",
@@ -263,7 +264,18 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			if (!asb_plugin_desktop_refine (plugin, pkg, fn,
 							app, tmpdir, error))
 				return FALSE;
+			found = TRUE;
 		}
+	}
+
+	/* required */
+	if (!found && as_app_get_kind (AS_APP (app)) == AS_APP_KIND_DESKTOP) {
+		g_set_error (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_FAILED,
+			     "a desktop file is required for %s",
+			     as_app_get_id (AS_APP (app)));
+		return FALSE;
 	}
 
 	return TRUE;
