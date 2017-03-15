@@ -1060,7 +1060,8 @@ as_utils_install_icon (AsUtilsLocation location,
 		g_set_error (error,
 			     AS_UTILS_ERROR,
 			     AS_UTILS_ERROR_FAILED,
-			     "Cannot open: %s",
+			     "Cannot open %s: %s",
+			     filename,
 			     archive_error_string (arch));
 		goto out;
 	}
