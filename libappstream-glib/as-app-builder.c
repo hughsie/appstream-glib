@@ -507,28 +507,31 @@ as_app_builder_search_translations_pak (AsAppBuilderContext *ctx,
 		g_autoptr(GDir) dir = NULL;
 		g_autofree gchar *path = NULL;
 		AsTranslation *t = g_ptr_array_index (ctx->translations, i);
+		const gchar *libdirs[] = { "lib64", "lib", NULL };
 
 		/* required */
 		if (as_translation_get_id (t) == NULL)
 			continue;
-		path = g_build_filename (prefix,
-					 "lib64",
-					 as_translation_get_id (t),
-					 "locales",
-					 NULL);
-		if (!g_file_test (path, G_FILE_TEST_EXISTS))
-			return TRUE;
-		dir = g_dir_open (path, 0, error);
-		if (dir == NULL)
-			return FALSE;
-
-		/* parse file for sanity */
-		while ((tmp = g_dir_read_name (dir)) != 0) {
-			g_autofree gchar *locale = NULL;
-			g_autofree gchar *fn = g_build_filename (path, tmp, NULL);
-			locale = as_app_builder_get_locale_from_pak_fn (tmp);
-			if (!as_app_builder_parse_file_pak (ctx, locale, fn, error))
+		for (guint j = 0; libdirs[j] != NULL; j++) {
+			path = g_build_filename (prefix,
+						 libdirs[j],
+						 as_translation_get_id (t),
+						 "locales",
+						 NULL);
+			if (!g_file_test (path, G_FILE_TEST_EXISTS))
+				continue;
+			dir = g_dir_open (path, 0, error);
+			if (dir == NULL)
 				return FALSE;
+
+			/* parse file for sanity */
+			while ((tmp = g_dir_read_name (dir)) != 0) {
+				g_autofree gchar *locale = NULL;
+				g_autofree gchar *fn = g_build_filename (path, tmp, NULL);
+				locale = as_app_builder_get_locale_from_pak_fn (tmp);
+				if (!as_app_builder_parse_file_pak (ctx, locale, fn, error))
+					return FALSE;
+			}
 		}
 	}
 	return TRUE;
