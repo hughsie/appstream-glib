@@ -537,6 +537,77 @@ as_app_builder_search_translations_pak (AsAppBuilderContext *ctx,
 	return TRUE;
 }
 
+static gchar *
+as_app_builder_get_locale_from_xpi_fn (const gchar *basename)
+{
+	gchar *locale;
+	gchar *str;
+
+	/* remove prefix */
+	if (g_str_has_prefix (basename, "langpack-"))
+		basename += 9;
+
+	/* remove suffix */
+	locale = g_strdup (basename);
+	str = g_strrstr (locale, "@");
+	if (str != NULL)
+		*str = '\0';
+	g_strdelimit (locale, "-", '_');
+	return locale;
+}
+
+static gboolean
+as_app_builder_parse_file_xpi (AsAppBuilderContext *ctx,
+			       const gchar *locale,
+			       const gchar *filename,
+			       GError **error)
+{
+	AsAppBuilderEntry *entry = as_app_builder_entry_new ();
+	entry->locale = g_strdup (locale);
+	entry->nstrings = 100;	/* FIXME: parse info */
+	as_app_builder_add_entry (ctx, entry);
+	return TRUE;
+}
+
+static gboolean
+as_app_builder_search_translations_xpi (AsAppBuilderContext *ctx,
+					const gchar *prefix,
+					AsAppBuilderFlags flags,
+					GError **error)
+{
+	const gchar *tmp;
+	g_autofree gchar *path = NULL;
+	g_autoptr(GDir) dir = NULL;
+	const gchar *libdirs[] = { "lib64", "lib", NULL };
+
+	/* list files */
+	for (guint j = 0; libdirs[j] != NULL; j++) {
+		path = g_build_filename (prefix,
+					 libdirs[j],
+					 "firefox",
+					 "langpacks",
+					 NULL);
+		if (!g_file_test (path, G_FILE_TEST_EXISTS))
+			continue;
+		dir = g_dir_open (path, 0, error);
+		if (dir == NULL)
+			return FALSE;
+
+		/* parse file for sanity */
+		while ((tmp = g_dir_read_name (dir)) != 0) {
+			g_autofree gchar *locale = NULL;
+			g_autofree gchar *fn = g_build_filename (path, tmp, NULL);
+			if (g_file_test (fn, G_FILE_TEST_IS_SYMLINK))
+				continue;
+			locale = as_app_builder_get_locale_from_xpi_fn (tmp);
+			if (!as_app_builder_parse_file_xpi (ctx, locale, fn, error))
+				return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
 static gint
 as_app_builder_entry_sort_cb (gconstpointer a, gconstpointer b)
 {
@@ -598,6 +669,10 @@ as_app_builder_search_translations (AsApp *app,
 
 	/* search for Google .pak files */
 	if (!as_app_builder_search_translations_pak (ctx, prefix, flags, error))
+		return FALSE;
+
+	/* search for Mozilla .xpi files */
+	if (!as_app_builder_search_translations_xpi (ctx, prefix, flags, error))
 		return FALSE;
 
 	/* calculate percentages */
