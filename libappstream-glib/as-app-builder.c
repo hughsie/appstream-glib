@@ -95,6 +95,14 @@ typedef struct {
 	guint32		 trans_sysdep_tab_offset;
 } AsAppBuilderGettextHeader;
 
+static void
+as_app_builder_add_entry (AsAppBuilderContext *ctx, AsAppBuilderEntry *entry)
+{
+	if (entry->nstrings > ctx->max_nstrings)
+		ctx->max_nstrings = entry->nstrings;
+	ctx->data = g_list_prepend (ctx->data, entry);
+}
+
 static gboolean
 as_app_builder_parse_file_gettext (AsAppBuilderContext *ctx,
 				   const gchar *locale,
@@ -129,9 +137,7 @@ as_app_builder_parse_file_gettext (AsAppBuilderContext *ctx,
 		entry->nstrings = GUINT32_SWAP_LE_BE (h.nstrings);
 	else
 		entry->nstrings = h.nstrings;
-	if (entry->nstrings > ctx->max_nstrings)
-		ctx->max_nstrings = entry->nstrings;
-	ctx->data = g_list_prepend (ctx->data, entry);
+	as_app_builder_add_entry (ctx, entry);
 	return TRUE;
 }
 
@@ -279,9 +285,7 @@ as_app_builder_parse_data_qt (AsAppBuilderContext *ctx,
 	entry = as_app_builder_entry_new ();
 	entry->locale = g_strdup (locale);
 	entry->nstrings = nstrings;
-	if (entry->nstrings > ctx->max_nstrings)
-		ctx->max_nstrings = entry->nstrings;
-	ctx->data = g_list_prepend (ctx->data, entry);
+	as_app_builder_add_entry (ctx, entry);
 }
 
 static gboolean
@@ -485,9 +489,7 @@ as_app_builder_parse_file_pak (AsAppBuilderContext *ctx,
 	entry = as_app_builder_entry_new ();
 	entry->locale = g_strdup (locale);
 	entry->nstrings = nr_resources;
-	if (entry->nstrings > ctx->max_nstrings)
-		ctx->max_nstrings = entry->nstrings;
-	ctx->data = g_list_prepend (ctx->data, entry);
+	as_app_builder_add_entry (ctx, entry);
 	return TRUE;
 }
 
