@@ -1044,6 +1044,8 @@ as_app_validate_is_content_license_id (const gchar *license_id)
 		return TRUE;
 	if (g_strcmp0 (license_id, "@FSFAP") == 0)
 		return TRUE;
+	if (g_strcmp0 (license_id, "@MIT") == 0)
+		return TRUE;
 	if (g_strcmp0 (license_id, "&") == 0)
 		return TRUE;
 	if (g_strcmp0 (license_id, "|") == 0)
