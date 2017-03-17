@@ -1574,6 +1574,7 @@ as_utils_version_from_uint16 (guint16 val, AsVersionParseFlag flags)
 gchar *
 as_utils_version_parse (const gchar *version)
 {
+	const gchar *version_noprefix = version;
 	gchar *endptr = NULL;
 	guint64 tmp;
 	guint base;
@@ -1590,7 +1591,7 @@ as_utils_version_parse (const gchar *version)
 
 	/* convert 0x prefixed strings to dotted decimal */
 	if (g_str_has_prefix (version, "0x")) {
-		version += 2;
+		version_noprefix += 2;
 		base = 16;
 	} else {
 		/* for non-numeric content, just return the string */
@@ -1602,10 +1603,10 @@ as_utils_version_parse (const gchar *version)
 	}
 
 	/* convert */
-	tmp = g_ascii_strtoull (version, &endptr, base);
+	tmp = g_ascii_strtoull (version_noprefix, &endptr, base);
 	if (endptr != NULL && endptr[0] != '\0')
 		return g_strdup (version);
-	if (tmp == 0 || tmp < 0xff)
+	if (tmp == 0)
 		return g_strdup (version);
 	return as_utils_version_from_uint32 ((guint32) tmp, AS_VERSION_PARSE_FLAG_USE_TRIPLET);
 }
