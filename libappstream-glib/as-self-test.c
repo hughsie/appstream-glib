@@ -4006,11 +4006,17 @@ as_test_utils_version_func (void)
 		AsVersionParseFlag flags;
 	} version_from_uint32[] = {
 		{ 0x0,		"0.0.0.0",	AS_VERSION_PARSE_FLAG_NONE },
+		{ 0x9,		"0.0.0.9",	AS_VERSION_PARSE_FLAG_NONE },
+		{ 0xf,		"0.0.0.15",	AS_VERSION_PARSE_FLAG_NONE },
+		{ 0x1a,		"0.0.0.26",	AS_VERSION_PARSE_FLAG_NONE },
 		{ 0xff,		"0.0.0.255",	AS_VERSION_PARSE_FLAG_NONE },
 		{ 0xff01,	"0.0.255.1",	AS_VERSION_PARSE_FLAG_NONE },
 		{ 0xff0001,	"0.255.0.1",	AS_VERSION_PARSE_FLAG_NONE },
 		{ 0xff000100,	"255.0.1.0",	AS_VERSION_PARSE_FLAG_NONE },
 		{ 0x0,		"0.0.0",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
+		{ 0x9,		"0.0.9",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
+		{ 0xf,		"0.0.15",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
+		{ 0x1a,		"0.0.26",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
 		{ 0xff,		"0.0.255",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
 		{ 0xff01,	"0.0.65281",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
 		{ 0xff0001,	"0.255.1",	AS_VERSION_PARSE_FLAG_USE_TRIPLET },
@@ -4022,6 +4028,15 @@ as_test_utils_version_func (void)
 		const gchar *new;
 	} version_parse[] = {
 		{ "0",		"0" },
+		{ "9",		"9" },
+		{ "0x9",	"0x9" },
+		{ "15",		"15" },
+		{ "0xf",	"0xf" },
+		{ "0x0f",	"0x0f" },
+		{ "26",		"26" },
+		{ "0x1a",	"0x1a" },
+		{ "255",	"0.0.255" },
+		{ "0xff",	"0.0.255" },
 		{ "257",	"0.0.257" },
 		{ "1.2.3",	"1.2.3" },
 		{ "0xff0001",	"0.255.1" },
