@@ -7,6 +7,7 @@
 # kelemeng <kelemeng@ubuntu.com>, 2016
 # Meskó Balázs <meskobalazs@gmail.com>, 2016. #zanata
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
+# Zoltan Hoppar <zoltanh721@fedoraproject.org>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib 0.6.7\n"
@@ -15,8 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-08-19 06:28-0400\n"
-"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
+"PO-Revision-Date: 2017-03-19 05:03-0400\n"
+"Last-Translator: Zoltan Hoppar <zoltanh721@fedoraproject.org>\n"
 "Language-Team: Hungarian (http://www.transifex.com/freedesktop/appstream-"
 "glib/language/hu/)\n"
 "Language: hu\n"
@@ -301,7 +302,7 @@ msgstr "Hozzáadva"
 #. TRANSLATORS: this is when a device ctrl+c's a watch
 #: client/as-util.c:4141
 msgid "Cancelled"
-msgstr ""
+msgstr "Visszavonva"
 
 #. TRANSLATORS: this is the --nonet argument
 #: client/as-util.c:4170
@@ -351,12 +352,12 @@ msgstr "AppStream alkalmazások keresése csomagnév alapján"
 #. TRANSLATORS: command description
 #: client/as-util.c:4245
 msgid "Show all installed AppStream applications"
-msgstr ""
+msgstr "Megjeleníti a telepített AppStream alkalmazásokat"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4251
 msgid "Search for AppStream applications by category name"
-msgstr ""
+msgstr "Appstream alkalmazások keresése kategória nevek alapján"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4257
@@ -436,12 +437,12 @@ msgstr "Képernyőképek cseréje a forrásfájlban"
 #. TRANSLATORS: command description
 #: client/as-util.c:4347
 msgid "Add a provide to a source file"
-msgstr ""
+msgstr "Hozzáadás a forrásfájlhoz fájlt"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4353
 msgid "Add a language to a source file"
-msgstr ""
+msgstr "Nyelv hozzáadása a forrásfájlhoz"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4359
@@ -491,7 +492,7 @@ msgstr "Fájl importálása AppStream jelölőnyelvbe"
 #. TRANSLATORS: command description
 #: client/as-util.c:4413
 msgid "Watch AppStream locations for changes"
-msgstr ""
+msgstr "AppStream helyek változásainak figyelése"
 
 #. TRANSLATORS: program name
 #: client/as-util.c:4426

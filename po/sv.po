@@ -7,6 +7,7 @@
 # sebras <sebras@gmail.com>, 2015-2016
 # Göran Uddeborg <goeran@uddeborg.se>, 2016. #zanata
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib 0.6.7\n"
@@ -15,8 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-12-19 03:11-0500\n"
-"Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
+"PO-Revision-Date: 2017-03-15 08:25-0400\n"
+"Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/freedesktop/appstream-glib/"
 "language/sv/)\n"
 "Language: sv\n"
@@ -36,22 +37,22 @@ msgstr "Lägg till ett cache-ID till varje komponent"
 #. TRANSLATORS: command line option
 #: client/as-builder.c:96
 msgid "Include failed results in the output"
-msgstr "Inkludera misslcyakdes resultat i utmatningen"
+msgstr "Inkludera misslyckade resultat i utmatningen"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:99
 msgid "Add HiDPI icons to the tarball"
-msgstr "Lägg till HiDPI-ikonder till tar-arkivet"
+msgstr "Lägg till HiDPI-ikoner till tar-arkivet"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:102
 msgid "Add encoded icons to the XML"
-msgstr "Lägg till kodade ikonder till XML:en"
+msgstr "Lägg till kodade ikoner till XML:en"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:105
 msgid "Do not compress the icons into a tarball"
-msgstr "Komprimera inte ikonderna till ett tar-arkiv"
+msgstr "Komprimera inte ikonerna till ett tar-arkiv"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:108
@@ -76,7 +77,7 @@ msgstr "Sätt utdatakatalogen"
 #. TRANSLATORS: command line option
 #: client/as-builder.c:120 client/as-compose.c:349
 msgid "Set the icons directory"
-msgstr "Ställ in ikonernkatalogen"
+msgstr "Ställ in ikonkatalogen"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:123
@@ -351,7 +352,7 @@ msgstr "Sök efter AppStream-program efter paketnamn"
 #. TRANSLATORS: command description
 #: client/as-util.c:4245
 msgid "Show all installed AppStream applications"
-msgstr "Visa endast installerade AppStream-program"
+msgstr "Visa alla installerade AppStream-program"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4251
@@ -451,7 +452,7 @@ msgstr "Spegla skärmdumparna från uppström"
 #. TRANSLATORS: command description
 #: client/as-util.c:4365
 msgid "Mirror local firmware files"
-msgstr "Spegla lokala fastmjukvarufiler"
+msgstr "Spegla lokala fastprogramvarufiler"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4371
@@ -461,7 +462,7 @@ msgstr "Bädda in extra metadata från en extern fil"
 #. TRANSLATORS: command description
 #: client/as-util.c:4377
 msgid "Compare the contents of two AppStream files"
-msgstr "Jämför innehåller från två AppStream-filer"
+msgstr "Jämför innehåll från två AppStream-filer"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4383

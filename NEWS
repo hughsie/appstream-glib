@@ -1,3 +1,19 @@
+Version 0.6.11
+~~~~~~~~~~~~~~
+Released: 2017-03-20
+
+New Features:
+ - Add initial support for Mozilla .xpi translations (Richard Hughes)
+ - Make content_rating required for any component with a 'Game' category (Richard Hughes)
+
+Bugfixes:
+ - Don't crash when using 'appstream-util show-search-tokens' (Richard Hughes)
+ - Fix a problem with appstream-compose with older AppData files (Richard Hughes)
+ - Fix compile with -Wdiscarded-qualifiers (Richard Hughes)
+ - Parse small version numbers correctly (Richard Hughes)
+ - Revert "Enable the stack protection in local builds" (Kalev Lember)
+ - Show a warning if a desktop file is not found when required (Richard Hughes)
+
 Version 0.6.10
 ~~~~~~~~~~~~~~
 Released: 2017-03-06
