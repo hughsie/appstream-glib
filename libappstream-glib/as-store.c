@@ -929,7 +929,7 @@ as_store_remove_app (AsStore *store, AsApp *app)
 	g_signal_emit (store, signals[SIGNAL_APP_REMOVED], 0, app);
 
 	/* only remove this specific unique app */
-	apps = g_hash_table_lookup (priv->hash_id, g_strdup (as_app_get_id (app)));
+	apps = g_hash_table_lookup (priv->hash_id, as_app_get_id (app));
 	if (apps != NULL) {
 		g_ptr_array_remove (apps, app);
 
