@@ -1078,7 +1078,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 		if (apps == NULL) {
 			apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 			g_hash_table_insert (priv->hash_merge_id,
-					     (gpointer) as_app_get_id (app),
+					     g_strdup (as_app_get_id (app)),
 					     apps);
 		}
 		g_debug ("added %s merge component: %s",
@@ -1260,7 +1260,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 	if (apps == NULL) {
 		apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 		g_hash_table_insert (priv->hash_id,
-				     (gpointer) as_app_get_id (app),
+				     g_strdup (as_app_get_id (app)),
 				     apps);
 	}
 	g_ptr_array_add (apps, g_object_ref (app));
@@ -1268,7 +1268,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 	/* success, add to array */
 	g_ptr_array_add (priv->array, g_object_ref (app));
 	g_hash_table_insert (priv->hash_unique_id,
-			     (gpointer) as_app_get_unique_id (app),
+			     g_strdup (as_app_get_unique_id (app)),
 			     g_object_ref (app));
 	pkgnames = as_app_get_pkgnames (app);
 	for (i = 0; i < pkgnames->len; i++) {
@@ -3472,15 +3472,15 @@ as_store_init (AsStore *store)
 							NULL);
 	priv->hash_id = g_hash_table_new_full (g_str_hash,
 					       g_str_equal,
-					       NULL,
+					       g_free,
 					       (GDestroyNotify) g_ptr_array_unref);
 	priv->hash_merge_id = g_hash_table_new_full (g_str_hash,
 						     g_str_equal,
-						     NULL,
+						     g_free,
 						     (GDestroyNotify) g_ptr_array_unref);
 	priv->hash_unique_id = g_hash_table_new_full (g_str_hash,
 						      g_str_equal,
-						      NULL,
+						      g_free,
 						      g_object_unref);
 	priv->hash_pkgname = g_hash_table_new_full (g_str_hash,
 						    g_str_equal,
