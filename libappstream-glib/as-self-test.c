@@ -5126,6 +5126,43 @@ as_test_store_merge_replace_func (void)
 	g_assert (!as_app_has_category (app2, "Family"));
 }
 
+static void
+as_test_store_merge_then_replace_func (void)
+{
+	g_autoptr (AsApp) app1 = NULL;
+	g_autoptr (AsApp) app2 = NULL;
+	g_autoptr (AsApp) app3 = NULL;
+	g_autoptr (AsStore) store = NULL;
+
+	store = as_store_new ();
+
+	/* this test case checks that a memory error using app names as keys is fixed */
+
+	/* add app */
+	app1 = as_app_new ();
+	as_app_set_id (app1, "org.gnome.Software.desktop");
+	_as_app_add_format_kind (app1, AS_FORMAT_KIND_DESKTOP);
+	as_app_set_priority (app1, 0);
+	as_store_add_app (store, app1);
+	g_clear_object (&app1);
+
+	/* add app that merges with the first */
+	app2 = as_app_new ();
+	as_app_set_id (app2, "org.gnome.Software.desktop");
+	_as_app_add_format_kind (app2, AS_FORMAT_KIND_DESKTOP);
+	as_app_set_priority (app2, 0);
+	as_store_add_app (store, app2);
+	g_clear_object (&app2);
+
+	/* add app that replaces the second */
+	app3 = as_app_new ();
+	as_app_set_id (app3, "org.gnome.Software.desktop");
+	_as_app_add_format_kind (app3, AS_FORMAT_KIND_DESKTOP);
+	as_app_set_priority (app3, 1);
+	as_store_add_app (store, app3);
+	g_clear_object (&app3);
+}
+
 /* shows the unique-id globbing functions at work */
 static void
 as_test_utils_unique_id_hash_func (void)
@@ -5313,6 +5350,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{unique}", as_test_store_unique_func);
 	g_test_add_func ("/AppStream/store{merge}", as_test_store_merge_func);
 	g_test_add_func ("/AppStream/store{merge-replace}", as_test_store_merge_replace_func);
+	g_test_add_func ("/AppStream/store{merge-then-replace}", as_test_store_merge_then_replace_func);
 	g_test_add_func ("/AppStream/store{empty}", as_test_store_empty_func);
 	if (g_test_slow ()) {
 		g_test_add_func ("/AppStream/store{auto-reload-dir}", as_test_store_auto_reload_dir_func);
