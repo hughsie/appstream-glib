@@ -879,6 +879,29 @@ as_app_validate_release (AsApp *app,
 }
 
 static gboolean
+as_app_validate_kudos (AsApp *app, AsAppValidateHelper *helper, GError **error)
+{
+	GPtrArray *kudos = as_app_get_kudos (app);
+	for (guint i = 0; i < kudos->len; i++) {
+		const gchar *kudo = g_ptr_array_index (kudos, i);
+		const gchar *valid[] = { "AppMenu",
+					 "HiDpiIcon",
+					 "HighContrast",
+					 "ModernToolkit",
+					 "Notifications",
+					 "SearchProvider",
+					 "UserDocs",
+					 NULL };
+		if (!g_strv_contains (valid, kudo)) {
+			ai_app_validate_add (helper,
+					     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
+					     "<kudo> is invalid [%s]", kudo);
+		}
+	}
+	return TRUE;
+}
+
+static gboolean
 as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **error)
 {
 	GPtrArray *releases;
@@ -1436,6 +1459,10 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 
 	/* releases */
 	if (!as_app_validate_releases (app, helper, error))
+		return NULL;
+
+	/* kudos */
+	if (!as_app_validate_kudos (app, helper, error))
 		return NULL;
 
 	/* name */
