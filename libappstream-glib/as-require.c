@@ -339,34 +339,52 @@ as_require_version_compare (AsRequire *require,
 {
 	AsRequirePrivate *priv = GET_PRIVATE (require);
 	gboolean ret = FALSE;
+	gint rc = 0;
 
 	switch (priv->compare) {
 	case AS_REQUIRE_COMPARE_EQ:
-		ret = as_utils_vercmp (version, priv->version) == 0;
+		rc = as_utils_vercmp (version, priv->version);
+		ret = rc == 0;
 		break;
 	case AS_REQUIRE_COMPARE_NE:
-		ret = as_utils_vercmp (version, priv->version) != 0;
+		rc = as_utils_vercmp (version, priv->version);
+		ret = rc != 0;
 		break;
 	case AS_REQUIRE_COMPARE_LT:
-		ret = as_utils_vercmp (version, priv->version) < 0;
+		rc = as_utils_vercmp (version, priv->version);
+		ret = rc < 0;
 		break;
 	case AS_REQUIRE_COMPARE_GT:
-		ret = as_utils_vercmp (version, priv->version) > 0;
+		rc = as_utils_vercmp (version, priv->version);
+		ret = rc > 0;
 		break;
 	case AS_REQUIRE_COMPARE_LE:
-		ret = as_utils_vercmp (version, priv->version) <= 0;
+		rc = as_utils_vercmp (version, priv->version);
+		ret = rc <= 0;
 		break;
 	case AS_REQUIRE_COMPARE_GE:
-		ret = as_utils_vercmp (version, priv->version) >= 0;
+		rc = as_utils_vercmp (version, priv->version);
+		ret = rc >= 0;
 		break;
 	case AS_REQUIRE_COMPARE_GLOB:
-		ret = fnmatch (version, priv->version, 0) == 0;
+		ret = fnmatch (priv->version, version, 0) == 0;
 		break;
 	case AS_REQUIRE_COMPARE_REGEX:
-		ret = g_regex_match_simple (version, priv->version, 0, 0);
+		ret = g_regex_match_simple (priv->version, version, 0, 0);
 		break;
 	default:
 		break;
+	}
+
+	/* could not compare */
+	if (rc == G_MAXINT) {
+		g_set_error (error,
+			     AS_UTILS_ERROR,
+			     AS_UTILS_ERROR_FAILED,
+			     "failed to compare [%s] and [%s]",
+			     priv->version,
+			     version);
+		return FALSE;
 	}
 
 	/* set error */

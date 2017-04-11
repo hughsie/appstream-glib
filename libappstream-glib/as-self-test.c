@@ -1308,15 +1308,29 @@ as_test_require_func (void)
 	require = as_require_new ();
 	as_require_set_version (require, "0.1.2");
 	as_require_set_compare (require, AS_REQUIRE_COMPARE_EQ);
-	g_assert (as_require_version_compare (require, "0.1.2", NULL));
+	ret = as_require_version_compare (require, "0.1.2", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	as_require_set_compare (require, AS_REQUIRE_COMPARE_LT);
-	g_assert (as_require_version_compare (require, "0.1.1", NULL));
+	ret = as_require_version_compare (require, "0.1.1", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 	as_require_set_compare (require, AS_REQUIRE_COMPARE_LE);
-	g_assert (as_require_version_compare (require, "0.1.2", NULL));
+	ret = as_require_version_compare (require, "0.1.2", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	as_require_set_version (require, "0.1.?");
 	as_require_set_compare (require, AS_REQUIRE_COMPARE_GLOB);
-	g_assert (as_require_version_compare (require, "0.?.*", NULL));
+	ret = as_require_version_compare (require, "0.1.9", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	as_require_set_version (require, "0.1.[0-9]");
 	as_require_set_compare (require, AS_REQUIRE_COMPARE_REGEX);
-	g_assert (as_require_version_compare (require, "0.1.[0-9]", NULL));
+	ret = as_require_version_compare (require, "0.1.9", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 }
 
 static void
@@ -4789,6 +4803,7 @@ as_test_utils_vercmp_func (void)
 {
 	/* same */
 	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.3"), ==, 0);
+	g_assert_cmpint (as_utils_vercmp ("001.002.003", "001.002.003"), ==, 0);
 
 	/* same, not dotted decimal */
 	g_assert_cmpint (as_utils_vercmp ("1.2.3", "0x1020003"), ==, 0);
@@ -4796,7 +4811,9 @@ as_test_utils_vercmp_func (void)
 
 	/* upgrade and downgrade */
 	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.4"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("001.002.000", "001.002.009"), <, 0);
 	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.2"), >, 0);
+	g_assert_cmpint (as_utils_vercmp ("001.002.009", "001.002.000"), >, 0);
 
 	/* unequal depth */
 	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.3.1"), <, 0);
