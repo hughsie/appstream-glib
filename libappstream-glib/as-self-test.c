@@ -5251,7 +5251,7 @@ as_test_utils_unique_id_hash_safe_func (void)
 	/* add to hash table using the unique ID as a key */
 	hash = g_hash_table_new ((GHashFunc) as_utils_unique_id_hash,
 				 (GEqualFunc) as_utils_unique_id_equal);
-	g_hash_table_insert (hash, "dave", app);
+	g_hash_table_insert (hash, (gpointer) "dave", app);
 
 	/* get with exact key */
 	found = g_hash_table_lookup (hash, "dave");
