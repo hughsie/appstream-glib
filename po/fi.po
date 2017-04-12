@@ -6,6 +6,7 @@
 # Jiri Grönroos <jiri.gronroos@iki.fi>, 2014
 # Ville Skyttä <ville.skytta@iki.fi>, 2016
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
+# Jiri Grönroos <jiri.gronroos@iki.fi>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib 0.6.7\n"
@@ -14,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-08-06 03:04-0400\n"
-"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
+"PO-Revision-Date: 2017-03-26 08:23-0400\n"
+"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>\n"
 "Language-Team: Finnish (http://www.transifex.com/freedesktop/appstream-glib/"
 "language/fi/)\n"
 "Language: fi\n"
@@ -156,7 +157,7 @@ msgstr "Valmis!"
 #. TRANSLATORS: we've saving the icon file to disk
 #: client/as-compose.c:124 client/as-compose.c:179
 msgid "Saving icon"
-msgstr ""
+msgstr "Tallennetaan kuvake"
 
 #. TRANSLATORS: command line option
 #: client/as-compose.c:343
@@ -172,12 +173,12 @@ msgstr ""
 #. * be loaded
 #: client/as-compose.c:418
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "Virhe ladatessa AppData-tiedostoa"
 
 #. TRANSLATORS: the .mo files could not be parsed
 #: client/as-compose.c:431
 msgid "Error parsing translations"
-msgstr ""
+msgstr "Virhe jäsentäessä kielikäännöksiä"
 
 #. TRANSLATORS: we could not auto-add the kudo
 #: client/as-compose.c:442
@@ -193,7 +194,7 @@ msgstr ""
 #. * be loaded
 #: client/as-compose.c:469
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "Virhe ladatessa desktop-tiedostoa"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
@@ -204,13 +205,13 @@ msgstr ""
 #. TRANSLATORS: we've saving the XML file to disk
 #: client/as-compose.c:491
 msgid "Saving AppStream"
-msgstr ""
+msgstr "Tallennetaan AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
 #: client/as-compose.c:501
 msgid "Error saving AppStream file"
-msgstr ""
+msgstr "Virhe tallentaessa AppStream-tiedostoa"
 
 #. TRANSLATORS: this is a command alias
 #: client/as-util.c:104
@@ -220,7 +221,7 @@ msgstr ""
 
 #: client/as-util.c:186
 msgid "Command not found, valid commands are:"
-msgstr ""
+msgstr "Komentoa ei löydy, kelvolliset komennot ovat:"
 
 #. TRANSLATORS: any manual changes required?
 #. * also note: FIXME is a hardcoded string
@@ -263,7 +264,7 @@ msgstr ""
 #. TRANSLATORS: not a recognised file type
 #: client/as-util.c:649 client/as-util.c:1047 client/as-util.c:1148
 msgid "Format not recognised"
-msgstr ""
+msgstr "Muotoa ei tunnistettu"
 
 #. TRANSLATORS: probably wrong XML
 #: client/as-util.c:1980
@@ -281,26 +282,26 @@ msgstr "EPÄONNISTUI"
 
 #: client/as-util.c:2812
 msgid "Validation failed"
-msgstr ""
+msgstr "Vahvistaminen epäonnistui"
 
 #: client/as-util.c:2856
 msgid "Validation of files failed"
-msgstr ""
+msgstr "Tiedostojen vahvistaminen epäonnistui"
 
 #. TRANSLATORS: application was removed
 #: client/as-util.c:3879
 msgid "Removed"
-msgstr ""
+msgstr "Poistettu"
 
 #. TRANSLATORS: application was added
 #: client/as-util.c:3892
 msgid "Added"
-msgstr ""
+msgstr "Lisätty"
 
 #. TRANSLATORS: this is when a device ctrl+c's a watch
 #: client/as-util.c:4141
 msgid "Cancelled"
-msgstr ""
+msgstr "Peruttu"
 
 #. TRANSLATORS: this is the --nonet argument
 #: client/as-util.c:4170
@@ -330,7 +331,7 @@ msgstr ""
 #. TRANSLATORS: command description
 #: client/as-util.c:4221
 msgid "Creates an example Appdata file from a .desktop file"
-msgstr ""
+msgstr "Luo tyhjän Appdata-esimerkkiteidoston .desktop-tiedostosta"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4227
@@ -340,7 +341,7 @@ msgstr ""
 #. TRANSLATORS: command description
 #: client/as-util.c:4233
 msgid "Search for AppStream applications"
-msgstr ""
+msgstr "Etsi AppStream-sovelluksia"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4239
@@ -350,7 +351,7 @@ msgstr ""
 #. TRANSLATORS: command description
 #: client/as-util.c:4245
 msgid "Show all installed AppStream applications"
-msgstr ""
+msgstr "Näytä kaikki asennetut AppStream-sovellukset"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4251
@@ -440,7 +441,7 @@ msgstr ""
 #. TRANSLATORS: command description
 #: client/as-util.c:4353
 msgid "Add a language to a source file"
-msgstr ""
+msgstr "Lisää kieli lähdetiedostoon"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4359
@@ -470,7 +471,7 @@ msgstr ""
 #. TRANSLATORS: command description
 #: client/as-util.c:4389
 msgid "Modify an AppData file"
-msgstr ""
+msgstr "Muokkaa AppData-tiedostoa"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4395
@@ -480,7 +481,7 @@ msgstr ""
 #. TRANSLATORS: command description
 #: client/as-util.c:4401
 msgid "Merge several files to an AppStream file"
-msgstr ""
+msgstr "Yhdistä useita tiedostoja AppStream-tiedostoon"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4407

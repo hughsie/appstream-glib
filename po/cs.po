@@ -7,6 +7,8 @@
 # Marek Černocký <marek@manet.cz>, 2016
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
 # Zdenek <chmelarz@gmail.com>, 2016. #zanata
+# Daniel Rusek <mail@asciiwolf.com>, 2017. #zanata
+# Zdenek <chmelarz@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib 0.6.7\n"
@@ -15,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-09-15 06:01-0400\n"
-"Last-Translator: Zdenek <chmelarz@gmail.com>\n"
+"PO-Revision-Date: 2017-04-09 06:58-0400\n"
+"Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech (http://www.transifex.com/freedesktop/appstream-glib/"
 "language/cs/)\n"
 "Language: cs\n"
@@ -56,32 +58,32 @@ msgstr "Nekomprimovat ikony do balíčku tarball"
 #. TRANSLATORS: command line option
 #: client/as-builder.c:108
 msgid "Set the logging directory"
-msgstr "Nastavit složku pro záznam"
+msgstr "Nastavit adresář pro záznam"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:111
 msgid "Set the packages directory"
-msgstr "Nastavit složku pro balíčky"
+msgstr "Nastavit adresář pro balíčky"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:114
 msgid "Set the temporary directory"
-msgstr "Nastavit složku pro dočasné soubory"
+msgstr "Nastavit adresář pro dočasné soubory"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:117 client/as-compose.c:346
 msgid "Set the output directory"
-msgstr "Nastavit výstupní složku"
+msgstr "Nastavit výstupní adresář"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:120 client/as-compose.c:349
 msgid "Set the icons directory"
-msgstr "Nastavit složku s ikonami"
+msgstr "Nastavit adresář s ikonami"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:123
 msgid "Set the cache directory"
-msgstr "Nastavit složku pro mezipaměť"
+msgstr "Nastavit adresář pro mezipaměť"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:126 client/as-compose.c:358
@@ -200,7 +202,7 @@ msgstr "Chyba při načítání souboru .desktop"
 #. * not be created
 #: client/as-compose.c:482
 msgid "Error creating output directory"
-msgstr "Chyba při vytváření výstupní složky"
+msgstr "Chyba při vytváření výstupního adresáře"
 
 #. TRANSLATORS: we've saving the XML file to disk
 #: client/as-compose.c:491
@@ -301,7 +303,7 @@ msgstr "Přidáno"
 #. TRANSLATORS: this is when a device ctrl+c's a watch
 #: client/as-util.c:4141
 msgid "Cancelled"
-msgstr ""
+msgstr "Zrušeno"
 
 #. TRANSLATORS: this is the --nonet argument
 #: client/as-util.c:4170
@@ -436,12 +438,12 @@ msgstr "Nahradit snímky obrazovky ve zdrojovém souboru"
 #. TRANSLATORS: command description
 #: client/as-util.c:4347
 msgid "Add a provide to a source file"
-msgstr ""
+msgstr "Přidání poskytovatele do zdrojového souboru"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4353
 msgid "Add a language to a source file"
-msgstr ""
+msgstr "Přidání jazyka do zdrojového souboru"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4359
@@ -491,7 +493,7 @@ msgstr "Importovat soubor do značkovacího jazyka AppStream"
 #. TRANSLATORS: command description
 #: client/as-util.c:4413
 msgid "Watch AppStream locations for changes"
-msgstr ""
+msgstr "Sledovat umístění AppStream na změny"
 
 #. TRANSLATORS: program name
 #: client/as-util.c:4426

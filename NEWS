@@ -1,3 +1,14 @@
+Version 0.6.12
+~~~~~~~~~~~~~~
+Released: 2017-04-12
+
+New Features:
+ - Validate kudos in AppData and AppStream files (Richard Hughes)
+
+Bugfixes:
+ - Copy hash table keys to avoid a common crash on Ubuntu (Robert Ancell)
+ - Fix the predicate comparison when using globs in metainfo files (Richard Hughes)
+
 Version 0.6.11
 ~~~~~~~~~~~~~~
 Released: 2017-03-20
