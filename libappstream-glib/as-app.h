@@ -477,6 +477,7 @@ AsAppScope	 as_app_get_scope		(AsApp		*app);
 AsAppMergeKind	 as_app_get_merge_kind		(AsApp		*app);
 AsAppState	 as_app_get_state		(AsApp		*app);
 AsAppTrustFlags	 as_app_get_trust_flags		(AsApp		*app);
+AsAppSearchMatch as_app_get_search_match	(AsApp		*app);
 GList		*as_app_get_languages		(AsApp		*app);
 GPtrArray	*as_app_get_addons		(AsApp		*app);
 GPtrArray	*as_app_get_categories		(AsApp		*app);
@@ -566,6 +567,8 @@ void		 as_app_set_state		(AsApp		*app,
 						 AsAppState	 state);
 void		 as_app_set_trust_flags		(AsApp		*app,
 						 AsAppTrustFlags trust_flags);
+void		 as_app_set_search_match	(AsApp		*app,
+						 AsAppSearchMatch search_match);
 void		 as_app_set_origin		(AsApp		*app,
 						 const gchar	*origin);
 void		 as_app_set_project_group	(AsApp		*app,

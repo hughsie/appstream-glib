@@ -6198,13 +6198,38 @@ as_app_set_search_blacklist (AsApp *app, GHashTable *search_blacklist)
 }
 
 /**
- * as_app_set_search_match: (skip)
+ * as_app_set_search_match:
+ * @app: a #AsApp instance.
+ * @search_match: the #AsAppSearchMatch, e.g. %AS_APP_SEARCH_MATCH_PKGNAME
+ *
+ * Sets the token match fields. The bitfield given here is used to choose what
+ * is included in the token cache.
+ *
+ * Since: 0.6.13
  **/
 void
 as_app_set_search_match (AsApp *app, AsAppSearchMatch search_match)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->search_match = search_match;
+}
+
+/**
+ * as_app_get_search_match:
+ * @app: a #AsApp instance.
+ *
+ * Gets the token match fields. The bitfield given here is used to choose what
+ * is included in the token cache.
+ *
+ * Returns: a #AsAppSearchMatch, e.g. %AS_APP_SEARCH_MATCH_PKGNAME
+ *
+ * Since: 0.6.13
+ **/
+AsAppSearchMatch
+as_app_get_search_match (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->search_match;
 }
 
 /**
