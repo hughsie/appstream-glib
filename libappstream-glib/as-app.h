@@ -442,6 +442,7 @@ typedef enum {
  * @AS_APP_SEARCH_MATCH_NAME:			Use the app name
  * @AS_APP_SEARCH_MATCH_KEYWORD:		Use the app keyword
  * @AS_APP_SEARCH_MATCH_ID:			Use the app application ID
+ * @AS_APP_SEARCH_MATCH_ORIGIN:			Use the app origin
  *
  * The token match kind, which we want to be exactly 16 bits for storage
  * reasons.
@@ -455,6 +456,7 @@ typedef enum __attribute__((__packed__)) {
 	AS_APP_SEARCH_MATCH_NAME	= 1 << 4,	/* Since: 0.6.5 */
 	AS_APP_SEARCH_MATCH_KEYWORD	= 1 << 5,	/* Since: 0.6.5 */
 	AS_APP_SEARCH_MATCH_ID		= 1 << 6,	/* Since: 0.6.5 */
+	AS_APP_SEARCH_MATCH_ORIGIN	= 1 << 7,	/* Since: 0.6.13 */
 	/*< private >*/
 	AS_APP_SEARCH_MATCH_LAST	= 0xffff
 } AsAppSearchMatch;

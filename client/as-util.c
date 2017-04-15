@@ -1307,6 +1307,7 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 				   AS_APP_SEARCH_MATCH_COMMENT |
 				   AS_APP_SEARCH_MATCH_NAME |
 				   AS_APP_SEARCH_MATCH_KEYWORD |
+				   AS_APP_SEARCH_MATCH_ORIGIN |
 				   AS_APP_SEARCH_MATCH_ID);
 	as_store_load_search_cache (store);
 

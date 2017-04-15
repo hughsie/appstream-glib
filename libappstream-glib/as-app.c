@@ -5545,6 +5545,12 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 			as_app_add_token (app, tmp, FALSE, AS_APP_SEARCH_MATCH_PKGNAME);
 		}
 	}
+	if (priv->search_match & AS_APP_SEARCH_MATCH_ORIGIN) {
+		if (priv->origin != NULL) {
+			as_app_add_token (app, priv->origin, TRUE,
+					  AS_APP_SEARCH_MATCH_ORIGIN);
+		}
+	}
 }
 
 static void
