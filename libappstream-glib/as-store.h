@@ -187,6 +187,7 @@ gboolean	 as_store_load_path		(AsStore	*store,
 void		 as_store_load_search_cache	(AsStore	*store);
 void		 as_store_set_search_match	(AsStore	*store,
 						 AsAppSearchMatch search_match);
+AsAppSearchMatch as_store_get_search_match	(AsStore	*store);
 void		 as_store_remove_all		(AsStore	*store);
 GPtrArray	*as_store_get_apps		(AsStore	*store);
 GPtrArray	*as_store_get_apps_by_id	(AsStore	*store,

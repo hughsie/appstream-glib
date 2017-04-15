@@ -3442,7 +3442,7 @@ as_store_create_search_blacklist (AsStore *store)
 /**
  * as_store_set_search_match:
  * @store: a #AsStore instance.
- * @search_match: the API version
+ * @search_match: the #AsAppSearchMatch, e.g. %AS_APP_SEARCH_MATCH_PKGNAME
  *
  * Sets the token match fields. The bitfield given here is used to choose what
  * is included in the token cache.
@@ -3454,6 +3454,24 @@ as_store_set_search_match (AsStore *store, AsAppSearchMatch search_match)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	priv->search_match = search_match;
+}
+
+/**
+ * as_store_get_search_match:
+ * @store: a #AsStore instance.
+ *
+ * Gets the token match fields. The bitfield given here is used to choose what
+ * is included in the token cache.
+ *
+ * Returns: a #AsAppSearchMatch, e.g. %AS_APP_SEARCH_MATCH_PKGNAME
+ *
+ * Since: 0.6.13
+ **/
+AsAppSearchMatch
+as_store_get_search_match (AsStore *store)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	return priv->search_match;
 }
 
 static void
