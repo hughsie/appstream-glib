@@ -1670,9 +1670,9 @@ as_test_app_func (void)
 		"<lang percentage=\"90\">en_GB</lang>\n"
 		"<lang>pl</lang>\n"
 		"</languages>\n"
-		"<metadata>\n"
+		"<custom>\n"
 		"<value key=\"SomethingRandom\"/>\n"
-		"</metadata>\n"
+		"</custom>\n"
 		"</component>\n";
 	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsApp) app = NULL;
@@ -1756,7 +1756,7 @@ as_test_app_func (void)
 
 	/* back to node */
 	root = as_node_new ();
-	as_node_context_set_version (ctx, 0.8);
+	as_node_context_set_version (ctx, 1.0);
 	n = as_app_node_insert (app, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	ret = as_test_compare_lines (xml->str, src, &error);
