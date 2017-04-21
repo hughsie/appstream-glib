@@ -41,6 +41,7 @@
 #include "as-monitor.h"
 #include "as-node-private.h"
 #include "as-problem.h"
+#include "as-launchable-private.h"
 #include "as-provide-private.h"
 #include "as-ref-string.h"
 #include "as-release-private.h"
@@ -557,6 +558,48 @@ as_test_provide_func (void)
 	root = as_node_new ();
 	as_node_context_set_version (ctx, 0.4);
 	n = as_provide_node_insert (provide, root, ctx);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+}
+
+static void
+as_test_launchable_func (void)
+{
+	GError *error = NULL;
+	AsNode *n;
+	AsNode *root;
+	GString *xml;
+	const gchar *src = "<launchable type=\"desktop-id\">gnome-software.desktop</launchable>";
+	gboolean ret;
+	g_autoptr(AsNodeContext) ctx = NULL;
+	g_autoptr(AsLaunchable) launchable = NULL;
+
+	launchable = as_launchable_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "launchable");
+	g_assert (n != NULL);
+	ctx = as_node_context_new ();
+	ret = as_launchable_node_parse (launchable, n, ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_launchable_get_kind (launchable), ==, AS_LAUNCHABLE_KIND_DESKTOP_ID);
+	g_assert_cmpstr (as_launchable_get_value (launchable), ==, "gnome-software.desktop");
+
+	/* back to node */
+	root = as_node_new ();
+	as_node_context_set_version (ctx, 0.4);
+	n = as_launchable_node_insert (launchable, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
 	ret = as_test_compare_lines (xml->str, src, &error);
 	g_assert_no_error (error);
@@ -1591,6 +1634,7 @@ as_test_app_func (void)
 	AsIcon *ic;
 	AsBundle *bu;
 	AsRelease *rel;
+	AsLaunchable *lau;
 	GError *error = NULL;
 	AsNode *n;
 	AsNode *root;
@@ -1666,6 +1710,7 @@ as_test_app_func (void)
 		"<dbus type=\"session\">org.gnome.Software</dbus>\n"
 		"<dbus type=\"system\">org.gnome.Software2</dbus>\n"
 		"</provides>\n"
+		"<launchable type=\"desktop-id\">gnome-software.desktop</launchable>\n"
 		"<languages>\n"
 		"<lang percentage=\"90\">en_GB</lang>\n"
 		"<lang>pl</lang>\n"
@@ -1707,6 +1752,7 @@ as_test_app_func (void)
 	g_assert_cmpint (as_app_get_priority (app), ==, -4);
 	g_assert_cmpint (as_app_get_screenshots(app)->len, ==, 2);
 	g_assert_cmpint (as_app_get_releases(app)->len, ==, 2);
+	g_assert_cmpint (as_app_get_launchables(app)->len, ==, 1);
 	g_assert_cmpint (as_app_get_provides(app)->len, ==, 3);
 	g_assert_cmpint (as_app_get_kudos(app)->len, ==, 1);
 	g_assert_cmpint (as_app_get_permissions(app)->len, ==, 1);
@@ -1742,6 +1788,12 @@ as_test_app_func (void)
 	g_assert_cmpint (as_bundle_get_kind (bu), ==, AS_BUNDLE_KIND_FLATPAK);
 	g_assert_cmpstr (as_bundle_get_id (bu), ==, "app/org.gnome.Software/x86_64/master");
 
+	/* check launchable */
+	lau = as_app_get_launchable_by_kind (app, AS_LAUNCHABLE_KIND_DESKTOP_ID);
+	g_assert (lau != NULL);
+	g_assert_cmpint (as_launchable_get_kind (lau), ==, AS_LAUNCHABLE_KIND_DESKTOP_ID);
+	g_assert_cmpstr (as_launchable_get_value (lau), ==, "gnome-software.desktop");
+
 	/* check we can get a specific icon */
 	ic = as_app_get_icon_for_size (app, 999, 999);
 	g_assert (ic == NULL);
@@ -1768,6 +1820,43 @@ as_test_app_func (void)
 	/* test contact demunging */
 	as_app_set_update_contact (app, "richard_at_hughsie_dot_co_dot_uk");
 	g_assert_cmpstr (as_app_get_update_contact (app), ==, "richard@hughsie.co.uk");
+}
+
+static void
+as_test_app_launchable_fallback_func (void)
+{
+	AsLaunchable *lau;
+	AsNode *n;
+	gboolean ret;
+	const gchar *src =
+		"<component type=\"desktop\">\n"
+		"<id>org.gnome.Software</id>\n"
+		"</component>\n";
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
+	g_autoptr(AsNode) root = NULL;
+	g_autoptr(GError) error = NULL;
+
+	app = as_app_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "component");
+	g_assert (n != NULL);
+	ctx = as_node_context_new ();
+	ret = as_app_node_parse (app, n, ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* verify */
+	g_assert_cmpstr (as_app_get_id (app), ==, "org.gnome.Software");
+	g_assert_cmpint (as_app_get_launchables(app)->len, ==, 1);
+	lau = as_app_get_launchable_by_kind (app, AS_LAUNCHABLE_KIND_DESKTOP_ID);
+	g_assert (lau != NULL);
+	g_assert_cmpint (as_launchable_get_kind (lau), ==, AS_LAUNCHABLE_KIND_DESKTOP_ID);
+	g_assert_cmpstr (as_launchable_get_value (lau), ==, "org.gnome.Software.desktop");
 }
 
 static void
@@ -5304,6 +5393,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/utils{locale-compat}", as_test_utils_locale_compat_func);
 	g_test_add_func ("/AppStream/utils{string-replace}", as_test_utils_string_replace_func);
 	g_test_add_func ("/AppStream/tag", as_test_tag_func);
+	g_test_add_func ("/AppStream/launchable", as_test_launchable_func);
 	g_test_add_func ("/AppStream/provide", as_test_provide_func);
 	g_test_add_func ("/AppStream/require", as_test_require_func);
 	g_test_add_func ("/AppStream/checksum", as_test_checksum_func);
@@ -5323,6 +5413,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/image{alpha}", as_test_image_alpha_func);
 	g_test_add_func ("/AppStream/screenshot", as_test_screenshot_func);
 	g_test_add_func ("/AppStream/app", as_test_app_func);
+	g_test_add_func ("/AppStream/app{launchable:fallback}", as_test_app_launchable_fallback_func);
 	g_test_add_func ("/AppStream/app{builder:gettext}", as_test_app_builder_gettext_func);
 	g_test_add_func ("/AppStream/app{builder:gettext-nodomain}", as_test_app_builder_gettext_nodomain_func);
 	g_test_add_func ("/AppStream/app{builder:qt}", as_test_app_builder_qt_func);

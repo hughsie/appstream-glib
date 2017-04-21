@@ -42,6 +42,7 @@
     <xi:include href="xml/as-image.xml"/>
     <xi:include href="xml/as-markup.xml"/>
     <xi:include href="xml/as-release.xml"/>
+    <xi:include href="xml/as-launchable.xml"/>
     <xi:include href="xml/as-provide.xml"/>
     <xi:include href="xml/as-screenshot.xml"/>
     <xi:include href="xml/as-store.xml"/>

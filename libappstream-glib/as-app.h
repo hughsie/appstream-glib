@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2017 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -32,6 +32,7 @@
 #include "as-enums.h"
 #include "as-format.h"
 #include "as-icon.h"
+#include "as-launchable.h"
 #include "as-provide.h"
 #include "as-release.h"
 #include "as-screenshot.h"
@@ -126,6 +127,7 @@ typedef enum {
  * @AS_APP_SUBSUME_FLAG_PROJECT_LICENSE: Copy the project license
  * @AS_APP_SUBSUME_FLAG_PROJECT_GROUP:	Copy the project group
  * @AS_APP_SUBSUME_FLAG_SOURCE_KIND:	Copy the source kind
+ * @AS_APP_SUBSUME_FLAG_LAUNCHABLES:	Copy the launchables
  *
  * The flags to use when subsuming applications.
  **/
@@ -167,6 +169,7 @@ typedef enum {
 	AS_APP_SUBSUME_FLAG_PROJECT_GROUP	= 1ull << 33,	/* Since: 0.6.1 */
 	AS_APP_SUBSUME_FLAG_SOURCE_KIND		= 1ull << 34,	/* Since: 0.6.1 */
 	AS_APP_SUBSUME_FLAG_SUGGESTS		= 1ull << 35,	/* Since: 0.6.3 */
+	AS_APP_SUBSUME_FLAG_LAUNCHABLES		= 1ull << 36,	/* Since: 0.6.13 */
 	/*< private >*/
 	AS_APP_SUBSUME_FLAG_LAST,
 } AsAppSubsumeFlags;
@@ -198,6 +201,7 @@ typedef enum {
 					 AS_APP_SUBSUME_FLAG_SUGGESTS | \
 					 AS_APP_SUBSUME_FLAG_TRANSLATIONS | \
 					 AS_APP_SUBSUME_FLAG_SOURCE_KIND | \
+					 AS_APP_SUBSUME_FLAG_LAUNCHABLES | \
 					 AS_APP_SUBSUME_FLAG_URL)
 
 /* deprecated name */
@@ -495,6 +499,7 @@ GPtrArray	*as_app_get_pkgnames		(AsApp		*app);
 GPtrArray	*as_app_get_architectures	(AsApp		*app);
 GPtrArray	*as_app_get_releases		(AsApp		*app);
 GPtrArray	*as_app_get_provides		(AsApp		*app);
+GPtrArray	*as_app_get_launchables		(AsApp		*app);
 GPtrArray	*as_app_get_screenshots		(AsApp		*app);
 GPtrArray	*as_app_get_reviews		(AsApp		*app);
 GPtrArray	*as_app_get_content_ratings	(AsApp		*app);
@@ -555,6 +560,9 @@ gboolean	 as_app_has_compulsory_for_desktop (AsApp	*app,
 						 const gchar	*desktop);
 gboolean	 as_app_has_quirk		(AsApp		*app,
 						 AsAppQuirk	 quirk);
+AsLaunchable	*as_app_get_launchable_default	(AsApp		*app);
+AsLaunchable	*as_app_get_launchable_by_kind	(AsApp		*app,
+						 AsLaunchableKind kind);
 
 /* setters */
 void		 as_app_set_id			(AsApp		*app,
@@ -626,6 +634,8 @@ void		 as_app_add_release		(AsApp		*app,
 						 AsRelease	*release);
 void		 as_app_add_provide		(AsApp		*app,
 						 AsProvide	*provide);
+void		 as_app_add_launchable		(AsApp		*app,
+						 AsLaunchable	*launchable);
 void		 as_app_add_screenshot		(AsApp		*app,
 						 AsScreenshot	*screenshot);
 void		 as_app_add_review		(AsApp		*app,

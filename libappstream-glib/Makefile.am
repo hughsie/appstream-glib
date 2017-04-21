@@ -75,6 +75,7 @@ libappstream_glib_include_HEADERS =				\
 	as-icon.h						\
 	as-image.h						\
 	as-inf.h						\
+	as-launchable.h						\
 	as-markup.h						\
 	as-node.h						\
 	as-problem.h						\
@@ -114,6 +115,8 @@ libappstream_glib_la_SOURCES =					\
 	as-image-private.h					\
 	as-inf.c						\
 	as-inf.h						\
+	as-launchable.c						\
+	as-launchable-private.h					\
 	as-markup.c						\
 	as-monitor.c						\
 	as-monitor.h						\
@@ -219,6 +222,8 @@ introspection_sources =						\
 	as-image.h						\
 	as-inf.c						\
 	as-inf.h						\
+	as-launchable.c						\
+	as-launchable.h						\
 	as-markup.c						\
 	as-markup.h						\
 	as-node.c						\

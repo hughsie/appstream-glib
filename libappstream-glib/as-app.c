@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2017 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -43,6 +43,7 @@
 #include "as-enums.h"
 #include "as-icon-private.h"
 #include "as-node-private.h"
+#include "as-launchable-private.h"
 #include "as-provide-private.h"
 #include "as-release-private.h"
 #include "as-ref-string.h"
@@ -82,6 +83,7 @@ typedef struct
 	GPtrArray	*formats;			/* of AsFormat */
 	GPtrArray	*releases;			/* of AsRelease */
 	GPtrArray	*provides;			/* of AsProvide */
+	GPtrArray	*launchables;			/* of AsLaunchable */
 	GPtrArray	*screenshots;			/* of AsScreenshot */
 	GPtrArray	*reviews;			/* of AsReview */
 	GPtrArray	*content_ratings;		/* of AsContentRating */
@@ -461,6 +463,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->architectures);
 	g_ptr_array_unref (priv->releases);
 	g_ptr_array_unref (priv->provides);
+	g_ptr_array_unref (priv->launchables);
 	g_ptr_array_unref (priv->screenshots);
 	g_ptr_array_unref (priv->reviews);
 	g_ptr_array_unref (priv->icons);
@@ -493,6 +496,7 @@ as_app_init (AsApp *app)
 	priv->addons = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->releases = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->provides = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	priv->launchables = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->screenshots = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->reviews = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->icons = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -1130,6 +1134,67 @@ as_app_get_provides (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	return priv->provides;
+}
+
+/**
+ * as_app_get_launchables:
+ * @app: a #AsApp instance.
+ *
+ * Gets all the launchables the application has.
+ *
+ * Returns: (element-type AsLaunchable) (transfer none): an array
+ *
+ * Since: 0.6.13
+ **/
+GPtrArray *
+as_app_get_launchables (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->launchables;
+}
+
+/**
+ * as_app_get_launchable_by_kind:
+ * @app: a #AsApp instance.
+ * @kind: a #AsLaunchableKind, e.g. %AS_FORMAT_KIND_APPDATA
+ *
+ * Searches the list of launchables for a specific launchable kind.
+ *
+ * Returns: (transfer none): A #AsLaunchable, or %NULL if not found
+ *
+ * Since: 0.6.13
+ */
+AsLaunchable *
+as_app_get_launchable_by_kind (AsApp *app, AsLaunchableKind kind)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	for (guint i = 0; i < priv->launchables->len; i++) {
+		AsLaunchable *launchable = g_ptr_array_index (priv->launchables, i);
+		if (as_launchable_get_kind (launchable) == kind)
+			return launchable;
+	}
+	return NULL;
+}
+
+/**
+ * as_app_get_launchable_default:
+ * @app: a #AsApp instance.
+ *
+ * Returns the default launchable.
+ *
+ * Returns: (transfer none): A #AsLaunchable, or %NULL if not found
+ *
+ * Since: 0.6.13
+ */
+AsLaunchable *
+as_app_get_launchable_default (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	if (priv->launchables->len > 0) {
+		AsLaunchable *launchable = g_ptr_array_index (priv->launchables, 0);
+		return launchable;
+	}
+	return NULL;
 }
 
 /**
@@ -3091,6 +3156,34 @@ as_app_add_provide (AsApp *app, AsProvide *provide)
 	g_ptr_array_add (priv->provides, g_object_ref (provide));
 }
 
+/**
+ * as_app_add_launchable:
+ * @app: a #AsApp instance.
+ * @launchable: a #AsLaunchable instance.
+ *
+ * Adds a launchable to an application.
+ *
+ * Since: 0.6.13
+ **/
+void
+as_app_add_launchable (AsApp *app, AsLaunchable *launchable)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* check for duplicates */
+	if (priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) {
+		for (guint i = 0; i < priv->launchables->len; i++) {
+			AsLaunchable *lau = g_ptr_array_index (priv->launchables, i);
+			if (as_launchable_get_kind (lau) == as_launchable_get_kind (launchable) &&
+			    g_strcmp0 (as_launchable_get_value (lau),
+				       as_launchable_get_value (launchable)) == 0)
+				return;
+		}
+	}
+
+	g_ptr_array_add (priv->launchables, g_object_ref (launchable));
+}
+
 static gint
 as_app_sort_screenshots (gconstpointer a, gconstpointer b)
 {
@@ -3884,6 +3977,17 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
 		}
 	}
 
+	/* launchables */
+	if (flags & AS_APP_SUBSUME_FLAG_LAUNCHABLES) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->launchables->len > 0)
+			g_ptr_array_set_size (papp->launchables, 0);
+		for (i = 0; i < priv->launchables->len; i++) {
+			AsLaunchable *lau = g_ptr_array_index (priv->launchables, i);
+			as_app_add_launchable (app, lau);
+		}
+	}
+
 	/* icons */
 	if (flags & AS_APP_SUBSUME_FLAG_ICONS) {
 		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
@@ -4096,6 +4200,20 @@ as_app_provides_sort_cb (gconstpointer a, gconstpointer b)
 		return 1;
 	return g_strcmp0 (as_provide_get_value (prov1),
 			  as_provide_get_value (prov2));
+}
+
+static gint
+as_app_launchables_sort_cb (gconstpointer a, gconstpointer b)
+{
+	AsLaunchable *lau1 = *((AsLaunchable **) a);
+	AsLaunchable *lau2 = *((AsLaunchable **) b);
+
+	if (as_launchable_get_kind (lau1) < as_launchable_get_kind (lau2))
+		return -1;
+	if (as_launchable_get_kind (lau1) > as_launchable_get_kind (lau2))
+		return 1;
+	return g_strcmp0 (as_launchable_get_value (lau1),
+			  as_launchable_get_value (lau2));
 }
 
 static gint
@@ -4436,6 +4554,15 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		for (i = 0; i < priv->provides->len; i++) {
 			provide = g_ptr_array_index (priv->provides, i);
 			as_provide_node_insert (provide, node_tmp, ctx);
+		}
+	}
+
+	/* <launchables> */
+	if (priv->launchables->len > 0 && as_node_context_get_version (ctx) > 0.9) {
+		g_ptr_array_sort (priv->launchables, as_app_launchables_sort_cb);
+		for (i = 0; i < priv->launchables->len; i++) {
+			AsLaunchable *launchable = g_ptr_array_index (priv->launchables, i);
+			as_launchable_node_insert (launchable, node_app, ctx);
 		}
 	}
 
@@ -4909,6 +5036,17 @@ as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
 		}
 		break;
 
+	/* <launchables> */
+	case AS_TAG_LAUNCHABLE:
+	{
+		g_autoptr(AsLaunchable) lau = NULL;
+		lau = as_launchable_new ();
+		if (!as_launchable_node_parse (lau, n, ctx, error))
+			return FALSE;
+		as_app_add_launchable (app, lau);
+		break;
+	}
+
 	/* <languages> */
 	case AS_TAG_LANGUAGES:
 		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
@@ -5021,6 +5159,7 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags,
 		g_ptr_array_set_size (priv->suggests, 0);
 		g_ptr_array_set_size (priv->requires, 0);
 		g_ptr_array_set_size (priv->content_ratings, 0);
+		g_ptr_array_set_size (priv->launchables, 0);
 		g_hash_table_remove_all (priv->keywords);
 	}
 	for (n = node->children; n != NULL; n = n->next) {
@@ -5031,6 +5170,22 @@ as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags,
 	/* if only one icon is listed, look for HiDPI versions too */
 	if (as_app_get_icons(app)->len == 1)
 		as_app_check_for_hidpi_icons (app);
+
+	/* add the launchable if missing for desktop apps */
+	if (priv->launchables->len == 0 &&
+	    priv->kind == AS_APP_KIND_DESKTOP &&
+	    priv->id != NULL) {
+		AsLaunchable *lau = as_launchable_new ();
+		as_launchable_set_kind (lau, AS_LAUNCHABLE_KIND_DESKTOP_ID);
+		if (g_str_has_suffix (priv->id, ".desktop")) {
+			as_launchable_set_value (lau, priv->id);
+		} else {
+			g_autofree gchar *id_tmp = NULL;
+			id_tmp = g_strdup_printf ("%s.desktop", priv->id);
+			as_launchable_set_value (lau, id_tmp);
+		}
+		g_ptr_array_add (priv->launchables, lau);
+	}
 
 	return TRUE;
 }
