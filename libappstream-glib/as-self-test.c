@@ -959,6 +959,7 @@ as_test_icon_func (void)
 	g_assert_cmpstr (as_icon_get_url (icon), ==, NULL);
 	g_assert_cmpint (as_icon_get_height (icon), ==, 64);
 	g_assert_cmpint (as_icon_get_width (icon), ==, 64);
+	g_assert_cmpint (as_icon_get_scale (icon), ==, 1);
 	g_assert (as_icon_get_pixbuf (icon) == NULL);
 	g_assert (as_icon_get_data (icon) == NULL);
 
@@ -985,6 +986,56 @@ as_test_icon_func (void)
 	g_assert_cmpstr (as_icon_get_url (icon), ==, NULL);
 	g_assert (as_icon_get_pixbuf (icon) != NULL);
 	g_assert (as_icon_get_data (icon) != NULL);
+}
+
+static void
+as_test_icon_scale_func (void)
+{
+	GError *error = NULL;
+	AsNode *n;
+	AsNode *root;
+	GString *xml;
+	const gchar *src = "<icon type=\"cached\" height=\"128\" scale=\"2\" width=\"128\">app.png</icon>";
+	gboolean ret;
+	g_autoptr(AsNodeContext) ctx = NULL;
+	g_autoptr(AsIcon) icon = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
+
+	icon = as_icon_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "icon");
+	g_assert (n != NULL);
+	ctx = as_node_context_new ();
+	ret = as_icon_node_parse (icon, n, ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_icon_get_kind (icon), ==, AS_ICON_KIND_CACHED);
+	g_assert_cmpstr (as_icon_get_name (icon), ==, "app.png");
+	g_assert_cmpstr (as_icon_get_filename (icon), ==, NULL);
+	g_assert_cmpstr (as_icon_get_url (icon), ==, NULL);
+	g_assert_cmpint (as_icon_get_height (icon), ==, 128);
+	g_assert_cmpint (as_icon_get_width (icon), ==, 128);
+	g_assert_cmpint (as_icon_get_scale (icon), ==, 2);
+	g_assert (as_icon_get_pixbuf (icon) == NULL);
+	g_assert (as_icon_get_data (icon) == NULL);
+
+	/* back to node */
+	root = as_node_new ();
+	as_node_context_set_version (ctx, 0.9);
+	n = as_icon_node_insert (icon, root, ctx);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
 }
 
 static void
@@ -5403,6 +5454,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/release{appdata}", as_test_release_appdata_func);
 	g_test_add_func ("/AppStream/release{appstream}", as_test_release_appstream_func);
 	g_test_add_func ("/AppStream/icon", as_test_icon_func);
+	g_test_add_func ("/AppStream/icon{scale}", as_test_icon_scale_func);
 	g_test_add_func ("/AppStream/icon{embedded}", as_test_icon_embedded_func);
 	g_test_add_func ("/AppStream/bundle", as_test_bundle_func);
 	g_test_add_func ("/AppStream/review", as_test_review_func);

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2017 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -112,6 +112,7 @@ const gchar	*as_icon_get_filename		(AsIcon		*icon);
 const gchar	*as_icon_get_prefix		(AsIcon		*icon);
 guint		 as_icon_get_width		(AsIcon		*icon);
 guint		 as_icon_get_height		(AsIcon		*icon);
+guint		 as_icon_get_scale		(AsIcon		*icon);
 AsIconKind	 as_icon_get_kind		(AsIcon		*icon);
 GdkPixbuf	*as_icon_get_pixbuf		(AsIcon		*icon);
 
@@ -128,6 +129,8 @@ void		 as_icon_set_width		(AsIcon		*icon,
 						 guint		 width);
 void		 as_icon_set_height		(AsIcon		*icon,
 						 guint		 height);
+void		 as_icon_set_scale		(AsIcon		*icon,
+						 guint		 scale);
 void		 as_icon_set_kind		(AsIcon		*icon,
 						 AsIconKind	 kind);
 void		 as_icon_set_pixbuf		(AsIcon		*icon,

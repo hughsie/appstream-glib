@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2017 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -50,6 +50,7 @@ typedef struct
 	AsRefString		*prefix_private;
 	guint			 width;
 	guint			 height;
+	guint			 scale;
 	GdkPixbuf		*pixbuf;
 	GBytes			*data;
 } AsIconPrivate;
@@ -263,6 +264,23 @@ as_icon_get_height (AsIcon *icon)
 }
 
 /**
+ * as_icon_get_scale:
+ * @icon: a #AsIcon instance.
+ *
+ * Gets the icon scale.
+ *
+ * Returns: scale factor
+ *
+ * Since: 0.6.13
+ **/
+guint
+as_icon_get_scale (AsIcon *icon)
+{
+	AsIconPrivate *priv = GET_PRIVATE (icon);
+	return priv->scale;
+}
+
+/**
  * as_icon_get_kind:
  * @icon: a #AsIcon instance.
  *
@@ -410,6 +428,22 @@ as_icon_set_height (AsIcon *icon, guint height)
 }
 
 /**
+ * as_icon_set_scale:
+ * @icon: a #AsIcon instance.
+ * @scale: the scale as a factor.
+ *
+ * Sets the icon scale.
+ *
+ * Since: 0.6.13
+ **/
+void
+as_icon_set_scale (AsIcon *icon, guint scale)
+{
+	AsIconPrivate *priv = GET_PRIVATE (icon);
+	priv->scale = scale;
+}
+
+/**
  * as_icon_set_kind:
  * @icon: a #AsIcon instance.
  * @kind: the #AsIconKind, e.g. %AS_ICON_KIND_STOCK.
@@ -483,6 +517,8 @@ as_icon_node_insert_embedded (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 		as_node_add_attribute_as_uint (n, "width", priv->width);
 		as_node_add_attribute_as_uint (n, "height", priv->height);
 	}
+	if (priv->scale > 1 && as_node_context_get_version (ctx) > 0.9)
+		as_node_add_attribute_as_uint (n, "scale", priv->scale);
 	as_node_insert (n, "name", priv->name, 0, NULL);
 	data = g_base64_encode (g_bytes_get_data (priv->data, NULL),
 				g_bytes_get_size (priv->data));
@@ -545,6 +581,8 @@ as_icon_node_insert (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 			as_node_add_attribute_as_uint (n, "width", priv->width);
 		if (priv->height > 0)
 			as_node_add_attribute_as_uint (n, "height", priv->height);
+		if (priv->scale > 1)
+			as_node_add_attribute_as_uint (n, "scale", priv->scale);
 	}
 	return n;
 }
@@ -674,12 +712,27 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 		}
 		priv->height = size;
 
+		/* scale is optional, assume 1 if missing */
+		size = as_node_get_attribute_as_uint (node, "scale");
+		if (size == G_MAXUINT)
+			size = 1;
+		priv->scale = size;
+
 		/* only use the size if the metadata has width and height */
 		if (prepend_size) {
-			g_autofree gchar *sz = g_strdup_printf ("%s/%ux%u",
-								priv->prefix,
-								priv->width,
-								priv->height);
+			g_autofree gchar *sz = NULL;
+			if (priv->scale > 1) {
+				sz = g_strdup_printf ("%s/%ux%u@%u",
+						      priv->prefix,
+						      priv->width,
+						      priv->height,
+						      priv->scale);
+			} else {
+				sz = g_strdup_printf ("%s/%ux%u",
+						      priv->prefix,
+						      priv->width,
+						      priv->height);
+			}
 			as_ref_string_assign_safe (&priv->prefix_private, sz);
 		}
 		break;
@@ -723,6 +776,11 @@ as_icon_node_parse_dep11 (AsIcon *icon, GNode *node,
 			if (size == G_MAXUINT)
 				size = 64;
 			priv->height = size;
+		} else if (g_strcmp0 (key, "scale") == 0) {
+			size = as_yaml_node_get_value_as_uint (n);
+			if (size == G_MAXUINT)
+				size = 1;
+			priv->scale = size;
 		} else {
 			if (priv->kind == AS_ICON_KIND_REMOTE) {
 				if (g_strcmp0 (key, "url") == 0) {
