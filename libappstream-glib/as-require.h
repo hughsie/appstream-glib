@@ -72,6 +72,8 @@ typedef enum {
  * @AS_REQUIRE_COMPARE_GT:			Greater than
  * @AS_REQUIRE_COMPARE_LE:			Less than or equal to
  * @AS_REQUIRE_COMPARE_GE:			Greater than or equal to
+ * @AS_REQUIRE_COMPARE_GLOB:			Filename glob, e.g. `test*`
+ * @AS_REQUIRE_COMPARE_REGEX:			A regular expression, e.g. `fw[0-255]`
  *
  * The relational comparison type.
  **/

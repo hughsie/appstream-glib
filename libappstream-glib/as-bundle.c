@@ -258,7 +258,7 @@ as_bundle_set_sdk (AsBundle *bundle, const gchar *sdk)
 /**
  * as_bundle_set_kind:
  * @bundle: a #AsBundle instance.
- * @kind: the #AsBundleKind, e.g. %AS_BUNDLE_KIND_THUMBNAIL.
+ * @kind: the #AsBundleKind, e.g. %AS_BUNDLE_KIND_FLATPAK.
  *
  * Sets the bundle kind.
  *

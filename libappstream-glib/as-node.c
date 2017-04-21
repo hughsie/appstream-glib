@@ -2207,7 +2207,7 @@ as_node_context_set_format_kind (AsNodeContext *ctx, AsFormatKind format_kind)
 /**
  * as_node_context_set_source_kind: (skip)
  * @ctx: a #AsNodeContext.
- * @format_kind: an API format kind, e.g. %AS_FORMAT_KIND_APPDATA
+ * @source_kind: an API format kind, e.g. %AS_FORMAT_KIND_APPDATA
  *
  * Sets the AppStream API format kind used when exporting nodes.
  *
