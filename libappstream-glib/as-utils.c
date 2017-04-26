@@ -1429,6 +1429,70 @@ as_ptr_array_find_string (GPtrArray *array, const gchar *value)
 }
 
 /**
+ * as_utils_guid_from_data:
+ * @namespace_id: A namespace ID, e.g. "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+ * @data: data to hash
+ * @data_len: length of @data
+ * @error: A #GError or %NULL
+ *
+ * Returns a GUID for some data. This uses a hash and so even small
+ * differences in the @data will produce radically different return values.
+ *
+ * The implementation is taken from RFC4122, Section 4.1.3; specifically
+ * using a type-5 SHA-1 hash.
+ *
+ * Returns: A new GUID, or %NULL if the namespace_id was invalid
+ *
+ * Since: 0.6.13
+ **/
+gchar *
+as_utils_guid_from_data (const gchar *namespace_id,
+			 const guint8 *data,
+			 gsize data_len,
+			 GError **error)
+{
+	gchar guid_new[37]; /* 36 plus NUL */
+	gsize digestlen = 20;
+	guint8 hash[20];
+	gint rc;
+	uuid_t uu_namespace;
+	uuid_t uu_new;
+	g_autoptr(GChecksum) csum = NULL;
+
+	g_return_val_if_fail (namespace_id != NULL, FALSE);
+	g_return_val_if_fail (data != NULL, FALSE);
+	g_return_val_if_fail (data_len != 0, FALSE);
+
+	/* convert the namespace to binary */
+	rc = uuid_parse (namespace_id, uu_namespace);
+	if (rc != 0) {
+		g_set_error (error,
+			     AS_UTILS_ERROR,
+			     AS_UTILS_ERROR_FAILED,
+			     "namespace '%s' is invalid",
+			     namespace_id);
+		return FALSE;
+	}
+
+	/* hash the namespace and then the string */
+	csum = g_checksum_new (G_CHECKSUM_SHA1);
+	g_checksum_update (csum, (guchar *) uu_namespace, 16);
+	g_checksum_update (csum, (guchar *) data, (gssize) data_len);
+	g_checksum_get_digest (csum, hash, &digestlen);
+
+	/* copy most parts of the hash 1:1 */
+	memcpy (uu_new, hash, 16);
+
+	/* set specific bits according to Section 4.1.3 */
+	uu_new[6] = (guint8) ((uu_new[6] & 0x0f) | (5 << 4));
+	uu_new[8] = (guint8) ((uu_new[8] & 0x3f) | 0x80);
+
+	/* return as a string */
+	uuid_unparse (uu_new, guid_new);
+	return g_strdup (guid_new);
+}
+
+/**
  * as_utils_guid_is_valid:
  * @guid: string to check
  *
@@ -1471,39 +1535,10 @@ as_utils_guid_is_valid (const gchar *guid)
 gchar *
 as_utils_guid_from_string (const gchar *str)
 {
-	const gchar *namespace_id = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
-	gchar guid_new[37]; /* 36 plus NUL */
-	gsize digestlen = 20;
-	guint8 hash[20];
-	gint rc;
-	uuid_t uu_namespace;
-	uuid_t uu_new;
-	g_autoptr(GChecksum) csum = NULL;
-
-	/* invalid */
 	if (str == NULL)
 		return NULL;
-
-	/* convert the namespace to binary */
-	rc = uuid_parse (namespace_id, uu_namespace);
-	g_assert (rc == 0);
-
-	/* hash the namespace and then the string */
-	csum = g_checksum_new (G_CHECKSUM_SHA1);
-	g_checksum_update (csum, (guchar *) uu_namespace, 16);
-	g_checksum_update (csum, (guchar *) str, (gssize) strlen (str));
-	g_checksum_get_digest (csum, hash, &digestlen);
-
-	/* copy most parts of the hash 1:1 */
-	memcpy(uu_new, hash, 16);
-
-	/* set specific bits according to Section 4.1.3 */
-	uu_new[6] = (guint8) ((uu_new[6] & 0x0f) | (5 << 4));
-	uu_new[8] = (guint8) ((uu_new[8] & 0x3f) | 0x80);
-
-	/* return as a string */
-	uuid_unparse (uu_new, guid_new);
-	return g_strdup (guid_new);
+	return as_utils_guid_from_data ("6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+					str, strlen (str), NULL);
 }
 
 /**
