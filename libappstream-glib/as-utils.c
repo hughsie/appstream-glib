@@ -1378,6 +1378,8 @@ as_utils_vercmp (const gchar *version_a, const gchar *version_b)
 	split_b = g_strsplit (str_b, ".", -1);
 	longest_split = MAX (g_strv_length (split_a), g_strv_length (split_b));
 	for (i = 0; i < longest_split; i++) {
+		gboolean isnum_a = TRUE;
+		gboolean isnum_b = TRUE;
 
 		/* we lost or gained a dot */
 		if (split_a[i] == NULL)
@@ -1388,18 +1390,32 @@ as_utils_vercmp (const gchar *version_a, const gchar *version_b)
 		/* compare integers */
 		ver_a = g_ascii_strtoll (split_a[i], &endptr, 10);
 		if (endptr != NULL && endptr[0] != '\0')
-			return G_MAXINT;
+			isnum_a = FALSE;
 		if (ver_a < 0)
-			return G_MAXINT;
+			isnum_a = FALSE;
 		ver_b = g_ascii_strtoll (split_b[i], &endptr, 10);
 		if (endptr != NULL && endptr[0] != '\0')
-			return G_MAXINT;
+			isnum_b = FALSE;
 		if (ver_b < 0)
+			isnum_b = FALSE;
+
+		/* can't compare integer with string */
+		if (isnum_a != isnum_b)
 			return G_MAXINT;
-		if (ver_a < ver_b)
-			return -1;
-		if (ver_a > ver_b)
-			return 1;
+
+		/* compare strings */
+		if (!isnum_a) {
+			gint rc = g_strcmp0 (split_a[i], split_b[i]);
+			if (rc != 0)
+				return rc;
+
+		/* compare integers */
+		} else {
+			if (ver_a < ver_b)
+				return -1;
+			if (ver_a > ver_b)
+				return 1;
+		}
 	}
 
 	/* we really shouldn't get here */

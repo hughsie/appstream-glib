@@ -4129,6 +4129,40 @@ as_util_markup_import (AsUtilPrivate *priv, gchar **values, GError **error)
 	return TRUE;
 }
 
+static gboolean
+as_util_vercmp (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	gint rc;
+
+	/* check args */
+	if (g_strv_length (values) != 2) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "expected VERSION1 VERSION2");
+		return FALSE;
+	}
+
+	/* compare */
+	rc = as_utils_vercmp (values[0], values[1]);
+	if (rc == G_MAXINT) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "failed to compare version numbers");
+		return FALSE;
+	}
+
+	/* print results */
+	if (rc == 0)
+		g_print ("%s = %s\n", values[0], values[1]);
+	else if (rc < 0)
+		g_print ("%s < %s\n", values[0], values[1]);
+	else if (rc > 0)
+		g_print ("%s > %s\n", values[0], values[1]);
+	return TRUE;
+}
+
 static void
 as_util_ignore_cb (const gchar *log_domain, GLogLevelFlags log_level,
 		   const gchar *message, gpointer user_data)
@@ -4414,6 +4448,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Watch AppStream locations for changes"),
 		     as_util_watch);
+	as_util_add (priv->cmd_array,
+		     "vercmp",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Compare version numbers"),
+		     as_util_vercmp);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
