@@ -59,6 +59,7 @@ as_stemmer_process (AsStemmer *stemmer, const gchar *value)
 	AsRefString *new;
 	const gchar *tmp;
 	gsize value_len;
+	g_autofree gchar *value_casefold = NULL;
 	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&stemmer->ctx_mutex);
 
 	/* look for word in the cache */
@@ -67,25 +68,28 @@ as_stemmer_process (AsStemmer *stemmer, const gchar *value)
 		return as_ref_string_ref (new);
 
 	/* not enabled */
+	value_casefold = g_utf8_casefold (value, -1);
 	if (stemmer->ctx == NULL || !stemmer->enabled)
-		return as_ref_string_new (value);
+		return as_ref_string_new (value_casefold);
 
 	/* stem, then add to the cache */
-	value_len = strlen (value);
+	value_len = strlen (value_casefold);
 	tmp = (const gchar *) sb_stemmer_stem (stemmer->ctx,
-					       (guchar *) value,
+					       (guchar *) value_casefold,
 					       (gint) value_len);
 	if (value_len == (gsize) sb_stemmer_length (stemmer->ctx)) {
-		new = as_ref_string_new_with_length (value, value_len);
+		new = as_ref_string_new_with_length (value_casefold, value_len);
 	} else {
 		new = as_ref_string_new_copy (tmp);
 	}
 	g_hash_table_insert (stemmer->hash,
-			     as_ref_string_new (value),
+			     as_ref_string_new (value_casefold),
 			     as_ref_string_ref (new));
 	return new;
 #else
-	return as_ref_string_new (value);
+	g_autofree gchar *value_casefold = NULL;
+	value_casefold = g_utf8_casefold (value, -1);
+	return as_ref_string_new (value_casefold);
 #endif
 }
 

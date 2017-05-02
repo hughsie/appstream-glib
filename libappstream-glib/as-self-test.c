@@ -2970,13 +2970,14 @@ as_test_app_search_func (void)
 	const gchar *all[] = { "gnome", "install", "software", NULL };
 	const gchar *none[] = { "gnome", "xxx", "software", NULL };
 	const gchar *mime[] = { "application/vnd.oasis.opendocument.text", NULL };
+	g_auto(GStrv) tokens = NULL;
 	g_autoptr(AsApp) app = NULL;
 	g_autoptr(GHashTable) search_blacklist = NULL;
 	g_autoptr(AsStemmer) stemmer = as_stemmer_new ();
 
 	app = as_app_new ();
 	as_app_set_stemmer (app, stemmer);
-	as_app_set_id (app, "gnome-software");
+	as_app_set_id (app, "org.gnome.Software.desktop");
 	as_app_add_pkgname (app, "gnome-software");
 	as_app_set_name (app, NULL, "GNOME Software X-Plane");
 	as_app_set_comment (app, NULL, "Install and remove software");
@@ -3000,6 +3001,12 @@ as_test_app_search_func (void)
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) all), ==, 96);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) none), ==, 0);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) mime), ==, 4);
+
+	/* test searching for all tokenized tokens */
+	tokens = as_utils_search_tokenize ("org.gnome.Software");
+	g_assert_cmpstr (tokens[0], ==, "org.gnome.software");
+	g_assert_cmpstr (tokens[1], ==, NULL);
+	g_assert_cmpint (as_app_search_matches_all (app, tokens), ==, 256);
 
 	/* test tokenization of hyphenated name */
 	g_assert_cmpint (as_app_search_matches (app, "x-plane"), ==, 64);
