@@ -2162,6 +2162,7 @@ as_app_set_id (AsApp *app, const gchar *id)
 		".desktop",
 		".addon",
 		".firmware",
+		".shell-extension",
 		NULL };
 
 	/* handle untrusted */
