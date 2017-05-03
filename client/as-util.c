@@ -4187,6 +4187,29 @@ as_util_sigint_cb (gpointer user_data)
 	return FALSE;
 }
 
+static gboolean
+as_util_regex (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	/* check args */
+	if (g_strv_length (values) != 2) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "expected PATTERN STRING");
+		return FALSE;
+	}
+
+	/* test */
+	if (!g_regex_match_simple (values[0], values[1], 0, 0)) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_FAILED,
+				     "Failed to match");
+		return FALSE;
+	}
+	return TRUE;
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -4454,6 +4477,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Compare version numbers"),
 		     as_util_vercmp);
+	as_util_add (priv->cmd_array,
+		     "regex",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Test a regular expression"),
+		     as_util_regex);
 
 	/* sort by command name */
 	g_ptr_array_sort (priv->cmd_array,
