@@ -3000,6 +3000,117 @@ as_util_check_root_app (AsApp *app, GPtrArray *problems)
 	}
 }
 
+static void
+as_util_check_component_app (AsApp *app, GPtrArray *problems)
+{
+	AsFormat *format;
+
+	g_print ("\nUsing %s for %s\n",
+		 as_app_get_unique_id (app),
+		 as_app_get_id (app));
+
+	/* has desktop file */
+	if (as_app_get_kind (app) == AS_APP_KIND_DESKTOP) {
+		format = as_app_get_format_by_kind (app, AS_FORMAT_KIND_DESKTOP);
+		if (format == NULL) {
+			g_ptr_array_add (problems, g_strdup ("No desktop file"));
+		} else {
+			g_print ("Checking source: %s\n", as_format_get_filename (format));
+		}
+	}
+
+	/* has AppData file */
+	format = as_app_get_format_by_kind (app, AS_FORMAT_KIND_APPDATA);
+	if (format == NULL)
+		format = as_app_get_format_by_kind (app, AS_FORMAT_KIND_METAINFO);
+	if (format == NULL) {
+		g_ptr_array_add (problems,
+				 g_strdup_printf ("%s has no AppData file",
+						  as_app_get_id (app)));
+	} else {
+		g_print ("Checking source: %s\n", as_format_get_filename (format));
+		if (as_app_get_description (app, NULL) == NULL) {
+			g_ptr_array_add (problems,
+					 g_strdup_printf ("%s has no <description>",
+							  as_app_get_id (app)));
+		}
+		if (as_app_get_comment (app, NULL) == NULL) {
+			g_ptr_array_add (problems,
+					 g_strdup_printf ("%s has no <summary>",
+							  as_app_get_id (app)));
+		}
+	}
+
+	/* check icon exists and is large enough */
+	if (as_app_get_kind (app) == AS_APP_KIND_DESKTOP) {
+		g_autoptr(GError) error_local = NULL;
+		if (!as_util_check_root_app_icon (app, &error_local))
+			g_ptr_array_add (problems, g_strdup (error_local->message));
+	}
+}
+
+static gboolean
+as_util_check_component (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GPtrArray) problems = NULL;
+
+	/* check args */
+	if (g_strv_length (values) < 1) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected example.desktop");
+		return FALSE;
+	}
+
+	/* load root */
+	store = as_store_new ();
+	as_store_set_add_flags (store, AS_STORE_ADD_FLAG_PREFER_LOCAL);
+	as_store_set_destdir (store, g_getenv ("DESTDIR"));
+	if (!as_store_load (store,
+			    AS_STORE_LOAD_FLAG_DESKTOP |
+			    AS_STORE_LOAD_FLAG_APPDATA |
+			    AS_STORE_LOAD_FLAG_ALLOW_VETO,
+			    NULL,
+			    error))
+		return FALSE;
+
+	/* sanity check each */
+	problems = g_ptr_array_new_with_free_func (g_free);
+	for (guint j = 0; values[j] != NULL; j++) {
+		g_autoptr(GPtrArray) apps = as_store_get_apps_by_id (store, values[j]);
+		if (apps->len == 0) {
+			g_printerr ("Failed to find %s\n", values[j]);
+			continue;
+		}
+		for (guint i = 0; i < apps->len; i++) {
+			AsApp *app = g_ptr_array_index (apps, i);
+			as_util_check_component_app (app, problems);
+		}
+	}
+
+	/* show problems */
+	if (problems->len) {
+		g_printerr ("\n");
+		for (guint i = 0; i < problems->len; i++) {
+			const gchar *tmp = g_ptr_array_index (problems, i);
+			g_printerr ("• %s\n", tmp);
+		}
+		g_set_error (error,
+			     AS_ERROR,
+			     AS_ERROR_FAILED,
+			     "Failed to check component, %u problems detected",
+			     problems->len);
+		return FALSE;
+	}
+
+	/* success */
+	g_print ("\nNo problems found\n");
+	return TRUE;
+}
+
 G_GNUC_PRINTF (2, 3)
 static void
 as_util_app_log (AsApp *app, const gchar *fmt, ...)
@@ -4393,6 +4504,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Check installed application data"),
 		     as_util_check_root);
+	as_util_add (priv->cmd_array,
+		     "check-component",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("check an installed application"),
+		     as_util_check_component);
 	as_util_add (priv->cmd_array,
 		     "replace-screenshots",
 		     NULL,
