@@ -2792,6 +2792,27 @@ as_app_add_category (AsApp *app, const gchar *category)
 	g_ptr_array_add (priv->categories, as_ref_string_new (category));
 }
 
+/**
+ * as_app_remove_category:
+ * @app: a #AsApp instance.
+ * @category: the category.
+ *
+ * Removed a menu category from the application.
+ *
+ * Since: 0.6.13
+ **/
+void
+as_app_remove_category (AsApp *app, const gchar *category)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	for (guint i = 0; i < priv->categories->len; i++) {
+		const gchar *tmp = g_ptr_array_index (priv->categories, i);
+		if (g_strcmp0 (tmp, category) == 0) {
+			g_ptr_array_remove (priv->categories, (gpointer) tmp);
+			break;
+		}
+	}
+}
 
 /**
  * as_app_add_compulsory_for_desktop:

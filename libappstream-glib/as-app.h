@@ -611,6 +611,8 @@ void		 as_app_set_priority		(AsApp		*app,
 						 gint		 priority);
 void		 as_app_add_category		(AsApp		*app,
 						 const gchar	*category);
+void		 as_app_remove_category		(AsApp		*app,
+						 const gchar	*category);
 void		 as_app_add_keyword		(AsApp		*app,
 						 const gchar	*locale,
 						 const gchar	*keyword);
