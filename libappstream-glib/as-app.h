@@ -618,6 +618,8 @@ void		 as_app_add_keyword		(AsApp		*app,
 						 const gchar	*keyword);
 void		 as_app_add_kudo		(AsApp		*app,
 						 const gchar	*kudo);
+void		 as_app_remove_kudo		(AsApp		*app,
+						 const gchar	*kudo);
 void		 as_app_add_kudo_kind		(AsApp		*app,
 						 AsKudoKind	 kudo_kind);
 void		 as_app_add_permission		(AsApp		*app,

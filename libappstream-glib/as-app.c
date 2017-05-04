@@ -2919,6 +2919,28 @@ as_app_add_kudo (AsApp *app, const gchar *kudo)
 }
 
 /**
+ * as_app_remove_kudo:
+ * @app: a #AsApp instance.
+ * @kudo: the kudo.
+ *
+ * Remove a kudo the application has obtained.
+ *
+ * Since: 0.6.13
+ **/
+void
+as_app_remove_kudo (AsApp *app, const gchar *kudo)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	for (guint i = 0; i < priv->kudos->len; i++) {
+		const gchar *tmp = g_ptr_array_index (priv->kudos, i);
+		if (g_strcmp0 (tmp, kudo) == 0) {
+			g_ptr_array_remove (priv->kudos, (gpointer) tmp);
+			break;
+		}
+	}
+}
+
+/**
  * as_app_add_permission:
  * @app: a #AsApp instance.
  * @permission: the permission.
