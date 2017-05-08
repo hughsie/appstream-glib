@@ -1,3 +1,20 @@
+Version 0.6.13
+~~~~~~~~~~~~~~
+Released: 2017-05-08
+
+New Features:
+ - Add a 'check-component' command to appstream-util (Richard Hughes)
+ - Add as_app_remove_category() and as_app_remove_kudo() (Richard Hughes)
+ - Add as_utils_guid_from_data() (Richard Hughes)
+ - Add functions for getting the AsApp and AsStore search match (Richard Hughes)
+ - Add support for icon scaling (Richard Hughes)
+ - Add support for <launchable> (Richard Hughes)
+ - Allow using the app origin as a search keyword (Richard Hughes)
+
+Bugfixes:
+ - Casefold all stemmed entries (Richard Hughes)
+ - Support non-numeric version numbers correctly (Richard Hughes)
+
 Version 0.6.12
 ~~~~~~~~~~~~~~
 Released: 2017-04-12
