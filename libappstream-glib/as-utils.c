@@ -1554,7 +1554,7 @@ as_utils_guid_from_string (const gchar *str)
 	if (str == NULL)
 		return NULL;
 	return as_utils_guid_from_data ("6ba7b810-9dad-11d1-80b4-00c04fd430c8",
-					str, strlen (str), NULL);
+					(const guint8 *) str, strlen (str), NULL);
 }
 
 /**
