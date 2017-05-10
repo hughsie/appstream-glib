@@ -12,7 +12,7 @@ install_data('appdata.its', install_dir : 'share/gettext/its')
 install_data('appdata.loc', install_dir : 'share/gettext/its')
 
 xsltproc = find_program('xsltproc', required : false)
-if xsltproc.found()
+if get_option('enable-man') and xsltproc.found()
   custom_target('appstream-util-man',
     input: 'appstream-util.xml',
     output: 'appstream-util.1',
