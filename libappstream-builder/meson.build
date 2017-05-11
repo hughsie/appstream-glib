@@ -81,7 +81,7 @@ pkgg.generate(
   name : 'appstream-builder',
   description : 'Objects and helper methods to help reading and writing AppStream metadata',
   filebase : 'appstream-builder',
-  subddirs : 'appstream-builder'
+  subdirs : 'libappstream-builder'
 )
 
 deps = [

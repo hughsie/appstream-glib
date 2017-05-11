@@ -141,7 +141,7 @@ pkgg.generate(
   name : 'appstream-glib',
   description : 'Objects and helper methods to help reading and writing AppStream metadata',
   filebase : 'appstream-glib',
-  subddirs : 'appstream-glib',
+  subdirs : 'libappstream-glib',
 )
 
 selftest = executable(
