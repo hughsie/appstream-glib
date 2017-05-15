@@ -138,6 +138,16 @@ asglib_incdir = include_directories('.')
 pkgg.generate(
   version : as_version,
   libraries : asglib,
+  requires : [
+    'glib-2.0',
+    'gobject-2.0',
+    'gdk-pixbuf-2.0',
+  ],
+  requires_private : [
+    'libarchive',
+    'uuid',
+    'libgcab-1.0',
+  ],
   name : 'appstream-glib',
   description : 'Objects and helper methods to help reading and writing AppStream metadata',
   filebase : 'appstream-glib',

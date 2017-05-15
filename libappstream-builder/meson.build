@@ -78,6 +78,11 @@ subdir('plugins')
 pkgg.generate(
   version : as_version,
   libraries : asbuilder,
+  requires : [
+    'glib-2.0',
+    'gobject-2.0',
+    'gdk-pixbuf-2.0',
+  ],
   name : 'appstream-builder',
   description : 'Objects and helper methods to help reading and writing AppStream metadata',
   filebase : 'appstream-builder',
