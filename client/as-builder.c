@@ -244,7 +244,7 @@ main (int argc, char **argv)
 	if (hidpi_enabled)
 		flags |= ASB_CONTEXT_FLAG_HIDPI_ICONS;
 	if (add_cache_id)
-		flags |= ASB_CONTEXT_FLAG_ADD_CACHE_ID;
+		g_print ("--add-cache-id now does nothing and will be removed in future versions\n");
 	if (embedded_icons)
 		flags |= ASB_CONTEXT_FLAG_EMBEDDED_ICONS;
 	if (include_failed)

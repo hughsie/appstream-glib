@@ -294,18 +294,10 @@ asb_test_plugin_loader_func (void)
 	g_assert_cmpstr (plugin->name, ==, "appdata");
 }
 
-#ifdef HAVE_RPM
-
-typedef enum {
-	ASB_TEST_CONTEXT_MODE_NO_CACHE,
-	ASB_TEST_CONTEXT_MODE_WITH_CACHE,
-	ASB_TEST_CONTEXT_MODE_WITH_OLD_CACHE,
-	ASB_TEST_CONTEXT_MODE_LAST
-} AsbTestContextMode;
-
 static void
-asb_test_context_test_func (AsbTestContextMode mode)
+asb_test_context_func (void)
 {
+#ifdef HAVE_RPM
 	AsApp *app;
 	AsbPluginLoader *loader;
 	GError *error = NULL;
@@ -334,13 +326,20 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"colorhug-als-2.0.2.cab",		/* firmware */
 		NULL};
 
+	/* remove icons */
+	ret = asb_utils_rmtree ("/tmp/asbuilder/temp/icons", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	ret = asb_utils_rmtree ("/tmp/asbuilder/output", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
 	/* set up the context */
 	ctx = asb_context_new ();
-	g_assert (!asb_context_get_flag (ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID));
 	asb_context_set_max_threads (ctx, 1);
 	asb_context_set_api_version (ctx, 0.9);
-	asb_context_set_flags (ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID |
-				    ASB_CONTEXT_FLAG_NO_NETWORK |
+	asb_context_set_flags (ctx, ASB_CONTEXT_FLAG_NO_NETWORK |
 				    ASB_CONTEXT_FLAG_INCLUDE_FAILED |
 				    ASB_CONTEXT_FLAG_HIDPI_ICONS);
 	asb_context_set_basename (ctx, "appstream");
@@ -349,21 +348,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	asb_context_set_output_dir (ctx, "/tmp/asbuilder/output");
 	asb_context_set_temp_dir (ctx, "/tmp/asbuilder/temp");
 	asb_context_set_icons_dir (ctx, "/tmp/asbuilder/temp/icons");
-	switch (mode) {
-	case ASB_TEST_CONTEXT_MODE_WITH_CACHE:
-		asb_context_set_old_metadata (ctx, "/tmp/asbuilder/output");
-		break;
-	case ASB_TEST_CONTEXT_MODE_WITH_OLD_CACHE:
-		{
-			g_autofree gchar *old_cache_dir = NULL;
-			old_cache_dir = asb_test_get_filename (".");
-			asb_context_set_old_metadata (ctx, old_cache_dir);
-		}
-		break;
-	default:
-		break;
-	}
-	g_assert (asb_context_get_flag (ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID));
 	g_assert_cmpstr (asb_context_get_temp_dir (ctx), ==, "/tmp/asbuilder/temp");
 	loader = asb_context_get_plugin_loader (ctx);
 	asb_plugin_loader_set_dir (loader, TESTPLUGINDIR);
@@ -384,16 +368,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	}
 
 	/* verify queue size */
-	switch (mode) {
-	case ASB_TEST_CONTEXT_MODE_NO_CACHE:
-	case ASB_TEST_CONTEXT_MODE_WITH_OLD_CACHE:
-		g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 9);
-		break;
-	default:
-		/* no packages should need extracting */
-		g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 0);
-		break;
-	}
+	g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 9);
 
 	/* run the plugins */
 	ret = asb_context_process (ctx, &error);
@@ -426,7 +401,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	/* check it matches what we expect */
 	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
-		"<components builder_id=\"appstream-glib:4\" origin=\"asb-self-test\" version=\"0.9\">\n"
+		"<components origin=\"asb-self-test\" version=\"0.9\">\n"
 #ifdef HAVE_FONTS
 		"<component type=\"font\">\n"
 		"<id>Liberation</id>\n"
@@ -444,7 +419,11 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<project_license>GPL-2.0+</project_license>\n"
 		"<url type=\"homepage\">http://fedorahosted.org/liberation-fonts/</url>\n"
 		"<screenshots>\n"
-		"<screenshot type=\"default\" priority=\"-32\">\n"
+		"<screenshot type=\"default\">\n"
+		"<caption>Liberation Serif – Regular</caption>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-" AS_TEST_WILDCARD_MD5 ".png</image>\n"
+		"</screenshot>\n"
+		"<screenshot priority=\"-32\">\n"
 		"<caption>Liberation Serif – Bold</caption>\n"
 		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-" AS_TEST_WILDCARD_MD5 ".png</image>\n"
 		"</screenshot>\n"
@@ -455,9 +434,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<languages>\n"
 		"<lang>en</lang>\n"
 		"</languages>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">font-1-1.fc21.noarch.rpm</value>\n"
-		"</metadata>\n"
 		"</component>\n"
 #endif
 		"<component type=\"addon\">\n"
@@ -468,9 +444,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<project_license>GPL-2.0+</project_license>\n"
 		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
 		"<extends>app.desktop</extends>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-1-1.fc25.x86_64.rpm</value>\n"
-		"</metadata>\n"
 		"</component>\n"
 		"<component type=\"addon\">\n"
 		"<id>app-extra</id>\n"
@@ -481,9 +454,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<project_license>GPL-2.0+</project_license>\n"
 		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
 		"<extends>app.desktop</extends>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-extra-1-1.fc25.noarch.rpm</value>\n"
-		"</metadata>\n"
 		"</component>\n"
 		"<component type=\"desktop\">\n"
 		"<id>app.desktop</id>\n"
@@ -524,9 +494,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<lang percentage=\"100\">en_GB</lang>\n"
 		"<lang percentage=\"33\">ru</lang>\n"
 		"</languages>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-1-1.fc25.x86_64.rpm</value>\n"
-		"</metadata>\n"
 		"</component>\n"
 #ifdef HAVE_GCAB
 		"<component type=\"firmware\">\n"
@@ -554,9 +521,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<provides>\n"
 		"<firmware type=\"flashed\">84f40464-9272-4ef7-9399-cd95f12da696</firmware>\n"
 		"</provides>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">colorhug-als-2.0.2.cab</value>\n"
-		"</metadata>\n"
 		"</component>\n"
 #endif
 		"</components>\n";
@@ -579,7 +543,7 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	/* check output */
 	xml_failed = as_store_to_xml (store_failed, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
-		"<components builder_id=\"appstream-glib:4\" origin=\"asb-self-test-failed\" version=\"0.9\">\n"
+		"<components origin=\"asb-self-test-failed\" version=\"0.9\">\n"
 #ifdef HAVE_FONTS
 		"<component type=\"font\">\n"
 		"<id>LiberationSerif</id>\n"
@@ -599,7 +563,11 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
 		"<extends>Liberation</extends>\n"
 		"<screenshots>\n"
-		"<screenshot type=\"default\" priority=\"-32\">\n"
+		"<screenshot type=\"default\">\n"
+		"<caption>Liberation Serif – Regular</caption>\n"
+		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-" AS_TEST_WILDCARD_MD5 ".png</image>\n"
+		"</screenshot>\n"
+		"<screenshot priority=\"-32\">\n"
 		"<caption>Liberation Serif – Bold</caption>\n"
 		"<image type=\"source\" height=\"48\" width=\"640\">file:/LiberationSerif-" AS_TEST_WILDCARD_MD5 ".png</image>\n"
 		"</screenshot>\n"
@@ -610,9 +578,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 		"<languages>\n"
 		"<lang>en</lang>\n"
 		"</languages>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">font-serif-1-1.fc21.noarch.rpm</value>\n"
-		"</metadata>\n"
 		"</component>\n"
 #endif
 		"</components>\n";
@@ -630,41 +595,26 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	/* check output */
 	xml_ignore = as_store_to_xml (store_ignore, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
 	expected_xml =
-		"<components builder_id=\"appstream-glib:4\" origin=\"asb-self-test-ignore\" version=\"0.9\">\n"
+		"<components origin=\"asb-self-test-ignore\" version=\"0.9\">\n"
 		"<component type=\"generic\">\n"
 		"<id>app-console.noarch</id>\n"
 		"<pkgname>app-console</pkgname>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-console-1-1.fc25.noarch.rpm</value>\n"
-		"</metadata>\n"
 		"</component>\n"
 		"<component type=\"generic\">\n"
 		"<id>app.i686</id>\n"
 		"<pkgname>app</pkgname>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">app-1-1.fc25.i686.rpm</value>\n"
-		"</metadata>\n"
 		"</component>\n"
 		"<component type=\"generic\">\n"
 		"<id>composite.x86_64</id>\n"
 		"<pkgname>composite</pkgname>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">composite-1-1.fc21.x86_64.rpm</value>\n"
-		"</metadata>\n"
 		"</component>\n"
 		"<component type=\"generic\">\n"
 		"<id>font-serif.noarch</id>\n"
 		"<pkgname>font-serif</pkgname>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">font-serif-1-1.fc21.noarch.rpm</value>\n"
-		"</metadata>\n"
 		"</component>\n"
 		"<component type=\"generic\">\n"
 		"<id>test.noarch</id>\n"
 		"<pkgname>test</pkgname>\n"
-		"<metadata>\n"
-		"<value key=\"X-CacheID\">test-0.1-1.fc21.noarch.rpm</value>\n"
-		"</metadata>\n"
 		"</component>\n"
 		"</components>\n";
 	ret = asb_test_compare_lines (xml_ignore->str, expected_xml, &error);
@@ -675,66 +625,6 @@ asb_test_context_test_func (AsbTestContextMode mode)
 	g_assert (g_file_test ("/tmp/asbuilder/temp/icons/64x64/app.png", G_FILE_TEST_EXISTS));
 	g_assert (g_file_test ("/tmp/asbuilder/temp/icons/128x128/app.png", G_FILE_TEST_EXISTS));
 	g_assert (!g_file_test ("/tmp/asbuilder/temp/icons/app.png", G_FILE_TEST_EXISTS));
-}
-#endif
-
-static void
-asb_test_context_nocache_func (void)
-{
-	GError *error = NULL;
-	gboolean ret;
-
-	/* remove icons */
-	ret = asb_utils_rmtree ("/tmp/asbuilder/temp/icons", &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-#ifdef HAVE_RPM
-	ret = asb_utils_rmtree ("/tmp/asbuilder/output", &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-	asb_test_context_test_func (ASB_TEST_CONTEXT_MODE_NO_CACHE);
-#endif
-}
-
-static void
-asb_test_context_cache_func (void)
-{
-return;
-#ifdef HAVE_RPM
-	GError *error = NULL;
-	gboolean ret;
-
-	/* remove icons */
-	ret = asb_utils_rmtree ("/tmp/asbuilder/temp/icons", &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* run again, this time using the old metadata as a cache */
-	asb_test_context_test_func (ASB_TEST_CONTEXT_MODE_WITH_CACHE);
-
-	/* remove temp space */
-	ret = asb_utils_rmtree ("/tmp/asbuilder", &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-#endif
-}
-
-static void
-asb_test_context_oldcache_func (void)
-{
-return;
-#ifdef HAVE_RPM
-	GError *error = NULL;
-	gboolean ret;
-
-	/* run again, this time using the old metadata as a cache */
-	asb_test_context_test_func (ASB_TEST_CONTEXT_MODE_WITH_OLD_CACHE);
-
-	/* remove temp space */
-	ret = asb_utils_rmtree ("/tmp/asbuilder", &error);
-	g_assert_no_error (error);
-	g_assert (ret);
 #endif
 }
 
@@ -875,9 +765,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStreamBuilder/utils{glob}", asb_test_utils_glob_func);
 	g_test_add_func ("/AppStreamBuilder/plugin-loader", asb_test_plugin_loader_func);
 	g_test_add_func ("/AppStreamBuilder/firmware", asb_test_firmware_func);
-	g_test_add_func ("/AppStreamBuilder/context{no-cache}", asb_test_context_nocache_func);
-	g_test_add_func ("/AppStreamBuilder/context{cache}", asb_test_context_cache_func);
-	g_test_add_func ("/AppStreamBuilder/context{old-cache}", asb_test_context_oldcache_func);
+	g_test_add_func ("/AppStreamBuilder/context", asb_test_context_func);
 #ifdef HAVE_RPM
 	g_test_add_func ("/AppStreamBuilder/package{rpm}", asb_test_package_rpm_func);
 #endif

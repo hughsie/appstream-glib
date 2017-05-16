@@ -115,9 +115,9 @@ asb_context_set_api_version (AsbContext *ctx, gdouble api_version)
 /**
  * asb_context_set_flags:
  * @ctx: A #AsbContext
- * @flags: #AsbContextFlags, e.g. %ASB_CONTEXT_FLAG_ADD_CACHE_ID
+ * @flags: #AsbContextFlags, e.g. %ASB_CONTEXT_FLAG_NO_NETWORK
  *
- * Sets if the cache id should be included in the metadata.
+ * Sets flags to be used when building the metadata.
  *
  * Since: 0.3.5
  **/
@@ -125,11 +125,6 @@ void
 asb_context_set_flags (AsbContext *ctx, AsbContextFlags flags)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	if (flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) {
-		as_store_add_metadata_index (priv->store_failed, "X-CacheID");
-		as_store_add_metadata_index (priv->store_ignore, "X-CacheID");
-		as_store_add_metadata_index (priv->store_old, "X-CacheID");
-	}
 	priv->flags = flags;
 }
 
@@ -464,12 +459,6 @@ asb_context_add_filename (AsbContext *ctx, const gchar *filename, GError **error
 {
 	g_autoptr(AsbPackage) pkg = NULL;
 
-	/* can find in existing metadata */
-	if (asb_context_find_in_cache (ctx, filename)) {
-		g_debug ("Found %s in old metadata", filename);
-		return TRUE;
-	}
-
 	/* open */
 #ifdef HAVE_RPM
 	if (g_str_has_suffix (filename, ".rpm"))
@@ -796,10 +785,6 @@ asb_context_write_xml (AsbContext *ctx, GError **error)
 	g_print ("Writing %s...\n", filename);
 	as_store_set_origin (store, priv->origin);
 	as_store_set_api_version (store, priv->api_version);
-	if (priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) {
-		g_autofree gchar *builder_id = asb_utils_get_builder_id ();
-		as_store_set_builder_id (store, builder_id);
-	}
 	return as_store_to_file (store,
 				 file,
 				 AS_NODE_TO_XML_FLAG_ADD_HEADER |
@@ -1028,10 +1013,6 @@ asb_context_write_xml_fail (AsbContext *ctx, GError **error)
 	basename_failed = g_strdup_printf ("%s-failed", priv->origin);
 	as_store_set_origin (priv->store_failed, basename_failed);
 	as_store_set_api_version (priv->store_failed, priv->api_version);
-	if (priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) {
-		g_autofree gchar *builder_id = asb_utils_get_builder_id ();
-		as_store_set_builder_id (priv->store_failed, builder_id);
-	}
 	return as_store_to_file (priv->store_failed,
 				 file,
 				 AS_NODE_TO_XML_FLAG_ADD_HEADER |
@@ -1048,10 +1029,6 @@ asb_context_write_xml_ignore (AsbContext *ctx, GError **error)
 	g_autofree gchar *filename = NULL;
 	g_autoptr(GFile) file = NULL;
 
-	/* no need to create */
-	if ((priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) == 0)
-		return TRUE;
-
 	/* the store is already populated */
 	filename = g_strdup_printf ("%s/%s-ignore.xml.gz",
 				    priv->output_dir, priv->basename);
@@ -1061,10 +1038,6 @@ asb_context_write_xml_ignore (AsbContext *ctx, GError **error)
 	basename_cache = g_strdup_printf ("%s-ignore", priv->origin);
 	as_store_set_origin (priv->store_ignore, basename_cache);
 	as_store_set_api_version (priv->store_ignore, priv->api_version);
-	if (priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) {
-		g_autofree gchar *builder_id = asb_utils_get_builder_id ();
-		as_store_set_builder_id (priv->store_ignore, builder_id);
-	}
 	return as_store_to_file (priv->store_ignore,
 				 file,
 				 AS_NODE_TO_XML_FLAG_ADD_HEADER |
@@ -1300,44 +1273,15 @@ asb_context_process (AsbContext *ctx, GError **error)
  * @ctx: A #AsbContext
  * @filename: cache-id
  *
- * Finds an application in the cache. This will only return results if
- * asb_context_set_old_metadata() has been used.
+ * This function used to find an application in the cache, and now does nothing.
  *
- * Returns: %TRUE to skip exploding the package
+ * Returns: always %FALSE
  *
  * Since: 0.1.0
  **/
 gboolean
 asb_context_find_in_cache (AsbContext *ctx, const gchar *filename)
 {
-	AsApp *app;
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	guint i;
-	g_autofree gchar *cache_id = NULL;
-	g_autofree gchar *builder_id = NULL;
-	g_autoptr(GPtrArray) apps = NULL;
-	g_autoptr(GPtrArray) apps_ignore = NULL;
-
-	/* the package was successfully parsed last time */
-	cache_id = asb_utils_get_cache_id_for_filename (filename);
-	apps = as_store_get_apps_by_metadata (priv->store_old,
-					      "X-CacheID",
-					      cache_id);
-	if (apps->len > 0) {
-		for (i = 0; i < apps->len; i++) {
-			app = g_ptr_array_index (apps, i);
-			asb_context_add_app (ctx, (AsbApp *) app);
-		}
-		return TRUE;
-	}
-
-	/* the package was ignored last time */
-	apps_ignore = as_store_get_apps_by_metadata (priv->store_ignore,
-						     "X-CacheID",
-						     cache_id);
-	if (apps_ignore->len > 0)
-		return TRUE;
-
 	return FALSE;
 }
 
@@ -1390,43 +1334,17 @@ asb_context_add_app (AsbContext *ctx, AsbApp *app)
 void
 asb_context_add_app_ignore (AsbContext *ctx, AsbPackage *pkg)
 {
-	AsApp *app_tmp;
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	g_autofree gchar *name_arch = NULL;
 	g_autoptr(AsApp) app = NULL;
-	g_autoptr(GPtrArray) apps = NULL;
-
-	/* only do this when we are using a cache-id */
-	if ((priv->flags & ASB_CONTEXT_FLAG_ADD_CACHE_ID) == 0)
-		return;
-
-	/* check not already added a dummy application for this package */
-	apps = as_store_get_apps_by_metadata (priv->store_ignore,
-					      "X-CacheID",
-					      asb_package_get_basename (pkg));
-	if (apps->len > 0) {
-		g_debug ("already found CacheID of %s",
-			 asb_package_get_basename (pkg));
-		return;
-	}
-
-	/* package name already exists, but with a different CacheID */
-	name_arch = g_strdup_printf ("%s.%s",
-				     asb_package_get_name (pkg),
-				     asb_package_get_arch (pkg));
-	app_tmp = as_store_get_app_by_id (priv->store_ignore, name_arch);
-	if (app_tmp != NULL) {
-		as_app_add_metadata (AS_APP (app_tmp), "X-CacheID",
-				     asb_package_get_basename (pkg));
-		return;
-	}
 
 	/* never encountered before, so add */
 	app = as_app_new ();
+	name_arch = g_strdup_printf ("%s.%s",
+				     asb_package_get_name (pkg),
+				     asb_package_get_arch (pkg));
 	as_app_set_id (app, name_arch);
 	as_app_add_pkgname (app, asb_package_get_name (pkg));
-	as_app_add_metadata (app, "X-CacheID",
-			     asb_package_get_basename (pkg));
 	as_store_add_app (priv->store_ignore, app);
 }
 

@@ -320,7 +320,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	GList *l;
 	GPtrArray *array;
 	gboolean ret;
-	gchar *cache_id;
 	guint i;
 	guint nr_added = 0;
 	g_autoptr(GError) error = NULL;
@@ -358,15 +357,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			app2 = asb_app_new (priv->pkg, as_app_get_id (app_tmp));
 			as_app_subsume (AS_APP (app2), app_tmp);
 			asb_context_add_app (priv->ctx, app2);
-
-			/* set cache-id in case we want to use the metadata directly */
-			if (asb_context_get_flag (priv->ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID)) {
-				cache_id = asb_utils_get_cache_id_for_filename (priv->filename);
-				as_app_add_metadata (AS_APP (app2),
-						     "X-CacheID",
-						     cache_id);
-				g_free (cache_id);
-			}
 			nr_added++;
 		}
 		g_debug ("added %u apps from archive", apps_tmp->len);
@@ -527,15 +517,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 			goto skip;
 		}
 
-		/* set cache-id in case we want to use the metadata directly */
-		if (asb_context_get_flag (priv->ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID)) {
-			cache_id = asb_utils_get_cache_id_for_filename (priv->filename);
-			as_app_add_metadata (AS_APP (app),
-					     "X-CacheID",
-					     cache_id);
-			g_free (cache_id);
-		}
-
 		/* set the VCS information into the metadata */
 		if (asb_package_get_vcs (priv->pkg) != NULL) {
 			as_app_add_metadata (AS_APP (app),
@@ -556,11 +537,6 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		nr_added++;
 	}
 skip:
-	/* add a dummy element to the AppStream metadata so that we don't keep
-	 * parsing this every time */
-	if (asb_context_get_flag (priv->ctx, ASB_CONTEXT_FLAG_ADD_CACHE_ID) && nr_added == 0)
-		asb_context_add_app_ignore (priv->ctx, priv->pkg);
-
 	/* delete tree */
 	g_debug ("deleting temp files: %s", asb_package_get_name (priv->pkg));
 	if (!asb_utils_rmtree (priv->tmpdir, &error)) {
