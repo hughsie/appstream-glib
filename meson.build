@@ -57,6 +57,10 @@ gdk = dependency('gdk-3.0')
 gdkpixbuf = dependency('gdk-pixbuf-2.0', version : '>= 2.31.5')
 libgcab = dependency('libgcab-1.0', required : false)
 
+if libgcab.found()
+  conf.set('HAVE_GCAB', 1)
+endif
+
 # builder (default enabled)
 if get_option('enable-builder')
   gtk = dependency('gtk+-3.0')

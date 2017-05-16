@@ -2011,7 +2011,7 @@ as_store_from_bytes (AsStore *store,
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
-			     "no firmware support, compiled with --disable-firmware");
+			     "not supported, compiled without gcab");
 		return FALSE;
 #endif
 	}
