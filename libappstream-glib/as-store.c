@@ -477,6 +477,25 @@ as_store_get_apps_by_id (AsStore *store, const gchar *id)
 }
 
 /**
+ * as_store_get_apps_by_id_merge:
+ * @store: a #AsStore instance.
+ * @id: the application full ID.
+ *
+ * Gets an array of all the merge applications that match a specific ID.
+ *
+ * Returns: (element-type AsApp) (transfer none): an array
+ *
+ * Since: 0.7.0
+ **/
+GPtrArray *
+as_store_get_apps_by_id_merge (AsStore *store, const gchar *id)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+	return g_hash_table_lookup (priv->hash_merge_id, id);
+}
+
+/**
  * as_store_add_metadata_index:
  * @store: a #AsStore instance.
  * @key: the metadata key.
