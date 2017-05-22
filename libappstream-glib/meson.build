@@ -225,5 +225,6 @@ asglib_gir = gnome.generate_gir(asglib,
     'Gio-2.0',
     'GdkPixbuf-2.0'
   ],
+  link_with : asglib,
   install : true,
 )
