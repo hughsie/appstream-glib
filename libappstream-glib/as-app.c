@@ -2888,6 +2888,14 @@ as_app_add_keyword (AsApp *app,
 			return;
 	}
 	g_ptr_array_add (tmp, as_ref_string_new (keyword));
+
+	/* cache already populated */
+	if (priv->token_cache_valid) {
+		g_warning ("%s has token cache, invaliding as %s was added",
+			   as_app_get_unique_id (app), keyword);
+		g_hash_table_remove_all (priv->token_cache);
+		priv->token_cache_valid = FALSE;
+	}
 }
 
 /**
