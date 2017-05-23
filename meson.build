@@ -44,7 +44,9 @@ lt_age = '0'
 lt_version = '@0@.@1@.@2@'.format(lt_current, lt_age, lt_revision)
 
 # set plugindir for builder
-plugindir = join_paths(get_option('libdir'), 'asb-plugins-' + as_plugin_version)
+plugindir = join_paths(get_option('prefix'),
+                       get_option('libdir'),
+                       'asb-plugins-' + as_plugin_version)
 
 glib_ver = '>= 2.45.8'
 uuid = dependency('uuid')
