@@ -1928,6 +1928,9 @@ as_test_app_validate_check (GPtrArray *array,
 		tmp = g_strrstr (message_no_data, " [");
 		if (tmp != NULL)
 			*tmp = '\0';
+		tmp = g_strrstr (message_no_data, ", ");
+		if (tmp != NULL)
+			*tmp = '\0';
 		if (g_strcmp0 (message_no_data, message) == 0)
 			return;
 	}

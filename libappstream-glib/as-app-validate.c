@@ -184,12 +184,14 @@ as_app_validate_description_li (const gchar *text, AsAppValidateHelper *helper)
 	if (str_len < length_li_min) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<li> is too short [%s]", text);
+				     "<li> is too short [%s] minimum is %u chars",
+				     text, length_li_min);
 	}
 	if (str_len > length_li_max) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<li> is too long [%s]", text);
+				     "<li> is too long [%s] maximum is %u chars",
+				     text, length_li_max);
 	}
 	if (ai_app_validate_fullstop_ending (text)) {
 		ai_app_validate_add (helper,
@@ -252,7 +254,8 @@ as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper
 	if (str_len > length_para_max) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "<p> is too long [%s]", text);
+				     "<p> is too long [%s], maximum is %u chars",
+				     text, length_para_max);
 	}
 	if (g_str_has_prefix (text, "This application")) {
 		ai_app_validate_add (helper,
@@ -530,26 +533,26 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	if (screenshot_width < ss_size_width_min) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> width too small [%s]",
-				     url);
+				     "<screenshot> width too small [%s] minimum is %upx",
+				     url, ss_size_width_min);
 	}
 	if (screenshot_height < ss_size_height_min) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> height too small [%s]",
-				     url);
+				     "<screenshot> height too small [%s] minimum is %upx",
+				     url, ss_size_height_min);
 	}
 	if (screenshot_width > ss_size_width_max) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> width too large [%s]",
-				     url);
+				     "<screenshot> width too large [%s] maximum is %upx",
+				     url, ss_size_width_max);
 	}
 	if (screenshot_height > ss_size_height_max) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> height too large [%s]",
-				     url);
+				     "<screenshot> height too large [%s] maximum is %upx",
+				     url, ss_size_height_max);
 	}
 
 	/* check padding */
@@ -778,12 +781,14 @@ as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 	if (screenshots->len < number_screenshots_min) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "Not enough <screenshot> tags");
+				     "Not enough <screenshot> tags, minimum is %u",
+				     number_screenshots_min);
 	}
 	if (screenshots->len > number_screenshots_max) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
-				     "Too many <screenshot> tags");
+				     "Too many <screenshot> tags, maximum is %u",
+				     number_screenshots_max);
 	}
 	for (i = 0; i < screenshots->len; i++) {
 		ss = g_ptr_array_index (screenshots, i);
@@ -1472,12 +1477,14 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		if (str_len < length_name_min) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<name> is too short [%s]", name);
+					     "<name> is too short [%s] minimum is %u chars",
+					     name, length_name_min);
 		}
 		if (str_len > length_name_max) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<name> is too long [%s]", name);
+					     "<name> is too long [%s] maximum is %u chars",
+					     name, length_name_max);
 		}
 		if (ai_app_validate_fullstop_ending (name)) {
 			ai_app_validate_add (helper,
@@ -1511,14 +1518,14 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		if (str_len < length_summary_min) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<summary> is too short [%s]",
-					     summary);
+					     "<summary> is too short [%s] minimum is %u chars",
+					     summary, length_summary_min);
 		}
 		if (str_len > length_summary_max) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<summary> is too long [%s]",
-					     summary);
+					     "<summary> is too long [%s] maximum is %u chars",
+					     summary, length_summary_max);
 		}
 		if (ai_app_validate_fullstop_ending (summary)) {
 			ai_app_validate_add (helper,
@@ -1596,14 +1603,14 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 		if (str_len < length_name_min) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<developer_name> is too short [%s]",
-					     name);
+					     "<developer_name> is too short [%s] minimum is %u chars",
+					     name, length_name_min);
 		}
 		if (str_len > length_name_max) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
-					     "<developer_name> is too long [%s]",
-					     name);
+					     "<developer_name> is too long [%s] maximum is %u chars",
+					     name, length_name_max);
 		}
 		if (as_app_validate_has_hyperlink (name)) {
 			ai_app_validate_add (helper,
