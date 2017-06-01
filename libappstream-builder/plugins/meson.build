@@ -68,6 +68,24 @@ shared_module(
   install_dir : plugindir,
 )
 
+shared_module(
+  'asb_plugin_shell_extension',
+  sources : 'asb-plugin-shell-extension.c',
+  include_directories: [
+    top_build_incdir,
+    asbuilder_incdir,
+    asglib_incdir,
+  ],
+  dependencies : [
+    gdkpixbuf,
+    json_glib,
+  ],
+  link_with : asbuilder,
+  c_args : asb_plugins_cargs,
+  install : true,
+  install_dir : plugindir,
+)
+
 if get_option('enable-fonts')
   shared_module(
     'asb_plugin_font',
