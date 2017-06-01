@@ -6043,7 +6043,7 @@ as_app_parse_appdata_file (AsApp *app,
 		g_set_error (error,
 			     AS_APP_ERROR,
 			     AS_APP_ERROR_INVALID_TYPE,
-			     "%s has an unrecognised contents",
+			     "%s has no <component> node",
 			     filename);
 		return FALSE;
 	}
