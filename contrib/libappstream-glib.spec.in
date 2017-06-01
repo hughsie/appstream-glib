@@ -94,10 +94,6 @@ GLib headers and libraries for appstream-builder.
 %install
 %meson_install
 
-%__rm -f %{buildroot}%{_libdir}/libappstream-glib*.la
-%__rm -f %{buildroot}%{_libdir}/libappstream-builder*.la
-%__rm -f %{buildroot}%{_libdir}/asb-plugins-%{as_plugin_version}/*.la
-
 %find_lang appstream-glib
 
 %post -p /sbin/ldconfig
