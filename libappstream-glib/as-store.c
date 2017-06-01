@@ -1159,10 +1159,12 @@ as_store_add_app (AsStore *store, AsApp *app)
 		if (app_format == NULL) {
 			g_warning ("no format specified in %s",
 				   as_app_get_unique_id (app));
+			return;
 		}
 		if (item_format == NULL) {
 			g_warning ("no format specified in %s",
 				   as_app_get_unique_id (item));
+			return;
 		}
 
 		/* the previously stored app is what we actually want */
