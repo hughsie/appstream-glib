@@ -53,7 +53,6 @@ typedef struct
 {
 	AsStore			*store_failed;
 	AsStore			*store_ignore;
-	AsStore			*store_old;
 	GList			*apps;			/* of AsbApp */
 	GMutex			 apps_mutex;		/* for ->apps */
 	GPtrArray		*file_globs;		/* of AsbPackage */
@@ -62,7 +61,6 @@ typedef struct
 	AsbContextFlags		 flags;
 	guint			 min_icon_size;
 	gdouble			 api_version;
-	gchar			*old_metadata;
 	gchar			*log_dir;
 	gchar			*cache_dir;
 	gchar			*temp_dir;
@@ -181,15 +179,13 @@ asb_context_get_min_icon_size (AsbContext *ctx)
  * @old_metadata: filename, or %NULL
  *
  * Sets the filename location of the old metadata file.
- * Note: the old metadata must have been built with cache-ids to be useful.
+ * This function now has no affect as no cache ID is available.
  *
  * Since: 0.1.0
  **/
 void
 asb_context_set_old_metadata (AsbContext *ctx, const gchar *old_metadata)
 {
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->old_metadata = asb_context_realpath (old_metadata);
 }
 
 /**
@@ -593,91 +589,12 @@ asb_context_setup (AsbContext *ctx, GError **error)
 			return FALSE;
 	}
 
-	/* decompress the icons */
-	if (priv->old_metadata != NULL) {
-		g_autofree gchar *icons_fn = NULL;
-		icons_fn = g_strdup_printf ("%s/%s-icons.tar.gz",
-					    priv->old_metadata,
-					    priv->basename);
-		if (g_file_test (icons_fn, G_FILE_TEST_EXISTS)) {
-			if (!asb_utils_explode (icons_fn,
-						priv->icons_dir,
-						NULL,
-						error))
-				return FALSE;
-		}
-	}
-
 	/* load plugins */
 	if (!asb_plugin_loader_setup (priv->plugin_loader, error))
 		return FALSE;
 
 	/* get a cache of the file globs */
 	priv->file_globs = asb_plugin_loader_get_globs (priv->plugin_loader);
-
-	/* add old metadata */
-	if (priv->old_metadata != NULL) {
-		g_autofree gchar *builder_id = NULL;
-		g_autofree gchar *fn_failed = NULL;
-		g_autofree gchar *fn_ignore = NULL;
-		g_autofree gchar *fn_old = NULL;
-		g_autoptr(GFile) file_failed = NULL;
-		g_autoptr(GFile) file_ignore = NULL;
-		g_autoptr(GFile) file_old = NULL;
-
-		builder_id = asb_utils_get_builder_id ();
-		fn_old = g_strdup_printf ("%s/%s.xml.gz",
-					  priv->old_metadata,
-					  priv->basename);
-		file_old = g_file_new_for_path (fn_old);
-		if (g_file_query_exists (file_old, NULL)) {
-			if (!as_store_from_file (priv->store_old, file_old,
-						 NULL, NULL, error))
-				return FALSE;
-			/* check builder-id matches */
-			if (g_strcmp0 (as_store_get_builder_id (priv->store_old),
-				       builder_id) != 0) {
-				g_debug ("builder ID does not match: %s:%s",
-					 as_store_get_builder_id (priv->store_old),
-					 builder_id);
-				as_store_remove_all (priv->store_old);
-			}
-		}
-		fn_ignore = g_strdup_printf ("%s/%s-ignore.xml.gz",
-					     priv->old_metadata,
-					     priv->basename);
-		file_ignore = g_file_new_for_path (fn_ignore);
-		if (g_file_query_exists (file_ignore, NULL)) {
-			if (!as_store_from_file (priv->store_ignore, file_ignore,
-						 NULL, NULL, error))
-				return FALSE;
-			/* check builder-id matches */
-			if (g_strcmp0 (as_store_get_builder_id (priv->store_ignore),
-				       builder_id) != 0) {
-				g_debug ("builder ID does not match: %s:%s",
-					 as_store_get_builder_id (priv->store_ignore),
-					 builder_id);
-				as_store_remove_all (priv->store_ignore);
-			}
-		}
-		fn_failed = g_strdup_printf ("%s/%s-failed.xml.gz",
-					     priv->old_metadata,
-					     priv->basename);
-		file_failed = g_file_new_for_path (fn_failed);
-		if (g_file_query_exists (file_failed, NULL)) {
-			if (!as_store_from_file (priv->store_failed, file_failed,
-						 NULL, NULL, error))
-				return FALSE;
-			/* check builder-id matches */
-			if (g_strcmp0 (as_store_get_builder_id (priv->store_failed),
-				       builder_id) != 0) {
-				g_debug ("builder ID does not match: %s:%s",
-					 as_store_get_builder_id (priv->store_failed),
-					 builder_id);
-				as_store_remove_all (priv->store_failed);
-			}
-		}
-	}
 
 	return TRUE;
 }
@@ -952,9 +869,6 @@ asb_context_detect_missing_parents (AsbContext *ctx, GError **error)
 			continue;
 		tmp = g_ptr_array_index (as_app_get_extends(app), 0);
 		found = g_hash_table_lookup (hash, tmp);
-		if (found != NULL)
-			continue;
-		found = as_store_get_app_by_id (priv->store_old, tmp);
 		if (found != NULL)
 			continue;
 
@@ -1310,7 +1224,6 @@ asb_context_finalize (GObject *object)
 
 	g_object_unref (priv->store_failed);
 	g_object_unref (priv->store_ignore);
-	g_object_unref (priv->store_old);
 	g_object_unref (priv->plugin_loader);
 	g_ptr_array_unref (priv->packages);
 	g_list_foreach (priv->apps, (GFunc) g_object_unref, NULL);
@@ -1318,7 +1231,6 @@ asb_context_finalize (GObject *object)
 	if (priv->file_globs != NULL)
 		g_ptr_array_unref (priv->file_globs);
 	g_mutex_clear (&priv->apps_mutex);
-	g_free (priv->old_metadata);
 	g_free (priv->log_dir);
 	g_free (priv->cache_dir);
 	g_free (priv->temp_dir);
@@ -1340,7 +1252,6 @@ asb_context_init (AsbContext *ctx)
 	g_mutex_init (&priv->apps_mutex);
 	priv->store_failed = as_store_new ();
 	priv->store_ignore = as_store_new ();
-	priv->store_old = as_store_new ();
 	priv->min_icon_size = 32;
 }
 

@@ -186,10 +186,11 @@ main (int argc, char **argv)
 	/* no longer threaded */
 	if (max_threads > 0)
 		g_print ("--max-threads now does nothing and will be removed in future versions");
+	if (old_metadata != NULL)
+		g_print ("--old-metadata now does nothing and will be removed in future versions");
 
 	ctx = asb_context_new ();
 	asb_context_set_api_version (ctx, 0.8);
-	asb_context_set_old_metadata (ctx, old_metadata);
 	asb_context_set_log_dir (ctx, log_dir);
 	asb_context_set_temp_dir (ctx, temp_dir);
 	asb_context_set_output_dir (ctx, output_dir);
