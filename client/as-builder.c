@@ -66,7 +66,7 @@ main (int argc, char **argv)
 	gboolean ret;
 	gboolean uncompressed_icons = FALSE;
 	gboolean verbose = FALSE;
-	guint max_threads = 4;
+	guint max_threads = 0;
 	guint min_icon_size = 32;
 	guint i;
 	int retval = EXIT_SUCCESS;
@@ -160,13 +160,6 @@ main (int argc, char **argv)
 	if (verbose)
 		g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
 
-#if !GLIB_CHECK_VERSION(2,40,0)
-	if (max_threads > 1) {
-		/* TRANSLATORS: debug message */
-		g_debug ("O_CLOEXEC not available, using 1 core");
-		max_threads = 1;
-	}
-#endif
 	/* set defaults */
 	if (temp_dir == NULL)
 		temp_dir = g_strdup ("./tmp");
@@ -190,6 +183,10 @@ main (int argc, char **argv)
 		origin = g_strdup ("example");
 	}
 
+	/* no longer threaded */
+	if (max_threads > 0)
+		g_print ("--max-threads now does nothing and will be removed in future versions");
+
 	ctx = asb_context_new ();
 	asb_context_set_api_version (ctx, 0.8);
 	asb_context_set_old_metadata (ctx, old_metadata);
@@ -200,7 +197,6 @@ main (int argc, char **argv)
 	asb_context_set_cache_dir (ctx, cache_dir);
 	asb_context_set_basename (ctx, basename);
 	asb_context_set_origin (ctx, origin);
-	asb_context_set_max_threads (ctx, max_threads);
 	asb_context_set_min_icon_size (ctx, min_icon_size);
 
 	/* parse the veto ignore flags */

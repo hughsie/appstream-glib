@@ -60,7 +60,6 @@ typedef struct
 	GPtrArray		*packages;		/* of AsbPackage */
 	AsbPluginLoader		*plugin_loader;
 	AsbContextFlags		 flags;
-	guint			 max_threads;
 	guint			 min_icon_size;
 	gdouble			 api_version;
 	gchar			*old_metadata;
@@ -134,14 +133,13 @@ asb_context_set_flags (AsbContext *ctx, AsbContextFlags flags)
  * @max_threads: integer
  *
  * Sets the maximum number of threads to use when processing packages.
+ * This function now has no affect as only one thread is ever used.
  *
  * Since: 0.1.0
  **/
 void
 asb_context_set_max_threads (AsbContext *ctx, guint max_threads)
 {
-	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	priv->max_threads = max_threads;
 }
 
 /**
@@ -684,17 +682,6 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	return TRUE;
 }
 
-static void
-asb_task_process_func (gpointer data, gpointer user_data)
-{
-	AsbTask *task = (AsbTask *) data;
-	g_autoptr(GError) error = NULL;
-
-	/* just run the task */
-	if (!asb_task_process (task, &error))
-		g_warning ("Failed to run task: %s", error->message);
-}
-
 static gboolean
 asb_context_write_icons (AsbContext *ctx,
 			 const gchar *temp_dir,
@@ -1148,31 +1135,16 @@ gboolean
 asb_context_process (AsbContext *ctx, GError **error)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
-	AsbPackage *pkg;
-	AsbTask *task;
-	GThreadPool *pool;
-	gboolean ret;
-	guint i;
-	g_autoptr(GPtrArray) tasks = NULL;
 
 	/* only process the newest packages */
 	asb_context_disable_multiarch_pkgs (ctx);
 	asb_context_disable_older_pkgs (ctx);
 
-	/* create thread pool */
-	pool = g_thread_pool_new (asb_task_process_func,
-				  ctx,
-				  (gint) priv->max_threads,
-				  TRUE,
-				  error);
-	if (pool == NULL)
-		return FALSE;
-
 	/* add each package */
 	g_print ("Processing packages...\n");
-	tasks = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
-	for (i = 0; i < priv->packages->len; i++) {
-		pkg = g_ptr_array_index (priv->packages, i);
+	for (guint i = 0; i < priv->packages->len; i++) {
+		g_autoptr(AsbTask) task = NULL;
+		AsbPackage *pkg = g_ptr_array_index (priv->packages, i);
 		if (!asb_package_get_enabled (pkg)) {
 			asb_package_log (pkg,
 					 ASB_PACKAGE_LOG_LEVEL_DEBUG,
@@ -1192,20 +1164,11 @@ asb_context_process (AsbContext *ctx, GError **error)
 		/* create task */
 		task = asb_task_new (ctx);
 		asb_task_set_package (task, pkg);
-		g_ptr_array_add (tasks, task);
 
 		/* run the task */
-		if (priv->max_threads == 1) {
-			if (!asb_task_process (task, error))
-				return FALSE;
-		} else {
-			if (!g_thread_pool_push (pool, task, error))
-				return FALSE;
-		}
+		if (!asb_task_process (task, error))
+			return FALSE;
 	}
-
-	/* wait for them to finish */
-	g_thread_pool_free (pool, FALSE, TRUE);
 
 	/* merge */
 	g_print ("Merging applications...\n");
@@ -1231,37 +1194,28 @@ asb_context_process (AsbContext *ctx, GError **error)
 	asb_context_write_app_xml (ctx);
 
 	/* write XML file */
-	ret = asb_context_write_xml (ctx, error);
-	if (!ret)
+	if (!asb_context_write_xml (ctx, error))
 		return FALSE;
 
 	/* write XML file */
-	ret = asb_context_write_xml_fail (ctx, error);
-	if (!ret)
+	if (!asb_context_write_xml_fail (ctx, error))
 		return FALSE;
 
 	/* write XML file */
-	ret = asb_context_write_xml_ignore (ctx, error);
-	if (!ret)
+	if (!asb_context_write_xml_ignore (ctx, error))
 		return FALSE;
 
 	/* write icons archive */
-	ret = asb_context_write_icons (ctx,
-				       priv->temp_dir,
-				       error);
-	if (!ret)
+	if (!asb_context_write_icons (ctx, priv->temp_dir, error))
 		return FALSE;
 
 	/* write screenshots archive */
-	ret = asb_context_write_screenshots (ctx,
-					     priv->temp_dir,
-					     error);
-	if (!ret)
+	if (!asb_context_write_screenshots (ctx, priv->temp_dir, error))
 		return FALSE;
 
 	/* ensure all packages are flushed */
-	for (i = 0; i < priv->packages->len; i++) {
-		pkg = g_ptr_array_index (priv->packages, i);
+	for (guint i = 0; i < priv->packages->len; i++) {
+		AsbPackage *pkg = g_ptr_array_index (priv->packages, i);
 		if (!asb_package_log_flush (pkg, error))
 			return FALSE;
 	}
@@ -1387,7 +1341,6 @@ asb_context_init (AsbContext *ctx)
 	priv->store_failed = as_store_new ();
 	priv->store_ignore = as_store_new ();
 	priv->store_old = as_store_new ();
-	priv->max_threads = 1;
 	priv->min_icon_size = 32;
 }
 
