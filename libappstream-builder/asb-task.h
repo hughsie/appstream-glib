@@ -48,7 +48,7 @@ struct _AsbTaskClass
 
 AsbTask		*asb_task_new			(AsbContext	*ctx);
 gboolean	 asb_task_process		(AsbTask	*task,
-						 GError		**error_not_used);
+						 GError		**error);
 void		 asb_task_set_package		(AsbTask	*task,
 						 AsbPackage	*pkg);
 

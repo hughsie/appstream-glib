@@ -301,7 +301,7 @@ asb_task_explode_extra_packages (AsbTask *task, GError **error)
 /**
  * asb_task_process:
  * @task: A #AsbTask
- * @error_not_used: A #GError or %NULL
+ * @error: A #GError or %NULL
  *
  * Processes the task.
  *
@@ -310,7 +310,7 @@ asb_task_explode_extra_packages (AsbTask *task, GError **error)
  * Since: 0.1.0
  **/
 gboolean
-asb_task_process (AsbTask *task, GError **error_not_used)
+asb_task_process (AsbTask *task, GError **error)
 {
 	AsRelease *release;
 	AsbApp *app;
@@ -331,7 +331,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	/* ensure nevra read */
 	if (!asb_package_ensure (priv->pkg,
 				 ASB_PACKAGE_ENSURE_NEVRA,
-				 error_not_used))
+				 error))
 		return FALSE;
 
 	g_debug ("starting: %s", asb_package_get_name (priv->pkg));
@@ -366,7 +366,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	/* ensure file list read */
 	if (!asb_package_ensure (priv->pkg,
 				 ASB_PACKAGE_ENSURE_FILES,
-				 error_not_used))
+				 error))
 		return FALSE;
 
 	/* did we get a file match on any plugin */
@@ -412,7 +412,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 	if (!asb_package_ensure (priv->pkg,
 				 ASB_PACKAGE_ENSURE_DEPS |
 				 ASB_PACKAGE_ENSURE_SOURCE,
-				 error_not_used))
+				 error))
 		return FALSE;
 	ret = asb_task_explode_extra_packages (task, &error);
 	if (!ret) {
@@ -471,7 +471,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 					 ASB_PACKAGE_ENSURE_RELEASES |
 					 ASB_PACKAGE_ENSURE_VCS |
 					 ASB_PACKAGE_ENSURE_URL,
-					 error_not_used))
+					 error))
 			return FALSE;
 		if (asb_package_get_url (priv->pkg) != NULL &&
 		    as_app_get_url_item (AS_APP (app), AS_URL_KIND_HOMEPAGE) == NULL) {
@@ -528,7 +528,7 @@ asb_task_process (AsbTask *task, GError **error_not_used)
 		if (array->len == 0) {
 			if (!asb_app_save_resources (ASB_APP (app),
 						     ASB_APP_SAVE_FLAG_SCREENSHOTS,
-						     error_not_used))
+						     error))
 				return FALSE;
 		}
 
