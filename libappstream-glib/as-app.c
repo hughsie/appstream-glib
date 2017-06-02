@@ -2380,7 +2380,7 @@ as_app_set_project_group (AsApp *app, const gchar *project_group)
 
 	/* check value */
 	if (priv->trust_flags != AS_APP_TRUST_FLAG_COMPLETE) {
-		if (!as_utils_is_environment_id (project_group)) {
+		if (g_strcmp0 (project_group, "") == 0) {
 			priv->problems |= AS_APP_PROBLEM_INVALID_PROJECT_GROUP;
 			return;
 		}
