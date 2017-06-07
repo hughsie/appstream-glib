@@ -635,8 +635,10 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	}
 
 	/* create app that might get merged later */
-	as_app_add_category (AS_APP (app), "Addons");
-	as_app_add_category (AS_APP (app), "Fonts");
+	if (asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_ADD_DEFAULT_ICONS)) {
+		as_app_add_category (AS_APP (app), "Addons");
+		as_app_add_category (AS_APP (app), "Fonts");
+	}
 	if (as_app_get_name (AS_APP (app), NULL) == NULL)
 		asb_plugin_font_set_name (app, ft_face->family_name);
 	if (as_app_get_comment (AS_APP (app), NULL) == NULL) {

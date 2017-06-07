@@ -52,7 +52,8 @@ asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
 }
 
 static gboolean
-as_app_parse_shell_extension_data (AsApp *app,
+as_app_parse_shell_extension_data (AsbPlugin *plugin,
+				   AsApp *app,
 				   const gchar *data,
 				   gsize len,
 				   GError **error)
@@ -61,7 +62,6 @@ as_app_parse_shell_extension_data (AsApp *app,
 	JsonNode *json_root;
 	JsonObject *json_obj;
 	const gchar *tmp;
-	g_autoptr(AsIcon) ic = NULL;
 	g_autoptr(JsonParser) json_parser = NULL;
 
 	/* parse the data */
@@ -87,8 +87,10 @@ as_app_parse_shell_extension_data (AsApp *app,
 
 	as_app_set_kind (app, AS_APP_KIND_SHELL_EXTENSION);
 	as_app_set_comment (app, NULL, "GNOME Shell Extension");
-	as_app_add_category (AS_APP (app), "Addons");
-	as_app_add_category (AS_APP (app), "ShellExtensions");
+	if (asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_ADD_DEFAULT_ICONS)) {
+		as_app_add_category (AS_APP (app), "Addons");
+		as_app_add_category (AS_APP (app), "ShellExtensions");
+	}
 	tmp = json_object_get_string_member (json_obj, "uuid");
 	if (tmp != NULL) {
 		g_autofree gchar *id = NULL;
@@ -148,10 +150,12 @@ as_app_parse_shell_extension_data (AsApp *app,
 	}
 
 	/* use a stock icon */
-	ic = as_icon_new ();
-	as_icon_set_kind (ic, AS_ICON_KIND_STOCK);
-	as_icon_set_name (ic, "application-x-addon-symbolic");
-	as_app_add_icon (app, ic);
+	if (asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_ADD_DEFAULT_ICONS)) {
+		g_autoptr(AsIcon) ic = as_icon_new ();
+		as_icon_set_kind (ic, AS_ICON_KIND_STOCK);
+		as_icon_set_name (ic, "application-x-addon-symbolic");
+		as_app_add_icon (app, ic);
+	}
 	return TRUE;
 }
 
@@ -169,7 +173,7 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 	app = asb_app_new (pkg, NULL);
 	if (!g_file_get_contents (filename, &data, &len, error))
 		return FALSE;
-	if (!as_app_parse_shell_extension_data (AS_APP (app), data, len, error))
+	if (!as_app_parse_shell_extension_data (plugin, AS_APP (app), data, len, error))
 		return FALSE;
 	asb_plugin_add_app (apps, AS_APP (app));
 	return TRUE;

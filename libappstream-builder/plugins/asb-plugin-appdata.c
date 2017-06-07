@@ -155,35 +155,39 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				 "Upstream contact <%s>", tmp);
 	}
 
-	/* add icon for firmware */
-	if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_FIRMWARE) {
-		g_autoptr(AsIcon) icon = NULL;
-		icon = as_icon_new ();
-		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
-		as_icon_set_name (icon, "application-x-executable");
-		as_app_add_icon (AS_APP (app), icon);
-	}
+	/* fix up various components as required */
+	if (asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_ADD_DEFAULT_ICONS)) {
 
-	/* fix up input methods */
-	if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_INPUT_METHOD) {
-		g_autoptr(AsIcon) icon = NULL;
-		icon = as_icon_new ();
-		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
-		as_icon_set_name (icon, "system-run-symbolic");
-		as_app_add_icon (AS_APP (app), icon);
-		as_app_add_category (AS_APP (app), "Addons");
-		as_app_add_category (AS_APP (app), "InputSources");
-	}
+		/* add icon for firmware */
+		if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_FIRMWARE) {
+			g_autoptr(AsIcon) icon = NULL;
+			icon = as_icon_new ();
+			as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+			as_icon_set_name (icon, "application-x-executable");
+			as_app_add_icon (AS_APP (app), icon);
+		}
 
-	/* fix up codecs */
-	if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_CODEC) {
-		g_autoptr(AsIcon) icon = NULL;
-		icon = as_icon_new ();
-		as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
-		as_icon_set_name (icon, "application-x-addon");
-		as_app_add_icon (AS_APP (app), icon);
-		as_app_add_category (AS_APP (app), "Addons");
-		as_app_add_category (AS_APP (app), "Codecs");
+		/* fix up input methods */
+		if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_INPUT_METHOD) {
+			g_autoptr(AsIcon) icon = NULL;
+			icon = as_icon_new ();
+			as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+			as_icon_set_name (icon, "system-run-symbolic");
+			as_app_add_icon (AS_APP (app), icon);
+			as_app_add_category (AS_APP (app), "Addons");
+			as_app_add_category (AS_APP (app), "InputSources");
+		}
+
+		/* fix up codecs */
+		if (as_app_get_kind (AS_APP (app)) == AS_APP_KIND_CODEC) {
+			g_autoptr(AsIcon) icon = NULL;
+			icon = as_icon_new ();
+			as_icon_set_kind (icon, AS_ICON_KIND_STOCK);
+			as_icon_set_name (icon, "application-x-addon");
+			as_app_add_icon (AS_APP (app), icon);
+			as_app_add_category (AS_APP (app), "Addons");
+			as_app_add_category (AS_APP (app), "Codecs");
+		}
 	}
 
 	/* success */
