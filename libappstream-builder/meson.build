@@ -109,7 +109,10 @@ asb_self_test = executable(
     '-DTESTDIRBUILD="@0@/../data/tests"'.format(meson.current_build_dir()),
     '-DTESTPLUGINDIR="@0@/plugins"'.format(meson.current_build_dir()),
   ],
-  link_with : asbuilder
+  link_with : [
+    asbuilder,
+    asglib,
+  ],
 )
 test('asb-self-test', asb_self_test)
 

@@ -33,11 +33,11 @@ git tag -s -f -m "Release 0.6.14" appstream_glib_0_6_14
 git push --tags
 git push
 
-5. run 'make distcheck'
+5. run 'ninja dist'
 
 6. Upload tarball to:
 
-scp *.tar.* hughsient@people.freedesktop.org:~/public_html/appstream-glib/releases
+scp meson-dist/*.tar.* hughsient@people.freedesktop.org:~/public_html/appstream-glib/releases
 
 7. Do post release version bump in configure.ac
 
