@@ -821,6 +821,9 @@ asb_context_detect_missing_data (AsbContext *ctx, GError **error)
 		case AS_APP_KIND_DRIVER:
 		case AS_APP_KIND_GENERIC:
 		case AS_APP_KIND_LOCALIZATION:
+		case AS_APP_KIND_CODEC:
+		case AS_APP_KIND_INPUT_METHOD:
+		case AS_APP_KIND_SHELL_EXTENSION:
 			break;
 		default:
 			if (as_app_get_icon_default (AS_APP (app)) == NULL)
