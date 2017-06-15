@@ -17,7 +17,9 @@ if get_option('enable-builder')
     ],
     command : [gcab, '--create', '--nopath', '@OUTPUT@', '@INPUT@'],
   )
+endif
 
+if conf.has('HAVE_GCAB_EXE')
   firmware202 = custom_target('firmware-2.0.2',
     output : 'colorhug-als-2.0.2.cab',
     input : [
@@ -26,5 +28,6 @@ if get_option('enable-builder')
       'firmware/2_0_2/firmware.metainfo.xml'
     ],
     command : [gcab, '--create', '--nopath', '@OUTPUT@', '@INPUT@'],
+    build_by_default: true,
   )
 endif

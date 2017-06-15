@@ -3602,7 +3602,7 @@ as_test_store_merges_local_func (void)
 static void
 as_test_store_cab_func (void)
 {
-#ifdef HAVE_GCAB
+#if defined(HAVE_GCAB_EXE)
 	gboolean ret;
 	const gchar *src;
 	g_autoptr(GError) error = NULL;

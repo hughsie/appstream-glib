@@ -2,7 +2,7 @@ project('appstream-glib', 'c',
   version : '0.7.0',
   license : 'LGPL-2.1+',
   default_options : ['warning_level=1'],
-  meson_version : '>=0.37.0'
+  meson_version : '>=0.38.0'
 )
 
 as_version = meson.project_version()
@@ -62,6 +62,11 @@ libgcab = dependency('libgcab-1.0', required : false)
 
 if libgcab.found()
   conf.set('HAVE_GCAB', 1)
+  # This is to build a test file - not required here, we'll skip the test if it's not there
+  gcab = find_program('gcab', required : false)
+  if gcab.found()
+    conf.set('HAVE_GCAB_EXE', 1)
+  endif
 endif
 
 # builder (default enabled)
