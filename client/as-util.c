@@ -869,9 +869,11 @@ as_util_news_to_appdata_hdr (GString *desc, const gchar *txt, GError **error)
 	/* add markup */
 	as_util_news_add_indent (desc, 2);
 	g_string_append_printf (desc, "<release version=\"%s\" "
-				"timestamp=\"%" G_GINT64_FORMAT "\">\n",
+				"date=\"%s-%s-%s\">\n",
 				version,
-				g_date_time_to_unix (dt));
+				release_split[0],
+				release_split[1],
+				release_split[2]);
 	as_util_news_add_indent (desc, 3);
 	g_string_append (desc, "<description>\n");
 
