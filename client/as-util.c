@@ -925,7 +925,7 @@ as_util_news_to_appdata (AsUtilPrivate *priv, gchar **values, GError **error)
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     "Not enough arguments, "
-				     "expected .appdata.xml");
+				     "expected NEWS");
 		return FALSE;
 	}
 
