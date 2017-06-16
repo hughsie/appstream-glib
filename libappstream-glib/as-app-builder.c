@@ -294,7 +294,7 @@ as_app_builder_parse_file_qt (AsAppBuilderContext *ctx,
 			      const gchar *filename,
 			      GError **error)
 {
-	guint32 len;
+	gsize len;
 	guint32 m = 0;
 	g_autofree guint8 *data = NULL;
 	const guint8 qm_magic[] = {
@@ -303,7 +303,7 @@ as_app_builder_parse_file_qt (AsAppBuilderContext *ctx,
 	};
 
 	/* load file */
-	if (!g_file_get_contents (filename, (gchar **) &data, (gsize *) &len, error))
+	if (!g_file_get_contents (filename, (gchar **) &data, &len, error))
 		return FALSE;
 
 	/* check header */
