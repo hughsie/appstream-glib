@@ -1088,6 +1088,13 @@ as_store_add_app (AsStore *store, AsApp *app)
 	    as_app_get_merge_kind (app) == AS_APP_MERGE_KIND_REPLACE)
 		as_app_add_quirk (app, AS_APP_QUIRK_MATCH_ANY_PREFIX);
 
+	/* ensure app has format set */
+	if (as_app_get_format_default (app) == NULL) {
+		g_autoptr(AsFormat) format = as_format_new ();
+		as_format_set_kind (format, AS_FORMAT_KIND_UNKNOWN);
+		as_app_add_format (app, format);
+	}
+
 	/* this is a special merge component */
 	if (as_app_has_quirk (app, AS_APP_QUIRK_MATCH_ANY_PREFIX)) {
 		AsAppSubsumeFlags flags = AS_APP_SUBSUME_FLAG_MERGE;
