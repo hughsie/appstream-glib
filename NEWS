@@ -1,3 +1,20 @@
+Version 0.7.0
+~~~~~~~~~~~~~
+Released: 2017-06-22
+
+New Features:
+ - Enable Travis CI for Fedora 25 and Debian Stretch (Richard Hughes)
+ - Remove the cache-id functionality (Richard Hughes)
+ - Switch to the meson build system (Richard Hughes, Emmanuele Bassi)
+
+Bugfixes:
+ - Add the limits in the validation output messages (Richard Hughes)
+ - Do not add the GNOME Software categories or icons (Richard Hughes)
+ - Do not enforce that the project is a valid environment_id (Richard Hughes)
+ - Don't cast gsize to guint32 when getting file length (Iain Lane)
+ - Return failure if the AsbTask fails (Richard Hughes)
+ - Show a warning if adding keywords after the cache creation (Richard Hughes)
+
 Version 0.6.13
 ~~~~~~~~~~~~~~
 Released: 2017-05-08

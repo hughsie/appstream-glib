@@ -5,7 +5,7 @@ Appstream-Glib Release Notes
 git shortlog appstream_glib_0_6_13.. | grep -i -v trivial | grep -v Merge > NEWS.new
 
 --------------------------------------------------------------------------------
-Version 0.6.14
+Version 0.7.0
 ~~~~~~~~~~~~~~
 Released: 2017-xx-xx
 
@@ -18,17 +18,17 @@ Bugfixes:
 
 1.5 Update translations:
 
-make -C po appstream-glib.pot
-zanata-cli push
-zanata-cli pull --min-doc-percent=5
+ninja-build appstream-glib-pot
+zanata push
+zanata pull --min-doc-percent=5
 git add po/*.po
 
 3. Update library version if new ABI or API in configure.ac
 
 4. Commit changes in git:
 
-git commit -a -m "Release version 0.6.14"
-git tag -s -f -m "Release 0.6.14" appstream_glib_0_6_14
+git commit -a -m "Release version 0.7.0"
+git tag -s -f -m "Release 0.7.0" appstream_glib_0_7_0
 <gpg password>
 git push --tags
 git push
