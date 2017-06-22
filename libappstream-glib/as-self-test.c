@@ -2320,7 +2320,7 @@ as_test_store_validate_func (void)
 static void
 _as_app_add_format_kind (AsApp *app, AsFormatKind kind)
 {
-	AsFormat *format = as_format_new ();
+	g_autoptr(AsFormat) format = as_format_new ();
 	as_format_set_kind (format, kind);
 	as_app_add_format (app, format);
 }
@@ -3760,13 +3760,13 @@ static void
 as_test_store_unique_func (void)
 {
 	AsApp *app;
-	GPtrArray *apps;
 	g_autoptr(AsApp) app1 = NULL;
 	g_autoptr(AsApp) app2 = NULL;
 	g_autoptr(AsApp) app3 = NULL;
 	g_autoptr(AsBundle) bundle2 = NULL;
 	g_autoptr(AsBundle) bundle3 = NULL;
 	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GPtrArray) apps = NULL;
 
 	/* create a store and add a single app */
 	store = as_store_new ();

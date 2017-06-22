@@ -505,7 +505,6 @@ as_app_builder_search_translations_pak (AsAppBuilderContext *ctx,
 	for (i = 0; i < ctx->translations->len; i++) {
 		const gchar *tmp;
 		g_autoptr(GDir) dir = NULL;
-		g_autofree gchar *path = NULL;
 		AsTranslation *t = g_ptr_array_index (ctx->translations, i);
 		const gchar *libdirs[] = { "lib64", "lib", NULL };
 
@@ -513,6 +512,7 @@ as_app_builder_search_translations_pak (AsAppBuilderContext *ctx,
 		if (as_translation_get_id (t) == NULL)
 			continue;
 		for (guint j = 0; libdirs[j] != NULL; j++) {
+			g_autofree gchar *path = NULL;
 			path = g_build_filename (prefix,
 						 libdirs[j],
 						 as_translation_get_id (t),
@@ -576,12 +576,12 @@ as_app_builder_search_translations_xpi (AsAppBuilderContext *ctx,
 					GError **error)
 {
 	const gchar *tmp;
-	g_autofree gchar *path = NULL;
 	g_autoptr(GDir) dir = NULL;
 	const gchar *libdirs[] = { "lib64", "lib", NULL };
 
 	/* list files */
 	for (guint j = 0; libdirs[j] != NULL; j++) {
+		g_autofree gchar *path = NULL;
 		path = g_build_filename (prefix,
 					 libdirs[j],
 					 "firefox",

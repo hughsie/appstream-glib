@@ -534,6 +534,7 @@ as_image_load_filename_full (AsImage *image,
 	/* only support non-deprecated types */
 	if (flags & AS_IMAGE_LOAD_FLAG_ONLY_SUPPORTED) {
 		GdkPixbufFormat *fmt;
+		g_autofree gchar *name = NULL;
 		fmt = gdk_pixbuf_get_file_info (filename, NULL, NULL);
 		if (fmt == NULL) {
 			g_set_error_literal (error,
@@ -542,15 +543,16 @@ as_image_load_filename_full (AsImage *image,
 					     "image format was not recognized");
 			return FALSE;
 		}
-		if (g_strcmp0 (gdk_pixbuf_format_get_name (fmt), "png") != 0 &&
-		    g_strcmp0 (gdk_pixbuf_format_get_name (fmt), "jpeg") != 0 &&
-		    g_strcmp0 (gdk_pixbuf_format_get_name (fmt), "xpm") != 0 &&
-		    g_strcmp0 (gdk_pixbuf_format_get_name (fmt), "svg") != 0) {
+		name = gdk_pixbuf_format_get_name (fmt);
+		if (g_strcmp0 (name, "png") != 0 &&
+		    g_strcmp0 (name, "jpeg") != 0 &&
+		    g_strcmp0 (name, "xpm") != 0 &&
+		    g_strcmp0 (name, "svg") != 0) {
 			g_set_error (error,
 				     AS_UTILS_ERROR,
 				     AS_UTILS_ERROR_FAILED,
 				     "image format %s is not supported",
-				     gdk_pixbuf_format_get_name (fmt));
+				     name);
 			return FALSE;
 		}
 	}
