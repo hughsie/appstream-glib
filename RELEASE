@@ -2,10 +2,10 @@ Appstream-Glib Release Notes
 
 1. Write NEWS entries for appstream_glib in the same format as usual.
 
-git shortlog appstream_glib_0_6_13.. | grep -i -v trivial | grep -v Merge > NEWS.new
+git shortlog appstream_glib_0_7_0.. | grep -i -v trivial | grep -v Merge > NEWS.new
 
 --------------------------------------------------------------------------------
-Version 0.7.0
+Version 0.7.1
 ~~~~~~~~~~~~~~
 Released: 2017-xx-xx
 
@@ -27,8 +27,8 @@ git add po/*.po
 
 4. Commit changes in git:
 
-git commit -a -m "Release version 0.7.0"
-git tag -s -f -m "Release 0.7.0" appstream_glib_0_7_0
+git commit -a -m "Release version 0.7.1"
+git tag -s -f -m "Release 0.7.1" appstream_glib_0_7_1
 <gpg password>
 git push --tags
 git push
@@ -39,7 +39,7 @@ git push
 
 scp meson-dist/*.tar.* hughsient@people.freedesktop.org:~/public_html/appstream-glib/releases
 
-7. Do post release version bump in configure.ac
+7. Do post release version bump in meson.build
 
 8. Commit trivial changes:
 
