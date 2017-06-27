@@ -1080,6 +1080,40 @@ as_app_validate_helper_free (AsAppValidateHelper *helper)
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsAppValidateHelper, as_app_validate_helper_free);
 
+static gboolean
+as_app_validate_check_id_char (const gchar c)
+{
+	const gchar valid[] = { '-', '_', '.', '\0' };
+	for (guint i = 0; valid[i] != '\0'; i++) {
+		if (valid[i] == c)
+			return TRUE;
+	}
+	return g_ascii_isalnum (c);
+}
+
+static void
+as_app_validate_check_id (AsAppValidateHelper *helper, const gchar *id)
+{
+	/* check valid */
+	if (id == NULL) {
+		ai_app_validate_add (helper,
+				     AS_PROBLEM_KIND_MARKUP_INVALID,
+				     "<id> is not set");
+		return;
+	}
+
+	/* check contains permitted chars */
+	for (guint i = 0; id[i] != '\0'; i++) {
+		if (!as_app_validate_check_id_char (id[i])) {
+			ai_app_validate_add (helper,
+					     AS_PROBLEM_KIND_MARKUP_INVALID,
+					     "<id> has invalid character [%c]",
+					     id[i]);
+			break;
+		}
+	}
+}
+
 /**
  * as_app_validate:
  * @app: a #AsApp instance.
@@ -1232,6 +1266,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 				     AS_PROBLEM_KIND_MARKUP_INVALID,
 				     "<id> does not have correct extension for kind");
 	}
+	as_app_validate_check_id (helper, id);
 
 	/* metadata_license */
 	license = as_app_get_metadata_license (app);
