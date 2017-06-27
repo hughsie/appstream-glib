@@ -60,6 +60,7 @@ struct _AsProvideClass
  * @AS_PROVIDE_KIND_DBUS_SESSION:	A D-Bus session service
  * @AS_PROVIDE_KIND_DBUS_SYSTEM:	A D-Bus system service
  * @AS_PROVIDE_KIND_FIRMWARE_FLASHED:	A flashed firmware GUID
+ * @AS_PROVIDE_KIND_ID:			An AppStream component ID
  *
  * The provide type.
  **/
@@ -75,6 +76,7 @@ typedef enum {
 	AS_PROVIDE_KIND_DBUS_SESSION,		/* Since: 0.1.7 */
 	AS_PROVIDE_KIND_DBUS_SYSTEM,		/* Since: 0.2.4 */
 	AS_PROVIDE_KIND_FIRMWARE_FLASHED,	/* Since: 0.5.0 */
+	AS_PROVIDE_KIND_ID,			/* Since: 0.7.1 */
 	/*< private >*/
 	AS_PROVIDE_KIND_LAST
 } AsProvideKind;
