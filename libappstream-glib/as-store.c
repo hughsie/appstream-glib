@@ -2948,6 +2948,10 @@ as_store_search_per_system (AsStore *store,
 			g_debug ("skipping %s as invalid", data_dirs[i]);
 			continue;
 		}
+		if (g_strstr_len (data_dirs[i], -1, "snapd/desktop") != NULL) {
+			g_debug ("skippping %s as invalid", data_dirs[i]);
+			continue;
+		}
 		if ((flags & AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM) > 0) {
 			g_autofree gchar *dest = NULL;
 			dest = g_build_filename (data_dirs[i], "app-info", NULL);
