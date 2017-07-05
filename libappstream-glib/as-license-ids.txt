@@ -1,4 +1,4 @@
-# the list of licenses from http://spdx.org/licenses/ version: 2.5
+# the list of licenses from http://spdx.org/licenses/ version: 2.6
 Glide
 Abstyles
 AFL-1.1
@@ -205,6 +205,7 @@ Mup
 NASA-1.3
 Naumen
 NBPL-1.0
+Net-SNMP
 NetCDF
 NGPL
 NOSL
@@ -290,16 +291,20 @@ SISSL-1.2
 SPL-1.0
 Watcom-1.0
 TCL
+TCP-wrappers
 Unlicense
 TMate
 TORQUE-1.1
 TOSL
+Unicode-DFS-2015
+Unicode-DFS-2016
 Unicode-TOU
 UPL-1.0
 NCSA
 Vim
 VOSTROM
 VSL-1.0
+W3C-20150513
 W3C-19980720
 W3C
 Wsuipa
