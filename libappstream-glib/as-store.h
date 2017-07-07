@@ -176,14 +176,33 @@ gboolean	 as_store_from_xml		(AsStore	*store,
 						 const gchar	*data,
 						 const gchar	*icon_root,
 						 GError		**error);
+
 gboolean	 as_store_load			(AsStore	*store,
 						 guint32	 flags,
 						 GCancellable	*cancellable,
 						 GError		**error);
+void 		 as_store_load_async		(AsStore	*store,
+						 AsStoreLoadFlags flags,
+						 GCancellable	*cancellable,
+						 GAsyncReadyCallback callback,
+						 gpointer        user_data);
+gboolean	 as_store_load_finish		(AsStore	*store,
+						 GAsyncResult	*result,
+						 GError		**error);
+
 gboolean	 as_store_load_path		(AsStore	*store,
 						 const gchar	*path,
 						 GCancellable	*cancellable,
 						 GError		**error);
+void		 as_store_load_path_async	(AsStore	*store,
+						 const gchar	*path,
+						 GCancellable	*cancellable,
+						 GAsyncReadyCallback callback,
+						 gpointer	 user_data);
+gboolean	 as_store_load_path_finish	(AsStore	*store,
+						 GAsyncResult	*result,
+						 GError		**error);
+
 void		 as_store_load_search_cache	(AsStore	*store);
 void		 as_store_set_search_match	(AsStore	*store,
 						 guint16	 search_match);
