@@ -5565,6 +5565,17 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 			as_app_set_project_group (app, as_yaml_node_get_value (n));
 			continue;
 		}
+		if (g_strcmp0 (tmp, "CompulsoryForDesktops") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				tmp = as_yaml_node_get_key (c);
+				if (tmp == NULL) {
+					nonfatal_str = "contained empty desktop";
+					continue;
+				}
+				as_app_add_compulsory_for_desktop (app, tmp);
+			}
+			continue;
+		}
 	}
 	if (nonfatal_str != NULL) {
 		g_debug ("nonfatal warning from %s: %s",
