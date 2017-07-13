@@ -6,3 +6,4 @@ option('enable-fonts', type : 'boolean', value : true, description : 'enable fon
 option('enable-stemmer', type : 'boolean', value : true, description : 'enable stemmer support')
 option('enable-man', type : 'boolean', value : true, description : 'generate man pages')
 option('enable-gtk-doc', type : 'boolean', value : false, description : 'generate API reference')
+option('enable-introspection', type : 'boolean', value : true, description : 'generate GObject Introspection data')
