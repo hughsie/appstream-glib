@@ -212,19 +212,21 @@ introspection_sources = [
   'as-utils.h',
 ]
 
-asglib_gir = gnome.generate_gir(asglib,
-  sources : introspection_sources,
-  nsversion : '1.0',
-  namespace : 'AppStreamGlib',
-  symbol_prefix : 'as_',
-  identifier_prefix : 'As',
-  export_packages : 'appstream-glib',
-  dependencies : deps,
-  includes : [
-    'GObject-2.0',
-    'Gio-2.0',
-    'GdkPixbuf-2.0'
-  ],
-  link_with : asglib,
-  install : true,
-)
+if get_option('enable-introspection')
+  asglib_gir = gnome.generate_gir(asglib,
+    sources : introspection_sources,
+    nsversion : '1.0',
+    namespace : 'AppStreamGlib',
+    symbol_prefix : 'as_',
+    identifier_prefix : 'As',
+    export_packages : 'appstream-glib',
+    dependencies : deps,
+    includes : [
+      'GObject-2.0',
+      'Gio-2.0',
+      'GdkPixbuf-2.0'
+    ],
+    link_with : asglib,
+    install : true,
+  )
+endif

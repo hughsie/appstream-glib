@@ -128,21 +128,23 @@ asbuilder_introspection_srcs = [
   'asb-task.h',
 ]
 
-asglib_gir_dep = declare_dependency(sources: asglib_gir)
+if get_option('enable-introspection')
+  asglib_gir_dep = declare_dependency(sources: asglib_gir)
 
-gnome.generate_gir(asbuilder,
-  sources : asbuilder_introspection_srcs,
-  nsversion : '1.0',
-  namespace : 'AppStreamBuilder',
-  symbol_prefix : 'asb_',
-  identifier_prefix : 'Asb',
-  export_packages : 'appstream-builder',
-  dependencies: asglib_gir_dep,
-  includes : [
-    'AppStreamGlib-1.0',
-    'GdkPixbuf-2.0',
-    'Gio-2.0',
-    'GObject-2.0',
-  ],
-  install : true
-)
+  gnome.generate_gir(asbuilder,
+    sources : asbuilder_introspection_srcs,
+    nsversion : '1.0',
+    namespace : 'AppStreamBuilder',
+    symbol_prefix : 'asb_',
+    identifier_prefix : 'Asb',
+    export_packages : 'appstream-builder',
+    dependencies: asglib_gir_dep,
+    includes : [
+      'AppStreamGlib-1.0',
+      'GdkPixbuf-2.0',
+      'Gio-2.0',
+      'GObject-2.0',
+    ],
+    install : true
+  )
+endif
