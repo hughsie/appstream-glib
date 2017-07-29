@@ -1,6 +1,7 @@
 subdir('installed-tests')
 subdir('tests')
 
+install_data('appdata-xml.m4', install_dir : 'share/aclocal')
 install_data('appstream-xml.m4', install_dir : 'share/aclocal')
 install_data('appstream-util', install_dir : 'share/bash-completion/completions')
 
