@@ -103,20 +103,19 @@ sources = [
   asresources,
 ]
 
-if gperf.found()
-  astagpriv = custom_target(
-    'gperf as-tag',
-    output : 'as-tag-private.h',
-    input : 'as-tag.gperf',
-    command : [
-      gperf,
-      '@INPUT@',
-      '--output-file',
-      '@OUTPUT@'
-    ]
-  )
-  sources = sources + [astagpriv]
-endif
+# gperf sources
+astagpriv = custom_target(
+  'gperf as-tag',
+  output : 'as-tag-private.h',
+  input : 'as-tag.gperf',
+  command : [
+    gperf,
+    '@INPUT@',
+    '--output-file',
+    '@OUTPUT@'
+  ]
+)
+sources = sources + [astagpriv]
 
 install_headers(headers, subdir : 'libappstream-glib')
 

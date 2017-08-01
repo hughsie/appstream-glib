@@ -98,10 +98,7 @@ if get_option('enable-stemmer')
 endif
 
 # use gperf for faster string -> enum matching
-gperf = find_program('gperf', required : false)
-if gperf.found()
-  conf.set('HAVE_GPERF', 1)
-endif
+gperf = find_program('gperf', required : true)
 
 gnome = import('gnome')
 i18n = import('i18n')
