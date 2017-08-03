@@ -9,13 +9,14 @@
 # Mingcong Bai <jeffbai@aosc.xyz>, 2015-2016
 # Mingcong Bai <jeffbai@aosc.xyz>, 2015
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
+# cheng ye <18969068329@163.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-22 16:32+0100\n"
-"PO-Revision-Date: 2016-08-06 02:59-0400\n"
-"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
+"POT-Creation-Date: 2017-08-03 13:59+0100\n"
+"PO-Revision-Date: 2017-07-23 03:30-0400\n"
+"Last-Translator: cheng ye <18969068329@163.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -304,7 +305,7 @@ msgstr "已添加"
 #. TRANSLATORS: this is when a device ctrl+c's a watch
 #: client/as-util.c:4290
 msgid "Cancelled"
-msgstr ""
+msgstr "已取消"
 
 #. TRANSLATORS: this is the --nonet argument
 #: client/as-util.c:4342
@@ -354,12 +355,12 @@ msgstr "按包名搜索 AppStream 应用程序"
 #. TRANSLATORS: command description
 #: client/as-util.c:4417
 msgid "Show all installed AppStream applications"
-msgstr ""
+msgstr "显示所有已安装的 Appstream 应用"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4423
 msgid "Search for AppStream applications by category name"
-msgstr ""
+msgstr "以类别名搜索 for AppStream 应用"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4429
@@ -443,13 +444,14 @@ msgstr "替换源文件内的画面快照"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4525
+#, fuzzy
 msgid "Add a provide to a source file"
-msgstr ""
+msgstr "向源文件添加其所提供"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4531
 msgid "Add a language to a source file"
-msgstr ""
+msgstr "向源文件添加语言"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4537
@@ -504,7 +506,7 @@ msgstr ""
 #. TRANSLATORS: command description
 #: client/as-util.c:4597
 msgid "Compare version numbers"
-msgstr ""
+msgstr "比较版本号"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4603

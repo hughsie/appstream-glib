@@ -23,7 +23,7 @@ zanata push
 zanata pull --min-doc-percent=5
 git add po/*.po
 
-3. Update library version if new ABI or API in configure.ac
+3. Update library version if new ABI or API in meson.build
 
 4. Commit changes in git:
 

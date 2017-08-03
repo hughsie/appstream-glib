@@ -6,12 +6,13 @@
 # Piotr Drąg <piotrdrag@gmail.com>, 2014-2016
 # Piotr Drąg <piotrdrag@gmail.com>, 2016. #zanata
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
+# Piotr Drąg <piotrdrag@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-22 16:32+0100\n"
-"PO-Revision-Date: 2016-12-15 10:25-0500\n"
+"POT-Creation-Date: 2017-08-03 13:59+0100\n"
+"PO-Revision-Date: 2017-06-22 01:07-0400\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/freedesktop/appstream-glib/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -431,7 +432,7 @@ msgstr "Sprawdza dane zainstalowanego programu"
 #. TRANSLATORS: command description
 #: client/as-util.c:4513
 msgid "check an installed application"
-msgstr ""
+msgstr "sprawdza zainstalowany program"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4519
@@ -501,12 +502,12 @@ msgstr "Obserwuje zmiany w położeniach AppStream"
 #. TRANSLATORS: command description
 #: client/as-util.c:4597
 msgid "Compare version numbers"
-msgstr ""
+msgstr "Porównuje numery wersji"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4603
 msgid "Test a regular expression"
-msgstr ""
+msgstr "Testuje wyrażenie regularne"
 
 #. TRANSLATORS: program name
 #: client/as-util.c:4616

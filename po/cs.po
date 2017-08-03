@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-22 16:32+0100\n"
-"PO-Revision-Date: 2017-04-09 06:58-0400\n"
+"POT-Creation-Date: 2017-08-03 13:59+0100\n"
+"PO-Revision-Date: 2017-06-26 07:20-0400\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech (http://www.transifex.com/freedesktop/appstream-glib/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -434,7 +434,7 @@ msgstr "Zkontrolovat nainstalovaná data aplikací"
 #. TRANSLATORS: command description
 #: client/as-util.c:4513
 msgid "check an installed application"
-msgstr ""
+msgstr "zkontrolovat nainstalovanou aplikaci"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4519
@@ -504,12 +504,12 @@ msgstr "Sledovat umístění AppStream na změny"
 #. TRANSLATORS: command description
 #: client/as-util.c:4597
 msgid "Compare version numbers"
-msgstr ""
+msgstr "Porovnat čísla verzí"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4603
 msgid "Test a regular expression"
-msgstr ""
+msgstr "Testovat regulární výraz"
 
 #. TRANSLATORS: program name
 #: client/as-util.c:4616

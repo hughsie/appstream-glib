@@ -1,3 +1,22 @@
+Version 0.7.1
+~~~~~~~~~~~~~~
+Released: 2017-08-03
+
+New Features:
+ - Add <id> kinds for application provides (Richard Hughes)
+ - Support CompulsoryForDesktops in YAML (Iain Lane)
+ - Update the SPDX license list to 2.6 (Richard Hughes)
+
+Bugfixes:
+ - Avoid unnecessary gdk dependency (Patrick Ohly)
+ - Fail to validate if AppData screenshots are duplicated (Richard Hughes)
+ - Have plugins link with asglib along with asbuilder (Neal Gompa)
+ - Install appdata-xml.m4 (Jeremy Bicha)
+ - Make gperf dependency fully required (Philip Withnall)
+ - Make introspection optional (Patrick Ohly)
+ - Skip loading desktop data from Snap directory (Robert Ancell)
+ - Validate the <id> format according to the spec (Richard Hughes)
+
 Version 0.7.0
 ~~~~~~~~~~~~~
 Released: 2017-06-22
