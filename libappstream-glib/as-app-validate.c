@@ -1348,12 +1348,15 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	}
 
 	/* appdata */
-	if (as_app_get_icon_default (app) != NULL &&
-	    as_format_get_kind (format) == AS_FORMAT_KIND_APPDATA &&
+	if (as_format_get_kind (format) == AS_FORMAT_KIND_APPDATA &&
 	    as_app_get_kind (app) == AS_APP_KIND_DESKTOP) {
-		ai_app_validate_add (helper,
-				     AS_PROBLEM_KIND_TAG_INVALID,
-				     "<icon> not allowed in desktop appdata");
+		AsIcon *icon = as_app_get_icon_default (app);
+		if (icon != NULL &&
+		    as_icon_get_kind (icon) != AS_ICON_KIND_REMOTE) {
+			ai_app_validate_add (helper,
+					     AS_PROBLEM_KIND_TAG_INVALID,
+					     "<icon> not allowed in desktop appdata");
+		}
 	}
 
 	/* extends */
