@@ -5544,11 +5544,13 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{embedded}", as_test_store_embedded_func);
 	g_test_add_func ("/AppStream/store{provides}", as_test_store_provides_func);
 	g_test_add_func ("/AppStream/store{local-appdata}", as_test_store_local_appdata_func);
-	g_test_add_func ("/AppStream/store{speed-appstream}", as_test_store_speed_appstream_func);
-	g_test_add_func ("/AppStream/store{speed-search}", as_test_store_speed_search_func);
-	g_test_add_func ("/AppStream/store{speed-appdata}", as_test_store_speed_appdata_func);
-	g_test_add_func ("/AppStream/store{speed-desktop}", as_test_store_speed_desktop_func);
-	g_test_add_func ("/AppStream/store{speed-yaml}", as_test_store_speed_yaml_func);
+	if (g_test_slow ()) {
+		g_test_add_func ("/AppStream/store{speed-appstream}", as_test_store_speed_appstream_func);
+		g_test_add_func ("/AppStream/store{speed-search}", as_test_store_speed_search_func);
+		g_test_add_func ("/AppStream/store{speed-appdata}", as_test_store_speed_appdata_func);
+		g_test_add_func ("/AppStream/store{speed-desktop}", as_test_store_speed_desktop_func);
+		g_test_add_func ("/AppStream/store{speed-yaml}", as_test_store_speed_yaml_func);
+	}
 
 	return g_test_run ();
 }
