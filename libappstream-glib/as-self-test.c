@@ -2130,9 +2130,7 @@ as_test_app_validate_file_bad_func (void)
 	}
 
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				    "<id> has invalid type attribute");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
-				    "<id> does not have correct extension for kind");
+				    "<component> has invalid type attribute");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<metadata_license> is not valid");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
@@ -2192,13 +2190,13 @@ as_test_app_validate_file_bad_func (void)
 				    "<content_rating> required for game");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
 				    "<id> has invalid character");
-	g_assert_cmpint (probs->len, ==, 36);
+	g_assert_cmpint (probs->len, ==, 35);
 
 	/* again, harder */
 	probs2 = as_app_validate (app, AS_APP_VALIDATE_FLAG_STRICT, &error);
 	as_test_app_validate_check (probs2, AS_PROBLEM_KIND_TAG_INVALID,
 				    "XML data contains unknown tag");
-	g_assert_cmpint (probs2->len, ==, 42);
+	g_assert_cmpint (probs2->len, ==, 41);
 }
 
 static void
@@ -2368,8 +2366,6 @@ as_test_app_validate_style_func (void)
 				    "<name> cannot end in '.'");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<summary> is too short");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
-				    "<id> does not have correct extension for kind");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "Not enough <screenshot> tags");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
@@ -2378,7 +2374,7 @@ as_test_app_validate_style_func (void)
 				    "<url> is not present");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<translation> not specified");
-	g_assert_cmpint (probs->len, ==, 12);
+	g_assert_cmpint (probs->len, ==, 11);
 }
 
 static void
