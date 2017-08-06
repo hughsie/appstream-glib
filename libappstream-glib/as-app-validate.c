@@ -1135,7 +1135,6 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	GHashTable *urls;
 	GList *l;
 	const gchar *description;
-	const gchar *id;
 	const gchar *key;
 	const gchar *license;
 	const gchar *name;
@@ -1227,46 +1226,14 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	if (!as_app_validate_setup_networking (helper, error))
 		return NULL;
 
-	/* id */
-	ret = FALSE;
-	id = as_app_get_id (app);
-	switch (as_app_get_kind (app)) {
-	case AS_APP_KIND_DESKTOP:
-	case AS_APP_KIND_WEB_APP:
-		if (g_str_has_suffix (id, ".desktop"))
-			ret = TRUE;
-		break;
-	case AS_APP_KIND_INPUT_METHOD:
-		if (g_str_has_suffix (id, ".xml"))
-			ret = TRUE;
-		else if (g_str_has_suffix (id, ".db"))
-			ret = TRUE;
-		break;
-	case AS_APP_KIND_CODEC:
-		if (g_str_has_prefix (id, "gstreamer"))
-			ret = TRUE;
-		break;
-	case AS_APP_KIND_UNKNOWN:
+	/* invalid component type */
+	if (as_app_get_kind (app) == AS_APP_KIND_UNKNOWN) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<id> has invalid type attribute");
+				     "<component> has invalid type attribute");
 
-		break;
-	case AS_APP_KIND_FIRMWARE:
-		if (g_str_has_suffix (id, ".firmware"))
-			ret = TRUE;
-		break;
-	default:
-		/* anything goes */
-		ret = TRUE;
-		break;
 	}
-	if (!ret) {
-		ai_app_validate_add (helper,
-				     AS_PROBLEM_KIND_MARKUP_INVALID,
-				     "<id> does not have correct extension for kind");
-	}
-	as_app_validate_check_id (helper, id);
+	as_app_validate_check_id (helper, as_app_get_id (app));
 
 	/* metadata_license */
 	license = as_app_get_metadata_license (app);
@@ -1278,8 +1245,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					     "<metadata_license> is not valid [%s]",
 					     license);
 		} else if (validate_license) {
-			ret = as_app_validate_license (license, &error_local);
-			if (!ret) {
+			if (!as_app_validate_license (license, &error_local)) {
 				g_prefix_error (&error_local,
 						"<metadata_license> is not valid [%s]",
 						license);
@@ -1306,8 +1272,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	/* project_license */
 	license = as_app_get_project_license (app);
 	if (license != NULL && validate_license) {
-		ret = as_app_validate_license (license, &error_local);
-		if (!ret) {
+		if (!as_app_validate_license (license, &error_local)) {
 			g_prefix_error (&error_local,
 					"<project_license> is not valid [%s]",
 					license);
