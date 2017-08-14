@@ -201,7 +201,7 @@ as_app_parse_file_key (AsApp *app,
 					     G_KEY_FILE_DESKTOP_GROUP,
 					     key,
 					     NULL);
-		if (tmp != NULL && strcasecmp (tmp, "True") == 0)
+		if (tmp != NULL && g_ascii_strcasecmp (tmp, "True") == 0)
 			as_app_add_veto (app, "NoDisplay=true");
 
 	/* Type */
