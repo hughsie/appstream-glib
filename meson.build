@@ -113,6 +113,9 @@ configure_file(
 
 add_global_arguments('-DAS_COMPILATION', language : 'c')
 
+# Needed for realpath()
+add_project_arguments('-D_XOPEN_SOURCE=500', language : 'c')
+
 subdir('libappstream-glib')
 subdir('data')
 subdir('docs')
