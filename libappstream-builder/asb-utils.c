@@ -633,10 +633,6 @@ asb_glob_value_search (GPtrArray *array, const gchar *search)
 	g_return_val_if_fail (array != NULL, NULL);
 	g_return_val_if_fail (search != NULL, NULL);
 
-	/* invalid */
-	if (search == NULL)
-		return NULL;
-
 	for (i = 0; i < array->len; i++) {
 		tmp = g_ptr_array_index (array, i);
 		if (fnmatch (tmp->glob, search, 0) == 0)
