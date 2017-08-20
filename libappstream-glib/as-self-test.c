@@ -227,7 +227,7 @@ as_test_monitor_dir_func (void)
 
 	/* rename the file */
 	cnt_added = cnt_removed = cnt_changed = 0;
-	g_rename (tmpfile, tmpfile_new);
+	g_assert_cmpint (g_rename (tmpfile, tmpfile_new), ==, 0);
 	as_test_loop_run_with_timeout (2000);
 	as_test_loop_quit ();
 	g_assert_cmpint (cnt_added, ==, 1);
@@ -2194,6 +2194,8 @@ as_test_app_validate_file_bad_func (void)
 
 	/* again, harder */
 	probs2 = as_app_validate (app, AS_APP_VALIDATE_FLAG_STRICT, &error);
+	g_assert_no_error (error);
+	g_assert (probs2 != NULL);
 	as_test_app_validate_check (probs2, AS_PROBLEM_KIND_TAG_INVALID,
 				    "XML data contains unknown tag");
 	g_assert_cmpint (probs2->len, ==, 41);
