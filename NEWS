@@ -1,3 +1,15 @@
+Version 0.7.2
+~~~~~~~~~~~~~~
+Released: 2017-08-21
+
+Bugfixes:
+ - Allow remote icon types for desktop AppData files (Richard Hughes)
+ - Define _XOPEN_SOURCE in order to expose realpath() in headers (Philip Withnall)
+ - Do not check the suffix of <id> tags (Richard Hughes)
+ - Drop an unreachable branch and add some additional checks (Philip Withnall)
+ - Enable C99 support in meson.build (Philip Withnall)
+ - Prefer /usr/share/metainfo as default path for metainfo files (Matthias Klumpp)
+
 Version 0.7.1
 ~~~~~~~~~~~~~~
 Released: 2017-08-03

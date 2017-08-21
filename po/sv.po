@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-03 13:59+0100\n"
-"PO-Revision-Date: 2017-03-15 08:25-0400\n"
+"POT-Creation-Date: 2017-08-21 15:55+0100\n"
+"PO-Revision-Date: 2017-08-04 11:27-0400\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/freedesktop/appstream-glib/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -433,7 +433,7 @@ msgstr "Kontrollera installerad programdata"
 #. TRANSLATORS: command description
 #: client/as-util.c:4513
 msgid "check an installed application"
-msgstr ""
+msgstr "kontrollera ett installerat program"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4519
@@ -503,12 +503,12 @@ msgstr "Övervaka AppStream-platser för ändringar"
 #. TRANSLATORS: command description
 #: client/as-util.c:4597
 msgid "Compare version numbers"
-msgstr ""
+msgstr "Jämför versionsnummer"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4603
 msgid "Test a regular expression"
-msgstr ""
+msgstr "Testa ett reguljärt uttryck"
 
 #. TRANSLATORS: program name
 #: client/as-util.c:4616
