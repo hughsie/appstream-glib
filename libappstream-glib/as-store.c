@@ -1416,6 +1416,7 @@ as_store_from_root (AsStore *store,
 	g_autoptr(AsProfileTask) ptask = NULL;
 	g_autoptr(AsRefString) icon_path_str = NULL;
 	g_autoptr(AsRefString) origin_str = NULL;
+	gboolean origin_is_flatpak;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
@@ -1468,9 +1469,11 @@ as_store_from_root (AsStore *store,
 		}
 	}
 
+	origin_is_flatpak = g_strcmp0 (priv->origin, "flatpak") == 0;
+
 	/* special case flatpak symlinks -- scope:name.xml.gz */
 	if (origin_app == NULL &&
-	    g_strcmp0 (priv->origin, "flatpak") == 0 &&
+	    origin_is_flatpak &&
 	    source_filename != NULL &&
 	    g_file_test (source_filename, G_FILE_TEST_IS_SYMLINK)) {
 		g_autofree gchar *source_basename = NULL;
@@ -1497,7 +1500,7 @@ as_store_from_root (AsStore *store,
 	}
 
 	/* fallback */
-	if (origin_app == NULL) {
+	if (origin_app == NULL && !origin_is_flatpak) {
 		id_prefix_app = g_strdup (as_app_scope_to_string (scope));
 		origin_app = g_strdup (priv->origin);
 		origin_app_icons = g_strdup (priv->origin);
