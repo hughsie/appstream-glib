@@ -1828,6 +1828,11 @@ as_test_app_func (void)
 	g_assert (rel != NULL);
 	g_assert_cmpstr (as_release_get_version (rel), ==, "3.11.91");
 
+	/* check specific release */
+	rel = as_app_get_release_by_version (app, "3.11.91");
+	g_assert (rel != NULL);
+	g_assert_cmpstr (as_release_get_version (rel), ==, "3.11.91");
+
 	/* check icons */
 	icons = as_app_get_icons (app);
 	g_assert (icons != NULL);

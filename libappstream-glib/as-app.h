@@ -713,6 +713,8 @@ AsBundle	*as_app_get_bundle_default	(AsApp		*app);
 AsRelease	*as_app_get_release		(AsApp		*app,
 						 const gchar	*version);
 AsRelease	*as_app_get_release_default	(AsApp		*app);
+AsRelease	*as_app_get_release_by_version	(AsApp		*app,
+						 const gchar	*version);
 AsRequire	*as_app_get_require_by_value	(AsApp		*app,
 						 AsRequireKind	 kind,
 						 const gchar	*value);

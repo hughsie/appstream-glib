@@ -1120,6 +1120,29 @@ as_app_get_release_default (AsApp *app)
 }
 
 /**
+ * as_app_get_release_by_version:
+ * @app: a #AsApp instance.
+ * @version: a release version number, e.g. "1.2.3"
+ *
+ * Gets a specific release from the application.
+ *
+ * Returns: (transfer none): a release, or %NULL
+ *
+ * Since: 0.7.3
+ **/
+AsRelease *
+as_app_get_release_by_version (AsApp *app, const gchar *version)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	for (guint i = 0; i < priv->releases->len; i++) {
+		AsRelease *release_tmp = g_ptr_array_index (priv->releases, i);
+		if (g_strcmp0 (version, as_release_get_version (release_tmp)) == 0)
+			return release_tmp;
+	}
+	return NULL;
+}
+
+/**
  * as_app_get_provides:
  * @app: a #AsApp instance.
  *
