@@ -90,6 +90,10 @@ as_launchable_kind_from_string (const gchar *kind)
 {
 	if (g_strcmp0 (kind, "desktop-id") == 0)
 		return AS_LAUNCHABLE_KIND_DESKTOP_ID;
+	if (g_strcmp0 (kind, "service") == 0)
+		return AS_LAUNCHABLE_KIND_SERVICE;
+	if (g_strcmp0 (kind, "cockpit-manifest") == 0)
+		return AS_LAUNCHABLE_KIND_COCKPIT_MANIFEST;
 	return AS_LAUNCHABLE_KIND_UNKNOWN;
 }
 
@@ -108,6 +112,10 @@ as_launchable_kind_to_string (AsLaunchableKind kind)
 {
 	if (kind == AS_LAUNCHABLE_KIND_DESKTOP_ID)
 		return "desktop-id";
+	if (kind == AS_LAUNCHABLE_KIND_SERVICE)
+		return "service";
+	if (kind == AS_LAUNCHABLE_KIND_COCKPIT_MANIFEST)
+		return "cockpit-manifest";
 	return NULL;
 }
 
