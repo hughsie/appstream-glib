@@ -57,6 +57,8 @@ struct _AsLaunchableClass
 typedef enum {
 	AS_LAUNCHABLE_KIND_UNKNOWN,
 	AS_LAUNCHABLE_KIND_DESKTOP_ID,		/* Since: 0.6.13 */
+	AS_LAUNCHABLE_KIND_SERVICE,		/* Since: 0.11.2 */
+	AS_LAUNCHABLE_KIND_COCKPIT_MANIFEST,    /* Since: 0.11.4 */
 	/*< private >*/
 	AS_LAUNCHABLE_KIND_LAST
 } AsLaunchableKind;
