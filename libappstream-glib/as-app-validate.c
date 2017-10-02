@@ -1141,7 +1141,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	const gchar *summary;
 	const gchar *tmp;
 	const gchar *update_contact;
-	gboolean deprectated_failure = FALSE;
+	gboolean deprecated_failure = FALSE;
 	gboolean require_appstream_spec_only = FALSE;
 	gboolean require_contactdetails = TRUE;
 	gboolean require_copyright = FALSE;
@@ -1200,7 +1200,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 
 	/* make the requirements more strict */
 	if ((flags & AS_APP_VALIDATE_FLAG_STRICT) > 0) {
-		deprectated_failure = TRUE;
+		deprecated_failure = TRUE;
 		require_copyright = TRUE;
 		require_translations = TRUE;
 		require_project_license = TRUE;
@@ -1375,7 +1375,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 					     AS_PROBLEM_KIND_VALUE_MISSING,
 					     "<!-- Copyright [year] [name] --> is not present");
 		}
-		if (deprectated_failure &&
+		if (deprecated_failure &&
 		    (problems & AS_APP_PROBLEM_UPDATECONTACT_FALLBACK) > 0) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_TAG_INVALID,
@@ -1635,7 +1635,7 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 	}
 
 	/* using deprecated names */
-	if (deprectated_failure && (problems & AS_APP_PROBLEM_DEPRECATED_LICENCE) > 0) {
+	if (deprecated_failure && (problems & AS_APP_PROBLEM_DEPRECATED_LICENCE) > 0) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				     "<licence> is deprecated, use "
