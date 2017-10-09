@@ -1996,7 +1996,7 @@ as_test_app_validate_appdata_good_func (void)
 	/* check screenshots were loaded */
 	screenshots = as_app_get_screenshots (app);
 	g_assert_cmpint (screenshots->len, ==, 1);
-	ss = g_ptr_array_index (screenshots, 0);
+	ss = as_app_get_screenshot_default (app);
 	g_assert_cmpint (as_screenshot_get_kind (ss), ==, AS_SCREENSHOT_KIND_DEFAULT);
 	images = as_screenshot_get_images (ss);
 	g_assert_cmpint (images->len, ==, 1);

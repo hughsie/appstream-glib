@@ -705,6 +705,7 @@ gboolean	 as_app_to_file			(AsApp		*app,
 						 GError		**error);
 AsContentRating	*as_app_get_content_rating	(AsApp		*app,
 						 const gchar 	*kind);
+AsScreenshot	*as_app_get_screenshot_default	(AsApp		*app);
 AsIcon		*as_app_get_icon_default	(AsApp		*app);
 AsIcon		*as_app_get_icon_for_size	(AsApp		*app,
 						 guint		 width,

@@ -1238,6 +1238,25 @@ as_app_get_screenshots (AsApp *app)
 }
 
 /**
+ * as_app_get_screenshot_default:
+ * @app: a #AsApp instance.
+ *
+ * Gets the default screenshot for the component.
+ *
+ * Returns: (transfer none): a screenshot or %NULL
+ *
+ * Since: 0.7.3
+ **/
+AsScreenshot *
+as_app_get_screenshot_default (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	if (priv->screenshots->len == 0)
+		return NULL;
+	return AS_SCREENSHOT (g_ptr_array_index (priv->screenshots, 0));
+}
+
+/**
  * as_app_get_reviews:
  * @app: a #AsApp instance.
  *
