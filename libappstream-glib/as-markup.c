@@ -192,13 +192,14 @@ as_markup_import_html_text_cb (GMarkupParseContext *context,
 static void
 as_markup_import_html_erase (GString *str, const gchar *start, const gchar *end)
 {
-	gssize i, j;
 	gssize start_len = (gssize) strlen (start);
 	gssize end_len = (gssize) strlen (end);
-	for (i = 0; str->str[i] != '\0'; i++) {
+	if (start_len + end_len > str->len)
+		return;
+	for (gssize i = 0; i < str->len - start_len; i++) {
 		if (memcmp (&str->str[i], start, (gsize) start_len) != 0)
 			continue;
-		for (j = i; i < (gssize) str->len; j++) {
+		for (gssize j = i; i < (gssize) str->len; j++) {
 			if (memcmp (&str->str[j], end, (gsize) end_len) != 0)
 				continue;
 			/* delete this section and restart the search */
