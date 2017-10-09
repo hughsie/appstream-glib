@@ -491,6 +491,7 @@ asb_test_context_func (void)
 		"<provides>\n"
 		"<dbus type=\"session\">org.freedesktop.AppStream</dbus>\n"
 		"</provides>\n"
+		"<launchable type=\"desktop-id\">app.desktop</launchable>\n"
 		"<languages>\n"
 		"<lang percentage=\"100\">en_GB</lang>\n"
 		"<lang percentage=\"33\">ru</lang>\n"

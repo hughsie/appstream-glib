@@ -4635,7 +4635,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	}
 
 	/* <launchables> */
-	if (priv->launchables->len > 0 && as_node_context_get_version (ctx) > 0.9) {
+	if (priv->launchables->len > 0) {
 		g_ptr_array_sort (priv->launchables, as_app_launchables_sort_cb);
 		for (i = 0; i < priv->launchables->len; i++) {
 			AsLaunchable *launchable = g_ptr_array_index (priv->launchables, i);

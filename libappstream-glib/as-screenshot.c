@@ -436,15 +436,13 @@ as_screenshot_node_insert (AsScreenshot *screenshot,
 		as_node_add_attribute (n, "type",
 				       as_screenshot_kind_to_string (priv->kind));
 	}
-	if (as_node_context_get_version (ctx) >= 0.41) {
-		if (priv->captions != NULL) {
-			as_node_insert_localized (n,
-						  "caption",
-						  priv->captions,
-						  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
-		}
+	if (priv->captions != NULL) {
+		as_node_insert_localized (n,
+					  "caption",
+					  priv->captions,
+					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 	}
-	if (as_node_context_get_version (ctx) >= 0.8 && priv->priority != 0)
+	if (priv->priority != 0)
 		as_node_add_attribute_as_int (n, "priority", priv->priority);
 	for (i = 0; i < priv->images->len; i++) {
 		image = g_ptr_array_index (priv->images, i);

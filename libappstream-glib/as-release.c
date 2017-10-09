@@ -645,7 +645,6 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	AsChecksum *checksum;
 	GNode *n;
-	guint i;
 
 	n = as_node_insert (parent, "release", NULL,
 			    AS_NODE_INSERT_FLAG_NONE,
@@ -667,19 +666,16 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 	}
 	if (priv->version != NULL)
 		as_node_add_attribute (n, "version", priv->version);
-	if (as_node_context_get_version (ctx) >= 0.9) {
-		const gchar *tmp;
-		for (i = 0; priv->locations != NULL && i < priv->locations->len; i++) {
-			tmp = g_ptr_array_index (priv->locations, i);
-			as_node_insert (n, "location", tmp,
-					AS_NODE_INSERT_FLAG_NONE, NULL);
-		}
-		for (i = 0; priv->checksums != NULL && i < priv->checksums->len; i++) {
-			checksum = g_ptr_array_index (priv->checksums, i);
-			as_checksum_node_insert (checksum, n, ctx);
-		}
+	for (guint i = 0; priv->locations != NULL && i < priv->locations->len; i++) {
+		const gchar *tmp = g_ptr_array_index (priv->locations, i);
+		as_node_insert (n, "location", tmp,
+				AS_NODE_INSERT_FLAG_NONE, NULL);
 	}
-	if (priv->descriptions != NULL && as_node_context_get_version (ctx) >= 0.6) {
+	for (guint i = 0; priv->checksums != NULL && i < priv->checksums->len; i++) {
+		checksum = g_ptr_array_index (priv->checksums, i);
+		as_checksum_node_insert (checksum, n, ctx);
+	}
+	if (priv->descriptions != NULL) {
 		as_node_insert_localized (n, "description", priv->descriptions,
 					  AS_NODE_INSERT_FLAG_PRE_ESCAPED |
 					  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
@@ -687,7 +683,7 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 
 	/* add sizes */
 	if (priv->sizes != NULL) {
-		for (i = 0; i < AS_SIZE_KIND_LAST; i++) {
+		for (guint i = 0; i < AS_SIZE_KIND_LAST; i++) {
 			g_autofree gchar *size_str = NULL;
 			if (priv->sizes[i] == 0)
 				continue;

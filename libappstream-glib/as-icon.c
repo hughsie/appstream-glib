@@ -513,11 +513,9 @@ as_icon_node_insert_embedded (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 	n = as_node_insert (parent, "icon", NULL, 0,
 			    "type", as_icon_kind_to_string (priv->kind),
 			    NULL);
-	if (as_node_context_get_version (ctx) >= 0.8) {
-		as_node_add_attribute_as_uint (n, "width", priv->width);
-		as_node_add_attribute_as_uint (n, "height", priv->height);
-	}
-	if (priv->scale > 1 && as_node_context_get_version (ctx) > 0.9)
+	as_node_add_attribute_as_uint (n, "width", priv->width);
+	as_node_add_attribute_as_uint (n, "height", priv->height);
+	if (priv->scale > 1)
 		as_node_add_attribute_as_uint (n, "scale", priv->scale);
 	as_node_insert (n, "name", priv->name, 0, NULL);
 	data = g_base64_encode (g_bytes_get_data (priv->data, NULL),
@@ -575,8 +573,7 @@ as_icon_node_insert (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 		}
 		break;
 	}
-	if (priv->kind == AS_ICON_KIND_CACHED &&
-	    as_node_context_get_version (ctx) >= 0.8) {
+	if (priv->kind == AS_ICON_KIND_CACHED) {
 		if (priv->width > 0)
 			as_node_add_attribute_as_uint (n, "width", priv->width);
 		if (priv->height > 0)

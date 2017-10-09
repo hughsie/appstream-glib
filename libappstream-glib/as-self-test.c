@@ -968,7 +968,7 @@ as_test_icon_func (void)
 	as_node_context_set_version (ctx, 0.4);
 	n = as_icon_node_insert (icon, root, ctx);
 	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_NONE);
-	ret = as_test_compare_lines (xml->str, src, &error);
+	ret = as_test_compare_lines (xml->str, "<icon type=\"cached\" height=\"64\" width=\"64\">app.png</icon>", &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_string_free (xml, TRUE);
@@ -1098,7 +1098,7 @@ as_test_icon_embedded_func (void)
 	AsNode *root;
 	GString *xml;
 	const gchar *src =
-"<icon type=\"embedded\"><name>app.png</name>"
+"<icon type=\"embedded\" height=\"32\" width=\"32\"><name>app.png</name>"
 "<filecontent>\n"
 "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ\n"
 "TUUH1gsaCxQZBldDDAAACLxJREFUWIW9lmtsHNUVx/8zd3Zm9uFd73ptZ/3Gid+OoUlwyAscSJw4\n"
@@ -2465,6 +2465,7 @@ as_test_app_no_markup_func (void)
 		"<component type=\"desktop\">\n"
 		"<id>org.gnome.Software.desktop</id>\n"
 		"<description>Software is awesome:\n\n * Bada\n * Boom!</description>\n"
+		"<launchable type=\"desktop-id\">org.gnome.Software.desktop</launchable>\n"
 		"</component>\n";
 	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsApp) app = NULL;
@@ -3038,7 +3039,7 @@ as_test_store_embedded_func (void)
 "<id>eog.desktop</id>"
 "<pkgname>eog</pkgname>"
 "<name>Image Viewer</name>"
-"<icon type=\"embedded\">"
+"<icon type=\"embedded\" height=\"32\" width=\"32\">"
 "<name>eog.png</name>"
 "<filecontent>\n"
 "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ\n"
@@ -3084,6 +3085,7 @@ as_test_store_embedded_func (void)
 "xxVXYLZ16ADU690D3JzxXLG581caBWBep/71278AZpn8hFce4VcAAAAASUVORK5CYII=\n"
 "</filecontent>"
 "</icon>"
+"<launchable type=\"desktop-id\">eog.desktop</launchable>"
 "</component>"
 "</components>";
 
@@ -3909,30 +3911,12 @@ as_test_store_versions_func (void)
 		"<description><p>Hello</p></description>\n"
 		"</release>\n"
 		"</releases>\n"
+		"<launchable type=\"desktop-id\">test.desktop</launchable>\n"
 		"</component>\n"
 		"</components>\n", &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_string_free (xml, TRUE);
-
-	/* test with legacy options */
-	as_store_set_api_version (store, 0.6);
-	xml = as_store_to_xml (store, 0);
-	g_assert_cmpstr (xml->str, ==,
-		"<components version=\"0.6\">"
-		"<component type=\"desktop\">"
-		"<id>test.desktop</id>"
-		"<description><p>Hello world</p></description>"
-		"<architectures><arch>i386</arch></architectures>"
-		"<releases>"
-		"<release timestamp=\"123\" version=\"0.1.2\">"
-		"<description><p>Hello</p></description>"
-		"</release>"
-		"</releases>"
-		"</component>"
-		"</components>");
-	g_string_free (xml, TRUE);
-
 	g_object_unref (store);
 
 	/* load a version 0.6 file to the store */
@@ -3952,6 +3936,7 @@ as_test_store_versions_func (void)
 		"<components version=\"0.6\">"
 		"<component type=\"desktop\">"
 		"<id>test.desktop</id>"
+		"<launchable type=\"desktop-id\">test.desktop</launchable>"
 		"</component>"
 		"</components>");
 	g_string_free (xml, TRUE);
@@ -3977,6 +3962,7 @@ as_test_store_addons_func (void)
 		"</component>"
 		"<component type=\"desktop\">"
 		"<id>eclipse.desktop</id>"
+		"<launchable type=\"desktop-id\">eclipse.desktop</launchable>"
 		"</component>"
 		"</components>";
 	g_autoptr(AsStore) store = NULL;
@@ -4059,6 +4045,7 @@ as_test_node_no_dup_c_func (void)
 		"<component type=\"desktop\">"
 		"<id>test.desktop</id>"
 		"<name>Krita</name>"
+		"<launchable type=\"desktop-id\">test.desktop</launchable>"
 		"</component>");
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
@@ -4868,7 +4855,7 @@ as_test_store_yaml_func (void)
 		"<id>iceweasel.desktop</id>\n"
 		"<pkgname>iceweasel</pkgname>\n"
 		"<name>Iceweasel</name>\n"
-		"<icon type=\"cached\">iceweasel.png</icon>\n"
+		"<icon type=\"cached\" height=\"64\" width=\"64\">iceweasel.png</icon>\n"
 		"<keywords>\n"
 		"<keyword>browser</keyword>\n"
 		"</keywords>\n"
