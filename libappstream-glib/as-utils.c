@@ -1598,6 +1598,11 @@ as_utils_version_from_uint32 (guint32 val, AsVersionParseFlag flags)
 gchar *
 as_utils_version_from_uint16 (guint16 val, AsVersionParseFlag flags)
 {
+	if (flags & AS_VERSION_PARSE_FLAG_USE_BCD) {
+		guint maj = ((val >> 12) & 0x0f) * 10 + ((val >> 8) & 0x0f);
+		guint min = ((val >> 4) & 0x0f) * 10 + (val & 0x0f);
+		return g_strdup_printf ("%u.%u", maj, min);
+	}
 	return g_strdup_printf ("%u.%u",
 				(guint) (val >> 8) & 0xff,
 				(guint) val & 0xff);

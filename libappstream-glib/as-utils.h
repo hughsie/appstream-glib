@@ -83,12 +83,14 @@ typedef enum {
  * AsVersionParseFlag:
  * @AS_VERSION_PARSE_FLAG_NONE:			No flags set
  * @AS_VERSION_PARSE_FLAG_USE_TRIPLET:		Use Microsoft-style version numbers
+ * @AS_VERSION_PARSE_FLAG_USE_BCD:		Use binary coded decimal notation
  *
  * The flags used when parsing version numbers.
  **/
 typedef enum {
 	AS_VERSION_PARSE_FLAG_NONE		= 0,
 	AS_VERSION_PARSE_FLAG_USE_TRIPLET	= 1 << 0,
+	AS_VERSION_PARSE_FLAG_USE_BCD		= 1 << 1,	/* Since: 0.7.3 */
 	/*< private >*/
 	AS_VERSION_PARSE_FLAG_LAST
 } AsVersionParseFlag;

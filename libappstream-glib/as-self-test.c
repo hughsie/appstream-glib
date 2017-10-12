@@ -4584,6 +4584,19 @@ as_test_utils_version_func (void)
 		{ 0,		NULL }
 	};
 	struct {
+		guint16 val;
+		const gchar *ver;
+		AsVersionParseFlag flags;
+	} version_from_uint16[] = {
+		{ 0x0,		"0.0",		AS_VERSION_PARSE_FLAG_NONE },
+		{ 0xff,		"0.255",	AS_VERSION_PARSE_FLAG_NONE },
+		{ 0xff01,	"255.1",	AS_VERSION_PARSE_FLAG_NONE },
+		{ 0x0,		"0.0",		AS_VERSION_PARSE_FLAG_USE_BCD },
+		{ 0x0110,	"1.10",		AS_VERSION_PARSE_FLAG_USE_BCD },
+		{ 0x9999,	"99.99",	AS_VERSION_PARSE_FLAG_USE_BCD },
+		{ 0,		NULL }
+	};
+	struct {
 		const gchar *old;
 		const gchar *new;
 	} version_parse[] = {
@@ -4605,6 +4618,12 @@ as_test_utils_version_func (void)
 		ver = as_utils_version_from_uint32 (version_from_uint32[i].val,
 						    version_from_uint32[i].flags);
 		g_assert_cmpstr (ver, ==, version_from_uint32[i].ver);
+	}
+	for (i = 0; version_from_uint16[i].ver != NULL; i++) {
+		g_autofree gchar *ver = NULL;
+		ver = as_utils_version_from_uint16 (version_from_uint16[i].val,
+						    version_from_uint16[i].flags);
+		g_assert_cmpstr (ver, ==, version_from_uint16[i].ver);
 	}
 
 	/* check version parsing */
