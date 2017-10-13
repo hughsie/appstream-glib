@@ -1557,6 +1557,8 @@ as_utils_guid_from_string (const gchar *str)
 					(const guint8 *) str, strlen (str), NULL);
 }
 
+#define AS_UTILS_DECODE_BCD(val)	((((val) >> 4) & 0x0f) * 10 + ((val) & 0x0f))
+
 /**
  * as_utils_version_from_uint32:
  * @val: A uint32le version number
@@ -1599,9 +1601,9 @@ gchar *
 as_utils_version_from_uint16 (guint16 val, AsVersionParseFlag flags)
 {
 	if (flags & AS_VERSION_PARSE_FLAG_USE_BCD) {
-		guint maj = ((val >> 12) & 0x0f) * 10 + ((val >> 8) & 0x0f);
-		guint min = ((val >> 4) & 0x0f) * 10 + (val & 0x0f);
-		return g_strdup_printf ("%u.%u", maj, min);
+		return g_strdup_printf ("%u.%u",
+					AS_UTILS_DECODE_BCD(val >> 8),
+					AS_UTILS_DECODE_BCD(val));
 	}
 	return g_strdup_printf ("%u.%u",
 				(guint) (val >> 8) & 0xff,
