@@ -94,6 +94,8 @@ as_url_kind_to_string (AsUrlKind url_kind)
 		return "missing";
 	if (url_kind == AS_URL_KIND_TRANSLATE)
 		return "translate";
+	if (url_kind == AS_URL_KIND_WEB_APP)
+		return "web-application";
 	return "unknown";
 }
 
@@ -124,6 +126,8 @@ as_url_kind_from_string (const gchar *url_kind)
 		return AS_URL_KIND_MISSING;
 	if (g_strcmp0 (url_kind, "translate") == 0)
 		return AS_URL_KIND_TRANSLATE;
+	if (g_strcmp0 (url_kind, "web-application") == 0)
+		return AS_URL_KIND_WEB_APP;
 	return AS_URL_KIND_UNKNOWN;
 }
 
