@@ -411,6 +411,7 @@ asb_utils_explode (const gchar *filename,
 		valid = asb_utils_explode_file (entry, dir);
 		if (!valid)
 			continue;
+		archive_entry_set_mode (entry, S_IRGRP | S_IWGRP | S_IRUSR | S_IWUSR);
 		r = archive_read_extract (arch, entry, 0);
 		if (r != ARCHIVE_OK) {
 			ret = FALSE;
