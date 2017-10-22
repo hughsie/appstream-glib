@@ -36,7 +36,7 @@ AC_DEFUN([APPSTREAM_XML],
          AS_IF([test "x$enable_appstream_validate" = "xyes"],
                [AC_MSG_ERROR([AppData validation was requested but appstream-util was not found])])])
 
-  AC_SUBST([appstreamxmldir], [${datadir}/appdata])
+  AC_SUBST([appstreamxmldir], [${datadir}/metainfo])
 
   APPSTREAM_XML_RULES='
 .PHONY : uninstall-appstream-xml install-appstream-xml clean-appstream-xml
