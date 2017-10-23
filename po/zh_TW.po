@@ -7,13 +7,14 @@
 # Matjaž Mozetič <m.mozetic@matmoz.si>, 2015
 # Ding-Yi Chen <dchen@redhat.com>, 2016. #zanata
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
+# Cheng-Chia Tseng <pswo10680@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-03 13:59+0100\n"
-"PO-Revision-Date: 2016-08-30 10:11-0400\n"
-"Last-Translator: Ding-Yi Chen <dchen@redhat.com>\n"
+"POT-Creation-Date: 2017-10-23 16:26+0100\n"
+"PO-Revision-Date: 2017-08-27 11:42-0400\n"
+"Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -302,7 +303,7 @@ msgstr "已加入"
 #. TRANSLATORS: this is when a device ctrl+c's a watch
 #: client/as-util.c:4290
 msgid "Cancelled"
-msgstr ""
+msgstr "已取消"
 
 #. TRANSLATORS: this is the --nonet argument
 #: client/as-util.c:4342
@@ -352,12 +353,12 @@ msgstr "依據軟體包名稱搜尋 AppStream 應用程式"
 #. TRANSLATORS: command description
 #: client/as-util.c:4417
 msgid "Show all installed AppStream applications"
-msgstr ""
+msgstr "顯示所有安裝的 AppStream 應用程式"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4423
 msgid "Search for AppStream applications by category name"
-msgstr ""
+msgstr "依據類別名稱搜尋 AppStream 應用程式"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4429
@@ -432,7 +433,7 @@ msgstr "檢查安裝的應用程式資料"
 #. TRANSLATORS: command description
 #: client/as-util.c:4513
 msgid "check an installed application"
-msgstr ""
+msgstr "檢查安裝的應用程式"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4519
@@ -442,12 +443,12 @@ msgstr "替換源檔內的畫面快照"
 #. TRANSLATORS: command description
 #: client/as-util.c:4525
 msgid "Add a provide to a source file"
-msgstr ""
+msgstr "加入提供者到來源檔中"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4531
 msgid "Add a language to a source file"
-msgstr ""
+msgstr "加入語言到來源檔中"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4537
@@ -497,17 +498,17 @@ msgstr "匯入檔案到 AppStream 標記"
 #. TRANSLATORS: command description
 #: client/as-util.c:4591
 msgid "Watch AppStream locations for changes"
-msgstr ""
+msgstr "監看 AppStream 位置是否有變動"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4597
 msgid "Compare version numbers"
-msgstr ""
+msgstr "比較版本號"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4603
 msgid "Test a regular expression"
-msgstr ""
+msgstr "測試常規表述式"
 
 #. TRANSLATORS: program name
 #: client/as-util.c:4616

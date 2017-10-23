@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-03 13:59+0100\n"
-"PO-Revision-Date: 2017-02-22 02:11-0500\n"
+"POT-Creation-Date: 2017-10-23 16:26+0100\n"
+"PO-Revision-Date: 2017-08-22 05:05-0400\n"
 "Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (http://www.transifex.com/freedesktop/appstream-glib/language/ca/)\n"
 "MIME-Version: 1.0\n"
@@ -434,7 +434,7 @@ msgstr "Comprova les dades de les aplicacions instal·lades"
 #. TRANSLATORS: command description
 #: client/as-util.c:4513
 msgid "check an installed application"
-msgstr ""
+msgstr "comprova una aplicació instal·lada"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4519
@@ -506,12 +506,12 @@ msgstr "Observa les ubicacions AppStream per si hi ha canvis"
 #. TRANSLATORS: command description
 #: client/as-util.c:4597
 msgid "Compare version numbers"
-msgstr ""
+msgstr "Compara els números de les versions"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4603
 msgid "Test a regular expression"
-msgstr ""
+msgstr "Prova una expressió regular"
 
 #. TRANSLATORS: program name
 #: client/as-util.c:4616

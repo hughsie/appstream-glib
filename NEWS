@@ -1,3 +1,19 @@
+Version 0.7.3
+~~~~~~~~~~~~~~
+Released: 2017-10-23
+
+New Features:
+ - Add AS_VERSION_PARSE_FLAG_USE_BCD when formatting version strings (Richard Hughes)
+ - Add as_app_get_release_by_version() (Richard Hughes)
+ - Add as_app_get_screenshot_default() (Richard Hughes)
+ - Add new launchable types (Marius Vollmer, Richard Hughes)
+
+Bugfixes:
+ - Do not assign "flatpak" as an app's origin when no origin was found (Joaquim Rocha)
+ - Fix the inode mode to be sane on extracted files (Richard Hughes)
+ - Prefer /usr/share/metainfo as default path for metainfo files (Jeremy Bicha)
+ - Write XML for newer AppStream specification versions (Richard Hughes)
+
 Version 0.7.2
 ~~~~~~~~~~~~~~
 Released: 2017-08-21

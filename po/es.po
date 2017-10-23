@@ -8,13 +8,14 @@
 # Emilio Herrera <ehespinosa57@gmail.com>, 2016. #zanata
 # Silvia Sanchez <BHKohane@gmail.com>, 2016. #zanata
 # William  Moreno Reyes <williamjmorenor@gmail.com>, 2016. #zanata
+# Máximo Castañeda Riloba <mcrcctm@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-03 13:59+0100\n"
-"PO-Revision-Date: 2016-12-19 07:13-0500\n"
-"Last-Translator: Richard Hughes <richard@hughsie.com>\n"
+"POT-Creation-Date: 2017-10-23 16:26+0100\n"
+"PO-Revision-Date: 2017-09-12 11:17-0400\n"
+"Last-Translator: Máximo Castañeda Riloba <mcrcctm@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/freedesktop/appstream-glib/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -434,7 +435,7 @@ msgstr "Comprobar los datos de aplicación instalados"
 #. TRANSLATORS: command description
 #: client/as-util.c:4513
 msgid "check an installed application"
-msgstr ""
+msgstr "Comprobar una aplicación instalada"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4519
@@ -504,12 +505,12 @@ msgstr "Espera las localizaciones de AppStream para los cambios"
 #. TRANSLATORS: command description
 #: client/as-util.c:4597
 msgid "Compare version numbers"
-msgstr ""
+msgstr "Compara números de versiones"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4603
 msgid "Test a regular expression"
-msgstr ""
+msgstr "Prueba una expresión regular"
 
 #. TRANSLATORS: program name
 #: client/as-util.c:4616
