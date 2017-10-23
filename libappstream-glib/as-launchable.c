@@ -94,6 +94,8 @@ as_launchable_kind_from_string (const gchar *kind)
 		return AS_LAUNCHABLE_KIND_SERVICE;
 	if (g_strcmp0 (kind, "cockpit-manifest") == 0)
 		return AS_LAUNCHABLE_KIND_COCKPIT_MANIFEST;
+	if (g_strcmp0 (kind, "url") == 0)
+		return AS_LAUNCHABLE_KIND_URL;
 	return AS_LAUNCHABLE_KIND_UNKNOWN;
 }
 
@@ -116,6 +118,8 @@ as_launchable_kind_to_string (AsLaunchableKind kind)
 		return "service";
 	if (kind == AS_LAUNCHABLE_KIND_COCKPIT_MANIFEST)
 		return "cockpit-manifest";
+	if (kind == AS_LAUNCHABLE_KIND_URL)
+		return "url";
 	return NULL;
 }
 

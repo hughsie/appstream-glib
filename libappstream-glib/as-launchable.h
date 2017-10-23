@@ -53,6 +53,7 @@ struct _AsLaunchableClass
  * @AS_LAUNCHABLE_KIND_DESKTOP_ID:	A desktop ID
  * @AS_LAUNCHABLE_KIND_SERVICE:		A system service
  * @AS_LAUNCHABLE_KIND_COCKPIT_MANIFEST: A manifest run by the cockpit project
+ * @AS_LAUNCHABLE_KIND_URL:		A web-app
  *
  * The launchable type.
  **/
@@ -61,6 +62,7 @@ typedef enum {
 	AS_LAUNCHABLE_KIND_DESKTOP_ID,		/* Since: 0.6.13 */
 	AS_LAUNCHABLE_KIND_SERVICE,		/* Since: 0.7.3 */
 	AS_LAUNCHABLE_KIND_COCKPIT_MANIFEST,	/* Since: 0.7.3 */
+	AS_LAUNCHABLE_KIND_URL,			/* Since: 0.7.3 */
 	/*< private >*/
 	AS_LAUNCHABLE_KIND_LAST
 } AsLaunchableKind;
