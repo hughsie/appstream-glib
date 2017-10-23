@@ -51,14 +51,16 @@ struct _AsLaunchableClass
  * AsLaunchableKind:
  * @AS_LAUNCHABLE_KIND_UNKNOWN:		Type invalid or not known
  * @AS_LAUNCHABLE_KIND_DESKTOP_ID:	A desktop ID
+ * @AS_LAUNCHABLE_KIND_SERVICE:		A system service
+ * @AS_LAUNCHABLE_KIND_COCKPIT_MANIFEST: A manifest run by the cockpit project
  *
  * The launchable type.
  **/
 typedef enum {
 	AS_LAUNCHABLE_KIND_UNKNOWN,
 	AS_LAUNCHABLE_KIND_DESKTOP_ID,		/* Since: 0.6.13 */
-	AS_LAUNCHABLE_KIND_SERVICE,		/* Since: 0.11.2 */
-	AS_LAUNCHABLE_KIND_COCKPIT_MANIFEST,    /* Since: 0.11.4 */
+	AS_LAUNCHABLE_KIND_SERVICE,		/* Since: 0.7.3 */
+	AS_LAUNCHABLE_KIND_COCKPIT_MANIFEST,	/* Since: 0.7.3 */
 	/*< private >*/
 	AS_LAUNCHABLE_KIND_LAST
 } AsLaunchableKind;
