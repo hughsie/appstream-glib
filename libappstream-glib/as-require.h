@@ -52,6 +52,7 @@ struct _AsRequireClass
  * @AS_REQUIRE_KIND_UNKNOWN:		Type invalid or not known
  * @AS_REQUIRE_KIND_ID:			Component ID
  * @AS_REQUIRE_KIND_FIRMWARE:		Device firmware version
+ * @AS_REQUIRE_KIND_HARDWARE:		Hardware device, typically a GUID
  *
  * The require type.
  **/
@@ -59,6 +60,7 @@ typedef enum {
 	AS_REQUIRE_KIND_UNKNOWN,
 	AS_REQUIRE_KIND_ID,
 	AS_REQUIRE_KIND_FIRMWARE,
+	AS_REQUIRE_KIND_HARDWARE,		/* Since: 0.7.4 */
 	/*< private >*/
 	AS_REQUIRE_KIND_LAST
 } AsRequireKind;
