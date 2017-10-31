@@ -1346,6 +1346,7 @@ as_test_require_func (void)
 		"<id>gimp.desktop</id>\n"
 		"<firmware compare=\"ge\" version=\"0.1.2\">bootloader</firmware>\n"
 		"<firmware compare=\"eq\" version=\"1.0.0\">runtime</firmware>\n"
+		"<hardware>4be0643f-1d98-573b-97cd-ca98a65347dd</hardware>\n"
 		"</requires>\n"
 		"</component>\n";
 	gboolean ret;
@@ -1370,7 +1371,7 @@ as_test_require_func (void)
 
 	/* verify */
 	requires = as_app_get_requires (app);
-	g_assert_cmpint (requires->len, ==, 3);
+	g_assert_cmpint (requires->len, ==, 4);
 	require = g_ptr_array_index (requires, 0);
 	g_assert_cmpint (as_require_get_kind (require), ==, AS_REQUIRE_KIND_ID);
 	g_assert_cmpint (as_require_get_compare (require), ==, AS_REQUIRE_COMPARE_UNKNOWN);
@@ -1381,6 +1382,11 @@ as_test_require_func (void)
 	g_assert_cmpint (as_require_get_compare (require), ==, AS_REQUIRE_COMPARE_GE);
 	g_assert_cmpstr (as_require_get_version (require), ==, "0.1.2");
 	g_assert_cmpstr (as_require_get_value (require), ==, "bootloader");
+	require = g_ptr_array_index (requires, 3);
+	g_assert_cmpint (as_require_get_kind (require), ==, AS_REQUIRE_KIND_HARDWARE);
+	g_assert_cmpint (as_require_get_compare (require), ==, AS_REQUIRE_COMPARE_UNKNOWN);
+	g_assert_cmpstr (as_require_get_version (require), ==, NULL);
+	g_assert_cmpstr (as_require_get_value (require), ==, "4be0643f-1d98-573b-97cd-ca98a65347dd");
 
 	/* back to node */
 	root = as_node_new ();

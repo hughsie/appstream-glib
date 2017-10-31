@@ -95,6 +95,8 @@ as_require_kind_from_string (const gchar *kind)
 		return AS_REQUIRE_KIND_ID;
 	if (g_strcmp0 (kind, "firmware") == 0)
 		return AS_REQUIRE_KIND_FIRMWARE;
+	if (g_strcmp0 (kind, "hardware") == 0)
+		return AS_REQUIRE_KIND_HARDWARE;
 	return AS_REQUIRE_KIND_UNKNOWN;
 }
 
@@ -115,6 +117,8 @@ as_require_kind_to_string (AsRequireKind kind)
 		return "id";
 	if (kind == AS_REQUIRE_KIND_FIRMWARE)
 		return "firmware";
+	if (kind == AS_REQUIRE_KIND_HARDWARE)
+		return "hardware";
 	return NULL;
 }
 
