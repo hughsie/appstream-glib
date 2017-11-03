@@ -396,7 +396,8 @@ asb_task_process (AsbTask *task, GError **error)
 				  priv->tmpdir,
 				  asb_context_get_file_globs (priv->ctx),
 				  error)) {
-		g_prefix_error (error, "Failed to explode: ");
+		g_prefix_error (error, "Failed to explode %s: ",
+				asb_package_get_basename (priv->pkg));
 		return FALSE;
 	}
 

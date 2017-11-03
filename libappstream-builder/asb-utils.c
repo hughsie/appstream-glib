@@ -418,7 +418,8 @@ asb_utils_explode (const gchar *filename,
 			g_set_error (error,
 				     ASB_PLUGIN_ERROR,
 				     ASB_PLUGIN_ERROR_FAILED,
-				     "Cannot extract: %s",
+				     "Cannot extract %s: %s",
+				     archive_entry_pathname (entry),
 				     archive_error_string (arch));
 			goto out;
 		}
