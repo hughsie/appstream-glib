@@ -36,6 +36,8 @@
 #include "asb-package-rpm.h"
 #endif
 
+#undef HAVE_FONTS
+
 static gchar *
 asb_test_get_filename (const gchar *filename)
 {
@@ -321,8 +323,10 @@ asb_test_context_func (void)
 		"app-console-1-1.fc25.noarch.rpm",	/* app with no icon */
 		"app-1-1.fc25.i686.rpm",		/* GUI multiarch app */
 		"composite-1-1.fc21.x86_64.rpm",	/* multiple GUI apps */
+#ifdef HAVE_FONTS
 		"font-1-1.fc21.noarch.rpm",		/* font */
 		"font-serif-1-1.fc21.noarch.rpm",	/* font that extends */
+#endif
 		"colorhug-als-2.0.2.cab",		/* firmware */
 		NULL};
 
@@ -369,7 +373,11 @@ asb_test_context_func (void)
 	}
 
 	/* verify queue size */
+#ifdef HAVE_FONTS
 	g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 9);
+#else
+	g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 7);
+#endif
 
 	/* run the plugins */
 	ret = asb_context_process (ctx, &error);
@@ -381,7 +389,9 @@ asb_test_context_func (void)
 	g_assert (g_file_test ("/tmp/asbuilder/output/appstream-failed.xml.gz", G_FILE_TEST_EXISTS));
 	g_assert (g_file_test ("/tmp/asbuilder/output/appstream-ignore.xml.gz", G_FILE_TEST_EXISTS));
 	g_assert (g_file_test ("/tmp/asbuilder/output/appstream-icons.tar.gz", G_FILE_TEST_EXISTS));
+#ifdef HAVE_FONTS
 	g_assert (g_file_test ("/tmp/asbuilder/output/appstream-screenshots.tar", G_FILE_TEST_EXISTS));
+#endif
 
 	/* load AppStream metadata */
 	file = g_file_new_for_path ("/tmp/asbuilder/output/appstream.xml.gz");
@@ -536,7 +546,9 @@ asb_test_context_func (void)
 	ret = as_store_from_file (store_failed, file_failed, NULL, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
+#ifdef HAVE_FONTS
 	g_assert_cmpint (as_store_get_size (store_failed), ==, 1);
+#endif
 //	app = as_store_get_app_by_id (store_failed, "console1.desktop");
 //	g_assert (app != NULL);
 //	app = as_store_get_app_by_id (store_failed, "console2.desktop");
@@ -544,9 +556,9 @@ asb_test_context_func (void)
 
 	/* check output */
 	xml_failed = as_store_to_xml (store_failed, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+#ifdef HAVE_FONTS
 	expected_xml =
 		"<components origin=\"asb-self-test-failed\" version=\"0.9\">\n"
-#ifdef HAVE_FONTS
 		"<component type=\"font\">\n"
 		"<id>LiberationSerif</id>\n"
 		"<pkgname>font-serif</pkgname>\n"
@@ -581,8 +593,11 @@ asb_test_context_func (void)
 		"<lang>en</lang>\n"
 		"</languages>\n"
 		"</component>\n"
-#endif
 		"</components>\n";
+#else
+	expected_xml =
+		"<components origin=\"asb-self-test-failed\" version=\"0.9\"/>\n";
+#endif
 	ret = asb_test_compare_lines (xml_failed->str, expected_xml, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -610,10 +625,12 @@ asb_test_context_func (void)
 		"<id>composite.x86_64</id>\n"
 		"<pkgname>composite</pkgname>\n"
 		"</component>\n"
+#ifdef HAVE_FONTS
 		"<component type=\"generic\">\n"
 		"<id>font-serif.noarch</id>\n"
 		"<pkgname>font-serif</pkgname>\n"
 		"</component>\n"
+#endif
 		"<component type=\"generic\">\n"
 		"<id>test.noarch</id>\n"
 		"<pkgname>test</pkgname>\n"
