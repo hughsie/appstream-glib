@@ -1,3 +1,13 @@
+Version 0.7.4
+~~~~~~~~~~~~~~
+Released: 2017-11-09
+
+New Features:
+ - Add the 'hardware' requires type (Richard Hughes)
+
+Bugfixes:
+ - Only try to set the file permissions on regular files (Richard Hughes)
+
 Version 0.7.3
 ~~~~~~~~~~~~~~
 Released: 2017-10-23
