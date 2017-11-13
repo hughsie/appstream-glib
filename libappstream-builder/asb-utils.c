@@ -411,6 +411,11 @@ asb_utils_explode (const gchar *filename,
 		valid = asb_utils_explode_file (entry, dir);
 		if (!valid)
 			continue;
+		if (g_file_test (archive_entry_pathname (entry), G_FILE_TEST_EXISTS)) {
+			g_debug ("skipping as %s already exists",
+				 archive_entry_pathname (entry));
+			continue;
+		}
 		if (archive_entry_symlink (entry) == NULL) {
 			archive_entry_set_mode (entry, S_IRGRP | S_IWGRP |
 						       S_IRUSR | S_IWUSR);
