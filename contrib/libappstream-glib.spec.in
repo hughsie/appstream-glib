@@ -69,6 +69,7 @@ GLib headers and libraries for appstream-glib.
 %package builder
 Summary: Library and command line tools for building AppStream metadata
 Requires: %{name}%{?_isa} = %{version}-%{release}
+Requires: pngquant
 
 %description builder
 This library and command line tool is used for building AppStream metadata

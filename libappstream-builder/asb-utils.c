@@ -281,6 +281,40 @@ asb_utils_explode_file (struct archive_entry *entry, const gchar *dir)
 }
 
 /**
+ * asb_utils_optimize_png:
+ * @filename: package filename
+ * @error: A #GError or %NULL
+ *
+ * Optimises a PNG if pngquant is installed on the system.
+ *
+ * Returns: %TRUE for success, %FALSE otherwise
+ **/
+gboolean
+asb_utils_optimize_png (const gchar *filename, GError **error)
+{
+	g_autofree gchar *standard_error = NULL;
+	gint exit_status = 0;
+	const gchar *argv[] = { "/usr/bin/pngquant", "--skip-if-larger",
+				"--strip", "--ext", ".png",
+				"--force", "--speed", "1", filename, NULL };
+	if (!g_file_test (argv[0], G_FILE_TEST_IS_EXECUTABLE))
+		return TRUE;
+	if (!g_spawn_sync (NULL, (gchar **) argv, NULL, G_SPAWN_DEFAULT,
+			   NULL, NULL, NULL, &standard_error, &exit_status, error))
+		return FALSE;
+	if (exit_status != 0) {
+		g_autofree gchar *argv_str = g_strjoinv (" ", (gchar **) argv);
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_FAILED,
+			     "failed to run %s: %s",
+			     argv_str, standard_error);
+		return FALSE;
+	}
+	return TRUE;
+}
+
+/**
  * asb_utils_explode:
  * @filename: package filename
  * @dir: directory to decompress into

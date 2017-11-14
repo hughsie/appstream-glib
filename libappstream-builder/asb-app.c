@@ -33,6 +33,7 @@
 #include <appstream-glib.h>
 
 #include "asb-app.h"
+#include "asb-utils.h"
 
 typedef struct
 {
@@ -186,6 +187,10 @@ asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 			return FALSE;
 		}
 		if (!gdk_pixbuf_save (pixbuf, filename, "png", error, NULL))
+			return FALSE;
+
+		/* optimize the icon */
+		if (!asb_utils_optimize_png (filename, error))
 			return FALSE;
 
 		/* set new AppStream compatible icon name */
