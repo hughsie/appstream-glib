@@ -517,7 +517,6 @@ asb_font_add_languages (AsbApp *app, const FcPattern *pattern)
 	FcStrSet *langs;
 	FcValue fc_value;
 	gint i;
-	gboolean any_added = FALSE;
 	gboolean skip_langs;
 
 	skip_langs = g_getenv ("ASB_IS_SELF_TEST") != NULL;
@@ -529,7 +528,6 @@ asb_font_add_languages (AsbApp *app, const FcPattern *pattern)
 			FcStrListFirst (list);
 			while ((tmp = (const gchar*) FcStrListNext (list)) != NULL) {
 				as_app_add_language (AS_APP (app), 0, tmp);
-				any_added = TRUE;
 			}
 			FcStrListDone (list);
 			FcStrSetDestroy (langs);
@@ -537,7 +535,7 @@ asb_font_add_languages (AsbApp *app, const FcPattern *pattern)
 	}
 
 	/* assume 'en' is available */
-	if (!any_added)
+	if (g_list_length (as_app_get_languages (AS_APP (app))) == 0)
 		as_app_add_language (AS_APP (app), 0, "en");
 }
 
