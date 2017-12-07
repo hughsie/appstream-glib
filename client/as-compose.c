@@ -402,7 +402,7 @@ main (int argc, char **argv)
 		g_auto(GStrv) intl_domains = NULL;
 		g_autoptr(AsApp) app_appdata = NULL;
 		g_autoptr(AsApp) app_desktop = NULL;
-		g_autofree gchar *desktop_basename = NULL;
+		g_autoptr(GString) desktop_basename = NULL;
 		g_autofree gchar *desktop_path = NULL;
 		const gchar *appdata_id;
 
@@ -455,12 +455,16 @@ main (int argc, char **argv)
 
 		as_store_add_app (store, app_appdata);
 
+		/* use the ID from the AppData file if it was found */
 		appdata_id = as_app_get_id (app_appdata);
-		if (appdata_id != NULL)
-			desktop_basename = g_strdup (appdata_id);
-		else
-			desktop_basename = g_strconcat (app_name, ".desktop", NULL);
-		desktop_path = g_build_filename (prefix, "share/applications", desktop_basename, NULL);
+		desktop_basename = g_string_new (appdata_id != NULL ? appdata_id : app_name);
+
+		/* append the .desktop suffix if using a new-style name */
+		if (!g_str_has_suffix (desktop_basename->str, ".desktop"))
+			g_string_append (desktop_basename, ".desktop");
+		desktop_path = g_build_filename (prefix, "share", "applications",
+						 desktop_basename->str, NULL);
+		g_debug ("looking for %s", desktop_path);
 
 		if (g_file_test (desktop_path, G_FILE_TEST_EXISTS)) {
 			app_desktop = load_desktop (prefix,
