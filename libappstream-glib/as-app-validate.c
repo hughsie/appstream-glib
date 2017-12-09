@@ -1423,6 +1423,11 @@ as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
 				     AS_PROBLEM_KIND_TAG_INVALID,
 				     "<screenshot> content was duplicated");
 	}
+	if (problems & AS_APP_PROBLEM_DUPLICATE_CONTENT_RATING) {
+		ai_app_validate_add (helper,
+				     AS_PROBLEM_KIND_TAG_INVALID,
+				     "<content_rating> was duplicated");
+	}
 
 	/* check for things that have to exist */
 	if (as_app_get_id (app) == NULL) {

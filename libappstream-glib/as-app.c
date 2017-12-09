@@ -3374,6 +3374,18 @@ void
 as_app_add_content_rating (AsApp *app, AsContentRating *content_rating)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
+		for (guint i = 0; i < priv->content_ratings->len; i++) {
+			AsContentRating *cr_tmp = g_ptr_array_index (priv->content_ratings, i);
+			if (g_strcmp0 (as_content_rating_get_kind (cr_tmp),
+				       as_content_rating_get_kind (content_rating)) == 0) {
+				priv->problems |= AS_APP_PROBLEM_DUPLICATE_CONTENT_RATING;
+				return;
+			}
+		}
+	}
 	g_ptr_array_add (priv->content_ratings, g_object_ref (content_rating));
 }
 

@@ -56,6 +56,7 @@ G_BEGIN_DECLS
  * @AS_APP_PROBLEM_INVALID_KEYWORDS:		One or more keywords was invalid
  * @AS_APP_PROBLEM_DUPLICATE_RELEASE:		More than one release with the same version
  * @AS_APP_PROBLEM_DUPLICATE_SCREENSHOT:	More than one screenshot with the same URL
+ * @AS_APP_PROBLEM_DUPLICATE_CONTENT_RATING:	More than one content rating with the same kind
  *
  * The application problems detected when loading.
  **/
@@ -80,6 +81,7 @@ typedef enum {
 	AS_APP_PROBLEM_INVALID_KEYWORDS		= 1 << 16,
 	AS_APP_PROBLEM_DUPLICATE_RELEASE	= 1 << 17,
 	AS_APP_PROBLEM_DUPLICATE_SCREENSHOT	= 1 << 18,
+	AS_APP_PROBLEM_DUPLICATE_CONTENT_RATING	= 1 << 19,
 	/*< private >*/
 	AS_APP_PROBLEM_LAST
 } AsAppProblems;
