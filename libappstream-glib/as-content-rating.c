@@ -179,6 +179,7 @@ as_content_rating_id_value_to_csm_age (const gchar *id, AsContentRatingValue val
 		AsContentRatingValue	 value;
 		guint			 csm_age;
 	} to_csm_age[] =  {
+	/* v1.0 */
 	{ "violence-cartoon",	AS_CONTENT_RATING_VALUE_NONE,		0 },
 	{ "violence-cartoon",	AS_CONTENT_RATING_VALUE_MILD,		3 },
 	{ "violence-cartoon",	AS_CONTENT_RATING_VALUE_MODERATE,	4 },
@@ -247,6 +248,38 @@ as_content_rating_id_value_to_csm_age (const gchar *id, AsContentRatingValue val
 	{ "social-info",	AS_CONTENT_RATING_VALUE_INTENSE,	13 },
 	{ "social-location",	AS_CONTENT_RATING_VALUE_NONE,		0 },
 	{ "social-location",	AS_CONTENT_RATING_VALUE_INTENSE,	13 },
+	/* v1.1 additions */
+	{ "social-info",	AS_CONTENT_RATING_VALUE_MILD,		0 },
+	{ "social-info",	AS_CONTENT_RATING_VALUE_MODERATE,	13 },
+	{ "money-purchasing",	AS_CONTENT_RATING_VALUE_MILD,		12 },
+	{ "social-chat",	AS_CONTENT_RATING_VALUE_MODERATE,	14 },
+	{ "sex-homosexuality",	AS_CONTENT_RATING_VALUE_NONE,		0 },
+	{ "sex-homosexuality",	AS_CONTENT_RATING_VALUE_MILD,		10 },
+	{ "sex-homosexuality",	AS_CONTENT_RATING_VALUE_MODERATE,	13 },
+	{ "sex-homosexuality",	AS_CONTENT_RATING_VALUE_INTENSE,	18 },
+	{ "sex-prostitution",	AS_CONTENT_RATING_VALUE_NONE,		0 },
+	{ "sex-prostitution",	AS_CONTENT_RATING_VALUE_MILD,		12 },
+	{ "sex-prostitution",	AS_CONTENT_RATING_VALUE_MODERATE,	14 },
+	{ "sex-prostitution",	AS_CONTENT_RATING_VALUE_INTENSE,	18 },
+	{ "sex-adultery",	AS_CONTENT_RATING_VALUE_NONE,		0 },
+	{ "sex-adultery",	AS_CONTENT_RATING_VALUE_MILD,		8 },
+	{ "sex-adultery",	AS_CONTENT_RATING_VALUE_MODERATE,	10 },
+	{ "sex-adultery",	AS_CONTENT_RATING_VALUE_INTENSE,	18 },
+	{ "sex-appearance",	AS_CONTENT_RATING_VALUE_NONE,		0 },
+	{ "sex-appearance",	AS_CONTENT_RATING_VALUE_MODERATE,	10 },
+	{ "sex-appearance",	AS_CONTENT_RATING_VALUE_INTENSE,	15 },
+	{ "violence-worship",	AS_CONTENT_RATING_VALUE_NONE,		0 },
+	{ "violence-worship",	AS_CONTENT_RATING_VALUE_MILD,		13 },
+	{ "violence-worship",	AS_CONTENT_RATING_VALUE_MODERATE,	15 },
+	{ "violence-worship",	AS_CONTENT_RATING_VALUE_INTENSE,	18 },
+	{ "violence-desecration", AS_CONTENT_RATING_VALUE_NONE,		0 },
+	{ "violence-desecration", AS_CONTENT_RATING_VALUE_MILD,		13 },
+	{ "violence-desecration", AS_CONTENT_RATING_VALUE_MODERATE,	15 },
+	{ "violence-desecration", AS_CONTENT_RATING_VALUE_INTENSE,	18 },
+	{ "violence-slavery",	AS_CONTENT_RATING_VALUE_NONE,		0 },
+	{ "violence-slavery",	AS_CONTENT_RATING_VALUE_MILD,		13 },
+	{ "violence-slavery",	AS_CONTENT_RATING_VALUE_MODERATE,	15 },
+	{ "violence-slavery",	AS_CONTENT_RATING_VALUE_INTENSE,	18 },
 	{ NULL, 0, 0 } };
 	for (i = 0; to_csm_age[i].id != NULL; i++) {
 		if (value == to_csm_age[i].value &&
@@ -282,7 +315,8 @@ as_content_rating_get_minimum_age (AsContentRating *content_rating)
 	guint csm_age = 0;
 
 	/* check kind */
-	if (g_strcmp0 (priv->kind, "oars-1.0") != 0)
+	if (g_strcmp0 (priv->kind, "oars-1.0") != 0 &&
+	    g_strcmp0 (priv->kind, "oars-1.1") != 0)
 		return G_MAXUINT;
 
 	for (i = 0; i < priv->keys->len; i++) {
