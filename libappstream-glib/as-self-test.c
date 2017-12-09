@@ -2978,6 +2978,32 @@ as_test_app_subsume_func (void)
 }
 
 static void
+as_test_app_screenshot_func (void)
+{
+	AsScreenshot *ss;
+	GPtrArray *screenshots;
+	g_autoptr(AsApp) app = as_app_new ();
+	g_autoptr(AsScreenshot) ss1 = as_screenshot_new ();
+	g_autoptr(AsScreenshot) ss2 = as_screenshot_new ();
+
+	as_screenshot_set_kind (ss1, AS_SCREENSHOT_KIND_DEFAULT);
+	as_screenshot_set_caption (ss1, NULL, "bbb");
+	as_app_add_screenshot (app, ss1);
+
+	as_screenshot_set_kind (ss2, AS_SCREENSHOT_KIND_NORMAL);
+	as_screenshot_set_caption (ss2, NULL, "aaa");
+	as_app_add_screenshot (app, ss2);
+
+	screenshots = as_app_get_screenshots (app);
+	ss = g_ptr_array_index (screenshots, 0);
+	g_assert (ss == ss1);
+	g_assert_cmpint (as_screenshot_get_kind (ss), ==, AS_SCREENSHOT_KIND_DEFAULT);
+	ss = g_ptr_array_index (screenshots, 1);
+	g_assert (ss == ss2);
+	g_assert_cmpint (as_screenshot_get_kind (ss), ==, AS_SCREENSHOT_KIND_NORMAL);
+}
+
+static void
 as_test_app_search_func (void)
 {
 	const gchar *all[] = { "gnome", "install", "software", NULL };
@@ -5510,6 +5536,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/app{no-markup}", as_test_app_no_markup_func);
 	g_test_add_func ("/AppStream/app{subsume}", as_test_app_subsume_func);
 	g_test_add_func ("/AppStream/app{search}", as_test_app_search_func);
+	g_test_add_func ("/AppStream/app{screenshot}", as_test_app_screenshot_func);
 	g_test_add_func ("/AppStream/markup{import-html}", as_test_markup_import_html);
 	g_test_add_func ("/AppStream/node", as_test_node_func);
 	g_test_add_func ("/AppStream/node{reflow}", as_test_node_reflow_text_func);
