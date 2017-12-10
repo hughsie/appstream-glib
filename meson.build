@@ -57,7 +57,7 @@ libarchive = dependency('libarchive')
 soup = dependency('libsoup-2.4', version : '>= 2.51.92')
 json_glib = dependency('json-glib-1.0')
 gdkpixbuf = dependency('gdk-pixbuf-2.0', version : '>= 2.31.5')
-libgcab = dependency('libgcab-1.0', required : false)
+libgcab = dependency('libgcab-1.0')
 
 if libgcab.found()
   conf.set('HAVE_GCAB', 1)
