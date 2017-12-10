@@ -25,11 +25,12 @@ To install the libappstream-glib library you either need to install the
 `libappstream-glib` package from your distributor, or you can build a local
 copy. To do the latter just do:
 
-    dnf install automake autoconf libtool glib-devel docbook-utils \
-               gtk-doc gobject-introspection-devel rpm-devel \
-               gtk3-devel sqlite-devel libsoup-devel gettext-devel \
-               libarchive-devel libyaml-devel
-    ./autogen.sh
+    dnf install docbook-utils gcab gettext-devel glib-devel \
+                gobject-introspection-devel gperf gtk-doc gtk3-devel \
+                libarchive-devel libtool libgcab-devel libsoup-devel \
+                libstemmer-devel libuuid-devel libyaml-devel \
+                meson rpm-devel sqlite-devel
+    ./configure
     make
     make install
 
@@ -88,7 +89,7 @@ binary and data files, or you can build a local copy. To do the latter just do:
 
     dnf install automake autoconf libtool rpm-devel \
                 gtk3-devel sqlite-devel libsoup-devel
-    ./autogen.sh
+    ./configure
     make
 
 To actually run the extractor you can do:
