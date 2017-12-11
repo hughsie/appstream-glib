@@ -27,7 +27,7 @@ copy. To do the latter just do:
 
     dnf install docbook-utils gcab gettext-devel glib-devel \
                 gobject-introspection-devel gperf gtk-doc gtk3-devel \
-                libarchive-devel libtool libgcab-devel libsoup-devel \
+                libarchive-devel libtool libgcab1-devel libsoup-devel \
                 libstemmer-devel libuuid-devel libyaml-devel \
                 meson rpm-devel sqlite-devel
     ./configure
