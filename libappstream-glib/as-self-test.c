@@ -3862,6 +3862,8 @@ as_test_store_provides_func (void)
 	gboolean ret;
 	g_autoptr(GError) error = NULL;
 	g_autoptr(AsStore) store = NULL;
+	g_autoptr(GPtrArray) apps1 = NULL;
+	g_autoptr(GPtrArray) apps2 = NULL;
 
 	/* create a store and add a single app */
 	store = as_store_new ();
@@ -3890,6 +3892,18 @@ as_test_store_provides_func (void)
 					   AS_PROVIDE_KIND_FIRMWARE_FLASHED,
 					   "beefdead");
 	g_assert (app == NULL);
+
+	/* arrays of apps */
+	apps1 = as_store_get_apps_by_provide (store,
+					      AS_PROVIDE_KIND_FIRMWARE_FLASHED,
+					      "deadbeef");
+	g_assert_cmpint (apps1->len, ==, 1);
+	app = g_ptr_array_index (apps1, 0);
+	g_assert_cmpstr (as_app_get_id (app), ==, "test.desktop");
+	apps2 = as_store_get_apps_by_provide (store,
+					      AS_PROVIDE_KIND_FIRMWARE_FLASHED,
+					      "beefdead");
+	g_assert_cmpint (apps2->len, ==, 0);
 }
 
 static void

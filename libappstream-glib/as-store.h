@@ -214,6 +214,9 @@ AsApp		*as_store_get_app_by_pkgnames	(AsStore	*store,
 AsApp		*as_store_get_app_by_provide	(AsStore	*store,
 						 AsProvideKind	 kind,
 						 const gchar	*value);
+GPtrArray	*as_store_get_apps_by_provide	(AsStore	*store,
+						 AsProvideKind	 kind,
+						 const gchar	*value);
 void		 as_store_add_app		(AsStore	*store,
 						 AsApp		*app);
 void		 as_store_add_apps		(AsStore	*store,

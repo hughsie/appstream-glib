@@ -667,6 +667,44 @@ as_store_get_app_by_provide (AsStore *store, AsProvideKind kind, const gchar *va
 }
 
 /**
+ * as_store_get_apps_by_provide:
+ * @store: a #AsStore instance.
+ * @kind: the #AsProvideKind
+ * @value: the provide value, e.g. "com.hughski.ColorHug2.firmware"
+ *
+ * Finds any applications in the store by something that they provides.
+ *
+ * Returns: (transfer container) (element-type AsApp): an array of applications
+ *
+ * Since: 0.7.5
+ **/
+GPtrArray *
+as_store_get_apps_by_provide (AsStore *store, AsProvideKind kind, const gchar *value)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	GPtrArray *apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+	g_return_val_if_fail (kind != AS_PROVIDE_KIND_UNKNOWN, NULL);
+	g_return_val_if_fail (value != NULL, NULL);
+
+	/* find an application that provides something */
+	for (guint i = 0; i < priv->array->len; i++) {
+		AsApp *app = g_ptr_array_index (priv->array, i);
+		GPtrArray *provides = as_app_get_provides (app);
+		for (guint j = 0; j < provides->len; j++) {
+			AsProvide *tmp = g_ptr_array_index (provides, j);
+			if (kind != as_provide_get_kind (tmp))
+				continue;
+			if (g_strcmp0 (as_provide_get_value (tmp), value) != 0)
+				continue;
+			g_ptr_array_add (apps, g_object_ref (app));
+		}
+	}
+	return apps;
+}
+
+/**
  * as_store_get_app_by_id_ignore_prefix:
  * @store: a #AsStore instance.
  * @id: the application full ID.
