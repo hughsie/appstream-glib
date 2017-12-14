@@ -28,7 +28,7 @@
 #include "as-store-cab.h"
 #include "as-utils.h"
 
-#ifndef GCabCabinet_autoptr
+#ifndef HAVE_GCAB_1_0
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(GCabCabinet, g_object_unref)
 #endif
 
