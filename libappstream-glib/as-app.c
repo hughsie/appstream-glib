@@ -6047,55 +6047,46 @@ as_app_parse_appdata_guess_project_group (AsApp *app)
 	}
 }
 
-static gboolean
-as_app_parse_appdata_file (AsApp *app,
-			   const gchar *filename,
-			   AsAppParseFlags flags,
-			   GError **error)
+/**
+ * as_app_parse_data:
+ * @app: a #AsApp instance.
+ * @data: data to parse.
+ * @flags: #AsAppParseFlags, e.g. %AS_APP_PARSE_FLAG_USE_HEURISTICS
+ * @error: A #GError or %NULL.
+ *
+ * Parses an AppData file and populates the application state.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.7.5
+ **/
+gboolean
+as_app_parse_data (AsApp *app, GBytes *data, AsAppParseFlags flags, GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsNodeFromXmlFlags from_xml_flags = AS_NODE_FROM_XML_FLAG_NONE;
-	GNode *l;
 	GNode *node;
+	const gchar *data_raw;
 	gboolean seen_application = FALSE;
-	gchar *tmp;
-	gsize len;
-	g_autoptr(GError) error_local = NULL;
+	gsize len = 0;
 	g_autoptr(AsNodeContext) ctx = NULL;
-	g_autofree gchar *data = NULL;
 	g_autoptr(AsNode) root = NULL;
 
-	/* open file */
-	if (!g_file_get_contents (filename, &data, &len, &error_local)) {
-		g_set_error (error,
-			     AS_APP_ERROR,
-			     AS_APP_ERROR_INVALID_TYPE,
-			     "%s could not be read: %s",
-			     filename, error_local->message);
-		return FALSE;
-	}
-
 	/* validate */
-	tmp = g_strstr_len (data, (gssize) len, "<?xml version=");
-	if (tmp == NULL)
+	data_raw = g_bytes_get_data (data, &len);
+	if (g_strstr_len (data_raw, (gssize) len, "<?xml version=") == NULL)
 		priv->problems |= AS_APP_PROBLEM_NO_XML_HEADER;
 
 	/* check for copyright */
-	if (fnmatch("*<!--*Copyright*-->*", data, 0) != 0)
+	if (fnmatch ("*<!--*Copyright*-->*", data_raw, 0) != 0)
 		priv->problems |= AS_APP_PROBLEM_NO_COPYRIGHT_INFO;
 
 	/* parse */
 	if (flags & AS_APP_PARSE_FLAG_KEEP_COMMENTS)
 		from_xml_flags |= AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS;
-	root = as_node_from_xml (data, from_xml_flags, &error_local);
-	if (root == NULL) {
-		g_set_error (error,
-			     AS_APP_ERROR,
-			     AS_APP_ERROR_INVALID_TYPE,
-			     "failed to parse %s: %s",
-			     filename, error_local->message);
+	root = as_node_from_xml (data_raw, from_xml_flags, error);
+	if (root == NULL)
 		return FALSE;
-	}
 
 	/* make the <_summary> tags into <summary> */
 	if (flags & AS_APP_PARSE_FLAG_CONVERT_TRANSLATABLE) {
@@ -6111,14 +6102,13 @@ as_app_parse_appdata_file (AsApp *app,
 	if (node == NULL)
 		node = as_node_find (root, "component");
 	if (node == NULL) {
-		g_set_error (error,
-			     AS_APP_ERROR,
-			     AS_APP_ERROR_INVALID_TYPE,
-			     "%s has no <component> node",
-			     filename);
+		g_set_error_literal (error,
+				     AS_APP_ERROR,
+				     AS_APP_ERROR_INVALID_TYPE,
+				     "no <component> node");
 		return FALSE;
 	}
-	for (l = node->children; l != NULL; l = l->next) {
+	for (GNode *l = node->children; l != NULL; l = l->next) {
 		if (g_strcmp0 (as_node_get_name (l), "licence") == 0 ||
 		    g_strcmp0 (as_node_get_name (l), "license") == 0) {
 			as_node_set_name (l, "metadata_license");
@@ -6142,6 +6132,38 @@ as_app_parse_appdata_file (AsApp *app,
 			as_app_parse_appdata_guess_project_group (app);
 	}
 
+	return TRUE;
+}
+
+static gboolean
+as_app_parse_appdata_file (AsApp *app,
+			   const gchar *filename,
+			   AsAppParseFlags flags,
+			   GError **error)
+{
+	gsize len;
+	g_autofree gchar *data_raw = NULL;
+	g_autoptr(GBytes) data = NULL;
+	g_autoptr(GError) error_local = NULL;
+
+	/* open file */
+	if (!g_file_get_contents (filename, &data_raw, &len, &error_local)) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "%s could not be read: %s",
+			     filename, error_local->message);
+		return FALSE;
+	}
+	data = g_bytes_new_take (g_steal_pointer (&data_raw), len);
+	if (!as_app_parse_data (app, data, flags, error)) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "failed to parse %s: %s",
+			     filename, error_local->message);
+		return FALSE;
+	}
 	return TRUE;
 }
 
