@@ -24,6 +24,7 @@
 #include <fnmatch.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <libsoup/soup.h>
+#include <libsoup/soup-status.h>
 #include <string.h>
 
 #include "as-app-private.h"
@@ -471,10 +472,17 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 
 	/* send sync */
 	status_code = soup_session_send_message (helper->session, msg);
-	if (status_code != SOUP_STATUS_OK) {
+	if (SOUP_STATUS_IS_TRANSPORT_ERROR(status_code)) {
 		ai_app_validate_add (helper,
-				     AS_PROBLEM_KIND_URL_NOT_FOUND,
-				     "<screenshot> url not found [%s]", url);
+			AS_PROBLEM_KIND_URL_NOT_FOUND,
+			"<screenshot> failed to connect: %s [%s]",
+			soup_status_get_phrase(status_code), url);
+		return FALSE;
+	} else if (status_code != SOUP_STATUS_OK) {
+		ai_app_validate_add (helper,
+			AS_PROBLEM_KIND_URL_NOT_FOUND,
+			"<screenshot> failed to download (HTTP %d: %s) [%s]",
+			status_code, soup_status_get_phrase(status_code), url);
 		return FALSE;
 	}
 
