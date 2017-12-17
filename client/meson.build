@@ -1,6 +1,6 @@
 as_util_cargs = ['-DG_LOG_DOMAIN="As"']
 
-if get_option('enable-builder')
+if get_option('builder')
   appstream_builder = executable(
     'appstream-builder',
     sources : 'as-builder.c',

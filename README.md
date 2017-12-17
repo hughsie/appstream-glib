@@ -25,13 +25,14 @@ To install the libappstream-glib library you either need to install the
 `libappstream-glib` package from your distributor, or you can build a local
 copy. To do the latter just do:
 
-    dnf install automake autoconf libtool glib-devel docbook-utils \
-               gtk-doc gobject-introspection-devel rpm-devel \
-               gtk3-devel sqlite-devel libsoup-devel gettext-devel \
-               libarchive-devel libyaml-devel
-    ./autogen.sh
-    make
-    make install
+    dnf install docbook-utils gcab gettext-devel glib-devel \
+                gobject-introspection-devel gperf gtk-doc gtk3-devel \
+                libarchive-devel libgcab-devel libsoup-devel \
+                libstemmer-devel libuuid-devel libyaml-devel \
+                meson rpm-devel sqlite-devel
+    mkdir build && cd build
+    meson .. --prefix=/opt -Dbuilder=false
+    ninja
 
 Hacking
 -------
@@ -56,7 +57,7 @@ and any new translations will be merged back to the project source code.
 Please use [https://www.transifex.com/projects/p/appstream-glib/](https://www.transifex.com/projects/p/appstream-glib/) to contribute translations,
 rather than sending pull requests.
 
-appstream-builder
+AppStream-Builder
 =================
 
 appstream-builder is a tool that allows us to create AppStream metadata from a
@@ -77,23 +78,26 @@ What this tool does:
    merged into single applications. This is how fonts are collected.
  * The `AsbApplication` objects are serialized to XML and written to a
    compressed archive.
- * Any application icons or screenshots referenced are written to a .tar archive
-.
+ * Any application icons or screenshots referenced are written to a .tar archive.
 
 Getting Started
------------
+---------------
 
 To run appstream-builder you either need to install the package containing the
 binary and data files, or you can build a local copy. To do the latter just do:
 
-    dnf install automake autoconf libtool rpm-devel \
-                gtk3-devel sqlite-devel libsoup-devel
-    ./autogen.sh
-    make
+    dnf install docbook-utils gcab gettext-devel glib-devel \
+                gobject-introspection-devel gperf gtk-doc gtk3-devel \
+                libarchive-devel libgcab-devel libsoup-devel \
+                libstemmer-devel libuuid-devel libyaml-devel \
+                meson rpm-devel sqlite-devel rpm-devel
+    mkdir build && cd build
+    meson .. --prefix=/opt -Dbuilder=true
+    ninja
 
 To actually run the extractor you can do:
 
-    ./appstream-builder --verbose   \
+    ./client/appstream-builder --verbose   \
                       --max-threads=8 \
                       --log-dir=/tmp/logs \
                       --packages-dir=/mnt/archive/Megarpms/21/Packages \
@@ -128,20 +132,10 @@ them with the rest of the metadata you ship (e.g. in the same directory as
         /tmp/asb-md/appstream-icons.tar.gz \
         /path/to/repodata/
 
-For Fedora 20 and 21, you have to actually install these files, so you can do
-something like this in the megarpms-release.spec file:
+You can then do something like this in the megarpms-release.spec file:
 
     Source1:   http://www.megarpms.org/temp/megarpms-20.xml.gz
     Source2:   http://www.megarpms.org/temp/megarpms-20-icons.tar.gz
-
-    %install
-    mkdir -p %{buildroot}%{_datadir}/app-info/xmls
-    cp %{SOURCE1} %{buildroot}%{_datadir}/app-info/xmls
-    mkdir -p %{buildroot}%{_datadir}/app-info/icons/megarpms-20
-    tar xvzf %{SOURCE2}
-    cd -
-
-or, if your distro ships a new enough libappstream-glib:
 
     %install
     DESTDIR=%{buildroot} appstream-util install %{SOURCE1} %{SOURCE2}
@@ -149,7 +143,7 @@ or, if your distro ships a new enough libappstream-glib:
 This ensures that gnome-software can access both data files when starting up.
 
 What is an application
------------
+----------------------
 
 Applications are defined in the context of AppStream as such:
 
@@ -159,7 +153,7 @@ amer.c)
    and includes an AppData file
 
 Guidelines for applications
------------
+---------------------------
 
 These guidelines explain how we filter applications from a package set.
 
@@ -202,7 +196,8 @@ The current rules of inclusion are thus:
  * Desktop files **SHOULD** include translations
 
 Guidelines for fonts
------------
+--------------------
+
  * Fonts **MUST** have a valid MetaInfo file installed to /usr/share/appdata
  * Fonts packaged in multiple packages **SHOULD** have multiple MetaInfo files
  * Fonts families **SHOULD** only have one description section
@@ -211,6 +206,6 @@ nds>`
  * MetaInfo files **SHOULD** include translations where possible
 
 License
-----
+-------
 
 LGPLv2+

@@ -1,4 +1,4 @@
-if get_option('enable-builder')
+if get_option('builder')
   firmware200 = custom_target('firmware-2.0.0',
     output : 'colorhug-als-2.0.0.cab',
     input : [

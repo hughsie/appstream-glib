@@ -5,7 +5,7 @@ install_data('appdata-xml.m4', install_dir : 'share/aclocal')
 install_data('appstream-xml.m4', install_dir : 'share/aclocal')
 install_data('appstream-util', install_dir : 'share/bash-completion/completions')
 
-if get_option('enable-builder')
+if get_option('builder')
 install_data('appstream-builder', install_dir : 'share/bash-completion/completions')
 endif
 
@@ -13,7 +13,7 @@ install_data('appdata.its', install_dir : 'share/gettext/its')
 install_data('appdata.loc', install_dir : 'share/gettext/its')
 
 xsltproc = find_program('xsltproc', required : false)
-if get_option('enable-man') and xsltproc.found()
+if get_option('man') and xsltproc.found()
   custom_target('appstream-util-man',
     input: 'appstream-util.xml',
     output: 'appstream-util.1',
@@ -50,7 +50,7 @@ if get_option('enable-man') and xsltproc.found()
       '@INPUT@'
     ]
   )
-  if get_option('enable-builder')
+  if get_option('builder')
     custom_target('appstream-builder-man',
       input: 'appstream-builder.xml',
       output: 'appstream-builder.1',

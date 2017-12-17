@@ -1,3 +1,3 @@
-if get_option('enable-gtk-doc')
+if get_option('gtk-doc')
   subdir('api')
 endif
