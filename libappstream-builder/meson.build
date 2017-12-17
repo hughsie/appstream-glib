@@ -13,15 +13,15 @@ deps = [
   soup,
 ]
 
-if get_option('enable-dep11')
+if get_option('dep11')
   deps = deps + [yaml]
 endif
 
-if get_option('enable-rpm')
+if get_option('rpm')
   deps = deps + [rpm]
 endif
 
-if get_option('enable-alpm')
+if get_option('alpm')
   deps = deps + [alpm]
 endif
 
@@ -44,11 +44,11 @@ sources = [
   'asb-plugin-loader.c',
 ]
 
-if get_option('enable-rpm')
+if get_option('rpm')
   sources = sources + ['asb-package-rpm.c']
 endif
 
-if get_option('enable-alpm')
+if get_option('alpm')
   sources = sources + ['asb-package-alpm.c']
 endif
 
@@ -128,7 +128,7 @@ asbuilder_introspection_srcs = [
   'asb-task.h',
 ]
 
-if get_option('enable-introspection')
+if get_option('introspection')
   asglib_gir_dep = declare_dependency(sources: asglib_gir)
 
   gnome.generate_gir(asbuilder,

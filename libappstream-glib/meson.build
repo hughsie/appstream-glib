@@ -14,11 +14,11 @@ deps = [
   uuid,
 ]
 
-if get_option('enable-dep11')
+if get_option('dep11')
   deps += yaml
 endif
 
-if get_option('enable-stemmer')
+if get_option('stemmer')
   deps += stemmer
 endif
 
@@ -211,7 +211,7 @@ introspection_sources = [
   'as-utils.h',
 ]
 
-if get_option('enable-introspection')
+if get_option('introspection')
   asglib_gir = gnome.generate_gir(asglib,
     sources : introspection_sources,
     nsversion : '1.0',

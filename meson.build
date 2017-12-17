@@ -67,19 +67,19 @@ if libgcab.found()
 endif
 
 # builder (default enabled)
-if get_option('enable-builder')
+if get_option('builder')
   gtk = dependency('gtk+-3.0')
   gmodule = dependency('gmodule-2.0')
   gcab = find_program('gcab')
-  if get_option('enable-rpm')
+  if get_option('rpm')
     rpm = dependency('rpm')
     conf.set('HAVE_RPM', 1)
   endif
-  if get_option('enable-alpm')
+  if get_option('alpm')
     alpm = dependency('libalpm')
     conf.set('HAVE_ALPM', 1)
   endif
-  if get_option('enable-fonts')
+  if get_option('fonts')
     gdk = dependency('gdk-3.0')
     conf.set('HAVE_FONTS', 1)
     freetype = dependency('freetype2', version : '>= 9.10.0')
@@ -88,13 +88,13 @@ if get_option('enable-builder')
 endif
 
 # support loading yaml files
-if get_option('enable-dep11')
+if get_option('dep11')
   yaml = dependency('yaml-0.1')
   conf.set('AS_BUILD_DEP11', 1)
 endif
 
 # support stemming of search tokens
-if get_option('enable-stemmer')
+if get_option('stemmer')
   cc = meson.get_compiler('c')
   stemmer = cc.find_library('stemmer')
   conf.set('HAVE_LIBSTEMMER', 1)
@@ -124,7 +124,7 @@ subdir('data')
 subdir('docs')
 subdir('po')
 
-if get_option('enable-builder')
+if get_option('builder')
   # depends on data
   subdir('libappstream-builder')
 endif

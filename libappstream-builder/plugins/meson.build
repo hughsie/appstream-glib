@@ -86,7 +86,7 @@ shared_module(
   install_dir : plugindir,
 )
 
-if get_option('enable-fonts')
+if get_option('fonts')
   shared_module(
     'asb_plugin_font',
     sources : 'asb-plugin-font.c',
