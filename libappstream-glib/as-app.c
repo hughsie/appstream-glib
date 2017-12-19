@@ -6156,7 +6156,7 @@ as_app_parse_appdata_file (AsApp *app,
 		return FALSE;
 	}
 	data = g_bytes_new_take (g_steal_pointer (&data_raw), len);
-	if (!as_app_parse_data (app, data, flags, error)) {
+	if (!as_app_parse_data (app, data, flags, &error_local)) {
 		g_set_error (error,
 			     AS_APP_ERROR,
 			     AS_APP_ERROR_INVALID_TYPE,
