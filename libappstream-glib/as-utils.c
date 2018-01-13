@@ -34,6 +34,7 @@
 
 #include <fnmatch.h>
 #include <string.h>
+#include <stdint.h>
 #include <archive_entry.h>
 #include <archive.h>
 #include <libsoup/soup.h>
