@@ -27,6 +27,7 @@
 #include <gio/gio.h>
 
 #include <appstream-glib.h>
+#include <stdint.h>
 #include <archive_entry.h>
 #include <archive.h>
 #include <libsoup/soup.h>
