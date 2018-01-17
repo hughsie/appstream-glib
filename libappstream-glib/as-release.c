@@ -454,7 +454,7 @@ as_release_get_timestamp (AsRelease *release)
 /**
  * as_release_get_description:
  * @release: a #AsRelease instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  *
  * Gets the release description markup for a given locale.
  *
@@ -602,7 +602,7 @@ as_release_set_timestamp (AsRelease *release, guint64 timestamp)
 /**
  * as_release_set_description:
  * @release: a #AsRelease instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  * @description: the description markup.
  *
  * Sets the description release markup.
