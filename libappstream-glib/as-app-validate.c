@@ -1135,7 +1135,7 @@ as_app_validate_check_id (AsAppValidateHelper *helper, const gchar *id)
  * Since: 0.1.4
  **/
 GPtrArray *
-as_app_validate (AsApp *app, AsAppValidateFlags flags, GError **error)
+as_app_validate (AsApp *app, guint32 flags, GError **error)
 {
 	AsAppProblems problems;
 	AsFormat *format;

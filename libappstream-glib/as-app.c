@@ -96,9 +96,9 @@ typedef struct
 	AsAppScope	 scope;
 	AsAppMergeKind	 merge_kind;
 	AsAppState	 state;
-	AsAppTrustFlags	 trust_flags;
+	guint32		 trust_flags;
 	AsAppQuirk	 quirk;
-	AsAppSearchMatch search_match;
+	guint16		 search_match;
 	AsRefString	*icon_path;
 	AsRefString	*id_filename;
 	AsRefString	*id;
@@ -1768,7 +1768,7 @@ as_app_get_state (AsApp *app)
  *
  * Since: 0.2.2
  **/
-AsAppTrustFlags
+guint32
 as_app_get_trust_flags (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
@@ -2322,7 +2322,7 @@ as_app_set_state (AsApp *app, AsAppState state)
  * Since: 0.2.2
  **/
 void
-as_app_set_trust_flags (AsApp *app, AsAppTrustFlags trust_flags)
+as_app_set_trust_flags (AsApp *app, guint32 trust_flags)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->trust_flags = trust_flags;
@@ -3810,7 +3810,7 @@ as_app_add_addon (AsApp *app, AsApp *addon)
 
 
 static void
-as_app_subsume_dict (GHashTable *dest, GHashTable *src, AsAppSubsumeFlags flags)
+as_app_subsume_dict (GHashTable *dest, GHashTable *src, guint64 flags)
 {
 	GList *l;
 	const gchar *tmp;
@@ -3892,7 +3892,7 @@ as_app_subsume_icon (AsApp *app, AsIcon *icon)
 }
 
 static void
-as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
+as_app_subsume_private (AsApp *app, AsApp *donor, guint64 flags)
 {
 	AsAppPrivate *priv = GET_PRIVATE (donor);
 	AsAppPrivate *papp = GET_PRIVATE (app);
@@ -4215,14 +4215,14 @@ as_app_subsume_private (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
  * as_app_subsume_full:
  * @app: a #AsApp instance.
  * @donor: the donor.
- * @flags: any optional flags, e.g. %AS_APP_SUBSUME_FLAG_NO_OVERWRITE
+ * @flags: any optional #AsAppSubsumeFlags, e.g. %AS_APP_SUBSUME_FLAG_NO_OVERWRITE
  *
  * Copies information from the donor to the application object.
  *
  * Since: 0.1.4
  **/
 void
-as_app_subsume_full (AsApp *app, AsApp *donor, AsAppSubsumeFlags flags)
+as_app_subsume_full (AsApp *app, AsApp *donor, guint64 flags)
 {
 	g_assert (app != donor);
 
@@ -4703,7 +4703,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 }
 
 static gboolean
-as_app_node_parse_child (AsApp *app, GNode *n, AsAppParseFlags flags,
+as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 			 AsNodeContext *ctx, GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
@@ -5236,7 +5236,7 @@ as_app_check_for_hidpi_icons (AsApp *app)
 }
 
 static gboolean
-as_app_node_parse_full (AsApp *app, GNode *node, AsAppParseFlags flags,
+as_app_node_parse_full (AsApp *app, GNode *node, guint32 flags,
 			AsNodeContext *ctx, GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
@@ -5656,7 +5656,7 @@ as_app_value_tokenize (const gchar *value)
 static void
 as_app_add_token_internal (AsApp *app,
 			   const gchar *value,
-			   AsAppSearchMatch match_flag)
+			   guint16 match_flag)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsAppTokenType *match_pval;
@@ -5696,7 +5696,7 @@ static void
 as_app_add_token (AsApp *app,
 		  const gchar *value,
 		  gboolean allow_split,
-		  AsAppSearchMatch match_flag)
+		  guint16 match_flag)
 {
 	/* add extra tokens for names like x-plane or half-life */
 	if (allow_split && g_strstr_len (value, -1, "-") != NULL) {
@@ -5727,7 +5727,7 @@ as_app_add_tokens (AsApp *app,
 		   const gchar *value,
 		   const gchar *locale,
 		   gboolean allow_split,
-		   AsAppSearchMatch match_flag)
+		   guint16 match_flag)
 {
 	guint i;
 	g_auto(GStrv) values_utf8 = NULL;
@@ -5862,7 +5862,7 @@ as_app_search_matches (AsApp *app, const gchar *search)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsAppTokenType *match_pval;
 	GList *l;
-	AsAppSearchMatch result = 0;
+	guint16 result = 0;
 	g_autoptr(GList) keys = NULL;
 	g_autoptr(AsRefString) search_stem = NULL;
 
@@ -6061,7 +6061,7 @@ as_app_parse_appdata_guess_project_group (AsApp *app)
  * Since: 0.7.5
  **/
 gboolean
-as_app_parse_data (AsApp *app, GBytes *data, AsAppParseFlags flags, GError **error)
+as_app_parse_data (AsApp *app, GBytes *data, guint32 flags, GError **error)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsNodeFromXmlFlags from_xml_flags = AS_NODE_FROM_XML_FLAG_NONE;
@@ -6138,7 +6138,7 @@ as_app_parse_data (AsApp *app, GBytes *data, AsAppParseFlags flags, GError **err
 static gboolean
 as_app_parse_appdata_file (AsApp *app,
 			   const gchar *filename,
-			   AsAppParseFlags flags,
+			   guint32 flags,
 			   GError **error)
 {
 	gsize len;
@@ -6183,10 +6183,7 @@ as_app_parse_appdata_file (AsApp *app,
  * Since: 0.1.2
  **/
 gboolean
-as_app_parse_file (AsApp *app,
-		   const gchar *filename,
-		   AsAppParseFlags flags,
-		   GError **error)
+as_app_parse_file (AsApp *app, const gchar *filename, guint32 flags, GError **error)
 {
 	GPtrArray *vetos;
 	g_autoptr(AsFormat) format = as_format_new ();
@@ -6514,7 +6511,7 @@ as_app_set_search_blacklist (AsApp *app, GHashTable *search_blacklist)
  * Since: 0.6.13
  **/
 void
-as_app_set_search_match (AsApp *app, AsAppSearchMatch search_match)
+as_app_set_search_match (AsApp *app, guint16 search_match)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	priv->search_match = search_match;
@@ -6531,7 +6528,7 @@ as_app_set_search_match (AsApp *app, AsAppSearchMatch search_match)
  *
  * Since: 0.6.13
  **/
-AsAppSearchMatch
+guint16
 as_app_get_search_match (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);

@@ -74,10 +74,10 @@ typedef struct
 	GHashTable		*metadata_indexes;	/* GHashTable{key} */
 	GHashTable		*appinfo_dirs;	/* GHashTable{path:AsStorePathData} */
 	GHashTable		*search_blacklist;	/* GHashTable{AsRefString:1} */
-	AsStoreAddFlags		 add_flags;
-	AsStoreWatchFlags	 watch_flags;
-	AsStoreProblems		 problems;
-	AsAppSearchMatch	 search_match;
+	guint32			 add_flags;
+	guint32			 watch_flags;
+	guint32			 problems;
+	guint16			 search_match;
 	guint32			 filter;
 	guint			 changed_block_refcnt;
 	gboolean		 is_pending_changed_signal;
@@ -117,8 +117,8 @@ static gboolean	as_store_from_file_internal (AsStore *store,
 					     GFile *file,
 					     AsAppScope scope,
 					     const gchar *arch,
-					     AsStoreLoadFlags load_flags,
-					     AsStoreWatchFlags watch_flags,
+					     guint32 load_flags,
+					     guint32 watch_flags,
 					     GCancellable *cancellable,
 					     GError **error);
 
@@ -604,7 +604,7 @@ as_store_get_app_by_app (AsStore *store, AsApp *app)
 AsApp *
 as_store_get_app_by_unique_id (AsStore *store,
 			       const gchar *unique_id,
-			       AsStoreSearchFlags search_flags)
+			       guint32 search_flags)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_autoptr(AsApp) app_tmp = NULL;
@@ -1135,7 +1135,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 
 	/* this is a special merge component */
 	if (as_app_has_quirk (app, AS_APP_QUIRK_MATCH_ANY_PREFIX)) {
-		AsAppSubsumeFlags flags = AS_APP_SUBSUME_FLAG_MERGE;
+		guint64 flags = AS_APP_SUBSUME_FLAG_MERGE;
 		AsAppMergeKind merge_kind = as_app_get_merge_kind (app);
 
 		apps = g_hash_table_lookup (priv->hash_merge_id, id);
@@ -1176,7 +1176,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 		for (i = 0; i < apps->len; i++) {
 			AsApp *app_tmp = g_ptr_array_index (apps, i);
 			AsAppMergeKind merge_kind = as_app_get_merge_kind (app_tmp);
-			AsAppSubsumeFlags flags = AS_APP_SUBSUME_FLAG_MERGE;
+			guint64 flags = AS_APP_SUBSUME_FLAG_MERGE;
 			g_debug ("using %s merge component %s on %s",
 				 as_app_merge_kind_to_string (merge_kind),
 				 as_app_get_unique_id (app_tmp),
@@ -1435,7 +1435,7 @@ as_store_from_root (AsStore *store,
 		    const gchar *icon_prefix,
 		    const gchar *source_filename,
 		    const gchar *arch,
-		    AsStoreLoadFlags load_flags,
+		    guint32 load_flags,
 		    GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
@@ -1936,13 +1936,13 @@ as_store_from_file_internal (AsStore *store,
 			     GFile *file,
 			     AsAppScope scope,
 			     const gchar *arch,
-			     AsStoreLoadFlags load_flags,
-			     AsStoreWatchFlags watch_flags,
+			     guint32 load_flags,
+			     guint32 watch_flags,
 			     GCancellable *cancellable,
 			     GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	AsNodeFromXmlFlags flags = AS_NODE_FROM_XML_FLAG_LITERAL_TEXT;
+	guint32 flags = AS_NODE_FROM_XML_FLAG_LITERAL_TEXT;
 	g_autofree gchar *filename = NULL;
 	g_autofree gchar *icon_prefix = NULL;
 	g_autoptr(GError) error_local = NULL;
@@ -2118,7 +2118,7 @@ as_store_from_xml (AsStore *store,
 		   GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	AsNodeFromXmlFlags flags = AS_NODE_FROM_XML_FLAG_LITERAL_TEXT;
+	guint32 flags = AS_NODE_FROM_XML_FLAG_LITERAL_TEXT;
 	g_autoptr(GError) error_local = NULL;
 	g_autoptr(AsNode) root = NULL;
 
@@ -2237,7 +2237,7 @@ as_store_remove_apps_with_veto (AsStore *store)
  * Since: 0.1.0
  **/
 GString *
-as_store_to_xml (AsStore *store, AsNodeToXmlFlags flags)
+as_store_to_xml (AsStore *store, guint32 flags)
 {
 	AsApp *app;
 	AsStorePrivate *priv = GET_PRIVATE (store);
@@ -2337,7 +2337,7 @@ as_store_convert_icons (AsStore *store, AsIconKind kind, GError **error)
 gboolean
 as_store_to_file (AsStore *store,
 		  GFile *file,
-		  AsNodeToXmlFlags flags,
+		  guint32 flags,
 		  GCancellable *cancellable,
 		  GError **error)
 {
@@ -2559,7 +2559,7 @@ as_store_set_api_version (AsStore *store, gdouble api_version)
  *
  * Since: 0.2.2
  **/
-AsStoreAddFlags
+guint32
 as_store_get_add_flags (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
@@ -2579,7 +2579,7 @@ as_store_get_add_flags (AsStore *store)
  * Since: 0.2.2
  **/
 void
-as_store_set_add_flags (AsStore *store, AsStoreAddFlags add_flags)
+as_store_set_add_flags (AsStore *store, guint32 add_flags)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	priv->add_flags = add_flags;
@@ -2595,7 +2595,7 @@ as_store_set_add_flags (AsStore *store, AsStoreAddFlags add_flags)
  *
  * Since: 0.4.2
  **/
-AsStoreWatchFlags
+guint32
 as_store_get_watch_flags (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
@@ -2612,7 +2612,7 @@ as_store_get_watch_flags (AsStore *store)
  * Since: 0.4.2
  **/
 void
-as_store_set_watch_flags (AsStore *store, AsStoreWatchFlags watch_flags)
+as_store_set_watch_flags (AsStore *store, guint32 watch_flags)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	priv->watch_flags = watch_flags;
@@ -2654,7 +2654,7 @@ as_store_load_app_info_file (AsStore *store,
 			     AsAppScope scope,
 			     const gchar *path_xml,
 			     const gchar *arch,
-			     AsStoreLoadFlags flags,
+			     guint32 flags,
 			     GCancellable *cancellable,
 			     GError **error)
 {
@@ -2688,7 +2688,7 @@ as_store_load_app_info (AsStore *store,
 			AsAppScope scope,
 			const gchar *path,
 			const gchar *arch,
-			AsStoreLoadFlags flags,
+			guint32 flags,
 			GCancellable *cancellable,
 			GError **error)
 {
@@ -2787,13 +2787,13 @@ as_store_load_installed_file_is_valid (const gchar *filename)
 
 static gboolean
 as_store_load_installed (AsStore *store,
-			 AsStoreLoadFlags flags,
+			 guint32 flags,
 			 AsAppScope scope,
 			 const gchar *path,
 			 GCancellable *cancellable,
 			 GError **error)
 {
-	AsAppParseFlags parse_flags = AS_APP_PARSE_FLAG_USE_HEURISTICS;
+	guint32 parse_flags = AS_APP_PARSE_FLAG_USE_HEURISTICS;
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	GError *error_local = NULL;
 	const gchar *tmp;
@@ -2922,7 +2922,7 @@ as_store_load_path (AsStore *store, const gchar *path,
 
 static gboolean
 as_store_search_installed (AsStore *store,
-			   AsStoreLoadFlags flags,
+			   guint32 flags,
 			   AsAppScope scope,
 			   const gchar *path,
 			   GCancellable *cancellable,
@@ -2940,7 +2940,7 @@ as_store_search_installed (AsStore *store,
 
 static gboolean
 as_store_search_app_info (AsStore *store,
-			  AsStoreLoadFlags flags,
+			  guint32 flags,
 			  AsAppScope scope,
 			  const gchar *path,
 			  GCancellable *cancellable,
@@ -2965,7 +2965,7 @@ as_store_search_app_info (AsStore *store,
 
 static gboolean
 as_store_search_per_system (AsStore *store,
-			    AsStoreLoadFlags flags,
+			    guint32 flags,
 			    GCancellable *cancellable,
 			    GError **error)
 {
@@ -3055,7 +3055,7 @@ as_store_search_per_system (AsStore *store,
 
 static gboolean
 as_store_search_per_user (AsStore *store,
-			  AsStoreLoadFlags flags,
+			  guint32 flags,
 			  GCancellable *cancellable,
 			  GError **error)
 {
@@ -3162,10 +3162,7 @@ as_store_load_search_cache (AsStore *store)
  * Since: 0.1.2
  **/
 gboolean
-as_store_load (AsStore *store,
-	       AsStoreLoadFlags flags,
-	       GCancellable *cancellable,
-	       GError **error)
+as_store_load (AsStore *store, guint32 flags, GCancellable *cancellable, GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_autoptr(AsProfileTask) ptask = NULL;
@@ -3252,7 +3249,7 @@ as_store_get_unique_name_app_key (AsApp *app)
  * Since: 0.2.4
  **/
 GPtrArray *
-as_store_validate (AsStore *store, AsAppValidateFlags flags, GError **error)
+as_store_validate (AsStore *store, guint32 flags, GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	AsApp *app;
@@ -3523,7 +3520,7 @@ as_store_create_search_blacklist (AsStore *store)
  * Since: 0.6.5
  **/
 void
-as_store_set_search_match (AsStore *store, AsAppSearchMatch search_match)
+as_store_set_search_match (AsStore *store, guint16 search_match)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	priv->search_match = search_match;
@@ -3540,7 +3537,7 @@ as_store_set_search_match (AsStore *store, AsAppSearchMatch search_match)
  *
  * Since: 0.6.13
  **/
-AsAppSearchMatch
+guint16
 as_store_get_search_match (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
