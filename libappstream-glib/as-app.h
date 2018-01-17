@@ -482,8 +482,8 @@ AsAppKind	 as_app_get_kind		(AsApp		*app);
 AsAppScope	 as_app_get_scope		(AsApp		*app);
 AsAppMergeKind	 as_app_get_merge_kind		(AsApp		*app);
 AsAppState	 as_app_get_state		(AsApp		*app);
-AsAppTrustFlags	 as_app_get_trust_flags		(AsApp		*app);
-AsAppSearchMatch as_app_get_search_match	(AsApp		*app);
+guint32		 as_app_get_trust_flags		(AsApp		*app);
+guint16		 as_app_get_search_match	(AsApp		*app);
 GList		*as_app_get_languages		(AsApp		*app);
 GPtrArray	*as_app_get_addons		(AsApp		*app);
 GPtrArray	*as_app_get_categories		(AsApp		*app);
@@ -576,9 +576,9 @@ void		 as_app_set_merge_kind		(AsApp		*app,
 void		 as_app_set_state		(AsApp		*app,
 						 AsAppState	 state);
 void		 as_app_set_trust_flags		(AsApp		*app,
-						 AsAppTrustFlags trust_flags);
+						 guint32	 trust_flags);
 void		 as_app_set_search_match	(AsApp		*app,
-						 AsAppSearchMatch search_match);
+						 guint16	 search_match);
 void		 as_app_set_origin		(AsApp		*app,
 						 const gchar	*origin);
 void		 as_app_set_project_group	(AsApp		*app,
@@ -678,13 +678,13 @@ void		 as_app_add_quirk		(AsApp		*app,
 
 /* object methods */
 GPtrArray	*as_app_validate		(AsApp		*app,
-						 AsAppValidateFlags flags,
+						 guint32	 flags,
 						 GError		**error);
 void		 as_app_subsume			(AsApp		*app,
 						 AsApp		*donor);
 void		 as_app_subsume_full		(AsApp		*app,
 						 AsApp		*donor,
-						 AsAppSubsumeFlags flags);
+						 guint64	 flags);
 void		 as_app_add_veto		(AsApp		*app,
 						 const gchar	*fmt,
 						 ...)
@@ -697,11 +697,11 @@ guint		 as_app_search_matches		(AsApp		*app,
 						 const gchar	*search);
 gboolean	 as_app_parse_file		(AsApp		*app,
 						 const gchar	*filename,
-						 AsAppParseFlags flags,
+						 guint32	 flags,
 						 GError		**error);
 gboolean	 as_app_parse_data		(AsApp		*app,
 						 GBytes		*data,
-						 AsAppParseFlags flags,
+						 guint32	 flags,
 						 GError		**error);
 gboolean	 as_app_to_file			(AsApp		*app,
 						 GFile		*file,
