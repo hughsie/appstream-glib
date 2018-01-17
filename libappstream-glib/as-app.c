@@ -964,7 +964,7 @@ as_app_get_format_by_kind (AsApp *app, AsFormatKind kind)
 /**
  * as_app_get_keywords:
  * @app: a #AsApp instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  *
  * Gets any keywords the application should match against.
  *
@@ -1850,7 +1850,7 @@ as_app_get_icon_path (AsApp *app)
 /**
  * as_app_get_name:
  * @app: a #AsApp instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  *
  * Gets the application name for a specific locale.
  *
@@ -1868,7 +1868,7 @@ as_app_get_name (AsApp *app, const gchar *locale)
 /**
  * as_app_get_comment:
  * @app: a #AsApp instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  *
  * Gets the application summary for a specific locale.
  *
@@ -1886,7 +1886,7 @@ as_app_get_comment (AsApp *app, const gchar *locale)
 /**
  * as_app_get_developer_name:
  * @app: a #AsApp instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  *
  * Gets the application developer name for a specific locale.
  *
@@ -1904,7 +1904,7 @@ as_app_get_developer_name (AsApp *app, const gchar *locale)
 /**
  * as_app_get_description:
  * @app: a #AsApp instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  *
  * Gets the application description markup for a specific locale.
  *
@@ -1922,7 +1922,7 @@ as_app_get_description (AsApp *app, const gchar *locale)
 /**
  * as_app_get_language:
  * @app: a #AsApp instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  *
  * Gets the language coverage for the specific language.
  *
@@ -2648,7 +2648,7 @@ as_app_set_icon_path (AsApp *app, const gchar *icon_path)
 /**
  * as_app_set_name:
  * @app: a #AsApp instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  * @name: the application name.
  *
  * Sets the application name for a specific locale.
@@ -2682,7 +2682,7 @@ as_app_set_name (AsApp *app,
 /**
  * as_app_set_comment:
  * @app: a #AsApp instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  * @comment: the application summary.
  *
  * Sets the application summary for a specific locale.
@@ -2718,7 +2718,7 @@ as_app_set_comment (AsApp *app,
 /**
  * as_app_set_developer_name:
  * @app: a #AsApp instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  * @developer_name: the application developer name.
  *
  * Sets the application developer name for a specific locale.
@@ -2754,7 +2754,7 @@ as_app_set_developer_name (AsApp *app,
 /**
  * as_app_set_description:
  * @app: a #AsApp instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  * @description: the application description.
  *
  * Sets the application descrption markup for a specific locale.
@@ -2891,7 +2891,7 @@ as_app_add_compulsory_for_desktop (AsApp *app, const gchar *compulsory_for_deskt
 /**
  * as_app_add_keyword:
  * @app: a #AsApp instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  * @keyword: the keyword.
  *
  * Add a keyword the application should match against.
@@ -3652,7 +3652,7 @@ as_app_add_arch (AsApp *app, const gchar *arch)
  * as_app_add_language:
  * @app: a #AsApp instance.
  * @percentage: the percentage completion of the translation, or 0 for unknown
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale. e.g. "en_GB"
  *
  * Adds a language to the application.
  *
@@ -6252,7 +6252,7 @@ as_app_parse_file (AsApp *app,
  * as_app_to_file:
  * @app: a #AsApp instance.
  * @file: a #GFile
- * @cancellable: A #GCancellable, or %NULL
+ * @cancellable: (nullable): A #GCancellable
  * @error: A #GError or %NULL
  *
  * Exports a DOM tree to an XML file.

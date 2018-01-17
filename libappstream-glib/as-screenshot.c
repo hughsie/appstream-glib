@@ -220,7 +220,7 @@ as_screenshot_get_images_for_locale (AsScreenshot *screenshot,
 /**
  * as_screenshot_get_image_for_locale:
  * @screenshot: a #AsScreenshot instance.
- * @locale: locale, or %NULL
+ * @locale: (nullable): locale, e.g. "en_GB"
  * @width: target width
  * @height: target height
  *
@@ -314,7 +314,7 @@ as_screenshot_get_source (AsScreenshot *screenshot)
 /**
  * as_screenshot_get_caption:
  * @screenshot: a #AsScreenshot instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale, or %NULL. e.g. "en_GB"
  *
  * Gets the image caption for a specific locale.
  *
@@ -382,7 +382,7 @@ as_screenshot_add_image (AsScreenshot *screenshot, AsImage *image)
 /**
  * as_screenshot_set_caption:
  * @screenshot: a #AsScreenshot instance.
- * @locale: the locale, or %NULL. e.g. "en_GB"
+ * @locale: (nullable): the locale, or %NULL. e.g. "en_GB"
  * @caption: the caption text.
  *
  * Sets a caption on the screenshot for a specific locale.

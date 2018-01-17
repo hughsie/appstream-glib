@@ -2006,7 +2006,7 @@ as_store_from_file_internal (AsStore *store,
  * as_store_from_file:
  * @store: a #AsStore instance.
  * @file: a #GFile.
- * @icon_root: the icon path, or %NULL for the default (unused)
+ * @icon_root: (nullable): the icon path, or %NULL for the default (unused)
  * @cancellable: a #GCancellable.
  * @error: A #GError or %NULL.
  *
@@ -2098,7 +2098,7 @@ as_store_from_bytes (AsStore *store,
  * as_store_from_xml:
  * @store: a #AsStore instance.
  * @data: XML data
- * @icon_root: the icon path, or %NULL for the default.
+ * @icon_root: (nullable): the icon path, or %NULL for the default.
  * @error: A #GError or %NULL.
  *
  * Parses AppStream XML file and adds any valid applications to the store.
