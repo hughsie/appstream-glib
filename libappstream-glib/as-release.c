@@ -559,6 +559,7 @@ as_release_add_location (AsRelease *release, const gchar *location)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 
 	/* deduplicate */
+	as_release_ensure_locations (release);
 	if (as_ptr_array_find_string (priv->locations, location))
 		return;
 
