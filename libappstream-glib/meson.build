@@ -185,6 +185,8 @@ introspection_sources = [
   'as-inf.h',
   'as-launchable.c',
   'as-launchable.h',
+  'as-markup.c',
+  'as-markup.h',
   'as-node.c',
   'as-node.h',
   'as-problem.c',
