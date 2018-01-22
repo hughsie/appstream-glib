@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 16:26+0100\n"
+"POT-Creation-Date: 2018-01-22 16:22+0000\n"
 "PO-Revision-Date: 2017-08-22 05:05-0400\n"
 "Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (http://www.transifex.com/freedesktop/appstream-glib/language/ca/)\n"
@@ -150,7 +150,7 @@ msgstr "No s'han pogut generar les metadades"
 
 #. success
 #. TRANSLATORS: information message
-#: client/as-builder.c:322 client/as-compose.c:522
+#: client/as-builder.c:322 client/as-compose.c:526
 msgid "Done!"
 msgstr "Fet!"
 
@@ -192,24 +192,24 @@ msgstr "S'ha produït un error en analitzar sintàcticament provides"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
-#: client/as-compose.c:475
+#: client/as-compose.c:479
 msgid "Error loading desktop file"
 msgstr "S'ha produït un error en carregar el fitxer d'escriptori"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
-#: client/as-compose.c:497
+#: client/as-compose.c:501
 msgid "Error creating output directory"
 msgstr "S'ha produït un error en crear el directori de sortida"
 
 #. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:506
+#: client/as-compose.c:510
 msgid "Saving AppStream"
 msgstr "S'està desant l'AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
-#: client/as-compose.c:516
+#: client/as-compose.c:520
 msgid "Error saving AppStream file"
 msgstr "S'ha produït un error en desar el fitxer d'AppStream"
 

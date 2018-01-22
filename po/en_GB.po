@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 16:26+0100\n"
+"POT-Creation-Date: 2018-01-22 16:22+0000\n"
 "PO-Revision-Date: 2016-08-06 02:59-0400\n"
 "Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
 "Language-Team: English (United Kingdom) (http://www.transifex.com/freedesktop/appstream-glib/language/en_GB/)\n"
@@ -149,7 +149,7 @@ msgstr "Failed to generate metadata"
 
 #. success
 #. TRANSLATORS: information message
-#: client/as-builder.c:322 client/as-compose.c:522
+#: client/as-builder.c:322 client/as-compose.c:526
 msgid "Done!"
 msgstr "Done!"
 
@@ -191,24 +191,24 @@ msgstr "Error parsing provides"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
-#: client/as-compose.c:475
+#: client/as-compose.c:479
 msgid "Error loading desktop file"
 msgstr "Error loading desktop file"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
-#: client/as-compose.c:497
+#: client/as-compose.c:501
 msgid "Error creating output directory"
 msgstr "Error creating output directory"
 
 #. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:506
+#: client/as-compose.c:510
 msgid "Saving AppStream"
 msgstr "Saving AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
-#: client/as-compose.c:516
+#: client/as-compose.c:520
 msgid "Error saving AppStream file"
 msgstr "Error saving AppStream file"
 

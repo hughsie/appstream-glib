@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 16:26+0100\n"
+"POT-Creation-Date: 2018-01-22 16:22+0000\n"
 "PO-Revision-Date: 2016-08-06 03:00-0400\n"
 "Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
 "Language-Team: Serbian (http://www.transifex.com/freedesktop/appstream-glib/language/sr/)\n"
@@ -150,7 +150,7 @@ msgstr "Не могу да направим метаподатке"
 
 #. success
 #. TRANSLATORS: information message
-#: client/as-builder.c:322 client/as-compose.c:522
+#: client/as-builder.c:322 client/as-compose.c:526
 msgid "Done!"
 msgstr "Готово!"
 
@@ -192,24 +192,24 @@ msgstr "Грешка обраде достављања"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
-#: client/as-compose.c:475
+#: client/as-compose.c:479
 msgid "Error loading desktop file"
 msgstr "Грешка учитавања датотеке радне површи"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
-#: client/as-compose.c:497
+#: client/as-compose.c:501
 msgid "Error creating output directory"
 msgstr "Грешка прављења излазног директоријума"
 
 #. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:506
+#: client/as-compose.c:510
 msgid "Saving AppStream"
 msgstr "Чувам Програмски ток"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
-#: client/as-compose.c:516
+#: client/as-compose.c:520
 msgid "Error saving AppStream file"
 msgstr "Грешка чувања датотеке Програмског тока"
 

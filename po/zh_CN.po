@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 16:26+0100\n"
+"POT-Creation-Date: 2018-01-22 16:22+0000\n"
 "PO-Revision-Date: 2017-07-23 03:30-0400\n"
 "Last-Translator: cheng ye <18969068329@163.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_CN/)\n"
@@ -153,7 +153,7 @@ msgstr "元数据生成失败"
 
 #. success
 #. TRANSLATORS: information message
-#: client/as-builder.c:322 client/as-compose.c:522
+#: client/as-builder.c:322 client/as-compose.c:526
 msgid "Done!"
 msgstr "完成！"
 
@@ -195,24 +195,24 @@ msgstr "解析 provides 值出错"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
-#: client/as-compose.c:475
+#: client/as-compose.c:479
 msgid "Error loading desktop file"
 msgstr "载入 desktop 文件出错"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
-#: client/as-compose.c:497
+#: client/as-compose.c:501
 msgid "Error creating output directory"
 msgstr "创建输出目录出错"
 
 #. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:506
+#: client/as-compose.c:510
 msgid "Saving AppStream"
 msgstr "正在保存 AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
-#: client/as-compose.c:516
+#: client/as-compose.c:520
 msgid "Error saving AppStream file"
 msgstr "保存 AppStream 文件出错"
 

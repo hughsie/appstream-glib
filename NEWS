@@ -1,3 +1,28 @@
+Version 0.7.5
+~~~~~~~~~~~~~~
+Released: 2017-01-22
+
+New Features:
+ - Add as_app_parse_data() (Richard Hughes)
+ - Add as_store_get_apps_by_provide() (Richard Hughes)
+ - Add more GObject Introspection annotations for Python (Richard Hughes)
+ - Support OARS v1.1 additions (Richard Hughes)
+ - Use pngquant to make the application icons take up less space (Richard Hughes)
+
+Bugfixes:
+ - Describe connection problems/HTTP errors when validating images (suve)
+ - Do not try to extract duplicate files in the icon theme packages (Richard Hughes)
+ - Do not use an 'enable' prefix for meson arguments (Richard Hughes)
+ - Don't expect an enum when really passing a bitfield (Richard Hughes)
+ - Don't fall back to English if other languages are available (Peter Oliver)
+ - Explicitly require a new enough json-glib (Richard Hughes)
+ - Fix a crash when calling as_release_add_location() directly (Richard Hughes)
+ - Fix appstream-compose when using new-style desktop IDs (Richard Hughes)
+ - Fix compile with GCab v1.0 (Richard Hughes)
+ - Fix the arithmetic when fitting an image in 16:9 (Joaquim Rocha)
+ - Generate icons and samples for emoji fonts (Peter Oliver)
+ - Never change the default screenshot when processing AppData (Richard Hughes)
+
 Version 0.7.4
 ~~~~~~~~~~~~~~
 Released: 2017-11-09

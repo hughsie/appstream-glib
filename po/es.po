@@ -8,13 +8,13 @@
 # Emilio Herrera <ehespinosa57@gmail.com>, 2016. #zanata
 # Silvia Sanchez <BHKohane@gmail.com>, 2016. #zanata
 # William  Moreno Reyes <williamjmorenor@gmail.com>, 2016. #zanata
-# Máximo Castañeda Riloba <mcrcctm@gmail.com>, 2017. #zanata
+# Edgar Daniel Lopez Prieto <protoanima@hotmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-23 16:26+0100\n"
-"PO-Revision-Date: 2017-09-12 11:17-0400\n"
+"POT-Creation-Date: 2018-01-22 16:22+0000\n"
+"PO-Revision-Date: 2017-12-31 11:05-0500\n"
 "Last-Translator: Máximo Castañeda Riloba <mcrcctm@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/freedesktop/appstream-glib/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -152,7 +152,7 @@ msgstr "No se pudo generar los metadatos"
 
 #. success
 #. TRANSLATORS: information message
-#: client/as-builder.c:322 client/as-compose.c:522
+#: client/as-builder.c:322 client/as-compose.c:526
 msgid "Done!"
 msgstr "¡Hecho!"
 
@@ -194,24 +194,24 @@ msgstr "Error analizando aprovisionamientos"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
-#: client/as-compose.c:475
+#: client/as-compose.c:479
 msgid "Error loading desktop file"
 msgstr "Error cargando fichero de escritorio"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
-#: client/as-compose.c:497
+#: client/as-compose.c:501
 msgid "Error creating output directory"
 msgstr "Error creando directorio de salida"
 
 #. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:506
+#: client/as-compose.c:510
 msgid "Saving AppStream"
 msgstr "Guardando AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
-#: client/as-compose.c:516
+#: client/as-compose.c:520
 msgid "Error saving AppStream file"
 msgstr "Error guardando fichero AppStream"
 
@@ -345,12 +345,12 @@ msgstr "Respalda las aplicaciones en la metadata de AppStream"
 #. TRANSLATORS: command description
 #: client/as-util.c:4405
 msgid "Search for AppStream applications"
-msgstr "Buscar las aplicaciones AppStream"
+msgstr "Buscar aplicaciones AppStream"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4411
 msgid "Search for AppStream applications by package name"
-msgstr "Buscar las aplicaciones AppStream por nombre de paquete"
+msgstr "Buscar aplicaciones AppStream por nombre de paquete"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4417
@@ -375,7 +375,7 @@ msgstr "Instala los metadatos de AppStream"
 #. TRANSLATORS: command description
 #: client/as-util.c:4441
 msgid "Installs AppStream metadata with new origin"
-msgstr "Instala metadata AppStream con nuevo origen"
+msgstr "Instala metadatos de AppStream con nuevo origen"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4447
