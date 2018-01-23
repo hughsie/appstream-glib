@@ -236,7 +236,7 @@ as_app_parse_file_key (AsApp *app,
 						   G_KEY_FILE_DESKTOP_GROUP,
 						   key,
 						   NULL, NULL);
-		for (i = 0; list[i] != NULL; i++) {
+		for (i = 0; list != NULL && list[i] != NULL; i++) {
 			const gchar *category_blacklist[] = {
 				"X-GNOME-Settings-Panel",
 				"X-Unity-Settings-Panel",
@@ -271,7 +271,7 @@ as_app_parse_file_key (AsApp *app,
 						   G_KEY_FILE_DESKTOP_GROUP,
 						   key,
 						   NULL, NULL);
-		for (i = 0; list[i] != NULL; i++) {
+		for (i = 0; list != NULL && list[i] != NULL; i++) {
 			g_auto(GStrv) kw_split = NULL;
 			kw_split = g_strsplit (list[i], ",", -1);
 			for (j = 0; kw_split[j] != NULL; j++) {
@@ -291,7 +291,7 @@ as_app_parse_file_key (AsApp *app,
 							  key,
 							  locale,
 							  NULL, NULL);
-		for (i = 0; list[i] != NULL; i++) {
+		for (i = 0; list != NULL && list[i] != NULL; i++) {
 			g_auto(GStrv) kw_split = NULL;
 			kw_split = g_strsplit (list[i], ",", -1);
 			for (j = 0; kw_split[j] != NULL; j++) {
@@ -306,7 +306,7 @@ as_app_parse_file_key (AsApp *app,
 						   G_KEY_FILE_DESKTOP_GROUP,
 						   key,
 						   NULL, NULL);
-		for (i = 0; list[i] != NULL; i++)
+		for (i = 0; list != NULL && list[i] != NULL; i++)
 			as_app_add_mimetype (app, list[i]);
 
 	} else if (g_strcmp0 (key, "X-AppInstall-Package") == 0) {
