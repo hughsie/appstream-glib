@@ -164,6 +164,10 @@ GNode		*as_node_from_xml		(const gchar	*data,
 						 AsNodeFromXmlFlags flags,
 						 GError		**error)
 						 G_GNUC_WARN_UNUSED_RESULT;
+GNode		*as_node_from_bytes		(GBytes		*bytes,
+						 AsNodeFromXmlFlags flags,
+						 GError		**error)
+						 G_GNUC_WARN_UNUSED_RESULT;
 GNode		*as_node_from_file		(GFile		*file,
 						 AsNodeFromXmlFlags flags,
 						 GCancellable	*cancellable,

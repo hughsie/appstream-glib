@@ -6047,6 +6047,16 @@ as_app_parse_appdata_guess_project_group (AsApp *app)
 	}
 }
 
+static int
+as_utils_fnmatch (const gchar *pattern, const gchar *text, gsize text_sz, gint flags)
+{
+	if (text_sz != -1 && text[text_sz-1] != '\0') {
+		g_autofree gchar *text_with_nul = g_strndup (text, text_sz);
+		return fnmatch (pattern, text_with_nul, flags);
+	}
+	return fnmatch (pattern, text, flags);
+}
+
 /**
  * as_app_parse_data:
  * @app: a #AsApp instance.
@@ -6078,13 +6088,13 @@ as_app_parse_data (AsApp *app, GBytes *data, guint32 flags, GError **error)
 		priv->problems |= AS_APP_PROBLEM_NO_XML_HEADER;
 
 	/* check for copyright */
-	if (fnmatch ("*<!--*Copyright*-->*", data_raw, 0) != 0)
+	if (as_utils_fnmatch ("*<!--*Copyright*-->*", data_raw, len, 0) != 0)
 		priv->problems |= AS_APP_PROBLEM_NO_COPYRIGHT_INFO;
 
 	/* parse */
 	if (flags & AS_APP_PARSE_FLAG_KEEP_COMMENTS)
 		from_xml_flags |= AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS;
-	root = as_node_from_xml (data_raw, from_xml_flags, error);
+	root = as_node_from_bytes (data, from_xml_flags, error);
 	if (root == NULL)
 		return FALSE;
 

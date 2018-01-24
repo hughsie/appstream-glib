@@ -24,6 +24,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <fnmatch.h>
 
 #include "as-app-private.h"
@@ -5473,6 +5474,22 @@ as_test_utils_unique_id_hash_safe_func (void)
 }
 
 static void
+as_test_app_parse_data_func (void)
+{
+	const gchar *data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			    "<component>\n</component>\n     ";
+	gboolean ret;
+	g_autoptr(GBytes) blob = NULL;
+	g_autoptr(AsApp) app = as_app_new ();
+	g_autoptr(GError) error = NULL;
+
+	blob = g_bytes_new (data, strlen (data));
+	ret = as_app_parse_data (app, blob, AS_APP_PARSE_FLAG_NONE, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+}
+
+static void
 as_test_ref_string_func (void)
 {
 	const gchar *tmp;
@@ -5546,6 +5563,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/app{validate-file-bad}", as_test_app_validate_file_bad_func);
 	g_test_add_func ("/AppStream/app{validate-meta-bad}", as_test_app_validate_meta_bad_func);
 	g_test_add_func ("/AppStream/app{validate-intltool}", as_test_app_validate_intltool_func);
+	g_test_add_func ("/AppStream/app{parse-data}", as_test_app_parse_data_func);
 	g_test_add_func ("/AppStream/app{parse-file:desktop}", as_test_app_parse_file_desktop_func);
 	g_test_add_func ("/AppStream/app{no-markup}", as_test_app_no_markup_func);
 	g_test_add_func ("/AppStream/app{subsume}", as_test_app_subsume_func);

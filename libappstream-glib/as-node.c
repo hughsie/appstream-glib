@@ -783,22 +783,10 @@ as_node_passthrough_cb (GMarkupParseContext *context,
 	}
 }
 
-/**
- * as_node_from_xml: (skip)
- * @data: XML data
- * @flags: #AsNodeFromXmlFlags, e.g. %AS_NODE_FROM_XML_FLAG_NONE
- * @error: A #GError or %NULL
- *
- * Parses XML data into a DOM tree.
- *
- * Returns: (transfer none): A populated #AsNode tree
- *
- * Since: 0.1.0
- **/
-AsNode *
-as_node_from_xml (const gchar *data,
-		  AsNodeFromXmlFlags flags,
-		  GError **error)
+static AsNode *
+as_node_from_xml_internal (const gchar *data, gssize data_sz,
+			   AsNodeFromXmlFlags flags,
+			   GError **error)
 {
 	AsNodeToXmlHelper helper;
 	AsNode *root = NULL;
@@ -822,10 +810,7 @@ as_node_from_xml (const gchar *data,
 					  G_MARKUP_PREFIX_ERROR_POSITION,
 					  &helper,
 					  NULL);
-	ret = g_markup_parse_context_parse (ctx,
-					    data,
-					    -1,
-					    &error_local);
+	ret = g_markup_parse_context_parse (ctx, data, data_sz, &error_local);
 	if (!ret) {
 		g_set_error_literal (error,
 				     AS_NODE_ERROR,
@@ -845,6 +830,46 @@ as_node_from_xml (const gchar *data,
 		return NULL;
 	}
 	return root;
+}
+
+/**
+ * as_node_from_bytes: (skip)
+ * @bytes: a #GBytes
+ * @flags: #AsNodeFromXmlFlags, e.g. %AS_NODE_FROM_XML_FLAG_NONE
+ * @error: A #GError or %NULL
+ *
+ * Parses XML data into a DOM tree.
+ *
+ * Returns: (transfer none): A populated #AsNode tree
+ *
+ * Since: 0.7.6
+ **/
+AsNode *
+as_node_from_bytes (GBytes *bytes, AsNodeFromXmlFlags flags, GError **error)
+{
+	gsize sz = 0;
+	const gchar *buf;
+	g_return_val_if_fail (bytes != NULL, NULL);
+	buf = g_bytes_get_data (bytes, &sz);
+	return as_node_from_xml_internal (buf, (gssize) sz, flags, error);
+}
+
+/**
+ * as_node_from_xml: (skip)
+ * @data: XML data
+ * @flags: #AsNodeFromXmlFlags, e.g. %AS_NODE_FROM_XML_FLAG_NONE
+ * @error: A #GError or %NULL
+ *
+ * Parses XML data into a DOM tree.
+ *
+ * Returns: (transfer none): A populated #AsNode tree
+ *
+ * Since: 0.1.0
+ **/
+AsNode *
+as_node_from_xml (const gchar *data, AsNodeFromXmlFlags flags, GError **error)
+{
+	return as_node_from_xml_internal (data, -1, flags, error);
 }
 
 /**
