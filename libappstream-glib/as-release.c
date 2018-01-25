@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2018 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2018 Matthias Klumpp <matthias@tenstral.net>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -50,6 +51,7 @@
 typedef struct
 {
 	AsUrgencyKind		 urgency;
+	AsReleaseKind		 kind;
 	AsReleaseState		 state;
 	guint64			*sizes;
 	AsRefString		*version;
@@ -90,6 +92,7 @@ as_release_init (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	priv->urgency = AS_URGENCY_KIND_UNKNOWN;
+	priv->kind = AS_RELEASE_KIND_UNKNOWN;
 	priv->state = AS_RELEASE_STATE_UNKNOWN;
 }
 
@@ -136,6 +139,45 @@ as_release_class_init (AsReleaseClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	object_class->finalize = as_release_finalize;
+}
+/**
+ * as_release_kind_to_string:
+ * @kind: the #AsReleaseKind.
+ *
+ * Converts the enumerated value to an text representation.
+ *
+ * Returns: string version of @kind
+ *
+ * Since: 0.7.6
+ **/
+const gchar*
+as_release_kind_to_string (AsReleaseKind kind)
+{
+	if (kind == AS_RELEASE_KIND_STABLE)
+		return "stable";
+	if (kind == AS_RELEASE_KIND_DEVELOPMENT)
+		return "development";
+	return "unknown";
+}
+
+/**
+ * as_release_kind_from_string:
+ * @kind_str: the string.
+ *
+ * Converts the text representation to an enumerated value.
+ *
+ * Returns: an #AsReleaseKind or %AS_RELEASE_KIND_UNKNOWN for unknown
+ *
+ * Since: 0.7.6
+ **/
+AsReleaseKind
+as_release_kind_from_string (const gchar *kind_str)
+{
+	if (g_strcmp0 (kind_str, "stable") == 0)
+		return AS_RELEASE_KIND_STABLE;
+	if (g_strcmp0 (kind_str, "development") == 0)
+		return AS_RELEASE_KIND_DEVELOPMENT;
+	return AS_RELEASE_KIND_UNKNOWN;
 }
 
 /**
@@ -283,6 +325,23 @@ as_release_get_state (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	return priv->state;
+}
+
+/**
+ * as_release_get_kind:
+ * @release: a #AsRelease instance.
+ *
+ * Gets the type of the release.
+ *
+ * Returns: enumerated value, e.g. %AS_RELEASE_KIND_STABLE
+ *
+ * Since: 0.7.6
+ **/
+AsReleaseKind
+as_release_get_kind (AsRelease *release)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	return priv->kind;
 }
 
 /**
@@ -529,6 +588,22 @@ as_release_set_urgency (AsRelease *release, AsUrgencyKind urgency)
 }
 
 /**
+ * as_release_set_kind:
+ * @release: a #AsRelease instance.
+ * @kind: the #AsReleaseKind
+ *
+ * Sets the release kind.
+ *
+ * Since: 0.7.6
+ **/
+void
+as_release_set_kind (AsRelease *release, AsReleaseKind kind)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	priv->kind = kind;
+}
+
+/**
  * as_release_set_state:
  * @release: a #AsRelease instance.
  * @state: the release state, e.g. %AS_RELEASE_STATE_INSTALLED
@@ -660,6 +735,10 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 		as_node_add_attribute (n, "urgency",
 				       as_urgency_kind_to_string (priv->urgency));
 	}
+	if (priv->kind != AS_RELEASE_KIND_UNKNOWN) {
+		as_node_add_attribute (n, "type",
+				       as_release_kind_to_string (priv->kind));
+	}
 	if (as_node_context_get_output_trusted (ctx) &&
 	    priv->state != AS_RELEASE_STATE_UNKNOWN) {
 		as_node_add_attribute (n, "state",
@@ -732,6 +811,9 @@ as_release_node_parse (AsRelease *release, GNode *node,
 	tmp = as_node_get_attribute (node, "urgency");
 	if (tmp != NULL)
 		as_release_set_urgency (release, as_urgency_kind_from_string (tmp));
+	tmp = as_node_get_attribute (node, "type");
+	if (tmp != NULL)
+		as_release_set_kind (release, as_release_kind_from_string (tmp));
 	tmp = as_node_get_attribute (node, "version");
 	if (tmp != NULL)
 		as_release_set_version (release, tmp);
@@ -842,6 +924,10 @@ as_release_node_parse_dep11 (AsRelease *release, GNode *node,
 		}
 		if (g_strcmp0 (tmp, "version") == 0) {
 			as_release_set_version (release, as_yaml_node_get_value (n));
+			continue;
+		}
+		if (g_strcmp0 (tmp, "type") == 0) {
+			as_release_set_kind (release, as_release_kind_from_string (as_yaml_node_get_value (n)));
 			continue;
 		}
 		if (g_strcmp0 (tmp, "description") == 0) {

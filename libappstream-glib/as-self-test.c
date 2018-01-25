@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2018 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -455,7 +455,7 @@ as_test_release_func (void)
 	AsNode *n;
 	AsNode *root;
 	GString *xml;
-	const gchar *src = "<release timestamp=\"123\" urgency=\"critical\" version=\"0.1.2\"/>";
+	const gchar *src = "<release type=\"stable\" timestamp=\"123\" urgency=\"critical\" version=\"0.1.2\"/>";
 	gboolean ret;
 	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsRelease) release = NULL;
@@ -478,6 +478,7 @@ as_test_release_func (void)
 	g_assert_cmpint ((gint32) as_release_get_timestamp (release), ==, 123);
 	g_assert_cmpint (as_release_get_urgency (release), ==, AS_URGENCY_KIND_CRITICAL);
 	g_assert_cmpint (as_release_get_state (release), ==, AS_RELEASE_STATE_UNKNOWN);
+	g_assert_cmpint (as_release_get_kind (release), ==, AS_RELEASE_KIND_STABLE);
 	g_assert_cmpstr (as_release_get_version (release), ==, "0.1.2");
 
 	/* state is not stored in the XML */

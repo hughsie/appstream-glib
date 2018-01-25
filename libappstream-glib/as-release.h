@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2016 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2018 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2018 Matthias Klumpp <matthias@tenstral.net>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -50,6 +51,24 @@ struct _AsReleaseClass
 };
 
 /**
+ * AsReleaseKind:
+ * @AS_RELEASE_KIND_UNKNOWN:		Unknown release type
+ * @AS_RELEASE_KIND_STABLE:		A stable release
+ * @AS_RELEASE_KIND_DEVELOPMENT:	A development release
+ *
+ * The release size kind.
+ *
+ * Since: 0.7.6
+ **/
+typedef enum {
+	AS_RELEASE_KIND_UNKNOWN,		/* Since: 0.7.6 */
+	AS_RELEASE_KIND_STABLE,			/* Since: 0.7.6 */
+	AS_RELEASE_KIND_DEVELOPMENT,		/* Since: 0.7.6 */
+	/*< private >*/
+	AS_RELEASE_KIND_LAST
+} AsReleaseKind;
+
+/**
  * AsReleaseState:
  * @AS_RELEASE_STATE_UNKNOWN:			Unknown state
  * @AS_RELEASE_STATE_INSTALLED:			Release is installed
@@ -69,6 +88,8 @@ AsRelease	*as_release_new			(void);
 gint		 as_release_vercmp		(AsRelease	*rel1,
 						 AsRelease	*rel2);
 
+AsReleaseKind	 as_release_kind_from_string	(const gchar	*kind_str);
+const gchar	*as_release_kind_to_string	(AsReleaseKind	 kind);
 AsReleaseState	 as_release_state_from_string	(const gchar	*state);
 const gchar	*as_release_state_to_string	(AsReleaseState	 state);
 
@@ -87,6 +108,7 @@ AsChecksum	*as_release_get_checksum_by_target (AsRelease	*release,
 						 AsChecksumTarget target);
 GPtrArray	*as_release_get_checksums	(AsRelease	*release);
 AsUrgencyKind	 as_release_get_urgency		(AsRelease	*release);
+AsReleaseKind	 as_release_get_kind		(AsRelease	*release);
 AsReleaseState	 as_release_get_state		(AsRelease	*release);
 guint64		 as_release_get_size		(AsRelease	*release,
 						 AsSizeKind	 kind);
@@ -108,6 +130,8 @@ void		 as_release_add_checksum	(AsRelease	*release,
 						 AsChecksum	*checksum);
 void		 as_release_set_urgency		(AsRelease	*release,
 						 AsUrgencyKind	 urgency);
+void		 as_release_set_kind		(AsRelease	*release,
+						 AsReleaseKind	 kind);
 void		 as_release_set_state		(AsRelease	*release,
 						 AsReleaseState	 state);
 void		 as_release_set_size		(AsRelease	*release,
