@@ -337,6 +337,7 @@ asb_test_context_func (void)
 		"app-console-1-1.fc25.noarch.rpm",	/* app with no icon */
 		"app-1-1.fc25.i686.rpm",		/* GUI multiarch app */
 		"composite-1-1.fc21.x86_64.rpm",	/* multiple GUI apps */
+		"driver-1-1.fc27.noarch.rpm",		/* a hardware driver */
 #ifdef HAVE_FONTS
 		"font-1-1.fc21.noarch.rpm",		/* font */
 		"font-serif-1-1.fc21.noarch.rpm",	/* font that extends */
@@ -388,9 +389,9 @@ asb_test_context_func (void)
 
 	/* verify queue size */
 #ifdef HAVE_FONTS
-	g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 9);
+	g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 10);
 #else
-	g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 7);
+	g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 8);
 #endif
 
 	/* run the plugins */
@@ -414,9 +415,9 @@ asb_test_context_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 #ifdef HAVE_FONTS
-//	g_assert_cmpint (as_store_get_size (store), ==, 5);
+//	g_assert_cmpint (as_store_get_size (store), ==, 6);
 #else
-	g_assert_cmpint (as_store_get_size (store), ==, 4);
+	g_assert_cmpint (as_store_get_size (store), ==, 5);
 #endif
 	app = as_store_get_app_by_pkgname (store, "app");
 	g_assert (app != NULL);
@@ -549,6 +550,18 @@ asb_test_context_func (void)
 		"</provides>\n"
 		"</component>\n"
 #endif
+		"<component type=\"driver\">\n"
+		"<id>driver</id>\n"
+		"<pkgname>driver</pkgname>\n"
+		"<name>Driver</name>\n"
+		"<summary>A hardware driver</summary>\n"
+		"<icon type=\"cached\" height=\"64\" width=\"64\">driver.png</icon>\n"
+		"<project_license>GPL-2.0+</project_license>\n"
+		"<url type=\"homepage\">http://people.freedesktop.org/</url>\n"
+		"<releases>\n"
+		"<release timestamp=\"1517313600\" version=\"1\"/>\n"
+		"</releases>\n"
+		"</component>\n"
 		"</components>\n";
 	ret = asb_test_compare_lines (xml->str, expected_xml, &error);
 	g_assert_no_error (error);
@@ -792,6 +805,7 @@ main (int argc, char **argv)
 	/* only critical and error are fatal */
 	g_log_set_fatal_mask (NULL, G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL);
 	g_setenv ("ASB_IS_SELF_TEST", "", TRUE);
+	g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
 
 	/* tests go here */
 	g_test_add_func ("/AppStreamBuilder/package", asb_test_package_func);

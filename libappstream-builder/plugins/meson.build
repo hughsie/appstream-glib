@@ -1,6 +1,23 @@
 asb_plugins_cargs = ['-DG_LOG_DOMAIN="Asb"']
 
 shared_module(
+  'asb_plugin_icon',
+  sources : 'asb-plugin-icon.c',
+  include_directories: [
+    top_build_incdir,
+    asbuilder_incdir,
+    asglib_incdir,
+  ],
+  dependencies : [
+    gdkpixbuf,
+  ],
+  link_with : [asbuilder, asglib],
+  c_args : asb_plugins_cargs,
+  install : true,
+  install_dir : plugindir,
+)
+
+shared_module(
   'asb_plugin_gettext',
   sources : 'asb-plugin-gettext.c',
   include_directories: [

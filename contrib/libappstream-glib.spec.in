@@ -136,6 +136,7 @@ GLib headers and libraries for appstream-builder.
 %{_libdir}/asb-plugins-%{as_plugin_version}/libasb_plugin_font.so
 %{_libdir}/asb-plugins-%{as_plugin_version}/libasb_plugin_gettext.so
 %{_libdir}/asb-plugins-%{as_plugin_version}/libasb_plugin_hardcoded.so
+%{_libdir}/asb-plugins-%{as_plugin_version}/libasb_plugin_icon.so
 %{_libdir}/asb-plugins-%{as_plugin_version}/libasb_plugin_shell_extension.so
 %{_libdir}/libappstream-builder.so.8*
 %{_mandir}/man1/appstream-builder.1.gz
