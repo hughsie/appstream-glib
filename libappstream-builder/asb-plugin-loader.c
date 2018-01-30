@@ -358,7 +358,7 @@ asb_plugin_loader_sort_cb (gconstpointer a, gconstpointer b)
 {
 	AsbPlugin **plugin_a = (AsbPlugin **) a;
 	AsbPlugin **plugin_b = (AsbPlugin **) b;
-	return -g_strcmp0 ((*plugin_a)->name, (*plugin_b)->name);
+	return g_strcmp0 ((*plugin_a)->name, (*plugin_b)->name);
 }
 
 /**
