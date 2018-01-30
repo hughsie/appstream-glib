@@ -222,12 +222,17 @@ as_node_get_attr_string (AsNodeData *data)
 
 	str = g_string_new ("");
 	for (l = data->attrs; l != NULL; l = l->next) {
+		g_autoptr(GString) value_safe = NULL;
 		attr = l->data;
 		if (g_strcmp0 (attr->key, "@comment") == 0 ||
 		    g_strcmp0 (attr->key, "@comment-tmp") == 0)
 			continue;
+		value_safe = g_string_new (attr->value);
+		as_utils_string_replace (value_safe, "&", "&amp;");
+		as_utils_string_replace (value_safe, "<", "&lt;");
+		as_utils_string_replace (value_safe, ">", "&gt;");
 		g_string_append_printf (str, " %s=\"%s\"",
-					attr->key, attr->value);
+					attr->key, value_safe->str);
 	}
 	return g_string_free (str, FALSE);
 }

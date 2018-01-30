@@ -946,7 +946,7 @@ as_test_checksum_func (void)
 	AsNode *n;
 	AsNode *root;
 	GString *xml;
-	const gchar *src = "<checksum filename=\"fn.cab\" target=\"container\" type=\"sha1\">12345</checksum>";
+	const gchar *src = "<checksum filename=\"f&amp;n.cab\" target=\"container\" type=\"sha1\">12&amp;45</checksum>";
 	gboolean ret;
 	g_autofree AsNodeContext *ctx = NULL;
 	g_autoptr(AsChecksum) csum = NULL;
@@ -976,8 +976,8 @@ as_test_checksum_func (void)
 	/* verify */
 	g_assert_cmpint (as_checksum_get_kind (csum), ==, G_CHECKSUM_SHA1);
 	g_assert_cmpint (as_checksum_get_target (csum), ==, AS_CHECKSUM_TARGET_CONTAINER);
-	g_assert_cmpstr (as_checksum_get_filename (csum), ==, "fn.cab");
-	g_assert_cmpstr (as_checksum_get_value (csum), ==, "12345");
+	g_assert_cmpstr (as_checksum_get_filename (csum), ==, "f&n.cab");
+	g_assert_cmpstr (as_checksum_get_value (csum), ==, "12&45");
 
 	/* back to node */
 	root = as_node_new ();
