@@ -1,3 +1,15 @@
+Version 0.7.6
+~~~~~~~~~~~~~~
+Released: 2018-02-09
+
+New Features:
+ - Add support for release types (Richard Hughes)
+
+Bugfixes:
+ - Do not deference invalid lists when parsing invalid desktop files (Marco Trevisan)
+ - Fix an invalid read when using as_app_parse_data() from Python (Richard Hughes)
+ - Never include '&' in attribute values (Richard Hughes)
+
 Version 0.7.5
 ~~~~~~~~~~~~~~
 Released: 2017-01-22
