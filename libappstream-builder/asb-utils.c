@@ -302,7 +302,7 @@ asb_utils_optimize_png (const gchar *filename, GError **error)
 	if (!g_spawn_sync (NULL, (gchar **) argv, NULL, G_SPAWN_DEFAULT,
 			   NULL, NULL, NULL, &standard_error, &exit_status, error))
 		return FALSE;
-	if (exit_status != 0) {
+	if (exit_status != 0 && exit_status != 98) {
 		g_autofree gchar *argv_str = g_strjoinv (" ", (gchar **) argv);
 		g_set_error (error,
 			     AS_APP_ERROR,
