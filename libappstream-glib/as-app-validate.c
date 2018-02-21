@@ -953,26 +953,6 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 		}
 	}
 
-	/* check the timestamps go down each time */
-	if (releases->len > 1) {
-		AsRelease *release_old = g_ptr_array_index (releases, 0);
-		for (guint i = 1; i < releases->len; i++) {
-			AsRelease *release = g_ptr_array_index (releases, i);
-			guint64 timestamp = as_release_get_timestamp (release);
-			guint64 timestamp_old = as_release_get_timestamp (release_old);
-			if (timestamp == 0 || timestamp_old == 0)
-				continue;
-			if (timestamp > timestamp_old) {
-				ai_app_validate_add (helper,
-						     AS_PROBLEM_KIND_TAG_INVALID,
-						     "<release> timestamps are not in order "
-						     "[%" G_GUINT64_FORMAT " before %" G_GUINT64_FORMAT "]",
-						     timestamp_old, timestamp);
-			}
-			release_old = release;
-		}
-	}
-
 	return TRUE;
 }
 
