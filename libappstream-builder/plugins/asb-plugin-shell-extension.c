@@ -94,8 +94,9 @@ as_app_parse_shell_extension_data (AsbPlugin *plugin,
 	tmp = json_object_get_string_member (json_obj, "uuid");
 	if (tmp != NULL) {
 		g_autofree gchar *id = NULL;
-		id = g_strdup_printf ("%s.shell-extension", tmp);
+		id = as_utils_appstream_id_build (tmp);
 		as_app_set_id (app, id);
+		as_app_add_metadata (AS_APP (app), "uuid", tmp);
 	}
 	if (json_object_has_member (json_obj, "gettext-domain")) {
 		tmp = json_object_get_string_member (json_obj, "gettext-domain");
