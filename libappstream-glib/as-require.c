@@ -405,6 +405,41 @@ as_require_version_compare (AsRequire *require,
 }
 
 /**
+ * as_require_equal:
+ * @require1: a #AsRequire instance.
+ * @require2: a #AsRequire instance.
+ *
+ * Checks if two requires are the same.
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.7.7
+ **/
+gboolean
+as_require_equal (AsRequire *require1, AsRequire *require2)
+{
+	AsRequirePrivate *priv1 = GET_PRIVATE (require1);
+	AsRequirePrivate *priv2 = GET_PRIVATE (require2);
+
+	/* trivial */
+	if (require1 == require2)
+		return TRUE;
+
+	/* check for equality */
+	if (priv1->kind != priv2->kind)
+		return FALSE;
+	if (priv1->compare != priv2->compare)
+		return FALSE;
+	if (g_strcmp0 (priv1->version, priv2->version) != 0)
+		return FALSE;
+	if (g_strcmp0 (priv1->value, priv2->value) != 0)
+		return FALSE;
+
+	/* success */
+	return TRUE;
+}
+
+/**
  * as_require_node_insert: (skip)
  * @require: a #AsRequire instance.
  * @parent: the parent #GNode to use..

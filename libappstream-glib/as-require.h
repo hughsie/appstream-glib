@@ -121,6 +121,8 @@ void		 as_require_set_value		(AsRequire	*require,
 gboolean	 as_require_version_compare	(AsRequire	*require,
 						 const gchar	*version,
 						 GError		**error);
+gboolean	 as_require_equal		(AsRequire	*require1,
+						 AsRequire	*require2);
 
 G_END_DECLS
 

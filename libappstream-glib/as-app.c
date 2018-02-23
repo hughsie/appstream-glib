@@ -3582,6 +3582,15 @@ void
 as_app_add_require (AsApp *app, AsRequire *require)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
+		for (guint i = 0; i < priv->requires->len; i++) {
+			AsRequire *req_tmp = g_ptr_array_index (priv->requires, i);
+			if (as_require_equal (require, req_tmp))
+				return;
+		}
+	}
 	g_ptr_array_add (priv->requires, g_object_ref (require));
 }
 
