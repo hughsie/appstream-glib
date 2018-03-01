@@ -161,6 +161,7 @@ asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 		const gchar *tmpdir;
 		g_autofree gchar *filename = NULL;
 		g_autofree gchar *size_str = NULL;
+		g_autoptr(GError) error_local = NULL;
 
 		/* don't save some types of icons */
 		icon = g_ptr_array_index (icons, i);
@@ -190,8 +191,12 @@ asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 			return FALSE;
 
 		/* optimize the icon */
-		if (!asb_utils_optimize_png (filename, error))
-			return FALSE;
+		if (!asb_utils_optimize_png (filename, &error_local)) {
+			asb_package_log (priv->pkg,
+					 ASB_PACKAGE_LOG_LEVEL_WARNING,
+					 "Failed to optimize icon: %s",
+					 error_local->message);
+		}
 
 		/* set new AppStream compatible icon name */
 		asb_package_log (priv->pkg,

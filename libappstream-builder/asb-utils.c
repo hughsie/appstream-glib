@@ -307,8 +307,8 @@ asb_utils_optimize_png (const gchar *filename, GError **error)
 		g_set_error (error,
 			     AS_APP_ERROR,
 			     AS_APP_ERROR_FAILED,
-			     "failed to run %s: %s",
-			     argv_str, standard_error);
+			     "failed to run %s: %s (%i)",
+			     argv_str, standard_error, exit_status);
 		return FALSE;
 	}
 	return TRUE;
