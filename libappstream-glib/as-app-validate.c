@@ -1032,28 +1032,56 @@ as_app_validate_is_content_license_id (const gchar *license_id)
 		return TRUE;
 	if (g_strcmp0 (license_id, "@FSFAP") == 0)
 		return TRUE;
-	if (g_strcmp0 (license_id, "&") == 0)
-		return TRUE;
-	if (g_strcmp0 (license_id, "|") == 0)
-		return TRUE;
-	if (g_strcmp0 (license_id, "+") == 0)
-		return TRUE;
 	return FALSE;
 }
 
 static gboolean
 as_app_validate_is_content_license (const gchar *license)
 {
-	guint i;
+	gboolean requires_all_tokens = TRUE;
+	guint content_license_bad_cnt = 0;
+	guint content_license_good_cnt = 0;
 	g_auto(GStrv) tokens = NULL;
 	tokens = as_utils_spdx_license_tokenize (license);
 	if (tokens == NULL)
 		return FALSE;
-	for (i = 0; tokens[i] != NULL; i++) {
-		if (!as_app_validate_is_content_license_id (tokens[i]))
+
+	/* this is too complicated to process */
+	for (guint i = 0; tokens[i] != NULL; i++) {
+		if (g_strcmp0 (tokens[i], "(") == 0 ||
+		    g_strcmp0 (tokens[i], ")") == 0)
 			return FALSE;
 	}
-	return TRUE;
+
+	/* this is a simple expression parser and can be easily tricked */
+	for (guint i = 0; tokens[i] != NULL; i++) {
+		if (g_strcmp0 (tokens[i], "+") == 0)
+			continue;
+		if (g_strcmp0 (tokens[i], "|") == 0) {
+			requires_all_tokens = FALSE;
+			continue;
+		}
+		if (g_strcmp0 (tokens[i], "&") == 0) {
+			requires_all_tokens = TRUE;
+			continue;
+		}
+		if (as_app_validate_is_content_license_id (tokens[i])) {
+			content_license_good_cnt++;
+		} else {
+			content_license_bad_cnt++;
+		}
+	}
+
+	/* any valid token makes this valid */
+	if (!requires_all_tokens && content_license_good_cnt > 0)
+		return TRUE;
+
+	/* all tokens are required to be valid */
+	if (requires_all_tokens && content_license_bad_cnt == 0)
+		return TRUE;
+
+	/* either the license was bad, or it was too complex to process */
+	return FALSE;
 }
 
 static void
