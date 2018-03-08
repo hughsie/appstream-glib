@@ -396,7 +396,7 @@ as_utils_spdx_license_tokenize_drop (AsUtilsSpdxHelper *helper)
 
 /* SPDX decided to rename some of the really common license IDs in v3
  * which broke a lot of tools that we cannot really fix now */
-static gchar *
+static GString *
 as_utils_spdx_license_3to2 (const gchar *license3)
 {
 	GString *license2 = g_string_new (license3);
