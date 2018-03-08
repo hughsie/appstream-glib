@@ -394,6 +394,17 @@ as_utils_spdx_license_tokenize_drop (AsUtilsSpdxHelper *helper)
 	g_string_truncate (helper->collect, 0);
 }
 
+/* SPDX decided to rename some of the really common license IDs in v3
+ * which broke a lot of tools that we cannot really fix now */
+static gchar *
+as_utils_spdx_license_3to2 (const gchar *license3)
+{
+	GString *license2 = g_string_new (license3);
+	as_utils_string_replace (license2, "-only", "");
+	as_utils_string_replace (license2, "-or-later", "+");
+	return license2;
+}
+
 /**
  * as_utils_spdx_license_tokenize:
  * @license: a license string, e.g. "LGPLv2+ and (QPL or GPLv2) and MIT"
@@ -411,32 +422,36 @@ as_utils_spdx_license_tokenize_drop (AsUtilsSpdxHelper *helper)
 gchar **
 as_utils_spdx_license_tokenize (const gchar *license)
 {
-	guint i;
 	AsUtilsSpdxHelper helper;
+	g_autoptr(GString) license2 = NULL;
 
 	/* handle invalid */
 	if (license == NULL)
 		return NULL;
 
+	/* SPDX broke the world with v3 */
+	license2 = as_utils_spdx_license_3to2 (license);
+
 	helper.last_token_literal = FALSE;
 	helper.collect = g_string_new ("");
 	helper.array = g_ptr_array_new_with_free_func (g_free);
-	for (i = 0; license[i] != '\0'; i++) {
+	for (guint i = 0; i < license2->len; i++) {
 
 		/* handle brackets */
-		if (license[i] == '(' || license[i] == ')') {
+		const gchar tmp = license2->str[i];
+		if (tmp == '(' || tmp == ')') {
 			as_utils_spdx_license_tokenize_drop (&helper);
-			g_ptr_array_add (helper.array, g_strdup_printf ("%c", license[i]));
+			g_ptr_array_add (helper.array, g_strdup_printf ("%c", tmp));
 			helper.last_token_literal = FALSE;
 			continue;
 		}
 
 		/* space, so dump queue */
-		if (license[i] == ' ') {
+		if (tmp == ' ') {
 			as_utils_spdx_license_tokenize_drop (&helper);
 			continue;
 		}
-		g_string_append_c (helper.collect, license[i]);
+		g_string_append_c (helper.collect, tmp);
 	}
 
 	/* dump anything remaining */
