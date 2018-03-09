@@ -86,6 +86,7 @@ add_icons (AsApp *app,
 	im = as_image_new ();
 	if (!as_image_load_filename_full (im, fn,
 					  64, min_icon_size,
+					  AS_IMAGE_LOAD_FLAG_ALWAYS_RESIZE |
 					  AS_IMAGE_LOAD_FLAG_ONLY_SUPPORTED |
 					  AS_IMAGE_LOAD_FLAG_SHARPEN,
 					  error)) {
@@ -138,6 +139,7 @@ add_icons (AsApp *app,
 	g_debug ("trying to load %s", fn_hidpi);
 	if (!as_image_load_filename_full (im, fn_hidpi,
 					  128, 128,
+					  AS_IMAGE_LOAD_FLAG_ALWAYS_RESIZE |
 					  AS_IMAGE_LOAD_FLAG_SHARPEN,
 					  &error_local)) {
 		g_debug ("failed to load HiDPI icon: %s", error_local->message);
