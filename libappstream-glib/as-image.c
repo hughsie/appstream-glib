@@ -620,6 +620,17 @@ as_image_load_filename_full (AsImage *image,
 		return TRUE;
 	}
 
+	/* this makes icons look blurry, but allows the software center to look
+	 * good as icons are properly aligned in the UI layout */
+	if (flags & AS_IMAGE_LOAD_FLAG_ALWAYS_RESIZE) {
+		pixbuf = gdk_pixbuf_scale_simple (pixbuf_src,
+						  (gint) dest_size,
+						  (gint) dest_size,
+						  GDK_INTERP_HYPER);
+		as_image_set_pixbuf (image, pixbuf);
+		return TRUE;
+	}
+
 	/* never scale up, just pad */
 	if (pixbuf_width < dest_size && pixbuf_height < dest_size) {
 		g_debug ("icon padded to %ux%u as size %ux%u",

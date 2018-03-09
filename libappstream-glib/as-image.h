@@ -89,6 +89,7 @@ typedef enum {
  * @AS_IMAGE_LOAD_FLAG_SET_BASENAME:	Set the image basename
  * @AS_IMAGE_LOAD_FLAG_SET_CHECKSUM:	Set the image checksum
  * @AS_IMAGE_LOAD_FLAG_ONLY_SUPPORTED:	Only load supported formats like PNG and JPG
+ * @AS_IMAGE_LOAD_FLAG_ALWAYS_RESIZE:	Always resize the source icon to the perfect size
  *
  * The flags used for loading images.
  **/
@@ -98,6 +99,7 @@ typedef enum {
 	AS_IMAGE_LOAD_FLAG_SET_BASENAME	= 2,	/* Since: 0.5.6 */
 	AS_IMAGE_LOAD_FLAG_SET_CHECKSUM	= 4,	/* Since: 0.5.6 */
 	AS_IMAGE_LOAD_FLAG_ONLY_SUPPORTED = 8,	/* Since: 0.5.6 */
+	AS_IMAGE_LOAD_FLAG_ALWAYS_RESIZE = 16,	/* Since: 0.7.7 */
 	/*< private >*/
 	AS_IMAGE_LOAD_FLAG_LAST
 } AsImageLoadFlags;
