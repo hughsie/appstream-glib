@@ -1485,7 +1485,7 @@ as_app_get_developer_names (AsApp *app)
  *
  * Gets the metadata set for the application.
  *
- * Returns: (transfer none): hash table of metadata
+ * Returns: (transfer none) (element-type utf8 utf8): hash table of metadata
  *
  * Since: 0.1.6
  **/
