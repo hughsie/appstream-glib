@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-22 16:22+0000\n"
+"POT-Creation-Date: 2018-03-13 13:32+0000\n"
 "PO-Revision-Date: 2017-12-24 10:19-0500\n"
 "Last-Translator: Antonio Lisbôa  <antonion.2048@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/freedesktop/appstream-glib/language/pt_BR/)\n"
@@ -23,7 +23,7 @@ msgstr ""
 "X-Generator: Zanata 3.9.6\n"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:90 client/as-compose.c:335 client/as-util.c:4345
+#: client/as-builder.c:90 client/as-compose.c:337 client/as-util.c:4345
 msgid "Show extra debugging information"
 msgstr "Mostrar informações extra de  depuração"
 
@@ -68,12 +68,12 @@ msgid "Set the temporary directory"
 msgstr "Define o diretório temporário"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:117 client/as-compose.c:341
+#: client/as-builder.c:117 client/as-compose.c:343
 msgid "Set the output directory"
 msgstr "Define o diretório de saída"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:120 client/as-compose.c:344
+#: client/as-builder.c:120 client/as-compose.c:346
 msgid "Set the icons directory"
 msgstr "Define o diretório de ícones"
 
@@ -83,12 +83,12 @@ msgid "Set the cache directory"
 msgstr "Define o diretório do cache"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:126 client/as-compose.c:353
+#: client/as-builder.c:126 client/as-compose.c:355
 msgid "Set the basenames of the output files"
 msgstr "Define os nomes base dos arquivos de saída"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:129 client/as-compose.c:347
+#: client/as-builder.c:129 client/as-compose.c:349
 msgid "Set the origin name"
 msgstr "Define o nome de origem"
 
@@ -98,7 +98,7 @@ msgid "Set the number of threads"
 msgstr "Define o número de fluxos"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:135 client/as-compose.c:350
+#: client/as-builder.c:135 client/as-compose.c:352
 msgid "Set the minimum icon size in pixels"
 msgstr "Define o tamanho mínimo do ícone em pixels"
 
@@ -113,7 +113,7 @@ msgid "Ignore certain types of veto"
 msgstr "Ignora certos tipos de veto"
 
 #. TRANSLATORS: error message
-#: client/as-builder.c:155 client/as-compose.c:367 client/as-util.c:4622
+#: client/as-builder.c:155 client/as-compose.c:369 client/as-util.c:4622
 msgid "Failed to parse arguments"
 msgstr "Falha ao analisar argumentos"
 
@@ -150,66 +150,66 @@ msgstr "Falha ao gerar metadados"
 
 #. success
 #. TRANSLATORS: information message
-#: client/as-builder.c:322 client/as-compose.c:526
+#: client/as-builder.c:322 client/as-compose.c:528
 msgid "Done!"
 msgstr "Pronto!"
 
 #. TRANSLATORS: we've saving the icon file to disk
-#: client/as-compose.c:124 client/as-compose.c:179
+#: client/as-compose.c:125 client/as-compose.c:181
 msgid "Saving icon"
 msgstr "Salvando o ícone"
 
 #. TRANSLATORS: command line option
-#: client/as-compose.c:338
+#: client/as-compose.c:340
 msgid "Set the prefix"
 msgstr "Define o prefixo"
 
 #. TRANSLATORS: we're generating the AppStream data
-#: client/as-compose.c:410
+#: client/as-compose.c:412
 msgid "Processing application"
 msgstr "Processando o aplicativo"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
-#: client/as-compose.c:416
+#: client/as-compose.c:418
 msgid "Error loading AppData file"
 msgstr "Erro ao carregar o arquivo AppData"
 
 #. TRANSLATORS: the .mo files could not be parsed
-#: client/as-compose.c:429
+#: client/as-compose.c:431
 msgid "Error parsing translations"
 msgstr "Erro ao analisar traduções"
 
 #. TRANSLATORS: we could not auto-add the kudo
-#: client/as-compose.c:440
+#: client/as-compose.c:442
 msgid "Error parsing kudos"
 msgstr "Erro ao analisar kudos"
 
 #. TRANSLATORS: we could not auto-add the provides
-#: client/as-compose.c:451
+#: client/as-compose.c:453
 msgid "Error parsing provides"
 msgstr "Erro ao analisar o provides"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
-#: client/as-compose.c:479
+#: client/as-compose.c:481
 msgid "Error loading desktop file"
 msgstr "Erro ao carregar o arquivo desktop"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
-#: client/as-compose.c:501
+#: client/as-compose.c:503
 msgid "Error creating output directory"
 msgstr "Erro ao criar diretório de saída"
 
 #. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:510
+#: client/as-compose.c:512
 msgid "Saving AppStream"
 msgstr "Salvando o AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
-#: client/as-compose.c:520
+#: client/as-compose.c:522
 msgid "Error saving AppStream file"
 msgstr "Erro ao salvar o arquivo de AppStream"
 

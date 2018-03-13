@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-22 16:22+0000\n"
+"POT-Creation-Date: 2018-03-13 13:32+0000\n"
 "PO-Revision-Date: 2017-12-06 02:29-0500\n"
 "Last-Translator: Fabio Tomat <f.t.public@gmail.com>\n"
 "Language-Team: Friulian\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Zanata 3.9.6\n"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:90 client/as-compose.c:335 client/as-util.c:4345
+#: client/as-builder.c:90 client/as-compose.c:337 client/as-util.c:4345
 msgid "Show extra debugging information"
 msgstr "Mostre informazions di debug adizionâls"
 
@@ -60,12 +60,12 @@ msgid "Set the temporary directory"
 msgstr "Stabilìs la cartele temporanie"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:117 client/as-compose.c:341
+#: client/as-builder.c:117 client/as-compose.c:343
 msgid "Set the output directory"
 msgstr "Stabilìs la cartele di jessude"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:120 client/as-compose.c:344
+#: client/as-builder.c:120 client/as-compose.c:346
 msgid "Set the icons directory"
 msgstr "Stabilìs la cartele des iconis"
 
@@ -75,12 +75,12 @@ msgid "Set the cache directory"
 msgstr "Stabilìs la cartele de cache"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:126 client/as-compose.c:353
+#: client/as-builder.c:126 client/as-compose.c:355
 msgid "Set the basenames of the output files"
 msgstr "Stabilìs il non di base dai file di jessude"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:129 client/as-compose.c:347
+#: client/as-builder.c:129 client/as-compose.c:349
 msgid "Set the origin name"
 msgstr "Stabilìs il non de origjin"
 
@@ -90,7 +90,7 @@ msgid "Set the number of threads"
 msgstr "Stabilìs il numar di thread"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:135 client/as-compose.c:350
+#: client/as-builder.c:135 client/as-compose.c:352
 msgid "Set the minimum icon size in pixels"
 msgstr "Stabilìs la dimension di icone minime in pixel"
 
@@ -105,7 +105,7 @@ msgid "Ignore certain types of veto"
 msgstr "Ignore cierts gjenars di veto"
 
 #. TRANSLATORS: error message
-#: client/as-builder.c:155 client/as-compose.c:367 client/as-util.c:4622
+#: client/as-builder.c:155 client/as-compose.c:369 client/as-util.c:4622
 msgid "Failed to parse arguments"
 msgstr "No si è rivâts a analizâ i argoments"
 
@@ -142,66 +142,66 @@ msgstr "No si è rivâts a gjenerâ i metadâts"
 
 #. success
 #. TRANSLATORS: information message
-#: client/as-builder.c:322 client/as-compose.c:526
+#: client/as-builder.c:322 client/as-compose.c:528
 msgid "Done!"
 msgstr "Fat!"
 
 #. TRANSLATORS: we've saving the icon file to disk
-#: client/as-compose.c:124 client/as-compose.c:179
+#: client/as-compose.c:125 client/as-compose.c:181
 msgid "Saving icon"
 msgstr "Salvament icone"
 
 #. TRANSLATORS: command line option
-#: client/as-compose.c:338
+#: client/as-compose.c:340
 msgid "Set the prefix"
 msgstr "Stabilìs il prefìs"
 
 #. TRANSLATORS: we're generating the AppStream data
-#: client/as-compose.c:410
+#: client/as-compose.c:412
 msgid "Processing application"
 msgstr "Elaborazion aplicazion"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
-#: client/as-compose.c:416
+#: client/as-compose.c:418
 msgid "Error loading AppData file"
 msgstr "Erôr tal cjariâ il file AppData"
 
 #. TRANSLATORS: the .mo files could not be parsed
-#: client/as-compose.c:429
+#: client/as-compose.c:431
 msgid "Error parsing translations"
 msgstr "Erôr tal analizâ lis traduzions"
 
 #. TRANSLATORS: we could not auto-add the kudo
-#: client/as-compose.c:440
+#: client/as-compose.c:442
 msgid "Error parsing kudos"
 msgstr "Erôr tal analizâ i kudos"
 
 #. TRANSLATORS: we could not auto-add the provides
-#: client/as-compose.c:451
+#: client/as-compose.c:453
 msgid "Error parsing provides"
 msgstr "Erôr tal analizâ i provides"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
-#: client/as-compose.c:479
+#: client/as-compose.c:481
 msgid "Error loading desktop file"
 msgstr "Erôr tal cjariâ il file desktop"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
-#: client/as-compose.c:501
+#: client/as-compose.c:503
 msgid "Error creating output directory"
 msgstr "Erôr tal creâ la cartele di jessude"
 
 #. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:510
+#: client/as-compose.c:512
 msgid "Saving AppStream"
 msgstr "Salvament AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
-#: client/as-compose.c:520
+#: client/as-compose.c:522
 msgid "Error saving AppStream file"
 msgstr "Erôr tal salvâ il file AppStream"
 

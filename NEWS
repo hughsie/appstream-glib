@@ -1,3 +1,18 @@
+Version 0.7.7
+~~~~~~~~~~~~~~
+Released: 2018-03-12
+
+New Features:
+ - Add AS_IMAGE_LOAD_FLAG_ALWAYS_RESIZE to always resize the pixbuf (Richard Hughes)
+ - Add custom metadata key for shell extension uuid (Kalev Lember)
+
+Bugfixes:
+ - Always resize AppStream icons to fit the destination size (Richard Hughes)
+ - Correctly validate files using OR in the metadata_license (Richard Hughes)
+ - Do not fail to validate if the timestamps are out of order (Richard Hughes)
+ - Don't abort the build if pngquant fails (Richard Hughes)
+ - Update the SPDX license list to v3.0 (Richard Hughes)
+
 Version 0.7.6
 ~~~~~~~~~~~~~~
 Released: 2018-02-09
