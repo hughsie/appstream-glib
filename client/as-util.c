@@ -3611,6 +3611,58 @@ as_util_mirror_local_firmware (AsUtilPrivate *priv, gchar **values, GError **err
 }
 
 static gboolean
+as_util_agreement_export (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	AsAgreement *pp;
+	GPtrArray *sections;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GFile) file = NULL;
+
+	/* check args */
+	if (g_strv_length (values) < 2) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, expected: file type, "
+				     "e.g. foo.metainfo.xml eula");
+		return FALSE;
+	}
+
+	/* parse file */
+	app = as_app_new ();
+	if (!as_app_parse_file (app, values[0], AS_APP_PARSE_FLAG_NONE, error))
+		return FALSE;
+
+	/* get all policy sections */
+	pp = as_app_get_agreement_by_kind (app, as_agreement_kind_from_string (values[1]));
+	if (pp == NULL) {
+		g_set_error (error,
+			     AS_ERROR,
+			     AS_ERROR_INVALID_ARGUMENTS,
+			     "no privacy policy with type %s",
+			     values[1]);
+		return FALSE;
+	}
+	sections = as_agreement_get_sections (pp);
+	for (guint i = 0; i < sections->len; i++) {
+		AsAgreementSection *ps = g_ptr_array_index (sections, i);
+		const gchar *tmp;
+		g_autofree gchar *plain = NULL;
+
+		g_print ("%s\n^^^\n", as_agreement_section_get_name (ps, NULL));
+		tmp = as_agreement_section_get_description (ps, NULL);
+		if (tmp == NULL)
+			continue;
+		plain = as_markup_convert_simple (tmp, error);
+		if (plain == NULL)
+			return FALSE;
+		g_print ("%s\n\n", plain);
+	}
+
+	return TRUE;
+}
+
+static gboolean
 as_util_replace_screenshots (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	GPtrArray *screenshots;
@@ -4482,6 +4534,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Validate an AppData or AppStream file (relaxed)"),
 		     as_util_validate_relax);
+	as_util_add (priv->cmd_array,
+		     "agreement-export",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Exports the agreement to text"),
+		     as_util_agreement_export);
 	as_util_add (priv->cmd_array,
 		     "validate-strict",
 		     NULL,

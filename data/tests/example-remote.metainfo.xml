@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2018 Richard Hughes <richard@hughsie.com> -->
+
+<component type="source">
+  <id>org.lvfs.stable-remote</id>
+  <name>Linux Vendor Firmware Service (stable firmware)</name>
+  <metadata_license>CC0</metadata_license>
+
+  <agreement version_id="1.0">
+    <agreement_section>
+      <name>Warning!</name>
+      <description>
+        <p>
+          The LVFS is a free service that operates as an independent legal
+          entity and has no connection with your distribution.
+          Your distributor may not have verified any of the firmware files for
+          compatibility with your system.
+          All firmware is provided only by the original equipment manufacturer.
+        </p>
+        <p>
+          Enabling this functionality is done at your own risk, so please do not
+          file issues with your distributor as they will not be able to help.
+        </p>
+      </description>
+    </agreement_section>
+  </agreement>
+
+</component>

@@ -190,6 +190,8 @@ as_tag_to_string (AsTag tag)
 		"requires",
 		"custom",
 		"launchable",
+		"agreement",
+		"agreement_section",
 		NULL };
 	if (tag > AS_TAG_LAST)
 		tag = AS_TAG_LAST;

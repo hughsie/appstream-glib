@@ -67,3 +67,5 @@ suggests, AS_TAG_SUGGESTS
 requires, AS_TAG_REQUIRES
 custom, AS_TAG_CUSTOM
 launchable, AS_TAG_LAUNCHABLE
+agreement, AS_TAG_AGREEMENT
+agreement_section, AS_TAG_AGREEMENT_SECTION

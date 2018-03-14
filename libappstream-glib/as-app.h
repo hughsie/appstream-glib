@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2017 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2018 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -40,6 +40,7 @@
 #include "as-review.h"
 #include "as-suggest.h"
 #include "as-content-rating.h"
+#include "as-agreement.h"
 #include "as-translation.h"
 
 G_BEGIN_DECLS
@@ -108,6 +109,7 @@ typedef enum {
  * @AS_APP_SUBSUME_FLAG_SCREENSHOTS:	Copy the screenshots
  * @AS_APP_SUBSUME_FLAG_REVIEWS:	Copy the reviews
  * @AS_APP_SUBSUME_FLAG_CONTENT_RATINGS: Copy the content ratings
+ * @AS_APP_SUBSUME_FLAG_AGREEMENTS:	Copy the agreements
  * @AS_APP_SUBSUME_FLAG_PROVIDES:	Copy the provides
  * @AS_APP_SUBSUME_FLAG_ICONS:		Copy the icons
  * @AS_APP_SUBSUME_FLAG_MIMETYPES:	Copy the mimetypes
@@ -170,6 +172,7 @@ typedef enum {
 	AS_APP_SUBSUME_FLAG_SOURCE_KIND		= 1ull << 34,	/* Since: 0.6.1 */
 	AS_APP_SUBSUME_FLAG_SUGGESTS		= 1ull << 35,	/* Since: 0.6.3 */
 	AS_APP_SUBSUME_FLAG_LAUNCHABLES		= 1ull << 36,	/* Since: 0.6.13 */
+	AS_APP_SUBSUME_FLAG_AGREEMENTS		= 1ull << 37,	/* Since: 0.7.8 */
 	/*< private >*/
 	AS_APP_SUBSUME_FLAG_LAST,
 } AsAppSubsumeFlags;
@@ -182,6 +185,7 @@ typedef enum {
 					 AS_APP_SUBSUME_FLAG_COMMENT | \
 					 AS_APP_SUBSUME_FLAG_COMPULSORY | \
 					 AS_APP_SUBSUME_FLAG_CONTENT_RATINGS | \
+					 AS_APP_SUBSUME_FLAG_AGREEMENTS | \
 					 AS_APP_SUBSUME_FLAG_DESCRIPTION | \
 					 AS_APP_SUBSUME_FLAG_DEVELOPER_NAME | \
 					 AS_APP_SUBSUME_FLAG_EXTENDS | \
@@ -646,6 +650,8 @@ void		 as_app_add_review		(AsApp		*app,
 						 AsReview	*review);
 void		 as_app_add_content_rating	(AsApp		*app,
 						 AsContentRating *content_rating);
+void		 as_app_add_agreement		(AsApp		*app,
+						 AsAgreement	*agreement);
 void		 as_app_add_icon		(AsApp		*app,
 						 AsIcon		*icon);
 void		 as_app_add_bundle		(AsApp		*app,
@@ -709,6 +715,9 @@ gboolean	 as_app_to_file			(AsApp		*app,
 						 GError		**error);
 AsContentRating	*as_app_get_content_rating	(AsApp		*app,
 						 const gchar 	*kind);
+AsAgreement	*as_app_get_agreement_by_kind	(AsApp		*app,
+						 AsAgreementKind kind);
+AsAgreement	*as_app_get_agreement_default	(AsApp		*app);
 AsScreenshot	*as_app_get_screenshot_default	(AsApp		*app);
 AsIcon		*as_app_get_icon_default	(AsApp		*app);
 AsIcon		*as_app_get_icon_for_size	(AsApp		*app,

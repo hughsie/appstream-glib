@@ -27,6 +27,7 @@
 #include <string.h>
 #include <fnmatch.h>
 
+#include "as-agreement-private.h"
 #include "as-app-private.h"
 #include "as-app-builder.h"
 #include "as-bundle-private.h"
@@ -1273,6 +1274,57 @@ as_test_image_func (void)
 	g_assert (ret);
 }
 
+static void
+as_test_agreement_func (void)
+{
+	GError *error = NULL;
+	AsAgreementSection *sect;
+	AsNode *n;
+	AsNode *root;
+	GString *xml;
+	const gchar *src =
+		"<agreement type=\"eula\" version_id=\"1.2.3a\">\n"
+		"<agreement_section type=\"intro\">\n"
+		"<description><p>Mighty Fine</p></description>\n"
+		"</agreement_section>\n"
+		"</agreement>\n";
+	gboolean ret;
+	g_autoptr(AsAgreement) agreement = NULL;
+	g_autoptr(AsNodeContext) ctx = NULL;
+
+	agreement = as_agreement_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	n = as_node_find (root, "agreement");
+	g_assert (n != NULL);
+	ctx = as_node_context_new ();
+	ret = as_agreement_node_parse (agreement, n, ctx, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	as_node_unref (root);
+
+	/* verify */
+	g_assert_cmpint (as_agreement_get_kind (agreement), ==, AS_AGREEMENT_KIND_EULA);
+	g_assert_cmpstr (as_agreement_get_version_id (agreement), ==, "1.2.3a");
+	sect = as_agreement_get_section_default (agreement);
+	g_assert_nonnull (sect);
+	g_assert_cmpstr (as_agreement_section_get_kind (sect), ==, "intro");
+	g_assert_cmpstr (as_agreement_section_get_description (sect, NULL), ==, "<p>Mighty Fine</p>");
+
+	/* back to node */
+	root = as_node_new ();
+	as_node_context_set_version (ctx, 0.4);
+	n = as_agreement_node_insert (agreement, root, ctx);
+	xml = as_node_to_xml (n, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	ret = as_test_compare_lines (xml->str, src, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_string_free (xml, TRUE);
+	as_node_unref (root);
+}
 
 static void
 as_test_review_func (void)
@@ -5576,6 +5628,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/icon{embedded}", as_test_icon_embedded_func);
 	g_test_add_func ("/AppStream/bundle", as_test_bundle_func);
 	g_test_add_func ("/AppStream/review", as_test_review_func);
+	g_test_add_func ("/AppStream/agreement", as_test_agreement_func);
 	g_test_add_func ("/AppStream/translation", as_test_translation_func);
 	g_test_add_func ("/AppStream/suggest", as_test_suggest_func);
 	g_test_add_func ("/AppStream/image", as_test_image_func);

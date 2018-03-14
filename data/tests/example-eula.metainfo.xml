@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2018 Richard Hughes <richard@hughsie.com> -->
+
+<component type="desktop">
+  <id>org.gnome.Software</id>
+  <name>GNOME Software</name>
+  ...usual contents for a desktop app...
+  <metadata_license>CC0</metadata_license>
+  <agreement type="eula" version_id="1.0">
+    <agreement_section>
+      <description>
+        <p>
+          If it breaks, you get to keep both pieces.
+        </p>
+      </description>
+    </agreement_section>
+  </agreement>
+</component>

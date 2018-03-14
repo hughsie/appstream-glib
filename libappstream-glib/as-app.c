@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2014-2017 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2014-2018 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -40,6 +40,7 @@
 #include "as-app-private.h"
 #include "as-bundle-private.h"
 #include "as-content-rating-private.h"
+#include "as-agreement-private.h"
 #include "as-enums.h"
 #include "as-icon-private.h"
 #include "as-node-private.h"
@@ -87,6 +88,7 @@ typedef struct
 	GPtrArray	*screenshots;			/* of AsScreenshot */
 	GPtrArray	*reviews;			/* of AsReview */
 	GPtrArray	*content_ratings;		/* of AsContentRating */
+	GPtrArray	*agreements;			/* of AsAgreement */
 	GPtrArray	*icons;				/* of AsIcon */
 	GPtrArray	*bundles;			/* of AsBundle */
 	GPtrArray	*translations;			/* of AsTranslation */
@@ -454,6 +456,7 @@ as_app_finalize (GObject *object)
 	g_ptr_array_unref (priv->categories);
 	g_ptr_array_unref (priv->compulsory_for_desktops);
 	g_ptr_array_unref (priv->content_ratings);
+	g_ptr_array_unref (priv->agreements);
 	g_ptr_array_unref (priv->extends);
 	g_ptr_array_unref (priv->kudos);
 	g_ptr_array_unref (priv->permissions);
@@ -483,6 +486,7 @@ as_app_init (AsApp *app)
 	priv->categories = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 	priv->compulsory_for_desktops = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 	priv->content_ratings = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	priv->agreements = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->extends = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 	priv->keywords = g_hash_table_new_full (g_str_hash, g_str_equal,
 						(GDestroyNotify) as_ref_string_unref,
@@ -1314,6 +1318,68 @@ as_app_get_content_rating (AsApp *app, const gchar *kind)
 			return content_rating;
 	}
 	return NULL;
+}
+
+/**
+ * as_app_get_agreements:
+ * @app: a #AsApp instance.
+ *
+ * Gets any agreements the application has defined.
+ *
+ * Returns: (element-type AsAgreement) (transfer none): an array
+ *
+ * Since: 0.7.8
+ **/
+GPtrArray *
+as_app_get_agreements (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	return priv->agreements;
+}
+
+/**
+ * as_app_get_agreement_by_kind:
+ * @app: a #AsApp instance.
+ * @kind: an agreement kind, e.g. %AS_AGREEMENT_KIND_EULA
+ *
+ * Gets a agreement the application has defined of a specific type.
+ *
+ * Returns: (transfer none): a #AsAgreement or NULL for not found
+ *
+ * Since: 0.7.8
+ **/
+AsAgreement *
+as_app_get_agreement_by_kind (AsApp *app, AsAgreementKind kind)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	guint i;
+
+	for (i = 0; i < priv->agreements->len; i++) {
+		AsAgreement *agreement;
+		agreement = g_ptr_array_index (priv->agreements, i);
+		if (as_agreement_get_kind (agreement) == kind)
+			return agreement;
+	}
+	return NULL;
+}
+
+/**
+ * as_app_get_agreement_default:
+ * @app: a #AsApp instance.
+ *
+ * Gets a privacy policys the application has defined of a specific type.
+ *
+ * Returns: (transfer none): a #AsAgreement or NULL for not found
+ *
+ * Since: 0.7.8
+ **/
+AsAgreement *
+as_app_get_agreement_default (AsApp *app)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	if (priv->agreements->len < 1)
+		return NULL;
+	return g_ptr_array_index (priv->agreements, 0);
 }
 
 /**
@@ -3389,6 +3455,33 @@ as_app_add_content_rating (AsApp *app, AsContentRating *content_rating)
 	g_ptr_array_add (priv->content_ratings, g_object_ref (content_rating));
 }
 
+/**
+ * as_app_add_agreement:
+ * @app: a #AsApp instance.
+ * @agreement: a #AsAgreement instance.
+ *
+ * Adds a agreement to an application.
+ *
+ * Since: 0.7.8
+ **/
+void
+as_app_add_agreement (AsApp *app, AsAgreement *agreement)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+
+	/* handle untrusted */
+	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
+		for (guint i = 0; i < priv->agreements->len; i++) {
+			AsAgreement *cr_tmp = g_ptr_array_index (priv->agreements, i);
+			if (as_agreement_get_kind (cr_tmp) == as_agreement_get_kind (agreement)) {
+				priv->problems |= AS_APP_PROBLEM_DUPLICATE_AGREEMENT;
+				return;
+			}
+		}
+	}
+	g_ptr_array_add (priv->agreements, g_object_ref (agreement));
+}
+
 static gboolean
 as_app_check_icon_duplicate (AsIcon *icon1, AsIcon *icon2)
 {
@@ -4087,6 +4180,18 @@ as_app_subsume_private (AsApp *app, AsApp *donor, guint64 flags)
 		}
 	}
 
+	/* agreements */
+	if (flags & AS_APP_SUBSUME_FLAG_AGREEMENTS) {
+		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
+		    priv->agreements->len > 0)
+			g_ptr_array_set_size (papp->agreements, 0);
+		for (i = 0; i < priv->agreements->len; i++) {
+			AsAgreement *agreement;
+			agreement = g_ptr_array_index (priv->agreements, i);
+			as_app_add_agreement (app, agreement);
+		}
+	}
+
 	/* provides */
 	if (flags & AS_APP_SUBSUME_FLAG_PROVIDES) {
 		if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 &&
@@ -4657,6 +4762,15 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 		}
 	}
 
+	/* <agreements> */
+	if (priv->agreements->len > 0) {
+		for (i = 0; i < priv->agreements->len; i++) {
+			AsAgreement *agreement;
+			agreement = g_ptr_array_index (priv->agreements, i);
+			as_agreement_node_insert (agreement, node_app, ctx);
+		}
+	}
+
 	/* <releases> */
 	if (priv->releases->len > 0) {
 		g_ptr_array_sort (priv->releases, as_app_releases_sort_cb);
@@ -5127,6 +5241,17 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 		break;
 	}
 
+	/* <agreements> */
+	case AS_TAG_AGREEMENT:
+	{
+		g_autoptr(AsAgreement) agreement = NULL;
+		agreement = as_agreement_new ();
+		if (!as_agreement_node_parse (agreement, n, ctx, error))
+			return FALSE;
+		as_app_add_agreement (app, agreement);
+		break;
+	}
+
 	/* <releases> */
 	case AS_TAG_RELEASES:
 		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
@@ -5280,6 +5405,7 @@ as_app_node_parse_full (AsApp *app, GNode *node, guint32 flags,
 		g_ptr_array_set_size (priv->suggests, 0);
 		g_ptr_array_set_size (priv->requires, 0);
 		g_ptr_array_set_size (priv->content_ratings, 0);
+		g_ptr_array_set_size (priv->agreements, 0);
 		g_ptr_array_set_size (priv->launchables, 0);
 		g_hash_table_remove_all (priv->keywords);
 	}
