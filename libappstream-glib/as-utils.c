@@ -1877,20 +1877,23 @@ as_utils_unique_id_is_wildcard_part (const gchar *str, guint len)
 }
 
 /**
- * as_utils_unique_id_equal:
+ * as_utils_unique_id_match:
  * @unique_id1: a unique ID
  * @unique_id2: another unique ID
+ * @match_flags: a #AsUniqueIdMatchFlags bitfield, e.g. %AS_UNIQUE_ID_MATCH_FLAG_ID
  *
- * Checks two unique IDs for equality allowing globs to match.
+ * Checks two unique IDs for equality allowing globs to match, whilst also
+ * allowing clients to whitelist sections that have to match.
  *
  * Returns: %TRUE if the ID's should be considered equal.
  *
- * Since: 0.6.1
+ * Since: 0.7.8
  */
 gboolean
-as_utils_unique_id_equal (const gchar *unique_id1, const gchar *unique_id2)
+as_utils_unique_id_match (const gchar *unique_id1,
+			  const gchar *unique_id2,
+			  AsUniqueIdMatchFlags match_flags)
 {
-	guint i;
 	guint last1 = 0;
 	guint last2 = 0;
 	guint len1;
@@ -1906,7 +1909,7 @@ as_utils_unique_id_equal (const gchar *unique_id1, const gchar *unique_id2)
 		return g_strcmp0 (unique_id1, unique_id2) == 0;
 
 	/* look at each part */
-	for (i = 0; i < AS_UTILS_UNIQUE_ID_PARTS; i++) {
+	for (guint i = 0; i < AS_UTILS_UNIQUE_ID_PARTS; i++) {
 		const gchar *tmp1 = unique_id1 + last1;
 		const gchar *tmp2 = unique_id2 + last2;
 
@@ -1915,7 +1918,8 @@ as_utils_unique_id_equal (const gchar *unique_id1, const gchar *unique_id2)
 		len2 = as_utils_unique_id_find_part (tmp2);
 
 		/* either string was a wildcard */
-		if (!as_utils_unique_id_is_wildcard_part (tmp1, len1) &&
+		if (match_flags & (1 << i) &&
+		    !as_utils_unique_id_is_wildcard_part (tmp1, len1) &&
 		    !as_utils_unique_id_is_wildcard_part (tmp2, len2)) {
 			/* are substrings the same */
 			if (len1 != len2)
@@ -1929,6 +1933,30 @@ as_utils_unique_id_equal (const gchar *unique_id1, const gchar *unique_id2)
 		last2 += len2 + 1;
 	}
 	return TRUE;
+}
+
+/**
+ * as_utils_unique_id_equal:
+ * @unique_id1: a unique ID
+ * @unique_id2: another unique ID
+ *
+ * Checks two unique IDs for equality allowing globs to match.
+ *
+ * Returns: %TRUE if the ID's should be considered equal.
+ *
+ * Since: 0.6.1
+ */
+gboolean
+as_utils_unique_id_equal (const gchar *unique_id1, const gchar *unique_id2)
+{
+	return as_utils_unique_id_match (unique_id1,
+					 unique_id2,
+					 AS_UNIQUE_ID_MATCH_FLAG_SCOPE |
+					 AS_UNIQUE_ID_MATCH_FLAG_BUNDLE_KIND |
+					 AS_UNIQUE_ID_MATCH_FLAG_ORIGIN |
+					 AS_UNIQUE_ID_MATCH_FLAG_KIND |
+					 AS_UNIQUE_ID_MATCH_FLAG_ID |
+					 AS_UNIQUE_ID_MATCH_FLAG_BRANCH);
 }
 
 /**

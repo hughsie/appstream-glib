@@ -5249,6 +5249,22 @@ as_test_utils_unique_id_func (void)
 	}
 	duration_ns = g_timer_elapsed (timer, NULL) * 1000000000.f;
 	g_print ("%.0f ns: ", duration_ns / (loops * 4));
+
+	/* allow ignoring using bitfields */
+	g_assert (as_utils_unique_id_match ("aa/bb/cc/dd/ee/ff",
+					    "aa/bb/cc/dd/ee/XXXXXXXXXXXXX",
+					    AS_UNIQUE_ID_MATCH_FLAG_SCOPE |
+					    AS_UNIQUE_ID_MATCH_FLAG_BUNDLE_KIND |
+					    AS_UNIQUE_ID_MATCH_FLAG_ORIGIN |
+					    AS_UNIQUE_ID_MATCH_FLAG_KIND |
+					    AS_UNIQUE_ID_MATCH_FLAG_ID));
+	g_assert (as_utils_unique_id_match ("XXXXXXXXXXXXX/bb/cc/dd/ee/ff",
+					    "aa/bb/cc/dd/ee/ff",
+					    AS_UNIQUE_ID_MATCH_FLAG_BUNDLE_KIND |
+					    AS_UNIQUE_ID_MATCH_FLAG_ORIGIN |
+					    AS_UNIQUE_ID_MATCH_FLAG_KIND |
+					    AS_UNIQUE_ID_MATCH_FLAG_ID |
+					    AS_UNIQUE_ID_MATCH_FLAG_BRANCH));
 }
 
 static void
