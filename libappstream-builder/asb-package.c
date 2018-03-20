@@ -842,7 +842,7 @@ asb_package_guess_from_filename (AsbPackage *pkg)
 	gchar *at;
 
 	/* remove .rpm extension */
-	tmp = g_strdup (priv->filename);
+	tmp = g_strdup (g_strrstr (priv->filename, "/"));
 	at = g_strrstr (tmp, ".rpm");
 	if (at == NULL)
 		return;
