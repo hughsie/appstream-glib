@@ -243,6 +243,20 @@ asb_test_package_func (void)
 }
 
 static void
+asb_test_package_guess_from_fn_func (void)
+{
+	g_autoptr(AsbPackage) pkg = asb_package_new ();
+
+	/* check pathological name */
+	asb_package_set_filename (pkg, "/tmp/atom.x86_64.rpm");
+	g_assert_cmpstr (asb_package_get_name (pkg), ==, NULL);
+	g_assert_cmpstr (asb_package_get_version (pkg), ==, NULL);
+	g_assert_cmpstr (asb_package_get_release_str (pkg), ==, NULL);
+	g_assert_cmpstr (asb_package_get_arch (pkg), ==, "x86_64");
+	g_assert_cmpint (asb_package_get_epoch (pkg), ==, 0);
+}
+
+static void
 asb_test_utils_glob_func (void)
 {
 	g_autoptr(GPtrArray) array = NULL;
@@ -781,6 +795,7 @@ main (int argc, char **argv)
 
 	/* tests go here */
 	g_test_add_func ("/AppStreamBuilder/package", asb_test_package_func);
+	g_test_add_func ("/AppStreamBuilder/package{guess-fn}", asb_test_package_guess_from_fn_func);
 	g_test_add_func ("/AppStreamBuilder/utils{glob}", asb_test_utils_glob_func);
 	g_test_add_func ("/AppStreamBuilder/plugin-loader", asb_test_plugin_loader_func);
 	g_test_add_func ("/AppStreamBuilder/firmware", asb_test_firmware_func);
