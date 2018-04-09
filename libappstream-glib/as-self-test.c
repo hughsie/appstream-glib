@@ -5032,9 +5032,18 @@ as_test_utils_vercmp_func (void)
 	g_assert_cmpint (as_utils_vercmp ("1.2.3.1", "1.2.4"), <, 0);
 
 	/* mixed-alpha-numeric */
-	g_assert_cmpint (as_utils_vercmp ("1.2xxx.3", "1.2.3"), ==, G_MAXINT);
-	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2xxx.3"), ==, G_MAXINT);
-	g_assert_cmpint (as_utils_vercmp ("1.2.-3", "1.2.3"), ==, G_MAXINT);
+	g_assert_cmpint (as_utils_vercmp ("1.2.3a", "1.2.3a"), ==, 0);
+	g_assert_cmpint (as_utils_vercmp ("1.2.3a", "1.2.3b"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("1.2.3b", "1.2.3a"), >, 0);
+
+	/* alpha version append */
+	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.3a"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("1.2.3a", "1.2.3"), >, 0);
+
+	/* alpha only */
+	g_assert_cmpint (as_utils_vercmp ("alpha", "alpha"), ==, 0);
+	g_assert_cmpint (as_utils_vercmp ("alpha", "beta"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("beta", "alpha"), >, 0);
 
 	/* alpha-compare */
 	g_assert_cmpint (as_utils_vercmp ("1.2a.3", "1.2a.3"), ==, 0);
