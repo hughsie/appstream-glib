@@ -53,6 +53,9 @@ struct _AsRequireClass
  * @AS_REQUIRE_KIND_ID:			Component ID
  * @AS_REQUIRE_KIND_FIRMWARE:		Device firmware version
  * @AS_REQUIRE_KIND_HARDWARE:		Hardware device, typically a GUID
+ * @AS_REQUIRE_KIND_MODALIAS:		Modalias string
+ * @AS_REQUIRE_KIND_KERNEL:		Kernel version
+ * @AS_REQUIRE_KIND_MEMORY:		Amount of installed memory in MiB
  *
  * The require type.
  **/
@@ -61,6 +64,9 @@ typedef enum {
 	AS_REQUIRE_KIND_ID,
 	AS_REQUIRE_KIND_FIRMWARE,
 	AS_REQUIRE_KIND_HARDWARE,		/* Since: 0.7.4 */
+	AS_REQUIRE_KIND_MODALIAS,		/* Since: 0.7.8 */
+	AS_REQUIRE_KIND_KERNEL,			/* Since: 0.7.8 */
+	AS_REQUIRE_KIND_MEMORY,			/* Since: 0.7.8 */
 	/*< private >*/
 	AS_REQUIRE_KIND_LAST
 } AsRequireKind;

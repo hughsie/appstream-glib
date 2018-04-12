@@ -97,6 +97,12 @@ as_require_kind_from_string (const gchar *kind)
 		return AS_REQUIRE_KIND_FIRMWARE;
 	if (g_strcmp0 (kind, "hardware") == 0)
 		return AS_REQUIRE_KIND_HARDWARE;
+	if (g_strcmp0 (kind, "modalias") == 0)
+		return AS_REQUIRE_KIND_MODALIAS;
+	if (g_strcmp0 (kind, "kernel") == 0)
+		return AS_REQUIRE_KIND_KERNEL;
+	if (g_strcmp0 (kind, "memory") == 0)
+		return AS_REQUIRE_KIND_MEMORY;
 	return AS_REQUIRE_KIND_UNKNOWN;
 }
 
@@ -119,6 +125,12 @@ as_require_kind_to_string (AsRequireKind kind)
 		return "firmware";
 	if (kind == AS_REQUIRE_KIND_HARDWARE)
 		return "hardware";
+	if (kind == AS_REQUIRE_KIND_MODALIAS)
+		return "modalias";
+	if (kind == AS_REQUIRE_KIND_KERNEL)
+		return "kernel";
+	if (kind == AS_REQUIRE_KIND_MEMORY)
+		return "memory";
 	return NULL;
 }
 
