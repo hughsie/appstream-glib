@@ -400,13 +400,13 @@ main (int argc, char **argv)
 
 	/* load each application specified */
 	for (i = 1; i < (guint) argc; i++) {
+		AsLaunchable *launchable;
 		const gchar *app_name = argv[i];
 		g_auto(GStrv) intl_domains = NULL;
 		g_autoptr(AsApp) app_appdata = NULL;
 		g_autoptr(AsApp) app_desktop = NULL;
 		g_autoptr(GString) desktop_basename = NULL;
 		g_autofree gchar *desktop_path = NULL;
-		const gchar *appdata_id;
 
 		/* TRANSLATORS: we're generating the AppStream data */
 		g_print ("%s %s\n", _("Processing application"), app_name);
@@ -458,12 +458,19 @@ main (int argc, char **argv)
 		as_store_add_app (store, app_appdata);
 
 		/* use the ID from the AppData file if it was found */
-		appdata_id = as_app_get_id (app_appdata);
-		desktop_basename = g_string_new (appdata_id != NULL ? appdata_id : app_name);
+		launchable = as_app_get_launchable_by_kind (app_appdata,
+							    AS_LAUNCHABLE_KIND_DESKTOP_ID);
+		if (launchable != NULL) {
+			desktop_basename = g_string_new (as_launchable_get_value (launchable));
+		} else {
+			const gchar *appdata_id = as_app_get_id (app_appdata);
 
-		/* append the .desktop suffix if using a new-style name */
-		if (!g_str_has_suffix (desktop_basename->str, ".desktop"))
-			g_string_append (desktop_basename, ".desktop");
+			/* append the .desktop suffix if using a new-style name */
+			desktop_basename = g_string_new (appdata_id != NULL ? appdata_id : app_name);
+			if (!g_str_has_suffix (desktop_basename->str, ".desktop"))
+				g_string_append (desktop_basename, ".desktop");
+		}
+
 		desktop_path = g_build_filename (prefix, "share", "applications",
 						 desktop_basename->str, NULL);
 		g_debug ("looking for %s", desktop_path);
