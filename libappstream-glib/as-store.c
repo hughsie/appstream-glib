@@ -667,6 +667,43 @@ as_store_get_app_by_provide (AsStore *store, AsProvideKind kind, const gchar *va
 }
 
 /**
+ * as_store_get_app_by_launchable:
+ * @store: a #AsStore instance.
+ * @kind: the #AsLaunchableKind
+ * @value: the provide value, e.g. "gimp.desktop"
+ *
+ * Finds an application in the store that provides a specific launchable.
+ *
+ * Returns: (transfer none): a #AsApp or %NULL
+ *
+ * Since: 0.7.8
+ **/
+AsApp *
+as_store_get_app_by_launchable (AsStore *store, AsLaunchableKind kind, const gchar *value)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+	g_return_val_if_fail (kind != AS_LAUNCHABLE_KIND_UNKNOWN, NULL);
+	g_return_val_if_fail (value != NULL, NULL);
+
+	for (guint i = 0; i < priv->array->len; i++) {
+		AsApp *app = g_ptr_array_index (priv->array, i);
+		GPtrArray *launchables = as_app_get_launchables (app);
+		for (guint j = 0; j < launchables->len; j++) {
+			AsLaunchable *tmp = g_ptr_array_index (launchables, j);
+			if (kind != as_launchable_get_kind (tmp))
+				continue;
+			if (g_strcmp0 (as_launchable_get_value (tmp), value) != 0)
+				continue;
+			return app;
+		}
+	}
+	return NULL;
+
+}
+
+/**
  * as_store_get_apps_by_provide:
  * @store: a #AsStore instance.
  * @kind: the #AsProvideKind
