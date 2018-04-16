@@ -497,6 +497,12 @@ main (int argc, char **argv)
 			if (g_hash_table_size (as_app_get_comments (app_appdata)) > 0)
 				g_hash_table_remove_all (as_app_get_comments (app_desktop));
 
+			/* does the app already exist with a launchable that matches this ID */
+			if (g_strcmp0 (as_app_get_id (app_appdata), as_app_get_id (app_desktop)) != 0) {
+				g_debug ("fixing up ID for desktop merge");
+				as_app_set_id (app_desktop, as_app_get_id (app_appdata));
+			}
+
 			as_store_add_app (store, app_desktop);
 		}
 	}
