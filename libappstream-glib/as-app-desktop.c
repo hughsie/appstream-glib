@@ -324,7 +324,10 @@ as_app_parse_file_key (AsApp *app,
 						   G_KEY_FILE_DESKTOP_GROUP,
 						   key,
 						   NULL, NULL);
-		if (g_strv_length (list) == 1)
+		/* "OnlyShowIn=" is the same as "NoDisplay=True" */
+		if (g_strv_length (list) == 0)
+			as_app_add_veto (app, "Empty OnlyShowIn");
+		else if (g_strv_length (list) == 1)
 			as_app_set_project_group (app, list[0]);
 
 	/* Name */
