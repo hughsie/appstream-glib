@@ -271,7 +271,14 @@ load_appdata (const gchar *prefix, const gchar *app_name, GError **error)
 	guint i;
 
 	appdata_path = get_appdata_filename (prefix, app_name);
-	g_debug ("Looking for %s", appdata_path);
+	if (appdata_path == NULL) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_FAILED,
+			     "no file found for %s", app_name);
+		return NULL;
+	}
+	g_debug ("looking for %s", appdata_path);
 
 	app = as_app_new ();
 	if (!as_app_parse_file (app, appdata_path,
