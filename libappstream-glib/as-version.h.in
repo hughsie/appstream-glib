@@ -36,6 +36,8 @@
 #ifndef __AS_VERSION_H
 #define __AS_VERSION_H
 
+#include <glib.h>
+
 /* compile time version
  */
 #define AS_MAJOR_VERSION				(@AS_MAJOR_VERSION_CONF@)
@@ -50,5 +52,7 @@
      (AS_MAJOR_VERSION == (major) && AS_MINOR_VERSION > (minor)) || \
      (AS_MAJOR_VERSION == (major) && AS_MINOR_VERSION == (minor) && \
       AS_MICRO_VERSION >= (micro)))
+
+const gchar	*as_version_string			(void);
 
 #endif /* __AS_VERSION_H */

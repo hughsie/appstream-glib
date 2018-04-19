@@ -103,6 +103,7 @@ sources = [
   'as-tag.c',
   'as-translation.c',
   'as-utils.c',
+  'as-version.c',
   'as-yaml.c',
   asresources,
 ]
@@ -219,6 +220,7 @@ introspection_sources = [
   'as-translation.h',
   'as-utils.c',
   'as-utils.h',
+  'as-version.c',
 ]
 
 if get_option('introspection')
