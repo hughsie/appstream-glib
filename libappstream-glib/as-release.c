@@ -238,16 +238,17 @@ as_release_vercmp (AsRelease *rel1, AsRelease *rel2)
 	AsReleasePrivate *priv2 = GET_PRIVATE (rel2);
 	gint val;
 
-	/* prefer the version strings */
-	val = as_utils_vercmp (priv2->version, priv1->version);
-	if (val != G_MAXINT)
-		return val;
-
-	/* fall back to the timestamp */
+	/* prefer the timestamp */
 	if (priv1->timestamp > priv2->timestamp)
 		return -1;
 	if (priv1->timestamp < priv2->timestamp)
 		return 1;
+
+	/* fall back to the version strings */
+	val = as_utils_vercmp (priv2->version, priv1->version);
+	if (val != G_MAXINT)
+		return val;
+
 	return 0;
 }
 
