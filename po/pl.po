@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-13 13:32+0000\n"
+"POT-Creation-Date: 2018-04-20 11:34+0100\n"
 "PO-Revision-Date: 2017-06-22 01:07-0400\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/freedesktop/appstream-glib/language/pl/)\n"
@@ -23,7 +23,7 @@ msgstr ""
 "X-Generator: Zanata 3.9.6\n"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:90 client/as-compose.c:337 client/as-util.c:4345
+#: client/as-builder.c:90 client/as-compose.c:344 client/as-util.c:4397
 msgid "Show extra debugging information"
 msgstr "Wyświetla dodatkowe informacje debugowania"
 
@@ -68,12 +68,12 @@ msgid "Set the temporary directory"
 msgstr "Ustawia katalog tymczasowy"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:117 client/as-compose.c:343
+#: client/as-builder.c:117 client/as-compose.c:350
 msgid "Set the output directory"
 msgstr "Ustawia katalog wyjściowy"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:120 client/as-compose.c:346
+#: client/as-builder.c:120 client/as-compose.c:353
 msgid "Set the icons directory"
 msgstr "Ustawia katalog ikon"
 
@@ -83,12 +83,12 @@ msgid "Set the cache directory"
 msgstr "Ustawia katalog pamięci podręcznej"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:126 client/as-compose.c:355
+#: client/as-builder.c:126 client/as-compose.c:362
 msgid "Set the basenames of the output files"
 msgstr "Ustawia podstawowe nazwy plików wyjściowych"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:129 client/as-compose.c:349
+#: client/as-builder.c:129 client/as-compose.c:356
 msgid "Set the origin name"
 msgstr "Ustawia pierwotną nazwę"
 
@@ -98,7 +98,7 @@ msgid "Set the number of threads"
 msgstr "Ustawia liczbę wątków"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:135 client/as-compose.c:352
+#: client/as-builder.c:135 client/as-compose.c:359
 msgid "Set the minimum icon size in pixels"
 msgstr "Ustawia minimalne wymiary ikony w pikselach"
 
@@ -113,7 +113,7 @@ msgid "Ignore certain types of veto"
 msgstr "Ignoruje podane typy weta"
 
 #. TRANSLATORS: error message
-#: client/as-builder.c:155 client/as-compose.c:369 client/as-util.c:4622
+#: client/as-builder.c:155 client/as-compose.c:376 client/as-util.c:4680
 msgid "Failed to parse arguments"
 msgstr "Przetworzenie parametrów się nie powiodło"
 
@@ -150,7 +150,7 @@ msgstr "Utworzenie metadanych się nie powiodło"
 
 #. success
 #. TRANSLATORS: information message
-#: client/as-builder.c:322 client/as-compose.c:528
+#: client/as-builder.c:322 client/as-compose.c:548
 msgid "Done!"
 msgstr "Gotowe."
 
@@ -160,56 +160,56 @@ msgid "Saving icon"
 msgstr "Zapisywanie ikony"
 
 #. TRANSLATORS: command line option
-#: client/as-compose.c:340
+#: client/as-compose.c:347
 msgid "Set the prefix"
 msgstr "Ustawia przedrostek"
 
 #. TRANSLATORS: we're generating the AppStream data
-#: client/as-compose.c:412
+#: client/as-compose.c:419
 msgid "Processing application"
 msgstr "Przetwarzanie programu"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
-#: client/as-compose.c:418
+#: client/as-compose.c:425
 msgid "Error loading AppData file"
 msgstr "Błąd podczas wczytywania pliku AppData"
 
 #. TRANSLATORS: the .mo files could not be parsed
-#: client/as-compose.c:431
+#: client/as-compose.c:438
 msgid "Error parsing translations"
 msgstr "Błąd podczas przetwarzania tłumaczeń"
 
 #. TRANSLATORS: we could not auto-add the kudo
-#: client/as-compose.c:442
+#: client/as-compose.c:449
 msgid "Error parsing kudos"
 msgstr "Błąd podczas przetwarzania punktów"
 
 #. TRANSLATORS: we could not auto-add the provides
-#: client/as-compose.c:453
+#: client/as-compose.c:460
 msgid "Error parsing provides"
 msgstr "Błąd podczas przetwarzania elementów dostarczanych"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
-#: client/as-compose.c:481
+#: client/as-compose.c:495
 msgid "Error loading desktop file"
 msgstr "Błąd podczas wczytywania pliku .desktop"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
-#: client/as-compose.c:503
+#: client/as-compose.c:523
 msgid "Error creating output directory"
 msgstr "Błąd podczas tworzenia katalogu wyjściowego"
 
 #. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:512
+#: client/as-compose.c:532
 msgid "Saving AppStream"
 msgstr "Zapisywanie pliku AppStream"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
-#: client/as-compose.c:522
+#: client/as-compose.c:542
 msgid "Error saving AppStream file"
 msgstr "Błąd podczas zapisywania pliku AppStream"
 
@@ -290,230 +290,235 @@ msgid "Validation of files failed"
 msgstr "Sprawdzenie plików się nie powiodło"
 
 #. TRANSLATORS: application was removed
-#: client/as-util.c:3994
+#: client/as-util.c:4046
 msgid "Removed"
 msgstr "Usunięto"
 
 #. TRANSLATORS: application was added
-#: client/as-util.c:4007
+#: client/as-util.c:4059
 msgid "Added"
 msgstr "Dodano"
 
 #. TRANSLATORS: this is when a device ctrl+c's a watch
-#: client/as-util.c:4290
+#: client/as-util.c:4342
 msgid "Cancelled"
 msgstr "Anulowano"
 
 #. TRANSLATORS: this is the --nonet argument
-#: client/as-util.c:4342
+#: client/as-util.c:4394
 msgid "Do not use network access"
 msgstr "Bez używania dostępu do sieci"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4348
+#: client/as-util.c:4400
 msgid "Show version"
 msgstr "Wyświetla wersję"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4351
+#: client/as-util.c:4403
 msgid "Enable profiling"
 msgstr "Włącza profilowanie"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4381
+#: client/as-util.c:4433
 msgid "Converts AppStream metadata from one version to another"
 msgstr "Konwertuje metadane AppStream z jednej wersji na inną"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4387
+#: client/as-util.c:4439
 msgid "Upgrade AppData metadata to the latest version"
 msgstr "Aktualizuje metadane AppData do najnowszej wersji"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4393
+#: client/as-util.c:4445
 msgid "Creates an example Appdata file from a .desktop file"
 msgstr "Tworzy przykładowy plik AppData z pliku .desktop"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4399
+#: client/as-util.c:4451
 msgid "Dumps the applications in the AppStream metadata"
 msgstr "Zrzuca aplikacje w metadanych AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4405
+#: client/as-util.c:4457
 msgid "Search for AppStream applications"
 msgstr "Wyszukuje programy AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4411
+#: client/as-util.c:4463
 msgid "Search for AppStream applications by package name"
 msgstr "Wyszukuje programy AppStream według nazw pakietów"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4417
+#: client/as-util.c:4469
 msgid "Show all installed AppStream applications"
 msgstr "Wyświetla wszystkie zainstalowane programy AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4423
+#: client/as-util.c:4475
 msgid "Search for AppStream applications by category name"
 msgstr "Wyszukuje programy AppStream według nazw kategorii"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4429
+#: client/as-util.c:4481
 msgid "Display application search tokens"
 msgstr "Wyświetla tokeny wyszukiwania programów"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4435
+#: client/as-util.c:4487
 msgid "Installs AppStream metadata"
 msgstr "Instaluje metadane AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4441
+#: client/as-util.c:4493
 msgid "Installs AppStream metadata with new origin"
 msgstr "Instaluje metadane AppStream z nowym pochodzeniem"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4447
+#: client/as-util.c:4499
 msgid "Uninstalls AppStream metadata"
 msgstr "Odinstalowuje metadane AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4453
+#: client/as-util.c:4505
 msgid "Create an HTML status page"
 msgstr "Tworzy stronę stanu HTML"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4459
+#: client/as-util.c:4511
 msgid "Create an CSV status document"
 msgstr "Tworzy dokument stanu CSV"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4465
+#: client/as-util.c:4517
 msgid "Create an HTML matrix page"
 msgstr "Tworzy stronę macierzy HTML"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4471
+#: client/as-util.c:4523
 msgid "List applications not backed by packages"
 msgstr "Wyświetla listę aplikacji niezawartych w pakietach"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4477
+#: client/as-util.c:4529
 msgid "Validate an AppData or AppStream file"
 msgstr "Sprawdza poprawność pliku AppData lub AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4483
+#: client/as-util.c:4535
 msgid "Validate an AppData or AppStream file (relaxed)"
 msgstr "Sprawdza poprawność pliku AppData lub AppStream (rozluźnione)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4489
+#: client/as-util.c:4541
+msgid "Exports the agreement to text"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4547
 msgid "Validate an AppData or AppStream file (strict)"
 msgstr "Sprawdza poprawność pliku AppData lub AppStream (ścisłe)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4495
+#: client/as-util.c:4553
 msgid "Convert an AppData file to NEWS format"
 msgstr "Konwertuje plik AppData do formatu NEWS"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4501
+#: client/as-util.c:4559
 msgid "Convert an NEWS file to AppData format"
 msgstr "Konwertuje plik NEWS do formatu AppData"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4507
+#: client/as-util.c:4565
 msgid "Check installed application data"
 msgstr "Sprawdza dane zainstalowanego programu"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4513
+#: client/as-util.c:4571
 msgid "check an installed application"
 msgstr "sprawdza zainstalowany program"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4519
+#: client/as-util.c:4577
 msgid "Replace screenshots in source file"
 msgstr "Zastępuje zrzuty ekranu w pliku źródłowym"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4525
+#: client/as-util.c:4583
 msgid "Add a provide to a source file"
 msgstr "Dodaje element dostarczany do pliku źródłowego"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4531
+#: client/as-util.c:4589
 msgid "Add a language to a source file"
 msgstr "Dodaje język do pliku źródłowego"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4537
+#: client/as-util.c:4595
 msgid "Mirror upstream screenshots"
 msgstr "Używa zrzutów ekranu nadrzędnego projektu"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4543
+#: client/as-util.c:4601
 msgid "Mirror local firmware files"
 msgstr "Używa lokalnych plików oprogramowania sprzętowego"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4549
+#: client/as-util.c:4607
 msgid "Incorporate extra metadata from an external file"
 msgstr "Dołącza dodatkowe metadane z zewnętrznego pliku"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4555
+#: client/as-util.c:4613
 msgid "Compare the contents of two AppStream files"
 msgstr "Porównuje zawartość dwóch plików AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4561
+#: client/as-util.c:4619
 msgid "Generate a GUID from an input string"
 msgstr "Tworzy GUID z ciągu wejściowego"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4567
+#: client/as-util.c:4625
 msgid "Modify an AppData file"
 msgstr "Modyfikuje plik AppData"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4573
+#: client/as-util.c:4631
 msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr "Dzieli plik AppStream na pliki AppData i Metainfo"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4579
+#: client/as-util.c:4637
 msgid "Merge several files to an AppStream file"
 msgstr "Łączy kilka plików w jeden plik AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4585
+#: client/as-util.c:4643
 msgid "Import a file to AppStream markup"
 msgstr "Importuje plik do języka znaczników AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4591
+#: client/as-util.c:4649
 msgid "Watch AppStream locations for changes"
 msgstr "Obserwuje zmiany w położeniach AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4597
+#: client/as-util.c:4655
 msgid "Compare version numbers"
 msgstr "Porównuje numery wersji"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4603
+#: client/as-util.c:4661
 msgid "Test a regular expression"
 msgstr "Testuje wyrażenie regularne"
 
 #. TRANSLATORS: program name
-#: client/as-util.c:4616
+#: client/as-util.c:4674
 msgid "AppStream Utility"
 msgstr "Narzędzie AppStream"
 
-#: client/as-util.c:4640
+#: client/as-util.c:4698
 msgid "Version:"
 msgstr "Wersja:"

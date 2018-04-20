@@ -6,13 +6,14 @@
 # Muhammet Kara <muhammetk@gmail.com>, 2015-2016
 # Necdet Yücel <necdetyucel@gmail.com>, 2014
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
+# Emin Tufan Çetin <etcetin@gmail.com>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-13 13:32+0000\n"
-"PO-Revision-Date: 2016-08-06 03:00-0400\n"
-"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
+"POT-Creation-Date: 2018-04-20 11:34+0100\n"
+"PO-Revision-Date: 2018-03-13 01:17-0400\n"
+"Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/freedesktop/appstream-glib/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,7 +23,7 @@ msgstr ""
 "X-Generator: Zanata 3.9.6\n"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:90 client/as-compose.c:337 client/as-util.c:4345
+#: client/as-builder.c:90 client/as-compose.c:344 client/as-util.c:4397
 msgid "Show extra debugging information"
 msgstr "Ek hata ayıklama bilgisi göster"
 
@@ -39,17 +40,17 @@ msgstr "Başarısız sonuçları çıktıya dahil et"
 #. TRANSLATORS: command line option
 #: client/as-builder.c:99
 msgid "Add HiDPI icons to the tarball"
-msgstr ""
+msgstr "HiDPI simgeleri Tar dosyasına ekle"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:102
 msgid "Add encoded icons to the XML"
-msgstr ""
+msgstr "Kodlanmış simgeleri XML'e ekle"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:105
 msgid "Do not compress the icons into a tarball"
-msgstr ""
+msgstr "Simgeleri Tar dosyasına sıkıştırma"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:108
@@ -67,14 +68,14 @@ msgid "Set the temporary directory"
 msgstr "Geçici dizini ayarla"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:117 client/as-compose.c:343
+#: client/as-builder.c:117 client/as-compose.c:350
 msgid "Set the output directory"
 msgstr "Çıktı dizinini ayarla"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:120 client/as-compose.c:346
+#: client/as-builder.c:120 client/as-compose.c:353
 msgid "Set the icons directory"
-msgstr ""
+msgstr "Simgeler dizinini belirle"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:123
@@ -82,12 +83,12 @@ msgid "Set the cache directory"
 msgstr "Bellek dizini ayarla"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:126 client/as-compose.c:355
+#: client/as-builder.c:126 client/as-compose.c:362
 msgid "Set the basenames of the output files"
-msgstr ""
+msgstr "Çıktı dosyalarının temel adını belirle"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:129 client/as-compose.c:349
+#: client/as-builder.c:129 client/as-compose.c:356
 msgid "Set the origin name"
 msgstr "Köken adını ayarla"
 
@@ -97,22 +98,22 @@ msgid "Set the number of threads"
 msgstr "Süreç sayısını ayarla"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:135 client/as-compose.c:352
+#: client/as-builder.c:135 client/as-compose.c:359
 msgid "Set the minimum icon size in pixels"
-msgstr ""
+msgstr "En küçük simge boyutunu piksel türünde belirle"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:138
 msgid "Set the old metadata location"
-msgstr "Eski meta veri konumunu ayarla"
+msgstr "Eski üst veri konumunu ayarla"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:141
 msgid "Ignore certain types of veto"
-msgstr ""
+msgstr "Bazı tür retleri görmezden gel"
 
 #. TRANSLATORS: error message
-#: client/as-builder.c:155 client/as-compose.c:369 client/as-util.c:4622
+#: client/as-builder.c:155 client/as-compose.c:376 client/as-util.c:4680
 msgid "Failed to parse arguments"
 msgstr "Argüman ayrıştırması başarısız"
 
@@ -140,75 +141,75 @@ msgstr "Paket ekleme başarısız"
 #: client/as-builder.c:305
 #, c-format
 msgid "Parsed %u/%u files..."
-msgstr ""
+msgstr "%u/%u dosya ayıklandı..."
 
 #. TRANSLATORS: error message
 #: client/as-builder.c:315
 msgid "Failed to generate metadata"
-msgstr "Meta veri üretilemedi"
+msgstr "Üst veri üretilemedi"
 
 #. success
 #. TRANSLATORS: information message
-#: client/as-builder.c:322 client/as-compose.c:528
+#: client/as-builder.c:322 client/as-compose.c:548
 msgid "Done!"
 msgstr "Tamamlandı!"
 
 #. TRANSLATORS: we've saving the icon file to disk
 #: client/as-compose.c:125 client/as-compose.c:181
 msgid "Saving icon"
-msgstr ""
+msgstr "Simge kaydediliyor"
 
 #. TRANSLATORS: command line option
-#: client/as-compose.c:340
+#: client/as-compose.c:347
 msgid "Set the prefix"
-msgstr ""
+msgstr "Öneki belirle"
 
 #. TRANSLATORS: we're generating the AppStream data
-#: client/as-compose.c:412
+#: client/as-compose.c:419
 msgid "Processing application"
-msgstr ""
+msgstr "Uygulama işleniyor"
 
 #. TRANSLATORS: the .appdata.xml file could not
 #. * be loaded
-#: client/as-compose.c:418
+#: client/as-compose.c:425
 msgid "Error loading AppData file"
-msgstr ""
+msgstr "AppData dosyası yüklenirken hata"
 
 #. TRANSLATORS: the .mo files could not be parsed
-#: client/as-compose.c:431
+#: client/as-compose.c:438
 msgid "Error parsing translations"
-msgstr ""
+msgstr "Çeviriler ayıklanırken hata"
 
 #. TRANSLATORS: we could not auto-add the kudo
-#: client/as-compose.c:442
+#: client/as-compose.c:449
 msgid "Error parsing kudos"
-msgstr ""
+msgstr "Kudo'lar ayıklanırken hata"
 
 #. TRANSLATORS: we could not auto-add the provides
-#: client/as-compose.c:453
+#: client/as-compose.c:460
 msgid "Error parsing provides"
-msgstr ""
+msgstr "Sağlananlar ayıklanırken hata"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
-#: client/as-compose.c:481
+#: client/as-compose.c:495
 msgid "Error loading desktop file"
-msgstr ""
+msgstr "Masaüstü dosyası yüklenirken hata"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
-#: client/as-compose.c:503
+#: client/as-compose.c:523
 msgid "Error creating output directory"
-msgstr ""
+msgstr "Çıktı dizini oluşturulurken hata"
 
 #. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:512
+#: client/as-compose.c:532
 msgid "Saving AppStream"
-msgstr ""
+msgstr "AppStream kaydediliyor"
 
 #. TRANSLATORS: this is when the destination file
 #. * cannot be saved for some reason
-#: client/as-compose.c:522
+#: client/as-compose.c:542
 msgid "Error saving AppStream file"
 msgstr "AppStream dosyasını kaydederken hata"
 
@@ -249,7 +250,7 @@ msgstr "Yeterli argüman yok, old.xml new.xml sürümleri bekleniyor"
 #: client/as-util.c:563
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr ""
+msgstr "%s türünden %s türüne dönüşüm hayata geçirilmedi"
 
 #: client/as-util.c:580
 msgid "Not enough arguments, expected file.xml"
@@ -291,230 +292,235 @@ msgid "Validation of files failed"
 msgstr "Dosyaların doğrulaması başarısız"
 
 #. TRANSLATORS: application was removed
-#: client/as-util.c:3994
+#: client/as-util.c:4046
 msgid "Removed"
 msgstr "Kaldırıldı"
 
 #. TRANSLATORS: application was added
-#: client/as-util.c:4007
+#: client/as-util.c:4059
 msgid "Added"
 msgstr "Eklendi"
 
 #. TRANSLATORS: this is when a device ctrl+c's a watch
-#: client/as-util.c:4290
+#: client/as-util.c:4342
 msgid "Cancelled"
-msgstr ""
+msgstr "İptal edildi"
 
 #. TRANSLATORS: this is the --nonet argument
-#: client/as-util.c:4342
+#: client/as-util.c:4394
 msgid "Do not use network access"
 msgstr "Ağ erişimini kullanma"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4348
+#: client/as-util.c:4400
 msgid "Show version"
 msgstr "Sürümü göster"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4351
+#: client/as-util.c:4403
 msgid "Enable profiling"
-msgstr ""
+msgstr "Profillemeyi etkinleştir"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4381
+#: client/as-util.c:4433
 msgid "Converts AppStream metadata from one version to another"
-msgstr "AppStream meta verisini bir sürümden diğerine dönüştürür"
+msgstr "AppStream üst verisini bir sürümden diğerine dönüştürür"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4387
+#: client/as-util.c:4439
 msgid "Upgrade AppData metadata to the latest version"
-msgstr "AppStream meta verisini son sürüme günceller"
+msgstr "AppStream üst verisini son sürüme günceller"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4393
+#: client/as-util.c:4445
 msgid "Creates an example Appdata file from a .desktop file"
 msgstr "Bir .desktop dosyasından bir örnek Appdata dosyası oluşturur"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4399
+#: client/as-util.c:4451
 msgid "Dumps the applications in the AppStream metadata"
-msgstr "AppStream meta verisindeki uygulamaları döker"
+msgstr "AppStream üst verisindeki uygulamaları döker"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4405
+#: client/as-util.c:4457
 msgid "Search for AppStream applications"
-msgstr ""
+msgstr "AppStream uygulamalarını ara"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4411
+#: client/as-util.c:4463
 msgid "Search for AppStream applications by package name"
-msgstr ""
+msgstr "AppStream uygulamalarını paket adına göre ara"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4417
+#: client/as-util.c:4469
 msgid "Show all installed AppStream applications"
-msgstr ""
+msgstr "Tüm kurulu AppStream uygulamalarını göster"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4423
+#: client/as-util.c:4475
 msgid "Search for AppStream applications by category name"
-msgstr ""
+msgstr "AppStream uygulamalarını kategori adına göre ara"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4429
+#: client/as-util.c:4481
 msgid "Display application search tokens"
-msgstr ""
+msgstr "Uygulama arama jetonlarını görüntüle"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4435
+#: client/as-util.c:4487
 msgid "Installs AppStream metadata"
-msgstr "AppStream meta verisini yükler"
+msgstr "AppStream üst verisini yükler"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4441
+#: client/as-util.c:4493
 msgid "Installs AppStream metadata with new origin"
-msgstr "AppStream meta verisini yeni bir köken ile yükler"
+msgstr "AppStream üst verisini yeni bir köken ile yükler"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4447
+#: client/as-util.c:4499
 msgid "Uninstalls AppStream metadata"
-msgstr "AppStream meta verisini kaldırır"
+msgstr "AppStream üst verisini kaldırır"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4453
+#: client/as-util.c:4505
 msgid "Create an HTML status page"
 msgstr "Bir HTML durum sayfası oluşturur"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4459
+#: client/as-util.c:4511
 msgid "Create an CSV status document"
 msgstr "Bir CSV durum belgesi oluştur"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4465
+#: client/as-util.c:4517
 msgid "Create an HTML matrix page"
 msgstr "Bir HTML matris sayfası oluştur"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4471
+#: client/as-util.c:4523
 msgid "List applications not backed by packages"
 msgstr "Paketler tarafından desteklenmeyen uygulamaları listele"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4477
+#: client/as-util.c:4529
 msgid "Validate an AppData or AppStream file"
 msgstr "Bir AppData veya AppStream dosyasını doğrula"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4483
+#: client/as-util.c:4535
 msgid "Validate an AppData or AppStream file (relaxed)"
 msgstr "Bir AppData veya AppStream dosyasını doğrula (gevşek)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4489
+#: client/as-util.c:4541
+msgid "Exports the agreement to text"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4547
 msgid "Validate an AppData or AppStream file (strict)"
 msgstr "Bir AppData veya AppStream dosyasını doğrula (sıkı)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4495
+#: client/as-util.c:4553
 msgid "Convert an AppData file to NEWS format"
-msgstr ""
+msgstr "AppData dosyasını NEWS biçimine dönüştür"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4501
+#: client/as-util.c:4559
 msgid "Convert an NEWS file to AppData format"
-msgstr ""
+msgstr "NEWS dosyasını AppData biçimine dönüştür"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4507
+#: client/as-util.c:4565
 msgid "Check installed application data"
 msgstr "Kurulu uygulama verisini kontrol et"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4513
+#: client/as-util.c:4571
 msgid "check an installed application"
-msgstr ""
+msgstr "kurulu uygulamayı denetle"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4519
+#: client/as-util.c:4577
 msgid "Replace screenshots in source file"
-msgstr ""
+msgstr "Kaynak dosyadaki ekran görüntülerini değiştir"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4525
+#: client/as-util.c:4583
 msgid "Add a provide to a source file"
-msgstr ""
+msgstr "Kaynak dosyaya sağlanan ekle"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4531
+#: client/as-util.c:4589
 msgid "Add a language to a source file"
-msgstr ""
+msgstr "Kaynak dosyaya dil ekle"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4537
+#: client/as-util.c:4595
 msgid "Mirror upstream screenshots"
 msgstr ""
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4543
+#: client/as-util.c:4601
 msgid "Mirror local firmware files"
 msgstr ""
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4549
+#: client/as-util.c:4607
 msgid "Incorporate extra metadata from an external file"
-msgstr ""
+msgstr "Dış dosyadan ek üst veri kat"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4555
+#: client/as-util.c:4613
 msgid "Compare the contents of two AppStream files"
-msgstr ""
+msgstr "İki AppStream dosyasının içeriklerini karşılaştır"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4561
+#: client/as-util.c:4619
 msgid "Generate a GUID from an input string"
-msgstr ""
+msgstr "Girdi dizgesinden GUID oluştur"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4567
+#: client/as-util.c:4625
 msgid "Modify an AppData file"
-msgstr ""
+msgstr "AppData dosyasını düzenle"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4573
+#: client/as-util.c:4631
 msgid "Split an AppStream file to AppData and Metainfo files"
-msgstr ""
+msgstr "AppStream dosyasını AppData ve Metainfo dosyalarına ayır"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4579
+#: client/as-util.c:4637
 msgid "Merge several files to an AppStream file"
-msgstr ""
+msgstr "Birkaç dosyayı AppStream dosyasında birleştir"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4585
+#: client/as-util.c:4643
 msgid "Import a file to AppStream markup"
-msgstr ""
+msgstr "AppStream biçimlendirmesine dosya aktar"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4591
+#: client/as-util.c:4649
 msgid "Watch AppStream locations for changes"
-msgstr ""
+msgstr "AppStream konumlarını değişiklikler için gözle"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4597
+#: client/as-util.c:4655
 msgid "Compare version numbers"
-msgstr ""
+msgstr "Sürüm numaralarını karşılaştır"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4603
+#: client/as-util.c:4661
 msgid "Test a regular expression"
-msgstr ""
+msgstr "Düzenli ifadeyi sına"
 
 #. TRANSLATORS: program name
-#: client/as-util.c:4616
+#: client/as-util.c:4674
 msgid "AppStream Utility"
 msgstr "AppStream Uygulaması"
 
-#: client/as-util.c:4640
+#: client/as-util.c:4698
 msgid "Version:"
 msgstr "Sürüm:"

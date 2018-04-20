@@ -1,3 +1,20 @@
+Version 0.7.8
+~~~~~~~~~~~~~~
+Released: 2018-04-20
+
+New Features:
+ - Add as_store_get_app_by_launchable() (Richard Hughes)
+ - Add as_utils_unique_id_match() (Richard Hughes)
+ - Add as_version_string() for fwupd (Richard Hughes)
+ - Add support for component agreements (Richard Hughes)
+
+Bugfixes:
+ - Correctly compare version numbers like '1.2.3' and '1.2.3a' (Richard Hughes)
+ - Don't include the path component in the name when parsing the package filename (Richard Hughes)
+ - If the launchable is specified don't guess it when composing (Richard Hughes)
+ - Never add more than one component to the AppStream store when composing (Richard Hughes)
+ - Veto apps that have empty OnlyShowIn= (Kalev Lember)
+
 Version 0.7.7
 ~~~~~~~~~~~~~~
 Released: 2018-03-12
