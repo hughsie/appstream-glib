@@ -1353,13 +1353,36 @@ as_utils_search_tokenize (const gchar *search)
 	return values;
 }
 
+static gint
+as_utils_vercmp_char (gchar chr1, gchar chr2)
+{
+	if (chr1 == chr2)
+		return 0;
+	if (chr1 == '~')
+		return -1;
+	if (chr2 == '~')
+		return 1;
+	return chr1 < chr2 ? -1 : 1;
+}
+
+static gint
+as_utils_vercmp_chunk (const gchar *str1, const gchar *str2)
+{
+	guint i;
+	for (i = 0; str1[i] != '\0' && str2[i] != '\0'; i++) {
+		gint rc = as_utils_vercmp_char (str1[i], str2[i]);
+		if (rc != 0)
+			return rc;
+	}
+	return as_utils_vercmp_char (str1[i], str2[i]);
+}
+
 /**
  * as_utils_vercmp:
  * @version_a: the release version, e.g. 1.2.3
  * @version_b: the release version, e.g. 1.2.3.1
  *
- * Compares version numbers for sorting. This function cannot deal with version
- * strings that do not contain numbers, for instance "rev2706" or "1.2_alpha".
+ * Compares version numbers for sorting.
  *
  * Returns: -1 if a < b, +1 if a > b, 0 if they are equal, and %G_MAXINT on error
  *
@@ -1411,7 +1434,7 @@ as_utils_vercmp (const gchar *version_a, const gchar *version_b)
 		/* compare strings */
 		if ((endptr_a != NULL && endptr_a[0] != '\0') ||
 		    (endptr_b != NULL && endptr_b[0] != '\0')) {
-			gint rc = g_strcmp0 (endptr_a, endptr_b);
+			gint rc = as_utils_vercmp_chunk (endptr_a, endptr_b);
 			if (rc < 0)
 				return -1;
 			if (rc > 0)

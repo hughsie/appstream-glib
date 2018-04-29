@@ -5102,6 +5102,12 @@ as_test_utils_vercmp_func (void)
 	g_assert_cmpint (as_utils_vercmp ("1.2a.3", "1.2b.3"), <, 0);
 	g_assert_cmpint (as_utils_vercmp ("1.2b.3", "1.2a.3"), >, 0);
 
+	/* tilde is all-powerful */
+	g_assert_cmpint (as_utils_vercmp ("1.2.3~rc1", "1.2.3~rc1"), ==, 0);
+	g_assert_cmpint (as_utils_vercmp ("1.2.3~rc1", "1.2.3"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("1.2.3", "1.2.3~rc1"), >, 0);
+	g_assert_cmpint (as_utils_vercmp ("1.2.3~rc2", "1.2.3~rc1"), >, 0);
+
 	/* invalid */
 	g_assert_cmpint (as_utils_vercmp ("1", NULL), ==, G_MAXINT);
 	g_assert_cmpint (as_utils_vercmp (NULL, "1"), ==, G_MAXINT);
