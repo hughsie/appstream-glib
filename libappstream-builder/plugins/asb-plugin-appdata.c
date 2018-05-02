@@ -21,6 +21,7 @@
 
 #include <config.h>
 #include <fnmatch.h>
+#include <string.h>
 
 #include <asb-plugin.h>
 
@@ -37,6 +38,9 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 	asb_plugin_add_glob (globs, "/usr/share/appdata/*.appdata.xml");
 	asb_plugin_add_glob (globs, "/usr/share/metainfo/*.metainfo.xml");
 	asb_plugin_add_glob (globs, "/usr/share/metainfo/*.appdata.xml");
+	asb_plugin_add_glob (globs, "/usr/share/pixmaps/*");
+	asb_plugin_add_glob (globs, "/usr/share/icons/*");
+	asb_plugin_add_glob (globs, "/usr/share/*/icons/*");
 }
 
 static gboolean
@@ -57,8 +61,132 @@ asb_plugin_check_filename (AsbPlugin *plugin, const gchar *filename)
 	return _asb_plugin_check_filename (filename);
 }
 
+static GdkPixbuf *
+asb_app_load_icon (AsbPlugin *plugin,
+		   const gchar *filename,
+		   const gchar *logfn,
+		   guint icon_size,
+		   guint min_icon_size,
+		   GError **error)
+{
+	g_autoptr(AsImage) im = NULL;
+	g_autoptr(GError) error_local = NULL;
+	AsImageLoadFlags load_flags = AS_IMAGE_LOAD_FLAG_NONE;
+
+	/* is icon in a unsupported format */
+	if (!asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_IGNORE_LEGACY_ICONS))
+		load_flags |= AS_IMAGE_LOAD_FLAG_ONLY_SUPPORTED;
+
+	im = as_image_new ();
+	if (!as_image_load_filename_full (im,
+					  filename,
+					  icon_size,
+					  min_icon_size,
+					  load_flags,
+					  &error_local)) {
+		g_set_error (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_FAILED,
+			     "%s: %s",
+			     error_local->message, logfn);
+		return NULL;
+	}
+	return g_object_ref (as_image_get_pixbuf (im));
+}
+
+static gboolean
+asb_plugin_convert_icon (AsbPlugin *plugin,
+			 AsIcon *icon,
+			 const gchar *tmpdir,
+			 const gchar *key,
+			 AsbApp *app,
+			 GError **error)
+{
+	guint min_icon_size;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
+	g_autofree gchar *name = NULL;
+	g_autofree gchar *fn = NULL;
+
+	/* load the icon */
+	fn = as_utils_find_icon_filename_full (tmpdir, key,
+					       AS_UTILS_FIND_ICON_NONE,
+					       error);
+	if (fn == NULL) {
+		g_prefix_error (error, "Failed to find icon: ");
+		return FALSE;
+	}
+
+	min_icon_size = asb_context_get_min_icon_size (plugin->ctx);
+	pixbuf = asb_app_load_icon (plugin, fn, fn + strlen (tmpdir),
+				    64, min_icon_size, error);
+	if (pixbuf == NULL) {
+		g_prefix_error (error, "Failed to load icon: ");
+		return FALSE;
+	}
+
+	/* save in target directory */
+	if (asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS)) {
+		name = g_strdup_printf ("%ix%i/%s.png",
+					64, 64,
+					as_app_get_id_filename (AS_APP (app)));
+	} else {
+		name = g_strdup_printf ("%s.png",
+					as_app_get_id_filename (AS_APP (app)));
+	}
+
+	as_icon_set_pixbuf (icon, pixbuf);
+	as_icon_set_name (icon, name);
+	as_icon_set_kind (icon, AS_ICON_KIND_CACHED);
+	as_icon_set_prefix (icon, as_app_get_icon_path (AS_APP (app)));
+
+	return TRUE;
+}
+
+static gboolean
+asb_plugin_convert_icons (AsbPlugin *plugin,
+			  const gchar *tmpdir,
+			  AsbApp *app,
+			  GError **error)
+{
+	AsIcon *icon;
+	GPtrArray *icons;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
+	g_autofree gchar *name = NULL;
+	const gchar *key;
+
+	/* Convert local and stock icons to cached */
+	icons = as_app_get_icons (AS_APP (app));
+	for (guint i = 0; i < icons->len; i++) {
+		icon = g_ptr_array_index (icons, i);
+		switch (as_icon_get_kind (icon)) {
+		case AS_ICON_KIND_LOCAL:
+			key = as_icon_get_filename (icon);
+			break;
+		case AS_ICON_KIND_STOCK:
+			key = g_strdup (as_icon_get_name (icon));
+			break;
+		default:
+			key = NULL;
+			break;
+		}
+
+		if (key) {
+			if (!asb_plugin_convert_icon (plugin,
+						      icon,
+						      tmpdir,
+						      key,
+						      app,
+						      error))
+				return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
 static gboolean
 asb_plugin_process_filename (AsbPlugin *plugin,
+			     const gchar *tmpdir,
 			     AsbPackage *pkg,
 			     const gchar *filename,
 			     GList **apps,
@@ -66,7 +194,6 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 {
 	AsProblemKind problem_kind;
 	AsProblem *problem;
-	GPtrArray *icons;
 	const gchar *tmp;
 	guint i;
 	g_autoptr(AsbApp) app = NULL;
@@ -104,10 +231,8 @@ asb_plugin_process_filename (AsbPlugin *plugin,
 				 as_problem_get_message (problem));
 	}
 
-	/* nuke things that do not belong */
-	icons = as_app_get_icons (AS_APP (app));
-	if (icons->len > 0)
-		g_ptr_array_set_size (icons, 0);
+	if (!asb_plugin_convert_icons (plugin, tmpdir, app, error))
+		return FALSE;
 
 	/* fix up the project license */
 	tmp = as_app_get_project_license (AS_APP (app));
@@ -215,6 +340,7 @@ asb_plugin_process (AsbPlugin *plugin,
 			continue;
 		filename_tmp = g_build_filename (tmpdir, filelist[i], NULL);
 		ret = asb_plugin_process_filename (plugin,
+						   tmpdir,
 						   pkg,
 						   filename_tmp,
 						   &apps,
