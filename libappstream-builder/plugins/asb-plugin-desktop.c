@@ -246,19 +246,31 @@ asb_plugin_process_app (AsbPlugin *plugin,
 			const gchar *tmpdir,
 			GError **error)
 {
+	AsLaunchable *launchable;
 	gboolean found = FALSE;
 	guint i;
+	g_autoptr(GString) desktop_basename = NULL;
 	const gchar *app_dirs[] = {
 		"/usr/share/applications",
 		"/usr/share/applications/kde4",
 		NULL };
+
+	/* get the (optional) launchable to get the name of the desktop file */
+	launchable = as_app_get_launchable_by_kind (AS_APP (app), AS_LAUNCHABLE_KIND_DESKTOP_ID);
+	if (launchable != NULL) {
+		desktop_basename = g_string_new (as_launchable_get_value (launchable));
+	} else {
+		desktop_basename = g_string_new (as_app_get_id (AS_APP (app)));
+		if (!g_str_has_suffix (desktop_basename->str, ".desktop"))
+			g_string_append (desktop_basename, ".desktop");
+	}
 
 	/* use the .desktop file to refine the application */
 	for (i = 0; app_dirs[i] != NULL; i++) {
 		g_autofree gchar *fn = NULL;
 		fn = g_build_filename (tmpdir,
 				       app_dirs[i],
-				       as_app_get_id (AS_APP (app)),
+				       desktop_basename->str,
 				       NULL);
 		if (g_file_test (fn, G_FILE_TEST_EXISTS)) {
 			if (!asb_plugin_desktop_refine (plugin, pkg, fn,
