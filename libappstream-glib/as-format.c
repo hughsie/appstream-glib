@@ -171,10 +171,6 @@ as_format_guess_kind (const gchar *filename)
 		return AS_FORMAT_KIND_APPSTREAM;
 	if (g_str_has_suffix (filename, ".yml.gz"))
 		return AS_FORMAT_KIND_APPSTREAM;
-#ifdef HAVE_GCAB
-	if (g_str_has_suffix (filename, ".cab"))
-		return AS_FORMAT_KIND_APPSTREAM;
-#endif
 	if (g_str_has_suffix (filename, ".desktop"))
 		return AS_FORMAT_KIND_DESKTOP;
 	if (g_str_has_suffix (filename, ".desktop.in"))

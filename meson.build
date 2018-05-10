@@ -57,20 +57,11 @@ libarchive = dependency('libarchive')
 soup = dependency('libsoup-2.4', version : '>= 2.51.92')
 json_glib = dependency('json-glib-1.0', version : '>= 1.1.2')
 gdkpixbuf = dependency('gdk-pixbuf-2.0', version : '>= 2.31.5')
-libgcab = dependency('libgcab-1.0', required : false)
-if libgcab.version().version_compare('>= 1.0')
-  conf.set('HAVE_GCAB_1_0', '1')
-endif
-
-if libgcab.found()
-  conf.set('HAVE_GCAB', 1)
-endif
 
 # builder (default enabled)
 if get_option('builder')
   gtk = dependency('gtk+-3.0')
   gmodule = dependency('gmodule-2.0')
-  gcab = find_program('gcab')
   if get_option('rpm')
     rpm = dependency('rpm')
     conf.set('HAVE_RPM', 1)

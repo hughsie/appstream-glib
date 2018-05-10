@@ -89,15 +89,8 @@ pkgg.generate(
   subdirs : 'libappstream-builder'
 )
 
-deps = [
-  firmware200,
-  firmware201,
-  firmware202,
-]
-
 asb_self_test = executable(
   'asb-self-test',
-  deps,
   'asb-self-test.c',
   include_directories : [
     include_directories('..'),
