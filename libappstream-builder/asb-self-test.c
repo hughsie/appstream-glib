@@ -342,7 +342,6 @@ asb_test_context_func (void)
 		"font-1-1.fc21.noarch.rpm",		/* font */
 		"font-serif-1-1.fc21.noarch.rpm",	/* font that extends */
 #endif
-		"colorhug-als-2.0.2.cab",		/* firmware */
 		NULL};
 
 	/* remove icons */
@@ -389,9 +388,9 @@ asb_test_context_func (void)
 
 	/* verify queue size */
 #ifdef HAVE_FONTS
-	g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 10);
+	g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 9);
 #else
-	g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 8);
+	g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 7);
 #endif
 
 	/* run the plugins */
@@ -415,9 +414,9 @@ asb_test_context_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 #ifdef HAVE_FONTS
-//	g_assert_cmpint (as_store_get_size (store), ==, 6);
+//	g_assert_cmpint (as_store_get_size (store), ==, 5);
 #else
-	g_assert_cmpint (as_store_get_size (store), ==, 5);
+	g_assert_cmpint (as_store_get_size (store), ==, 4);
 #endif
 	app = as_store_get_app_by_pkgname (store, "app");
 	g_assert (app != NULL);
@@ -522,34 +521,6 @@ asb_test_context_func (void)
 		"<lang percentage=\"33\">ru</lang>\n"
 		"</languages>\n"
 		"</component>\n"
-#ifdef HAVE_GCAB
-		"<component type=\"firmware\">\n"
-		"<id>com.hughski.ColorHug2.firmware</id>\n"
-		"<name>ColorHug Firmware</name>\n"
-		"<summary>Firmware for the ColorHug Colorimeter</summary>\n"
-		"<developer_name>Hughski Limited</developer_name>\n"
-		"<description><p>Updating the firmware on your ColorHug device "
-		"improves performance and adds new features.</p></description>\n"
-		"<project_license>GPL-2.0+</project_license>\n"
-		"<url type=\"homepage\">http://www.hughski.com/</url>\n"
-		"<releases>\n"
-		"<release timestamp=\"1424116753\" version=\"2.0.2\">\n"
-		"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.2.cab</location>\n"
-		"<checksum type=\"sha1\" filename=\"colorhug-als-2.0.2.cab\" target=\"container\">" AS_TEST_WILDCARD_SHA1 "</checksum>\n"
-		"<checksum type=\"sha1\" filename=\"firmware.bin\" target=\"content\">" AS_TEST_WILDCARD_SHA1 "</checksum>\n"
-		"<description><p>This unstable release adds the following features:</p>"
-		"<ul><li>Add TakeReadingArray to enable panel latency measurements</li>"
-		"<li>Speed up the auto-scaled measurements considerably, using 256ms "
-		"as the smallest sample duration</li></ul></description>\n"
-		"<size type=\"installed\">14</size>\n"
-		"<size type=\"download\">2015</size>\n"
-		"</release>\n"
-		"</releases>\n"
-		"<provides>\n"
-		"<firmware type=\"flashed\">84f40464-9272-4ef7-9399-cd95f12da696</firmware>\n"
-		"</provides>\n"
-		"</component>\n"
-#endif
 		"<component type=\"driver\">\n"
 		"<id>driver</id>\n"
 		"<pkgname>driver</pkgname>\n"
@@ -674,128 +645,6 @@ asb_test_context_func (void)
 #endif
 }
 
-static void
-asb_test_firmware_func (void)
-{
-#ifdef HAVE_GCAB
-	AsApp *app;
-	AsbPluginLoader *loader;
-	const gchar *expected_xml;
-	gboolean ret;
-	guint i;
-	g_autoptr(GError) error = NULL;
-	g_autoptr(AsbContext) ctx = NULL;
-	g_autoptr(AsStore) store = NULL;
-	g_autoptr(GFile) file = NULL;
-	g_autoptr(GString) xml = NULL;
-	const gchar *filenames[] = {
-		"colorhug-als-2.0.1.cab",
-		"colorhug-als-2.0.0.cab",
-		"colorhug-als-2.0.2.cab",
-		NULL};
-
-	/* set up the context */
-	ctx = asb_context_new ();
-	asb_context_set_max_threads (ctx, 1);
-	asb_context_set_api_version (ctx, 0.9);
-	asb_context_set_flags (ctx, ASB_CONTEXT_FLAG_NO_NETWORK);
-	asb_context_set_basename (ctx, "appstream");
-	asb_context_set_origin (ctx, "asb-self-test");
-	asb_context_set_cache_dir (ctx, "/tmp/asbuilder/cache");
-	asb_context_set_output_dir (ctx, "/tmp/asbuilder/output");
-	asb_context_set_temp_dir (ctx, "/tmp/asbuilder/temp");
-	asb_context_set_icons_dir (ctx, "/tmp/asbuilder/temp/icons");
-	loader = asb_context_get_plugin_loader (ctx);
-	asb_plugin_loader_set_dir (loader, TESTPLUGINDIR);
-	ret = asb_context_setup (ctx, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* add packages */
-	for (i = 0; filenames[i] != NULL; i++) {
-		g_autofree gchar *filename = NULL;
-		filename = asb_test_get_filename (filenames[i]);
-		if (filename == NULL)
-			g_warning ("%s not found", filenames[i]);
-		g_assert (filename != NULL);
-		ret = asb_context_add_filename (ctx, filename, &error);
-		g_assert_no_error (error);
-		g_assert (ret);
-	}
-
-	/* verify queue size */
-	g_assert_cmpint (asb_context_get_packages(ctx)->len, ==, 3);
-
-	/* run the plugins */
-	ret = asb_context_process (ctx, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* check files created */
-	g_assert (g_file_test ("/tmp/asbuilder/output/appstream.xml.gz", G_FILE_TEST_EXISTS));
-
-	/* load AppStream metadata */
-	file = g_file_new_for_path ("/tmp/asbuilder/output/appstream.xml.gz");
-	store = as_store_new ();
-	ret = as_store_from_file (store, file, NULL, NULL, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-	g_assert_cmpint (as_store_get_size (store), ==, 1);
-	app = as_store_get_app_by_id (store, "com.hughski.ColorHug2.firmware");
-	g_assert (app != NULL);
-
-	/* check it matches what we expect */
-	xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
-	expected_xml =
-		"<components origin=\"asb-self-test\" version=\"0.9\">\n"
-		"<component type=\"firmware\">\n"
-		"<id>com.hughski.ColorHug2.firmware</id>\n"
-		"<name>ColorHug Firmware</name>\n"
-		"<summary>Firmware for the ColorHug Colorimeter</summary>\n"
-		"<developer_name>Hughski Limited</developer_name>\n"
-		"<description><p>Updating the firmware on your ColorHug device "
-		"improves performance and adds new features.</p></description>\n"
-		"<project_license>GPL-2.0+</project_license>\n"
-		"<url type=\"homepage\">http://www.hughski.com/</url>\n"
-		"<releases>\n"
-		"<release timestamp=\"1424116753\" version=\"2.0.2\">\n"
-		"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.2.cab</location>\n"
-		"<checksum type=\"sha1\" filename=\"colorhug-als-2.0.2.cab\" target=\"container\">" AS_TEST_WILDCARD_SHA1 "</checksum>\n"
-		"<checksum type=\"sha1\" filename=\"firmware.bin\" target=\"content\">" AS_TEST_WILDCARD_SHA1 "</checksum>\n"
-		"<description><p>This unstable release adds the following features:</p>"
-		"<ul><li>Add TakeReadingArray to enable panel latency measurements</li>"
-		"<li>Speed up the auto-scaled measurements considerably, using 256ms "
-		"as the smallest sample duration</li></ul></description>\n"
-		"<size type=\"installed\">14</size>\n"
-		"<size type=\"download\">2015</size>\n"
-		"</release>\n"
-		"<release timestamp=\"1424116753\" version=\"2.0.1\">\n"
-		"<location>http://www.hughski.com/downloads/colorhug2/firmware/colorhug-2.0.1.cab</location>\n"
-		"<checksum type=\"sha1\" filename=\"colorhug-als-2.0.1.cab\" target=\"container\">" AS_TEST_WILDCARD_SHA1 "</checksum>\n"
-		"<checksum type=\"sha1\" filename=\"firmware.bin\" target=\"content\">" AS_TEST_WILDCARD_SHA1 "</checksum>\n"
-		"<description><p>This unstable release adds the following features:</p>"
-		"<ul><li>Use TakeReadings() to do a quick non-adaptive measurement</li>"
-		"<li>Scale XYZ measurement with a constant factor to make the CCMX more "
-		"sane</li></ul></description>\n"
-		"<size type=\"installed\">14</size>\n"
-		"<size type=\"download\">1951</size>\n"
-		"</release>\n"
-		"</releases>\n"
-		"<provides>\n"
-		"<firmware type=\"flashed\">84f40464-9272-4ef7-9399-cd95f12da696</firmware>\n"
-		"</provides>\n"
-		"</component>\n"
-		"</components>\n";
-	ret = asb_test_compare_lines (xml->str, expected_xml, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	ret = asb_utils_rmtree ("/tmp/asbuilder", &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-#endif
-}
-
 int
 main (int argc, char **argv)
 {
@@ -812,7 +661,6 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStreamBuilder/package{guess-fn}", asb_test_package_guess_from_fn_func);
 	g_test_add_func ("/AppStreamBuilder/utils{glob}", asb_test_utils_glob_func);
 	g_test_add_func ("/AppStreamBuilder/plugin-loader", asb_test_plugin_loader_func);
-	g_test_add_func ("/AppStreamBuilder/firmware", asb_test_firmware_func);
 	g_test_add_func ("/AppStreamBuilder/context", asb_test_context_func);
 #ifdef HAVE_RPM
 	g_test_add_func ("/AppStreamBuilder/package{rpm}", asb_test_package_rpm_func);

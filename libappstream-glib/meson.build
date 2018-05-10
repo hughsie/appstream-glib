@@ -9,7 +9,6 @@ deps = [
   giounix,
   glib,
   libarchive,
-  libgcab,
   soup,
   uuid,
 ]
@@ -150,7 +149,6 @@ pkgg.generate(
   requires_private : [
     'libarchive',
     'uuid',
-    'libgcab-1.0',
   ],
   name : 'appstream-glib',
   description : 'Objects and helper methods to help reading and writing AppStream metadata',

@@ -6,7 +6,6 @@ RUN dnf -y install \
 	docbook-utils \
 	fontconfig-devel \
 	freetype-devel \
-	gcab \
 	gdk-pixbuf2-devel \
 	gettext \
 	glib2-devel \
@@ -16,7 +15,6 @@ RUN dnf -y install \
 	gtk-doc \
 	json-glib-devel \
 	libarchive-devel \
-	libgcab1-devel \
 	libsoup-devel \
 	libstemmer-devel \
 	libuuid-devel \

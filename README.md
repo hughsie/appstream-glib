@@ -25,9 +25,9 @@ To install the libappstream-glib library you either need to install the
 `libappstream-glib` package from your distributor, or you can build a local
 copy. To do the latter just do:
 
-    dnf install docbook-utils gcab gettext-devel glib-devel \
+    dnf install docbook-utils gettext-devel glib-devel \
                 gobject-introspection-devel gperf gtk-doc gtk3-devel \
-                libarchive-devel libgcab-devel libsoup-devel \
+                libarchive-devel libsoup-devel \
                 libstemmer-devel libuuid-devel libyaml-devel \
                 meson rpm-devel sqlite-devel
     mkdir build && cd build
@@ -86,9 +86,9 @@ Getting Started
 To run appstream-builder you either need to install the package containing the
 binary and data files, or you can build a local copy. To do the latter just do:
 
-    dnf install docbook-utils gcab gettext-devel glib-devel \
+    dnf install docbook-utils gettext-devel glib-devel \
                 gobject-introspection-devel gperf gtk-doc gtk3-devel \
-                libarchive-devel libgcab-devel libsoup-devel \
+                libarchive-devel libsoup-devel \
                 libstemmer-devel libuuid-devel libyaml-devel \
                 meson rpm-devel sqlite-devel rpm-devel
     mkdir build && cd build

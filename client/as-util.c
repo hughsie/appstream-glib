@@ -3541,83 +3541,6 @@ as_util_mirror_screenshots (AsUtilPrivate *priv, gchar **values, GError **error)
 }
 
 static gboolean
-as_util_mirror_local_firmware (AsUtilPrivate *priv, gchar **values, GError **error)
-{
-	AsApp *app;
-	GPtrArray *apps;
-	guint i;
-	guint j;
-	g_autoptr(AsStore) store = NULL;
-	g_autoptr(GFile) file = NULL;
-
-	/* check args */
-	if (g_strv_length (values) != 2) {
-		g_set_error_literal (error,
-				     AS_ERROR,
-				     AS_ERROR_INVALID_ARGUMENTS,
-				     "Not enough arguments, expected: "
-				     "file url");
-		return FALSE;
-	}
-
-	/* open file */
-	store = as_store_new ();
-	file = g_file_new_for_path (values[0]);
-	if (!as_store_from_file (store, file, NULL, NULL, error))
-		return FALSE;
-
-	/* convert all the screenshots */
-	apps = as_store_get_apps (store);
-	for (i = 0; i < apps->len; i++) {
-		GPtrArray *releases;
-		AsRelease *rel;
-
-		/* get app */
-		app = g_ptr_array_index (apps, i);
-		if (as_app_get_kind (app) != AS_APP_KIND_FIRMWARE)
-			continue;
-		releases = as_app_get_releases (app);
-		if (releases->len == 0)
-			continue;
-		for (j = 0; j < releases->len; j++) {
-			AsChecksum *csum;
-			const gchar *tmp;
-			g_autofree gchar *loc = NULL;
-			g_autofree gchar *fn = NULL;
-			rel = g_ptr_array_index (releases, j);
-
-			/* get the release filename, but fall back to
-			 * the default location basename if unset */
-			csum = as_release_get_checksum_by_target (rel, AS_CHECKSUM_TARGET_CONTAINER);
-			if (csum != NULL) {
-				tmp = as_checksum_get_filename (csum);
-				if (tmp == NULL)
-					continue;
-				fn = g_strdup (tmp);
-			} else {
-				tmp = as_release_get_location_default (rel);
-				if (tmp == NULL)
-					continue;
-				fn = g_path_get_basename (tmp);
-			}
-			loc = g_build_filename (values[1], fn, NULL);
-			g_ptr_array_set_size (as_release_get_locations (rel), 0);
-			as_release_add_location (rel, loc);
-		}
-	}
-
-	/* save file */
-	if (!as_store_to_file (store, file,
-			       AS_NODE_TO_XML_FLAG_ADD_HEADER |
-			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
-			       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE,
-			       NULL, error))
-		return FALSE;
-
-	return TRUE;
-}
-
-static gboolean
 as_util_agreement_export (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	AsAgreement *pp;
@@ -4601,12 +4524,6 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Mirror upstream screenshots"),
 		     as_util_mirror_screenshots);
-	as_util_add (priv->cmd_array,
-		     "mirror-local-firmware",
-		     NULL,
-		     /* TRANSLATORS: command description */
-		     _("Mirror local firmware files"),
-		     as_util_mirror_local_firmware);
 	as_util_add (priv->cmd_array,
 		     "incorporate",
 		     NULL,

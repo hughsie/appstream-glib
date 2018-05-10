@@ -41,73 +41,13 @@ asb_package_cab_init (AsbPackageCab *pkg)
 }
 
 static gboolean
-asb_package_cab_ensure_simple (AsbPackage *pkg, GError **error)
-{
-	g_autofree gchar *basename = NULL;
-	gchar *tmp;
-
-	/* get basename minus the .cab extension */
-	basename = g_path_get_basename (asb_package_get_filename (pkg));
-	tmp = g_strrstr (basename, ".cab");
-	if (tmp != NULL)
-		*tmp = '\0';
-
-	/* maybe get a version too */
-	tmp = g_strrstr (basename, "-");
-	if (tmp == NULL) {
-		asb_package_set_name (pkg, basename);
-		asb_package_set_version (pkg, "unknown");
-		asb_package_set_release (pkg, "unknown");
-	} else {
-		*tmp = '\0';
-		asb_package_set_name (pkg, basename);
-		asb_package_set_version (pkg, tmp + 1);
-		asb_package_set_release (pkg, "unknown");
-	}
-	return TRUE;
-}
-
-static gboolean
-asb_package_cab_ensure_filelists (AsbPackage *pkg, GError **error)
-{
-	const gchar *argv[4] = { "gcab", "--list", "fn", NULL };
-	guint i;
-	g_autofree gchar *output = NULL;
-	g_autoptr(GPtrArray) files = NULL;
-	g_auto(GStrv) lines = NULL;
-
-	/* spawn sync */
-	argv[2] = asb_package_get_filename (pkg);
-	if (!g_spawn_sync (NULL, (gchar **) argv, NULL,
-			   G_SPAWN_SEARCH_PATH,
-			   NULL, NULL,
-			   &output, NULL, NULL, error))
-		return FALSE;
-
-	/* parse output */
-	files = g_ptr_array_new_with_free_func (g_free);
-	lines = g_strsplit (output, "\n", -1);
-	for (i = 0; lines[i] != NULL; i++) {
-		if (lines[i][0] == '\0')
-			continue;
-		g_ptr_array_add (files, g_strdup (lines[i]));
-	}
-
-	/* save */
-	g_ptr_array_add (files, NULL);
-	asb_package_set_filelist (pkg, (gchar **) files->pdata);
-	return TRUE;
-}
-
-static gboolean
 asb_package_cab_open (AsbPackage *pkg, const gchar *filename, GError **error)
 {
-	/* read package stuff */
-	if (!asb_package_cab_ensure_simple (pkg, error))
-		return FALSE;
-	if (!asb_package_cab_ensure_filelists (pkg, error))
-		return FALSE;
-	return TRUE;
+	g_set_error (error,
+		     AS_STORE_ERROR,
+		     AS_STORE_ERROR_FAILED,
+		     "Loading firmware is no longer suported, see fwupd");
+	return FALSE;
 }
 
 static gboolean
@@ -115,17 +55,11 @@ asb_package_cab_ensure (AsbPackage *pkg,
 			AsbPackageEnsureFlags flags,
 			GError **error)
 {
-	if ((flags & ASB_PACKAGE_ENSURE_NEVRA) > 0) {
-		if (!asb_package_cab_ensure_simple (pkg, error))
-			return FALSE;
-	}
-
-	if ((flags & ASB_PACKAGE_ENSURE_FILES) > 0) {
-		if (!asb_package_cab_ensure_filelists (pkg, error))
-			return FALSE;
-	}
-
-	return TRUE;
+	g_set_error (error,
+		     AS_STORE_ERROR,
+		     AS_STORE_ERROR_FAILED,
+		     "Loading firmware is no longer suported, see fwupd");
+	return FALSE;
 }
 
 static void

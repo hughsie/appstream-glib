@@ -46,10 +46,7 @@
 #include "as-store.h"
 #include "as-utils-private.h"
 #include "as-yaml.h"
-
-#ifdef HAVE_GCAB
 #include "as-store-cab.h"
-#endif
 
 #define AS_API_VERSION_NEWEST	0.8
 
@@ -2003,11 +2000,10 @@ as_store_from_file_internal (AsStore *store,
 						cancellable,
 						error);
 	}
-#ifdef HAVE_GCAB
+
 	/* a cab archive */
 	if (g_str_has_suffix (filename, ".cab"))
 		return as_store_cab_from_file (store, file, cancellable, error);
-#endif
 
 	/* an AppStream XML file */
 	if (priv->add_flags & AS_STORE_ADD_FLAG_ONLY_NATIVE_LANGS)
@@ -2111,15 +2107,7 @@ as_store_from_bytes (AsStore *store,
 
 	/* is firmware */
 	if (g_strcmp0 (content_type, "application/vnd.ms-cab-compressed") == 0) {
-#ifdef HAVE_GCAB
 		return as_store_cab_from_bytes (store, bytes, cancellable, error);
-#else
-		g_set_error (error,
-			     AS_STORE_ERROR,
-			     AS_STORE_ERROR_FAILED,
-			     "not supported, compiled without gcab");
-		return FALSE;
-#endif
 	}
 
 	/* not sure what to do */

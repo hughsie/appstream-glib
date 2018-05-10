@@ -2,7 +2,7 @@ FROM debian:stretch
 
 RUN echo "deb-src http://deb.debian.org/debian/ stretch main" >> /etc/apt/sources.list
 RUN apt-get update -qq
-RUN apt-get install -yq --no-install-recommends meson gcab libstemmer-dev
+RUN apt-get install -yq --no-install-recommends meson libstemmer-dev
 RUN apt-get build-dep -yq appstream-glib
 
 RUN mkdir /build
