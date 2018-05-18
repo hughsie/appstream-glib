@@ -3185,7 +3185,8 @@ as_app_remove_format (AsApp *app, AsFormat *format)
 void
 as_app_add_kudo_kind (AsApp *app, AsKudoKind kudo_kind)
 {
-	as_app_add_kudo (app, as_kudo_kind_to_string (kudo_kind));
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_ptr_array_add (priv->kudos, (AsRefString *) as_kudo_kind_to_string (kudo_kind));
 }
 
 /**
@@ -3818,7 +3819,7 @@ as_app_add_url (AsApp *app,
 		g_hash_table_remove (priv->urls, as_url_kind_to_string (url_kind));
 	} else {
 		g_hash_table_insert (priv->urls,
-				     as_ref_string_new (as_url_kind_to_string (url_kind)),
+				     (AsRefString *) as_url_kind_to_string (url_kind),
 				     as_ref_string_new (url));
 	}
 }

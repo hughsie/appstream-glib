@@ -32,6 +32,7 @@
 
 #include "as-enums.h"
 #include "as-app.h"
+#include "as-ref-string.h"
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 /**
@@ -81,20 +82,20 @@ const gchar *
 as_url_kind_to_string (AsUrlKind url_kind)
 {
 	if (url_kind == AS_URL_KIND_HOMEPAGE)
-		return "homepage";
+		return as_ref_string_new_static ("homepage");
 	if (url_kind == AS_URL_KIND_BUGTRACKER)
-		return "bugtracker";
+		return as_ref_string_new_static ("bugtracker");
 	if (url_kind == AS_URL_KIND_FAQ)
-		return "faq";
+		return as_ref_string_new_static ("faq");
 	if (url_kind == AS_URL_KIND_DONATION)
-		return "donation";
+		return as_ref_string_new_static ("donation");
 	if (url_kind == AS_URL_KIND_HELP)
-		return "help";
+		return as_ref_string_new_static ("help");
 	if (url_kind == AS_URL_KIND_MISSING)
-		return "missing";
+		return as_ref_string_new_static ("missing");
 	if (url_kind == AS_URL_KIND_TRANSLATE)
-		return "translate";
-	return "unknown";
+		return as_ref_string_new_static ("translate");
+	return as_ref_string_new_static ("unknown");
 }
 
 /**
@@ -141,19 +142,19 @@ const gchar *
 as_kudo_kind_to_string (AsKudoKind kudo_kind)
 {
 	if (kudo_kind == AS_KUDO_KIND_SEARCH_PROVIDER)
-		return "SearchProvider";
+		return as_ref_string_new_static ("SearchProvider");
 	if (kudo_kind == AS_KUDO_KIND_USER_DOCS)
-		return "UserDocs";
+		return as_ref_string_new_static ("UserDocs");
 	if (kudo_kind == AS_KUDO_KIND_APP_MENU)
-		return "AppMenu";
+		return as_ref_string_new_static ("AppMenu");
 	if (kudo_kind == AS_KUDO_KIND_MODERN_TOOLKIT)
-		return "ModernToolkit";
+		return as_ref_string_new_static ("ModernToolkit");
 	if (kudo_kind == AS_KUDO_KIND_NOTIFICATIONS)
-		return "Notifications";
+		return as_ref_string_new_static ("Notifications");
 	if (kudo_kind == AS_KUDO_KIND_HIGH_CONTRAST)
-		return "HighContrast";
+		return as_ref_string_new_static ("HighContrast");
 	if (kudo_kind == AS_KUDO_KIND_HI_DPI_ICON)
-		return "HiDpiIcon";
+		return as_ref_string_new_static ("HiDpiIcon");
 	return NULL;
 }
 
@@ -201,10 +202,10 @@ const gchar *
 as_size_kind_to_string (AsSizeKind size_kind)
 {
 	if (size_kind == AS_SIZE_KIND_INSTALLED)
-		return "installed";
+		return as_ref_string_new_static ("installed");
 	if (size_kind == AS_SIZE_KIND_DOWNLOAD)
-		return "download";
-	return "unknown";
+		return as_ref_string_new_static ("download");
+	return as_ref_string_new_static ("unknown");
 }
 
 /**
@@ -241,14 +242,14 @@ const gchar *
 as_urgency_kind_to_string (AsUrgencyKind urgency_kind)
 {
 	if (urgency_kind == AS_URGENCY_KIND_LOW)
-		return "low";
+		return as_ref_string_new_static ("low");
 	if (urgency_kind == AS_URGENCY_KIND_MEDIUM)
-		return "medium";
+		return as_ref_string_new_static ("medium");
 	if (urgency_kind == AS_URGENCY_KIND_HIGH)
-		return "high";
+		return as_ref_string_new_static ("high");
 	if (urgency_kind == AS_URGENCY_KIND_CRITICAL)
-		return "critical";
-	return "unknown";
+		return as_ref_string_new_static ("critical");
+	return as_ref_string_new_static ("unknown");
 }
 
 /**
