@@ -5034,10 +5034,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 		for (c = n->children; c != NULL; c = c->next) {
 			if (as_node_get_tag (c) != AS_TAG_CATEGORY)
 				continue;
-			tmp = as_node_get_data_as_refstr (c);
-			if (tmp == NULL)
+			str = as_node_get_data_as_refstr (c);
+			if (str == NULL)
 				continue;
-			as_app_add_category (app, tmp);
+			g_ptr_array_add (priv->categories, as_ref_string_ref (str));
 		}
 		if (n->children == NULL)
 			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
@@ -5193,7 +5193,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 			priv->problems |= AS_APP_PROBLEM_TRANSLATED_PROJECT_GROUP;
 			break;
 		}
-		as_app_set_project_group (app, as_node_get_data (n));
+		as_ref_string_assign (&priv->project_group,
+				      as_node_get_data_as_refstr (n));
 		break;
 
 	/* <compulsory_for_desktop> */
