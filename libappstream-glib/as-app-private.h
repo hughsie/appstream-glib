@@ -127,6 +127,8 @@ void		 as_app_set_search_blacklist	(AsApp		*app,
 						 GHashTable	*search_blacklist);
 void		 as_app_set_icon_path_rstr	(AsApp		*app,
 						 AsRefString	*rstr);
+void		 as_app_set_origin_rstr		(AsApp		*app,
+						 AsRefString	*rstr);
 
 G_END_DECLS
 

@@ -2697,6 +2697,13 @@ as_app_set_icon_path_rstr (AsApp *app, AsRefString *rstr)
 	as_ref_string_assign (&priv->icon_path, rstr);
 }
 
+void
+as_app_set_origin_rstr (AsApp *app, AsRefString *rstr)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	as_ref_string_assign (&priv->origin, rstr);
+}
+
 /**
  * as_app_set_icon_path:
  * @app: a #AsApp instance.

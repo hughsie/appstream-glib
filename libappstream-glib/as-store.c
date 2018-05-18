@@ -1671,7 +1671,7 @@ as_store_from_root (AsStore *store,
 			as_store_fixup_id_prefix (app, id_prefix_app);
 
 		if (origin_str != NULL)
-			as_app_set_origin (app, origin_str);
+			as_app_set_origin_rstr (app, origin_str);
 		as_store_add_app (store, app);
 	}
 
