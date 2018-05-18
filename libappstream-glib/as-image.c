@@ -281,6 +281,13 @@ as_image_set_url (AsImage *image, const gchar *url)
 	as_ref_string_assign_safe (&priv->url, url);
 }
 
+void
+as_image_set_url_rstr (AsImage *image, AsRefString *rstr)
+{
+	AsImagePrivate *priv = GET_PRIVATE (image);
+	as_ref_string_assign (&priv->url, rstr);
+}
+
 /**
  * as_image_set_basename:
  * @image: a #AsImage instance.

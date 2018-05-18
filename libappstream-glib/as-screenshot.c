@@ -469,6 +469,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node,
 			  AsNodeContext *ctx, GError **error)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	AsRefString *str;
 	GList *l;
 	GNode *c;
 	const gchar *tmp;
@@ -499,8 +500,8 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node,
 	}
 
 	/* AppData files does not have <image> tags */
-	tmp = as_node_get_data (node);
-	if (tmp != NULL) {
+	str = as_node_get_data_as_refstr (node);
+	if (str != NULL) {
 		AsImage *image;
 		image = as_image_new ();
 		as_image_set_kind (image, AS_IMAGE_KIND_SOURCE);
@@ -510,7 +511,7 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node,
 		size = as_node_get_attribute_as_uint (node, "height");
 		if (size != G_MAXUINT)
 			as_image_set_height (image, size);
-		as_image_set_url (image, tmp);
+		as_image_set_url_rstr (image, str);
 		g_ptr_array_add (priv->images, image);
 	}
 

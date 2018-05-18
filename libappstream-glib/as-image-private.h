@@ -42,6 +42,8 @@ gboolean	 as_image_node_parse_dep11	(AsImage	*image,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+void		 as_image_set_url_rstr		(AsImage	*image,
+						 AsRefString	*rstr);
 
 G_END_DECLS
 
