@@ -5020,7 +5020,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 	{
 		g_autoptr(AsIcon) ic = NULL;
 		ic = as_icon_new ();
-		as_icon_set_prefix (ic, priv->icon_path);
+		as_icon_set_prefix_rstr (ic, priv->icon_path);
 		if (!as_icon_node_parse (ic, n, ctx, error))
 			return FALSE;
 		as_app_add_icon (app, ic);

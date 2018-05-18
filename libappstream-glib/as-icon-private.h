@@ -47,6 +47,9 @@ gboolean	 as_icon_node_parse_dep11	(AsIcon		*icon,
 						 AsNodeContext	*ctx,
 						 GError		**error);
 
+void		 as_icon_set_prefix_rstr	(AsIcon		*icon,
+						 AsRefString	*rstr);
+
 G_END_DECLS
 
 #endif /* __AS_ICON_PRIVATE_H */

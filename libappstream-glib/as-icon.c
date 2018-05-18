@@ -363,6 +363,13 @@ as_icon_set_prefix (AsIcon *icon, const gchar *prefix)
 	as_ref_string_assign_safe (&priv->prefix, prefix);
 }
 
+void
+as_icon_set_prefix_rstr (AsIcon *icon, AsRefString *rstr)
+{
+	AsIconPrivate *priv = GET_PRIVATE (icon);
+	as_ref_string_assign (&priv->prefix, rstr);
+}
+
 /**
  * as_icon_set_url:
  * @icon: a #AsIcon instance.
