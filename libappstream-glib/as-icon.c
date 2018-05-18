@@ -48,6 +48,7 @@ typedef struct
 	AsRefString		*filename;
 	AsRefString		*prefix;
 	AsRefString		*prefix_private;
+	gboolean		 prepend_size;
 	guint			 width;
 	guint			 height;
 	guint			 scale;
@@ -224,6 +225,25 @@ const gchar *
 as_icon_get_prefix (AsIcon *icon)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+
+	/* only use the size if the metadata has width and height */
+	if (priv->prepend_size && priv->prefix_private == NULL) {
+		g_autofree gchar *sz = NULL;
+		if (priv->scale > 1) {
+			sz = g_strdup_printf ("%s/%ux%u@%u",
+					      priv->prefix,
+					      priv->width,
+					      priv->height,
+					      priv->scale);
+		} else {
+			sz = g_strdup_printf ("%s/%ux%u",
+					      priv->prefix,
+					      priv->width,
+					      priv->height);
+		}
+		as_ref_string_assign_safe (&priv->prefix_private, sz);
+	}
+
 	if (priv->prefix_private != NULL)
 		return priv->prefix_private;
 	return priv->prefix;
@@ -663,12 +683,11 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 		    AsNodeContext *ctx, GError **error)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
-	const gchar *tmp;
+	AsRefString *str;
 	guint size;
-	gboolean prepend_size = TRUE;
 
-	tmp = as_node_get_attribute (node, "type");
-	as_icon_set_kind (icon, as_icon_kind_from_string (tmp));
+	str = as_node_get_attribute_as_refstr (node, "type");
+	as_icon_set_kind (icon, as_icon_kind_from_string (str));
 	switch (priv->kind) {
 	case AS_ICON_KIND_EMBEDDED:
 		if (!as_icon_node_parse_embedded (icon, node, error))
@@ -677,8 +696,8 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 	default:
 
 		/* preserve the URL for remote icons */
-		tmp = as_node_get_data (node);
-		if (tmp == NULL) {
+		str = as_node_get_data_as_refstr (node);
+		if (str == NULL) {
 			g_set_error (error,
 				     AS_ICON_ERROR,
 				     AS_ICON_ERROR_FAILED,
@@ -687,24 +706,25 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 			return FALSE;
 		}
 		if (priv->kind == AS_ICON_KIND_REMOTE)
-			as_icon_set_url (icon, tmp);
+			as_ref_string_assign (&priv->url, str);
 		else if (priv->kind == AS_ICON_KIND_LOCAL)
-			as_icon_set_filename (icon, tmp);
+			as_ref_string_assign (&priv->filename, str);
 
 		/* store the name without any prefix */
-		if (g_strstr_len (tmp, -1, "/") == NULL) {
-			as_icon_set_name (icon, tmp);
+		if (g_strstr_len (str, -1, "/") == NULL) {
+			as_ref_string_assign (&priv->name, str);
 		} else {
 			g_autofree gchar *basename = NULL;
-			basename = g_path_get_basename (tmp);
+			basename = g_path_get_basename (str);
 			as_icon_set_name (icon, basename);
 		}
 
 		/* width is optional, assume 64px if missing */
+		priv->prepend_size = TRUE;
 		size = as_node_get_attribute_as_uint (node, "width");
 		if (size == G_MAXUINT) {
 			size = 64;
-			prepend_size = FALSE;
+			priv->prepend_size = FALSE;
 		}
 		priv->width = size;
 
@@ -712,7 +732,7 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 		size = as_node_get_attribute_as_uint (node, "height");
 		if (size == G_MAXUINT) {
 			size = 64;
-			prepend_size = FALSE;
+			priv->prepend_size = FALSE;
 		}
 		priv->height = size;
 
@@ -721,24 +741,6 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 		if (size == G_MAXUINT)
 			size = 1;
 		priv->scale = size;
-
-		/* only use the size if the metadata has width and height */
-		if (prepend_size) {
-			g_autofree gchar *sz = NULL;
-			if (priv->scale > 1) {
-				sz = g_strdup_printf ("%s/%ux%u@%u",
-						      priv->prefix,
-						      priv->width,
-						      priv->height,
-						      priv->scale);
-			} else {
-				sz = g_strdup_printf ("%s/%ux%u",
-						      priv->prefix,
-						      priv->width,
-						      priv->height);
-			}
-			as_ref_string_assign_safe (&priv->prefix_private, sz);
-		}
 		break;
 	}
 
