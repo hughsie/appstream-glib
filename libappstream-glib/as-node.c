@@ -2013,7 +2013,7 @@ as_node_fix_locale_full (const GNode *node, const gchar *locale)
 	GNode *root = g_node_get_root ((GNode *) node);
 	AsNodeRoot *root_data = ((AsNodeData *)root->data)->root;
 
-	if (locale == NULL)
+	if (locale == NULL || g_strcmp0 (locale, "C") == 0)
 		return as_ref_string_new_static ("C");
 	if (g_strcmp0 (locale, "xx") == 0)
 		return NULL;
@@ -2035,7 +2035,7 @@ as_node_fix_locale_full (const GNode *node, const gchar *locale)
 AsRefString *
 as_node_fix_locale (const gchar *locale)
 {
-	if (locale == NULL)
+	if (locale == NULL || g_strcmp0 (locale, "C") == 0)
 		return as_ref_string_new_static ("C");
 	if (g_strcmp0 (locale, "xx") == 0)
 		return NULL;
