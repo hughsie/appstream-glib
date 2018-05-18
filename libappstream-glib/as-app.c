@@ -5322,8 +5322,9 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 			percent = as_node_get_attribute_as_int (c, "percentage");
 			if (percent == G_MAXINT)
 				percent = 0;
-			as_app_add_language (app, percent,
-					     as_node_get_data (c));
+			g_hash_table_insert (priv->languages,
+					     as_ref_string_ref (as_node_get_data_as_refstr (c)),
+					     GINT_TO_POINTER (percent));
 		}
 		if (n->children == NULL)
 			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;

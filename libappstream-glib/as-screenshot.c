@@ -490,12 +490,14 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node,
 	captions = as_node_get_localized (node, "caption");
 	if (captions != NULL) {
 		g_autoptr(GList) keys = NULL;
+		as_screenshot_ensure_captions (screenshot);
 		keys = g_hash_table_get_keys (captions);
 		for (l = keys; l != NULL; l = l->next) {
-			tmp = l->data;
-			as_screenshot_set_caption (screenshot,
-						   tmp,
-						   g_hash_table_lookup (captions, tmp));
+			AsRefString *locale = l->data;
+			AsRefString *caption = g_hash_table_lookup (captions, locale);
+			g_hash_table_insert (priv->captions,
+					     as_ref_string_ref (locale),
+					     as_ref_string_ref (caption));
 		}
 	}
 
