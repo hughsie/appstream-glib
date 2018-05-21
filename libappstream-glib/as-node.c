@@ -2077,27 +2077,31 @@ GHashTable *
 as_node_get_localized_unwrap (const AsNode *node, GError **error)
 {
 	AsNodeData *data;
-	GHashTable *results;
+	AsRefString *xml_lang;
 	GList *l;
 	AsNode *tmp;
 	GString *str;
-	const gchar *xml_lang;
 	gboolean is_li_translated = TRUE;
 	g_autoptr(GHashTable) hash = NULL;
+	g_autoptr(GHashTable) results = NULL;
 	g_autoptr(GList) keys = NULL;
 
 	g_return_val_if_fail (node != NULL, NULL);
 
+	/* use AsRefString to be able to ref when subsuming */
+	results = g_hash_table_new_full (g_str_hash, g_str_equal,
+					 (GDestroyNotify) as_ref_string_unref,
+					 (GDestroyNotify) as_ref_string_unref);
+
 	/* work out what kind of normalization this is */
-	xml_lang = as_node_get_attribute (node, "xml:lang");
+	xml_lang = as_node_get_attribute_as_refstr (node, "xml:lang");
 	if (xml_lang != NULL && node->children != NULL) {
 		str = as_node_to_xml (node->children, AS_NODE_TO_XML_FLAG_NONE);
-		results = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 		g_hash_table_insert (results,
-				     g_strdup (xml_lang),
-				     g_strdup (str->str));
+				     as_ref_string_ref (xml_lang),
+				     as_ref_string_new (str->str));
 		g_string_free (str, TRUE);
-		return results;
+		return g_steal_pointer (&results);
 	}
 	for (tmp = node->children; tmp != NULL; tmp = tmp->next) {
 		data = tmp->data;
@@ -2122,9 +2126,6 @@ as_node_get_localized_unwrap (const AsNode *node, GError **error)
 	}
 
 	/* copy into a hash table of the correct size */
-	results = g_hash_table_new_full (g_str_hash, g_str_equal,
-					 (GDestroyNotify) as_ref_string_unref,
-					 (GDestroyNotify) as_ref_string_unref);
 	keys = g_hash_table_get_keys (hash);
 	for (l = keys; l != NULL; l = l->next) {
 		g_autoptr(AsRefString) locale_fixed = NULL;
@@ -2137,7 +2138,7 @@ as_node_get_localized_unwrap (const AsNode *node, GError **error)
 				     as_ref_string_ref (locale_fixed),
 				     as_ref_string_new (str->str));
 	}
-	return results;
+	return g_steal_pointer (&results);
 }
 
 /* helper struct */
