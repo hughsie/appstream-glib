@@ -2273,6 +2273,9 @@ as_app_set_id (AsApp *app, const gchar *id)
 		".shell-extension",
 		NULL };
 
+	g_return_if_fail (AS_IS_APP (app));
+	g_return_if_fail (id != NULL);
+
 	/* handle untrusted */
 	if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_VALID_UTF8) > 0 &&
 	    !as_app_validate_utf8 (id)) {
@@ -4846,6 +4849,10 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 		tmp = as_node_get_attribute (n, "type");
 		if (tmp != NULL)
 			as_app_set_kind (app, as_app_kind_from_string (tmp));
+		if (as_node_get_data (n) == NULL) {
+			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
+			break;
+		}
 		as_app_set_id (app, as_node_get_data (n));
 		break;
 
