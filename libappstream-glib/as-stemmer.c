@@ -80,7 +80,7 @@ as_stemmer_process (AsStemmer *stemmer, const gchar *value)
 	if (value_len == (gsize) sb_stemmer_length (stemmer->ctx)) {
 		new = as_ref_string_new_with_length (value_casefold, value_len);
 	} else {
-		new = as_ref_string_new_copy (tmp);
+		new = as_ref_string_new (tmp);
 	}
 	g_hash_table_insert (stemmer->hash,
 			     as_ref_string_new (value_casefold),

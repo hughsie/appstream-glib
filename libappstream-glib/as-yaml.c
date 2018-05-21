@@ -371,12 +371,12 @@ as_node_yaml_process_layer (AsYamlContext *ctx, AsNode *parent, GError **error)
 			    last_scalar != NULL) {
 				ym = last_scalar->data;
 				if (ym->key != NULL)
-					ym->value = as_ref_string_new_copy (tmp);
+					ym->value = as_ref_string_new (tmp);
 				ym->kind = AS_YAML_NODE_KIND_KEY_VALUE;
 				last_scalar = NULL;
 			} else {
 				if (as_yaml_node_valid (ctx, parent, tmp)) {
-					g_autoptr(AsRefString) rstr = as_ref_string_new_copy (tmp);
+					g_autoptr(AsRefString) rstr = as_ref_string_new (tmp);
 					ym = as_yaml_node_new (AS_YAML_NODE_KIND_KEY, rstr);
 				} else {
 					ym = as_yaml_node_new (AS_YAML_NODE_KIND_KEY, NULL);

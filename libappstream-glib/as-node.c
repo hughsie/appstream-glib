@@ -287,7 +287,7 @@ as_node_cdata_to_escaped (AsNodeData *data)
 		as_utils_string_replace (str, "&", "&amp;");
 		as_utils_string_replace (str, "<", "&lt;");
 		as_utils_string_replace (str, ">", "&gt;");
-		data->cdata = as_ref_string_new_copy_with_length (str->str, str->len);
+		data->cdata = as_ref_string_new_with_length (str->str, str->len);
 	}
 	data->is_cdata_escaped = TRUE;
 }
@@ -518,7 +518,7 @@ as_node_reflow_text (const gchar *text, gssize text_len)
 	    !g_str_has_suffix (text, " ")) {
 		gsize len;
 		len = text_len >= 0 ? (gsize) text_len : strlen (text);
-		return as_ref_string_new_copy_with_length (text, len);
+		return as_ref_string_new_with_length (text, len);
 	}
 
 	/* split the text into lines */
@@ -553,7 +553,7 @@ as_node_reflow_text (const gchar *text, gssize text_len)
 		/* this last section was paragraph */
 		newline_count = 1;
 	}
-	return as_ref_string_new_copy_with_length (tmp->str, tmp->len);
+	return as_ref_string_new_with_length (tmp->str, tmp->len);
 }
 
 typedef struct {
@@ -1501,7 +1501,7 @@ as_node_find_with_attribute (AsNode *root, const gchar *path,
 	return node;
 }
 
-static gchar *
+static AsRefString *
 as_node_insert_line_breaks (const gchar *text, guint break_len)
 {
 	guint i;
@@ -1518,7 +1518,7 @@ as_node_insert_line_breaks (const gchar *text, guint break_len)
 	for (i = break_len + 1; i < str->len; i += break_len + 1)
 		g_string_insert (str, (gssize) i, "\n");
 	g_string_append (str, "\n");
-	return as_ref_string_new_copy_with_length (str->str, str->len);;
+	return as_ref_string_new_with_length (str->str, str->len);
 }
 
 /**
@@ -1618,7 +1618,7 @@ as_node_insert_localized (AsNode *parent,
 	as_node_data_set_name (root, data, name, insert_flags);
 	if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
 		g_autofree gchar *tmp = as_markup_convert_simple (value_c, NULL);
-		data->cdata = as_ref_string_new_copy (tmp);
+		data->cdata = as_ref_string_new (tmp);
 		data->is_cdata_escaped = FALSE;
 	} else {
 		data->cdata = as_ref_string_new (value_c);
@@ -1644,7 +1644,7 @@ as_node_insert_localized (AsNode *parent,
 		as_node_data_set_name (root, data, name, insert_flags);
 		if (insert_flags & AS_NODE_INSERT_FLAG_NO_MARKUP) {
 			g_autofree gchar *tmp = as_markup_convert_simple (value, NULL);
-			data->cdata = as_ref_string_new_copy (tmp);
+			data->cdata = as_ref_string_new (tmp);
 			data->is_cdata_escaped = FALSE;
 		} else {
 			data->cdata = as_ref_string_new (value);

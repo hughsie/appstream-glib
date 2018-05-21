@@ -2289,7 +2289,7 @@ as_app_set_id (AsApp *app, const gchar *id)
 	/* save filename */
 	if (priv->id_filename != NULL)
 		as_ref_string_unref (priv->id_filename);
-	priv->id_filename = as_ref_string_new_copy (as_app_get_id_no_prefix (app));
+	priv->id_filename = as_ref_string_new (as_app_get_id_no_prefix (app));
 	g_strdelimit (priv->id_filename, "&<>", '-');
 	for (i = 0; suffixes[i] != NULL; i++) {
 		tmp = g_strrstr_len (priv->id_filename, -1, suffixes[i]);
