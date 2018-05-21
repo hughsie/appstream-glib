@@ -53,9 +53,6 @@ typedef enum {
 AsRefString	*as_ref_string_new			(const gchar	*str);
 AsRefString	*as_ref_string_new_with_length		(const gchar	*str,
 							 gsize		 len);
-AsRefString	*as_ref_string_new_copy			(const gchar	*str);
-AsRefString	*as_ref_string_new_copy_with_length	(const gchar	*str,
-							 gsize		 len);
 AsRefString	*as_ref_string_ref			(AsRefString	*rstr);
 AsRefString	*as_ref_string_unref			(AsRefString	*rstr);
 void		 as_ref_string_assign			(AsRefString	**rstr_ptr,
@@ -63,6 +60,13 @@ void		 as_ref_string_assign			(AsRefString	**rstr_ptr,
 void		 as_ref_string_assign_safe		(AsRefString	**rstr_ptr,
 							 const gchar	*str);
 gchar		*as_ref_string_debug			(AsRefStringDebugFlags flags);
+void		 as_ref_string_debug_start		(void);
+void		 as_ref_string_debug_stop		(void);
+
+/* deprecated */
+AsRefString	*as_ref_string_new_copy			(const gchar	*str);
+AsRefString	*as_ref_string_new_copy_with_length	(const gchar	*str,
+							 gsize		 len);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsRefString, as_ref_string_unref)
 

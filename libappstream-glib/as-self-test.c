@@ -5581,9 +5581,7 @@ as_test_app_parse_data_func (void)
 static void
 as_test_ref_string_func (void)
 {
-	const gchar *tmp;
 	AsRefString *rstr;
-	AsRefString *rstr2;
 
 	/* basic refcounting */
 	rstr = as_ref_string_new ("test");
@@ -5592,16 +5590,6 @@ as_test_ref_string_func (void)
 	g_assert (as_ref_string_ref (rstr) != NULL);
 	g_assert (as_ref_string_unref (rstr) != NULL);
 	g_assert (as_ref_string_unref (rstr) == NULL);
-
-	/* adopting const string */
-	tmp = "test";
-	rstr = as_ref_string_new (tmp);
-	g_assert_cmpstr (rstr, ==, tmp);
-	rstr2 = as_ref_string_new (rstr);
-	g_assert_cmpstr (rstr2, ==, tmp);
-	g_assert (rstr == rstr2);
-	g_assert (as_ref_string_unref (rstr) != NULL);
-	g_assert (as_ref_string_unref (rstr2) == NULL);
 }
 
 int
