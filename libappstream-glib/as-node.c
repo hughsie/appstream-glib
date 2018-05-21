@@ -607,7 +607,6 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	AsNodeData *data;
 	AsNodeData *data_parent;
 	AsNode *current;
-	AsRefString *tmp;
 	guint i;
 
 	/* check if we should ignore the locale */
@@ -648,10 +647,13 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	current = g_node_append_data (helper->current, data);
 
 	/* transfer the ownership of the comment to the new child */
-	tmp = as_node_get_attribute_as_refstr (helper->current, "@comment-tmp");
-	if (tmp != NULL) {
-		as_node_add_attribute (current, "@comment", tmp);
-		as_node_remove_attribute (helper->current, "@comment-tmp");
+	if (helper->flags & AS_NODE_FROM_XML_FLAG_KEEP_COMMENTS) {
+		AsRefString *tmp;
+		tmp = as_node_get_attribute_as_refstr (helper->current, "@comment-tmp");
+		if (tmp != NULL) {
+			as_node_add_attribute (current, "@comment", tmp);
+			as_node_remove_attribute (helper->current, "@comment-tmp");
+		}
 	}
 
 	/* the child is now the node to be processed */
