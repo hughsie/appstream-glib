@@ -1277,6 +1277,10 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GPtrArray) array = NULL;
 
+	/* start collecting string stats */
+	if (g_getenv ("AS_REF_STR_DEBUG") != NULL)
+		as_ref_string_debug_start ();
+
 	/* check args */
 	if (g_strv_length (values) < 1) {
 		g_set_error_literal (error,
@@ -1364,9 +1368,12 @@ as_util_search (AsUtilPrivate *priv, gchar **values, GError **error)
 	}
 
 	/* dump refcounted string debug data */
-	if (g_getenv ("AS_REF_STR_DEBUG") != NULL) {
-		g_autofree gchar *tmp = as_ref_string_debug (AS_REF_STRING_DEBUG_DEDUPED |
-							     AS_REF_STRING_DEBUG_DUPES);
+	if (g_strcmp0 (g_getenv ("AS_REF_STR_DEBUG"), "deduped") == 0) {
+		g_autofree gchar *tmp = as_ref_string_debug (AS_REF_STRING_DEBUG_DEDUPED);
+		g_print ("%s", tmp);
+	}
+	if (g_strcmp0 (g_getenv ("AS_REF_STR_DEBUG"), "dupes") == 0) {
+		g_autofree gchar *tmp = as_ref_string_debug (AS_REF_STRING_DEBUG_DUPES);
 		g_print ("%s", tmp);
 	}
 
