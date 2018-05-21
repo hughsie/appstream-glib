@@ -4983,6 +4983,8 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 		if (n->children == NULL) {
 			/* pre-formatted */
 			priv->problems |= AS_APP_PROBLEM_PREFORMATTED_DESCRIPTION;
+			if (as_node_get_data (n) == NULL)
+				break;
 			as_app_set_description (app,
 						as_node_get_attribute (n, "xml:lang"),
 						as_node_get_data (n));
