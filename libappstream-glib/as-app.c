@@ -2690,6 +2690,13 @@ as_app_set_origin (AsApp *app, const gchar *origin)
 	priv->unique_id_valid = FALSE;
 }
 
+void
+as_app_set_icon_path_rstr (AsApp *app, AsRefString *rstr)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	as_ref_string_assign (&priv->icon_path, rstr);
+}
+
 /**
  * as_app_set_icon_path:
  * @app: a #AsApp instance.

@@ -1644,7 +1644,7 @@ as_store_from_root (AsStore *store,
 
 		app = as_app_new ();
 		if (icon_path_str != NULL)
-			as_app_set_icon_path (app, icon_path_str);
+			as_app_set_icon_path_rstr (app, icon_path_str);
 		if (arch != NULL)
 			as_app_add_arch (app, arch);
 		as_app_add_format (app, format);
