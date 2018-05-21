@@ -60,7 +60,7 @@ typedef enum {
 	AS_CHECKSUM_TARGET_UNKNOWN,		/* Since: 0.4.2 */
 	AS_CHECKSUM_TARGET_CONTAINER,		/* Since: 0.4.2 */
 	AS_CHECKSUM_TARGET_CONTENT,		/* Since: 0.4.2 */
-	AS_CHECKSUM_TARGET_SIGNATURE,		/* Since: 0.6.8 */
+	AS_CHECKSUM_TARGET_SIGNATURE,		/* Since: 0.7.9 */
 	/*< private >*/
 	AS_CHECKSUM_TARGET_LAST
 } AsChecksumTarget;
