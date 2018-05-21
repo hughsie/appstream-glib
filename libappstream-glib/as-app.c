@@ -3920,28 +3920,22 @@ as_app_add_addon (AsApp *app, AsApp *addon)
 
 /******************************************************************************/
 
-
 static void
 as_app_subsume_dict (GHashTable *dest, GHashTable *src, guint64 flags)
 {
-	GList *l;
-	const gchar *tmp;
-	const gchar *key;
-	const gchar *value;
-	g_autoptr(GList) keys = NULL;
-
-	keys = g_hash_table_get_keys (src);
+	g_autoptr(GList) keys = g_hash_table_get_keys (src);
 	if ((flags & AS_APP_SUBSUME_FLAG_REPLACE) > 0 && keys != NULL)
 		g_hash_table_remove_all (dest);
-	for (l = keys; l != NULL; l = l->next) {
-		key = l->data;
+	for (GList *l = keys; l != NULL; l = l->next) {
+		AsRefString *key = l->data;
+		AsRefString *value;
 		if (flags & AS_APP_SUBSUME_FLAG_NO_OVERWRITE) {
-			tmp = g_hash_table_lookup (dest, key);
+			const gchar *tmp = g_hash_table_lookup (dest, key);
 			if (tmp != NULL)
 				continue;
 		}
 		value = g_hash_table_lookup (src, key);
-		g_hash_table_insert (dest, as_ref_string_new (key), as_ref_string_new (value));
+		g_hash_table_insert (dest, as_ref_string_ref (key), as_ref_string_ref (value));
 	}
 }
 
