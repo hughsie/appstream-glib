@@ -45,6 +45,7 @@
 typedef struct {
 	GHashTable		*intern_attr;	/* key=value of AsRefString */
 	GHashTable		*intern_name;	/* key=value of AsRefString */
+	GHashTable		*intern_lang;	/* key=value of AsRefString */
 } AsNodeRoot;
 
 typedef struct
@@ -99,6 +100,10 @@ as_node_new (void)
 							 g_str_equal,
 							 (GDestroyNotify) as_ref_string_unref,
 							 NULL);
+	data->root->intern_lang = g_hash_table_new_full (g_str_hash,
+							 g_str_equal,
+							 (GDestroyNotify) as_ref_string_unref,
+							 NULL);
 	return g_node_new (data);
 }
 
@@ -108,13 +113,14 @@ as_node_attr_free (AsNodeAttr *attr)
 	g_slice_free (AsNodeAttr, attr);
 }
 
+/* transfer: none */
 static AsRefString *
 as_node_intern (GHashTable *hash, const gchar *key)
 {
 	AsRefString *rstr = g_hash_table_lookup (hash, key);
 	if (rstr == NULL) {
 		rstr = as_ref_string_new (key);
-		g_hash_table_insert (hash, rstr, rstr);
+		g_hash_table_add (hash, rstr);
 	}
 	return rstr;
 }
@@ -170,6 +176,7 @@ as_node_destroy_node_cb (AsNode *node, gpointer user_data)
 	if (data->is_root_node) {
 		g_hash_table_unref (data->root->intern_attr);
 		g_hash_table_unref (data->root->intern_name);
+		g_hash_table_unref (data->root->intern_lang);
 		g_free (data->root);
 	} else {
 		if (!data->is_cdata_const && data->cdata != NULL)
@@ -1989,6 +1996,33 @@ as_node_get_localized_unwrap_type_ul (const AsNode *node,
 }
 
 /**
+ * as_node_fix_locale_full: (skip)
+ * @node: A #AsNode
+ * @locale: The locale
+ *
+ * Fixes and filters incorrect locale strings using the root node to intern the
+ * locale.
+ *
+ * Returns: (transfer full): a newly allocated string
+ *
+ * Since: 0.7.9
+ **/
+AsRefString *
+as_node_fix_locale_full (const GNode *node, const gchar *locale)
+{
+	GNode *root = g_node_get_root ((GNode *) node);
+	AsNodeRoot *root_data = ((AsNodeData *)root->data)->root;
+
+	if (locale == NULL)
+		return as_ref_string_new_static ("C");
+	if (g_strcmp0 (locale, "xx") == 0)
+		return NULL;
+	if (g_strcmp0 (locale, "x-test") == 0)
+		return NULL;
+	return as_ref_string_ref (as_node_intern (root_data->intern_lang, locale));
+}
+
+/**
  * as_node_fix_locale: (skip)
  * @locale: The locale
  *
@@ -2001,17 +2035,13 @@ as_node_get_localized_unwrap_type_ul (const AsNode *node,
 AsRefString *
 as_node_fix_locale (const gchar *locale)
 {
-	AsRefString *tmp;
-
 	if (locale == NULL)
 		return as_ref_string_new_static ("C");
 	if (g_strcmp0 (locale, "xx") == 0)
 		return NULL;
 	if (g_strcmp0 (locale, "x-test") == 0)
 		return NULL;
-	tmp = as_ref_string_new (locale);
-	g_strdelimit (tmp, "-", '_'); // FIXME: might be evil
-	return tmp;
+	return as_ref_string_new (locale);
 }
 
 /**
@@ -2097,14 +2127,14 @@ as_node_get_localized_unwrap (const AsNode *node, GError **error)
 					 (GDestroyNotify) as_ref_string_unref);
 	keys = g_hash_table_get_keys (hash);
 	for (l = keys; l != NULL; l = l->next) {
-		gchar *locale_fixed;
+		g_autoptr(AsRefString) locale_fixed = NULL;
 		xml_lang = l->data;
-		locale_fixed = as_node_fix_locale (xml_lang);
+		locale_fixed = as_node_fix_locale_full (node, xml_lang);
 		if (locale_fixed == NULL)
 			continue;
 		str = g_hash_table_lookup (hash, xml_lang);
 		g_hash_table_insert (results,
-				     locale_fixed,
+				     as_ref_string_ref (locale_fixed),
 				     as_ref_string_new (str->str));
 	}
 	return results;

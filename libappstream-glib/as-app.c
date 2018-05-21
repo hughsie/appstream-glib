@@ -4928,7 +4928,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 
 	/* <name> */
 	case AS_TAG_NAME:
-		xml_lang = as_node_fix_locale (as_node_get_attribute (n, "xml:lang"));
+		xml_lang = as_node_fix_locale_full (n, as_node_get_attribute (n, "xml:lang"));
 		if (xml_lang == NULL)
 			break;
 		str = as_node_get_data_as_refstr (n);
@@ -4941,7 +4941,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 
 	/* <summary> */
 	case AS_TAG_SUMMARY:
-		xml_lang = as_node_fix_locale (as_node_get_attribute (n, "xml:lang"));
+		xml_lang = as_node_fix_locale_full (n, as_node_get_attribute (n, "xml:lang"));
 		if (xml_lang == NULL)
 			break;
 		str = as_node_get_data_as_refstr (n);
@@ -4954,7 +4954,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 
 	/* <developer_name> */
 	case AS_TAG_DEVELOPER_NAME:
-		xml_lang = as_node_fix_locale (as_node_get_attribute (n, "xml:lang"));
+		xml_lang = as_node_fix_locale_full (n, as_node_get_attribute (n, "xml:lang"));
 		if (xml_lang == NULL)
 			break;
 		str = as_node_get_data_as_refstr (n);
@@ -5069,7 +5069,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 			tmp = as_node_get_data (c);
 			if (tmp == NULL)
 				continue;
-			xml_lang2 = as_node_fix_locale (as_node_get_attribute (c, "xml:lang"));
+			xml_lang2 = as_node_fix_locale_full (n, as_node_get_attribute (c, "xml:lang"));
 			if (xml_lang2 == NULL)
 				continue;
 			if (g_strstr_len (tmp, -1, ",") != NULL)
