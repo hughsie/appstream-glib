@@ -604,7 +604,7 @@ as_app_validate_image (AsImage *im, AsAppValidateHelper *helper)
 
 	/* blank */
 	url = as_image_get_url (im);
-	if ((guint) strlen (url) == 0) {
+	if (url == NULL || (guint) strlen (url) == 0) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_VALUE_MISSING,
 				     "<screenshot> has no content");
