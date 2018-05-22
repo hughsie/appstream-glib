@@ -2971,6 +2971,32 @@ as_app_add_compulsory_for_desktop (AsApp *app, const gchar *compulsory_for_deskt
 			 as_ref_string_new (compulsory_for_desktop));
 }
 
+static void
+as_app_add_keyword_rstr (AsApp *app, AsRefString *locale, AsRefString *keyword)
+{
+	AsAppPrivate *priv = GET_PRIVATE (app);
+	GPtrArray *tmp;
+
+	/* create an array if required */
+	tmp = g_hash_table_lookup (priv->keywords, locale);
+	if (tmp == NULL) {
+		tmp = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
+		g_hash_table_insert (priv->keywords, as_ref_string_ref (locale), tmp);
+	} else if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
+		if (as_ptr_array_find_string (tmp, keyword))
+			return;
+	}
+	g_ptr_array_add (tmp, as_ref_string_ref (keyword));
+
+	/* cache already populated */
+	if (priv->token_cache_valid) {
+		g_warning ("%s has token cache, invaliding as %s was added",
+			   as_app_get_unique_id (app), keyword);
+		g_hash_table_remove_all (priv->token_cache);
+		priv->token_cache_valid = FALSE;
+	}
+}
+
 /**
  * as_app_add_keyword:
  * @app: a #AsApp instance.
@@ -2987,7 +3013,6 @@ as_app_add_keyword (AsApp *app,
 		    const gchar *keyword)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
-	GPtrArray *tmp;
 	g_autoptr(AsRefString) locale_fixed = NULL;
 
 	g_return_if_fail (keyword != NULL);
@@ -3003,24 +3028,8 @@ as_app_add_keyword (AsApp *app,
 	if (locale_fixed == NULL)
 		return;
 
-	/* create an array if required */
-	tmp = g_hash_table_lookup (priv->keywords, locale_fixed);
-	if (tmp == NULL) {
-		tmp = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
-		g_hash_table_insert (priv->keywords, as_ref_string_ref (locale_fixed), tmp);
-	} else if ((priv->trust_flags & AS_APP_TRUST_FLAG_CHECK_DUPLICATES) > 0) {
-		if (as_ptr_array_find_string (tmp, keyword))
-			return;
-	}
-	g_ptr_array_add (tmp, as_ref_string_new (keyword));
-
-	/* cache already populated */
-	if (priv->token_cache_valid) {
-		g_warning ("%s has token cache, invaliding as %s was added",
-			   as_app_get_unique_id (app), keyword);
-		g_hash_table_remove_all (priv->token_cache);
-		priv->token_cache_valid = FALSE;
-	}
+	/* add */
+	as_app_add_keyword_rstr (app, locale_fixed, as_ref_string_new (keyword));
 }
 
 /**
@@ -3951,17 +3960,13 @@ static void
 as_app_subsume_keywords (AsApp *app, AsApp *donor, gboolean overwrite)
 {
 	AsAppPrivate *priv = GET_PRIVATE (donor);
-	GList *l;
 	GPtrArray *array;
-	const gchar *key;
-	const gchar *tmp;
-	guint i;
 	g_autoptr(GList) keys = NULL;
 
 	/* get all locales in the keywords dict */
 	keys = g_hash_table_get_keys (priv->keywords);
-	for (l = keys; l != NULL; l = l->next) {
-		key = l->data;
+	for (GList *l = keys; l != NULL; l = l->next) {
+		AsRefString *key = l->data;
 		if (!overwrite) {
 			array = as_app_get_keywords (app, key);
 			if (array != NULL)
@@ -3972,9 +3977,9 @@ as_app_subsume_keywords (AsApp *app, AsApp *donor, gboolean overwrite)
 		array = g_hash_table_lookup (priv->keywords, key);
 		if (array == NULL)
 			continue;
-		for (i = 0; i < array->len; i++) {
-			tmp = g_ptr_array_index (array, i);
-			as_app_add_keyword (app, key, tmp);
+		for (guint i = 0; i < array->len; i++) {
+			AsRefString *tmp = g_ptr_array_index (array, i);
+			as_app_add_keyword_rstr (app, key, tmp);
 		}
 	}
 }
@@ -5068,15 +5073,15 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 			g_autoptr(AsRefString) xml_lang2 = NULL;
 			if (as_node_get_tag (c) != AS_TAG_KEYWORD)
 				continue;
-			tmp = as_node_get_data (c);
-			if (tmp == NULL)
+			str = as_node_get_data_as_refstr (c);
+			if (str == NULL)
 				continue;
 			xml_lang2 = as_node_fix_locale_full (n, as_node_get_attribute (c, "xml:lang"));
 			if (xml_lang2 == NULL)
 				continue;
-			if (g_strstr_len (tmp, -1, ",") != NULL)
+			if (g_strstr_len (str, -1, ",") != NULL)
 				priv->problems |= AS_APP_PROBLEM_INVALID_KEYWORDS;
-			as_app_add_keyword (app, xml_lang2, tmp);
+			as_app_add_keyword_rstr (app, xml_lang2, str);
 		}
 		if (n->children == NULL)
 			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
