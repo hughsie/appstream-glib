@@ -69,3 +69,12 @@ custom, AS_TAG_CUSTOM
 launchable, AS_TAG_LAUNCHABLE
 agreement, AS_TAG_AGREEMENT
 agreement_section, AS_TAG_AGREEMENT_SECTION
+p, AS_TAG_P
+li, AS_TAG_LI
+ul, AS_TAG_UL
+ol, AS_TAG_OL
+binary, AS_TAG_BINARY
+font, AS_TAG_FONT
+dbus, AS_TAG_DBUS
+modalias, AS_TAG_MODALIAS
+library, AS_TAG_LIBRARY

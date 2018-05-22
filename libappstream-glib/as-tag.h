@@ -160,6 +160,15 @@ typedef enum {
 	AS_TAG_LAUNCHABLE,		/* Since: 0.6.13 */
 	AS_TAG_AGREEMENT,		/* Since: 0.7.8 */
 	AS_TAG_AGREEMENT_SECTION,	/* Since: 0.7.8 */
+	AS_TAG_P,			/* Since: 0.7.9 */
+	AS_TAG_LI,			/* Since: 0.7.9 */
+	AS_TAG_UL,			/* Since: 0.7.9 */
+	AS_TAG_OL,			/* Since: 0.7.9 */
+	AS_TAG_BINARY,			/* Since: 0.7.9 */
+	AS_TAG_FONT,			/* Since: 0.7.9 */
+	AS_TAG_DBUS,			/* Since: 0.7.9 */
+	AS_TAG_MODALIAS,		/* Since: 0.7.9 */
+	AS_TAG_LIBRARY,			/* Since: 0.7.9 */
 	/*< private >*/
 	AS_TAG_LAST
 } AsTag;

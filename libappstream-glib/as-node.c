@@ -1793,9 +1793,7 @@ as_node_string_free (GString *string)
 }
 
 static void
-as_node_denorm_add_to_langs (GHashTable *hash,
-			     const gchar *data,
-			     gboolean is_start)
+as_node_denorm_add_to_langs (GHashTable *hash, AsTag tag, gboolean is_start)
 {
 	GList *l;
 	GString *str;
@@ -1807,9 +1805,9 @@ as_node_denorm_add_to_langs (GHashTable *hash,
 		xml_lang = l->data;
 		str = g_hash_table_lookup (hash, xml_lang);
 		if (is_start)
-			g_string_append_printf (str, "<%s>", data);
+			g_string_append_printf (str, "<%s>", as_tag_to_string (tag));
 		else
-			g_string_append_printf (str, "</%s>", data);
+			g_string_append_printf (str, "</%s>", as_tag_to_string (tag));
 	}
 }
 
@@ -1865,16 +1863,15 @@ as_node_get_localized_unwrap_type_li (const AsNode *node,
 
 		/* append to existing string, adding the locale if it's not
 		 * already present */
-		if (g_strcmp0 (data->name, "p") == 0) {
+		if (data->tag == AS_TAG_P) {
 			str = as_node_denorm_get_str_for_lang (hash, data, TRUE);
 			as_node_cdata_to_escaped (data);
 			g_string_append_printf (str, "<p>%s</p>",
 						data->cdata);
 
 		/* loop on the children */
-		} else if (g_strcmp0 (data->name, "ul") == 0 ||
-			   g_strcmp0 (data->name, "ol") == 0) {
-			as_node_denorm_add_to_langs (hash, data->name, TRUE);
+		} else if (data->tag == AS_TAG_UL || data->tag == AS_TAG_OL) {
+			as_node_denorm_add_to_langs (hash, data->tag, TRUE);
 			for (tmp_c = tmp->children; tmp_c != NULL; tmp_c = tmp_c->next) {
 				data_c = tmp_c->data;
 
@@ -1888,9 +1885,9 @@ as_node_get_localized_unwrap_type_li (const AsNode *node,
 									       data_c,
 									       TRUE);
 					g_string_append_printf (str, "<%s>",
-								data->name);
+								as_tag_data_get_name (data));
 				}
-				if (g_strcmp0 (data_c->name, "li") == 0) {
+				if (data_c->tag == AS_TAG_LI) {
 					as_node_cdata_to_escaped (data_c);
 					g_string_append_printf (str,
 								"<li>%s</li>",
@@ -1901,18 +1898,19 @@ as_node_get_localized_unwrap_type_li (const AsNode *node,
 						     AS_NODE_ERROR,
 						     AS_NODE_ERROR_INVALID_MARKUP,
 						     "Tag %s in %s invalid",
-						     data_c->name, data->name);
+						     data_c->name,
+						     as_tag_data_get_name (data));
 					return FALSE;
 				}
 			}
-			as_node_denorm_add_to_langs (hash, data->name, FALSE);
+			as_node_denorm_add_to_langs (hash, data->tag, FALSE);
 		} else {
 			/* only <p>, <ul> and <ol> is valid here */
 			g_set_error (error,
 				     AS_NODE_ERROR,
 				     AS_NODE_ERROR_INVALID_MARKUP,
 				     "Unknown tag '%s'",
-				     data->name);
+				     as_tag_data_get_name (data));
 			return FALSE;
 		}
 	}
@@ -1953,20 +1951,19 @@ as_node_get_localized_unwrap_type_ul (const AsNode *node,
 
 		/* append to existing string, adding the locale if it's not
 		 * already present */
-		if (g_strcmp0 (data->name, "p") == 0) {
+		if (data->tag == AS_TAG_P) {
 			str = as_node_denorm_get_str_for_lang (hash, data, TRUE);
 			as_node_cdata_to_escaped (data);
 			g_string_append_printf (str, "<p>%s</p>",
 						data->cdata);
 
 		/* loop on the children */
-		} else if (g_strcmp0 (data->name, "ul") == 0 ||
-			   g_strcmp0 (data->name, "ol") == 0) {
+		} else if (data->tag == AS_TAG_UL || data->tag == AS_TAG_OL) {
 			str = as_node_denorm_get_str_for_lang (hash, data, TRUE);
-			g_string_append_printf (str, "<%s>", data->name);
+			g_string_append_printf (str, "<%s>", as_tag_data_get_name (data));
 			for (tmp_c = tmp->children; tmp_c != NULL; tmp_c = tmp_c->next) {
 				data_c = tmp_c->data;
-				if (g_strcmp0 (data_c->name, "li") == 0) {
+				if (data_c->tag == AS_TAG_LI) {
 					as_node_cdata_to_escaped (data_c);
 					g_string_append_printf (str,
 								"<li>%s</li>",
@@ -1977,18 +1974,19 @@ as_node_get_localized_unwrap_type_ul (const AsNode *node,
 						     AS_NODE_ERROR,
 						     AS_NODE_ERROR_INVALID_MARKUP,
 						     "Tag %s in %s invalid",
-						     data_c->name, data->name);
+						     data_c->name,
+						     as_tag_data_get_name (data));
 					return FALSE;
 				}
 			}
-			g_string_append_printf (str, "</%s>", data->name);
+			g_string_append_printf (str, "</%s>", as_tag_data_get_name (data));
 		} else {
 			/* only <p>, <ul> and <ol> is valid here */
 			g_set_error (error,
 				     AS_NODE_ERROR,
 				     AS_NODE_ERROR_INVALID_MARKUP,
 				     "Unknown tag '%s'",
-				     data->name);
+				     as_tag_data_get_name (data));
 			return FALSE;
 		}
 	}
@@ -2105,8 +2103,7 @@ as_node_get_localized_unwrap (const AsNode *node, GError **error)
 	}
 	for (tmp = node->children; tmp != NULL; tmp = tmp->next) {
 		data = tmp->data;
-		if (g_strcmp0 (data->name, "ul") == 0 ||
-		    g_strcmp0 (data->name, "ol") == 0) {
+		if (data->tag == AS_TAG_UL || data->tag == AS_TAG_OL) {
 			if (as_node_attr_lookup (data, "xml:lang") != NULL) {
 				is_li_translated = FALSE;
 				break;

@@ -192,6 +192,15 @@ as_tag_to_string (AsTag tag)
 		"launchable",
 		"agreement",
 		"agreement_section",
+		"p",
+		"li",
+		"ul",
+		"ol",
+		"binary",
+		"font",
+		"dbus",
+		"modalias",
+		"library",
 		NULL };
 	if (tag > AS_TAG_LAST)
 		tag = AS_TAG_LAST;
