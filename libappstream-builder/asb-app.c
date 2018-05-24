@@ -172,21 +172,16 @@ asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 		    as_icon_get_kind (icon) == AS_ICON_KIND_REMOTE)
 			continue;
 
+		/* missing cached icons */
+		pixbuf = as_icon_get_pixbuf (icon);
+		if (pixbuf == NULL)
+			continue;
+
 		/* save to disk */
 		tmpdir = asb_package_get_config (priv->pkg, "IconsDir");
 		filename = g_build_filename (tmpdir,
 					     as_icon_get_name (icon),
 					     NULL);
-		pixbuf = as_icon_get_pixbuf (icon);
-		if (pixbuf == NULL) {
-			g_set_error (error,
-				     AS_APP_ERROR,
-				     AS_APP_ERROR_FAILED,
-				     "No pixbuf for %s in %s",
-				     as_icon_get_name (icon),
-				     as_app_get_id (AS_APP (app)));
-			return FALSE;
-		}
 		if (!gdk_pixbuf_save (pixbuf, filename, "png", error, NULL))
 			return FALSE;
 
