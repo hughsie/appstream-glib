@@ -3991,10 +3991,6 @@ as_app_subsume_icon (AsApp *app, AsIcon *icon)
 	AsIcon *ic_tmp;
 	guint i;
 
-	/* don't add a rubbish icon */
-	if (as_icon_get_kind (icon) == AS_ICON_KIND_UNKNOWN)
-		return;
-
 	/* does application already have this icon in this size */
 	for (i = 0; i < priv->icons->len; i++) {
 		ic_tmp = AS_ICON (g_ptr_array_index (priv->icons, i));

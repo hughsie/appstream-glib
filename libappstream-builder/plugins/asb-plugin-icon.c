@@ -188,6 +188,10 @@ asb_plugin_process_app (AsbPlugin *plugin,
 		return TRUE;
 	}
 
+	/* already a cached icon, e.g. a font */
+	if (as_icon_get_kind (icon) == AS_ICON_KIND_CACHED)
+		return TRUE;
+
 	/* convert to cached */
 	switch (as_icon_get_kind (icon)) {
 	case AS_ICON_KIND_LOCAL:
