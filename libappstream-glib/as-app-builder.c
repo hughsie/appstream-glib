@@ -321,6 +321,13 @@ as_app_builder_parse_file_qt (AsAppBuilderContext *ctx,
 	while (m < len) {
 		AsAppBuilderQmSection section = _read_uint8(data, &m);
 		guint32 section_len = _read_uint32 (data, &m);
+		if (section_len > len - m) {
+			g_set_error_literal (error,
+					     AS_APP_ERROR,
+					     AS_APP_ERROR_FAILED,
+					     "file is invalid, section too large");
+			return FALSE;
+		}
 		if (section == AS_APP_TRANSLATION_QM_SECTION_MESSAGES) {
 			as_app_builder_parse_data_qt (ctx,
 						      locale,
