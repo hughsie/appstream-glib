@@ -1369,6 +1369,16 @@ static gint
 as_utils_vercmp_chunk (const gchar *str1, const gchar *str2)
 {
 	guint i;
+
+	/* trivial */
+	if (g_strcmp0 (str1, str2) == 0)
+		return 0;
+	if (str1 == NULL)
+		return 1;
+	if (str2 == NULL)
+		return -1;
+
+	/* check each char of the chunk */
 	for (i = 0; str1[i] != '\0' && str2[i] != '\0'; i++) {
 		gint rc = as_utils_vercmp_char (str1[i], str2[i]);
 		if (rc != 0)
