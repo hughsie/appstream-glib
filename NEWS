@@ -2,8 +2,6 @@ Version 0.7.9
 ~~~~~~~~~~~~~~
 Released: 2018-06-04
 
-Notes:
-
 New Features:
  - Add ability to store signature filename and checksum (Richard Hughes)
  - Convert local icons found in metainfo files (Richard Hughes)
