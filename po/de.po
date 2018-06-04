@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-20 11:34+0100\n"
-"PO-Revision-Date: 2016-09-29 07:16-0400\n"
+"POT-Creation-Date: 2018-06-04 11:35+0100\n"
+"PO-Revision-Date: 2016-09-29 07:16+0000\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German (http://www.transifex.com/freedesktop/appstream-glib/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -19,10 +19,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 3.9.6\n"
+"X-Generator: Zanata 4.4.5\n"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:90 client/as-compose.c:344 client/as-util.c:4397
+#: client/as-builder.c:90 client/as-compose.c:344 client/as-util.c:4404
 msgid "Show extra debugging information"
 msgstr "Zusätzliche Fehlerdiagnoseinformationen anzeigen"
 
@@ -112,7 +112,7 @@ msgid "Ignore certain types of veto"
 msgstr "Bestimmte Arten von Veto ignorieren"
 
 #. TRANSLATORS: error message
-#: client/as-builder.c:155 client/as-compose.c:376 client/as-util.c:4680
+#: client/as-builder.c:155 client/as-compose.c:376 client/as-util.c:4687
 msgid "Failed to parse arguments"
 msgstr "Fehler beim Auswerten der Argumente"
 
@@ -267,258 +267,258 @@ msgid "Format not recognised"
 msgstr "Format nicht erkannt"
 
 #. TRANSLATORS: probably wrong XML
-#: client/as-util.c:1982
+#: client/as-util.c:1989
 msgid "No desktop applications found"
 msgstr "Keine Desktop-Anwendungen gefunden"
 
 #. TRANSLATORS: the file is valid
-#: client/as-util.c:2713
+#: client/as-util.c:2720
 msgid "OK"
 msgstr "OK"
 
 #. list failures
-#: client/as-util.c:2718
+#: client/as-util.c:2725
 msgid "FAILED"
 msgstr "FEHLGESCHLAGEN"
 
-#: client/as-util.c:2814
+#: client/as-util.c:2821
 msgid "Validation failed"
 msgstr "Validierung fehlgeschlagen"
 
-#: client/as-util.c:2858
+#: client/as-util.c:2865
 msgid "Validation of files failed"
 msgstr "Validierung der Dateien ist fehlgeschlagen"
 
 #. TRANSLATORS: application was removed
-#: client/as-util.c:4046
+#: client/as-util.c:4053
 msgid "Removed"
 msgstr "Entfernt"
 
 #. TRANSLATORS: application was added
-#: client/as-util.c:4059
+#: client/as-util.c:4066
 msgid "Added"
 msgstr "Hinzugefügt"
 
 #. TRANSLATORS: this is when a device ctrl+c's a watch
-#: client/as-util.c:4342
+#: client/as-util.c:4349
 msgid "Cancelled"
 msgstr ""
 
 #. TRANSLATORS: this is the --nonet argument
-#: client/as-util.c:4394
+#: client/as-util.c:4401
 msgid "Do not use network access"
 msgstr "Keinen Netzwerkzugriff verwenden"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4400
+#: client/as-util.c:4407
 msgid "Show version"
 msgstr "Version anzeigen"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4403
+#: client/as-util.c:4410
 msgid "Enable profiling"
 msgstr "Profilbildung aktivieren"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4433
+#: client/as-util.c:4440
 msgid "Converts AppStream metadata from one version to another"
 msgstr "Konvertiert AppStream-Metadaten von einer Version in eine andere"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4439
+#: client/as-util.c:4446
 msgid "Upgrade AppData metadata to the latest version"
 msgstr "AppData-Metadaten auf die neueste Version aktualisieren"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4445
+#: client/as-util.c:4452
 msgid "Creates an example Appdata file from a .desktop file"
 msgstr "Erstellt eine Beispiel-Appdata-Datei aus einer .desktop-Datei"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4451
+#: client/as-util.c:4458
 msgid "Dumps the applications in the AppStream metadata"
 msgstr "Gibt die Anwendungen in den AppStream-Metadaten aus"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4457
+#: client/as-util.c:4464
 msgid "Search for AppStream applications"
 msgstr "Nach AppStream-Anwendungen suchen"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4463
+#: client/as-util.c:4470
 msgid "Search for AppStream applications by package name"
 msgstr "Nach AppStream-Anwendungen mit Paketname suchen"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4469
+#: client/as-util.c:4476
 msgid "Show all installed AppStream applications"
 msgstr "Alle installierten Appstream-Anwendungen anzeigen"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4475
+#: client/as-util.c:4482
 msgid "Search for AppStream applications by category name"
 msgstr "Nach installierten Appstream-Anwendungen nach Kategorienamen suchen"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4481
+#: client/as-util.c:4488
 msgid "Display application search tokens"
 msgstr "Anwendungssuchinformation anzeigen"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4487
+#: client/as-util.c:4494
 msgid "Installs AppStream metadata"
 msgstr "Installiert AppStream-Metadaten"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4493
+#: client/as-util.c:4500
 msgid "Installs AppStream metadata with new origin"
 msgstr "Installiert AppStream-Metadaten mit neuer Quelle"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4499
+#: client/as-util.c:4506
 msgid "Uninstalls AppStream metadata"
 msgstr "Deinstalliert AppStream-Metadaten"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4505
+#: client/as-util.c:4512
 msgid "Create an HTML status page"
 msgstr "HTML-Statusseite erstellen"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4511
+#: client/as-util.c:4518
 msgid "Create an CSV status document"
 msgstr "CSV-Statusdokument erstellen"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4517
+#: client/as-util.c:4524
 msgid "Create an HTML matrix page"
 msgstr "HTML-Matrixseite erstellen"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4523
+#: client/as-util.c:4530
 msgid "List applications not backed by packages"
 msgstr "Nicht durch Pakete abgedeckte Anwendungen auflisten"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4529
+#: client/as-util.c:4536
 msgid "Validate an AppData or AppStream file"
 msgstr "AppData- oder AppStream-Datei validieren"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4535
+#: client/as-util.c:4542
 msgid "Validate an AppData or AppStream file (relaxed)"
 msgstr "AppData- oder AppStream-Datei validieren (locker)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4541
+#: client/as-util.c:4548
 msgid "Exports the agreement to text"
 msgstr ""
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4547
+#: client/as-util.c:4554
 msgid "Validate an AppData or AppStream file (strict)"
 msgstr "AppData- oder AppStream-Datei (strikt) validieren"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4553
+#: client/as-util.c:4560
 msgid "Convert an AppData file to NEWS format"
 msgstr "AppData-Datei in NEWS-Format konvertieren"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4559
+#: client/as-util.c:4566
 msgid "Convert an NEWS file to AppData format"
 msgstr "NEWS-Datei in AppData-Format konvertieren"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4565
+#: client/as-util.c:4572
 msgid "Check installed application data"
 msgstr "Installierte Anwendungsdaten überprüfen"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4571
+#: client/as-util.c:4578
 msgid "check an installed application"
 msgstr ""
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4577
+#: client/as-util.c:4584
 msgid "Replace screenshots in source file"
 msgstr "Bildschirmfotos in Quelldatei ersetzen"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4583
+#: client/as-util.c:4590
 msgid "Add a provide to a source file"
 msgstr ""
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4589
+#: client/as-util.c:4596
 msgid "Add a language to a source file"
 msgstr ""
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4595
+#: client/as-util.c:4602
 msgid "Mirror upstream screenshots"
 msgstr "Vorgeschaltete Bildschirmfotos spiegeln"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4601
+#: client/as-util.c:4608
 msgid "Mirror local firmware files"
 msgstr "Lokale Firmware-Dateien spiegeln"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4607
+#: client/as-util.c:4614
 msgid "Incorporate extra metadata from an external file"
 msgstr "Zusätzliche Metadaten aus einer externen Datei integrieren"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4613
+#: client/as-util.c:4620
 msgid "Compare the contents of two AppStream files"
 msgstr "Inhalt zweier AppStream-Dateien vergleichen"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4619
+#: client/as-util.c:4626
 msgid "Generate a GUID from an input string"
 msgstr "Eine GUID aus einer Eingabezeichenfolge erzeugen"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4625
+#: client/as-util.c:4632
 msgid "Modify an AppData file"
 msgstr "Ändern einer AppData-Datei"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4631
+#: client/as-util.c:4638
 msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr "Eine AppStream-Datei in AppData- und Metainfo-Dateien aufspalten"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4637
+#: client/as-util.c:4644
 msgid "Merge several files to an AppStream file"
 msgstr "Mehrere Dateien zu einer AppStream-Datei zusammenführen"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4643
+#: client/as-util.c:4650
 msgid "Import a file to AppStream markup"
 msgstr "Eine Datei in die AppStream-Auszeichnung importieren"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4649
+#: client/as-util.c:4656
 msgid "Watch AppStream locations for changes"
 msgstr ""
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4655
+#: client/as-util.c:4662
 msgid "Compare version numbers"
 msgstr ""
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4661
+#: client/as-util.c:4668
 msgid "Test a regular expression"
 msgstr ""
 
 #. TRANSLATORS: program name
-#: client/as-util.c:4674
+#: client/as-util.c:4681
 msgid "AppStream Utility"
 msgstr "AppStream-Dienstprogramm"
 
-#: client/as-util.c:4698
+#: client/as-util.c:4705
 msgid "Version:"
 msgstr "Version:"

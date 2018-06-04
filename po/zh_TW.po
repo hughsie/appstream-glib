@@ -5,26 +5,26 @@
 # Translators:
 # Hotellook, 2014
 # Matjaž Mozetič <m.mozetic@matmoz.si>, 2015
-# Ding-Yi Chen <dchen@redhat.com>, 2016. #zanata
+# Ding-Yi Chen <dingyichen@gmail.com>, 2016. #zanata
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
 # Cheng-Chia Tseng <pswo10680@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-20 11:34+0100\n"
-"PO-Revision-Date: 2017-08-27 11:42-0400\n"
+"POT-Creation-Date: 2018-06-04 11:35+0100\n"
+"PO-Revision-Date: 2017-08-27 11:42+0000\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/freedesktop/appstream-glib/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: zh-TW\n"
+"Language: zh_TW\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Zanata 3.9.6\n"
+"X-Generator: Zanata 4.4.5\n"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:90 client/as-compose.c:344 client/as-util.c:4397
+#: client/as-builder.c:90 client/as-compose.c:344 client/as-util.c:4404
 msgid "Show extra debugging information"
 msgstr "顯示額外的除錯用資訊"
 
@@ -114,7 +114,7 @@ msgid "Ignore certain types of veto"
 msgstr "忽略特定類型的 veto"
 
 #. TRANSLATORS: error message
-#: client/as-builder.c:155 client/as-compose.c:376 client/as-util.c:4680
+#: client/as-builder.c:155 client/as-compose.c:376 client/as-util.c:4687
 msgid "Failed to parse arguments"
 msgstr "無法解析引數"
 
@@ -268,258 +268,258 @@ msgid "Format not recognised"
 msgstr "無法辨別格式"
 
 #. TRANSLATORS: probably wrong XML
-#: client/as-util.c:1982
+#: client/as-util.c:1989
 msgid "No desktop applications found"
 msgstr "找不到桌面應用程式"
 
 #. TRANSLATORS: the file is valid
-#: client/as-util.c:2713
+#: client/as-util.c:2720
 msgid "OK"
 msgstr "確定"
 
 #. list failures
-#: client/as-util.c:2718
+#: client/as-util.c:2725
 msgid "FAILED"
 msgstr "失敗"
 
-#: client/as-util.c:2814
+#: client/as-util.c:2821
 msgid "Validation failed"
 msgstr "驗證失敗"
 
-#: client/as-util.c:2858
+#: client/as-util.c:2865
 msgid "Validation of files failed"
 msgstr "檔案驗證失敗"
 
 #. TRANSLATORS: application was removed
-#: client/as-util.c:4046
+#: client/as-util.c:4053
 msgid "Removed"
 msgstr "已移除"
 
 #. TRANSLATORS: application was added
-#: client/as-util.c:4059
+#: client/as-util.c:4066
 msgid "Added"
 msgstr "已加入"
 
 #. TRANSLATORS: this is when a device ctrl+c's a watch
-#: client/as-util.c:4342
+#: client/as-util.c:4349
 msgid "Cancelled"
 msgstr "已取消"
 
 #. TRANSLATORS: this is the --nonet argument
-#: client/as-util.c:4394
+#: client/as-util.c:4401
 msgid "Do not use network access"
 msgstr "不要使用網路存取"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4400
+#: client/as-util.c:4407
 msgid "Show version"
 msgstr "顯示版本"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4403
+#: client/as-util.c:4410
 msgid "Enable profiling"
 msgstr "啟用評測"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4433
+#: client/as-util.c:4440
 msgid "Converts AppStream metadata from one version to another"
 msgstr "將 AppStream 中介資料從一個版本轉換成另一個版本"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4439
+#: client/as-util.c:4446
 msgid "Upgrade AppData metadata to the latest version"
 msgstr "將 AppData 中介資料升級至最新版"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4445
+#: client/as-util.c:4452
 msgid "Creates an example Appdata file from a .desktop file"
 msgstr "從 .desktop 檔建立樣本 Appdata 檔案"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4451
+#: client/as-util.c:4458
 msgid "Dumps the applications in the AppStream metadata"
 msgstr "將應用程式傾印到 AppStream 中介資料中"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4457
+#: client/as-util.c:4464
 msgid "Search for AppStream applications"
 msgstr "搜尋 AppStream 應用程式"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4463
+#: client/as-util.c:4470
 msgid "Search for AppStream applications by package name"
 msgstr "依據軟體包名稱搜尋 AppStream 應用程式"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4469
+#: client/as-util.c:4476
 msgid "Show all installed AppStream applications"
 msgstr "顯示所有安裝的 AppStream 應用程式"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4475
+#: client/as-util.c:4482
 msgid "Search for AppStream applications by category name"
 msgstr "依據類別名稱搜尋 AppStream 應用程式"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4481
+#: client/as-util.c:4488
 msgid "Display application search tokens"
 msgstr "顯示應用程式搜尋代符"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4487
+#: client/as-util.c:4494
 msgid "Installs AppStream metadata"
 msgstr "安裝 AppStream 中介資料"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4493
+#: client/as-util.c:4500
 msgid "Installs AppStream metadata with new origin"
 msgstr "以新來源安裝 AppStream 中介資料"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4499
+#: client/as-util.c:4506
 msgid "Uninstalls AppStream metadata"
 msgstr "解除 AppStream 中介資料的安裝"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4505
+#: client/as-util.c:4512
 msgid "Create an HTML status page"
 msgstr "建立 HTML 狀態網頁"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4511
+#: client/as-util.c:4518
 msgid "Create an CSV status document"
 msgstr "建立 CSV 狀態文件"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4517
+#: client/as-util.c:4524
 msgid "Create an HTML matrix page"
 msgstr "建立 HTML matrix 頁面"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4523
+#: client/as-util.c:4530
 msgid "List applications not backed by packages"
 msgstr "列出未受軟體包支持的應用程式"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4529
+#: client/as-util.c:4536
 msgid "Validate an AppData or AppStream file"
 msgstr "驗證 AppData 或 AppStream 檔案"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4535
+#: client/as-util.c:4542
 msgid "Validate an AppData or AppStream file (relaxed)"
 msgstr "驗證 AppData 或 AppStream 檔案 (寬鬆檢驗)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4541
+#: client/as-util.c:4548
 msgid "Exports the agreement to text"
 msgstr ""
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4547
+#: client/as-util.c:4554
 msgid "Validate an AppData or AppStream file (strict)"
 msgstr "驗證 AppData 或 AppStream 檔案 (嚴格檢驗)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4553
+#: client/as-util.c:4560
 msgid "Convert an AppData file to NEWS format"
 msgstr "將 AppData 檔轉換成 NEWS 格式"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4559
+#: client/as-util.c:4566
 msgid "Convert an NEWS file to AppData format"
 msgstr "將 NEWS 檔轉換成 AppData 格式"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4565
+#: client/as-util.c:4572
 msgid "Check installed application data"
 msgstr "檢查安裝的應用程式資料"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4571
+#: client/as-util.c:4578
 msgid "check an installed application"
 msgstr "檢查安裝的應用程式"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4577
+#: client/as-util.c:4584
 msgid "Replace screenshots in source file"
 msgstr "替換源檔內的畫面快照"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4583
+#: client/as-util.c:4590
 msgid "Add a provide to a source file"
 msgstr "加入提供者到來源檔中"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4589
+#: client/as-util.c:4596
 msgid "Add a language to a source file"
 msgstr "加入語言到來源檔中"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4595
+#: client/as-util.c:4602
 msgid "Mirror upstream screenshots"
 msgstr "同步使用上游畫面快照"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4601
+#: client/as-util.c:4608
 msgid "Mirror local firmware files"
 msgstr "同步使用本地端的韌體檔案"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4607
+#: client/as-util.c:4614
 msgid "Incorporate extra metadata from an external file"
 msgstr "從外部檔案整合額外中介資料"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4613
+#: client/as-util.c:4620
 msgid "Compare the contents of two AppStream files"
 msgstr "比較兩份 AppStream 檔案的內容"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4619
+#: client/as-util.c:4626
 msgid "Generate a GUID from an input string"
 msgstr "從輸入字串生成 GUID"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4625
+#: client/as-util.c:4632
 msgid "Modify an AppData file"
 msgstr "修改 AppData 檔"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4631
+#: client/as-util.c:4638
 msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr "將 AppStream 檔案切分為 AppData 和 Metainfo 檔案"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4637
+#: client/as-util.c:4644
 msgid "Merge several files to an AppStream file"
 msgstr "將多個檔案合併成一份 AppStream 檔"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4643
+#: client/as-util.c:4650
 msgid "Import a file to AppStream markup"
 msgstr "匯入檔案到 AppStream 標記"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4649
+#: client/as-util.c:4656
 msgid "Watch AppStream locations for changes"
 msgstr "監看 AppStream 位置是否有變動"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4655
+#: client/as-util.c:4662
 msgid "Compare version numbers"
 msgstr "比較版本號"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4661
+#: client/as-util.c:4668
 msgid "Test a regular expression"
 msgstr "測試常規表述式"
 
 #. TRANSLATORS: program name
-#: client/as-util.c:4674
+#: client/as-util.c:4681
 msgid "AppStream Utility"
 msgstr "AppStream 公用程式"
 
-#: client/as-util.c:4698
+#: client/as-util.c:4705
 msgid "Version:"
 msgstr "版本："
