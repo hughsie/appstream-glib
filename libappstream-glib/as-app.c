@@ -3844,7 +3844,7 @@ as_app_add_url (AsApp *app,
  * as_app_add_metadata:
  * @app: a #AsApp instance.
  * @key: the metadata key.
- * @value: the value to store.
+ * @value: (nullable): the value to store.
  *
  * Adds a metadata entry to the application.
  *
