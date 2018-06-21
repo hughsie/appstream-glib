@@ -153,6 +153,7 @@ const gchar *
 as_bundle_get_id (AsBundle *bundle)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
+	g_return_val_if_fail (AS_IS_BUNDLE (bundle), NULL);
 	return priv->id;
 }
 
@@ -170,6 +171,7 @@ const gchar *
 as_bundle_get_runtime (AsBundle *bundle)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
+	g_return_val_if_fail (AS_IS_BUNDLE (bundle), NULL);
 	return priv->runtime;
 }
 
@@ -187,6 +189,7 @@ const gchar *
 as_bundle_get_sdk (AsBundle *bundle)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
+	g_return_val_if_fail (AS_IS_BUNDLE (bundle), NULL);
 	return priv->sdk;
 }
 
@@ -204,6 +207,7 @@ AsBundleKind
 as_bundle_get_kind (AsBundle *bundle)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
+	g_return_val_if_fail (AS_IS_BUNDLE (bundle), AS_BUNDLE_KIND_UNKNOWN);
 	return priv->kind;
 }
 
@@ -220,6 +224,7 @@ void
 as_bundle_set_id (AsBundle *bundle, const gchar *id)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
+	g_return_if_fail (AS_IS_BUNDLE (bundle));
 	as_ref_string_assign_safe (&priv->id, id);
 }
 
@@ -236,6 +241,7 @@ void
 as_bundle_set_runtime (AsBundle *bundle, const gchar *runtime)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
+	g_return_if_fail (AS_IS_BUNDLE (bundle));
 	as_ref_string_assign_safe (&priv->runtime, runtime);
 }
 
@@ -252,6 +258,7 @@ void
 as_bundle_set_sdk (AsBundle *bundle, const gchar *sdk)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
+	g_return_if_fail (AS_IS_BUNDLE (bundle));
 	as_ref_string_assign_safe (&priv->sdk, sdk);
 }
 
@@ -268,6 +275,7 @@ void
 as_bundle_set_kind (AsBundle *bundle, AsBundleKind kind)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
+	g_return_if_fail (AS_IS_BUNDLE (bundle));
 	priv->kind = kind;
 }
 
@@ -288,6 +296,8 @@ as_bundle_node_insert (AsBundle *bundle, GNode *parent, AsNodeContext *ctx)
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
 	GNode *n;
+
+	g_return_val_if_fail (AS_IS_BUNDLE (bundle), NULL);
 
 	n = as_node_insert (parent, "bundle", priv->id,
 			    AS_NODE_INSERT_FLAG_NONE,
@@ -320,6 +330,8 @@ as_bundle_node_parse (AsBundle *bundle, GNode *node,
 {
 	AsBundlePrivate *priv = GET_PRIVATE (bundle);
 	const gchar *tmp;
+
+	g_return_val_if_fail (AS_IS_BUNDLE (bundle), FALSE);
 
 	tmp = as_node_get_attribute (node, "type");
 	as_bundle_set_kind (bundle, as_bundle_kind_from_string (tmp));

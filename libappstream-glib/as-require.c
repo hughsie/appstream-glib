@@ -213,6 +213,7 @@ const gchar *
 as_require_get_version (AsRequire *require)
 {
 	AsRequirePrivate *priv = GET_PRIVATE (require);
+	g_return_val_if_fail (AS_IS_REQUIRE (require), NULL);
 	return priv->version;
 }
 
@@ -230,6 +231,7 @@ const gchar *
 as_require_get_value (AsRequire *require)
 {
 	AsRequirePrivate *priv = GET_PRIVATE (require);
+	g_return_val_if_fail (AS_IS_REQUIRE (require), NULL);
 	return priv->value;
 }
 
@@ -247,6 +249,7 @@ AsRequireKind
 as_require_get_kind (AsRequire *require)
 {
 	AsRequirePrivate *priv = GET_PRIVATE (require);
+	g_return_val_if_fail (AS_IS_REQUIRE (require), AS_REQUIRE_KIND_UNKNOWN);
 	return priv->kind;
 }
 
@@ -263,6 +266,7 @@ void
 as_require_set_kind (AsRequire *require, AsRequireKind kind)
 {
 	AsRequirePrivate *priv = GET_PRIVATE (require);
+	g_return_if_fail (AS_IS_REQUIRE (require));
 	priv->kind = kind;
 }
 
@@ -280,6 +284,7 @@ AsRequireCompare
 as_require_get_compare (AsRequire *require)
 {
 	AsRequirePrivate *priv = GET_PRIVATE (require);
+	g_return_val_if_fail (AS_IS_REQUIRE (require), AS_REQUIRE_COMPARE_UNKNOWN);
 	return priv->compare;
 }
 
@@ -296,6 +301,7 @@ void
 as_require_set_compare (AsRequire *require, AsRequireCompare compare)
 {
 	AsRequirePrivate *priv = GET_PRIVATE (require);
+	g_return_if_fail (AS_IS_REQUIRE (require));
 	priv->compare = compare;
 }
 
@@ -312,6 +318,7 @@ void
 as_require_set_version (AsRequire *require, const gchar *version)
 {
 	AsRequirePrivate *priv = GET_PRIVATE (require);
+	g_return_if_fail (AS_IS_REQUIRE (require));
 	if (priv->version != NULL)
 		as_ref_string_unref (priv->version);
 	priv->version = as_ref_string_new (version);
@@ -330,6 +337,7 @@ void
 as_require_set_value (AsRequire *require, const gchar *value)
 {
 	AsRequirePrivate *priv = GET_PRIVATE (require);
+	g_return_if_fail (AS_IS_REQUIRE (require));
 	if (priv->value != NULL)
 		as_ref_string_unref (priv->value);
 	priv->value = as_ref_string_new (value);
@@ -356,6 +364,8 @@ as_require_version_compare (AsRequire *require,
 	AsRequirePrivate *priv = GET_PRIVATE (require);
 	gboolean ret = FALSE;
 	gint rc = 0;
+
+	g_return_val_if_fail (AS_IS_REQUIRE (require), FALSE);
 
 	switch (priv->compare) {
 	case AS_REQUIRE_COMPARE_EQ:
@@ -433,6 +443,9 @@ as_require_equal (AsRequire *require1, AsRequire *require2)
 	AsRequirePrivate *priv1 = GET_PRIVATE (require1);
 	AsRequirePrivate *priv2 = GET_PRIVATE (require2);
 
+	g_return_val_if_fail (AS_IS_REQUIRE (require1), FALSE);
+	g_return_val_if_fail (AS_IS_REQUIRE (require2), FALSE);
+
 	/* trivial */
 	if (require1 == require2)
 		return TRUE;
@@ -468,6 +481,8 @@ as_require_node_insert (AsRequire *require, GNode *parent, AsNodeContext *ctx)
 {
 	AsRequirePrivate *priv = GET_PRIVATE (require);
 	GNode *n;
+
+	g_return_val_if_fail (AS_IS_REQUIRE (require), NULL);
 
 	/* don't know what to do here */
 	if (priv->kind == AS_REQUIRE_KIND_UNKNOWN)
@@ -506,6 +521,7 @@ as_require_node_parse (AsRequire *require, GNode *node,
 {
 	AsRequirePrivate *priv = GET_PRIVATE (require);
 	const gchar *tmp;
+	g_return_val_if_fail (AS_IS_REQUIRE (require), FALSE);
 	tmp = as_node_get_name (node);
 	if (tmp != NULL)
 		as_require_set_kind (require, as_require_kind_from_string (tmp));

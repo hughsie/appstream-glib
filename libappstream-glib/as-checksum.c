@@ -138,6 +138,7 @@ const gchar *
 as_checksum_get_filename (AsChecksum *checksum)
 {
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
+	g_return_val_if_fail (AS_IS_CHECKSUM (checksum), NULL);
 	return priv->filename;
 }
 
@@ -155,6 +156,7 @@ const gchar *
 as_checksum_get_value (AsChecksum *checksum)
 {
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
+	g_return_val_if_fail (AS_IS_CHECKSUM (checksum), NULL);
 	return priv->value;
 }
 
@@ -172,6 +174,7 @@ GChecksumType
 as_checksum_get_kind (AsChecksum *checksum)
 {
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
+	g_return_val_if_fail (AS_IS_CHECKSUM (checksum), AS_CHECKSUM_UNKNOWN);
 	return priv->kind;
 }
 
@@ -189,6 +192,7 @@ AsChecksumTarget
 as_checksum_get_target (AsChecksum *checksum)
 {
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
+	g_return_val_if_fail (AS_IS_CHECKSUM (checksum), AS_CHECKSUM_TARGET_UNKNOWN);
 	return priv->target;
 }
 
@@ -206,6 +210,7 @@ as_checksum_set_filename (AsChecksum *checksum,
 			  const gchar *filename)
 {
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
+	g_return_if_fail (AS_IS_CHECKSUM (checksum));
 	as_ref_string_assign_safe (&priv->filename, filename);
 }
 
@@ -222,6 +227,7 @@ void
 as_checksum_set_value (AsChecksum *checksum, const gchar *value)
 {
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
+	g_return_if_fail (AS_IS_CHECKSUM (checksum));
 	as_ref_string_assign_safe (&priv->value, value);
 }
 
@@ -238,6 +244,7 @@ void
 as_checksum_set_kind (AsChecksum *checksum, GChecksumType kind)
 {
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
+	g_return_if_fail (AS_IS_CHECKSUM (checksum));
 	priv->kind = kind;
 }
 
@@ -254,6 +261,7 @@ void
 as_checksum_set_target (AsChecksum *checksum, AsChecksumTarget target)
 {
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
+	g_return_if_fail (AS_IS_CHECKSUM (checksum));
 	priv->target = target;
 }
 
@@ -303,6 +311,8 @@ as_checksum_node_insert (AsChecksum *checksum, GNode *parent, AsNodeContext *ctx
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
 	GNode *n;
 
+	g_return_val_if_fail (AS_IS_CHECKSUM (checksum), NULL);
+
 	n = as_node_insert (parent, "checksum", priv->value,
 			    AS_NODE_INSERT_FLAG_NONE,
 			    NULL);
@@ -338,6 +348,8 @@ as_checksum_node_parse (AsChecksum *checksum, GNode *node,
 {
 	AsChecksumPrivate *priv = GET_PRIVATE (checksum);
 	const gchar *tmp;
+
+	g_return_val_if_fail (AS_IS_CHECKSUM (checksum), FALSE);
 
 	tmp = as_node_get_attribute (node, "type");
 	if (tmp != NULL)

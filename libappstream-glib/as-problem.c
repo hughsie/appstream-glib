@@ -129,6 +129,7 @@ AsProblemKind
 as_problem_get_kind (AsProblem *problem)
 {
 	AsProblemPrivate *priv = GET_PRIVATE (problem);
+	g_return_val_if_fail (AS_IS_PROBLEM (problem), AS_PROBLEM_KIND_UNKNOWN);
 	return priv->kind;
 }
 
@@ -146,6 +147,7 @@ guint
 as_problem_get_line_number (AsProblem *problem)
 {
 	AsProblemPrivate *priv = GET_PRIVATE (problem);
+	g_return_val_if_fail (AS_IS_PROBLEM (problem), 0);
 	return priv->line_number;
 }
 
@@ -163,6 +165,7 @@ const gchar *
 as_problem_get_message (AsProblem *problem)
 {
 	AsProblemPrivate *priv = GET_PRIVATE (problem);
+	g_return_val_if_fail (AS_IS_PROBLEM (problem), NULL);
 	return priv->message;
 }
 
@@ -179,6 +182,7 @@ void
 as_problem_set_kind (AsProblem *problem, AsProblemKind kind)
 {
 	AsProblemPrivate *priv = GET_PRIVATE (problem);
+	g_return_if_fail (AS_IS_PROBLEM (problem));
 	priv->kind = kind;
 }
 
@@ -195,6 +199,7 @@ void
 as_problem_set_line_number (AsProblem *problem, guint line_number)
 {
 	AsProblemPrivate *priv = GET_PRIVATE (problem);
+	g_return_if_fail (AS_IS_PROBLEM (problem));
 	priv->line_number = line_number;
 }
 
@@ -211,6 +216,7 @@ void
 as_problem_set_message (AsProblem *problem, const gchar *message)
 {
 	AsProblemPrivate *priv = GET_PRIVATE (problem);
+	g_return_if_fail (AS_IS_PROBLEM (problem));
 	g_free (priv->message);
 	priv->message = g_strdup (message);
 }

@@ -537,7 +537,7 @@ AsReviewFlags
 as_review_get_flags (AsReview *review)
 {
 	AsReviewPrivate *priv = GET_PRIVATE (review);
-	g_return_val_if_fail (AS_IS_REVIEW (review), 0);
+	g_return_val_if_fail (AS_IS_REVIEW (review), AS_REVIEW_FLAG_NONE);
 	return priv->flags;
 }
 
@@ -904,6 +904,8 @@ as_review_node_parse (AsReview *review, GNode *node,
 	AsNode *c;
 	const gchar *tmp;
 	gint itmp;
+
+	g_return_val_if_fail (AS_IS_REVIEW (review), FALSE);
 
 	itmp = as_node_get_attribute_as_int (node, "rating");
 	if (itmp != G_MAXINT)

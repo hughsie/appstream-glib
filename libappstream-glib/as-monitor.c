@@ -418,6 +418,8 @@ as_monitor_add_directory (AsMonitor *monitor,
 	g_autoptr(GFile) file = NULL;
 	g_autoptr(GDir) dir = NULL;
 
+	g_return_val_if_fail (AS_IS_MONITOR (monitor), FALSE);
+
 	/* find the files already in the directory */
 	if (g_file_test (filename, G_FILE_TEST_EXISTS)) {
 		dir = g_dir_open (filename, 0, error);
@@ -466,6 +468,8 @@ as_monitor_add_file (AsMonitor *monitor,
 	AsMonitorPrivate *priv = GET_PRIVATE (monitor);
 	g_autoptr(GFile) file = NULL;
 	g_autoptr(GFileMonitor) mon = NULL;
+
+	g_return_val_if_fail (AS_IS_MONITOR (monitor), FALSE);
 
 	/* already watched */
 	if (_g_ptr_array_str_find (priv->files, filename) != NULL)

@@ -282,6 +282,7 @@ void
 as_store_add_filter (AsStore *store, AsAppKind kind)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_if_fail (AS_IS_STORE (store));
 	priv->filter |= 1u << kind;
 }
 
@@ -302,6 +303,7 @@ void
 as_store_remove_filter (AsStore *store, AsAppKind kind)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_if_fail (AS_IS_STORE (store));
 	priv->filter &= ~(1u << kind);
 }
 
@@ -1016,6 +1018,8 @@ as_store_remove_app (AsStore *store, AsApp *app)
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	GPtrArray *apps;
 
+	g_return_if_fail (AS_IS_STORE (store));
+
 	/* emit before removal */
 	g_signal_emit (store, signals[SIGNAL_APP_REMOVED], 0, app);
 
@@ -1053,6 +1057,8 @@ as_store_remove_app_by_id (AsStore *store, const gchar *id)
 	AsApp *app;
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	guint i;
+
+	g_return_if_fail (AS_IS_STORE (store));
 
 	if (!g_hash_table_remove (priv->hash_id, id))
 		return;
@@ -1141,6 +1147,8 @@ as_store_add_app (AsStore *store, AsApp *app)
 	const gchar *id;
 	const gchar *pkgname;
 	guint i;
+
+	g_return_if_fail (AS_IS_STORE (store));
 
 	/* have we recorded this before? */
 	id = as_app_get_id (app);
@@ -2063,6 +2071,8 @@ as_store_from_file (AsStore *store,
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 
+	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
+
 	return as_store_from_file_internal (store, file,
 					    AS_APP_SCOPE_UNKNOWN,
 					    NULL, /* arch */
@@ -2232,6 +2242,8 @@ as_store_remove_apps_with_veto (AsStore *store)
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
+	g_return_if_fail (AS_IS_STORE (store));
+
 	/* don't shortcut the list as we have to use as_store_remove_app()
 	 * rather than just removing from the GPtrArray */
 	tok = as_store_changed_inhibit (store);
@@ -2273,6 +2285,8 @@ as_store_to_xml (AsStore *store, guint32 flags)
 	guint i;
 	gchar version[6];
 	g_autoptr(AsNodeContext) ctx = NULL;
+
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 
 	/* check categories of apps about to be written */
 	as_store_check_apps_for_veto (store);
@@ -2335,6 +2349,8 @@ as_store_convert_icons (AsStore *store, AsIconKind kind, GError **error)
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	AsApp *app;
 	guint i;
+
+	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
 	/* convert application icons */
 	for (i = 0; i < priv->array->len; i++) {
@@ -2451,6 +2467,7 @@ const gchar *
 as_store_get_origin (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 	return priv->origin;
 }
 
@@ -2467,6 +2484,7 @@ void
 as_store_set_origin (AsStore *store, const gchar *origin)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_if_fail (AS_IS_STORE (store));
 	g_free (priv->origin);
 	priv->origin = g_strdup (origin);
 }
@@ -2486,6 +2504,7 @@ const gchar *
 as_store_get_builder_id (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 	return priv->builder_id;
 }
 
@@ -2503,6 +2522,7 @@ void
 as_store_set_builder_id (AsStore *store, const gchar *builder_id)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_if_fail (AS_IS_STORE (store));
 	g_free (priv->builder_id);
 	priv->builder_id = g_strdup (builder_id);
 }
@@ -2520,6 +2540,7 @@ void
 as_store_set_destdir (AsStore *store, const gchar *destdir)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_if_fail (AS_IS_STORE (store));
 	g_free (priv->destdir);
 	priv->destdir = g_strdup (destdir);
 }
@@ -2538,6 +2559,7 @@ const gchar *
 as_store_get_destdir (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 	return priv->destdir;
 }
 
@@ -2555,6 +2577,7 @@ gdouble
 as_store_get_api_version (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_val_if_fail (AS_IS_STORE (store), 0.0);
 	return priv->api_version;
 }
 
@@ -2571,6 +2594,7 @@ void
 as_store_set_api_version (AsStore *store, gdouble api_version)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_if_fail (AS_IS_STORE (store));
 	priv->api_version = api_version;
 }
 
@@ -2588,6 +2612,7 @@ guint32
 as_store_get_add_flags (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_val_if_fail (AS_IS_STORE (store), 0);
 	return priv->add_flags;
 }
 
@@ -2607,6 +2632,7 @@ void
 as_store_set_add_flags (AsStore *store, guint32 add_flags)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_if_fail (AS_IS_STORE (store));
 	priv->add_flags = add_flags;
 }
 
@@ -2624,6 +2650,7 @@ guint32
 as_store_get_watch_flags (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_val_if_fail (AS_IS_STORE (store), AS_STORE_WATCH_FLAG_NONE);
 	return priv->watch_flags;
 }
 
@@ -2640,6 +2667,7 @@ void
 as_store_set_watch_flags (AsStore *store, guint32 watch_flags)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_if_fail (AS_IS_STORE (store));
 	priv->watch_flags = watch_flags;
 }
 
@@ -3157,6 +3185,8 @@ as_store_load_search_cache (AsStore *store)
 	GThreadPool *pool;
 	g_autoptr(AsProfileTask) ptask = NULL;
 
+	g_return_if_fail (AS_IS_STORE (store));
+
 	/* profile */
 	ptask = as_profile_start_literal (priv->profile,
 					  "AsStore:load-token-cache");
@@ -3192,6 +3222,8 @@ as_store_load (AsStore *store, guint32 flags, GCancellable *cancellable, GError 
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_autoptr(AsProfileTask) ptask = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
+
+	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
 
 	/* profile */
 	ptask = as_profile_start_literal (priv->profile, "AsStore:load");
@@ -3548,6 +3580,7 @@ void
 as_store_set_search_match (AsStore *store, guint16 search_match)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_if_fail (AS_IS_STORE (store));
 	priv->search_match = search_match;
 }
 
@@ -3566,6 +3599,7 @@ guint16
 as_store_get_search_match (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_return_val_if_fail (AS_IS_STORE (store), 0);
 	return priv->search_match;
 }
 

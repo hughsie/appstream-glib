@@ -238,6 +238,9 @@ as_release_vercmp (AsRelease *rel1, AsRelease *rel2)
 	AsReleasePrivate *priv2 = GET_PRIVATE (rel2);
 	gint val;
 
+	g_return_val_if_fail (AS_IS_RELEASE (rel1), 0);
+	g_return_val_if_fail (AS_IS_RELEASE (rel2), 0);
+
 	/* prefer the timestamp */
 	if (priv1->timestamp > priv2->timestamp)
 		return -1;
@@ -267,6 +270,7 @@ guint64
 as_release_get_size (AsRelease *release, AsSizeKind kind)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_val_if_fail (AS_IS_RELEASE (release), 0);
 	if (kind >= AS_SIZE_KIND_LAST)
 		return 0;
 	if (priv->sizes == NULL)
@@ -288,6 +292,7 @@ void
 as_release_set_size (AsRelease *release, AsSizeKind kind, guint64 size)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_if_fail (AS_IS_RELEASE (release));
 	if (kind >= AS_SIZE_KIND_LAST)
 		return;
 	as_release_ensure_sizes (release);
@@ -308,6 +313,7 @@ AsUrgencyKind
 as_release_get_urgency (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_val_if_fail (AS_IS_RELEASE (release), AS_URGENCY_KIND_UNKNOWN);
 	return priv->urgency;
 }
 
@@ -325,6 +331,7 @@ AsReleaseState
 as_release_get_state (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_val_if_fail (AS_IS_RELEASE (release), AS_RELEASE_STATE_UNKNOWN);
 	return priv->state;
 }
 
@@ -342,6 +349,7 @@ AsReleaseKind
 as_release_get_kind (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_val_if_fail (AS_IS_RELEASE (release), AS_RELEASE_KIND_UNKNOWN);
 	return priv->kind;
 }
 
@@ -359,6 +367,7 @@ const gchar *
 as_release_get_version (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_val_if_fail (AS_IS_RELEASE (release), NULL);
 	return priv->version;
 }
 
@@ -377,6 +386,7 @@ GBytes *
 as_release_get_blob (AsRelease *release, const gchar *filename)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_val_if_fail (AS_IS_RELEASE (release), NULL);
 	g_return_val_if_fail (filename != NULL, NULL);
 	if (priv->blobs == NULL)
 		return NULL;
@@ -397,6 +407,7 @@ GPtrArray *
 as_release_get_locations (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_val_if_fail (AS_IS_RELEASE (release), NULL);
 	as_release_ensure_locations (release);
 	return priv->locations;
 }
@@ -415,6 +426,7 @@ const gchar *
 as_release_get_location_default (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_val_if_fail (AS_IS_RELEASE (release), NULL);
 	if (priv->locations == NULL)
 		return NULL;
 	if (priv->locations->len == 0)
@@ -436,6 +448,7 @@ GPtrArray *
 as_release_get_checksums (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_val_if_fail (AS_IS_RELEASE (release), NULL);
 	as_release_ensure_checksums (release);
 	return priv->checksums;
 }
@@ -457,6 +470,8 @@ as_release_get_checksum_by_fn (AsRelease *release, const gchar *fn)
 	AsChecksum *checksum;
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	guint i;
+
+	g_return_val_if_fail (AS_IS_RELEASE (release), NULL);
 
 	for (i = 0; i < priv->checksums->len; i++) {
 		checksum = g_ptr_array_index (priv->checksums, i);
@@ -484,6 +499,8 @@ as_release_get_checksum_by_target (AsRelease *release, AsChecksumTarget target)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	guint i;
 
+	g_return_val_if_fail (AS_IS_RELEASE (release), NULL);
+
 	if (priv->checksums == NULL)
 		return NULL;
 	for (i = 0; i < priv->checksums->len; i++) {
@@ -508,6 +525,7 @@ guint64
 as_release_get_timestamp (AsRelease *release)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_val_if_fail (AS_IS_RELEASE (release), 0);
 	return priv->timestamp;
 }
 
@@ -526,6 +544,7 @@ const gchar *
 as_release_get_description (AsRelease *release, const gchar *locale)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_val_if_fail (AS_IS_RELEASE (release), NULL);
 	if (priv->descriptions == NULL)
 		return NULL;
 	return as_hash_lookup_by_locale (priv->descriptions, locale);
@@ -544,6 +563,7 @@ void
 as_release_set_version (AsRelease *release, const gchar *version)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_if_fail (AS_IS_RELEASE (release));
 	as_ref_string_assign_safe (&priv->version, version);
 }
 
@@ -563,6 +583,7 @@ void
 as_release_set_blob (AsRelease *release, const gchar *filename, GBytes *blob)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_if_fail (AS_IS_RELEASE (release));
 	g_return_if_fail (filename != NULL);
 	g_return_if_fail (blob != NULL);
 
@@ -585,6 +606,7 @@ void
 as_release_set_urgency (AsRelease *release, AsUrgencyKind urgency)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_if_fail (AS_IS_RELEASE (release));
 	priv->urgency = urgency;
 }
 
@@ -601,6 +623,7 @@ void
 as_release_set_kind (AsRelease *release, AsReleaseKind kind)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_if_fail (AS_IS_RELEASE (release));
 	priv->kind = kind;
 }
 
@@ -617,6 +640,7 @@ void
 as_release_set_state (AsRelease *release, AsReleaseState state)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_if_fail (AS_IS_RELEASE (release));
 	priv->state = state;
 }
 
@@ -633,6 +657,8 @@ void
 as_release_add_location (AsRelease *release, const gchar *location)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+
+	g_return_if_fail (AS_IS_RELEASE (release));
 
 	/* deduplicate */
 	as_release_ensure_locations (release);
@@ -655,6 +681,7 @@ void
 as_release_add_checksum (AsRelease *release, AsChecksum *checksum)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_if_fail (AS_IS_RELEASE (release));
 	as_release_ensure_checksums (release);
 	g_ptr_array_add (priv->checksums, g_object_ref (checksum));
 }
@@ -672,6 +699,7 @@ void
 as_release_set_timestamp (AsRelease *release, guint64 timestamp)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_if_fail (AS_IS_RELEASE (release));
 	priv->timestamp = timestamp;
 }
 
@@ -691,6 +719,7 @@ as_release_set_description (AsRelease *release,
 			    const gchar *description)
 {
 	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_if_fail (AS_IS_RELEASE (release));
 	if (locale == NULL)
 		locale = "C";
 	if (priv->descriptions == NULL) {
@@ -722,6 +751,8 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	AsChecksum *checksum;
 	GNode *n;
+
+	g_return_val_if_fail (AS_IS_RELEASE (release), NULL);
 
 	n = as_node_insert (parent, "release", NULL,
 			    AS_NODE_INSERT_FLAG_NONE,
@@ -798,6 +829,8 @@ as_release_node_parse (AsRelease *release, GNode *node,
 	AsReleasePrivate *priv = GET_PRIVATE (release);
 	GNode *n;
 	const gchar *tmp;
+
+	g_return_val_if_fail (AS_IS_RELEASE (release), FALSE);
 
 	tmp = as_node_get_attribute (node, "timestamp");
 	if (tmp != NULL)
@@ -915,6 +948,8 @@ as_release_node_parse_dep11 (AsRelease *release, GNode *node,
 	GNode *n;
 	const gchar *tmp;
 	const gchar *value;
+
+	g_return_val_if_fail (AS_IS_RELEASE (release), FALSE);
 
 	for (n = node->children; n != NULL; n = n->next) {
 		tmp = as_yaml_node_get_key (n);

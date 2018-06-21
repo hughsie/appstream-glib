@@ -90,6 +90,7 @@ const gchar *
 as_agreement_section_get_kind (AsAgreementSection *agreement_section)
 {
 	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
+	g_return_val_if_fail (AS_IS_AGREEMENT_SECTION (agreement_section), NULL);
 	return priv->kind;
 }
 
@@ -106,6 +107,7 @@ void
 as_agreement_section_set_kind (AsAgreementSection *agreement_section, const gchar *kind)
 {
 	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
+	g_return_if_fail (AS_IS_AGREEMENT_SECTION (agreement_section));
 	as_ref_string_assign_safe (&priv->kind, kind);
 }
 
@@ -124,6 +126,7 @@ const gchar *
 as_agreement_section_get_name (AsAgreementSection *agreement_section, const gchar *locale)
 {
 	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
+	g_return_val_if_fail (AS_IS_AGREEMENT_SECTION (agreement_section), NULL);
 	return priv->name;
 }
 
@@ -142,6 +145,7 @@ as_agreement_section_set_name (AsAgreementSection *agreement_section,
 			       const gchar *locale, const gchar *name)
 {
 	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
+	g_return_if_fail (AS_IS_AGREEMENT_SECTION (agreement_section));
 	as_ref_string_assign_safe (&priv->name, name);
 }
 
@@ -161,6 +165,7 @@ as_agreement_section_get_description (AsAgreementSection *agreement_section,
 				      const gchar *locale)
 {
 	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
+	g_return_val_if_fail (AS_IS_AGREEMENT_SECTION (agreement_section), NULL);
 	return priv->desc;
 }
 
@@ -179,6 +184,7 @@ as_agreement_section_set_description (AsAgreementSection *agreement_section,
 				      const gchar *locale, const gchar *desc)
 {
 	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
+	g_return_if_fail (AS_IS_AGREEMENT_SECTION (agreement_section));
 	as_ref_string_assign_safe (&priv->desc, desc);
 }
 
@@ -200,6 +206,7 @@ as_agreement_section_node_insert (AsAgreementSection *agreement_section,
 				  AsNodeContext *ctx)
 {
 	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
+	g_return_val_if_fail (AS_IS_AGREEMENT_SECTION (agreement_section), NULL);
 	GNode *n = as_node_insert (parent, "agreement_section", NULL,
 				   AS_NODE_INSERT_FLAG_NONE,
 				   NULL);
