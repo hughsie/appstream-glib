@@ -164,6 +164,7 @@ const gchar *
 as_provide_get_value (AsProvide *provide)
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
+	g_return_val_if_fail (AS_IS_PROVIDE (provide), NULL);
 	return priv->value;
 }
 
@@ -181,6 +182,7 @@ AsProvideKind
 as_provide_get_kind (AsProvide *provide)
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
+	g_return_val_if_fail (AS_IS_PROVIDE (provide), AS_PROVIDE_KIND_UNKNOWN);
 	return priv->kind;
 }
 
@@ -197,6 +199,7 @@ void
 as_provide_set_value (AsProvide *provide, const gchar *value)
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
+	g_return_if_fail (AS_IS_PROVIDE (provide));
 	as_ref_string_assign_safe (&priv->value, value);
 }
 
@@ -213,6 +216,7 @@ void
 as_provide_set_kind (AsProvide *provide, AsProvideKind kind)
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
+	g_return_if_fail (AS_IS_PROVIDE (provide));
 	priv->kind = kind;
 }
 
@@ -233,6 +237,8 @@ as_provide_node_insert (AsProvide *provide, GNode *parent, AsNodeContext *ctx)
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
 	GNode *n = NULL;
+
+	g_return_val_if_fail (AS_IS_PROVIDE (provide), NULL);
 
 	switch (priv->kind) {
 	case AS_PROVIDE_KIND_UNKNOWN:
@@ -314,6 +320,8 @@ as_provide_node_parse (AsProvide *provide, GNode *node,
 {
 	AsProvidePrivate *priv = GET_PRIVATE (provide);
 	const gchar *tmp;
+
+	g_return_val_if_fail (AS_IS_PROVIDE (provide), FALSE);
 
 	if (g_strcmp0 (as_node_get_name (node), "dbus") == 0) {
 		tmp = as_node_get_attribute (node, "type");

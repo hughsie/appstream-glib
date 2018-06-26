@@ -102,6 +102,7 @@ AsContentRatingValue
 as_content_rating_get_value (AsContentRating *content_rating, const gchar *id)
 {
 	AsContentRatingPrivate *priv = GET_PRIVATE (content_rating);
+	g_return_val_if_fail (AS_IS_CONTENT_RATING (content_rating), AS_CONTENT_RATING_VALUE_UNKNOWN);
 	guint i;
 	for (i = 0; i < priv->keys->len; i++) {
 		AsContentRatingKey *key = g_ptr_array_index (priv->keys, i);
@@ -314,6 +315,8 @@ as_content_rating_get_minimum_age (AsContentRating *content_rating)
 	guint i;
 	guint csm_age = 0;
 
+	g_return_val_if_fail (AS_IS_CONTENT_RATING (content_rating), 0);
+
 	/* check kind */
 	if (g_strcmp0 (priv->kind, "oars-1.0") != 0 &&
 	    g_strcmp0 (priv->kind, "oars-1.1") != 0)
@@ -344,6 +347,7 @@ const gchar *
 as_content_rating_get_kind (AsContentRating *content_rating)
 {
 	AsContentRatingPrivate *priv = GET_PRIVATE (content_rating);
+	g_return_val_if_fail (AS_IS_CONTENT_RATING (content_rating), NULL);
 	return priv->kind;
 }
 
@@ -360,6 +364,7 @@ void
 as_content_rating_set_kind (AsContentRating *content_rating, const gchar *kind)
 {
 	AsContentRatingPrivate *priv = GET_PRIVATE (content_rating);
+	g_return_if_fail (AS_IS_CONTENT_RATING (content_rating));
 	as_ref_string_assign_safe (&priv->kind, kind);
 }
 
@@ -384,6 +389,8 @@ as_content_rating_node_insert (AsContentRating *content_rating,
 	AsContentRatingPrivate *priv = GET_PRIVATE (content_rating);
 	GNode *n;
 	guint i;
+
+	g_return_val_if_fail (AS_IS_CONTENT_RATING (content_rating), NULL);
 
 	n = as_node_insert (parent, "content_rating", NULL,
 			    AS_NODE_INSERT_FLAG_NONE,
@@ -423,6 +430,8 @@ as_content_rating_node_parse (AsContentRating *content_rating, GNode *node,
 	GNode *c;
 	const gchar *tmp;
 	g_autoptr(GHashTable) captions = NULL;
+
+	g_return_val_if_fail (AS_IS_CONTENT_RATING (content_rating), FALSE);
 
 	/* get ID */
 	tmp = as_node_get_attribute (node, "type");

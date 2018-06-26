@@ -172,6 +172,7 @@ const gchar *
 as_icon_get_name (AsIcon *icon)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_val_if_fail (AS_IS_ICON (icon), NULL);
 	return priv->name;
 }
 
@@ -190,6 +191,7 @@ const gchar *
 as_icon_get_url (AsIcon *icon)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_val_if_fail (AS_IS_ICON (icon), NULL);
 	return priv->url;
 }
 
@@ -208,6 +210,7 @@ const gchar *
 as_icon_get_filename (AsIcon *icon)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_val_if_fail (AS_IS_ICON (icon), NULL);
 	return priv->filename;
 }
 
@@ -225,6 +228,8 @@ const gchar *
 as_icon_get_prefix (AsIcon *icon)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+
+	g_return_val_if_fail (AS_IS_ICON (icon), NULL);
 
 	/* only use the size if the metadata has width and height */
 	if (priv->prepend_size && priv->prefix_private == NULL) {
@@ -263,6 +268,7 @@ guint
 as_icon_get_width (AsIcon *icon)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_val_if_fail (AS_IS_ICON (icon), 0);
 	return priv->width;
 }
 
@@ -280,6 +286,7 @@ guint
 as_icon_get_height (AsIcon *icon)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_val_if_fail (AS_IS_ICON (icon), 0);
 	return priv->height;
 }
 
@@ -297,6 +304,7 @@ guint
 as_icon_get_scale (AsIcon *icon)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_val_if_fail (AS_IS_ICON (icon), 0);
 	return priv->scale;
 }
 
@@ -314,6 +322,7 @@ AsIconKind
 as_icon_get_kind (AsIcon *icon)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_val_if_fail (AS_IS_ICON (icon), AS_ICON_KIND_UNKNOWN);
 	return priv->kind;
 }
 
@@ -331,6 +340,7 @@ GdkPixbuf *
 as_icon_get_pixbuf (AsIcon *icon)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_val_if_fail (AS_IS_ICON (icon), NULL);
 	return priv->pixbuf;
 }
 
@@ -348,6 +358,7 @@ GBytes *
 as_icon_get_data (AsIcon *icon)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_val_if_fail (AS_IS_ICON (icon), NULL);
 	return priv->data;
 }
 
@@ -364,6 +375,7 @@ void
 as_icon_set_name (AsIcon *icon, const gchar *name)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_if_fail (AS_IS_ICON (icon));
 	as_ref_string_assign_safe (&priv->name, name);
 }
 
@@ -380,6 +392,7 @@ void
 as_icon_set_prefix (AsIcon *icon, const gchar *prefix)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_if_fail (AS_IS_ICON (icon));
 	as_ref_string_assign_safe (&priv->prefix, prefix);
 }
 
@@ -387,6 +400,7 @@ void
 as_icon_set_prefix_rstr (AsIcon *icon, AsRefString *rstr)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_if_fail (AS_IS_ICON (icon));
 	as_ref_string_assign (&priv->prefix, rstr);
 }
 
@@ -403,6 +417,7 @@ void
 as_icon_set_url (AsIcon *icon, const gchar *url)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_if_fail (AS_IS_ICON (icon));
 	as_ref_string_assign_safe (&priv->url, url);
 }
 
@@ -419,6 +434,7 @@ void
 as_icon_set_filename (AsIcon *icon, const gchar *filename)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_if_fail (AS_IS_ICON (icon));
 	as_ref_string_assign_safe (&priv->filename, filename);
 }
 
@@ -435,6 +451,7 @@ void
 as_icon_set_width (AsIcon *icon, guint width)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_if_fail (AS_IS_ICON (icon));
 	priv->width = width;
 }
 
@@ -451,6 +468,7 @@ void
 as_icon_set_height (AsIcon *icon, guint height)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_if_fail (AS_IS_ICON (icon));
 	priv->height = height;
 }
 
@@ -467,6 +485,7 @@ void
 as_icon_set_scale (AsIcon *icon, guint scale)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_if_fail (AS_IS_ICON (icon));
 	priv->scale = scale;
 }
 
@@ -483,6 +502,7 @@ void
 as_icon_set_kind (AsIcon *icon, AsIconKind kind)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_if_fail (AS_IS_ICON (icon));
 	priv->kind = kind;
 }
 
@@ -499,6 +519,7 @@ void
 as_icon_set_pixbuf (AsIcon *icon, GdkPixbuf *pixbuf)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+	g_return_if_fail (AS_IS_ICON (icon));
 	g_set_object (&priv->pixbuf, pixbuf);
 	if (pixbuf != NULL) {
 		priv->width = (guint) gdk_pixbuf_get_width (pixbuf);
@@ -519,6 +540,8 @@ void
 as_icon_set_data (AsIcon *icon, GBytes *data)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+
+	g_return_if_fail (AS_IS_ICON (icon));
 
 	if (priv->data != NULL)
 		g_bytes_unref (priv->data);
@@ -569,6 +592,8 @@ as_icon_node_insert (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	GNode *n;
+
+	g_return_val_if_fail (AS_IS_ICON (icon), NULL);
 
 	/* embedded icon */
 	if (priv->kind == AS_ICON_KIND_EMBEDDED)
@@ -686,6 +711,8 @@ as_icon_node_parse (AsIcon *icon, GNode *node,
 	AsRefString *str;
 	guint size;
 
+	g_return_val_if_fail (AS_IS_ICON (icon), FALSE);
+
 	str = as_node_get_attribute_as_refstr (node, "type");
 	as_icon_set_kind (icon, as_icon_kind_from_string (str));
 	switch (priv->kind) {
@@ -767,6 +794,8 @@ as_icon_node_parse_dep11 (AsIcon *icon, GNode *node,
 	GNode *n;
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 
+	g_return_val_if_fail (AS_IS_ICON (icon), FALSE);
+
 	for (n = node->children; n != NULL; n = n->next) {
 		const gchar *key;
 		guint size;
@@ -839,6 +868,8 @@ as_icon_load (AsIcon *icon, AsIconLoadFlags flags, GError **error)
 	AsIconPrivate *priv = GET_PRIVATE (icon);
 	g_autofree gchar *fn_fallback = NULL;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
+
+	g_return_val_if_fail (AS_IS_ICON (icon), FALSE);
 
 	/* absolute filename */
 	if (priv->kind == AS_ICON_KIND_LOCAL) {
@@ -915,6 +946,8 @@ gboolean
 as_icon_convert_to_kind (AsIcon *icon, AsIconKind kind, GError **error)
 {
 	AsIconPrivate *priv = GET_PRIVATE (icon);
+
+	g_return_val_if_fail (AS_IS_ICON (icon), FALSE);
 
 	/* these can't be converted */
 	if (priv->kind == AS_ICON_KIND_STOCK ||

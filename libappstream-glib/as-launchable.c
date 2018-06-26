@@ -137,6 +137,7 @@ const gchar *
 as_launchable_get_value (AsLaunchable *launchable)
 {
 	AsLaunchablePrivate *priv = GET_PRIVATE (launchable);
+	g_return_val_if_fail (AS_IS_LAUNCHABLE (launchable), NULL);
 	return priv->value;
 }
 
@@ -154,6 +155,7 @@ AsLaunchableKind
 as_launchable_get_kind (AsLaunchable *launchable)
 {
 	AsLaunchablePrivate *priv = GET_PRIVATE (launchable);
+	g_return_val_if_fail (AS_IS_LAUNCHABLE (launchable), AS_LAUNCHABLE_KIND_UNKNOWN);
 	return priv->kind;
 }
 
@@ -170,6 +172,7 @@ void
 as_launchable_set_value (AsLaunchable *launchable, const gchar *value)
 {
 	AsLaunchablePrivate *priv = GET_PRIVATE (launchable);
+	g_return_if_fail (AS_IS_LAUNCHABLE (launchable));
 	as_ref_string_assign_safe (&priv->value, value);
 }
 
@@ -186,6 +189,7 @@ void
 as_launchable_set_kind (AsLaunchable *launchable, AsLaunchableKind kind)
 {
 	AsLaunchablePrivate *priv = GET_PRIVATE (launchable);
+	g_return_if_fail (AS_IS_LAUNCHABLE (launchable));
 	priv->kind = kind;
 }
 
@@ -205,10 +209,12 @@ GNode *
 as_launchable_node_insert (AsLaunchable *launchable, GNode *parent, AsNodeContext *ctx)
 {
 	AsLaunchablePrivate *priv = GET_PRIVATE (launchable);
-	GNode *n = as_node_insert (parent, "launchable",
-				   priv->value,
-				   AS_NODE_INSERT_FLAG_NONE,
-				   NULL);
+	GNode *n;
+	g_return_val_if_fail (AS_IS_LAUNCHABLE (launchable), NULL);
+	n = as_node_insert (parent, "launchable",
+			    priv->value,
+			    AS_NODE_INSERT_FLAG_NONE,
+			    NULL);
 	if (priv->kind != AS_LAUNCHABLE_KIND_UNKNOWN)
 		as_node_add_attribute (n, "type", as_launchable_kind_to_string (priv->kind));
 	return n;
@@ -252,6 +258,7 @@ as_launchable_node_parse (AsLaunchable *launchable, GNode *node,
 			  AsNodeContext *ctx, GError **error)
 {
 	AsLaunchablePrivate *priv = GET_PRIVATE (launchable);
+	g_return_val_if_fail (AS_IS_LAUNCHABLE (launchable), FALSE);
 	priv->kind = as_launchable_kind_from_string (as_node_get_attribute (node, "type"));
 	as_ref_string_assign (&priv->value, as_node_get_data_as_refstr (node));
 	return TRUE;

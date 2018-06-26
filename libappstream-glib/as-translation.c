@@ -130,6 +130,7 @@ const gchar *
 as_translation_get_id (AsTranslation *translation)
 {
 	AsTranslationPrivate *priv = GET_PRIVATE (translation);
+	g_return_val_if_fail (AS_IS_TRANSLATION (translation), NULL);
 	return priv->id;
 }
 
@@ -147,6 +148,7 @@ AsTranslationKind
 as_translation_get_kind (AsTranslation *translation)
 {
 	AsTranslationPrivate *priv = GET_PRIVATE (translation);
+	g_return_val_if_fail (AS_IS_TRANSLATION (translation), AS_TRANSLATION_KIND_UNKNOWN);
 	return priv->kind;
 }
 
@@ -163,6 +165,7 @@ void
 as_translation_set_id (AsTranslation *translation, const gchar *id)
 {
 	AsTranslationPrivate *priv = GET_PRIVATE (translation);
+	g_return_if_fail (AS_IS_TRANSLATION (translation));
 	as_ref_string_assign_safe (&priv->id, id);
 }
 
@@ -179,6 +182,7 @@ void
 as_translation_set_kind (AsTranslation *translation, AsTranslationKind kind)
 {
 	AsTranslationPrivate *priv = GET_PRIVATE (translation);
+	g_return_if_fail (AS_IS_TRANSLATION (translation));
 	priv->kind = kind;
 }
 
@@ -199,6 +203,8 @@ as_translation_node_insert (AsTranslation *translation, GNode *parent, AsNodeCon
 {
 	AsTranslationPrivate *priv = GET_PRIVATE (translation);
 	GNode *n;
+
+	g_return_val_if_fail (AS_IS_TRANSLATION (translation), NULL);
 
 	/* invalid */
 	if (priv->kind == AS_TRANSLATION_KIND_UNKNOWN)
@@ -231,6 +237,8 @@ as_translation_node_parse (AsTranslation *translation, GNode *node,
 	AsTranslationPrivate *priv = GET_PRIVATE (translation);
 	const gchar *tmp;
 
+	g_return_val_if_fail (AS_IS_TRANSLATION (translation), FALSE);
+
 	tmp = as_node_get_attribute (node, "type");
 	as_translation_set_kind (translation, as_translation_kind_from_string (tmp));
 	as_ref_string_assign (&priv->id, as_node_get_data_as_refstr (node));
@@ -251,16 +259,18 @@ as_translation_node_parse (AsTranslation *translation, GNode *node,
  * Since: 0.5.8
  **/
 gboolean
-as_translation_node_parse_dep11 (AsTranslation *im, GNode *node,
+as_translation_node_parse_dep11 (AsTranslation *translation, GNode *node,
 				 AsNodeContext *ctx, GError **error)
 {
 	GNode *n;
 	const gchar *tmp;
 
+	g_return_val_if_fail (AS_IS_TRANSLATION (translation), FALSE);
+
 	for (n = node->children; n != NULL; n = n->next) {
 		tmp = as_yaml_node_get_key (n);
 		if (g_strcmp0 (tmp, "id") == 0)
-			as_translation_set_id (im, as_yaml_node_get_value (n));
+			as_translation_set_id (translation, as_yaml_node_get_value (n));
 	}
 	return TRUE;
 }

@@ -132,6 +132,7 @@ const gchar *
 as_format_get_filename (AsFormat *format)
 {
 	AsFormatPrivate *priv = GET_PRIVATE (format);
+	g_return_val_if_fail (AS_IS_FORMAT (format), NULL);
 	return priv->filename;
 }
 
@@ -149,6 +150,7 @@ AsFormatKind
 as_format_get_kind (AsFormat *format)
 {
 	AsFormatPrivate *priv = GET_PRIVATE (format);
+	g_return_val_if_fail (AS_IS_FORMAT (format), AS_FORMAT_KIND_UNKNOWN);
 	return priv->kind;
 }
 
@@ -201,6 +203,7 @@ void
 as_format_set_filename (AsFormat *format, const gchar *filename)
 {
 	AsFormatPrivate *priv = GET_PRIVATE (format);
+	g_return_if_fail (AS_IS_FORMAT (format));
 	if (priv->kind == AS_FORMAT_KIND_UNKNOWN)
 		priv->kind = as_format_guess_kind (filename);
 	as_ref_string_assign_safe (&priv->filename, filename);
@@ -219,6 +222,7 @@ void
 as_format_set_kind (AsFormat *format, AsFormatKind kind)
 {
 	AsFormatPrivate *priv = GET_PRIVATE (format);
+	g_return_if_fail (AS_IS_FORMAT (format));
 	priv->kind = kind;
 }
 
@@ -238,6 +242,9 @@ as_format_equal (AsFormat *format1, AsFormat *format2)
 {
 	AsFormatPrivate *priv1 = GET_PRIVATE (format1);
 	AsFormatPrivate *priv2 = GET_PRIVATE (format2);
+
+	g_return_val_if_fail (AS_IS_FORMAT (format1), FALSE);
+	g_return_val_if_fail (AS_IS_FORMAT (format2), FALSE);
 
 	/* trivial */
 	if (format1 == format2)

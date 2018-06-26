@@ -143,6 +143,7 @@ const gchar *
 as_image_get_url (AsImage *image)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_val_if_fail (AS_IS_IMAGE (image), NULL);
 	return priv->url;
 }
 
@@ -160,6 +161,7 @@ const gchar *
 as_image_get_basename (AsImage *image)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_val_if_fail (AS_IS_IMAGE (image), NULL);
 	return priv->basename;
 }
 
@@ -177,6 +179,7 @@ const gchar *
 as_image_get_locale (AsImage *image)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_val_if_fail (AS_IS_IMAGE (image), NULL);
 	return priv->locale;
 }
 
@@ -194,6 +197,7 @@ const gchar *
 as_image_get_md5 (AsImage *image)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_val_if_fail (AS_IS_IMAGE (image), NULL);
 	return priv->md5;
 }
 
@@ -211,6 +215,7 @@ guint
 as_image_get_width (AsImage *image)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_val_if_fail (AS_IS_IMAGE (image), 0);
 	return priv->width;
 }
 
@@ -228,6 +233,7 @@ guint
 as_image_get_height (AsImage *image)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_val_if_fail (AS_IS_IMAGE (image), 0);
 	return priv->height;
 }
 
@@ -245,6 +251,7 @@ AsImageKind
 as_image_get_kind (AsImage *image)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_val_if_fail (AS_IS_IMAGE (image), AS_IMAGE_KIND_UNKNOWN);
 	return priv->kind;
 }
 
@@ -262,6 +269,7 @@ GdkPixbuf *
 as_image_get_pixbuf (AsImage *image)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_val_if_fail (AS_IS_IMAGE (image), NULL);
 	return priv->pixbuf;
 }
 
@@ -278,6 +286,7 @@ void
 as_image_set_url (AsImage *image, const gchar *url)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_if_fail (AS_IS_IMAGE (image));
 	as_ref_string_assign_safe (&priv->url, url);
 }
 
@@ -285,6 +294,7 @@ void
 as_image_set_url_rstr (AsImage *image, AsRefString *rstr)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_if_fail (AS_IS_IMAGE (image));
 	as_ref_string_assign (&priv->url, rstr);
 }
 
@@ -301,6 +311,7 @@ void
 as_image_set_basename (AsImage *image, const gchar *basename)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_if_fail (AS_IS_IMAGE (image));
 	as_ref_string_assign_safe (&priv->basename, basename);
 }
 
@@ -317,6 +328,7 @@ void
 as_image_set_locale (AsImage *image, const gchar *locale)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_if_fail (AS_IS_IMAGE (image));
 	as_ref_string_assign_safe (&priv->locale, locale);
 }
 
@@ -333,6 +345,7 @@ void
 as_image_set_width (AsImage *image, guint width)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_if_fail (AS_IS_IMAGE (image));
 	priv->width = width;
 }
 
@@ -349,6 +362,7 @@ void
 as_image_set_height (AsImage *image, guint height)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_if_fail (AS_IS_IMAGE (image));
 	priv->height = height;
 }
 
@@ -365,6 +379,7 @@ void
 as_image_set_kind (AsImage *image, AsImageKind kind)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
+	g_return_if_fail (AS_IS_IMAGE (image));
 	priv->kind = kind;
 }
 
@@ -383,6 +398,8 @@ as_image_set_pixbuf (AsImage *image, GdkPixbuf *pixbuf)
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	guchar *data;
 	guint len;
+
+	g_return_if_fail (AS_IS_IMAGE (image));
 
 	g_set_object (&priv->pixbuf, pixbuf);
 	if (pixbuf == NULL)
@@ -415,6 +432,7 @@ as_image_node_insert (AsImage *image, GNode *parent, AsNodeContext *ctx)
 {
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	GNode *n;
+	g_return_val_if_fail (AS_IS_IMAGE (image), NULL);
 	n = as_node_insert (parent, "image", priv->url,
 			    AS_NODE_INSERT_FLAG_NONE,
 			    NULL);
@@ -449,6 +467,8 @@ as_image_node_parse (AsImage *image, GNode *node,
 	AsImagePrivate *priv = GET_PRIVATE (image);
 	const gchar *tmp;
 	guint size;
+
+	g_return_val_if_fail (AS_IS_IMAGE (image), FALSE);
 
 	size = as_node_get_attribute_as_uint (node, "width");
 	if (size != G_MAXUINT)
@@ -537,6 +557,8 @@ as_image_load_filename_full (AsImage *image,
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
 	g_autoptr(GdkPixbuf) pixbuf_src = NULL;
 	g_autoptr(GdkPixbuf) pixbuf_tmp = NULL;
+
+	g_return_val_if_fail (AS_IS_IMAGE (image), FALSE);
 
 	/* only support non-deprecated types */
 	if (flags & AS_IMAGE_LOAD_FLAG_ONLY_SUPPORTED) {
@@ -749,6 +771,8 @@ as_image_save_pixbuf (AsImage *image,
 	guint pixbuf_width;
 	g_autoptr(GdkPixbuf) pixbuf_tmp = NULL;
 
+	g_return_val_if_fail (AS_IS_IMAGE (image), NULL);
+
 	/* never set */
 	if (priv->pixbuf == NULL)
 		return NULL;
@@ -900,6 +924,8 @@ as_image_get_alpha_flags (AsImage *image)
 	guint cnt_content_to_alpha_h;
 	guint cnt_content_to_alpha_v = 0;
 
+	g_return_val_if_fail (AS_IS_IMAGE (image), AS_IMAGE_ALPHA_FLAG_NONE);
+
 	if (!gdk_pixbuf_get_has_alpha (priv->pixbuf))
 		return AS_IMAGE_ALPHA_FLAG_NONE;
 
@@ -1005,6 +1031,9 @@ as_image_equal (AsImage *image1, AsImage *image2)
 {
 	AsImagePrivate *priv1 = GET_PRIVATE (image1);
 	AsImagePrivate *priv2 = GET_PRIVATE (image2);
+
+	g_return_val_if_fail (AS_IS_IMAGE (image1), FALSE);
+	g_return_val_if_fail (AS_IS_IMAGE (image2), FALSE);
 
 	/* trivial */
 	if (image1 == image2)

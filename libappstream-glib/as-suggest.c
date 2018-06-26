@@ -129,6 +129,7 @@ GPtrArray *
 as_suggest_get_ids (AsSuggest *suggest)
 {
 	AsSuggestPrivate *priv = GET_PRIVATE (suggest);
+	g_return_val_if_fail (AS_IS_SUGGEST (suggest), NULL);
 	return priv->ids;
 }
 
@@ -146,6 +147,7 @@ AsSuggestKind
 as_suggest_get_kind (AsSuggest *suggest)
 {
 	AsSuggestPrivate *priv = GET_PRIVATE (suggest);
+	g_return_val_if_fail (AS_IS_SUGGEST (suggest), AS_SUGGEST_KIND_UNKNOWN);
 	return priv->kind;
 }
 
@@ -162,6 +164,7 @@ void
 as_suggest_set_kind (AsSuggest *suggest, AsSuggestKind kind)
 {
 	AsSuggestPrivate *priv = GET_PRIVATE (suggest);
+	g_return_if_fail (AS_IS_SUGGEST (suggest));
 	priv->kind = kind;
 }
 
@@ -178,6 +181,7 @@ void
 as_suggest_add_id (AsSuggest *suggest, const gchar *id)
 {
 	AsSuggestPrivate *priv = GET_PRIVATE (suggest);
+	g_return_if_fail (AS_IS_SUGGEST (suggest));
 	g_ptr_array_add (priv->ids, as_ref_string_new (id));
 }
 
@@ -199,6 +203,8 @@ as_suggest_node_insert (AsSuggest *suggest, GNode *parent, AsNodeContext *ctx)
 	AsSuggestPrivate *priv = GET_PRIVATE (suggest);
 	GNode *n;
 	guint i;
+
+	g_return_val_if_fail (AS_IS_SUGGEST (suggest), NULL);
 
 	n = as_node_insert (parent, "suggests", NULL,
 			    AS_NODE_INSERT_FLAG_NONE,

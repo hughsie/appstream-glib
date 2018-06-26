@@ -148,6 +148,7 @@ AsScreenshotKind
 as_screenshot_get_kind (AsScreenshot *screenshot)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), AS_SCREENSHOT_KIND_UNKNOWN);
 	return priv->kind;
 }
 
@@ -165,6 +166,7 @@ gint
 as_screenshot_get_priority (AsScreenshot *screenshot)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), 0);
 	return priv->priority;
 }
 
@@ -182,6 +184,7 @@ GPtrArray *
 as_screenshot_get_images (AsScreenshot *screenshot)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), NULL);
 	return priv->images;
 }
 
@@ -204,6 +207,8 @@ as_screenshot_get_images_for_locale (AsScreenshot *screenshot,
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	GPtrArray *array;
 	guint i;
+
+	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), NULL);
 
 	/* user wants a specific locale */
 	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -303,6 +308,8 @@ as_screenshot_get_source (AsScreenshot *screenshot)
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	guint i;
 
+	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), NULL);
+
 	for (i = 0; i < priv->images->len; i++) {
 		im = g_ptr_array_index (priv->images, i);
 		if (as_image_get_kind (im) == AS_IMAGE_KIND_SOURCE)
@@ -326,6 +333,7 @@ const gchar *
 as_screenshot_get_caption (AsScreenshot *screenshot, const gchar *locale)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), NULL);
 	if (priv->captions == NULL)
 		return NULL;
 	return as_hash_lookup_by_locale (priv->captions, locale);
@@ -344,6 +352,7 @@ void
 as_screenshot_set_priority (AsScreenshot *screenshot, gint priority)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	g_return_if_fail (AS_IS_SCREENSHOT (screenshot));
 	priv->priority = priority;
 }
 
@@ -360,6 +369,7 @@ void
 as_screenshot_set_kind (AsScreenshot *screenshot, AsScreenshotKind kind)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	g_return_if_fail (AS_IS_SCREENSHOT (screenshot));
 	priv->kind = kind;
 }
 
@@ -376,6 +386,7 @@ void
 as_screenshot_add_image (AsScreenshot *screenshot, AsImage *image)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	g_return_if_fail (AS_IS_SCREENSHOT (screenshot));
 	g_ptr_array_add (priv->images, g_object_ref (image));
 }
 
@@ -395,6 +406,7 @@ as_screenshot_set_caption (AsScreenshot *screenshot,
 			   const gchar *caption)
 {
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+	g_return_if_fail (AS_IS_SCREENSHOT (screenshot));
 	if (locale == NULL)
 		locale = "C";
 	as_screenshot_ensure_captions (screenshot);
@@ -424,6 +436,8 @@ as_screenshot_node_insert (AsScreenshot *screenshot,
 	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
 	GNode *n;
 	guint i;
+
+	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), NULL);
 
 	/* nothing to add */
 	if (priv->images->len == 0)
@@ -476,6 +490,8 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node,
 	guint size;
 	gint priority;
 	g_autoptr(GHashTable) captions = NULL;
+
+	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), FALSE);
 
 	tmp = as_node_get_attribute (node, "type");
 	if (tmp != NULL) {
@@ -600,6 +616,9 @@ as_screenshot_equal (AsScreenshot *screenshot1, AsScreenshot *screenshot2)
 	AsScreenshotPrivate *priv2 = GET_PRIVATE (screenshot2);
 	AsImage *im1;
 	AsImage *im2;
+
+	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot1), FALSE);
+	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot2), FALSE);
 
 	/* trivial */
 	if (screenshot1 == screenshot2)
