@@ -163,7 +163,7 @@ as_app_validate_description_li (const gchar *text, AsAppValidateHelper *helper)
 {
 	gboolean require_sentence_case = TRUE;
 	guint str_len;
-	guint length_li_max = 100;
+	guint length_li_max = 300;
 	guint length_li_min = 20;
 
 	/* relax the requirements a bit */
