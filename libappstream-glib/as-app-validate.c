@@ -828,10 +828,12 @@ as_app_validate_release (AsApp *app,
 	guint64 timestamp;
 	guint number_para_max = 3;
 	guint number_para_min = 1;
+	gboolean required_timestamp = TRUE;
 
 	/* relax the requirements a bit */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
 		number_para_max = 4;
+		required_timestamp = FALSE;
 	}
 
 	/* check version */
@@ -844,7 +846,7 @@ as_app_validate_release (AsApp *app,
 
 	/* check timestamp */
 	timestamp = as_release_get_timestamp (release);
-	if (timestamp == 0) {
+	if (required_timestamp && timestamp == 0) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
 				     "<release> has no timestamp");
