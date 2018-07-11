@@ -343,6 +343,8 @@ as_node_get_attr_string (AsNodeData *data)
 		as_utils_string_replace (value_safe, "&", "&amp;");
 		as_utils_string_replace (value_safe, "<", "&lt;");
 		as_utils_string_replace (value_safe, ">", "&gt;");
+		as_utils_string_replace (value_safe, "\"", "&quot;");
+		as_utils_string_replace (value_safe, "'", "&apos;");
 		g_string_append_printf (str, " %s=\"%s\"",
 					attr->key, value_safe->str);
 	}
