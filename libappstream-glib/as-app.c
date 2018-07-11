@@ -3014,6 +3014,7 @@ as_app_add_keyword (AsApp *app,
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_autoptr(AsRefString) locale_fixed = NULL;
+	g_autoptr(AsRefString) keyword_rstr = NULL;
 
 	g_return_if_fail (keyword != NULL);
 
@@ -3029,7 +3030,8 @@ as_app_add_keyword (AsApp *app,
 		return;
 
 	/* add */
-	as_app_add_keyword_rstr (app, locale_fixed, as_ref_string_new (keyword));
+	keyword_rstr = as_ref_string_new (keyword);
+	as_app_add_keyword_rstr (app, locale_fixed, keyword_rstr);
 }
 
 /**
