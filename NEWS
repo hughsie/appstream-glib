@@ -1,3 +1,13 @@
+Version 0.7.10
+~~~~~~~~~~~~~~
+Released: 2018-07-11
+
+Bugfixes:
+ - Add object type checks on the inputs of all functions (Robert Ancell)
+ - Do not parse firmware files (Richard Hughes)
+ - Do not require a release transaction when validating in relaxed mode (Richard Hughes)
+ - Extract release descriptions and agreement sections for translation (Piotr Drąg)
+
 Version 0.7.9
 ~~~~~~~~~~~~~~
 Released: 2018-06-04
