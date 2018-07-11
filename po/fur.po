@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-04 11:35+0100\n"
+"POT-Creation-Date: 2018-07-11 19:18+0100\n"
 "PO-Revision-Date: 2018-03-21 04:19+0000\n"
 "Last-Translator: Fabio Tomat <f.t.public@gmail.com>\n"
 "Language-Team: Friulian\n"
@@ -16,502 +16,395 @@ msgstr ""
 "X-Generator: Zanata 4.4.5\n"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:90 client/as-compose.c:344 client/as-util.c:4404
-msgid "Show extra debugging information"
-msgstr "Mostre informazions di debug adizionâls"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:93
-msgid "Add a cache ID to each component"
-msgstr "Zonte un ID di cache par ogni component"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:96
-msgid "Include failed results in the output"
-msgstr "Inclût i risultâts falîts te jessude/stampe"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:99
 msgid "Add HiDPI icons to the tarball"
 msgstr "Zonte iconis HiDPI al tarball"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:102
+msgid "Add a cache ID to each component"
+msgstr "Zonte un ID di cache par ogni component"
+
+#. TRANSLATORS: command description
+msgid "Add a language to a source file"
+msgstr "Zonte une lenghe a un file sorzint"
+
+#. TRANSLATORS: command description
+msgid "Add a provide to a source file"
+msgstr "Zonte une furnidure a un file sorzint"
+
+#. TRANSLATORS: command line option
 msgid "Add encoded icons to the XML"
 msgstr "Zonte iconis codificadis al XML"
 
-#. TRANSLATORS: command line option
-#: client/as-builder.c:105
-msgid "Do not compress the icons into a tarball"
-msgstr "No sta comprimi lis iconis intun tarball"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:108
-msgid "Set the logging directory"
-msgstr "Stabilìs la cartele di regjistrazion"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:111
-msgid "Set the packages directory"
-msgstr "Stabilìs la cartele dai pachets"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:114
-msgid "Set the temporary directory"
-msgstr "Stabilìs la cartele temporanie"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:117 client/as-compose.c:350
-msgid "Set the output directory"
-msgstr "Stabilìs la cartele di jessude"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:120 client/as-compose.c:353
-msgid "Set the icons directory"
-msgstr "Stabilìs la cartele des iconis"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:123
-msgid "Set the cache directory"
-msgstr "Stabilìs la cartele de cache"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:126 client/as-compose.c:362
-msgid "Set the basenames of the output files"
-msgstr "Stabilìs il non di base dai file di jessude"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:129 client/as-compose.c:356
-msgid "Set the origin name"
-msgstr "Stabilìs il non de origjin"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:132
-msgid "Set the number of threads"
-msgstr "Stabilìs il numar di thread"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:135 client/as-compose.c:359
-msgid "Set the minimum icon size in pixels"
-msgstr "Stabilìs la dimension di icone minime in pixel"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:138
-msgid "Set the old metadata location"
-msgstr "Stabilìs la vecje posizion dai metadâts"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:141
-msgid "Ignore certain types of veto"
-msgstr "Ignore cierts gjenars di veto"
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:155 client/as-compose.c:376 client/as-util.c:4687
-msgid "Failed to parse arguments"
-msgstr "No si è rivâts a analizâ i argoments"
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:260
-msgid "Failed to set up builder"
-msgstr "No si è rivâts a meti impins il gjeneradôr"
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:279
-msgid "Failed to open packages"
-msgstr "No si è rivâts a vierzi i pachets"
-
-#. TRANSLATORS: information message
-#: client/as-builder.c:289
-msgid "Scanning packages..."
-msgstr "Analisi dai pachets..."
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:299
-msgid "Failed to add package"
-msgstr "No si è rivâts a zontâ il pachet"
-
-#. TRANSLATORS: information message
-#: client/as-builder.c:305
-#, c-format
-msgid "Parsed %u/%u files..."
-msgstr "Analizât %u/%u file..."
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:315
-msgid "Failed to generate metadata"
-msgstr "No si è rivâts a gjenerâ i metadâts"
-
-#. success
-#. TRANSLATORS: information message
-#: client/as-builder.c:322 client/as-compose.c:548
-msgid "Done!"
-msgstr "Fat!"
-
-#. TRANSLATORS: we've saving the icon file to disk
-#: client/as-compose.c:125 client/as-compose.c:181
-msgid "Saving icon"
-msgstr "Salvament icone"
-
-#. TRANSLATORS: command line option
-#: client/as-compose.c:347
-msgid "Set the prefix"
-msgstr "Stabilìs il prefìs"
-
-#. TRANSLATORS: we're generating the AppStream data
-#: client/as-compose.c:419
-msgid "Processing application"
-msgstr "Elaborazion aplicazion"
-
-#. TRANSLATORS: the .appdata.xml file could not
-#. * be loaded
-#: client/as-compose.c:425
-msgid "Error loading AppData file"
-msgstr "Erôr tal cjariâ il file AppData"
-
-#. TRANSLATORS: the .mo files could not be parsed
-#: client/as-compose.c:438
-msgid "Error parsing translations"
-msgstr "Erôr tal analizâ lis traduzions"
-
-#. TRANSLATORS: we could not auto-add the kudo
-#: client/as-compose.c:449
-msgid "Error parsing kudos"
-msgstr "Erôr tal analizâ i kudos"
-
-#. TRANSLATORS: we could not auto-add the provides
-#: client/as-compose.c:460
-msgid "Error parsing provides"
-msgstr "Erôr tal analizâ i provides"
-
-#. TRANSLATORS: the .desktop file could not
-#. * be loaded
-#: client/as-compose.c:495
-msgid "Error loading desktop file"
-msgstr "Erôr tal cjariâ il file desktop"
-
-#. TRANSLATORS: this is when the folder could
-#. * not be created
-#: client/as-compose.c:523
-msgid "Error creating output directory"
-msgstr "Erôr tal creâ la cartele di jessude"
-
-#. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:532
-msgid "Saving AppStream"
-msgstr "Salvament AppStream"
-
-#. TRANSLATORS: this is when the destination file
-#. * cannot be saved for some reason
-#: client/as-compose.c:542
-msgid "Error saving AppStream file"
-msgstr "Erôr tal salvâ il file AppStream"
+#. TRANSLATORS: application was added
+msgid "Added"
+msgstr "Zontade"
 
 #. TRANSLATORS: this is a command alias
-#: client/as-util.c:104
 #, c-format
 msgid "Alias to %s"
 msgstr "Alias a %s"
 
-#: client/as-util.c:186
+#. TRANSLATORS: program name
+msgid "AppStream Utility"
+msgstr "Utilitât AppStream"
+
+#. TRANSLATORS: this is when a device ctrl+c's a watch
+msgid "Cancelled"
+msgstr "Anulade"
+
+#. TRANSLATORS: command description
+msgid "Check installed application data"
+msgstr "Controle i dâts de aplicazion instalade"
+
 msgid "Command not found, valid commands are:"
 msgstr "Comant no cjatât, i comants valits a son:"
 
-#. TRANSLATORS: any manual changes required?
-#. * also note: FIXME is a hardcoded string
-#: client/as-util.c:478
-msgid "Please review the file and fix any 'FIXME' items"
-msgstr "Controle il file e comede ducj i elements 'FIXME'"
+#. TRANSLATORS: command description
+msgid "Compare the contents of two AppStream files"
+msgstr "Confronte i contignûts di doi file AppStream"
 
-#. TRANSLATORS: information message
-#: client/as-util.c:496
-msgid "Old API version"
-msgstr "Version de API vecje"
-
-#. TRANSLATORS: information message
-#: client/as-util.c:508
-msgid "New API version"
-msgstr "Version de API gnove"
-
-#: client/as-util.c:527
-msgid "Not enough arguments, expected old.xml new.xml version"
-msgstr "No vonde argoments, si spietave version vieli.xml gnûf.xml"
+#. TRANSLATORS: command description
+msgid "Compare version numbers"
+msgstr "Confronte numars di version"
 
 #. TRANSLATORS: the %s and %s are file types,
 #. * e.g. "appdata" to "appstream"
-#: client/as-util.c:563
 #, c-format
 msgid "Conversion %s to %s is not implemented"
 msgstr "La conversion %s a %s no je implementade"
 
-#: client/as-util.c:580
-msgid "Not enough arguments, expected file.xml"
-msgstr "No vonde argoments, si spietave file.xml"
+#. TRANSLATORS: command description
+msgid "Convert an AppData file to NEWS format"
+msgstr "Convertìs un file AppData al formât NEWS"
+
+#. TRANSLATORS: command description
+msgid "Convert an NEWS file to AppData format"
+msgstr "Convertìs un file NEWS al formât AppData"
+
+#. TRANSLATORS: command description
+msgid "Converts AppStream metadata from one version to another"
+msgstr "Al convertìs i metadâts AppStream di une version a une altre"
+
+#. TRANSLATORS: command description
+msgid "Create an CSV status document"
+msgstr "Cree un document di stât in formât CSV"
+
+#. TRANSLATORS: command description
+msgid "Create an HTML matrix page"
+msgstr "Cree une pagjine di matriç in formât HTML"
+
+#. TRANSLATORS: command description
+msgid "Create an HTML status page"
+msgstr "Cree une pagjine di stât in formât HTML"
+
+#. TRANSLATORS: command description
+msgid "Creates an example Appdata file from a .desktop file"
+msgstr "Al cree un file Appdata di esempli partint di un file .desktop"
+
+#. TRANSLATORS: command description
+msgid "Display application search tokens"
+msgstr "Mostre i token di ricercje aplicazions"
+
+#. TRANSLATORS: command line option
+msgid "Do not compress the icons into a tarball"
+msgstr "No sta comprimi lis iconis intun tarball"
+
+#. TRANSLATORS: this is the --nonet argument
+msgid "Do not use network access"
+msgstr "No sta doprâ l'acès ae rêt"
+
+#. success
+#. TRANSLATORS: information message
+msgid "Done!"
+msgstr "Fat!"
+
+#. TRANSLATORS: command description
+msgid "Dumps the applications in the AppStream metadata"
+msgstr "Al discjarie lis aplicazions tai metadâts AppStream"
+
+#. TRANSLATORS: command line option
+msgid "Enable profiling"
+msgstr "Abilite il profilament"
+
+#. TRANSLATORS: this is when the folder could
+#. * not be created
+msgid "Error creating output directory"
+msgstr "Erôr tal creâ la cartele di jessude"
+
+#. TRANSLATORS: the .appdata.xml file could not
+#. * be loaded
+msgid "Error loading AppData file"
+msgstr "Erôr tal cjariâ il file AppData"
+
+#. TRANSLATORS: the .desktop file could not
+#. * be loaded
+msgid "Error loading desktop file"
+msgstr "Erôr tal cjariâ il file desktop"
+
+#. TRANSLATORS: we could not auto-add the kudo
+msgid "Error parsing kudos"
+msgstr "Erôr tal analizâ i kudos"
+
+#. TRANSLATORS: we could not auto-add the provides
+msgid "Error parsing provides"
+msgstr "Erôr tal analizâ i provides"
+
+#. TRANSLATORS: the .mo files could not be parsed
+msgid "Error parsing translations"
+msgstr "Erôr tal analizâ lis traduzions"
+
+#. TRANSLATORS: this is when the destination file
+#. * cannot be saved for some reason
+msgid "Error saving AppStream file"
+msgstr "Erôr tal salvâ il file AppStream"
+
+#. list failures
+msgid "FAILED"
+msgstr "FALÎT"
+
+#. TRANSLATORS: error message
+msgid "Failed to add package"
+msgstr "No si è rivâts a zontâ il pachet"
+
+#. TRANSLATORS: error message
+msgid "Failed to generate metadata"
+msgstr "No si è rivâts a gjenerâ i metadâts"
+
+#. TRANSLATORS: error message
+msgid "Failed to open packages"
+msgstr "No si è rivâts a vierzi i pachets"
+
+#. TRANSLATORS: error message
+msgid "Failed to parse arguments"
+msgstr "No si è rivâts a analizâ i argoments"
+
+#. TRANSLATORS: error message
+msgid "Failed to set up builder"
+msgstr "No si è rivâts a meti impins il gjeneradôr"
 
 #. TRANSLATORS: %s is a file type,
 #. * e.g. 'appdata'
-#: client/as-util.c:606
 #, c-format
 msgid "File format '%s' cannot be upgraded"
 msgstr "Il formât di file '%s' nol pues jessi inzornât"
 
 #. TRANSLATORS: not a recognised file type
-#: client/as-util.c:648 client/as-util.c:1048 client/as-util.c:1149
 msgid "Format not recognised"
 msgstr "Formât no ricognossût"
 
-#. TRANSLATORS: probably wrong XML
-#: client/as-util.c:1989
-msgid "No desktop applications found"
-msgstr "Nissune aplicazion scritori cjatade"
-
-#. TRANSLATORS: the file is valid
-#: client/as-util.c:2720
-msgid "OK"
-msgstr "OK"
-
-#. list failures
-#: client/as-util.c:2725
-msgid "FAILED"
-msgstr "FALÎT"
-
-#: client/as-util.c:2821
-msgid "Validation failed"
-msgstr "Validazion falide"
-
-#: client/as-util.c:2865
-msgid "Validation of files failed"
-msgstr "No si è rivâts a validâ i file"
-
-#. TRANSLATORS: application was removed
-#: client/as-util.c:4053
-msgid "Removed"
-msgstr "Gjavade"
-
-#. TRANSLATORS: application was added
-#: client/as-util.c:4066
-msgid "Added"
-msgstr "Zontade"
-
-#. TRANSLATORS: this is when a device ctrl+c's a watch
-#: client/as-util.c:4349
-msgid "Cancelled"
-msgstr "Anulade"
-
-#. TRANSLATORS: this is the --nonet argument
-#: client/as-util.c:4401
-msgid "Do not use network access"
-msgstr "No sta doprâ l'acès ae rêt"
+#. TRANSLATORS: command description
+msgid "Generate a GUID from an input string"
+msgstr "Gjenere un GUID partint di une stringhe di jentrade"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4407
-msgid "Show version"
-msgstr "Mostre version"
+msgid "Ignore certain types of veto"
+msgstr "Ignore cierts gjenars di veto"
+
+#. TRANSLATORS: command description
+msgid "Import a file to AppStream markup"
+msgstr "Impuarte un file a segnalazion(markup) AppStream"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4410
-msgid "Enable profiling"
-msgstr "Abilite il profilament"
+msgid "Include failed results in the output"
+msgstr "Inclût i risultâts falîts te jessude/stampe"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4440
-msgid "Converts AppStream metadata from one version to another"
-msgstr "Al convertìs i metadâts AppStream di une version a une altre"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4446
-msgid "Upgrade AppData metadata to the latest version"
-msgstr "Inzorne i metadâts AppData ae ultime version"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4452
-msgid "Creates an example Appdata file from a .desktop file"
-msgstr "Al cree un file Appdata di esempli partint di un file .desktop"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4458
-msgid "Dumps the applications in the AppStream metadata"
-msgstr "Al discjarie lis aplicazions tai metadâts AppStream"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4464
-msgid "Search for AppStream applications"
-msgstr "Cîr aplicazions AppStream"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4470
-msgid "Search for AppStream applications by package name"
-msgstr "Cîr aplicazions AppStream par non di pachet"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4476
-msgid "Show all installed AppStream applications"
-msgstr "Mostre dutis lis aplicazions AppStream instaladis"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4482
-msgid "Search for AppStream applications by category name"
-msgstr "Cîr aplicazions AppStream par non di categorie"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4488
-msgid "Display application search tokens"
-msgstr "Mostre i token di ricercje aplicazions"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4494
-msgid "Installs AppStream metadata"
-msgstr "Al instale metadâts AppStream"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4500
-msgid "Installs AppStream metadata with new origin"
-msgstr "Al Instale metadâts AppStream cun gnove origjin"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4506
-msgid "Uninstalls AppStream metadata"
-msgstr "Al disinstale metadâts AppStream"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4512
-msgid "Create an HTML status page"
-msgstr "Cree une pagjine di stât in formât HTML"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4518
-msgid "Create an CSV status document"
-msgstr "Cree un document di stât in formât CSV"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4524
-msgid "Create an HTML matrix page"
-msgstr "Cree une pagjine di matriç in formât HTML"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4530
-msgid "List applications not backed by packages"
-msgstr "Liste di aplicazions no supuartadis di pachets"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4536
-msgid "Validate an AppData or AppStream file"
-msgstr "Valide un AppData o un file AppStream"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4542
-msgid "Validate an AppData or AppStream file (relaxed)"
-msgstr "Valide un AppData o un file AppStream (rilassât)"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4548
-msgid "Exports the agreement to text"
-msgstr ""
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4554
-msgid "Validate an AppData or AppStream file (strict)"
-msgstr "Valide un AppData o un file AppStream (rigorôs)"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4560
-msgid "Convert an AppData file to NEWS format"
-msgstr "Convertìs un file AppData al formât NEWS"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4566
-msgid "Convert an NEWS file to AppData format"
-msgstr "Convertìs un file NEWS al formât AppData"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4572
-msgid "Check installed application data"
-msgstr "Controle i dâts de aplicazion instalade"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4578
-msgid "check an installed application"
-msgstr "controle une aplicazion instalade"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4584
-msgid "Replace screenshots in source file"
-msgstr "Sostituìs une cature di schermi tal file sorzint"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4590
-msgid "Add a provide to a source file"
-msgstr "Zonte une furnidure a un file sorzint"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4596
-msgid "Add a language to a source file"
-msgstr "Zonte une lenghe a un file sorzint"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4602
-msgid "Mirror upstream screenshots"
-msgstr "Copie lis caturis di schermi upstream"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4608
-msgid "Mirror local firmware files"
-msgstr "Copie i file firmware locâi"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4614
 msgid "Incorporate extra metadata from an external file"
 msgstr "Incorpore metadâts adizionâi di un file esterni"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4620
-msgid "Compare the contents of two AppStream files"
-msgstr "Confronte i contignûts di doi file AppStream"
+msgid "Installs AppStream metadata"
+msgstr "Al instale metadâts AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4626
-msgid "Generate a GUID from an input string"
-msgstr "Gjenere un GUID partint di une stringhe di jentrade"
+msgid "Installs AppStream metadata with new origin"
+msgstr "Al Instale metadâts AppStream cun gnove origjin"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4632
-msgid "Modify an AppData file"
-msgstr "Modifiche un file AppData"
+msgid "List applications not backed by packages"
+msgstr "Liste di aplicazions no supuartadis di pachets"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4638
-msgid "Split an AppStream file to AppData and Metainfo files"
-msgstr "Divît un file AppStream in file AppData e Metainfo"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4644
 msgid "Merge several files to an AppStream file"
 msgstr "Unìs plui file intun file AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4650
-msgid "Import a file to AppStream markup"
-msgstr "Impuarte un file a segnalazion(markup) AppStream"
+msgid "Mirror upstream screenshots"
+msgstr "Copie lis caturis di schermi upstream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4656
+msgid "Modify an AppData file"
+msgstr "Modifiche un file AppData"
+
+#. TRANSLATORS: information message
+msgid "New API version"
+msgstr "Version de API gnove"
+
+#. TRANSLATORS: probably wrong XML
+msgid "No desktop applications found"
+msgstr "Nissune aplicazion scritori cjatade"
+
+msgid "Not enough arguments, expected file.xml"
+msgstr "No vonde argoments, si spietave file.xml"
+
+msgid "Not enough arguments, expected old.xml new.xml version"
+msgstr "No vonde argoments, si spietave version vieli.xml gnûf.xml"
+
+#. TRANSLATORS: the file is valid
+msgid "OK"
+msgstr "OK"
+
+#. TRANSLATORS: information message
+msgid "Old API version"
+msgstr "Version de API vecje"
+
+#. TRANSLATORS: information message
+#, c-format
+msgid "Parsed %u/%u files..."
+msgstr "Analizât %u/%u file..."
+
+#. TRANSLATORS: any manual changes required?
+#. * also note: FIXME is a hardcoded string
+msgid "Please review the file and fix any 'FIXME' items"
+msgstr "Controle il file e comede ducj i elements 'FIXME'"
+
+#. TRANSLATORS: we're generating the AppStream data
+msgid "Processing application"
+msgstr "Elaborazion aplicazion"
+
+#. TRANSLATORS: application was removed
+msgid "Removed"
+msgstr "Gjavade"
+
+#. TRANSLATORS: command description
+msgid "Replace screenshots in source file"
+msgstr "Sostituìs une cature di schermi tal file sorzint"
+
+#. TRANSLATORS: we've saving the XML file to disk
+msgid "Saving AppStream"
+msgstr "Salvament AppStream"
+
+#. TRANSLATORS: we've saving the icon file to disk
+msgid "Saving icon"
+msgstr "Salvament icone"
+
+#. TRANSLATORS: information message
+msgid "Scanning packages..."
+msgstr "Analisi dai pachets..."
+
+#. TRANSLATORS: command description
+msgid "Search for AppStream applications"
+msgstr "Cîr aplicazions AppStream"
+
+#. TRANSLATORS: command description
+msgid "Search for AppStream applications by category name"
+msgstr "Cîr aplicazions AppStream par non di categorie"
+
+#. TRANSLATORS: command description
+msgid "Search for AppStream applications by package name"
+msgstr "Cîr aplicazions AppStream par non di pachet"
+
+#. TRANSLATORS: command line option
+msgid "Set the basenames of the output files"
+msgstr "Stabilìs il non di base dai file di jessude"
+
+#. TRANSLATORS: command line option
+msgid "Set the cache directory"
+msgstr "Stabilìs la cartele de cache"
+
+#. TRANSLATORS: command line option
+msgid "Set the icons directory"
+msgstr "Stabilìs la cartele des iconis"
+
+#. TRANSLATORS: command line option
+msgid "Set the logging directory"
+msgstr "Stabilìs la cartele di regjistrazion"
+
+#. TRANSLATORS: command line option
+msgid "Set the minimum icon size in pixels"
+msgstr "Stabilìs la dimension di icone minime in pixel"
+
+#. TRANSLATORS: command line option
+msgid "Set the number of threads"
+msgstr "Stabilìs il numar di thread"
+
+#. TRANSLATORS: command line option
+msgid "Set the old metadata location"
+msgstr "Stabilìs la vecje posizion dai metadâts"
+
+#. TRANSLATORS: command line option
+msgid "Set the origin name"
+msgstr "Stabilìs il non de origjin"
+
+#. TRANSLATORS: command line option
+msgid "Set the output directory"
+msgstr "Stabilìs la cartele di jessude"
+
+#. TRANSLATORS: command line option
+msgid "Set the packages directory"
+msgstr "Stabilìs la cartele dai pachets"
+
+#. TRANSLATORS: command line option
+msgid "Set the prefix"
+msgstr "Stabilìs il prefìs"
+
+#. TRANSLATORS: command line option
+msgid "Set the temporary directory"
+msgstr "Stabilìs la cartele temporanie"
+
+#. TRANSLATORS: command description
+msgid "Show all installed AppStream applications"
+msgstr "Mostre dutis lis aplicazions AppStream instaladis"
+
+#. TRANSLATORS: command line option
+msgid "Show extra debugging information"
+msgstr "Mostre informazions di debug adizionâls"
+
+#. TRANSLATORS: command line option
+msgid "Show version"
+msgstr "Mostre version"
+
+#. TRANSLATORS: command description
+msgid "Split an AppStream file to AppData and Metainfo files"
+msgstr "Divît un file AppStream in file AppData e Metainfo"
+
+#. TRANSLATORS: command description
+msgid "Test a regular expression"
+msgstr "Prove une espression regolâr"
+
+#. TRANSLATORS: command description
+msgid "Uninstalls AppStream metadata"
+msgstr "Al disinstale metadâts AppStream"
+
+#. TRANSLATORS: command description
+msgid "Upgrade AppData metadata to the latest version"
+msgstr "Inzorne i metadâts AppData ae ultime version"
+
+#. TRANSLATORS: command description
+msgid "Validate an AppData or AppStream file"
+msgstr "Valide un AppData o un file AppStream"
+
+#. TRANSLATORS: command description
+msgid "Validate an AppData or AppStream file (relaxed)"
+msgstr "Valide un AppData o un file AppStream (rilassât)"
+
+#. TRANSLATORS: command description
+msgid "Validate an AppData or AppStream file (strict)"
+msgstr "Valide un AppData o un file AppStream (rigorôs)"
+
+msgid "Validation failed"
+msgstr "Validazion falide"
+
+msgid "Validation of files failed"
+msgstr "No si è rivâts a validâ i file"
+
+msgid "Version:"
+msgstr "Version:"
+
+#. TRANSLATORS: command description
 msgid "Watch AppStream locations for changes"
 msgstr "Ten di voli lis posizions di AppStream par modifichis"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4662
-msgid "Compare version numbers"
-msgstr "Confronte numars di version"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4668
-msgid "Test a regular expression"
-msgstr "Prove une espression regolâr"
-
-#. TRANSLATORS: program name
-#: client/as-util.c:4681
-msgid "AppStream Utility"
-msgstr "Utilitât AppStream"
-
-#: client/as-util.c:4705
-msgid "Version:"
-msgstr "Version:"
+msgid "check an installed application"
+msgstr "controle une aplicazion instalade"

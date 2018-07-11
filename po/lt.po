@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-04 11:35+0100\n"
-"PO-Revision-Date: 2018-02-13 02:02+0000\n"
+"POT-Creation-Date: 2018-07-11 19:18+0100\n"
+"PO-Revision-Date: 2018-06-26 09:31+0000\n"
 "Last-Translator: Moo <hazap@hotmail.com>\n"
 "Language-Team: Lithuanian\n"
 "MIME-Version: 1.0\n"
@@ -15,502 +15,399 @@ msgstr ""
 "X-Generator: Zanata 4.4.5\n"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:90 client/as-compose.c:344 client/as-util.c:4404
-msgid "Show extra debugging information"
-msgstr "Rodyti papildomą derinimo informaciją"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:93
-msgid "Add a cache ID to each component"
-msgstr "Pridėti kiekvienam komponentui podėlio ID"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:96
-msgid "Include failed results in the output"
-msgstr "Įtraukti į išvestį nepavykusius rezultatus"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:99
 msgid "Add HiDPI icons to the tarball"
 msgstr "Pridėti į TAR paką HiDPI piktogramas"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:102
+msgid "Add a cache ID to each component"
+msgstr "Pridėti kiekvienam komponentui podėlio ID"
+
+#. TRANSLATORS: command description
+msgid "Add a language to a source file"
+msgstr "Pridėti kalbą į šaltinio failą"
+
+#. TRANSLATORS: command description
+msgid "Add a provide to a source file"
+msgstr "Pridėti pateikimą į šaltinio failą"
+
+#. TRANSLATORS: command line option
 msgid "Add encoded icons to the XML"
 msgstr "Pridėti į XML koduotas piktogramas"
 
-#. TRANSLATORS: command line option
-#: client/as-builder.c:105
-msgid "Do not compress the icons into a tarball"
-msgstr "Neglaudinti piktogramų į TAR paką"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:108
-msgid "Set the logging directory"
-msgstr "Nustatyti registravimo katalogą"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:111
-msgid "Set the packages directory"
-msgstr "Nustatyti paketų katalogą"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:114
-msgid "Set the temporary directory"
-msgstr "Nustatyti laikinąjį katalogą"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:117 client/as-compose.c:350
-msgid "Set the output directory"
-msgstr "Nustatyti išvesties katalogą"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:120 client/as-compose.c:353
-msgid "Set the icons directory"
-msgstr "Nustatyti piktogramų katalogą"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:123
-msgid "Set the cache directory"
-msgstr "Nustatyti podėlio katalogą"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:126 client/as-compose.c:362
-msgid "Set the basenames of the output files"
-msgstr "Nustatyti pagrindinius išvesties failų pavadinimus"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:129 client/as-compose.c:356
-msgid "Set the origin name"
-msgstr "Nustatyti kilmės pavadinimą"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:132
-msgid "Set the number of threads"
-msgstr "Nustatyti gijų skaičių"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:135 client/as-compose.c:359
-msgid "Set the minimum icon size in pixels"
-msgstr "Nustatyti mažiausią piktogramos dydį, pikseliais"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:138
-msgid "Set the old metadata location"
-msgstr "Nustatyti seną metaduomenų vietą"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:141
-msgid "Ignore certain types of veto"
-msgstr "Nepaisyti tam tikrų veto tipų"
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:155 client/as-compose.c:376 client/as-util.c:4687
-msgid "Failed to parse arguments"
-msgstr "Nepavyko išnagrinėti argumentų"
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:260
-msgid "Failed to set up builder"
-msgstr "Nepavyko nustatyti kūrėjo"
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:279
-msgid "Failed to open packages"
-msgstr "Nepavyko atverti paketų"
-
-#. TRANSLATORS: information message
-#: client/as-builder.c:289
-msgid "Scanning packages..."
-msgstr "Peržiūrimi paketai..."
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:299
-msgid "Failed to add package"
-msgstr "Nepavyko pridėti paketo"
-
-#. TRANSLATORS: information message
-#: client/as-builder.c:305
-#, c-format
-msgid "Parsed %u/%u files..."
-msgstr "Išnagrinėta %u/%u failų..."
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:315
-msgid "Failed to generate metadata"
-msgstr "Nepavyko sugeneruoti metaduomenų"
-
-#. success
-#. TRANSLATORS: information message
-#: client/as-builder.c:322 client/as-compose.c:548
-msgid "Done!"
-msgstr "Atlikta!"
-
-#. TRANSLATORS: we've saving the icon file to disk
-#: client/as-compose.c:125 client/as-compose.c:181
-msgid "Saving icon"
-msgstr "Įrašoma piktograma"
-
-#. TRANSLATORS: command line option
-#: client/as-compose.c:347
-msgid "Set the prefix"
-msgstr "Nustatyti priešdėlį"
-
-#. TRANSLATORS: we're generating the AppStream data
-#: client/as-compose.c:419
-msgid "Processing application"
-msgstr "Apdorojama programa"
-
-#. TRANSLATORS: the .appdata.xml file could not
-#. * be loaded
-#: client/as-compose.c:425
-msgid "Error loading AppData file"
-msgstr "Klaida įkeliant AppData failą"
-
-#. TRANSLATORS: the .mo files could not be parsed
-#: client/as-compose.c:438
-msgid "Error parsing translations"
-msgstr "Klaida nagrinėjant vertimus"
-
-#. TRANSLATORS: we could not auto-add the kudo
-#: client/as-compose.c:449
-msgid "Error parsing kudos"
-msgstr "Klaida nagrinėjant kudo"
-
-#. TRANSLATORS: we could not auto-add the provides
-#: client/as-compose.c:460
-msgid "Error parsing provides"
-msgstr "Klaida nagrinėjant pateikimus"
-
-#. TRANSLATORS: the .desktop file could not
-#. * be loaded
-#: client/as-compose.c:495
-msgid "Error loading desktop file"
-msgstr "Klaida įkeliant darbalaukio failą"
-
-#. TRANSLATORS: this is when the folder could
-#. * not be created
-#: client/as-compose.c:523
-msgid "Error creating output directory"
-msgstr "Klaida kuriant išvesties katalogą"
-
-#. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:532
-msgid "Saving AppStream"
-msgstr "Įrašoma AppStream"
-
-#. TRANSLATORS: this is when the destination file
-#. * cannot be saved for some reason
-#: client/as-compose.c:542
-msgid "Error saving AppStream file"
-msgstr "Klaida įrašant AppStream failą"
+#. TRANSLATORS: application was added
+msgid "Added"
+msgstr "Pridėta"
 
 #. TRANSLATORS: this is a command alias
-#: client/as-util.c:104
 #, c-format
 msgid "Alias to %s"
 msgstr "Alternatyvusis %s pavadinimas"
 
-#: client/as-util.c:186
+#. TRANSLATORS: program name
+msgid "AppStream Utility"
+msgstr "AppStream paslaugų programa"
+
+#. TRANSLATORS: this is when a device ctrl+c's a watch
+msgid "Cancelled"
+msgstr "Atsisakyta"
+
+#. TRANSLATORS: command description
+msgid "Check installed application data"
+msgstr "Tikrinti įdiegtus programos duomenis"
+
 msgid "Command not found, valid commands are:"
 msgstr "Komanda nerasta, teisingos komandos yra:"
 
-#. TRANSLATORS: any manual changes required?
-#. * also note: FIXME is a hardcoded string
-#: client/as-util.c:478
-msgid "Please review the file and fix any 'FIXME' items"
-msgstr "Peržiūrėkite failą ir pataisykite visus \"FIXME\" elementus"
+#. TRANSLATORS: command description
+msgid "Compare the contents of two AppStream files"
+msgstr "Palyginti dviejų AppStream failų turinį"
 
-#. TRANSLATORS: information message
-#: client/as-util.c:496
-msgid "Old API version"
-msgstr "Sena API versija"
-
-#. TRANSLATORS: information message
-#: client/as-util.c:508
-msgid "New API version"
-msgstr "Nauja API versija"
-
-#: client/as-util.c:527
-msgid "Not enough arguments, expected old.xml new.xml version"
-msgstr "Nepakanka argumentų, buvo tikėtasi senas.xml naujas.xml versijos"
+#. TRANSLATORS: command description
+msgid "Compare version numbers"
+msgstr "Palyginti versijų numerius"
 
 #. TRANSLATORS: the %s and %s are file types,
 #. * e.g. "appdata" to "appstream"
-#: client/as-util.c:563
 #, c-format
 msgid "Conversion %s to %s is not implemented"
 msgstr "Konvertavimas %s į %s nėra įgyvendintas"
 
-#: client/as-util.c:580
-msgid "Not enough arguments, expected file.xml"
-msgstr "Nepakanka argumentų, buvo tikėtasi failas.xml"
+#. TRANSLATORS: command description
+msgid "Convert an AppData file to NEWS format"
+msgstr "Konvertuoti AppData failą į NEWS formatą"
+
+#. TRANSLATORS: command description
+msgid "Convert an NEWS file to AppData format"
+msgstr "Konvertuoti NEWS failą į AppData formatą"
+
+#. TRANSLATORS: command description
+msgid "Converts AppStream metadata from one version to another"
+msgstr "Konvertuoja AppStream metaduomenis iš vienos versijos į kitą"
+
+#. TRANSLATORS: command description
+msgid "Create an CSV status document"
+msgstr "Sukurti CSV būsenos dokumentą"
+
+#. TRANSLATORS: command description
+msgid "Create an HTML matrix page"
+msgstr "Sukurti HTML matricos puslapį"
+
+#. TRANSLATORS: command description
+msgid "Create an HTML status page"
+msgstr "Sukurti HTML būsenos puslapį"
+
+#. TRANSLATORS: command description
+msgid "Creates an example Appdata file from a .desktop file"
+msgstr "Sukuria pavyzdinį Appdata failą iš .desktop failo"
+
+#. TRANSLATORS: command description
+msgid "Display application search tokens"
+msgstr "Rodyti programų paieškos prieigos raktus"
+
+#. TRANSLATORS: command line option
+msgid "Do not compress the icons into a tarball"
+msgstr "Neglaudinti piktogramų į TAR paką"
+
+#. TRANSLATORS: this is the --nonet argument
+msgid "Do not use network access"
+msgstr "Nenaudoti tinklo prieigos"
+
+#. success
+#. TRANSLATORS: information message
+msgid "Done!"
+msgstr "Atlikta!"
+
+#. TRANSLATORS: command description
+msgid "Dumps the applications in the AppStream metadata"
+msgstr "Padaro programų išklotinę AppStream metaduomenyse"
+
+#. TRANSLATORS: command line option
+msgid "Enable profiling"
+msgstr "Įjungti profiliavimą"
+
+#. TRANSLATORS: this is when the folder could
+#. * not be created
+msgid "Error creating output directory"
+msgstr "Klaida kuriant išvesties katalogą"
+
+#. TRANSLATORS: the .appdata.xml file could not
+#. * be loaded
+msgid "Error loading AppData file"
+msgstr "Klaida įkeliant AppData failą"
+
+#. TRANSLATORS: the .desktop file could not
+#. * be loaded
+msgid "Error loading desktop file"
+msgstr "Klaida įkeliant darbalaukio failą"
+
+#. TRANSLATORS: we could not auto-add the kudo
+msgid "Error parsing kudos"
+msgstr "Klaida nagrinėjant kudo"
+
+#. TRANSLATORS: we could not auto-add the provides
+msgid "Error parsing provides"
+msgstr "Klaida nagrinėjant pateikimus"
+
+#. TRANSLATORS: the .mo files could not be parsed
+msgid "Error parsing translations"
+msgstr "Klaida nagrinėjant vertimus"
+
+#. TRANSLATORS: this is when the destination file
+#. * cannot be saved for some reason
+msgid "Error saving AppStream file"
+msgstr "Klaida įrašant AppStream failą"
+
+#. TRANSLATORS: command description
+msgid "Exports the agreement to text"
+msgstr "Eksportuoja sutikimą į tekstą"
+
+#. list failures
+msgid "FAILED"
+msgstr "NEPAVYKO"
+
+#. TRANSLATORS: error message
+msgid "Failed to add package"
+msgstr "Nepavyko pridėti paketo"
+
+#. TRANSLATORS: error message
+msgid "Failed to generate metadata"
+msgstr "Nepavyko sugeneruoti metaduomenų"
+
+#. TRANSLATORS: error message
+msgid "Failed to open packages"
+msgstr "Nepavyko atverti paketų"
+
+#. TRANSLATORS: error message
+msgid "Failed to parse arguments"
+msgstr "Nepavyko išnagrinėti argumentų"
+
+#. TRANSLATORS: error message
+msgid "Failed to set up builder"
+msgstr "Nepavyko nustatyti kūrėjo"
 
 #. TRANSLATORS: %s is a file type,
 #. * e.g. 'appdata'
-#: client/as-util.c:606
 #, c-format
 msgid "File format '%s' cannot be upgraded"
 msgstr "Failo formatas \"%s\" negali būti atnaujintas"
 
 #. TRANSLATORS: not a recognised file type
-#: client/as-util.c:648 client/as-util.c:1048 client/as-util.c:1149
 msgid "Format not recognised"
 msgstr "Neatpažintas formatas"
 
-#. TRANSLATORS: probably wrong XML
-#: client/as-util.c:1989
-msgid "No desktop applications found"
-msgstr "Nerasta jokių darbalaukio programų"
-
-#. TRANSLATORS: the file is valid
-#: client/as-util.c:2720
-msgid "OK"
-msgstr "GERAI"
-
-#. list failures
-#: client/as-util.c:2725
-msgid "FAILED"
-msgstr "NEPAVYKO"
-
-#: client/as-util.c:2821
-msgid "Validation failed"
-msgstr "Patvirtinimas nepavyko"
-
-#: client/as-util.c:2865
-msgid "Validation of files failed"
-msgstr "Failų patvirtinimas nepavyko"
-
-#. TRANSLATORS: application was removed
-#: client/as-util.c:4053
-msgid "Removed"
-msgstr "Pašalinta"
-
-#. TRANSLATORS: application was added
-#: client/as-util.c:4066
-msgid "Added"
-msgstr "Pridėta"
-
-#. TRANSLATORS: this is when a device ctrl+c's a watch
-#: client/as-util.c:4349
-msgid "Cancelled"
-msgstr "Atsisakyta"
-
-#. TRANSLATORS: this is the --nonet argument
-#: client/as-util.c:4401
-msgid "Do not use network access"
-msgstr "Nenaudoti tinklo prieigos"
+#. TRANSLATORS: command description
+msgid "Generate a GUID from an input string"
+msgstr "Generuoti GUID iš įvesties eilutės"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4407
-msgid "Show version"
-msgstr "Rodyti versiją"
+msgid "Ignore certain types of veto"
+msgstr "Nepaisyti tam tikrų veto tipų"
+
+#. TRANSLATORS: command description
+msgid "Import a file to AppStream markup"
+msgstr "Importuoti failą į AppStream ženklinimą"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4410
-msgid "Enable profiling"
-msgstr "Įjungti profiliavimą"
+msgid "Include failed results in the output"
+msgstr "Įtraukti į išvestį nepavykusius rezultatus"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4440
-msgid "Converts AppStream metadata from one version to another"
-msgstr "Konvertuoja AppStream metaduomenis iš vienos versijos į kitą"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4446
-msgid "Upgrade AppData metadata to the latest version"
-msgstr "Naujinti AppData metaduomenis į naujausią versiją"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4452
-msgid "Creates an example Appdata file from a .desktop file"
-msgstr "Sukuria pavyzdinį Appdata failą iš .desktop failo"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4458
-msgid "Dumps the applications in the AppStream metadata"
-msgstr "Padaro programų išklotinę AppStream metaduomenyse"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4464
-msgid "Search for AppStream applications"
-msgstr "Ieškoti AppStream programų"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4470
-msgid "Search for AppStream applications by package name"
-msgstr "Ieškoti AppStream programų pagal paketo pavadinimą"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4476
-msgid "Show all installed AppStream applications"
-msgstr "Rodyti visas įdiegtas AppStream programas"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4482
-msgid "Search for AppStream applications by category name"
-msgstr "Ieškoti AppStream programų pagal kategorijos pavadinimą"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4488
-msgid "Display application search tokens"
-msgstr "Rodyti programų paieškos prieigos raktus"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4494
-msgid "Installs AppStream metadata"
-msgstr "Įdiegia AppStream metaduomenis"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4500
-msgid "Installs AppStream metadata with new origin"
-msgstr "Įdiegia AppStream metaduomenis su nauja kilme"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4506
-msgid "Uninstalls AppStream metadata"
-msgstr "Pašalina AppStream metaduomenis"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4512
-msgid "Create an HTML status page"
-msgstr "Sukurti HTML būsenos puslapį"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4518
-msgid "Create an CSV status document"
-msgstr "Sukurti CSV būsenos dokumentą"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4524
-msgid "Create an HTML matrix page"
-msgstr "Sukurti HTML matricos puslapį"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4530
-msgid "List applications not backed by packages"
-msgstr "Išvardyti programas, kurios nėra palaikomos paketų"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4536
-msgid "Validate an AppData or AppStream file"
-msgstr "Patvirtinti AppData ar AppStream failą"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4542
-msgid "Validate an AppData or AppStream file (relaxed)"
-msgstr "Patvirtinti AppData ar AppStream failą (atpalaiduotas)"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4548
-msgid "Exports the agreement to text"
-msgstr ""
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4554
-msgid "Validate an AppData or AppStream file (strict)"
-msgstr "Patvirtinti AppData ar AppStream failą (griežtas)"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4560
-msgid "Convert an AppData file to NEWS format"
-msgstr "Konvertuoti AppData failą į NEWS formatą"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4566
-msgid "Convert an NEWS file to AppData format"
-msgstr "Konvertuoti NEWS failą į AppData formatą"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4572
-msgid "Check installed application data"
-msgstr "Tikrinti įdiegtus programos duomenis"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4578
-msgid "check an installed application"
-msgstr "tikrinti įdiegtą programą"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4584
-msgid "Replace screenshots in source file"
-msgstr "Pakeisti ekrano kopijas šaltinio faile"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4590
-msgid "Add a provide to a source file"
-msgstr "Pridėti pateikimą į šaltinio failą"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4596
-msgid "Add a language to a source file"
-msgstr "Pridėti kalbą į šaltinio failą"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4602
-msgid "Mirror upstream screenshots"
-msgstr "Dubliuoti pirminio kūrimo srauto ekrano kopijas"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4608
-msgid "Mirror local firmware files"
-msgstr "Dubliuoti vietinius programinės aparatinės įrangos failus"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4614
 msgid "Incorporate extra metadata from an external file"
 msgstr "Prijungti papildomus metaduomenis iš išorinio failo"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4620
-msgid "Compare the contents of two AppStream files"
-msgstr "Palyginti dviejų AppStream failų turinį"
+msgid "Installs AppStream metadata"
+msgstr "Įdiegia AppStream metaduomenis"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4626
-msgid "Generate a GUID from an input string"
-msgstr "Generuoti GUID iš įvesties eilutės"
+msgid "Installs AppStream metadata with new origin"
+msgstr "Įdiegia AppStream metaduomenis su nauja kilme"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4632
-msgid "Modify an AppData file"
-msgstr "Modifikuoti AppData failą"
+msgid "List applications not backed by packages"
+msgstr "Išvardyti programas, kurios nėra palaikomos paketų"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4638
-msgid "Split an AppStream file to AppData and Metainfo files"
-msgstr "Padalyti AppStream failą į AppData ir metainformacijos failą"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4644
 msgid "Merge several files to an AppStream file"
 msgstr "Sulieti kelis failus į AppStream failą"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4650
-msgid "Import a file to AppStream markup"
-msgstr "Importuoti failą į AppStream ženklinimą"
+msgid "Mirror upstream screenshots"
+msgstr "Dubliuoti pirminio kūrimo srauto ekrano kopijas"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4656
+msgid "Modify an AppData file"
+msgstr "Modifikuoti AppData failą"
+
+#. TRANSLATORS: information message
+msgid "New API version"
+msgstr "Nauja API versija"
+
+#. TRANSLATORS: probably wrong XML
+msgid "No desktop applications found"
+msgstr "Nerasta jokių darbalaukio programų"
+
+msgid "Not enough arguments, expected file.xml"
+msgstr "Nepakanka argumentų, buvo tikėtasi failas.xml"
+
+msgid "Not enough arguments, expected old.xml new.xml version"
+msgstr "Nepakanka argumentų, buvo tikėtasi senas.xml naujas.xml versijos"
+
+#. TRANSLATORS: the file is valid
+msgid "OK"
+msgstr "GERAI"
+
+#. TRANSLATORS: information message
+msgid "Old API version"
+msgstr "Sena API versija"
+
+#. TRANSLATORS: information message
+#, c-format
+msgid "Parsed %u/%u files..."
+msgstr "Išnagrinėta %u/%u failų..."
+
+#. TRANSLATORS: any manual changes required?
+#. * also note: FIXME is a hardcoded string
+msgid "Please review the file and fix any 'FIXME' items"
+msgstr "Peržiūrėkite failą ir pataisykite visus \"FIXME\" elementus"
+
+#. TRANSLATORS: we're generating the AppStream data
+msgid "Processing application"
+msgstr "Apdorojama programa"
+
+#. TRANSLATORS: application was removed
+msgid "Removed"
+msgstr "Pašalinta"
+
+#. TRANSLATORS: command description
+msgid "Replace screenshots in source file"
+msgstr "Pakeisti ekrano kopijas šaltinio faile"
+
+#. TRANSLATORS: we've saving the XML file to disk
+msgid "Saving AppStream"
+msgstr "Įrašoma AppStream"
+
+#. TRANSLATORS: we've saving the icon file to disk
+msgid "Saving icon"
+msgstr "Įrašoma piktograma"
+
+#. TRANSLATORS: information message
+msgid "Scanning packages..."
+msgstr "Peržiūrimi paketai..."
+
+#. TRANSLATORS: command description
+msgid "Search for AppStream applications"
+msgstr "Ieškoti AppStream programų"
+
+#. TRANSLATORS: command description
+msgid "Search for AppStream applications by category name"
+msgstr "Ieškoti AppStream programų pagal kategorijos pavadinimą"
+
+#. TRANSLATORS: command description
+msgid "Search for AppStream applications by package name"
+msgstr "Ieškoti AppStream programų pagal paketo pavadinimą"
+
+#. TRANSLATORS: command line option
+msgid "Set the basenames of the output files"
+msgstr "Nustatyti pagrindinius išvesties failų pavadinimus"
+
+#. TRANSLATORS: command line option
+msgid "Set the cache directory"
+msgstr "Nustatyti podėlio katalogą"
+
+#. TRANSLATORS: command line option
+msgid "Set the icons directory"
+msgstr "Nustatyti piktogramų katalogą"
+
+#. TRANSLATORS: command line option
+msgid "Set the logging directory"
+msgstr "Nustatyti registravimo katalogą"
+
+#. TRANSLATORS: command line option
+msgid "Set the minimum icon size in pixels"
+msgstr "Nustatyti mažiausią piktogramos dydį, pikseliais"
+
+#. TRANSLATORS: command line option
+msgid "Set the number of threads"
+msgstr "Nustatyti gijų skaičių"
+
+#. TRANSLATORS: command line option
+msgid "Set the old metadata location"
+msgstr "Nustatyti seną metaduomenų vietą"
+
+#. TRANSLATORS: command line option
+msgid "Set the origin name"
+msgstr "Nustatyti kilmės pavadinimą"
+
+#. TRANSLATORS: command line option
+msgid "Set the output directory"
+msgstr "Nustatyti išvesties katalogą"
+
+#. TRANSLATORS: command line option
+msgid "Set the packages directory"
+msgstr "Nustatyti paketų katalogą"
+
+#. TRANSLATORS: command line option
+msgid "Set the prefix"
+msgstr "Nustatyti priešdėlį"
+
+#. TRANSLATORS: command line option
+msgid "Set the temporary directory"
+msgstr "Nustatyti laikinąjį katalogą"
+
+#. TRANSLATORS: command description
+msgid "Show all installed AppStream applications"
+msgstr "Rodyti visas įdiegtas AppStream programas"
+
+#. TRANSLATORS: command line option
+msgid "Show extra debugging information"
+msgstr "Rodyti papildomą derinimo informaciją"
+
+#. TRANSLATORS: command line option
+msgid "Show version"
+msgstr "Rodyti versiją"
+
+#. TRANSLATORS: command description
+msgid "Split an AppStream file to AppData and Metainfo files"
+msgstr "Padalyti AppStream failą į AppData ir metainformacijos failą"
+
+#. TRANSLATORS: command description
+msgid "Test a regular expression"
+msgstr "Išbandyti reguliarųjį reiškinį"
+
+#. TRANSLATORS: command description
+msgid "Uninstalls AppStream metadata"
+msgstr "Pašalina AppStream metaduomenis"
+
+#. TRANSLATORS: command description
+msgid "Upgrade AppData metadata to the latest version"
+msgstr "Naujinti AppData metaduomenis į naujausią versiją"
+
+#. TRANSLATORS: command description
+msgid "Validate an AppData or AppStream file"
+msgstr "Patvirtinti AppData ar AppStream failą"
+
+#. TRANSLATORS: command description
+msgid "Validate an AppData or AppStream file (relaxed)"
+msgstr "Patvirtinti AppData ar AppStream failą (atpalaiduotas)"
+
+#. TRANSLATORS: command description
+msgid "Validate an AppData or AppStream file (strict)"
+msgstr "Patvirtinti AppData ar AppStream failą (griežtas)"
+
+msgid "Validation failed"
+msgstr "Patvirtinimas nepavyko"
+
+msgid "Validation of files failed"
+msgstr "Failų patvirtinimas nepavyko"
+
+msgid "Version:"
+msgstr "Versija:"
+
+#. TRANSLATORS: command description
 msgid "Watch AppStream locations for changes"
 msgstr "Stebėti ar AppStream vietose yra pakeitimų"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4662
-msgid "Compare version numbers"
-msgstr "Palyginti versijų numerius"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4668
-msgid "Test a regular expression"
-msgstr "Išbandyti reguliarųjį reiškinį"
-
-#. TRANSLATORS: program name
-#: client/as-util.c:4681
-msgid "AppStream Utility"
-msgstr "AppStream paslaugų programa"
-
-#: client/as-util.c:4705
-msgid "Version:"
-msgstr "Versija:"
+msgid "check an installed application"
+msgstr "tikrinti įdiegtą programą"

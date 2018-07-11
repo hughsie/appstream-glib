@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-04 11:35+0100\n"
+"POT-Creation-Date: 2018-07-11 19:18+0100\n"
 "PO-Revision-Date: 2016-08-06 03:00+0000\n"
 "Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
 "Language-Team: Serbian (http://www.transifex.com/freedesktop/appstream-glib/language/sr/)\n"
@@ -23,504 +23,346 @@ msgstr ""
 "X-Generator: Zanata 4.4.5\n"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:90 client/as-compose.c:344 client/as-util.c:4404
-msgid "Show extra debugging information"
-msgstr "Приказује додатне податке за исправљање грешака у програму"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:93
-msgid "Add a cache ID to each component"
-msgstr "Додаје ИБ оставе сваком састојку"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:96
-msgid "Include failed results in the output"
-msgstr "Укључи неуспешне резултате у излаз"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:99
 msgid "Add HiDPI icons to the tarball"
 msgstr "Додај „HiDPi“ иконице у архиву"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:102
+msgid "Add a cache ID to each component"
+msgstr "Додаје ИБ оставе сваком састојку"
+
+#. TRANSLATORS: command line option
 msgid "Add encoded icons to the XML"
 msgstr "Додај кодиране иконицу у „XML“"
 
-#. TRANSLATORS: command line option
-#: client/as-builder.c:105
-msgid "Do not compress the icons into a tarball"
-msgstr "Не пакуј иконице унутар архиве"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:108
-msgid "Set the logging directory"
-msgstr "Подешава директоријум дневника"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:111
-msgid "Set the packages directory"
-msgstr "Подешава директоријум пакета"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:114
-msgid "Set the temporary directory"
-msgstr "Подешава привремени директоријум"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:117 client/as-compose.c:350
-msgid "Set the output directory"
-msgstr "Подешава директоријум излаза"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:120 client/as-compose.c:353
-msgid "Set the icons directory"
-msgstr "Постави фасциклу са иконицама"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:123
-msgid "Set the cache directory"
-msgstr "Подешава директоријум оставе"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:126 client/as-compose.c:362
-msgid "Set the basenames of the output files"
-msgstr "Постави основно име за излазне датотеке"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:129 client/as-compose.c:356
-msgid "Set the origin name"
-msgstr "Подешава назив порекла"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:132
-msgid "Set the number of threads"
-msgstr "Подешава број нити"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:135 client/as-compose.c:359
-msgid "Set the minimum icon size in pixels"
-msgstr "Постави најмању величину иконице у пикселима"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:138
-msgid "Set the old metadata location"
-msgstr "Подешава старо место метаподатака"
-
-#. TRANSLATORS: command line option
-#: client/as-builder.c:141
-msgid "Ignore certain types of veto"
-msgstr "Занемари одређене врсте вета"
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:155 client/as-compose.c:376 client/as-util.c:4687
-msgid "Failed to parse arguments"
-msgstr "Не могу да обрадим аргументе"
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:260
-msgid "Failed to set up builder"
-msgstr "Не могу да подесим програм за изградњу"
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:279
-msgid "Failed to open packages"
-msgstr "Не могу да отворим пакет"
-
-#. TRANSLATORS: information message
-#: client/as-builder.c:289
-msgid "Scanning packages..."
-msgstr "Прегледам пакете..."
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:299
-msgid "Failed to add package"
-msgstr "Не могу да додам пакет"
-
-#. TRANSLATORS: information message
-#: client/as-builder.c:305
-#, c-format
-msgid "Parsed %u/%u files..."
-msgstr ""
-
-#. TRANSLATORS: error message
-#: client/as-builder.c:315
-msgid "Failed to generate metadata"
-msgstr "Не могу да направим метаподатке"
-
-#. success
-#. TRANSLATORS: information message
-#: client/as-builder.c:322 client/as-compose.c:548
-msgid "Done!"
-msgstr "Готово!"
-
-#. TRANSLATORS: we've saving the icon file to disk
-#: client/as-compose.c:125 client/as-compose.c:181
-msgid "Saving icon"
-msgstr "Чувам иконицу"
-
-#. TRANSLATORS: command line option
-#: client/as-compose.c:347
-msgid "Set the prefix"
-msgstr "Подеси префикс"
-
-#. TRANSLATORS: we're generating the AppStream data
-#: client/as-compose.c:419
-msgid "Processing application"
-msgstr "Обрађујем програм"
-
-#. TRANSLATORS: the .appdata.xml file could not
-#. * be loaded
-#: client/as-compose.c:425
-msgid "Error loading AppData file"
-msgstr "Грешка учитавања датотеке програмских података"
-
-#. TRANSLATORS: the .mo files could not be parsed
-#: client/as-compose.c:438
-msgid "Error parsing translations"
-msgstr "Грешка обраде превода"
-
-#. TRANSLATORS: we could not auto-add the kudo
-#: client/as-compose.c:449
-msgid "Error parsing kudos"
-msgstr "Грешка обраде кудос-а"
-
-#. TRANSLATORS: we could not auto-add the provides
-#: client/as-compose.c:460
-msgid "Error parsing provides"
-msgstr "Грешка обраде достављања"
-
-#. TRANSLATORS: the .desktop file could not
-#. * be loaded
-#: client/as-compose.c:495
-msgid "Error loading desktop file"
-msgstr "Грешка учитавања датотеке радне површи"
-
-#. TRANSLATORS: this is when the folder could
-#. * not be created
-#: client/as-compose.c:523
-msgid "Error creating output directory"
-msgstr "Грешка прављења излазног директоријума"
-
-#. TRANSLATORS: we've saving the XML file to disk
-#: client/as-compose.c:532
-msgid "Saving AppStream"
-msgstr "Чувам Програмски ток"
-
-#. TRANSLATORS: this is when the destination file
-#. * cannot be saved for some reason
-#: client/as-compose.c:542
-msgid "Error saving AppStream file"
-msgstr "Грешка чувања датотеке Програмског тока"
+#. TRANSLATORS: application was added
+msgid "Added"
+msgstr "Додат"
 
 #. TRANSLATORS: this is a command alias
-#: client/as-util.c:104
 #, c-format
 msgid "Alias to %s"
 msgstr "Други назив за „%s“"
 
-#: client/as-util.c:186
+#. TRANSLATORS: program name
+msgid "AppStream Utility"
+msgstr "Алатка Програмског тока"
+
+#. TRANSLATORS: command description
+msgid "Check installed application data"
+msgstr "Проверава инсталиране податке програма"
+
 msgid "Command not found, valid commands are:"
 msgstr "Нисам нашао наредбу, исправне наредбе су:"
 
-#. TRANSLATORS: any manual changes required?
-#. * also note: FIXME is a hardcoded string
-#: client/as-util.c:478
-msgid "Please review the file and fix any 'FIXME' items"
-msgstr "Прегледајте датотеку и поправите сваку ставку „FIXME“"
-
-#. TRANSLATORS: information message
-#: client/as-util.c:496
-msgid "Old API version"
-msgstr "Старо издање АПИ-ја"
-
-#. TRANSLATORS: information message
-#: client/as-util.c:508
-msgid "New API version"
-msgstr "Ново издање АПИ-ја"
-
-#: client/as-util.c:527
-msgid "Not enough arguments, expected old.xml new.xml version"
-msgstr "Нема довољно аргумената, очекивах „стари.xml нови.xml“ издање"
+#. TRANSLATORS: command description
+msgid "Compare the contents of two AppStream files"
+msgstr "Упореди садржај две датотеке Програмског тока"
 
 #. TRANSLATORS: the %s and %s are file types,
 #. * e.g. "appdata" to "appstream"
-#: client/as-util.c:563
 #, c-format
 msgid "Conversion %s to %s is not implemented"
 msgstr "Претварање „%s“ у „%s“ није примењено"
 
-#: client/as-util.c:580
-msgid "Not enough arguments, expected file.xml"
-msgstr "Нема довољно аргумената, очекивах „датотека.xml“"
+#. TRANSLATORS: command description
+msgid "Convert an AppData file to NEWS format"
+msgstr "Претвори „AppData“ датотеку у „NEWS“ формат"
+
+#. TRANSLATORS: command description
+msgid "Convert an NEWS file to AppData format"
+msgstr "Претвори „NEWS“ датотеку у „AppData“ формат"
+
+#. TRANSLATORS: command description
+msgid "Converts AppStream metadata from one version to another"
+msgstr "Претвара метаподатке Програмског тока из једног издања у друго"
+
+#. TRANSLATORS: command description
+msgid "Create an CSV status document"
+msgstr "Прави CSV документ стања"
+
+#. TRANSLATORS: command description
+msgid "Create an HTML matrix page"
+msgstr "Направи матричну ХТМЛ страницу"
+
+#. TRANSLATORS: command description
+msgid "Create an HTML status page"
+msgstr "Прави ХТМЛ страницу стања"
+
+#. TRANSLATORS: command description
+msgid "Creates an example Appdata file from a .desktop file"
+msgstr "Прави примерак датотеке Програмског тока из „.desktop“ датотеке"
+
+#. TRANSLATORS: command description
+msgid "Display application search tokens"
+msgstr "Прикажи жетоне претраге програма"
+
+#. TRANSLATORS: command line option
+msgid "Do not compress the icons into a tarball"
+msgstr "Не пакуј иконице унутар архиве"
+
+#. TRANSLATORS: this is the --nonet argument
+msgid "Do not use network access"
+msgstr "Не користи приступ мрежи"
+
+#. success
+#. TRANSLATORS: information message
+msgid "Done!"
+msgstr "Готово!"
+
+#. TRANSLATORS: command description
+msgid "Dumps the applications in the AppStream metadata"
+msgstr "Исписује програме у метаподацима Програмског тока"
+
+#. TRANSLATORS: command line option
+msgid "Enable profiling"
+msgstr "Укључи профилисање"
+
+#. TRANSLATORS: this is when the folder could
+#. * not be created
+msgid "Error creating output directory"
+msgstr "Грешка прављења излазног директоријума"
+
+#. TRANSLATORS: the .appdata.xml file could not
+#. * be loaded
+msgid "Error loading AppData file"
+msgstr "Грешка учитавања датотеке програмских података"
+
+#. TRANSLATORS: the .desktop file could not
+#. * be loaded
+msgid "Error loading desktop file"
+msgstr "Грешка учитавања датотеке радне површи"
+
+#. TRANSLATORS: we could not auto-add the kudo
+msgid "Error parsing kudos"
+msgstr "Грешка обраде кудос-а"
+
+#. TRANSLATORS: we could not auto-add the provides
+msgid "Error parsing provides"
+msgstr "Грешка обраде достављања"
+
+#. TRANSLATORS: the .mo files could not be parsed
+msgid "Error parsing translations"
+msgstr "Грешка обраде превода"
+
+#. TRANSLATORS: this is when the destination file
+#. * cannot be saved for some reason
+msgid "Error saving AppStream file"
+msgstr "Грешка чувања датотеке Програмског тока"
+
+#. list failures
+msgid "FAILED"
+msgstr "НЕУСПЕХ"
+
+#. TRANSLATORS: error message
+msgid "Failed to add package"
+msgstr "Не могу да додам пакет"
+
+#. TRANSLATORS: error message
+msgid "Failed to generate metadata"
+msgstr "Не могу да направим метаподатке"
+
+#. TRANSLATORS: error message
+msgid "Failed to open packages"
+msgstr "Не могу да отворим пакет"
+
+#. TRANSLATORS: error message
+msgid "Failed to parse arguments"
+msgstr "Не могу да обрадим аргументе"
+
+#. TRANSLATORS: error message
+msgid "Failed to set up builder"
+msgstr "Не могу да подесим програм за изградњу"
 
 #. TRANSLATORS: %s is a file type,
 #. * e.g. 'appdata'
-#: client/as-util.c:606
 #, c-format
 msgid "File format '%s' cannot be upgraded"
 msgstr "Запис датотеке „%s“ се не може надоградити"
 
 #. TRANSLATORS: not a recognised file type
-#: client/as-util.c:648 client/as-util.c:1048 client/as-util.c:1149
 msgid "Format not recognised"
 msgstr "Запис није препознат"
 
-#. TRANSLATORS: probably wrong XML
-#: client/as-util.c:1989
-msgid "No desktop applications found"
-msgstr "Нисам пронашао програме радне површи"
-
-#. TRANSLATORS: the file is valid
-#: client/as-util.c:2720
-msgid "OK"
-msgstr "У реду"
-
-#. list failures
-#: client/as-util.c:2725
-msgid "FAILED"
-msgstr "НЕУСПЕХ"
-
-#: client/as-util.c:2821
-msgid "Validation failed"
-msgstr "Потврђивање није успело"
-
-#: client/as-util.c:2865
-msgid "Validation of files failed"
-msgstr "Потврђивање датотека није успело"
-
-#. TRANSLATORS: application was removed
-#: client/as-util.c:4053
-msgid "Removed"
-msgstr "Уклоњен"
-
-#. TRANSLATORS: application was added
-#: client/as-util.c:4066
-msgid "Added"
-msgstr "Додат"
-
-#. TRANSLATORS: this is when a device ctrl+c's a watch
-#: client/as-util.c:4349
-msgid "Cancelled"
-msgstr ""
-
-#. TRANSLATORS: this is the --nonet argument
-#: client/as-util.c:4401
-msgid "Do not use network access"
-msgstr "Не користи приступ мрежи"
+#. TRANSLATORS: command description
+msgid "Generate a GUID from an input string"
+msgstr "Ствара ГУИБ из улазне ниске"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4407
-msgid "Show version"
-msgstr "Приказује издање"
+msgid "Ignore certain types of veto"
+msgstr "Занемари одређене врсте вета"
+
+#. TRANSLATORS: command description
+msgid "Import a file to AppStream markup"
+msgstr "Увози датотеку у означавање Програмског тока"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4410
-msgid "Enable profiling"
-msgstr "Укључи профилисање"
+msgid "Include failed results in the output"
+msgstr "Укључи неуспешне резултате у излаз"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4440
-msgid "Converts AppStream metadata from one version to another"
-msgstr "Претвара метаподатке Програмског тока из једног издања у друго"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4446
-msgid "Upgrade AppData metadata to the latest version"
-msgstr "Надограђује метаподатке Програмског тока на најновије издање"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4452
-msgid "Creates an example Appdata file from a .desktop file"
-msgstr "Прави примерак датотеке Програмског тока из „.desktop“ датотеке"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4458
-msgid "Dumps the applications in the AppStream metadata"
-msgstr "Исписује програме у метаподацима Програмског тока"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4464
-msgid "Search for AppStream applications"
-msgstr "Потражи програме Програмског тока"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4470
-msgid "Search for AppStream applications by package name"
-msgstr ""
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4476
-msgid "Show all installed AppStream applications"
-msgstr ""
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4482
-msgid "Search for AppStream applications by category name"
-msgstr ""
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4488
-msgid "Display application search tokens"
-msgstr "Прикажи жетоне претраге програма"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4494
-msgid "Installs AppStream metadata"
-msgstr "Инсталира метаподатке Програмског тока"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4500
-msgid "Installs AppStream metadata with new origin"
-msgstr "Инсталира метаподатке Програмског тока са новим пореклом"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4506
-msgid "Uninstalls AppStream metadata"
-msgstr "Уклања метаподатке Програмског тока"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4512
-msgid "Create an HTML status page"
-msgstr "Прави ХТМЛ страницу стања"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4518
-msgid "Create an CSV status document"
-msgstr "Прави CSV документ стања"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4524
-msgid "Create an HTML matrix page"
-msgstr "Направи матричну ХТМЛ страницу"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4530
-msgid "List applications not backed by packages"
-msgstr "Исписује програме за које пакети нису направили резерву"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4536
-msgid "Validate an AppData or AppStream file"
-msgstr "Потврђује Програмске податке или датотеку Програмског тока"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4542
-msgid "Validate an AppData or AppStream file (relaxed)"
-msgstr "Потврђује Програмске податке или датотеку Програмског тока(опуштено)"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4548
-msgid "Exports the agreement to text"
-msgstr ""
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4554
-msgid "Validate an AppData or AppStream file (strict)"
-msgstr "Потврђује Програмске податке или датотеку Програмског тока(изричито)"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4560
-msgid "Convert an AppData file to NEWS format"
-msgstr "Претвори „AppData“ датотеку у „NEWS“ формат"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4566
-msgid "Convert an NEWS file to AppData format"
-msgstr "Претвори „NEWS“ датотеку у „AppData“ формат"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4572
-msgid "Check installed application data"
-msgstr "Проверава инсталиране податке програма"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4578
-msgid "check an installed application"
-msgstr ""
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4584
-msgid "Replace screenshots in source file"
-msgstr "Замени снимке екрана у изворној датотеци"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4590
-msgid "Add a provide to a source file"
-msgstr ""
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4596
-msgid "Add a language to a source file"
-msgstr ""
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4602
-msgid "Mirror upstream screenshots"
-msgstr "Дуплирај узводне снимке екрана"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4608
-msgid "Mirror local firmware files"
-msgstr "Дуплирај локалне датотеке са фирмвером"
-
-#. TRANSLATORS: command description
-#: client/as-util.c:4614
 msgid "Incorporate extra metadata from an external file"
 msgstr "Уврсти додатне метаподатке из спољне датотеке"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4620
-msgid "Compare the contents of two AppStream files"
-msgstr "Упореди садржај две датотеке Програмског тока"
+msgid "Installs AppStream metadata"
+msgstr "Инсталира метаподатке Програмског тока"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4626
-msgid "Generate a GUID from an input string"
-msgstr "Ствара ГУИБ из улазне ниске"
+msgid "Installs AppStream metadata with new origin"
+msgstr "Инсталира метаподатке Програмског тока са новим пореклом"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4632
+msgid "List applications not backed by packages"
+msgstr "Исписује програме за које пакети нису направили резерву"
+
+#. TRANSLATORS: command description
+msgid "Mirror upstream screenshots"
+msgstr "Дуплирај узводне снимке екрана"
+
+#. TRANSLATORS: command description
 msgid "Modify an AppData file"
 msgstr "Мења датотеку програмских података"
 
+#. TRANSLATORS: information message
+msgid "New API version"
+msgstr "Ново издање АПИ-ја"
+
+#. TRANSLATORS: probably wrong XML
+msgid "No desktop applications found"
+msgstr "Нисам пронашао програме радне површи"
+
+msgid "Not enough arguments, expected file.xml"
+msgstr "Нема довољно аргумената, очекивах „датотека.xml“"
+
+msgid "Not enough arguments, expected old.xml new.xml version"
+msgstr "Нема довољно аргумената, очекивах „стари.xml нови.xml“ издање"
+
+#. TRANSLATORS: the file is valid
+msgid "OK"
+msgstr "У реду"
+
+#. TRANSLATORS: information message
+msgid "Old API version"
+msgstr "Старо издање АПИ-ја"
+
+#. TRANSLATORS: any manual changes required?
+#. * also note: FIXME is a hardcoded string
+msgid "Please review the file and fix any 'FIXME' items"
+msgstr "Прегледајте датотеку и поправите сваку ставку „FIXME“"
+
+#. TRANSLATORS: we're generating the AppStream data
+msgid "Processing application"
+msgstr "Обрађујем програм"
+
+#. TRANSLATORS: application was removed
+msgid "Removed"
+msgstr "Уклоњен"
+
 #. TRANSLATORS: command description
-#: client/as-util.c:4638
+msgid "Replace screenshots in source file"
+msgstr "Замени снимке екрана у изворној датотеци"
+
+#. TRANSLATORS: we've saving the XML file to disk
+msgid "Saving AppStream"
+msgstr "Чувам Програмски ток"
+
+#. TRANSLATORS: we've saving the icon file to disk
+msgid "Saving icon"
+msgstr "Чувам иконицу"
+
+#. TRANSLATORS: information message
+msgid "Scanning packages..."
+msgstr "Прегледам пакете..."
+
+#. TRANSLATORS: command description
+msgid "Search for AppStream applications"
+msgstr "Потражи програме Програмског тока"
+
+#. TRANSLATORS: command line option
+msgid "Set the basenames of the output files"
+msgstr "Постави основно име за излазне датотеке"
+
+#. TRANSLATORS: command line option
+msgid "Set the cache directory"
+msgstr "Подешава директоријум оставе"
+
+#. TRANSLATORS: command line option
+msgid "Set the icons directory"
+msgstr "Постави фасциклу са иконицама"
+
+#. TRANSLATORS: command line option
+msgid "Set the logging directory"
+msgstr "Подешава директоријум дневника"
+
+#. TRANSLATORS: command line option
+msgid "Set the minimum icon size in pixels"
+msgstr "Постави најмању величину иконице у пикселима"
+
+#. TRANSLATORS: command line option
+msgid "Set the number of threads"
+msgstr "Подешава број нити"
+
+#. TRANSLATORS: command line option
+msgid "Set the old metadata location"
+msgstr "Подешава старо место метаподатака"
+
+#. TRANSLATORS: command line option
+msgid "Set the origin name"
+msgstr "Подешава назив порекла"
+
+#. TRANSLATORS: command line option
+msgid "Set the output directory"
+msgstr "Подешава директоријум излаза"
+
+#. TRANSLATORS: command line option
+msgid "Set the packages directory"
+msgstr "Подешава директоријум пакета"
+
+#. TRANSLATORS: command line option
+msgid "Set the prefix"
+msgstr "Подеси префикс"
+
+#. TRANSLATORS: command line option
+msgid "Set the temporary directory"
+msgstr "Подешава привремени директоријум"
+
+#. TRANSLATORS: command line option
+msgid "Show extra debugging information"
+msgstr "Приказује додатне податке за исправљање грешака у програму"
+
+#. TRANSLATORS: command line option
+msgid "Show version"
+msgstr "Приказује издање"
+
+#. TRANSLATORS: command description
 msgid "Split an AppStream file to AppData and Metainfo files"
-msgstr ""
-"Дели датотеку Програмског тока на програмске податке и на датотеке "
-"метаподатака"
+msgstr "Дели датотеку Програмског тока на програмске податке и на датотеке метаподатака"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4644
-msgid "Merge several files to an AppStream file"
-msgstr ""
+msgid "Uninstalls AppStream metadata"
+msgstr "Уклања метаподатке Програмског тока"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4650
-msgid "Import a file to AppStream markup"
-msgstr "Увози датотеку у означавање Програмског тока"
+msgid "Upgrade AppData metadata to the latest version"
+msgstr "Надограђује метаподатке Програмског тока на најновије издање"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4656
-msgid "Watch AppStream locations for changes"
-msgstr ""
+msgid "Validate an AppData or AppStream file"
+msgstr "Потврђује Програмске податке или датотеку Програмског тока"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4662
-msgid "Compare version numbers"
-msgstr ""
+msgid "Validate an AppData or AppStream file (relaxed)"
+msgstr "Потврђује Програмске податке или датотеку Програмског тока(опуштено)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4668
-msgid "Test a regular expression"
-msgstr ""
+msgid "Validate an AppData or AppStream file (strict)"
+msgstr "Потврђује Програмске податке или датотеку Програмског тока(изричито)"
 
-#. TRANSLATORS: program name
-#: client/as-util.c:4681
-msgid "AppStream Utility"
-msgstr "Алатка Програмског тока"
+msgid "Validation failed"
+msgstr "Потврђивање није успело"
 
-#: client/as-util.c:4705
+msgid "Validation of files failed"
+msgstr "Потврђивање датотека није успело"
+
 msgid "Version:"
 msgstr "Издање:"

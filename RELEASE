@@ -21,6 +21,9 @@ Bugfixes:
 ninja-build appstream-glib-pot
 zanata push
 zanata pull --min-doc-percent=5
+for f in po/*.po; do
+msgattrib --no-location --translated --no-wrap --sort-output $f --output-file=$f
+done
 git add po/*.po
 
 3. Update library version if new ABI or API in meson.build

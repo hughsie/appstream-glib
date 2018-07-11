@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Cédric Valmary <cvalmary@yahoo.fr>, 2015
 # Cédric Valmary <cvalmary@yahoo.fr>, 2016
@@ -23,76 +23,73 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. TRANSLATORS: command line option
-msgid "Show extra debugging information"
-msgstr "Aficha d'informacions de desbugatge suplementàrias"
-
-#. TRANSLATORS: command line option
 msgid "Add a cache ID to each component"
 msgstr "Apond un identificant de cache a cada component"
 
-#. TRANSLATORS: command line option
-msgid "Include failed results in the output"
-msgstr ""
+#. TRANSLATORS: application was added
+msgid "Added"
+msgstr "Apondut"
 
-#. TRANSLATORS: command line option
-msgid "Add HiDPI icons to the tarball"
-msgstr ""
+#. TRANSLATORS: this is a command alias
+#, c-format
+msgid "Alias to %s"
+msgstr "Aliàs de %s"
 
-#. TRANSLATORS: command line option
-msgid "Add encoded icons to the XML"
-msgstr ""
+#. TRANSLATORS: program name
+msgid "AppStream Utility"
+msgstr "Utilitari AppStream"
 
-#. TRANSLATORS: command line option
-msgid "Do not compress the icons into a tarball"
-msgstr ""
+#. TRANSLATORS: command description
+msgid "Check installed application data"
+msgstr "Verificar las donadas d'aplicacions installadas"
 
-#. TRANSLATORS: command line option
-msgid "Set the logging directory"
-msgstr "Definís lo repertòri de jornalizacion"
+msgid "Command not found, valid commands are:"
+msgstr "Comanda introbabla, las comandas validas son :"
 
-#. TRANSLATORS: command line option
-msgid "Set the packages directory"
-msgstr "Definís lo repertòri dels paquets"
+#. TRANSLATORS: command description
+msgid "Converts AppStream metadata from one version to another"
+msgstr "Convertís las metadonadas AppStream d'una version a una autra"
 
-#. TRANSLATORS: command line option
-msgid "Set the temporary directory"
-msgstr "Definís lo repertòri temporari"
+#. TRANSLATORS: command description
+msgid "Create an CSV status document"
+msgstr "Crear un document de sintèsi CSV"
 
-#. TRANSLATORS: command line option
-msgid "Set the output directory"
-msgstr "Definís lo repertòri de sortida"
+#. TRANSLATORS: command description
+msgid "Create an HTML status page"
+msgstr "Crear una pagina de sintèsi HTML"
 
-#. TRANSLATORS: command line option
-msgid "Set the icons directory"
-msgstr ""
+#. TRANSLATORS: command description
+msgid "Creates an example Appdata file from a .desktop file"
+msgstr "Crèa un fichièr Appdata exemple a partir d'un fichièr .desktop"
 
-#. TRANSLATORS: command line option
-msgid "Set the cache directory"
-msgstr "Definís lo repertòri de cache"
+#. TRANSLATORS: this is the --nonet argument
+msgid "Do not use network access"
+msgstr "Utilizatz pas l'accès ret"
 
-#. TRANSLATORS: command line option
-msgid "Set the basenames of the output files"
-msgstr ""
+#. success
+#. TRANSLATORS: information message
+msgid "Done!"
+msgstr "Acabat !"
 
-#. TRANSLATORS: command line option
-msgid "Set the origin name"
-msgstr "Definís lo nom d'origina"
+#. TRANSLATORS: command description
+msgid "Dumps the applications in the AppStream metadata"
+msgstr "Expòrta las aplicacions dins las metadonadas AppStream"
 
-#. TRANSLATORS: command line option
-msgid "Set the number of threads"
-msgstr "Definís lo nombre de fials d'execucion"
+#. list failures
+msgid "FAILED"
+msgstr "FRACÀS"
 
-#. TRANSLATORS: command line option
-msgid "Set the minimum icon size in pixels"
-msgstr ""
+#. TRANSLATORS: error message
+msgid "Failed to add package"
+msgstr "L'apondon del paquet a fracassat"
 
-#. TRANSLATORS: command line option
-msgid "Set the old metadata location"
-msgstr "Definís l'ancian emplaçament de las metadonadas"
+#. TRANSLATORS: error message
+msgid "Failed to generate metadata"
+msgstr "La generacion de metadonadas a fracassat"
 
-#. TRANSLATORS: command line option
-msgid "Ignore certain types of veto"
-msgstr ""
+#. TRANSLATORS: error message
+msgid "Failed to open packages"
+msgstr "Fracàs de dobertura dels paquets"
 
 #. TRANSLATORS: error message
 msgid "Failed to parse arguments"
@@ -101,189 +98,6 @@ msgstr "Fracàs d'analisi dels paramètres"
 #. TRANSLATORS: error message
 msgid "Failed to set up builder"
 msgstr "Fracàs de configuracion del constructor"
-
-#. TRANSLATORS: error message
-msgid "Failed to open packages"
-msgstr "Fracàs de dobertura dels paquets"
-
-#. TRANSLATORS: information message
-msgid "Scanning packages..."
-msgstr "Analisi dels paquets…"
-
-#. TRANSLATORS: error message
-msgid "Failed to add package"
-msgstr "L'apondon del paquet a fracassat"
-
-#. TRANSLATORS: information message
-#, c-format
-msgid "Parsed %i/%i files..."
-msgstr "%i/%i fichièrs analisats…"
-
-#. TRANSLATORS: error message
-msgid "Failed to generate metadata"
-msgstr "La generacion de metadonadas a fracassat"
-
-#. success
-#. TRANSLATORS: information message
-msgid "Done!"
-msgstr "Acabat !"
-
-#. TRANSLATORS: we've saving the icon file to disk
-msgid "Saving icon"
-msgstr ""
-
-#. TRANSLATORS: command line option
-msgid "Set the prefix"
-msgstr ""
-
-#. TRANSLATORS: we're generating the AppStream data
-msgid "Processing application"
-msgstr ""
-
-#. TRANSLATORS: the .appdata.xml file could not
-#. * be loaded
-msgid "Error loading AppData file"
-msgstr ""
-
-#. TRANSLATORS: the .mo files could not be parsed
-msgid "Error parsing translations"
-msgstr ""
-
-#. TRANSLATORS: we could not auto-add the kudo
-msgid "Error parsing kudos"
-msgstr ""
-
-#. TRANSLATORS: we could not auto-add the provides
-msgid "Error parsing provides"
-msgstr ""
-
-#. TRANSLATORS: the .desktop file could not
-#. * be loaded
-msgid "Error loading desktop file"
-msgstr ""
-
-#. TRANSLATORS: this is when the folder could
-#. * not be created
-msgid "Error creating output directory"
-msgstr ""
-
-#. TRANSLATORS: we've saving the XML file to disk
-msgid "Saving AppStream"
-msgstr ""
-
-#. TRANSLATORS: this is when the destination file
-#. * cannot be saved for some reason
-msgid "Error saving AppStream file"
-msgstr ""
-
-#. TRANSLATORS: this is a command alias
-#, c-format
-msgid "Alias to %s"
-msgstr "Aliàs de %s"
-
-msgid "Command not found, valid commands are:"
-msgstr "Comanda introbabla, las comandas validas son :"
-
-#. TRANSLATORS: any manual changes required?
-#. * also note: FIXME is a hardcoded string
-msgid "Please review the file and fix any 'FIXME' items"
-msgstr "Revisatz lo fichièr e resolvètz los elements « FIXME »"
-
-#. TRANSLATORS: information message
-msgid "Old API version"
-msgstr ""
-
-#. TRANSLATORS: information message
-msgid "New API version"
-msgstr "Novèla version d'API"
-
-msgid "Not enough arguments, expected old.xml new.xml version"
-msgstr "Paramètres insufisents, indicatz ancian.xml novel.xml version"
-
-#. TRANSLATORS: the %s and %s are file types,
-#. * e.g. "appdata" to "appstream"
-#, c-format
-msgid "Conversion %s to %s is not implemented"
-msgstr ""
-
-msgid "Not enough arguments, expected file.xml"
-msgstr "Paramètres insufisents, file.xml es esperat"
-
-#. TRANSLATORS: %s is a file type,
-#. * e.g. 'appdata'
-#, c-format
-msgid "File format '%s' cannot be upgraded"
-msgstr ""
-
-#. TRANSLATORS: not a recognised file type
-msgid "Format not recognised"
-msgstr ""
-
-#. TRANSLATORS: probably wrong XML
-msgid "No desktop applications found"
-msgstr ""
-
-#. TRANSLATORS: the file is valid
-msgid "OK"
-msgstr "D'ACÒRDI"
-
-#. list failures
-msgid "FAILED"
-msgstr "FRACÀS"
-
-msgid "Validation failed"
-msgstr "La validacion a fracassat"
-
-msgid "Validation of files failed"
-msgstr "La validacion dels fichièrs a fracassat"
-
-#. TRANSLATORS: application was removed
-msgid "Removed"
-msgstr "Suprimit"
-
-#. TRANSLATORS: application was added
-msgid "Added"
-msgstr "Apondut"
-
-#. TRANSLATORS: this is the --nonet argument
-msgid "Do not use network access"
-msgstr "Utilizatz pas l'accès ret"
-
-#. TRANSLATORS: command line option
-msgid "Show version"
-msgstr "Afichar la version"
-
-#. TRANSLATORS: command line option
-msgid "Enable profiling"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "Converts AppStream metadata from one version to another"
-msgstr "Convertís las metadonadas AppStream d'una version a una autra"
-
-#. TRANSLATORS: command description
-msgid "Upgrade AppData metadata to the latest version"
-msgstr "Met a jorn las metadonadas AppData a la darrièra version"
-
-#. TRANSLATORS: command description
-msgid "Creates an example Appdata file from a .desktop file"
-msgstr "Crèa un fichièr Appdata exemple a partir d'un fichièr .desktop"
-
-#. TRANSLATORS: command description
-msgid "Dumps the applications in the AppStream metadata"
-msgstr "Expòrta las aplicacions dins las metadonadas AppStream"
-
-#. TRANSLATORS: command description
-msgid "Search for AppStream applications"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "Search for AppStream applications by package name"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "Display application search tokens"
-msgstr ""
 
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata"
@@ -294,24 +108,88 @@ msgid "Installs AppStream metadata with new origin"
 msgstr "Installa las metadonadas AppStream d'una novèla origina"
 
 #. TRANSLATORS: command description
+msgid "List applications not backed by packages"
+msgstr "Lista de las aplicacions non basadas sus de paquets"
+
+#. TRANSLATORS: information message
+msgid "New API version"
+msgstr "Novèla version d'API"
+
+msgid "Not enough arguments, expected file.xml"
+msgstr "Paramètres insufisents, file.xml es esperat"
+
+msgid "Not enough arguments, expected old.xml new.xml version"
+msgstr "Paramètres insufisents, indicatz ancian.xml novel.xml version"
+
+#. TRANSLATORS: the file is valid
+msgid "OK"
+msgstr "D'ACÒRDI"
+
+#. TRANSLATORS: information message
+#, c-format
+msgid "Parsed %i/%i files..."
+msgstr "%i/%i fichièrs analisats…"
+
+#. TRANSLATORS: any manual changes required?
+#. * also note: FIXME is a hardcoded string
+msgid "Please review the file and fix any 'FIXME' items"
+msgstr "Revisatz lo fichièr e resolvètz los elements « FIXME »"
+
+#. TRANSLATORS: application was removed
+msgid "Removed"
+msgstr "Suprimit"
+
+#. TRANSLATORS: information message
+msgid "Scanning packages..."
+msgstr "Analisi dels paquets…"
+
+#. TRANSLATORS: command line option
+msgid "Set the cache directory"
+msgstr "Definís lo repertòri de cache"
+
+#. TRANSLATORS: command line option
+msgid "Set the logging directory"
+msgstr "Definís lo repertòri de jornalizacion"
+
+#. TRANSLATORS: command line option
+msgid "Set the number of threads"
+msgstr "Definís lo nombre de fials d'execucion"
+
+#. TRANSLATORS: command line option
+msgid "Set the old metadata location"
+msgstr "Definís l'ancian emplaçament de las metadonadas"
+
+#. TRANSLATORS: command line option
+msgid "Set the origin name"
+msgstr "Definís lo nom d'origina"
+
+#. TRANSLATORS: command line option
+msgid "Set the output directory"
+msgstr "Definís lo repertòri de sortida"
+
+#. TRANSLATORS: command line option
+msgid "Set the packages directory"
+msgstr "Definís lo repertòri dels paquets"
+
+#. TRANSLATORS: command line option
+msgid "Set the temporary directory"
+msgstr "Definís lo repertòri temporari"
+
+#. TRANSLATORS: command line option
+msgid "Show extra debugging information"
+msgstr "Aficha d'informacions de desbugatge suplementàrias"
+
+#. TRANSLATORS: command line option
+msgid "Show version"
+msgstr "Afichar la version"
+
+#. TRANSLATORS: command description
 msgid "Uninstalls AppStream metadata"
 msgstr "Desinstalla las metadonadas AppStream"
 
 #. TRANSLATORS: command description
-msgid "Create an HTML status page"
-msgstr "Crear una pagina de sintèsi HTML"
-
-#. TRANSLATORS: command description
-msgid "Create an CSV status document"
-msgstr "Crear un document de sintèsi CSV"
-
-#. TRANSLATORS: command description
-msgid "Create an HTML matrix page"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "List applications not backed by packages"
-msgstr "Lista de las aplicacions non basadas sus de paquets"
+msgid "Upgrade AppData metadata to the latest version"
+msgstr "Met a jorn las metadonadas AppData a la darrièra version"
 
 #. TRANSLATORS: command description
 msgid "Validate an AppData or AppStream file"
@@ -325,61 +203,11 @@ msgstr "Validar un fichièr AppData o AppStream (laxista)"
 msgid "Validate an AppData or AppStream file (strict)"
 msgstr "Validar un fichièr AppData o AppStream (estricte)"
 
-#. TRANSLATORS: command description
-msgid "Convert an AppData file to NEWS format"
-msgstr ""
+msgid "Validation failed"
+msgstr "La validacion a fracassat"
 
-#. TRANSLATORS: command description
-msgid "Convert an NEWS file to AppData format"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "Check installed application data"
-msgstr "Verificar las donadas d'aplicacions installadas"
-
-#. TRANSLATORS: command description
-msgid "Replace screenshots in source file"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "Mirror upstream screenshots"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "Mirror local firmware files"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "Incorporate extra metadata from an external file"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "Compare the contents of two AppStream files"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "Generate a GUID from an input string"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "Modify an AppData file"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "Split an AppStream file to AppData and Metainfo files"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "Merge several files to an AppStream file"
-msgstr ""
-
-#. TRANSLATORS: command description
-msgid "Import a file to AppStream markup"
-msgstr ""
-
-#. TRANSLATORS: program name
-msgid "AppStream Utility"
-msgstr "Utilitari AppStream"
+msgid "Validation of files failed"
+msgstr "La validacion dels fichièrs a fracassat"
 
 msgid "Version:"
 msgstr "Version :"
