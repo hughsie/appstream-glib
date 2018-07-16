@@ -2973,6 +2973,70 @@ as_store_load_path (AsStore *store, const gchar *path,
 					path, cancellable, error);
 }
 
+static void
+store_load_path_thread (GTask *task,
+			gpointer source_object,
+			gpointer task_data,
+			GCancellable *cancellable)
+{
+	AsStore *store = source_object;
+	const char *path = task_data;
+	GError *error = NULL;
+	gboolean success;
+
+	success = as_store_load_path (store, path, cancellable, &error);
+	if (error)
+		g_task_return_error (task, error);
+	else
+		g_task_return_boolean (task, success);
+}
+
+
+/**
+ * as_store_load_path_async:
+ * @store: a #AsStore instance.
+ * @path: A path to load
+ * @cancellable: a #GCancellable.
+ * @callback: A #GAsyncReadyCallback
+ * @user_data: Data to pass to @callback
+ *
+ * Asynchronously loads the store from a specific path.
+ *
+ * Since: 0.7.2
+ **/
+void
+as_store_load_path_async (AsStore *store, const gchar *path,
+			  GCancellable *cancellable,
+			  GAsyncReadyCallback callback,
+			  gpointer user_data)
+{
+	GTask *task = g_task_new (store, cancellable, callback, user_data);
+	g_task_set_task_data (task, g_strdup (path), g_free);
+	g_task_run_in_thread (task, store_load_path_thread);
+	g_object_unref (task);
+}
+
+/**
+ * as_store_load_path_finish:
+ * @store: a #AsStore instance.
+ * @result: A #GAsyncResult
+ * @error: A #GError or %NULL.
+ *
+ * Retrieve the result of as_store_load_path_async().
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.7.2
+ **/
+gboolean
+as_store_load_path_finish (AsStore *store,
+			   GAsyncResult *result,
+			   GError **error)
+{
+	g_return_val_if_fail (g_task_is_valid (result, store), FALSE);
+	return g_task_propagate_boolean (G_TASK (result), error);
+}
+
 static gboolean
 as_store_search_installed (AsStore *store,
 			   guint32 flags,
@@ -3250,6 +3314,70 @@ as_store_load (AsStore *store, guint32 flags, GCancellable *cancellable, GError 
 	as_store_changed_uninhibit (&tok);
 	as_store_perhaps_emit_changed (store, "store-load");
 	return TRUE;
+}
+
+static void
+store_load_thread (GTask *task,
+		   gpointer source_object,
+		   gpointer task_data,
+		   GCancellable *cancellable)
+{
+	AsStore *store = AS_STORE (source_object);
+	AsStoreLoadFlags flags = GPOINTER_TO_INT (task_data);
+	GError *error = NULL;
+	gboolean success;
+
+	success = as_store_load (store, flags, cancellable, &error);
+	if (error != NULL)
+		g_task_return_error (task, error);
+	else
+		g_task_return_boolean (task, success);
+}
+
+/**
+ * as_store_load_async:
+ * @store: a #AsStore instance.
+ * @flags: #AsStoreLoadFlags, e.g. %AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM
+ * @cancellable: a #GCancellable.
+ * @callback: A #GAsyncReadyCallback
+ * @user_data: Data to pass to @callback
+ *
+ * Asynchronously loads the store from the default locations.
+ *
+ * Since: 0.7.7
+ **/
+void
+as_store_load_async (AsStore *store,
+		     AsStoreLoadFlags flags,
+		     GCancellable *cancellable,
+		     GAsyncReadyCallback callback,
+		     gpointer user_data)
+{
+	GTask *task = g_task_new (store, cancellable, callback, user_data);
+	g_task_set_task_data (task, GINT_TO_POINTER (flags), NULL);
+	g_task_run_in_thread (task, store_load_thread);
+	g_object_unref (task);
+}
+
+/**
+ * as_store_load_finish:
+ * @store: a #AsStore instance.
+ * @result: A #GAsyncResult
+ * @error: A #GError or %NULL.
+ *
+ * Retrieve the result of as_store_load_async().
+ *
+ * Returns: %TRUE for success
+ *
+ * Since: 0.7.7
+ **/
+gboolean
+as_store_load_finish (AsStore *store,
+		      GAsyncResult *result,
+		      GError **error)
+{
+	g_return_val_if_fail (g_task_is_valid (result, store), FALSE);
+	return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 G_GNUC_PRINTF (3, 4) static void
