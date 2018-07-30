@@ -808,19 +808,28 @@ as_image_save_pixbuf (AsImage *image,
 				 (gint) width,
 				 (gint) height);
 	gdk_pixbuf_fill (pixbuf, 0x00000000);
-	/* check the ratio to see which property needs to be fitted and which needs
-	 * to be reduced */
-	if (pixbuf_width * 9 > pixbuf_height * 16) {
-		tmp_width = width;
-		tmp_height = width * pixbuf_height / pixbuf_width;
+	/* check the ratio to see if there is any scaling required and, if so,
+	 * which property needs to be fitted and which needs to be reduced */
+	if (pixbuf_width > width || pixbuf_height > height) {
+		/* we need to scale */
+		if (pixbuf_width * 9 > pixbuf_height * 16) {
+			tmp_width = width;
+			tmp_height = width * pixbuf_height / pixbuf_width;
+		} else {
+			tmp_width = height * pixbuf_width / pixbuf_height;
+			tmp_height = height;
+		}
+		pixbuf_tmp = gdk_pixbuf_scale_simple (priv->pixbuf,
+						      (gint) tmp_width,
+						      (gint) tmp_height,
+						      GDK_INTERP_HYPER);
 	} else {
-		tmp_width = height * pixbuf_width / pixbuf_height;
-		tmp_height = height;
+		/* no scaling required, let's just pad the original pixbuf with
+		 * the required extra space */
+		pixbuf_tmp = g_object_ref (priv->pixbuf);
+		tmp_width = pixbuf_width;
+		tmp_height = pixbuf_height;
 	}
-	pixbuf_tmp = gdk_pixbuf_scale_simple (priv->pixbuf,
-					      (gint) tmp_width,
-					      (gint) tmp_height,
-					      GDK_INTERP_HYPER);
 	if ((flags & AS_IMAGE_SAVE_FLAG_SHARPEN) > 0)
 		as_pixbuf_sharpen (pixbuf_tmp, 1, -0.5);
 	if ((flags & AS_IMAGE_SAVE_FLAG_BLUR) > 0)
