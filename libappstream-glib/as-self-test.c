@@ -1257,6 +1257,14 @@ as_test_image_func (void)
 	g_assert_cmpstr (as_image_get_basename (image), ==, "screenshot.png");
 	g_assert_cmpstr (as_image_get_md5 (image), ==, "9de72240c27a6f8f2eaab692795cdafc");
 
+	/* resample to wrong aspect ratio */
+	pixbuf = as_image_save_pixbuf (image,
+				       423, 752,
+				       AS_IMAGE_SAVE_FLAG_PAD_16_9);
+	g_assert_cmpint (gdk_pixbuf_get_width (pixbuf), ==, 423);
+	g_assert_cmpint (gdk_pixbuf_get_height (pixbuf), ==, 752);
+	g_clear_object (&pixbuf);
+
 	/* resample */
 	pixbuf = as_image_save_pixbuf (image,
 				       752, 423,

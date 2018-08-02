@@ -808,9 +808,8 @@ as_image_save_pixbuf (AsImage *image,
 				 (gint) width,
 				 (gint) height);
 	gdk_pixbuf_fill (pixbuf, 0x00000000);
-	/* check the ratio to see which property needs to be fitted and which needs
-	 * to be reduced */
-	if (pixbuf_width * 9 > pixbuf_height * 16) {
+	/* scale image to largest size in requested size */
+	if (height * pixbuf_width > pixbuf_height * width) {
 		tmp_width = width;
 		tmp_height = width * pixbuf_height / pixbuf_width;
 	} else {
