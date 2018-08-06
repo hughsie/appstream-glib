@@ -352,6 +352,7 @@ typedef enum {
  * @AS_APP_QUIRK_NEEDS_USER_ACTION:	The component requires some kind of user action
  * @AS_APP_QUIRK_IS_PROXY:		Is a proxy app that operates on other applications
  * @AS_APP_QUIRK_REMOVABLE_HARDWARE:	The device is unusable whilst the action is performed
+ * @AS_APP_QUIRK_DEVELOPER_VERIFIED:	The app developer has been verified
  *
  * The component attributes.
  **/
@@ -368,6 +369,7 @@ typedef enum {
 	AS_APP_QUIRK_NEEDS_USER_ACTION	= 1 << 8,	/* Since: 0.6.2 */
 	AS_APP_QUIRK_IS_PROXY 		= 1 << 9,	/* Since: 0.6.6 */
 	AS_APP_QUIRK_REMOVABLE_HARDWARE	= 1 << 10,	/* Since: 0.6.6 */
+	AS_APP_QUIRK_DEVELOPER_VERIFIED	= 1 << 11,	/* Since: 0.7.11 */
 	/*< private >*/
 	AS_APP_QUIRK_LAST
 } AsAppQuirk;
