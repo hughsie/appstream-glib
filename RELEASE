@@ -2,7 +2,7 @@ Appstream-Glib Release Notes
 
 1. Write NEWS entries for appstream_glib in the same format as usual.
 
-git shortlog appstream_glib_0_7_9.. | grep -i -v trivial | grep -v Merge > NEWS.new
+git shortlog appstream_glib_0_7_10.. | grep -i -v trivial | grep -v Merge > NEWS.new
 
 --------------------------------------------------------------------------------
 Version 0.7.11
