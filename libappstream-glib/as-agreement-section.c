@@ -36,11 +36,12 @@
 #include "as-agreement-section-private.h"
 #include "as-ref-string.h"
 #include "as-tag.h"
+#include "as-utils-private.h"
 
 typedef struct {
 	AsRefString		*kind;
-	AsRefString		*name;
-	AsRefString		*desc;
+	GHashTable		*names;		/* of AsRefString:AsRefString */
+	GHashTable		*descriptions;	/* of AsRefString:AsRefString */
 } AsAgreementSectionPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsAgreementSection, as_agreement_section, G_TYPE_OBJECT)
@@ -55,10 +56,8 @@ as_agreement_section_finalize (GObject *object)
 
 	if (priv->kind != NULL)
 		as_ref_string_unref (priv->kind);
-	if (priv->name != NULL)
-		as_ref_string_unref (priv->name);
-	if (priv->desc != NULL)
-		as_ref_string_unref (priv->desc);
+	g_hash_table_unref (priv->names);
+	g_hash_table_unref (priv->descriptions);
 
 	G_OBJECT_CLASS (as_agreement_section_parent_class)->finalize (object);
 }
@@ -66,7 +65,13 @@ as_agreement_section_finalize (GObject *object)
 static void
 as_agreement_section_init (AsAgreementSection *agreement_section)
 {
-//	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
+	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
+	priv->names = g_hash_table_new_full (g_str_hash, g_str_equal,
+					     (GDestroyNotify) as_ref_string_unref,
+					     (GDestroyNotify) as_ref_string_unref);
+	priv->descriptions = g_hash_table_new_full (g_str_hash, g_str_equal,
+						    (GDestroyNotify) as_ref_string_unref,
+						    (GDestroyNotify) as_ref_string_unref);
 }
 
 static void
@@ -127,7 +132,7 @@ as_agreement_section_get_name (AsAgreementSection *agreement_section, const gcha
 {
 	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
 	g_return_val_if_fail (AS_IS_AGREEMENT_SECTION (agreement_section), NULL);
-	return priv->name;
+	return as_hash_lookup_by_locale (priv->names, locale);
 }
 
 /**
@@ -145,8 +150,18 @@ as_agreement_section_set_name (AsAgreementSection *agreement_section,
 			       const gchar *locale, const gchar *name)
 {
 	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
+	g_autoptr(AsRefString) locale_fixed = NULL;
+
 	g_return_if_fail (AS_IS_AGREEMENT_SECTION (agreement_section));
-	as_ref_string_assign_safe (&priv->name, name);
+	g_return_if_fail (name != NULL);
+
+	/* get fixed locale */
+	locale_fixed = as_node_fix_locale (locale);
+	if (locale_fixed == NULL)
+		return;
+	g_hash_table_insert (priv->names,
+			     as_ref_string_ref (locale_fixed),
+			     as_ref_string_new (name));
 }
 
 /**
@@ -166,7 +181,7 @@ as_agreement_section_get_description (AsAgreementSection *agreement_section,
 {
 	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
 	g_return_val_if_fail (AS_IS_AGREEMENT_SECTION (agreement_section), NULL);
-	return priv->desc;
+	return as_hash_lookup_by_locale (priv->descriptions, locale);
 }
 
 /**
@@ -175,7 +190,7 @@ as_agreement_section_get_description (AsAgreementSection *agreement_section,
  * @locale: (nullable): the locale. e.g. "en_GB"
  * @desc: the rating desc, e.g. "GDPR"
  *
- * Sets the agreement section desc.
+ * Sets the agreement section description.
  *
  * Since: 0.7.8
  **/
@@ -184,8 +199,18 @@ as_agreement_section_set_description (AsAgreementSection *agreement_section,
 				      const gchar *locale, const gchar *desc)
 {
 	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
+	g_autoptr(AsRefString) locale_fixed = NULL;
+
 	g_return_if_fail (AS_IS_AGREEMENT_SECTION (agreement_section));
-	as_ref_string_assign_safe (&priv->desc, desc);
+	g_return_if_fail (desc != NULL);
+
+	/* get fixed locale */
+	locale_fixed = as_node_fix_locale (locale);
+	if (locale_fixed == NULL)
+		return;
+	g_hash_table_insert (priv->descriptions,
+			     as_ref_string_ref (locale_fixed),
+			     as_ref_string_new (desc));
 }
 
 /**
@@ -212,12 +237,26 @@ as_agreement_section_node_insert (AsAgreementSection *agreement_section,
 				   NULL);
 	if (priv->kind != NULL)
 		as_node_add_attribute (n, "type", priv->kind);
-	if (priv->desc != NULL) {
-		as_node_insert (n, "description", priv->desc,
-				AS_NODE_INSERT_FLAG_PRE_ESCAPED, NULL);
-	}
+	as_node_insert_localized (n, "name",
+				  priv->names,
+				  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
+	as_node_insert_localized (n, "description",
+				  priv->descriptions,
+				  AS_NODE_INSERT_FLAG_PRE_ESCAPED |
+				  AS_NODE_INSERT_FLAG_DEDUPE_LANG);
 
 	return n;
+}
+
+static void
+as_agreement_section_copy_dict (GHashTable *dest, GHashTable *src)
+{
+	g_autoptr(GList) keys = g_hash_table_get_keys (src);
+	for (GList *l = keys; l != NULL; l = l->next) {
+		AsRefString *key = l->data;
+		AsRefString *value = g_hash_table_lookup (src, key);
+		g_hash_table_insert (dest, as_ref_string_ref (key), as_ref_string_ref (value));
+	}
 }
 
 /**
@@ -234,31 +273,39 @@ as_agreement_section_node_insert (AsAgreementSection *agreement_section,
  * Since: 0.7.8
  **/
 gboolean
-as_agreement_section_node_parse (AsAgreementSection *agreement_section, GNode *node,
+as_agreement_section_node_parse (AsAgreementSection *agreement_section, GNode *n,
 				 AsNodeContext *ctx, GError **error)
 {
+	AsAgreementSectionPrivate *priv = GET_PRIVATE (agreement_section);
 	const gchar *tmp;
+	AsRefString *str;
 
 	/* get ID */
-	tmp = as_node_get_attribute (node, "type");
+	tmp = as_node_get_attribute (n, "type");
 	if (tmp != NULL)
 		as_agreement_section_set_kind (agreement_section, tmp);
 
 	/* get sections and details */
-	for (GNode *c = node->children; c != NULL; c = c->next) {
+	for (GNode *c = n->children; c != NULL; c = c->next) {
 		if (as_node_get_tag (c) == AS_TAG_NAME) {
-			as_agreement_section_set_name (agreement_section,
-						       as_node_get_attribute (c, "xml:lang"),
-						       as_node_get_data (c));
+			g_autoptr(AsRefString) xml_lang = NULL;
+			xml_lang = as_node_fix_locale_full (n, as_node_get_attribute (n, "xml:lang"));
+			if (xml_lang == NULL)
+				break;
+			str = as_node_get_data_as_refstr (n);
+			if (str != NULL) {
+				g_hash_table_insert (priv->names,
+						     as_ref_string_ref (xml_lang),
+						     as_ref_string_ref (str));
+			}
 			continue;
 		}
 		if (as_node_get_tag (c) == AS_TAG_DESCRIPTION) {
-			g_autoptr(GString) xml = NULL;
-			xml = as_node_to_xml (c->children,
-					      AS_NODE_TO_XML_FLAG_INCLUDE_SIBLINGS);
-			as_agreement_section_set_description (agreement_section,
-							      as_node_get_attribute (c, "xml:lang"),
-							      xml->str);
+			g_autoptr(GHashTable) desc = NULL;
+			desc = as_node_get_localized_unwrap (c, error);
+			if (desc == NULL)
+				return FALSE;
+			as_agreement_section_copy_dict (priv->descriptions, desc);
 			continue;
 		}
 	}
