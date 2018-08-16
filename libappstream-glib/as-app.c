@@ -4790,7 +4790,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 	if (priv->releases->len > 0) {
 		g_ptr_array_sort (priv->releases, as_app_releases_sort_cb);
 		node_tmp = as_node_insert (node_app, "releases", NULL, 0, NULL);
-		for (i = 0; i < priv->releases->len && i < 3; i++) {
+		for (i = 0; i < priv->releases->len; i++) {
 			rel = g_ptr_array_index (priv->releases, i);
 			as_release_node_insert (rel, node_tmp, ctx);
 		}
