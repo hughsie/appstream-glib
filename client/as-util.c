@@ -2495,18 +2495,19 @@ as_util_matrix_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	g_autoptr(GString) html = NULL;
 
 	/* check args */
-	if (g_strv_length (values) < 2) {
+	guint value_count = g_strv_length (values);
+	if (value_count < 2) {
 		g_set_error_literal (error,
 				     AS_ERROR,
 				     AS_ERROR_INVALID_ARGUMENTS,
 				     "Not enough arguments, "
-				     "expected matrix.html filename.xml.gz");
+				     "expected filename.xml.gz matrix.html");
 		return FALSE;
 	}
 
 	/* load file */
 	store = as_store_new ();
-	for (i = 1; values[i] != NULL; i++) {
+	for (i = 0; i < value_count - 1; i++) {
 		g_autoptr(GFile) file = NULL;
 		file = g_file_new_for_path (values[i]);
 		if (!as_store_from_file (store, file, NULL, NULL, error))
@@ -2567,7 +2568,7 @@ as_util_matrix_html (AsUtilPrivate *priv, gchar **values, GError **error)
 	g_string_append (html, "</html>\n");
 
 	/* save file */
-	return g_file_set_contents (values[0], html->str, -1, error);
+	return g_file_set_contents (values[value_count - 1], html->str, -1, error);
 }
 
 static gboolean
