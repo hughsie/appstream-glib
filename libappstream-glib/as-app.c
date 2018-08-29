@@ -6219,7 +6219,9 @@ as_app_parse_appdata_guess_project_group (AsApp *app)
 static int
 as_utils_fnmatch (const gchar *pattern, const gchar *text, gsize text_sz, gint flags)
 {
-	if (text_sz != -1 && text[text_sz-1] != '\0') {
+	if (text_sz == 0)
+		return FNM_NOMATCH;
+	if (text[text_sz-1] != '\0') {
 		g_autofree gchar *text_with_nul = g_strndup (text, text_sz);
 		return fnmatch (pattern, text_with_nul, flags);
 	}
@@ -6334,7 +6336,9 @@ as_app_parse_appdata_file (AsApp *app,
 			     filename, error_local->message);
 		return FALSE;
 	}
-	data = g_bytes_new_take (g_steal_pointer (&data_raw), len);
+	/* Note it is len + 1 - this is the contents of the file and the nul character
+         * that g_file_get_contents automatically appends */
+	data = g_bytes_new_take (g_steal_pointer (&data_raw), len + 1);
 	if (!as_app_parse_data (app, data, flags, &error_local)) {
 		g_set_error (error,
 			     AS_APP_ERROR,
