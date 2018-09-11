@@ -478,6 +478,13 @@ main (int argc, char **argv)
 				g_string_append (desktop_basename, ".desktop");
 		}
 
+		if (!g_str_has_suffix (desktop_basename->str, ".desktop")) {
+			/* TRANSLATORS: not a valid desktop filename */
+			g_print ("%s: %s\n", _("Invalid desktop filename"),
+				 desktop_basename->str);
+			return EXIT_FAILURE;
+		}
+
 		desktop_path = g_build_filename (prefix, "share", "applications",
 						 desktop_basename->str, NULL);
 		g_debug ("looking for desktop path '%s'", desktop_path);
