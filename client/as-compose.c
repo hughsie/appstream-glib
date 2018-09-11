@@ -278,7 +278,7 @@ load_appdata (const gchar *prefix, const gchar *app_name, GError **error)
 			     "no file found for %s", app_name);
 		return NULL;
 	}
-	g_debug ("looking for %s", appdata_path);
+	g_debug ("looking for appdata path '%s'", appdata_path);
 
 	app = as_app_new ();
 	if (!as_app_parse_file (app, appdata_path,
@@ -480,7 +480,7 @@ main (int argc, char **argv)
 
 		desktop_path = g_build_filename (prefix, "share", "applications",
 						 desktop_basename->str, NULL);
-		g_debug ("looking for %s", desktop_path);
+		g_debug ("looking for desktop path '%s'", desktop_path);
 
 		if (g_file_test (desktop_path, G_FILE_TEST_EXISTS)) {
 			app_desktop = load_desktop (prefix,
