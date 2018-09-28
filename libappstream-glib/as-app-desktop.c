@@ -309,6 +309,18 @@ as_app_parse_file_key (AsApp *app,
 		for (i = 0; list != NULL && list[i] != NULL; i++)
 			as_app_add_mimetype (app, list[i]);
 
+	} else if (g_strcmp0 (key, "X-Flatpak-RenamedFrom") == 0) {
+		list = g_key_file_get_string_list (kf,
+						   G_KEY_FILE_DESKTOP_GROUP,
+						   key,
+						   NULL, NULL);
+		for (i = 0; list != NULL && list[i] != NULL; i++) {
+			g_autoptr(AsProvide) prov = as_provide_new ();
+			as_provide_set_kind (prov, AS_PROVIDE_KIND_ID);
+			as_provide_set_value (prov, list[i]);
+			as_app_add_provide (app, prov);
+		}
+
 	} else if (g_strcmp0 (key, "X-AppInstall-Package") == 0) {
 		tmp = g_key_file_get_string (kf,
 					     G_KEY_FILE_DESKTOP_GROUP,
