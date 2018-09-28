@@ -30,6 +30,8 @@
 
 #include "config.h"
 
+#include <glib.h>
+
 #include "as-version.h"
 
 /**
