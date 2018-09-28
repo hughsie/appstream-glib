@@ -12,16 +12,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-11 19:18+0100\n"
-"PO-Revision-Date: 2018-05-01 03:48+0000\n"
-"Last-Translator: Muhammet Kara <muhammet.k@gmail.com>\n"
+"POT-Creation-Date: 2018-09-28 13:48+0100\n"
+"PO-Revision-Date: 2018-08-25 07:59+0000\n"
+"Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/freedesktop/appstream-glib/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: tr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Zanata 4.4.5\n"
+"X-Generator: Zanata 4.6.2\n"
 
 #. TRANSLATORS: command line option
 msgid "Add HiDPI icons to the tarball"
@@ -29,7 +29,7 @@ msgstr "HiDPI simgeleri Tar dosyasına ekle"
 
 #. TRANSLATORS: command line option
 msgid "Add a cache ID to each component"
-msgstr "Her bileşene bir bellek kimliği ekle"
+msgstr "Her bileşene önbellek kimliği ekle"
 
 #. TRANSLATORS: command description
 msgid "Add a language to a source file"
@@ -241,6 +241,10 @@ msgid "Merge several files to an AppStream file"
 msgstr "Birkaç dosyayı AppStream dosyasında birleştir"
 
 #. TRANSLATORS: command description
+msgid "Mirror upstream screenshots"
+msgstr "Üst akım ekran görüntülerini yansıla"
+
+#. TRANSLATORS: command description
 msgid "Modify an AppData file"
 msgstr "AppData dosyasını düzenle"
 
@@ -318,7 +322,7 @@ msgstr "Çıktı dosyalarının temel adını belirle"
 
 #. TRANSLATORS: command line option
 msgid "Set the cache directory"
-msgstr "Bellek dizini ayarla"
+msgstr "Önbellek dizini ayarla"
 
 #. TRANSLATORS: command line option
 msgid "Set the icons directory"

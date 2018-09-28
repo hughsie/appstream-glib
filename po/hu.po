@@ -6,23 +6,23 @@
 # Balázs Úr <urbalazs@gmail.com>, 2014-2016
 # kelemeng <kelemeng@ubuntu.com>, 2016
 # Meskó Balázs <meskobalazs@gmail.com>, 2016. #zanata
-# Richard Hughes <richard@hughsie.com>, 2016. #zanata
 # Meskó Balázs <meskobalazs@gmail.com>, 2017. #zanata
 # Zoltan Hoppar <zoltanh721@fedoraproject.org>, 2017. #zanata
+# Meskó Balázs <meskobalazs@gmail.com>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-11 19:18+0100\n"
-"PO-Revision-Date: 2017-07-16 04:07+0000\n"
-"Last-Translator: Meskó Balázs <meskobalazs@gmail.com>\n"
+"POT-Creation-Date: 2018-09-28 13:48+0100\n"
+"PO-Revision-Date: 2018-08-15 06:06+0000\n"
+"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
 "Language-Team: Hungarian (http://www.transifex.com/freedesktop/appstream-glib/language/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: hu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 4.4.5\n"
+"X-Generator: Zanata 4.6.2\n"
 
 #. TRANSLATORS: command line option
 msgid "Add HiDPI icons to the tarball"
@@ -152,7 +152,7 @@ msgstr "Hiba a desktop fájl betöltésekor"
 
 #. TRANSLATORS: we could not auto-add the kudo
 msgid "Error parsing kudos"
-msgstr "Hiba a kudos feldolgozásakor"
+msgstr "Hiba a köszönetnyilvánítások feldolgozásakor"
 
 #. TRANSLATORS: we could not auto-add the provides
 msgid "Error parsing provides"
@@ -166,6 +166,10 @@ msgstr "Hiba a fordítások feldolgozásakor"
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
 msgstr "Hiba az AppStream fájl mentésekor"
+
+#. TRANSLATORS: command description
+msgid "Exports the agreement to text"
+msgstr "A megállapodás exportálása szövegként"
 
 #. list failures
 msgid "FAILED"
@@ -219,7 +223,7 @@ msgstr "Sikertelen találatok felvétele a kimenetbe"
 
 #. TRANSLATORS: command description
 msgid "Incorporate extra metadata from an external file"
-msgstr "Extra metaadatok egyesítése egy külső fájlból"
+msgstr "További metaadatok használata külső fájlból"
 
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata"
@@ -231,7 +235,7 @@ msgstr "Telepíti az AppStream metaadatokat egy új eredettel"
 
 #. TRANSLATORS: command description
 msgid "List applications not backed by packages"
-msgstr "Alkalmazások felsorolása, amelyeket nem másoltak a csomagok"
+msgstr "Alkalmazások felsorolása, melyek mögött nincsenek csomagok"
 
 #. TRANSLATORS: command description
 msgid "Merge several files to an AppStream file"
@@ -239,7 +243,7 @@ msgstr "Több fájl egy AppStream fájlba fésülése"
 
 #. TRANSLATORS: command description
 msgid "Mirror upstream screenshots"
-msgstr "A fő tároló képernyőképeinek tükrözése"
+msgstr "Az upstream képernyőképek tükrözése"
 
 #. TRANSLATORS: command description
 msgid "Modify an AppData file"

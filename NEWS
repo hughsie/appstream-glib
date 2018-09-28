@@ -1,3 +1,16 @@
+Version 0.7.13
+~~~~~~~~~~~~~~
+Released: 2018-09-28
+
+New Features:
+ - Add ID provides for desktop files with X-Flatpak-RenamedFrom (Richard Hughes)
+
+Bugfixes:
+ - Better debug output for appstream-compose (Bastien Nocera)
+ - Change order of arguments in matrix-html to match status-html (suve)
+ - Do not restrict the maximum number of releases allowed (Richard Hughes)
+ - Throw an error when a launchable desktop-id is invalid (Bastien Nocera)
+
 Version 0.7.12
 ~~~~~~~~~~~~~~
 Released: 2018-08-13
