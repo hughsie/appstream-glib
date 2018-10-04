@@ -410,6 +410,33 @@ as_content_rating_node_insert (AsContentRating *content_rating,
 }
 
 /**
+ * as_content_rating_add_attribute:
+ * @content_rating: a #AsContentRating instance.
+ * @id: a content rating ID, e.g. `money-gambling`.
+ * @value: a #AsContentRatingValue, e.g. %AS_CONTENT_RATING_VALUE_MODERATE.
+ *
+ * Adds an attribute value to the content rating.
+ *
+ * Since: 0.7.14
+ **/
+void
+as_content_rating_add_attribute (AsContentRating *content_rating,
+				 const gchar *id,
+				 AsContentRatingValue value)
+{
+	AsContentRatingKey *key = g_slice_new0 (AsContentRatingKey);
+	AsContentRatingPrivate *priv = GET_PRIVATE (content_rating);
+
+	g_return_if_fail (AS_IS_CONTENT_RATING (content_rating));
+	g_return_if_fail (id != NULL);
+	g_return_if_fail (value != AS_CONTENT_RATING_VALUE_UNKNOWN);
+
+	key->id = as_ref_string_new (id);
+	key->value = value;
+	g_ptr_array_add (priv->keys, key);
+}
+
+/**
  * as_content_rating_node_parse:
  * @content_rating: a #AsContentRating instance.
  * @node: a #GNode.
@@ -441,7 +468,6 @@ as_content_rating_node_parse (AsContentRating *content_rating, GNode *node,
 	/* get keys */
 	for (c = node->children; c != NULL; c = c->next) {
 		AsContentRatingKey *key;
-		g_autoptr(AsImage) image = NULL;
 		if (as_node_get_tag (c) != AS_TAG_CONTENT_ATTRIBUTE)
 			continue;
 		key = g_slice_new0 (AsContentRatingKey);
