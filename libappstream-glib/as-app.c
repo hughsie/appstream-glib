@@ -6414,6 +6414,31 @@ as_app_parse_file (AsApp *app, const gchar *filename, guint32 flags, GError **er
 }
 
 /**
+ * as_app_to_xml:
+ * @app: a #AsApp instance.
+ * @error: A #GError or %NULL
+ *
+ * Exports a DOM tree to an XML string.
+ *
+ * Returns: (transfer full): an XML string, or %NULL
+ *
+ * Since: 0.7.14
+ **/
+GString *
+as_app_to_xml (AsApp *app, GError **error)
+{
+	g_autoptr(AsNodeContext) ctx = as_node_context_new ();
+	g_autoptr(AsNode) root = as_node_new ();
+	as_node_context_set_version (ctx, 1.0);
+	as_node_context_set_output (ctx, AS_FORMAT_KIND_APPDATA);
+	as_app_node_insert (app, root, ctx);
+	return as_node_to_xml (root,
+			       AS_NODE_TO_XML_FLAG_ADD_HEADER |
+			       AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
+			       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+}
+
+/**
  * as_app_to_file:
  * @app: a #AsApp instance.
  * @file: a #GFile
@@ -6432,19 +6457,9 @@ as_app_to_file (AsApp *app,
 		GCancellable *cancellable,
 		GError **error)
 {
-	g_autoptr(AsNodeContext) ctx = NULL;
-	g_autoptr(AsNode) root = NULL;
-	g_autoptr(GString) xml = NULL;
-
-	root = as_node_new ();
-	ctx = as_node_context_new ();
-	as_node_context_set_version (ctx, 1.0);
-	as_node_context_set_output (ctx, AS_FORMAT_KIND_APPDATA);
-	as_app_node_insert (app, root, ctx);
-	xml = as_node_to_xml (root,
-			      AS_NODE_TO_XML_FLAG_ADD_HEADER |
-			      AS_NODE_TO_XML_FLAG_FORMAT_INDENT |
-			      AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+	g_autoptr(GString) xml = as_app_to_xml (app, error);
+	if (xml == NULL)
+		return FALSE;
 	return g_file_replace_contents (file,
 					xml->str,
 					xml->len,

@@ -715,6 +715,8 @@ gboolean	 as_app_to_file			(AsApp		*app,
 						 GFile		*file,
 						 GCancellable	*cancellable,
 						 GError		**error);
+GString		*as_app_to_xml			(AsApp		*app,
+						 GError		**error);
 AsContentRating	*as_app_get_content_rating	(AsApp		*app,
 						 const gchar 	*kind);
 AsAgreement	*as_app_get_agreement_by_kind	(AsApp		*app,
