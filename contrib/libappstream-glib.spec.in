@@ -87,7 +87,7 @@ GLib headers and libraries for appstream-builder.
 %meson \
     -Dgtk-doc=true \
     -Dstemmer=true \
-    -Ddep11=false
+    -Ddep11=true
 %meson_build
 
 %install
