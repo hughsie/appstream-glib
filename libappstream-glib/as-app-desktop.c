@@ -309,6 +309,11 @@ as_app_parse_file_key (AsApp *app,
 		for (i = 0; list != NULL && list[i] != NULL; i++)
 			as_app_add_mimetype (app, list[i]);
 
+	} else if (g_strcmp0 (key, "X-Flatpak") == 0) {
+		tmp = g_key_file_get_string (kf, G_KEY_FILE_DESKTOP_GROUP, key, NULL);
+		if (tmp != NULL && tmp[0] != '\0')
+			as_app_set_id (app, tmp);
+
 	} else if (g_strcmp0 (key, "X-Flatpak-RenamedFrom") == 0) {
 		list = g_key_file_get_string_list (kf,
 						   G_KEY_FILE_DESKTOP_GROUP,
