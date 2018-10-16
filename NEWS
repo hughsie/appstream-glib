@@ -1,3 +1,14 @@
+Version 0.7.14
+~~~~~~~~~~~~~~
+Released: 2018-10-16
+
+New Features:
+ - Add as_app_to_xml() (Richard Hughes)
+ - Add as_content_rating_add_attribute() (Richard Hughes)
+
+Bugfixes:
+ - Set the AppStream ID from the X-Flatpak desktop key (Richard Hughes)
+
 Version 0.7.13
 ~~~~~~~~~~~~~~
 Released: 2018-09-28
