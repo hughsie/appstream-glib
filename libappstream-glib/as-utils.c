@@ -1397,7 +1397,7 @@ as_utils_vercmp_chunk (const gchar *str1, const gchar *str2)
  *
  * Returns: -1 if a < b, +1 if a > b, 0 if they are equal, and %G_MAXINT on error
  *
- * Since: 0.7.14
+ * Since: 0.7.15
  */
 gint
 as_utils_vercmp_full (const gchar *version_a,
