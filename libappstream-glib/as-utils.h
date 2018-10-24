@@ -96,6 +96,20 @@ typedef enum {
 } AsVersionParseFlag;
 
 /**
+ * AsVersionCompareFlag:
+ * @AS_VERSION_COMPARE_FLAG_NONE:		No flags set
+ * @AS_VERSION_COMPARE_FLAG_USE_HEURISTICS:	Use a heuristic to parse version numbers
+ *
+ * The flags used when comparing version numbers.
+ **/
+typedef enum {
+	AS_VERSION_COMPARE_FLAG_NONE		= 0,
+	AS_VERSION_COMPARE_FLAG_USE_HEURISTICS	= 1 << 0,
+	/*< private >*/
+	AS_VERSION_COMPARE_FLAG_LAST
+} AsVersionCompareFlag;
+
+/**
  * AsUniqueIdMatchFlags:
  * @AS_UNIQUE_ID_MATCH_FLAG_NONE:		No flags set
  * @AS_UNIQUE_ID_MATCH_FLAG_SCOPE:		Scope, e.g. a #AsAppScope
