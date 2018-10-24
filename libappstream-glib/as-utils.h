@@ -160,6 +160,9 @@ gboolean	 as_utils_install_filename	(AsUtilsLocation location,
 						 GError		**error);
 gboolean	 as_utils_search_token_valid	(const gchar	*token);
 gchar		**as_utils_search_tokenize	(const gchar	*search);
+gint		 as_utils_vercmp_full		(const gchar	*version_a,
+						 const gchar	*version_b,
+						 AsVersionCompareFlag flags);
 gint		 as_utils_vercmp		(const gchar	*version_a,
 						 const gchar	*version_b);
 gboolean	 as_utils_guid_is_valid		(const gchar	*guid);
