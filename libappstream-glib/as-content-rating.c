@@ -301,8 +301,8 @@ as_content_rating_id_value_to_csm_age (const gchar *id, AsContentRatingValue val
  *
  * You're free to disagree with these, and of course you should use your own
  * brain to work our if your child is able to cope with the concepts enumerated
- * here. Some 13 year olds mey be fine with the concept of mutilation of body
- * parts, others may get nightmares.
+ * here. Some 13 year olds may be fine with the concept of mutilation of body
+ * parts; others may get nightmares.
  *
  * Returns: The age in years, 0 for no rating, or G_MAXUINT for no details.
  *
@@ -371,7 +371,7 @@ as_content_rating_set_kind (AsContentRating *content_rating, const gchar *kind)
 /**
  * as_content_rating_node_insert: (skip)
  * @content_rating: a #AsContentRating instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the content_rating into the DOM tree.
