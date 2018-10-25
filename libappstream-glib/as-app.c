@@ -3237,54 +3237,6 @@ as_app_add_mimetype (AsApp *app, const gchar *mimetype)
 	g_ptr_array_add (priv->mimetypes, as_ref_string_new (mimetype));
 }
 
-static void
-as_app_subsume_release (AsRelease *release, AsRelease *donor)
-{
-	AsChecksum *csum;
-	AsChecksum *csum_tmp;
-	GPtrArray *locations;
-	GPtrArray *checksums;
-	const gchar *tmp;
-	guint i;
-
-	/* this is high quality metadata */
-	tmp = as_release_get_description (donor, NULL);
-	if (tmp != NULL)
-		as_release_set_description (release, NULL, tmp);
-
-	/* only installed is useful */
-	if (as_release_get_state (donor) == AS_RELEASE_STATE_INSTALLED)
-		as_release_set_state (release, AS_RELEASE_STATE_INSTALLED);
-
-	/* overwrite the timestamp if the metadata is high quality,
-	 * or if no timestamp has already been set */
-	if (tmp != NULL || as_release_get_timestamp (release) == 0)
-		as_release_set_timestamp (release, as_release_get_timestamp (donor));
-
-	/* overwrite the version */
-	tmp = as_release_get_version (donor);
-	if (tmp != NULL && as_release_get_version (release) == NULL)
-		as_release_set_version (release, tmp);
-
-	/* copy all locations */
-	locations = as_release_get_locations (donor);
-	for (i = 0; i < locations->len; i++) {
-		tmp = g_ptr_array_index (locations, i);
-		as_release_add_location (release, tmp);
-	}
-
-	/* copy checksums if set */
-	checksums = as_release_get_checksums (donor);
-	for (i = 0; i < checksums->len; i++) {
-		csum = g_ptr_array_index (checksums, i);
-		tmp = as_checksum_get_filename (csum);
-		csum_tmp = as_release_get_checksum_by_fn (release, tmp);
-		if (csum_tmp != NULL)
-			continue;
-		as_release_add_checksum (release, csum);
-	}
-}
-
 /**
  * as_app_add_release:
  * @app: a #AsApp instance.
@@ -3299,18 +3251,14 @@ as_app_add_release (AsApp *app, AsRelease *release)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	AsRelease *release_old;
-
 	/* if already exists them update */
 	release_old = as_app_get_release (app, as_release_get_version (release));
 	if (release_old == NULL)
 		release_old = as_app_get_release (app, NULL);
 	if (release_old == release)
 		return;
-	if (release_old != NULL) {
-		priv->problems |= AS_APP_PROBLEM_DUPLICATE_RELEASE;
-		as_app_subsume_release (release_old, release);
-		return;
-	}
+	if (release_old != NULL)
+		g_debug ("Potentially duplicate release %s", as_app_get_name (app, NULL));
 
 	g_ptr_array_add (priv->releases, g_object_ref (release));
 }

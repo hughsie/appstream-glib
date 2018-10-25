@@ -2245,8 +2245,6 @@ as_test_app_validate_file_bad_func (void)
 				    "<translation> not specified");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<release> versions are not in order");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
-				    "<release> version was duplicated");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				    "<release> timestamp is in the future");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,

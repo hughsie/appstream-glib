@@ -1430,12 +1430,6 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 				     "<keyword> invalid contents");
 	}
 
-	/* releases all have to have unique versions */
-	if (problems & AS_APP_PROBLEM_DUPLICATE_RELEASE) {
-		ai_app_validate_add (helper,
-				     AS_PROBLEM_KIND_TAG_INVALID,
-				     "<release> version was duplicated");
-	}
 	if (problems & AS_APP_PROBLEM_DUPLICATE_SCREENSHOT) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_TAG_INVALID,
