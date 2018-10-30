@@ -2017,7 +2017,10 @@ as_store_from_file_internal (AsStore *store,
 	if (priv->add_flags & AS_STORE_ADD_FLAG_ONLY_NATIVE_LANGS)
 		flags |= AS_NODE_FROM_XML_FLAG_ONLY_NATIVE_LANGS;
 	root = as_node_from_file (file, flags, cancellable, &error_local);
-	if (root == NULL) {
+	if (root == NULL && g_error_matches (error_local, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)) {
+		g_propagate_error (error, g_steal_pointer (&error_local));
+		return FALSE;
+	} else if (root == NULL) {
 		g_set_error (error,
 			     AS_STORE_ERROR,
 			     AS_STORE_ERROR_FAILED,
@@ -2057,6 +2060,9 @@ as_store_from_file_internal (AsStore *store,
  * If the root node does not have a 'origin' attribute, then the method
  * as_store_set_origin() should be called *before* this function if cached
  * icons are required.
+ *
+ * If @file does not exist, %G_IO_ERROR_NOT_FOUND will be returned. Other
+ * #GIOErrors and #AsStoreErrors may be returned as appropriate.
  *
  * Returns: %TRUE for success
  *
