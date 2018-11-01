@@ -87,6 +87,50 @@ as_content_rating_class_init (AsContentRatingClass *klass)
 	object_class->finalize = as_content_rating_finalize;
 }
 
+static gint
+ids_sort_cb (gconstpointer id_ptr_a, gconstpointer id_ptr_b)
+{
+	const gchar *id_a = *((const gchar **) id_ptr_a);
+	const gchar *id_b = *((const gchar **) id_ptr_b);
+
+	return g_strcmp0 (id_a, id_b);
+}
+
+/**
+ * as_content_rating_get_rating_ids:
+ * @content_rating: a #AsContentRating
+ *
+ * Gets the set of ratings IDs which are present in this @content_rating. An
+ * example of a ratings ID is `violence-bloodshed`.
+ *
+ * The IDs are returned in lexicographical order.
+ *
+ * Returns: (array zero-terminated=1) (transfer container): %NULL-terminated
+ *    array of ratings IDs; each ratings ID is owned by the #AsContentRating and
+ *    must not be freed, but the container must be freed with g_free()
+ *
+ * Since: 0.7.15
+ **/
+const gchar **
+as_content_rating_get_rating_ids (AsContentRating *content_rating)
+{
+	AsContentRatingPrivate *priv = GET_PRIVATE (content_rating);
+	GPtrArray *ids = g_ptr_array_new_with_free_func (NULL);
+	guint i;
+
+	g_return_val_if_fail (AS_IS_CONTENT_RATING (content_rating), NULL);
+
+	for (i = 0; i < priv->keys->len; i++) {
+		AsContentRatingKey *key = g_ptr_array_index (priv->keys, i);
+		g_ptr_array_add (ids, key->id);
+	}
+
+	g_ptr_array_sort (ids, ids_sort_cb);
+	g_ptr_array_add (ids, NULL);  /* NULL terminator */
+
+	return (const gchar **) g_ptr_array_free (g_steal_pointer (&ids), FALSE);
+}
+
 /**
  * as_content_rating_get_value:
  * @content_rating: a #AsContentRating

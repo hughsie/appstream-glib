@@ -82,6 +82,8 @@ void		 as_content_rating_add_attribute(AsContentRating	*content_rating,
 						 const gchar		*id,
 						 AsContentRatingValue	 value);
 
+const gchar	**as_content_rating_get_rating_ids (AsContentRating	*content_rating);
+
 /* setters */
 void		 as_content_rating_set_kind	(AsContentRating	*content_rating,
 						 const gchar		*kind);

@@ -1700,6 +1700,9 @@ as_test_content_rating_func (void)
 	gboolean ret;
 	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsContentRating) content_rating = NULL;
+	g_autofree const gchar **rating_ids = NULL;
+	const gchar *expected_rating_ids[] = { "drugs-alcohol", "violence-cartoon", NULL };
+	gsize i;
 
 	content_rating = as_content_rating_new ();
 
@@ -1722,6 +1725,15 @@ as_test_content_rating_func (void)
 			 AS_CONTENT_RATING_VALUE_MILD);
 	g_assert_cmpint (as_content_rating_get_value (content_rating, "violence-bloodshed"), ==,
 			 AS_CONTENT_RATING_VALUE_UNKNOWN);
+
+	rating_ids = as_content_rating_get_rating_ids (content_rating);
+	g_assert_nonnull (rating_ids);
+
+	for (i = 0; rating_ids[i] != NULL && expected_rating_ids[i] != NULL; i++)
+		g_assert_cmpstr (rating_ids[i], ==, expected_rating_ids[i]);
+	g_assert_null (rating_ids[i]);
+	g_assert_null (expected_rating_ids[i]);
+
 	as_node_unref (root);
 
 	/* check CSM */
