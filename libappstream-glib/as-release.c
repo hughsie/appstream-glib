@@ -58,6 +58,7 @@ typedef struct
 	GHashTable		*blobs;		/* of AsRefString:GBytes */
 	GHashTable		*descriptions;
 	guint64			 timestamp;
+	guint64			 install_duration;
 	GPtrArray		*locations;	/* of AsRefString, lazy */
 	GPtrArray		*checksums;	/* of AsChecksum, lazy */
 } AsReleasePrivate;
@@ -530,6 +531,24 @@ as_release_get_timestamp (AsRelease *release)
 }
 
 /**
+ * as_release_get_install_duration:
+ * @release: a #AsRelease instance.
+ *
+ * Gets the typical install duration.
+ *
+ * Returns: install duration in seconds, or 0 for unset
+ *
+ * Since: 0.7.15
+ **/
+guint64
+as_release_get_install_duration (AsRelease *release)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_val_if_fail (AS_IS_RELEASE (release), 0);
+	return priv->install_duration;
+}
+
+/**
  * as_release_get_description:
  * @release: a #AsRelease instance.
  * @locale: (nullable): the locale. e.g. "en_GB"
@@ -704,6 +723,23 @@ as_release_set_timestamp (AsRelease *release, guint64 timestamp)
 }
 
 /**
+ * as_release_set_install_duration:
+ * @release: a #AsRelease instance.
+ * @install_duration: the install duration in seconds
+ *
+ * Sets the typical duration of the install.
+ *
+ * Since: 0.7.15
+ **/
+void
+as_release_set_install_duration (AsRelease *release, guint64 install_duration)
+{
+	AsReleasePrivate *priv = GET_PRIVATE (release);
+	g_return_if_fail (AS_IS_RELEASE (release));
+	priv->install_duration = install_duration;
+}
+
+/**
  * as_release_set_description:
  * @release: a #AsRelease instance.
  * @locale: (nullable): the locale. e.g. "en_GB"
@@ -778,6 +814,12 @@ as_release_node_insert (AsRelease *release, GNode *parent, AsNodeContext *ctx)
 	}
 	if (priv->version != NULL)
 		as_node_add_attribute (n, "version", priv->version);
+	if (priv->install_duration > 0) {
+		g_autofree gchar *install_duration_str = NULL;
+		install_duration_str = g_strdup_printf ("%" G_GUINT64_FORMAT,
+							priv->install_duration);
+		as_node_add_attribute (n, "install_duration", install_duration_str);
+	}
 	for (guint i = 0; priv->locations != NULL && i < priv->locations->len; i++) {
 		const gchar *tmp = g_ptr_array_index (priv->locations, i);
 		as_node_insert (n, "location", tmp,
@@ -851,6 +893,9 @@ as_release_node_parse (AsRelease *release, GNode *node,
 	tmp = as_node_get_attribute (node, "version");
 	if (tmp != NULL)
 		as_release_set_version (release, tmp);
+	tmp = as_node_get_attribute (node, "install_duration");
+	if (tmp != NULL)
+		priv->install_duration = g_ascii_strtoull (tmp, NULL, 10);
 
 	/* get optional locations */
 	if (priv->locations != NULL)

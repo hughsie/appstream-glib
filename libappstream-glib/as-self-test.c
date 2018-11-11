@@ -456,7 +456,8 @@ as_test_release_func (void)
 	AsNode *n;
 	AsNode *root;
 	GString *xml;
-	const gchar *src = "<release type=\"stable\" timestamp=\"123\" urgency=\"critical\" version=\"0.1.2\"/>";
+	const gchar *src = "<release type=\"stable\" install_duration=\"120\" "
+			   "timestamp=\"123\" urgency=\"critical\" version=\"0.1.2\"/>";
 	gboolean ret;
 	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autoptr(AsRelease) release = NULL;

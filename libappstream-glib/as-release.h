@@ -98,6 +98,7 @@ const gchar	*as_release_get_version		(AsRelease	*release);
 GBytes		*as_release_get_blob		(AsRelease	*release,
 						 const gchar	*filename);
 guint64		 as_release_get_timestamp	(AsRelease	*release);
+guint64		 as_release_get_install_duration(AsRelease	*release);
 const gchar	*as_release_get_description	(AsRelease	*release,
 						 const gchar	*locale);
 GPtrArray	*as_release_get_locations	(AsRelease	*release);
@@ -121,6 +122,8 @@ void		 as_release_set_blob		(AsRelease	*release,
 						 GBytes		*blob);
 void		 as_release_set_timestamp	(AsRelease	*release,
 						 guint64	 timestamp);
+void		 as_release_set_install_duration(AsRelease	*release,
+						 guint64	 install_duration);
 void		 as_release_set_description	(AsRelease	*release,
 						 const gchar	*locale,
 						 const gchar	*description);
