@@ -1463,6 +1463,209 @@ as_utils_vercmp_full (const gchar *version_a,
 }
 
 /**
+ * as_utils_version_reparse:
+ * @version: A version number
+ *
+ * Returns a dotted decimal version string from a version string. The supported
+ * formats are:
+ *
+ * - Dotted decimal, e.g. "1.2.3"
+ * - Base 16, a hex number *with* a 0x prefix, e.g. "0x10203"
+ *
+ * Anything with a '.' or that doesn't match 0x[a-f,0-9] is considered
+ * a string and returned without modification.
+ *
+ * Returns: A version number, e.g. "1.0.3"
+ *
+ * Since: 0.7.15
+ */
+gchar *
+as_utils_version_reparse (const gchar *version)
+{
+	const gchar *version_noprefix = version;
+	gchar *endptr = NULL;
+	guint64 tmp;
+	guint base;
+
+	/* already dotted decimal */
+	if (g_strstr_len (version, -1, ".") != NULL)
+		return g_strdup (version);
+
+	/* convert 0x prefixed strings to dotted decimal */
+	if (g_str_has_prefix (version, "0x")) {
+		version_noprefix += 2;
+		base = 16;
+	} else {
+		/* just return the string */
+		return g_strdup (version);
+	}
+
+	/* convert */
+	tmp = g_ascii_strtoull (version_noprefix, &endptr, base);
+	if (endptr != NULL && endptr[0] != '\0')
+		return g_strdup (version);
+	if (tmp == 0)
+		return g_strdup (version);
+	return as_utils_version_from_uint32 ((guint32) tmp, AS_VERSION_PARSE_FLAG_USE_TRIPLET);
+}
+
+// Based on: https://github.com/rpm-software-management/rpm/blob/ca8ff08e4f61f05c743797ea4afbb9bf0bce3064/lib/rpmvercmp.c#L12-L122
+/**
+ * as_utils_vercmp_rpm:
+ * @version_a: the release version, e.g. 1.2.3
+ * @version_b: the release version, e.g. 1.2.3.1
+ *
+ * Compares version numbers for sorting.
+ *
+ * Returns: -1 if a < b, +1 if a > b, 0 if they are equal
+ *
+ * Since: 0.7.15
+ */
+gint
+as_utils_vercmp_rpm (const gchar *version_a, const gchar *version_b)
+{
+	/* easy comparison to see if versions are identical */
+	if (g_strcmp0(version_a, version_b) == 0) return 0;
+
+	gchar oldch1, oldch2;
+	gchar abuf[strlen(version_a)+1], bbuf[strlen(version_b)+1];
+	gchar *str1 = abuf, *str2 = bbuf;
+	gchar * one, * two;
+	gint rc;
+	gint isnum;
+
+	g_strlcpy(str1, version_a, sizeof(abuf));
+	g_strlcpy(str2, version_b, sizeof(bbuf));
+
+	one = str1;
+	two = str2;
+
+	/* loop through each version segment of str1 and str2 and compare them */
+	while (*one || *two) {
+	while (*one && !g_ascii_isalnum(*one) && *one != '~') one++;
+	while (*two && !g_ascii_isalnum(*two) && *two != '~') two++;
+
+	/* handle the tilde separator, it sorts before everything else */
+	if (*one == '~' || *two == '~') {
+		if (*one != '~') return 1;
+		if (*two != '~') return -1;
+		one++;
+		two++;
+		continue;
+	}
+
+	/* If we ran to the end of either, we are finished with the loop */
+	if (!(*one && *two)) break;
+
+	str1 = one;
+	str2 = two;
+
+	/* grab first completely alpha or completely numeric segment */
+	/* leave one and two pointing to the start of the alpha or numeric */
+	/* segment and walk str1 and str2 to end of segment */
+	if (g_ascii_isdigit(*str1)) {
+		while (*str1 && g_ascii_isdigit(*str1)) str1++;
+		while (*str2 && g_ascii_isdigit(*str2)) str2++;
+		isnum = 1;
+	} else {
+		while (*str1 && g_ascii_isalpha(*str1)) str1++;
+		while (*str2 && g_ascii_isalpha(*str2)) str2++;
+		isnum = 0;
+	}
+
+	/* save character at the end of the alpha or numeric segment */
+	/* so that they can be restored after the comparison */
+	oldch1 = *str1;
+	*str1 = '\0';
+	oldch2 = *str2;
+	*str2 = '\0';
+
+	/* this cannot happen, as we previously tested to make sure that */
+	/* the first string has a non-null segment */
+	if (one == str1) return -1;	/* arbitrary */
+
+	/* take care of the case where the two version segments are */
+	/* different types: one numeric, the other alpha (i.e. empty) */
+	/* numeric segments are always newer than alpha segments */
+	/* XXX See patch #60884 (and details) from bugzilla #50977. */
+	if (two == str2) return (isnum ? 1 : -1);
+
+	if (isnum) {
+		gsize onelen, twolen;
+		/* this used to be done by converting the digit segments */
+		/* to ints using atoi() - it's changed because long  */
+		/* digit segments can overflow an int - this should fix that. */
+
+		/* throw away any leading zeros - it's a number, right? */
+		while (*one == '0') one++;
+		while (*two == '0') two++;
+
+		/* whichever number has more digits wins */
+		onelen = strlen(one);
+		twolen = strlen(two);
+		if (onelen > twolen) return 1;
+		if (twolen > onelen) return -1;
+	}
+
+	/* strcmp will return which one is greater - even if the two */
+	/* segments are alpha or if they are numeric.  don't return  */
+	/* if they are equal because there might be more segments to */
+	/* compare */
+	rc = g_strcmp0(one, two);
+	if (rc) return (rc < 1 ? -1 : 1);
+
+	/* restore character that was replaced by null above */
+	*str1 = oldch1;
+	one = str1;
+	*str2 = oldch2;
+	two = str2;
+	}
+
+	/* this catches the case where all numeric and alpha segments have */
+	/* compared identically but the segment sepparating characters were */
+	/* different */
+	if ((!*one) && (!*two)) return 0;
+
+	/* whichever version still has characters left over wins */
+	if (!*one) return -1; else return 1;
+}
+
+/**
+ * as_utils_vercmp_complex:
+ * @version_a: the release version, e.g. 1.2.3
+ * @version_b: the release version, e.g. 1.2.3.1
+ * @flags: some #AsVersionCompareFlag
+ *
+ * Compares version numbers for sorting.
+ *
+ * Returns: -1 if a < b, +1 if a > b, 0 if they are equal, and %G_MAXINT on error
+ *
+ * Since: 0.7.15
+ */
+gint
+as_utils_vercmp_complex (const gchar *version_a,
+			 const gchar *version_b,
+			 AsVersionCompareFlag flags)
+{
+	/* sanity check */
+	if (version_a == NULL || version_b == NULL)
+		return G_MAXINT;
+
+	/* optimisation */
+	if (g_strcmp0 (version_a, version_b) == 0)
+		return 0;
+
+	/* split into sections, and try to parse */
+	if (flags & AS_VERSION_COMPARE_FLAG_USE_HEURISTICS) {
+		g_autofree gchar *str_a = as_utils_version_reparse (version_a);
+		g_autofree gchar *str_b = as_utils_version_reparse (version_b);
+		return as_utils_vercmp_rpm (str_a, str_b);
+	} else {
+		return as_utils_vercmp_rpm (version_a, version_b);
+	}
+}
+
+/**
  * as_utils_vercmp:
  * @version_a: the release version, e.g. 1.2.3
  * @version_b: the release version, e.g. 1.2.3.1
@@ -1476,8 +1679,8 @@ as_utils_vercmp_full (const gchar *version_a,
 gint
 as_utils_vercmp (const gchar *version_a, const gchar *version_b)
 {
-	return as_utils_vercmp_full (version_a, version_b,
-				     AS_VERSION_COMPARE_FLAG_USE_HEURISTICS);
+	return as_utils_vercmp_complex (version_a, version_b,
+					AS_VERSION_COMPARE_FLAG_USE_HEURISTICS);
 }
 
 /**

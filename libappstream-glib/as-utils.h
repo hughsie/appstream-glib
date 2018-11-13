@@ -163,6 +163,12 @@ gchar		**as_utils_search_tokenize	(const gchar	*search);
 gint		 as_utils_vercmp_full		(const gchar	*version_a,
 						 const gchar	*version_b,
 						 AsVersionCompareFlag flags);
+gchar		*as_utils_version_reparse	(const gchar	*version);
+gint		 as_utils_vercmp_rpm		(const gchar	*version_a,
+						 const gchar	*version_b);
+gint		 as_utils_vercmp_complex	(const gchar	*version_a,
+						 const gchar	*version_b,
+						 AsVersionCompareFlag flags);
 gint		 as_utils_vercmp		(const gchar	*version_a,
 						 const gchar	*version_b);
 gboolean	 as_utils_guid_is_valid		(const gchar	*guid);
