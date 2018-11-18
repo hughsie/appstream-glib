@@ -177,8 +177,9 @@ gchar		*as_utils_version_from_uint32	(guint32	 val,
 						 AsVersionParseFlag flags);
 gchar		*as_utils_version_from_uint16	(guint16	 val,
 						 AsVersionParseFlag flags);
+gchar		*as_utils_version_parse_full	(const gchar	*version,
+						 const gboolean	hex_only);
 gchar		*as_utils_version_parse		(const gchar	*version);
-gchar		*as_utils_version_parse_hex	(const gchar	*version);
 guint		 as_utils_string_replace	(GString	*string,
 						 const gchar	*search,
 						 const gchar	*replace);

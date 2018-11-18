@@ -1414,8 +1414,8 @@ as_utils_vercmp_full (const gchar *version_a,
 
 	/* split into sections, and try to parse */
 	if (flags & AS_VERSION_COMPARE_FLAG_USE_HEURISTICS) {
-		g_autofree gchar *str_a = as_utils_version_parse_hex (version_a);
-		g_autofree gchar *str_b = as_utils_version_parse_hex (version_b);
+		g_autofree gchar *str_a = as_utils_version_parse_full (version_a, TRUE);
+		g_autofree gchar *str_b = as_utils_version_parse_full (version_b, TRUE);
 		return as_utils_vercmp_rpm (str_a, str_b);
 	} else {
 		return as_utils_vercmp_rpm (version_a, version_b);
@@ -1750,15 +1750,16 @@ as_utils_version_from_uint16 (guint16 val, AsVersionParseFlag flags)
 }
 
 /**
- * as_utils_version_parse:
+ * as_utils_version_parse_full:
  * @version: A version number
+ * @hex_only: Turn off heuristic for anything that does not match hex number
  *
  * Returns a dotted decimal version string from a version string. The supported
  * formats are:
  *
  * - Dotted decimal, e.g. "1.2.3"
  * - Base 16, a hex number *with* a 0x prefix, e.g. "0x10203"
- * - Base 10, a string containing just [0-9], e.g. "66051"
+ * - Base 10, a string containing just [0-9], e.g. "66051" (only if hex_only == FALSE)
  * - Date in YYYYMMDD format, e.g. 20150915
  *
  * Anything with a '.' or that doesn't match [0-9] or 0x[a-f,0-9] is considered
@@ -1766,10 +1767,10 @@ as_utils_version_from_uint16 (guint16 val, AsVersionParseFlag flags)
  *
  * Returns: A version number, e.g. "1.0.3"
  *
- * Since: 0.5.2
+ * Since: 0.7.15
  */
 gchar *
-as_utils_version_parse (const gchar *version)
+as_utils_version_parse_full (const gchar *version, const gboolean hex_only)
 {
 	const gchar *version_noprefix = version;
 	gchar *endptr = NULL;
@@ -1791,6 +1792,10 @@ as_utils_version_parse (const gchar *version)
 		version_noprefix += 2;
 		base = 16;
 	} else {
+		/* just return the string */
+		if (hex_only)
+			return g_strdup (version);
+		
 		/* for non-numeric content, just return the string */
 		for (i = 0; version[i] != '\0'; i++) {
 			if (!g_ascii_isdigit (version[i]))
@@ -1809,7 +1814,7 @@ as_utils_version_parse (const gchar *version)
 }
 
 /**
- * as_utils_version_parse_hex:
+ * as_utils_version_parse:
  * @version: A version number
  *
  * Returns a dotted decimal version string from a version string. The supported
@@ -1817,42 +1822,20 @@ as_utils_version_parse (const gchar *version)
  *
  * - Dotted decimal, e.g. "1.2.3"
  * - Base 16, a hex number *with* a 0x prefix, e.g. "0x10203"
+ * - Base 10, a string containing just [0-9], e.g. "66051"
+ * - Date in YYYYMMDD format, e.g. 20150915
  *
- * Anything with a '.' or that doesn't match 0x[a-f,0-9] is considered
+ * Anything with a '.' or that doesn't match [0-9] or 0x[a-f,0-9] is considered
  * a string and returned without modification.
  *
  * Returns: A version number, e.g. "1.0.3"
  *
- * Since: 0.7.15
+ * Since: 0.5.2
  */
 gchar *
-as_utils_version_parse_hex (const gchar *version)
+as_utils_version_parse (const gchar *version)
 {
-	const gchar *version_noprefix = version;
-	gchar *endptr = NULL;
-	guint64 tmp;
-	guint base;
-
-	/* already dotted decimal */
-	if (g_strstr_len (version, -1, ".") != NULL)
-		return g_strdup (version);
-
-	/* convert 0x prefixed strings to dotted decimal */
-	if (g_str_has_prefix (version, "0x")) {
-		version_noprefix += 2;
-		base = 16;
-	} else {
-		/* just return the string */
-		return g_strdup (version);
-	}
-
-	/* convert */
-	tmp = g_ascii_strtoull (version_noprefix, &endptr, base);
-	if (endptr != NULL && endptr[0] != '\0')
-		return g_strdup (version);
-	if (tmp == 0)
-		return g_strdup (version);
-	return as_utils_version_from_uint32 ((guint32) tmp, AS_VERSION_PARSE_FLAG_USE_TRIPLET);
+	return as_utils_version_parse_full (version, FALSE);
 }
 
 /**
