@@ -1404,10 +1404,6 @@ as_utils_vercmp_full (const gchar *version_a,
 		      const gchar *version_b,
 		      AsVersionCompareFlag flags)
 {
-	guint longest_split;
-	g_auto(GStrv) split_a = NULL;
-	g_auto(GStrv) split_b = NULL;
-
 	/* sanity check */
 	if (version_a == NULL || version_b == NULL)
 		return G_MAXINT;
@@ -1420,93 +1416,10 @@ as_utils_vercmp_full (const gchar *version_a,
 	if (flags & AS_VERSION_COMPARE_FLAG_USE_HEURISTICS) {
 		g_autofree gchar *str_a = as_utils_version_parse (version_a);
 		g_autofree gchar *str_b = as_utils_version_parse (version_b);
-		split_a = g_strsplit (str_a, ".", -1);
-		split_b = g_strsplit (str_b, ".", -1);
+		return as_utils_vercmp_rpm (str_a, str_b);
 	} else {
-		split_a = g_strsplit (version_a, ".", -1);
-		split_b = g_strsplit (version_b, ".", -1);
+		return as_utils_vercmp_rpm (version_a, version_b);
 	}
-	longest_split = MAX (g_strv_length (split_a), g_strv_length (split_b));
-	for (guint i = 0; i < longest_split; i++) {
-		gchar *endptr_a = NULL;
-		gchar *endptr_b = NULL;
-		gint64 ver_a;
-		gint64 ver_b;
-
-		/* we lost or gained a dot */
-		if (split_a[i] == NULL)
-			return -1;
-		if (split_b[i] == NULL)
-			return 1;
-
-		/* compare integers */
-		ver_a = g_ascii_strtoll (split_a[i], &endptr_a, 10);
-		ver_b = g_ascii_strtoll (split_b[i], &endptr_b, 10);
-		if (ver_a < ver_b)
-			return -1;
-		if (ver_a > ver_b)
-			return 1;
-
-		/* compare strings */
-		if ((endptr_a != NULL && endptr_a[0] != '\0') ||
-		    (endptr_b != NULL && endptr_b[0] != '\0')) {
-			gint rc = as_utils_vercmp_chunk (endptr_a, endptr_b);
-			if (rc < 0)
-				return -1;
-			if (rc > 0)
-				return 1;
-		}
-	}
-
-	/* we really shouldn't get here */
-	return 0;
-}
-
-/**
- * as_utils_version_reparse:
- * @version: A version number
- *
- * Returns a dotted decimal version string from a version string. The supported
- * formats are:
- *
- * - Dotted decimal, e.g. "1.2.3"
- * - Base 16, a hex number *with* a 0x prefix, e.g. "0x10203"
- *
- * Anything with a '.' or that doesn't match 0x[a-f,0-9] is considered
- * a string and returned without modification.
- *
- * Returns: A version number, e.g. "1.0.3"
- *
- * Since: 0.7.15
- */
-gchar *
-as_utils_version_reparse (const gchar *version)
-{
-	const gchar *version_noprefix = version;
-	gchar *endptr = NULL;
-	guint64 tmp;
-	guint base;
-
-	/* already dotted decimal */
-	if (g_strstr_len (version, -1, ".") != NULL)
-		return g_strdup (version);
-
-	/* convert 0x prefixed strings to dotted decimal */
-	if (g_str_has_prefix (version, "0x")) {
-		version_noprefix += 2;
-		base = 16;
-	} else {
-		/* just return the string */
-		return g_strdup (version);
-	}
-
-	/* convert */
-	tmp = g_ascii_strtoull (version_noprefix, &endptr, base);
-	if (endptr != NULL && endptr[0] != '\0')
-		return g_strdup (version);
-	if (tmp == 0)
-		return g_strdup (version);
-	return as_utils_version_from_uint32 ((guint32) tmp, AS_VERSION_PARSE_FLAG_USE_TRIPLET);
 }
 
 // Based on: https://github.com/rpm-software-management/rpm/blob/ca8ff08e4f61f05c743797ea4afbb9bf0bce3064/lib/rpmvercmp.c#L12-L122
@@ -1631,41 +1544,6 @@ as_utils_vercmp_rpm (const gchar *version_a, const gchar *version_b)
 }
 
 /**
- * as_utils_vercmp_complex:
- * @version_a: the release version, e.g. 1.2.3
- * @version_b: the release version, e.g. 1.2.3.1
- * @flags: some #AsVersionCompareFlag
- *
- * Compares version numbers for sorting.
- *
- * Returns: -1 if a < b, +1 if a > b, 0 if they are equal, and %G_MAXINT on error
- *
- * Since: 0.7.15
- */
-gint
-as_utils_vercmp_complex (const gchar *version_a,
-			 const gchar *version_b,
-			 AsVersionCompareFlag flags)
-{
-	/* sanity check */
-	if (version_a == NULL || version_b == NULL)
-		return G_MAXINT;
-
-	/* optimisation */
-	if (g_strcmp0 (version_a, version_b) == 0)
-		return 0;
-
-	/* split into sections, and try to parse */
-	if (flags & AS_VERSION_COMPARE_FLAG_USE_HEURISTICS) {
-		g_autofree gchar *str_a = as_utils_version_reparse (version_a);
-		g_autofree gchar *str_b = as_utils_version_reparse (version_b);
-		return as_utils_vercmp_rpm (str_a, str_b);
-	} else {
-		return as_utils_vercmp_rpm (version_a, version_b);
-	}
-}
-
-/**
  * as_utils_vercmp:
  * @version_a: the release version, e.g. 1.2.3
  * @version_b: the release version, e.g. 1.2.3.1
@@ -1679,8 +1557,8 @@ as_utils_vercmp_complex (const gchar *version_a,
 gint
 as_utils_vercmp (const gchar *version_a, const gchar *version_b)
 {
-	return as_utils_vercmp_complex (version_a, version_b,
-					AS_VERSION_COMPARE_FLAG_USE_HEURISTICS);
+	return as_utils_vercmp_full (version_a, version_b,
+				     AS_VERSION_COMPARE_FLAG_USE_HEURISTICS);
 }
 
 /**
@@ -1880,10 +1758,8 @@ as_utils_version_from_uint16 (guint16 val, AsVersionParseFlag flags)
  *
  * - Dotted decimal, e.g. "1.2.3"
  * - Base 16, a hex number *with* a 0x prefix, e.g. "0x10203"
- * - Base 10, a string containing just [0-9], e.g. "66051"
- * - Date in YYYYMMDD format, e.g. 20150915
  *
- * Anything with a '.' or that doesn't match [0-9] or 0x[a-f,0-9] is considered
+ * Anything with a '.' or that doesn't match 0x[a-f,0-9] is considered
  * a string and returned without modification.
  *
  * Returns: A version number, e.g. "1.0.3"
@@ -1897,15 +1773,9 @@ as_utils_version_parse (const gchar *version)
 	gchar *endptr = NULL;
 	guint64 tmp;
 	guint base;
-	guint i;
 
 	/* already dotted decimal */
 	if (g_strstr_len (version, -1, ".") != NULL)
-		return g_strdup (version);
-
-	/* is a date */
-	if (g_str_has_prefix (version, "20") &&
-	    strlen (version) == 8)
 		return g_strdup (version);
 
 	/* convert 0x prefixed strings to dotted decimal */
@@ -1913,12 +1783,8 @@ as_utils_version_parse (const gchar *version)
 		version_noprefix += 2;
 		base = 16;
 	} else {
-		/* for non-numeric content, just return the string */
-		for (i = 0; version[i] != '\0'; i++) {
-			if (!g_ascii_isdigit (version[i]))
-				return g_strdup (version);
-		}
-		base = 10;
+		/* just return the string */
+		return g_strdup (version);
 	}
 
 	/* convert */
