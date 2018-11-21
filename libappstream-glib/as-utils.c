@@ -1412,7 +1412,7 @@ as_utils_vercmp_full (const gchar *version_a,
 	if (g_strcmp0 (version_a, version_b) == 0)
 		return 0;
 
-	/* split into sections, and try to parse */
+	/* decide to support hex format or not */
 	if (flags & AS_VERSION_COMPARE_FLAG_USE_HEURISTICS) {
 		g_autofree gchar *str_a = as_utils_version_parse_full (version_a, TRUE);
 		g_autofree gchar *str_b = as_utils_version_parse_full (version_b, TRUE);
@@ -1438,100 +1438,101 @@ gint
 as_utils_vercmp_rpm (const gchar *version_a, const gchar *version_b)
 {
 	/* easy comparison to see if versions are identical */
-	if (g_strcmp0(version_a, version_b) == 0) return 0;
+	if (g_strcmp0 (version_a, version_b) == 0)
+		return 0;
 
 	gchar oldch1, oldch2;
-	gchar abuf[strlen(version_a)+1], bbuf[strlen(version_b)+1];
+	gchar abuf[strlen (version_a)+1], bbuf[strlen (version_b)+1];
 	gchar *str1 = abuf, *str2 = bbuf;
-	gchar * one, * two;
+	gchar *one, *two;
 	gint rc;
-	gint isnum;
+	gboolean isnum;
 
-	g_strlcpy(str1, version_a, sizeof(abuf));
-	g_strlcpy(str2, version_b, sizeof(bbuf));
+	g_strlcpy(str1, version_a, sizeof (abuf));
+	g_strlcpy(str2, version_b, sizeof (bbuf));
 
 	one = str1;
 	two = str2;
 
 	/* loop through each version segment of str1 and str2 and compare them */
 	while (*one || *two) {
-	while (*one && !g_ascii_isalnum(*one) && *one != '~') one++;
-	while (*two && !g_ascii_isalnum(*two) && *two != '~') two++;
+		while (*one && !g_ascii_isalnum (*one) && *one != '~') one++;
+		while (*two && !g_ascii_isalnum (*two) && *two != '~') two++;
 
-	/* handle the tilde separator, it sorts before everything else */
-	if (*one == '~' || *two == '~') {
-		if (*one != '~') return 1;
-		if (*two != '~') return -1;
-		one++;
-		two++;
-		continue;
-	}
+		/* handle the tilde separator, it sorts before everything else */
+		if (*one == '~' || *two == '~') {
+			if (*one != '~') return 1;
+			if (*two != '~') return -1;
+			one++;
+			two++;
+			continue;
+		}
 
-	/* If we ran to the end of either, we are finished with the loop */
-	if (!(*one && *two)) break;
+		/* If we ran to the end of either, we are finished with the loop */
+		if (!(*one && *two)) break;
 
-	str1 = one;
-	str2 = two;
+		str1 = one;
+		str2 = two;
 
-	/* grab first completely alpha or completely numeric segment */
-	/* leave one and two pointing to the start of the alpha or numeric */
-	/* segment and walk str1 and str2 to end of segment */
-	if (g_ascii_isdigit(*str1)) {
-		while (*str1 && g_ascii_isdigit(*str1)) str1++;
-		while (*str2 && g_ascii_isdigit(*str2)) str2++;
-		isnum = 1;
-	} else {
-		while (*str1 && g_ascii_isalpha(*str1)) str1++;
-		while (*str2 && g_ascii_isalpha(*str2)) str2++;
-		isnum = 0;
-	}
+		/* grab first completely alpha or completely numeric segment */
+		/* leave one and two pointing to the start of the alpha or numeric */
+		/* segment and walk str1 and str2 to end of segment */
+		if (g_ascii_isdigit (*str1)) {
+			while (*str1 && g_ascii_isdigit (*str1)) str1++;
+			while (*str2 && g_ascii_isdigit (*str2)) str2++;
+			isnum = TRUE;
+		} else {
+			while (*str1 && g_ascii_isalpha (*str1)) str1++;
+			while (*str2 && g_ascii_isalpha (*str2)) str2++;
+			isnum = FALSE;
+		}
 
-	/* save character at the end of the alpha or numeric segment */
-	/* so that they can be restored after the comparison */
-	oldch1 = *str1;
-	*str1 = '\0';
-	oldch2 = *str2;
-	*str2 = '\0';
+		/* save character at the end of the alpha or numeric segment */
+		/* so that they can be restored after the comparison */
+		oldch1 = *str1;
+		*str1 = '\0';
+		oldch2 = *str2;
+		*str2 = '\0';
 
-	/* this cannot happen, as we previously tested to make sure that */
-	/* the first string has a non-null segment */
-	if (one == str1) return -1;	/* arbitrary */
+		/* this cannot happen, as we previously tested to make sure that */
+		/* the first string has a non-null segment */
+		if (one == str1) return -1;	/* arbitrary */
 
-	/* take care of the case where the two version segments are */
-	/* different types: one numeric, the other alpha (i.e. empty) */
-	/* numeric segments are always newer than alpha segments */
-	/* XXX See patch #60884 (and details) from bugzilla #50977. */
-	if (two == str2) return (isnum ? 1 : -1);
+		/* take care of the case where the two version segments are */
+		/* different types: one numeric, the other alpha (i.e. empty) */
+		/* numeric segments are always newer than alpha segments */
+		/* XXX See patch #60884 (and details) from bugzilla #50977. */
+		if (two == str2) return (isnum ? 1 : -1);
 
-	if (isnum) {
-		gsize onelen, twolen;
-		/* this used to be done by converting the digit segments */
-		/* to ints using atoi() - it's changed because long  */
-		/* digit segments can overflow an int - this should fix that. */
+		if (isnum) {
+			gsize onelen, twolen;
+			/* this used to be done by converting the digit segments */
+			/* to ints using atoi() - it's changed because long  */
+			/* digit segments can overflow an int - this should fix that. */
 
-		/* throw away any leading zeros - it's a number, right? */
-		while (*one == '0') one++;
-		while (*two == '0') two++;
+			/* throw away any leading zeros - it's a number, right? */
+			while (*one == '0') one++;
+			while (*two == '0') two++;
 
-		/* whichever number has more digits wins */
-		onelen = strlen(one);
-		twolen = strlen(two);
-		if (onelen > twolen) return 1;
-		if (twolen > onelen) return -1;
-	}
+			/* whichever number has more digits wins */
+			onelen = strlen (one);
+			twolen = strlen (two);
+			if (onelen > twolen) return 1;
+			if (twolen > onelen) return -1;
+		}
 
-	/* strcmp will return which one is greater - even if the two */
-	/* segments are alpha or if they are numeric.  don't return  */
-	/* if they are equal because there might be more segments to */
-	/* compare */
-	rc = g_strcmp0(one, two);
-	if (rc) return (rc < 1 ? -1 : 1);
+		/* strcmp will return which one is greater - even if the two */
+		/* segments are alpha or if they are numeric.  don't return  */
+		/* if they are equal because there might be more segments to */
+		/* compare */
+		rc = g_strcmp0 (one, two);
+		if (rc) return (rc < 1 ? -1 : 1);
 
-	/* restore character that was replaced by null above */
-	*str1 = oldch1;
-	one = str1;
-	*str2 = oldch2;
-	two = str2;
+		/* restore character that was replaced by null above */
+		*str1 = oldch1;
+		one = str1;
+		*str2 = oldch2;
+		two = str2;
 	}
 
 	/* this catches the case where all numeric and alpha segments have */
