@@ -1422,7 +1422,9 @@ as_utils_vercmp_full (const gchar *version_a,
 	}
 }
 
-// Based on: https://github.com/rpm-software-management/rpm/blob/ca8ff08e4f61f05c743797ea4afbb9bf0bce3064/lib/rpmvercmp.c#L12-L122
+// Based on:
+// https://github.com/rpm-software-management/rpm/blob/ca8ff08e4f61f05c743797ea4afbb9bf0bce3064/lib/rpmvercmp.c#L12-L122
+// https://github.com/ximion/appstream/blob/d10f947e4590b0f04fc6bd74acf04b7987057e36/src/as-utils.c#L1003-L1125
 /**
  * as_utils_vercmp_rpm:
  * @version_a: the release version, e.g. 1.2.3

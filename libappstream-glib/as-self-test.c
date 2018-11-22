@@ -5065,6 +5065,71 @@ as_test_utils_vercmp_func (void)
 	g_assert_cmpint (as_utils_vercmp ("1", NULL), ==, G_MAXINT);
 	g_assert_cmpint (as_utils_vercmp (NULL, "1"), ==, G_MAXINT);
 	g_assert_cmpint (as_utils_vercmp (NULL, NULL), ==, G_MAXINT);
+
+	/* numbers */
+	g_assert_cmpint (as_utils_vercmp ("0", "000"), ==, 0);
+	g_assert_cmpint (as_utils_vercmp ("001", "1"), ==, 0);
+	g_assert_cmpint (as_utils_vercmp ("001", "2"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("002", "1"), >, 0);
+	g_assert_cmpint (as_utils_vercmp ("010", "00100"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("0012345", "098765"), <, 0);
+
+	/* Blender */
+	g_assert_cmpint (as_utils_vercmp ("2.79b", "2.79b"), ==, 0);
+	g_assert_cmpint (as_utils_vercmp ("2.79a", "2.79b"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("2.79b", "2.79a"), >, 0);
+	g_assert_cmpint (as_utils_vercmp ("2.79", "2.79b"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("2.79b", "2.79"), >, 0);
+
+	/* Widelands */
+	g_assert_cmpint (as_utils_vercmp ("Build 9half", "Build 9half"), ==, 0);
+	g_assert_cmpint (as_utils_vercmp ("Build 9half", "Build 19"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("Build 19", "Build 9half"), >, 0);
+	g_assert_cmpint (as_utils_vercmp ("Build 9", "Build 19"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("Build 19", "Build 3"), >, 0);
+	g_assert_cmpint (as_utils_vercmp ("Build 1", "Build 2"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("Build 19", "Build 18"), >, 0);
+
+	/* Widelands-like */
+	g_assert_cmpint (as_utils_vercmp ("Build 9half", "Build 10"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("Build 9.5", "Build 10"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("Build 9+", "Build 10"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("Build 9a", "Build 10"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("Build 9", "Build 10"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("Build 009", "Build 10"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("9half", "10"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("9.5", "10"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("9+", "10"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("9a", "10"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("9", "10"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("009", "10"), <, 0);
+
+	/* RPM VersionComparison */
+	// https://fedoraproject.org/wiki/Archive:Tools/RPM/VersionComparison
+	g_assert_cmpint (as_utils_vercmp ("1.0010", "1.9"), >, 0);
+	g_assert_cmpint (as_utils_vercmp ("1.05", "1.5"), ==, 0);
+	g_assert_cmpint (as_utils_vercmp ("1.0", "1"), >, 0);
+	g_assert_cmpint (as_utils_vercmp ("2.50", "2.5"), >, 0);
+	g_assert_cmpint (as_utils_vercmp ("fc4", "fc.4"), ==, 0);
+	g_assert_cmpint (as_utils_vercmp ("FC5", "fc4"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("2a", "2.0"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("1.0", "1.fc4"), >, 0);
+	g_assert_cmpint (as_utils_vercmp ("3.0.0_fc", "3.0.0.fc"), ==, 0);
+
+	/* ximion AppStream */
+	// https://github.com/ximion/appstream/blob/d10f947e4590b0f04fc6bd74acf04b7987057e36/tests/test-basics.c#L382-L410
+	g_assert_cmpint (as_utils_vercmp ("6", "8"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("0.6.12b-d", "0.6.12a"), >, 0);
+	g_assert_cmpint (as_utils_vercmp ("7.4", "7.4"), ==, 0);
+	g_assert_cmpint (as_utils_vercmp ("ab.d", "ab.f"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("0.6.16", "0.6.14"), >, 0);
+	g_assert_cmpint (as_utils_vercmp ("5.9.1+dfsg-5pureos1", "5.9.1+dfsg-5"), >, 0);
+	g_assert_cmpint (as_utils_vercmp ("2.79", "2.79a"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("3.0.rc2", "3.0.0"), <, 0);
+	g_assert_cmpint (as_utils_vercmp ("3.0.0~rc2", "3.0.0"), <, 0);
+	g_assert_cmpint (as_utils_vercmp (NULL, NULL), ==, G_MAXINT);
+	g_assert_cmpint (as_utils_vercmp (NULL, "4.0"), ==, G_MAXINT);
+	g_assert_cmpint (as_utils_vercmp ("4.0", NULL), ==, G_MAXINT);
 }
 
 static void
