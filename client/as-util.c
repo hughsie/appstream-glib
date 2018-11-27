@@ -640,7 +640,8 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 			g_print ("\n\n");
 
 		/* check types */
-		if (as_format_guess_kind (values[f]) != AS_FORMAT_KIND_APPDATA) {
+		if (as_format_guess_kind (values[f]) != AS_FORMAT_KIND_APPDATA &&
+		    as_format_guess_kind (values[f]) != AS_FORMAT_KIND_METAINFO) {
 			g_set_error_literal (error,
 					     AS_ERROR,
 					     AS_ERROR_INVALID_ARGUMENTS,
