@@ -5929,8 +5929,12 @@ as_app_create_token_cache_target (AsApp *app, AsApp *donor)
 	/* add all the data we have */
 	if (priv->search_match & AS_APP_SEARCH_MATCH_ID) {
 		if (priv->id_filename != NULL) {
+			/* add the whole ID */
 			as_app_add_token (app, priv->id_filename, FALSE,
 					  AS_APP_SEARCH_MATCH_ID);
+			/* tokenize and add individual parts */
+			as_app_add_tokens (app, priv->id_filename, "C", FALSE,
+					   AS_APP_SEARCH_MATCH_ID);
 		}
 	}
 	locales = g_get_language_names ();
