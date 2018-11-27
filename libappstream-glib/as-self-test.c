@@ -3095,13 +3095,13 @@ as_test_app_search_func (void)
 			     GUINT_TO_POINTER (1));
 	as_app_set_search_blacklist (app, search_blacklist);
 
-	g_assert_cmpint (as_app_search_matches (app, "software"), ==, 96);
-	g_assert_cmpint (as_app_search_matches (app, "soft"), ==, 24);
+	g_assert_cmpint (as_app_search_matches (app, "software"), ==, 352);
+	g_assert_cmpint (as_app_search_matches (app, "soft"), ==, 88);
 	g_assert_cmpint (as_app_search_matches (app, "install"), ==, 32);
 	g_assert_cmpint (as_app_search_matches (app, "awesome"), ==, 128);
 	g_assert_cmpint (as_app_search_matches (app, "c++"), ==, 128);
 	g_assert_cmpint (as_app_search_matches (app, "d-feet"), ==, 128);
-	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) all), ==, 96);
+	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) all), ==, 352);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) none), ==, 0);
 	g_assert_cmpint (as_app_search_matches_all (app, (gchar**) mime), ==, 4);
 
