@@ -60,7 +60,6 @@ gdkpixbuf = dependency('gdk-pixbuf-2.0', version : '>= 2.31.5')
 
 # builder (default enabled)
 if get_option('builder')
-  gtk = dependency('gtk+-3.0')
   gmodule = dependency('gmodule-2.0')
   if get_option('rpm')
     rpm = dependency('rpm')
