@@ -3340,6 +3340,13 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	} else if (priv->nonet) {
 		as_util_app_log (app, "Missing %s:%s", url, cache_filename);
 	} else {
+		if (g_str_has_prefix (url, "file:")) {
+			g_set_error (error,
+				     AS_ERROR,
+				     AS_ERROR_FAILED,
+				     "file:// URLs like %s are not suported", url);
+			return FALSE;
+		}
 		uri = soup_uri_new (url);
 		if (uri == NULL) {
 			g_set_error (error,
