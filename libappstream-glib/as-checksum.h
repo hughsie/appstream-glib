@@ -53,6 +53,7 @@ struct _AsChecksumClass
  * @AS_CHECKSUM_TARGET_CONTAINER:		Container file, e.g. `.cab`
  * @AS_CHECKSUM_TARGET_CONTENT:			Extracted file, e.g. `.bin`
  * @AS_CHECKSUM_TARGET_SIGNATURE:		Signature, e.g. `.asc` or `.cat`
+ * @AS_CHECKSUM_TARGET_DEVICE:			Device-reported value
  *
  * The checksum target type.
  **/
@@ -61,6 +62,7 @@ typedef enum {
 	AS_CHECKSUM_TARGET_CONTAINER,		/* Since: 0.4.2 */
 	AS_CHECKSUM_TARGET_CONTENT,		/* Since: 0.4.2 */
 	AS_CHECKSUM_TARGET_SIGNATURE,		/* Since: 0.7.9 */
+	AS_CHECKSUM_TARGET_DEVICE,		/* Since: 0.7.15 */
 	/*< private >*/
 	AS_CHECKSUM_TARGET_LAST
 } AsChecksumTarget;

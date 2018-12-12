@@ -99,6 +99,8 @@ as_checksum_target_from_string (const gchar *target)
 		return AS_CHECKSUM_TARGET_CONTENT;
 	if (g_strcmp0 (target, "signature") == 0)
 		return AS_CHECKSUM_TARGET_SIGNATURE;
+	if (g_strcmp0 (target, "device") == 0)
+		return AS_CHECKSUM_TARGET_DEVICE;
 	return AS_CHECKSUM_TARGET_UNKNOWN;
 }
 
@@ -121,6 +123,8 @@ as_checksum_target_to_string (AsChecksumTarget target)
 		return "content";
 	if (target == AS_CHECKSUM_TARGET_SIGNATURE)
 		return "signature";
+	if (target == AS_CHECKSUM_TARGET_DEVICE)
+		return "device";
 	return NULL;
 }
 
