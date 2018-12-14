@@ -4730,7 +4730,7 @@ static void
 as_test_store_metadata_index_func (void)
 {
 	GPtrArray *apps;
-	const guint repeats = 10000;
+	const guint repeats = 500;
 	guint i;
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GTimer) timer = NULL;

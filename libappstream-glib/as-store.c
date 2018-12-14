@@ -473,7 +473,7 @@ as_store_get_apps_by_metadata (AsStore *store,
 		}
 		apps = g_hash_table_lookup (index, value);
 		if (apps != NULL)
-			return g_ptr_array_ref (apps);
+			return _dup_app_array (apps);
 		return g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	}
 
