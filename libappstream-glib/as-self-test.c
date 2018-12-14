@@ -3477,12 +3477,12 @@ as_test_store_flatpak_func (void)
 	AsApp *app;
 	AsFormat *format;
 	GError *error = NULL;
-	GPtrArray *apps;
 	gboolean ret;
 	g_autofree gchar *filename = NULL;
 	g_autofree gchar *filename_root = NULL;
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GFile) file = NULL;
+	g_autoptr(GPtrArray) apps = NULL;
 
 	/* make throws us under a bus, yet again */
 	g_setenv ("AS_SELF_TEST_PREFIX_DELIM", "_", TRUE);
@@ -3503,7 +3503,7 @@ as_test_store_flatpak_func (void)
 	/* test extraction of symlink data */
 	g_assert_cmpstr (as_store_get_origin (store), ==, "flatpak");
 	g_assert_cmpint (as_store_get_size (store), ==, 1);
-	apps = as_store_get_apps (store);
+	apps = as_store_dup_apps (store);
 	g_assert_cmpint (apps->len, ==, 1);
 	app = g_ptr_array_index (apps, 0);
 	g_assert_cmpstr (as_app_get_id (app), ==, "flatpak:test.desktop");
@@ -4730,7 +4730,7 @@ static void
 as_test_store_metadata_index_func (void)
 {
 	GPtrArray *apps;
-	const guint repeats = 10000;
+	const guint repeats = 500;
 	guint i;
 	g_autoptr(AsStore) store = NULL;
 	g_autoptr(GTimer) timer = NULL;

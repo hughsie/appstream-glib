@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
  * Copyright (C) 2013-2016 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2015-2018 Kalev Lember <klember@redhat.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -67,6 +68,7 @@ typedef struct
 	GHashTable		*hash_merge_id;	/* of GPtrArray of AsApp{id} */
 	GHashTable		*hash_unique_id;	/* of AsApp{unique_id} */
 	GHashTable		*hash_pkgname;	/* of AsApp{pkgname} */
+	GMutex			 mutex;
 	AsMonitor		*monitor;
 	GHashTable		*metadata_indexes;	/* GHashTable{key} */
 	GHashTable		*appinfo_dirs;	/* GHashTable{path:AsStorePathData} */
@@ -139,6 +141,7 @@ as_store_finalize (GObject *object)
 	g_hash_table_unref (priv->metadata_indexes);
 	g_hash_table_unref (priv->appinfo_dirs);
 	g_hash_table_unref (priv->search_blacklist);
+	g_mutex_clear (&priv->mutex);
 
 	G_OBJECT_CLASS (as_store_parent_class)->finalize (object);
 }
@@ -264,6 +267,22 @@ as_store_changed_uninhibit_cb (void *v)
 
 #define _cleanup_uninhibit_ __attribute__ ((cleanup(as_store_changed_uninhibit_cb)))
 
+static GPtrArray *
+_dup_app_array (GPtrArray *array)
+{
+	GPtrArray *array_dup;
+
+	g_return_val_if_fail (array != NULL, NULL);
+
+	array_dup = g_ptr_array_new_full (array->len, (GDestroyNotify) g_object_unref);
+	for (guint i = 0; i < array->len; i++) {
+		AsApp *app = g_ptr_array_index (array, i);
+		g_ptr_array_add (array_dup, g_object_ref (app));
+	}
+
+	return array_dup;
+}
+
 /**
  * as_store_add_filter:
  * @store: a #AsStore instance.
@@ -322,7 +341,11 @@ guint
 as_store_get_size (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_autoptr(GMutexLocker) locker = NULL;
+
 	g_return_val_if_fail (AS_IS_STORE (store), 0);
+
+	locker = g_mutex_locker_new (&priv->mutex);
 	return priv->array->len;
 }
 
@@ -340,8 +363,35 @@ GPtrArray *
 as_store_get_apps (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_autoptr(GMutexLocker) locker = NULL;
+
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+
+	locker = g_mutex_locker_new (&priv->mutex);
 	return priv->array;
+}
+
+/**
+ * as_store_dup_apps:
+ * @store: a #AsStore instance.
+ *
+ * Gets an array of all the valid applications in the store.
+ *
+ * Returns: (element-type AsApp) (transfer container): an array
+ *
+ * Since: 0.7.15
+ **/
+GPtrArray *
+as_store_dup_apps (AsStore *store)
+{
+
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_autoptr(GMutexLocker) locker = NULL;
+
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+
+	locker = g_mutex_locker_new (&priv->mutex);
+	return _dup_app_array (priv->array);
 }
 
 /**
@@ -356,7 +406,11 @@ void
 as_store_remove_all (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_autoptr(GMutexLocker) locker = NULL;
+
 	g_return_if_fail (AS_IS_STORE (store));
+
+	locker = g_mutex_locker_new (&priv->mutex);
 	g_ptr_array_set_size (priv->array, 0);
 	g_hash_table_remove_all (priv->hash_id);
 	g_hash_table_remove_all (priv->hash_merge_id);
@@ -423,8 +477,11 @@ as_store_get_apps_by_metadata (AsStore *store,
 	GHashTable *index;
 	GPtrArray *apps;
 	guint i;
+	g_autoptr(GMutexLocker) locker = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+
+	locker = g_mutex_locker_new (&priv->mutex);
 
 	/* do we have this indexed? */
 	index = g_hash_table_lookup (priv->metadata_indexes, key);
@@ -435,7 +492,7 @@ as_store_get_apps_by_metadata (AsStore *store,
 		}
 		apps = g_hash_table_lookup (index, value);
 		if (apps != NULL)
-			return g_ptr_array_ref (apps);
+			return _dup_app_array (apps);
 		return g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	}
 
@@ -468,10 +525,15 @@ as_store_get_apps_by_id (AsStore *store, const gchar *id)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	GPtrArray *apps;
+	g_autoptr(GMutexLocker) locker = NULL;
+
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+
+	locker = g_mutex_locker_new (&priv->mutex);
+
 	apps = g_hash_table_lookup (priv->hash_id, id);
 	if (apps != NULL)
-		return g_ptr_array_ref (apps);
+		return _dup_app_array (apps);
 	return g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 }
 
@@ -490,8 +552,40 @@ GPtrArray *
 as_store_get_apps_by_id_merge (AsStore *store, const gchar *id)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_autoptr(GMutexLocker) locker = NULL;
+
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+
+	locker = g_mutex_locker_new (&priv->mutex);
 	return g_hash_table_lookup (priv->hash_merge_id, id);
+}
+
+/**
+ * as_store_dup_apps_by_id_merge:
+ * @store: a #AsStore instance.
+ * @id: the application full ID.
+ *
+ * Gets an array of all the merge applications that match a specific ID.
+ *
+ * Returns: (element-type AsApp) (transfer container): an array
+ *
+ * Since: 0.7.15
+ **/
+GPtrArray *
+as_store_dup_apps_by_id_merge (AsStore *store, const gchar *id)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	GPtrArray *apps;
+	g_autoptr(GMutexLocker) locker = NULL;
+
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+
+	locker = g_mutex_locker_new (&priv->mutex);
+
+	apps = g_hash_table_lookup (priv->hash_merge_id, id);
+	if (apps != NULL)
+		return _dup_app_array (apps);
+	return g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 }
 
 /**
@@ -509,6 +603,12 @@ as_store_get_apps_by_id_merge (AsStore *store, const gchar *id)
 void
 as_store_add_metadata_index (AsStore *store, const gchar *key)
 {
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_autoptr(GMutexLocker) locker = NULL;
+
+	g_return_if_fail (AS_IS_STORE (store));
+
+	locker = g_mutex_locker_new (&priv->mutex);
 	as_store_regen_metadata_index_key (store, key);
 }
 
@@ -531,7 +631,11 @@ as_store_get_app_by_id (AsStore *store, const gchar *id)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	GPtrArray *apps;
+	g_autoptr(GMutexLocker) locker = NULL;
+
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+
+	locker = g_mutex_locker_new (&priv->mutex);
 	apps = g_hash_table_lookup (priv->hash_id, id);
 	if (apps == NULL)
 		return NULL;
@@ -578,6 +682,7 @@ as_store_get_app_by_app (AsStore *store, AsApp *app)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	guint i;
+	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&priv->mutex);
 
 	for (i = 0; i < priv->array->len; i++) {
 		AsApp *app_tmp = g_ptr_array_index (priv->array, i);
@@ -612,8 +717,10 @@ as_store_get_app_by_unique_id (AsStore *store,
 	g_return_val_if_fail (unique_id != NULL, NULL);
 
 	/* no globs */
-	if ((search_flags & AS_STORE_SEARCH_FLAG_USE_WILDCARDS) == 0)
+	if ((search_flags & AS_STORE_SEARCH_FLAG_USE_WILDCARDS) == 0) {
+		g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&priv->mutex);
 		return g_hash_table_lookup (priv->hash_unique_id, unique_id);
+	}
 
 	/* create virtual app using scope/system/origin/kind/id/branch */
 	app_tmp = _as_app_new_from_unique_id (unique_id);
@@ -643,10 +750,13 @@ as_store_get_app_by_provide (AsStore *store, AsProvideKind kind, const gchar *va
 	guint i;
 	guint j;
 	GPtrArray *provides;
+	g_autoptr(GMutexLocker) locker = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 	g_return_val_if_fail (kind != AS_PROVIDE_KIND_UNKNOWN, NULL);
 	g_return_val_if_fail (value != NULL, NULL);
+
+	locker = g_mutex_locker_new (&priv->mutex);
 
 	/* find an application that provides something */
 	for (i = 0; i < priv->array->len; i++) {
@@ -681,10 +791,13 @@ AsApp *
 as_store_get_app_by_launchable (AsStore *store, AsLaunchableKind kind, const gchar *value)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_autoptr(GMutexLocker) locker = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 	g_return_val_if_fail (kind != AS_LAUNCHABLE_KIND_UNKNOWN, NULL);
 	g_return_val_if_fail (value != NULL, NULL);
+
+	locker = g_mutex_locker_new (&priv->mutex);
 
 	for (guint i = 0; i < priv->array->len; i++) {
 		AsApp *app = g_ptr_array_index (priv->array, i);
@@ -719,10 +832,13 @@ as_store_get_apps_by_provide (AsStore *store, AsProvideKind kind, const gchar *v
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	GPtrArray *apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	g_autoptr(GMutexLocker) locker = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 	g_return_val_if_fail (kind != AS_PROVIDE_KIND_UNKNOWN, NULL);
 	g_return_val_if_fail (value != NULL, NULL);
+
+	locker = g_mutex_locker_new (&priv->mutex);
 
 	/* find an application that provides something */
 	for (guint i = 0; i < priv->array->len; i++) {
@@ -757,9 +873,12 @@ as_store_get_app_by_id_ignore_prefix (AsStore *store, const gchar *id)
 	AsApp *app;
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	guint i;
+	g_autoptr(GMutexLocker) locker = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 	g_return_val_if_fail (id != NULL, NULL);
+
+	locker = g_mutex_locker_new (&priv->mutex);
 
 	/* find an application that provides something */
 	for (i = 0; i < priv->array->len; i++) {
@@ -954,8 +1073,11 @@ as_store_get_app_by_pkgname (AsStore *store, const gchar *pkgname)
 	AsApp *app;
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	guint i;
+	g_autoptr(GMutexLocker) locker = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+
+	locker = g_mutex_locker_new (&priv->mutex);
 
 	/* in most cases, we can use the cache */
 	app = g_hash_table_lookup (priv->hash_pkgname, pkgname);
@@ -996,6 +1118,7 @@ as_store_get_app_by_pkgnames (AsStore *store, gchar **pkgnames)
 	g_return_val_if_fail (pkgnames != NULL, NULL);
 
 	for (i = 0; pkgnames[i] != NULL; i++) {
+		g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&priv->mutex);
 		app = g_hash_table_lookup (priv->hash_pkgname, pkgnames[i]);
 		if (app != NULL)
 			return app;
@@ -1024,6 +1147,7 @@ as_store_remove_app (AsStore *store, AsApp *app)
 	g_signal_emit (store, signals[SIGNAL_APP_REMOVED], 0, app);
 
 	/* only remove this specific unique app */
+	g_mutex_lock (&priv->mutex);
 	apps = g_hash_table_lookup (priv->hash_id, as_app_get_id (app));
 	if (apps != NULL) {
 		g_ptr_array_remove (apps, app);
@@ -1037,6 +1161,7 @@ as_store_remove_app (AsStore *store, AsApp *app)
 	g_hash_table_remove (priv->hash_unique_id, as_app_get_unique_id (app));
 	g_ptr_array_remove (priv->array, app);
 	g_hash_table_remove_all (priv->metadata_indexes);
+	g_mutex_unlock (&priv->mutex);
 
 	/* removed */
 	as_store_perhaps_emit_changed (store, "remove-app");
@@ -1054,27 +1179,37 @@ as_store_remove_app (AsStore *store, AsApp *app)
 void
 as_store_remove_app_by_id (AsStore *store, const gchar *id)
 {
-	AsApp *app;
 	AsStorePrivate *priv = GET_PRIVATE (store);
-	guint i;
+	g_autoptr(GPtrArray) apps = NULL;
 
 	g_return_if_fail (AS_IS_STORE (store));
 
-	if (!g_hash_table_remove (priv->hash_id, id))
+	g_mutex_lock (&priv->mutex);
+	if (!g_hash_table_remove (priv->hash_id, id)) {
+		g_mutex_unlock (&priv->mutex);
 		return;
-	for (i = 0; i < priv->array->len; i++) {
-		app = g_ptr_array_index (priv->array, i);
+	}
+	g_mutex_unlock (&priv->mutex);
+
+	apps = as_store_dup_apps (store);
+	for (guint i = 0; i < apps->len; i++) {
+		AsApp *app = g_ptr_array_index (apps, i);
+
 		if (g_strcmp0 (id, as_app_get_id (app)) != 0)
 			continue;
 
 		/* emit before removal */
 		g_signal_emit (store, signals[SIGNAL_APP_REMOVED], 0, app);
 
+		g_mutex_lock (&priv->mutex);
 		g_ptr_array_remove (priv->array, app);
 		g_hash_table_remove (priv->hash_unique_id,
 				     as_app_get_unique_id (app));
+		g_mutex_unlock (&priv->mutex);
 	}
+	g_mutex_lock (&priv->mutex);
 	g_hash_table_remove_all (priv->metadata_indexes);
+	g_mutex_unlock (&priv->mutex);
 
 	/* removed */
 	as_store_perhaps_emit_changed (store, "remove-app-by-id");
@@ -1179,7 +1314,9 @@ as_store_add_app (AsStore *store, AsApp *app)
 	if (as_app_has_quirk (app, AS_APP_QUIRK_MATCH_ANY_PREFIX)) {
 		guint64 flags = AS_APP_SUBSUME_FLAG_MERGE;
 		AsAppMergeKind merge_kind = as_app_get_merge_kind (app);
+		g_autoptr(GPtrArray) apps_changed = NULL;
 
+		g_mutex_lock (&priv->mutex);
 		apps = g_hash_table_lookup (priv->hash_merge_id, id);
 		if (apps == NULL) {
 			apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -1191,11 +1328,16 @@ as_store_add_app (AsStore *store, AsApp *app)
 			 as_app_merge_kind_to_string (merge_kind),
 			 as_app_get_unique_id (app));
 		g_ptr_array_add (apps, g_object_ref (app));
+		g_mutex_unlock (&priv->mutex);
 
 		/* apply to existing components */
 		flags |= AS_APP_SUBSUME_FLAG_NO_OVERWRITE;
 		if (merge_kind == AS_APP_MERGE_KIND_REPLACE)
 			flags |= AS_APP_SUBSUME_FLAG_REPLACE;
+
+		apps_changed = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+
+		g_mutex_lock (&priv->mutex);
 		for (i = 0; i < priv->array->len; i++) {
 			AsApp *app_tmp = g_ptr_array_index (priv->array, i);
 			if (g_strcmp0 (as_app_get_id (app_tmp), id) != 0)
@@ -1204,7 +1346,11 @@ as_store_add_app (AsStore *store, AsApp *app)
 				 as_app_merge_kind_to_string (merge_kind),
 				 id, as_app_get_unique_id (app_tmp));
 			as_app_subsume_full (app_tmp, app, flags);
-
+			g_ptr_array_add (apps_changed, g_object_ref (app_tmp));
+		}
+		g_mutex_unlock (&priv->mutex);
+		for (i = 0; i < apps_changed->len; i++) {
+			AsApp *app_tmp = g_ptr_array_index (apps_changed, i);
 			/* emit after changes have been made */
 			g_signal_emit (store, signals[SIGNAL_APP_CHANGED],
 				       0, app_tmp);
@@ -1213,6 +1359,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 	}
 
 	/* is there any merge components to add to this app */
+	g_mutex_lock (&priv->mutex);
 	apps = g_hash_table_lookup (priv->hash_merge_id, id);
 	if (apps != NULL) {
 		for (i = 0; i < apps->len; i++) {
@@ -1229,14 +1376,17 @@ as_store_add_app (AsStore *store, AsApp *app)
 			as_app_subsume_full (app, app_tmp, flags);
 		}
 	}
+	g_mutex_unlock (&priv->mutex);
 
 	/* find the item */
 	if (priv->add_flags & AS_STORE_ADD_FLAG_USE_UNIQUE_ID) {
 		item = as_store_get_app_by_app (store, app);
 	} else {
+		g_mutex_lock (&priv->mutex);
 		apps = g_hash_table_lookup (priv->hash_id, id);
 		if (apps != NULL && apps->len > 0)
 			item = g_ptr_array_index (apps, 0);
+		g_mutex_unlock (&priv->mutex);
 	}
 	if (item != NULL) {
 		AsFormat *app_format = as_app_get_format_default (app);
@@ -1364,6 +1514,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 	}
 
 	/* create hash of id:[apps] if required */
+	g_mutex_lock (&priv->mutex);
 	apps = g_hash_table_lookup (priv->hash_id, id);
 	if (apps == NULL) {
 		apps = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -1385,6 +1536,7 @@ as_store_add_app (AsStore *store, AsApp *app)
 				     g_strdup (pkgname),
 				     g_object_ref (app));
 	}
+	g_mutex_unlock (&priv->mutex);
 
 	/* add helper objects */
 	as_app_set_stemmer (app, priv->stemmer);
@@ -1432,15 +1584,16 @@ as_store_match_addons (AsStore *store)
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	guint i;
 	g_autoptr(AsProfileTask) ptask = NULL;
+	g_autoptr(GPtrArray) apps = NULL;
 
 	/* profile */
 	ptask = as_profile_start_literal (priv->profile, "AsStore:match-addons");
 	g_assert (ptask != NULL);
-	for (i = 0; i < priv->array->len; i++) {
-		AsApp *app = g_ptr_array_index (priv->array, i);
-		if (as_app_get_kind (app) != AS_APP_KIND_ADDON)
-			continue;
-		as_store_match_addons_app (store, app);
+	apps = as_store_dup_apps (store);
+	for (i = 0; i < apps->len; i++) {
+		AsApp *app = g_ptr_array_index (apps, i);
+		if (as_app_get_kind (app) == AS_APP_KIND_ADDON)
+			as_store_match_addons_app (store, app);
 	}
 }
 
@@ -1795,15 +1948,15 @@ static void
 as_store_remove_by_source_file (AsStore *store, const gchar *filename)
 {
 	AsApp *app;
-	GPtrArray *apps;
 	guint i;
 	const gchar *tmp;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
+	g_autoptr(GPtrArray) apps = NULL;
 	g_autoptr(GPtrArray) ids = NULL;
 
 	/* find any applications in the store with this source file */
 	ids = g_ptr_array_new_with_free_func (g_free);
-	apps = as_store_get_apps (store);
+	apps = as_store_dup_apps (store);
 	for (i = 0; i < apps->len; i++) {
 		AsFormat *format;
 		app = g_ptr_array_index (apps, i);
@@ -1846,16 +1999,21 @@ as_store_watch_source_added (AsStore *store, const gchar *filename)
 	if (!g_file_test (filename, G_FILE_TEST_IS_REGULAR))
 		return;
 
-	/* we helpfully saved this */
 	dirname = g_path_get_dirname (filename);
 	g_debug ("parsing new file %s from %s", filename, dirname);
+
+	/* we helpfully saved this */
+	g_mutex_lock (&priv->mutex);
 	path_data = g_hash_table_lookup (priv->appinfo_dirs, filename);
 	if (path_data == NULL)
 		path_data = g_hash_table_lookup (priv->appinfo_dirs, dirname);
 	if (path_data == NULL) {
 		g_warning ("no path data for %s", dirname);
+		g_mutex_unlock (&priv->mutex);
 		return;
 	}
+	g_mutex_unlock (&priv->mutex);
+
 	file = g_file_new_for_path (filename);
 	/* Do not watch the file for changes: we're already watching its
 	 * parent directory */
@@ -1947,7 +2105,9 @@ as_store_add_path_data (AsStore *store,
 	}
 
 	/* check not already exists */
+	g_mutex_lock (&priv->mutex);
 	path_data = g_hash_table_lookup (priv->appinfo_dirs, path);
+	g_mutex_unlock (&priv->mutex);
 	if (path_data != NULL) {
 		if (path_data->scope != scope ||
 		    g_strcmp0 (path_data->arch, arch) != 0) {
@@ -1970,7 +2130,9 @@ as_store_add_path_data (AsStore *store,
 	path_data = g_slice_new0 (AsStorePathData);
 	path_data->scope = scope;
 	path_data->arch = g_strdup (arch);
+	g_mutex_lock (&priv->mutex);
 	g_hash_table_insert (priv->appinfo_dirs, g_strdup (path), path_data);
+	g_mutex_unlock (&priv->mutex);
 }
 
 static gboolean
@@ -2224,6 +2386,7 @@ as_store_check_apps_for_veto (AsStore *store)
 	guint i;
 	AsApp *app;
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&priv->mutex);
 
 	/* add any vetos */
 	for (i = 0; i < priv->array->len; i++) {
@@ -2243,27 +2406,28 @@ as_store_check_apps_for_veto (AsStore *store)
 void
 as_store_remove_apps_with_veto (AsStore *store)
 {
-	guint i;
-	AsApp *app;
-	AsStorePrivate *priv = GET_PRIVATE (store);
 	_cleanup_uninhibit_ guint32 *tok = NULL;
+	g_autoptr(GPtrArray) apps = NULL;
+	g_autoptr(GPtrArray) apps_remove = NULL;
 
 	g_return_if_fail (AS_IS_STORE (store));
 
 	/* don't shortcut the list as we have to use as_store_remove_app()
 	 * rather than just removing from the GPtrArray */
 	tok = as_store_changed_inhibit (store);
-	do {
-		for (i = 0; i < priv->array->len; i++) {
-			app = g_ptr_array_index (priv->array, i);
-			if (as_app_get_vetos (app)->len > 0) {
-				g_debug ("removing %s as vetoed",
-					 as_app_get_id (app));
-				as_store_remove_app (store, app);
-				break;
-			}
-		}
-	} while (i < priv->array->len);
+	apps = as_store_dup_apps (store);
+	apps_remove = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	for (guint i = 0; i < apps->len; i++) {
+		AsApp *app = g_ptr_array_index (apps, i);
+		if (as_app_get_vetos (app)->len > 0)
+			g_ptr_array_add (apps_remove, g_object_ref (app));
+	}
+	for (guint i = 0; i < apps_remove->len; i++) {
+		AsApp *app = g_ptr_array_index (apps_remove, i);
+		g_debug ("removing %s as vetoed",
+		         as_app_get_id (app));
+		as_store_remove_app (store, app);
+	}
 	as_store_changed_uninhibit (&tok);
 	as_store_perhaps_emit_changed (store, "remove-apps-with-veto");
 }
@@ -2316,22 +2480,28 @@ as_store_to_xml (AsStore *store, guint32 flags)
 		as_node_add_attribute (node_apps, "version", version);
 	}
 
-	/* sort by ID */
-	g_ptr_array_sort (priv->array, as_store_apps_sort_cb);
-
 	/* output is trusted, so include update_contact */
 	if (g_getenv ("APPSTREAM_GLIB_OUTPUT_TRUSTED") != NULL)
 		output_trusted = TRUE;
 
-	/* add applications */
 	ctx = as_node_context_new ();
 	as_node_context_set_version (ctx, priv->api_version);
 	as_node_context_set_output (ctx, AS_FORMAT_KIND_APPSTREAM);
 	as_node_context_set_output_trusted (ctx, output_trusted);
+
+	g_mutex_lock (&priv->mutex);
+
+	/* sort by ID */
+	g_ptr_array_sort (priv->array, as_store_apps_sort_cb);
+
+	/* add applications */
 	for (i = 0; i < priv->array->len; i++) {
 		app = g_ptr_array_index (priv->array, i);
 		as_app_node_insert (app, node_apps, ctx);
 	}
+
+	g_mutex_unlock (&priv->mutex);
+
 	xml = as_node_to_xml (node_root, flags);
 	as_node_unref (node_root);
 	return xml;
@@ -2355,8 +2525,11 @@ as_store_convert_icons (AsStore *store, AsIconKind kind, GError **error)
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	AsApp *app;
 	guint i;
+	g_autoptr(GMutexLocker) locker = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), FALSE);
+
+	locker = g_mutex_locker_new (&priv->mutex);
 
 	/* convert application icons */
 	for (i = 0; i < priv->array->len; i++) {
@@ -2755,8 +2928,12 @@ as_store_load_app_info (AsStore *store,
 	_cleanup_uninhibit_ guint32 *tok = NULL;
 
 	/* Don't add the same dir twice, we're monitoring it for changes anyway */
-	if (g_hash_table_contains (priv->appinfo_dirs, path))
+	g_mutex_lock (&priv->mutex);
+	if (g_hash_table_contains (priv->appinfo_dirs, path)) {
+		g_mutex_unlock (&priv->mutex);
 		return TRUE;
+	}
+	g_mutex_unlock (&priv->mutex);
 
 	/* emit once when finished */
 	tok = as_store_changed_inhibit (store);
@@ -3266,10 +3443,12 @@ as_store_load_search_cache (AsStore *store)
 	pool = g_thread_pool_new (as_store_load_search_cache_cb,
 				  store, 4, TRUE, NULL);
 	g_assert (pool != NULL);
+	g_mutex_lock (&priv->mutex);
 	for (i = 0; i < priv->array->len; i++) {
 		AsApp *app = g_ptr_array_index (priv->array, i);
 		g_thread_pool_push (pool, app, NULL);
 	}
+	g_mutex_unlock (&priv->mutex);
 	g_thread_pool_free (pool, FALSE, TRUE);
 }
 
@@ -3444,9 +3623,10 @@ as_store_validate (AsStore *store, guint32 flags, GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	AsApp *app;
-	GPtrArray *probs;
+	g_autoptr(GPtrArray) probs = NULL;
 	guint i;
 	g_autoptr(GHashTable) hash_names = NULL;
+	g_autoptr(GPtrArray) apps = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 
@@ -3478,19 +3658,20 @@ as_store_validate (AsStore *store, guint32 flags, GError **error)
 		}
 	}
 
-	/* check there exists only onle application with a specific name */
+	/* check there exists only one application with a specific name */
 	hash_names = g_hash_table_new_full (g_str_hash, g_str_equal,
 					    g_free, (GDestroyNotify) g_object_unref);
 
 	/* check each application */
-	for (i = 0; i < priv->array->len; i++) {
+	apps = as_store_dup_apps (store);
+	for (i = 0; i < apps->len; i++) {
 		AsApp *app_tmp;
 		AsProblem *prob;
 		guint j;
 		g_autofree gchar *app_key = NULL;
 		g_autoptr(GPtrArray) probs_app = NULL;
 
-		app = g_ptr_array_index (priv->array, i);
+		app = g_ptr_array_index (apps, i);
 		if (priv->api_version < 0.3) {
 			if (as_app_get_source_pkgname (app) != NULL) {
 				as_store_validate_add (probs,
@@ -3663,7 +3844,7 @@ as_store_validate (AsStore *store, guint32 flags, GError **error)
 			}
 		}
 	}
-	return probs;
+	return g_steal_pointer (&probs);
 }
 
 static void
@@ -3741,6 +3922,7 @@ static void
 as_store_init (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
+	g_mutex_init (&priv->mutex);
 	priv->profile = as_profile_new ();
 	priv->stemmer = as_stemmer_new ();
 	priv->api_version = AS_API_VERSION_NEWEST;
