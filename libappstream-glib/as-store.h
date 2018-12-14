@@ -209,9 +209,12 @@ void		 as_store_set_search_match	(AsStore	*store,
 guint16		 as_store_get_search_match	(AsStore	*store);
 void		 as_store_remove_all		(AsStore	*store);
 GPtrArray	*as_store_get_apps		(AsStore	*store);
+GPtrArray	*as_store_dup_apps		(AsStore	*store);
 GPtrArray	*as_store_get_apps_by_id	(AsStore	*store,
 						 const gchar	*id);
 GPtrArray	*as_store_get_apps_by_id_merge	(AsStore	*store,
+						 const gchar	*id);
+GPtrArray	*as_store_dup_apps_by_id_merge	(AsStore	*store,
 						 const gchar	*id);
 GPtrArray	*as_store_get_apps_by_metadata	(AsStore	*store,
 						 const gchar	*key,

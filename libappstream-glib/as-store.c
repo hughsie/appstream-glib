@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
  * Copyright (C) 2013-2016 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2015-2018 Kalev Lember <klember@redhat.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -264,6 +265,22 @@ as_store_changed_uninhibit_cb (void *v)
 
 #define _cleanup_uninhibit_ __attribute__ ((cleanup(as_store_changed_uninhibit_cb)))
 
+static GPtrArray *
+_dup_app_array (GPtrArray *array)
+{
+	GPtrArray *array_dup;
+
+	g_return_val_if_fail (array != NULL, NULL);
+
+	array_dup = g_ptr_array_new_full (array->len, (GDestroyNotify) g_object_unref);
+	for (guint i = 0; i < array->len; i++) {
+		AsApp *app = g_ptr_array_index (array, i);
+		g_ptr_array_add (array_dup, g_object_ref (app));
+	}
+
+	return array_dup;
+}
+
 /**
  * as_store_add_filter:
  * @store: a #AsStore instance.
@@ -342,6 +359,27 @@ as_store_get_apps (AsStore *store)
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 	return priv->array;
+}
+
+/**
+ * as_store_dup_apps:
+ * @store: a #AsStore instance.
+ *
+ * Gets an array of all the valid applications in the store.
+ *
+ * Returns: (element-type AsApp) (transfer container): an array
+ *
+ * Since: 0.7.15
+ **/
+GPtrArray *
+as_store_dup_apps (AsStore *store)
+{
+
+	AsStorePrivate *priv = GET_PRIVATE (store);
+
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+
+	return _dup_app_array (priv->array);
 }
 
 /**
@@ -471,7 +509,7 @@ as_store_get_apps_by_id (AsStore *store, const gchar *id)
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 	apps = g_hash_table_lookup (priv->hash_id, id);
 	if (apps != NULL)
-		return g_ptr_array_ref (apps);
+		return _dup_app_array (apps);
 	return g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 }
 
@@ -492,6 +530,31 @@ as_store_get_apps_by_id_merge (AsStore *store, const gchar *id)
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
 	return g_hash_table_lookup (priv->hash_merge_id, id);
+}
+
+/**
+ * as_store_dup_apps_by_id_merge:
+ * @store: a #AsStore instance.
+ * @id: the application full ID.
+ *
+ * Gets an array of all the merge applications that match a specific ID.
+ *
+ * Returns: (element-type AsApp) (transfer container): an array
+ *
+ * Since: 0.7.15
+ **/
+GPtrArray *
+as_store_dup_apps_by_id_merge (AsStore *store, const gchar *id)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	GPtrArray *apps;
+
+	g_return_val_if_fail (AS_IS_STORE (store), NULL);
+
+	apps = g_hash_table_lookup (priv->hash_merge_id, id);
+	if (apps != NULL)
+		return _dup_app_array (apps);
+	return g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 }
 
 /**
