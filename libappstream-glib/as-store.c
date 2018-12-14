@@ -3658,7 +3658,7 @@ as_store_validate (AsStore *store, guint32 flags, GError **error)
 		}
 	}
 
-	/* check there exists only onle application with a specific name */
+	/* check there exists only one application with a specific name */
 	hash_names = g_hash_table_new_full (g_str_hash, g_str_equal,
 					    g_free, (GDestroyNotify) g_object_unref);
 
