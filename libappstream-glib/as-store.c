@@ -3623,7 +3623,7 @@ as_store_validate (AsStore *store, guint32 flags, GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	AsApp *app;
-	GPtrArray *probs;
+	g_autoptr(GPtrArray) probs = NULL;
 	guint i;
 	g_autoptr(GHashTable) hash_names = NULL;
 	g_autoptr(GPtrArray) apps = NULL;
@@ -3844,7 +3844,7 @@ as_store_validate (AsStore *store, guint32 flags, GError **error)
 			}
 		}
 	}
-	return probs;
+	return g_steal_pointer (&probs);
 }
 
 static void
