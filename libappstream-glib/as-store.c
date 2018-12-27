@@ -3407,7 +3407,7 @@ as_store_search_per_user (AsStore *store,
 static void
 as_store_load_search_cache_cb (gpointer data, gpointer user_data)
 {
-	AsApp *app = AS_APP (data);
+	g_autoptr(AsApp) app = AS_APP (data);
 	as_app_search_matches (app, NULL);
 }
 
@@ -3446,7 +3446,7 @@ as_store_load_search_cache (AsStore *store)
 	g_mutex_lock (&priv->mutex);
 	for (i = 0; i < priv->array->len; i++) {
 		AsApp *app = g_ptr_array_index (priv->array, i);
-		g_thread_pool_push (pool, app, NULL);
+		g_thread_pool_push (pool, g_object_ref (app), NULL);
 	}
 	g_mutex_unlock (&priv->mutex);
 	g_thread_pool_free (pool, FALSE, TRUE);
