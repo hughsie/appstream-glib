@@ -40,6 +40,10 @@
 #include <stdlib.h>
 #include <uuid.h>
 
+#ifdef HAVE_RPM
+#include <rpm/rpmlib.h>
+#endif
+
 #include "as-app-private.h"
 #include "as-enums.h"
 #include "as-node.h"
@@ -1465,7 +1469,11 @@ as_utils_vercmp_full (const gchar *version_a,
 		g_autofree gchar *str_b = as_utils_version_parse (version_b);
 		return as_utils_vercmp_internal (str_a, str_b);
 	} else {
+#ifdef HAVE_RPM
+		return rpmvercmp (version_a, version_b);
+#else
 		return as_utils_vercmp_internal (version_a, version_b);
+#endif
 	}
 }
 
