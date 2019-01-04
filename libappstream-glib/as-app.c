@@ -112,6 +112,7 @@ typedef struct
 	AsRefString	*update_contact;
 	gchar		*unique_id;
 	gboolean	 unique_id_valid;
+	GMutex		 unique_id_mutex;
 	AsRefString	*branch;
 	gint		 priority;
 	gsize		 token_cache_valid;
@@ -441,6 +442,7 @@ as_app_finalize (GObject *object)
 	if (priv->update_contact != NULL)
 		as_ref_string_unref (priv->update_contact);
 	g_free (priv->unique_id);
+	g_mutex_clear (&priv->unique_id_mutex);
 	if (priv->branch != NULL)
 		as_ref_string_unref (priv->branch);
 	g_hash_table_unref (priv->comments);
@@ -654,6 +656,11 @@ const gchar *
 as_app_get_unique_id (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_autoptr(GMutexLocker) locker = NULL;
+
+	g_return_val_if_fail (AS_IS_APP (app), NULL);
+
+	locker = g_mutex_locker_new (&priv->unique_id_mutex);
 	if (priv->unique_id == NULL || !priv->unique_id_valid) {
 		g_free (priv->unique_id);
 		if (as_app_has_quirk (app, AS_APP_QUIRK_MATCH_ANY_PREFIX)) {
