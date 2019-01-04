@@ -17,6 +17,10 @@ if get_option('dep11')
   deps += yaml
 endif
 
+if get_option('rpm')
+  deps += rpm
+endif
+
 if get_option('stemmer')
   deps += stemmer
 endif
