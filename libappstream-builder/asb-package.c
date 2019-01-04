@@ -1158,12 +1158,12 @@ asb_package_compare (AsbPackage *pkg1, AsbPackage *pkg2)
 		return 1;
 
 	/* check version */
-	rc = as_utils_vercmp (priv1->version, priv2->version);
+	rc = as_utils_vercmp_full (priv1->version, priv2->version, AS_VERSION_COMPARE_FLAG_NONE);
 	if (rc != 0)
 		return rc;
 
 	/* check release */
-	rc = as_utils_vercmp (priv1->release, priv2->release);
+	rc = as_utils_vercmp_full (priv1->release, priv2->release, AS_VERSION_COMPARE_FLAG_NONE);
 	if (rc != 0)
 		return rc;
 

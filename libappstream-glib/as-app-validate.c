@@ -944,7 +944,7 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 			const gchar *version_old = as_release_get_version (release_old);
 			if (version == NULL || version_old == NULL)
 				continue;
-			if (as_utils_vercmp (version, version_old) > 0) {
+			if (as_utils_vercmp_full (version, version_old, AS_VERSION_COMPARE_FLAG_NONE) > 0) {
 				ai_app_validate_add (helper,
 						     AS_PROBLEM_KIND_TAG_INVALID,
 						     "<release> versions are not in order "

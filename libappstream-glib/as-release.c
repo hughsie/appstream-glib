@@ -249,7 +249,7 @@ as_release_vercmp (AsRelease *rel1, AsRelease *rel2)
 		return 1;
 
 	/* fall back to the version strings */
-	val = as_utils_vercmp (priv2->version, priv1->version);
+	val = as_utils_vercmp_full (priv2->version, priv1->version, AS_VERSION_COMPARE_FLAG_NONE);
 	if (val != G_MAXINT)
 		return val;
 

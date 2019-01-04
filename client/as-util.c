@@ -4248,7 +4248,7 @@ as_util_vercmp (AsUtilPrivate *priv, gchar **values, GError **error)
 	}
 
 	/* compare */
-	rc = as_utils_vercmp (values[0], values[1]);
+	rc = as_utils_vercmp_full (values[0], values[1], AS_VERSION_COMPARE_FLAG_NONE);
 	if (rc == G_MAXINT) {
 		g_set_error_literal (error,
 				     AS_ERROR,

@@ -369,27 +369,27 @@ as_require_version_compare (AsRequire *require,
 
 	switch (priv->compare) {
 	case AS_REQUIRE_COMPARE_EQ:
-		rc = as_utils_vercmp (version, priv->version);
+		rc = as_utils_vercmp_full (version, priv->version, AS_VERSION_COMPARE_FLAG_NONE);
 		ret = rc == 0;
 		break;
 	case AS_REQUIRE_COMPARE_NE:
-		rc = as_utils_vercmp (version, priv->version);
+		rc = as_utils_vercmp_full (version, priv->version, AS_VERSION_COMPARE_FLAG_NONE);
 		ret = rc != 0;
 		break;
 	case AS_REQUIRE_COMPARE_LT:
-		rc = as_utils_vercmp (version, priv->version);
+		rc = as_utils_vercmp_full (version, priv->version, AS_VERSION_COMPARE_FLAG_NONE);
 		ret = rc < 0;
 		break;
 	case AS_REQUIRE_COMPARE_GT:
-		rc = as_utils_vercmp (version, priv->version);
+		rc = as_utils_vercmp_full (version, priv->version, AS_VERSION_COMPARE_FLAG_NONE);
 		ret = rc > 0;
 		break;
 	case AS_REQUIRE_COMPARE_LE:
-		rc = as_utils_vercmp (version, priv->version);
+		rc = as_utils_vercmp_full (version, priv->version, AS_VERSION_COMPARE_FLAG_NONE);
 		ret = rc <= 0;
 		break;
 	case AS_REQUIRE_COMPARE_GE:
-		rc = as_utils_vercmp (version, priv->version);
+		rc = as_utils_vercmp_full (version, priv->version, AS_VERSION_COMPARE_FLAG_NONE);
 		ret = rc >= 0;
 		break;
 	case AS_REQUIRE_COMPARE_GLOB:
