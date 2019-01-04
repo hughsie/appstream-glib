@@ -1387,45 +1387,17 @@ as_utils_vercmp_chunk (const gchar *str1, const gchar *str2)
 	return as_utils_vercmp_char (str1[i], str2[i]);
 }
 
-/**
- * as_utils_vercmp_full:
- * @version_a: the release version, e.g. 1.2.3
- * @version_b: the release version, e.g. 1.2.3.1
- * @flags: some #AsVersionCompareFlag
- *
- * Compares version numbers for sorting.
- *
- * Returns: -1 if a < b, +1 if a > b, 0 if they are equal, and %G_MAXINT on error
- *
- * Since: 0.7.15
- */
-gint
-as_utils_vercmp_full (const gchar *version_a,
-		      const gchar *version_b,
-		      AsVersionCompareFlag flags)
+static gint
+as_utils_vercmp_internal (const gchar *version_a,
+                          const gchar *version_b)
 {
 	guint longest_split;
 	g_auto(GStrv) split_a = NULL;
 	g_auto(GStrv) split_b = NULL;
 
-	/* sanity check */
-	if (version_a == NULL || version_b == NULL)
-		return G_MAXINT;
+	split_a = g_strsplit (version_a, ".", -1);
+	split_b = g_strsplit (version_b, ".", -1);
 
-	/* optimisation */
-	if (g_strcmp0 (version_a, version_b) == 0)
-		return 0;
-
-	/* split into sections, and try to parse */
-	if (flags & AS_VERSION_COMPARE_FLAG_USE_HEURISTICS) {
-		g_autofree gchar *str_a = as_utils_version_parse (version_a);
-		g_autofree gchar *str_b = as_utils_version_parse (version_b);
-		split_a = g_strsplit (str_a, ".", -1);
-		split_b = g_strsplit (str_b, ".", -1);
-	} else {
-		split_a = g_strsplit (version_a, ".", -1);
-		split_b = g_strsplit (version_b, ".", -1);
-	}
 	longest_split = MAX (g_strv_length (split_a), g_strv_length (split_b));
 	for (guint i = 0; i < longest_split; i++) {
 		gchar *endptr_a = NULL;
@@ -1460,6 +1432,41 @@ as_utils_vercmp_full (const gchar *version_a,
 
 	/* we really shouldn't get here */
 	return 0;
+}
+
+/**
+ * as_utils_vercmp_full:
+ * @version_a: the release version, e.g. 1.2.3
+ * @version_b: the release version, e.g. 1.2.3.1
+ * @flags: some #AsVersionCompareFlag
+ *
+ * Compares version numbers for sorting.
+ *
+ * Returns: -1 if a < b, +1 if a > b, 0 if they are equal, and %G_MAXINT on error
+ *
+ * Since: 0.7.15
+ */
+gint
+as_utils_vercmp_full (const gchar *version_a,
+		      const gchar *version_b,
+		      AsVersionCompareFlag flags)
+{
+	/* sanity check */
+	if (version_a == NULL || version_b == NULL)
+		return G_MAXINT;
+
+	/* optimisation */
+	if (g_strcmp0 (version_a, version_b) == 0)
+		return 0;
+
+	if (flags & AS_VERSION_COMPARE_FLAG_USE_HEURISTICS) {
+		/* split into sections, and try to parse */
+		g_autofree gchar *str_a = as_utils_version_parse (version_a);
+		g_autofree gchar *str_b = as_utils_version_parse (version_b);
+		return as_utils_vercmp_internal (str_a, str_b);
+	} else {
+		return as_utils_vercmp_internal (version_a, version_b);
+	}
 }
 
 /**
