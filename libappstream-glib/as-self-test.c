@@ -5066,6 +5066,14 @@ as_test_utils_vercmp_func (void)
 	g_assert_cmpint (as_utils_vercmp ("1", NULL), ==, G_MAXINT);
 	g_assert_cmpint (as_utils_vercmp (NULL, "1"), ==, G_MAXINT);
 	g_assert_cmpint (as_utils_vercmp (NULL, NULL), ==, G_MAXINT);
+
+	/* full version gets some more checks right */
+	g_assert_cmpint (as_utils_vercmp_full ("0.9", "1", AS_VERSION_COMPARE_FLAG_NONE), <, 0);
+	g_assert_cmpint (as_utils_vercmp_full ("9", "9a", AS_VERSION_COMPARE_FLAG_NONE), <, 0);
+	g_assert_cmpint (as_utils_vercmp_full ("9a", "10", AS_VERSION_COMPARE_FLAG_NONE), <, 0);
+	g_assert_cmpint (as_utils_vercmp_full ("9+", "10", AS_VERSION_COMPARE_FLAG_NONE), <, 0);
+	g_assert_cmpint (as_utils_vercmp_full ("9half", "10", AS_VERSION_COMPARE_FLAG_NONE), <, 0);
+	g_assert_cmpint (as_utils_vercmp_full ("9.5", "10", AS_VERSION_COMPARE_FLAG_NONE), <, 0);
 }
 
 static void
