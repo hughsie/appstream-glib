@@ -32,7 +32,6 @@
 
 #include "config.h"
 
-#include <fnmatch.h>
 #include <string.h>
 #include <archive_entry.h>
 #include <archive.h>

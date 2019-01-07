@@ -35,7 +35,16 @@
 #include "config.h"
 
 #include <string.h>
+
+#ifdef _WIN32
+#include <shlwapi.h>
+ /* The Microsoft MS-DOS pattern matching is close enough to
+  * the glob shell pattern matching for our usage.
+  */
+#define fnmatch(pattern, string, flags) PathMatchSpecA(string, pattern)
+#else
 #include <fnmatch.h>
+#endif
 
 #include "as-app-private.h"
 #include "as-bundle-private.h"
