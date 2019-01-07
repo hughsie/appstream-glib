@@ -38,7 +38,9 @@
 #include <archive.h>
 #include <libsoup/soup.h>
 #include <stdlib.h>
+#ifndef _WIN32
 #include <uuid.h>
+#endif
 
 #ifdef HAVE_RPM
 #include <rpm/rpmlib.h>
@@ -1540,6 +1542,13 @@ as_utils_guid_from_data (const gchar *namespace_id,
 			 gsize data_len,
 			 GError **error)
 {
+#ifdef _WIN32
+	g_set_error_literal (error,
+			     AS_UTILS_ERROR,
+			     AS_UTILS_ERROR_FAILED,
+			     "not supported");
+	return FALSE;
+#else
 	gchar guid_new[37]; /* 36 plus NUL */
 	gsize digestlen = 20;
 	guint8 hash[20];
@@ -1579,6 +1588,7 @@ as_utils_guid_from_data (const gchar *namespace_id,
 	/* return as a string */
 	uuid_unparse (uu_new, guid_new);
 	return g_strdup (guid_new);
+#endif
 }
 
 /**
@@ -1594,12 +1604,20 @@ as_utils_guid_from_data (const gchar *namespace_id,
 gboolean
 as_utils_guid_is_valid (const gchar *guid)
 {
+#ifdef _WIN32
+	g_set_error_literal (error,
+			     AS_UTILS_ERROR,
+			     AS_UTILS_ERROR_FAILED,
+			     "not supported");
+	return FALSE;
+#else
 	gint rc;
 	uuid_t uu;
 	if (guid == NULL)
 		return FALSE;
 	rc = uuid_parse (guid, uu);
 	return rc == 0;
+#endif
 }
 
 /**
