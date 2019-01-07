@@ -23,8 +23,11 @@
 
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
-#include <glib-unix.h>
 #include <gio/gio.h>
+
+#ifndef _WIN32
+#include <glib-unix.h>
+#endif
 
 #include <appstream-glib.h>
 #include <archive_entry.h>
@@ -4282,6 +4285,7 @@ as_util_watch_cancelled_cb (GCancellable *cancellable, gpointer user_data)
 	g_main_loop_quit (priv->loop);
 }
 
+#ifndef _WIN32
 static gboolean
 as_util_sigint_cb (gpointer user_data)
 {
@@ -4290,6 +4294,7 @@ as_util_sigint_cb (gpointer user_data)
 	g_cancellable_cancel (priv->cancellable);
 	return FALSE;
 }
+#endif
 
 static gboolean
 as_util_regex (AsUtilPrivate *priv, gchar **values, GError **error)
@@ -4355,11 +4360,13 @@ main (int argc, char *argv[])
 	/* do stuff on ctrl+c */
 	priv->loop = g_main_loop_new (NULL, FALSE);
 	priv->cancellable = g_cancellable_new ();
+#ifndef _WIN32
 	g_unix_signal_add_full (G_PRIORITY_DEFAULT,
 				SIGINT,
 				as_util_sigint_cb,
 				priv,
 				NULL);
+#endif
 	g_signal_connect (priv->cancellable, "cancelled",
 			  G_CALLBACK (as_util_watch_cancelled_cb), priv);
 

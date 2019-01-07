@@ -35,7 +35,6 @@
 #include "config.h"
 
 #include <string.h>
-#include <fnmatch.h>
 
 #include "as-app-private.h"
 #include "as-bundle-private.h"
@@ -57,6 +56,10 @@
 #include "as-suggest-private.h"
 #include "as-utils-private.h"
 #include "as-yaml.h"
+
+#ifndef _WIN32
+#include <fnmatch.h>
+#endif
 
 typedef struct
 {
@@ -6177,8 +6180,8 @@ as_app_parse_appdata_unintltoolize_cb (GNode *node, gpointer data)
 static void
 as_app_parse_appdata_guess_project_group (AsApp *app)
 {
+#ifndef _WIN32
 	const gchar *tmp;
-	guint i;
 	struct {
 		const gchar *project_group;
 		const gchar *url_glob;
@@ -6201,7 +6204,7 @@ as_app_parse_appdata_guess_project_group (AsApp *app)
 	tmp = as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE);
 	if (tmp == NULL)
 		return;
-	for (i = 0; table[i].project_group != NULL; i++) {
+	for (guint i = 0; table[i].project_group != NULL; i++) {
 		if (fnmatch (table[i].url_glob, tmp, 0) == 0) {
 			as_app_set_project_group (app, table[i].project_group);
 			return;
@@ -6214,16 +6217,21 @@ as_app_parse_appdata_guess_project_group (AsApp *app)
 		as_app_set_project_group (AS_APP (app), "KDE");
 		return;
 	}
+#endif
 }
 
 static int
 as_utils_fnmatch (const gchar *pattern, const gchar *text, gsize text_sz, gint flags)
 {
+#ifndef _WIN32
 	if (text_sz != -1 && text[text_sz-1] != '\0') {
 		g_autofree gchar *text_with_nul = g_strndup (text, text_sz);
 		return fnmatch (pattern, text_with_nul, flags);
 	}
 	return fnmatch (pattern, text, flags);
+#else
+	return 1;
+#endif
 }
 
 /**
