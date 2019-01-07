@@ -935,6 +935,7 @@ as_node_from_file (GFile *file,
 	gsize chunk_size = 32 * 1024;
 	gssize len;
 	g_autofree gchar *data = NULL;
+	g_autofree gchar *mime_type = NULL;
 	g_autoptr(GMarkupParseContext) ctx = NULL;
 	g_autoptr(GConverter) conv = NULL;
 	g_autoptr(GFileInfo) info = NULL;
@@ -961,18 +962,22 @@ as_node_from_file (GFile *file,
 	if (file_stream == NULL)
 		return NULL;
 	content_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
-	if (g_strcmp0 (content_type, "application/gzip") == 0 ||
-	    g_strcmp0 (content_type, "application/x-gzip") == 0) {
-		conv = G_CONVERTER (g_zlib_decompressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP));
-		stream_data = g_converter_input_stream_new (file_stream, conv);
-	} else if (g_strcmp0 (content_type, "application/xml") == 0) {
-		stream_data = g_object_ref (file_stream);
-	} else {
+	mime_type = g_content_type_get_mime_type (content_type);
+	if (mime_type != NULL) {
+		if (g_strcmp0 (mime_type, "application/gzip") == 0 ||
+			g_strcmp0 (mime_type, "application/x-gzip") == 0) {
+			conv = G_CONVERTER (g_zlib_decompressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP));
+			stream_data = g_converter_input_stream_new (file_stream, conv);
+		} else if (g_strcmp0 (mime_type, "application/xml") == 0 ||
+				   g_strcmp0 (mime_type, "text/xml") == 0) {
+			stream_data = g_object_ref (file_stream);
+		}
+	}
+	if (stream_data == NULL) {
 		g_set_error (error,
 			     AS_NODE_ERROR,
 			     AS_NODE_ERROR_FAILED,
-			     "cannot process file of type %s",
-			     content_type);
+			     "cannot process file of type %s", content_type);
 		return NULL;
 	}
 

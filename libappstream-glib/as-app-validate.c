@@ -7,7 +7,6 @@
 
 #include "config.h"
 
-#include <fnmatch.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <libsoup/soup.h>
 #include <libsoup/soup-status.h>

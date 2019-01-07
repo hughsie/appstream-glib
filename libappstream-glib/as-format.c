@@ -188,11 +188,15 @@ as_format_guess_kind (const gchar *filename)
 void
 as_format_set_filename (AsFormat *format, const gchar *filename)
 {
+	gchar *canon_filename;
+
 	AsFormatPrivate *priv = GET_PRIVATE (format);
 	g_return_if_fail (AS_IS_FORMAT (format));
 	if (priv->kind == AS_FORMAT_KIND_UNKNOWN)
 		priv->kind = as_format_guess_kind (filename);
-	as_ref_string_assign_safe (&priv->filename, filename);
+	canon_filename = g_canonicalize_filename (filename, NULL);
+	as_ref_string_assign_safe (&priv->filename, canon_filename);
+	g_free (canon_filename);
 }
 
 /**

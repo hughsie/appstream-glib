@@ -5,7 +5,6 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#include <fnmatch.h>
 #include <string.h>
 
 #include "as-app-private.h"
@@ -102,11 +101,11 @@ as_app_parse_file_metadata (AsApp *app, GKeyFile *kf, const gchar *key)
 	guint i;
 	g_autofree gchar *value = NULL;
 	const gchar *blacklist[] = {
-		"X-AppInstall-*",
+		"X-AppInstall-",
 		"X-Desktop-File-Install-Version",
-		"X-Geoclue-Reason*",
-		"X-GNOME-Bugzilla-*",
-		"X-GNOME-FullName*",
+		"X-Geoclue-Reason",
+		"X-GNOME-Bugzilla-",
+		"X-GNOME-FullName",
 		"X-GNOME-Gettext-Domain",
 		"X-GNOME-UsesNotifications",
 		NULL };
@@ -116,7 +115,7 @@ as_app_parse_file_metadata (AsApp *app, GKeyFile *kf, const gchar *key)
 
 	/* anything blacklisted */
 	for (i = 0; blacklist[i] != NULL; i++) {
-		if (fnmatch (blacklist[i], key, 0) == 0)
+		if (g_str_has_prefix (blacklist[i], key))
 			return;
 	}
 	value = g_key_file_get_string (kf,

@@ -18,12 +18,14 @@
 
 #include "config.h"
 
-#include <fnmatch.h>
-
 #include "as-require-private.h"
 #include "as-node-private.h"
 #include "as-ref-string.h"
 #include "as-utils-private.h"
+
+#ifndef _WIN32
+#include <fnmatch.h>
+#endif
 
 typedef struct
 {
@@ -379,7 +381,11 @@ as_require_version_compare (AsRequire *require,
 		ret = rc >= 0;
 		break;
 	case AS_REQUIRE_COMPARE_GLOB:
+#ifdef _WIN32
+		ret = g_strcmp0 (priv->version, version) == 0;
+#else
 		ret = fnmatch (priv->version, version, 0) == 0;
+#endif
 		break;
 	case AS_REQUIRE_COMPARE_REGEX:
 		ret = g_regex_match_simple (priv->version, version, 0, 0);
