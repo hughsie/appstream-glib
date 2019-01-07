@@ -11,6 +11,17 @@ as_major_version = varr[0]
 as_minor_version = varr[1]
 as_micro_version = varr[2]
 
+# Check the right platform.
+
+platform_win32 = false
+
+host_os = host_machine.system()
+
+platform_win32 = (host_os.startswith('mingw') or
+                  host_os.startswith('cygwin') or
+                  host_os.startswith('windows'))
+
+
 conf = configuration_data()
 conf.set('AS_MAJOR_VERSION_CONF', as_major_version)
 conf.set('AS_MINOR_VERSION_CONF', as_minor_version)
@@ -52,7 +63,11 @@ glib_ver = '>= 2.45.8'
 uuid = dependency('uuid')
 glib = dependency('glib-2.0', version : glib_ver)
 gmodule = dependency('gmodule-2.0', version : glib_ver)
-giounix = dependency('gio-unix-2.0', version : glib_ver)
+if platform_win32
+  giowindows = dependency('gio-windows-2.0', version : glib_ver)
+else
+  giounix = dependency('gio-unix-2.0', version : glib_ver)
+endif
 libarchive = dependency('libarchive')
 soup = dependency('libsoup-2.4', version : '>= 2.51.92')
 json_glib = dependency('json-glib-1.0', version : '>= 1.1.2')

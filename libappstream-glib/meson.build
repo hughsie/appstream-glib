@@ -6,12 +6,17 @@ cargs = [
 
 deps = [
   gdkpixbuf,
-  giounix,
   glib,
   libarchive,
   soup,
   uuid,
 ]
+
+if platform_win32
+  deps += [giowindows]
+else
+  deps += [giounix]
+endif
 
 if get_option('dep11')
   deps += yaml
