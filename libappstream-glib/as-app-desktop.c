@@ -19,20 +19,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <string.h>
+
+#include "as-app-private.h"
+#include "as-utils.h"
+
 #ifdef _WIN32
 #include <shlwapi.h>
  /* The Microsoft MS-DOS pattern matching is close enough to
   * the glob shell pattern matching for our usage.
   */
-#define fnmatch(pattern, string, flags) PathMatchSpecA(string, pattern)
+static int
+fnmatch (const char *pattern, const char *string, int flags)
+{
+	typedef BOOL (WINAPI *t_PathMatchSpecA) (LPCSTR pszFile, LPCSTR pszSpec);
+	t_PathMatchSpecA p_PathMatchSpecA;
+
+	p_PathMatchSpecA = (t_PathMatchSpecA) GetProcAddress (GetModuleHandle ("Shlwapi.dll"), "PathMatchSpecA");
+
+	g_return_val_if_fail (p_PathMatchSpecA, 1);
+
+	return p_PathMatchSpecA(string, pattern);
+}
 #else
 #include <fnmatch.h>
 #endif
-
-#include <string.h>
-
-#include "as-app-private.h"
-#include "as-utils.h"
 
 static gchar *
 as_app_desktop_key_get_locale (const gchar *key)
