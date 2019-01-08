@@ -37,7 +37,11 @@
 #include <archive.h>
 #include <libsoup/soup.h>
 #include <stdlib.h>
+#ifdef _WIN32
+#include <rpc.h>
+#else
 #include <uuid.h>
+#endif
 
 #include "as-app-private.h"
 #include "as-enums.h"
@@ -1524,12 +1528,39 @@ as_utils_guid_from_data (const gchar *namespace_id,
 			 gsize data_len,
 			 GError **error)
 {
-	gchar guid_new[37]; /* 36 plus NUL */
 	gsize digestlen = 20;
 	guint8 hash[20];
+	guchar temp_data[16];
+#ifdef _WIN32
+	gchar *guid_new;
+	RPC_STATUS rc;
+	RPC_CSTR temp_guid_new;
+	UUID uu_namespace;
+	UUID uu_new;
+
+	typedef RPC_STATUS (WINAPI *t_UuidCreate) (UUID *Uuid);
+	typedef RPC_STATUS (WINAPI *t_UuidFromString) (RPC_CSTR StringUuid, UUID *Uuid);
+	typedef RPC_STATUS (WINAPI *t_UuidToString) (const UUID *Uuid, RPC_CSTR *StringUuid);
+	typedef RPC_STATUS (WINAPI *t_RpcStringFree) (RPC_CSTR *String);
+
+	t_UuidCreate p_UuidCreate;
+	t_UuidFromString p_UuidFromString;
+	t_UuidToString p_UuidToString;
+	t_RpcStringFree p_RpcStringFree;
+
+	p_UuidCreate = (t_UuidCreate) GetProcAddress (GetModuleHandle ("Rpcrt4.dll"), "UuidCreate");
+	p_UuidFromString = (t_UuidFromString) GetProcAddress (GetModuleHandle ("Rpcrt4.dll"), "UuidFromString");
+	p_UuidToString = (t_UuidToString) GetProcAddress (GetModuleHandle ("Rpcrt4.dll"), "UuidToString");
+	p_RpcStringFree = (t_RpcStringFree) GetProcAddress (GetModuleHandle ("Rpcrt4.dll"), "RpcStringFree");
+
+	g_return_val_if_fail (p_UuidCreate && p_UuidFromString && p_UuidToString, FALSE);
+#else
+	gchar guid_new[37]; /* 36 plus NUL */
 	gint rc;
 	uuid_t uu_namespace;
 	uuid_t uu_new;
+#endif
+
 	g_autoptr(GChecksum) csum = NULL;
 
 	g_return_val_if_fail (namespace_id != NULL, FALSE);
@@ -1537,32 +1568,101 @@ as_utils_guid_from_data (const gchar *namespace_id,
 	g_return_val_if_fail (data_len != 0, FALSE);
 
 	/* convert the namespace to binary */
+#ifdef _WIN32
+	rc = p_UuidFromString ((RPC_CSTR) namespace_id, &uu_namespace);
+	if (rc != RPC_S_OK) {
+		g_set_error (error,
+					 AS_UTILS_ERROR,
+					 AS_UTILS_ERROR_FAILED,
+					 "namespace '%s' is invalid",
+					 namespace_id);
+		return FALSE;
+	}
+#else
 	rc = uuid_parse (namespace_id, uu_namespace);
 	if (rc != 0) {
 		g_set_error (error,
-			     AS_UTILS_ERROR,
-			     AS_UTILS_ERROR_FAILED,
-			     "namespace '%s' is invalid",
-			     namespace_id);
+					 AS_UTILS_ERROR,
+					 AS_UTILS_ERROR_FAILED,
+					 "namespace '%s' is invalid",
+					 namespace_id);
 		return FALSE;
 	}
+#endif
 
 	/* hash the namespace and then the string */
+#ifdef _WIN32
+	memcpy (temp_data, &uu_namespace.Data1, 4);
+	memcpy (temp_data + 4, &uu_namespace.Data2, 2);
+	memcpy (temp_data + 6, &uu_namespace.Data3, 2);
+	memcpy (temp_data + 8, &uu_namespace.Data4[0], 1);
+	memcpy (temp_data + 9, &uu_namespace.Data4[1], 1);
+	memcpy (temp_data + 10, &uu_namespace.Data4[2], 1);
+	memcpy (temp_data + 11, &uu_namespace.Data4[3], 1);
+	memcpy (temp_data + 12, &uu_namespace.Data4[4], 1);
+	memcpy (temp_data + 13, &uu_namespace.Data4[5], 1);
+	memcpy (temp_data + 14, &uu_namespace.Data4[6], 1);
+	memcpy (temp_data + 15, &uu_namespace.Data4[7], 1);
+#else
+	memcpy (temp_data, uu_namespace, 16);
+#endif
+
 	csum = g_checksum_new (G_CHECKSUM_SHA1);
-	g_checksum_update (csum, (guchar *) uu_namespace, 16);
+	g_checksum_update (csum, (guchar *) temp_data, 16);
 	g_checksum_update (csum, (guchar *) data, (gssize) data_len);
 	g_checksum_get_digest (csum, hash, &digestlen);
 
+#ifdef _WIN32
+	rc = p_UuidCreate (&uu_new);
+	if (rc != RPC_S_OK) {
+		g_set_error (error,
+					 AS_UTILS_ERROR,
+					 AS_UTILS_ERROR_FAILED,
+					 "UuidCreate() failed");
+		return FALSE;
+	}
+	memcpy (&uu_new.Data1, hash, 4);
+	memcpy (&uu_new.Data2, hash + 4, 2);
+	memcpy (&uu_new.Data3, hash + 6, 2);
+	memcpy (&uu_new.Data4[0], hash + 8, 1);
+	memcpy (&uu_new.Data4[1], hash + 9, 1);
+	memcpy (&uu_new.Data4[2], hash + 10, 1);
+	memcpy (&uu_new.Data4[3], hash + 11, 1);
+	memcpy (&uu_new.Data4[4], hash + 12, 1);
+	memcpy (&uu_new.Data4[5], hash + 13, 1);
+	memcpy (&uu_new.Data4[6], hash + 14, 1);
+	memcpy (&uu_new.Data4[7], hash + 15, 1);
+
+	uu_new.Data3 = (uu_new.Data3 & 0xFF00) | (guint8) ((uu_new.Data3 & 0x0f) | (5 << 4));
+	uu_new.Data4[0]  = (guint8) ((uu_new.Data4[0] & 0x3f) | 0x80);
+#else
 	/* copy most parts of the hash 1:1 */
 	memcpy (uu_new, hash, 16);
 
 	/* set specific bits according to Section 4.1.3 */
 	uu_new[6] = (guint8) ((uu_new[6] & 0x0f) | (5 << 4));
 	uu_new[8] = (guint8) ((uu_new[8] & 0x3f) | 0x80);
+#endif
 
 	/* return as a string */
+#ifdef _WIN32
+	rc = p_UuidToString (&uu_new, &temp_guid_new);
+	if (rc != RPC_S_OK) {
+		g_set_error (error,
+					 AS_UTILS_ERROR,
+					 AS_UTILS_ERROR_FAILED,
+					 "UuidToString() failed (system out of memory)");
+		return FALSE;
+	}
+	guid_new = g_strdup ((gchar*) temp_guid_new);
+	p_RpcStringFree (&temp_guid_new);
+
+	return guid_new;
+#else
 	uuid_unparse (uu_new, guid_new);
+
 	return g_strdup (guid_new);
+#endif
 }
 
 /**
@@ -1578,12 +1678,31 @@ as_utils_guid_from_data (const gchar *namespace_id,
 gboolean
 as_utils_guid_is_valid (const gchar *guid)
 {
-	gint rc;
-	uuid_t uu;
-	if (guid == NULL)
+	if (guid == NULL) {
 		return FALSE;
-	rc = uuid_parse (guid, uu);
-	return rc == 0;
+    }
+    else {
+#ifdef _WIN32
+		typedef RPC_STATUS (WINAPI *t_UuidFromString) (RPC_CSTR StringUuid, UUID *Uuid);
+
+		t_UuidFromString p_UuidFromString;
+        RPC_STATUS rc;
+        UUID uu;
+
+		p_UuidFromString = (t_UuidFromString) GetProcAddress (GetModuleHandle ("Rpcrt4.dll"), "UuidFromString");
+
+		g_return_val_if_fail (p_UuidFromString, FALSE);
+
+        rc = p_UuidFromString ((RPC_CSTR) guid, &uu);
+        return (rc == RPC_S_OK);
+#else
+        gint rc;
+        uuid_t uu;
+
+        rc = uuid_parse (guid, uu);
+        return rc == 0;
+#endif
+    }
 }
 
 /**

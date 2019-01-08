@@ -60,13 +60,13 @@ plugindir = join_paths(get_option('prefix'),
                        'asb-plugins-' + as_plugin_version)
 
 glib_ver = '>= 2.45.8'
-uuid = dependency('uuid')
 glib = dependency('glib-2.0', version : glib_ver)
 gmodule = dependency('gmodule-2.0', version : glib_ver)
 if platform_win32
   giowindows = dependency('gio-windows-2.0', version : glib_ver)
 else
   giounix = dependency('gio-unix-2.0', version : glib_ver)
+  uuid = dependency('uuid')
 endif
 libarchive = dependency('libarchive')
 soup = dependency('libsoup-2.4', version : '>= 2.51.92')
