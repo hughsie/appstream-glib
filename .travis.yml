@@ -6,10 +6,9 @@ services:
   - docker
 
 before_script:
-  - docker build -t appstream-glib-fedora-25 -f contrib/ci/Dockerfile-fedora-25 .
-  - docker build -t appstream-glib-debian-stretch -f contrib/ci/Dockerfile-debian-stretch .
+  - docker build -t appstream-glib-fedora-29 -f contrib/ci/Dockerfile-fedora-29 .
+  - docker build -t appstream-glib-debian-buster -f contrib/ci/Dockerfile-debian-buster .
 
 script:
-  - docker run -t -v `pwd`:/build appstream-glib-fedora-25 ./contrib/ci/build_and_test.sh -Drpm=true -Ddep11=false
-  # ideally Ddep11=true but meson is too old
-  - docker run -t -v `pwd`:/build appstream-glib-debian-stretch ./contrib/ci/build_and_test.sh -Drpm=false -Ddep11=false
+  - docker run -t -v `pwd`:/build appstream-glib-fedora-29 ./contrib/ci/build_and_test.sh -Drpm=true -Ddep11=false
+  - docker run -t -v `pwd`:/build appstream-glib-debian-buster ./contrib/ci/build_and_test.sh -Drpm=false -Ddep11=true
