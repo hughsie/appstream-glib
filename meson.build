@@ -2,7 +2,7 @@ project('appstream-glib', 'c',
   version : '0.7.15',
   license : 'LGPL-2.1+',
   default_options : ['warning_level=1', 'c_std=c99'],
-  meson_version : '>=0.37.0'
+  meson_version : '>=0.46.0'
 )
 
 as_version = meson.project_version()
@@ -84,14 +84,25 @@ if get_option('dep11')
 endif
 
 # support stemming of search tokens
+cc = meson.get_compiler('c')
 if get_option('stemmer')
-  cc = meson.get_compiler('c')
   stemmer = cc.find_library('stemmer')
   conf.set('HAVE_LIBSTEMMER', 1)
 endif
 
 # use gperf for faster string -> enum matching
 gperf = find_program('gperf', required : true)
+
+global_link_args = []
+foreach arg: [ '-Wl,-Bsymbolic' ]
+  if cc.has_link_argument(arg)
+    global_link_args += arg
+  endif
+endforeach
+add_global_link_arguments(
+  global_link_args,
+  language: 'c'
+)
 
 gnome = import('gnome')
 i18n = import('i18n')
