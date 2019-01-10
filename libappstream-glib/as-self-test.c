@@ -115,7 +115,21 @@ as_test_get_filename (const gchar *filename)
 		g_free (path);
 		path = g_build_filename (TESTDIRBUILD, filename, NULL);
 	}
+#ifdef _WIN32
+	{
+		DWORD retval;
+		TCHAR full_path[PATH_MAX];
+
+		retval = GetFullPathNameA (path, PATH_MAX, full_path, NULL);
+
+		if (retval > 0)
+			return g_strdup (full_path);
+		else
+			return NULL;
+	}
+#else
 	return realpath (path, NULL);
+#endif
 }
 
 static GMainLoop *_test_loop = NULL;
