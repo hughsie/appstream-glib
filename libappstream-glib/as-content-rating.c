@@ -205,18 +205,18 @@ as_content_rating_value_from_string (const gchar *value)
 }
 
 /**
- * as_content_rating_id_value_to_csm_age:
- * @id: the subsection ID e.g. "violence-cartoon"
+ * as_content_rating_attribute_to_csm_age:
+ * @id: the subsection ID e.g. `violence-cartoon`
  * @value: the #AsContentRatingValue, e.g. %AS_CONTENT_RATING_VALUE_INTENSE
  *
  * Gets the Common Sense Media approved age for a specific rating level.
  *
  * Returns: The age in years, or 0 for no details.
  *
- * Since: 0.5.12
+ * Since: 0.7.15
  **/
-static guint
-as_content_rating_id_value_to_csm_age (const gchar *id, AsContentRatingValue value)
+guint
+as_content_rating_attribute_to_csm_age (const gchar *id, AsContentRatingValue value)
 {
 	/* The struct definition below assumes we don’t grow more
 	 * #AsContentRating values. */
@@ -328,7 +328,7 @@ as_content_rating_get_minimum_age (AsContentRating *content_rating)
 		AsContentRatingKey *key;
 		guint csm_tmp;
 		key = g_ptr_array_index (priv->keys, i);
-		csm_tmp = as_content_rating_id_value_to_csm_age (key->id, key->value);
+		csm_tmp = as_content_rating_attribute_to_csm_age (key->id, key->value);
 		if (csm_tmp > 0 && csm_tmp > csm_age)
 			csm_age = csm_tmp;
 	}
