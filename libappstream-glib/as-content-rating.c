@@ -293,6 +293,30 @@ as_content_rating_attribute_to_csm_age (const gchar *id, AsContentRatingValue va
 }
 
 /**
+ * as_content_rating_get_all_rating_ids:
+ *
+ * Returns a list of all the valid OARS content rating attribute IDs as could
+ * be passed to as_content_rating_add_attribute() or
+ * as_content_rating_attribute_to_csm_age().
+ *
+ * Returns: (array zero-terminated=1) (transfer container): a %NULL-terminated
+ *    array of IDs, to be freed with g_free() (the element values are owned by
+ *    libappstream-glib and must not be freed)
+ * Since: 0.7.15
+ */
+const gchar **
+as_content_rating_get_all_rating_ids (void)
+{
+	g_autofree const gchar **ids = NULL;
+
+	ids = g_new0 (const gchar *, G_N_ELEMENTS (oars_to_csm_mappings) + 1 /* NULL terminator */);
+	for (gsize i = 0; i < G_N_ELEMENTS (oars_to_csm_mappings); i++)
+		ids[i] = oars_to_csm_mappings[i].id;
+
+	return g_steal_pointer (&ids);
+}
+
+/**
  * as_content_rating_get_minimum_age:
  * @content_rating: a #AsContentRating
  *

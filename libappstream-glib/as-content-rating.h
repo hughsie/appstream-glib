@@ -86,6 +86,7 @@ const gchar	**as_content_rating_get_rating_ids (AsContentRating	*content_rating)
 
 guint		as_content_rating_attribute_to_csm_age (const gchar		*id,
 							AsContentRatingValue 	 value);
+const gchar	**as_content_rating_get_all_rating_ids (void);
 
 /* setters */
 void		 as_content_rating_set_kind	(AsContentRating	*content_rating,
