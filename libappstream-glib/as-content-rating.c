@@ -204,6 +204,51 @@ as_content_rating_value_from_string (const gchar *value)
 	return AS_CONTENT_RATING_VALUE_UNKNOWN;
 }
 
+/* The struct definition below assumes we don’t grow more
+ * #AsContentRating values. */
+G_STATIC_ASSERT (AS_CONTENT_RATING_VALUE_LAST == AS_CONTENT_RATING_VALUE_INTENSE + 1);
+
+static const struct {
+	const gchar	*id;
+	guint		 csm_age_none;  /* for %AS_CONTENT_RATING_VALUE_NONE */
+	guint		 csm_age_mild;  /* for %AS_CONTENT_RATING_VALUE_MILD */
+	guint		 csm_age_moderate;  /* for %AS_CONTENT_RATING_VALUE_MODERATE */
+	guint		 csm_age_intense;  /* for %AS_CONTENT_RATING_VALUE_INTENSE */
+} oars_to_csm_mappings[] =  {
+	/* Each @id must only appear once. The set of @csm_age_* values for a
+	 * given @id must be complete and non-decreasing. */
+	/* v1.0 */
+	{ "violence-cartoon",	0, 3, 4, 6 },
+	{ "violence-fantasy",	0, 3, 7, 8 },
+	{ "violence-realistic",	0, 4, 9, 14 },
+	{ "violence-bloodshed",	0, 9, 11, 18 },
+	{ "violence-sexual",	0, 18, 18, 18 },
+	{ "drugs-alcohol",	0, 11, 13, 16 },
+	{ "drugs-narcotics",	0, 12, 14, 17 },
+	{ "drugs-tobacco",	0, 10, 13, 13 },
+	{ "sex-nudity",		0, 12, 14, 14 },
+	{ "sex-themes",		0, 13, 14, 15 },
+	{ "language-profanity",	0, 8, 11, 14 },
+	{ "language-humor",	0, 3, 8, 14 },
+	{ "language-discrimination", 0, 9, 10, 11 },
+	{ "money-advertising",	0, 7, 8, 10 },
+	{ "money-gambling",	0, 7, 10, 18 },
+	{ "money-purchasing",	0, 12, 14, 15 },
+	{ "social-chat",	0, 4, 10, 13 },
+	{ "social-audio",	0, 15, 15, 15 },
+	{ "social-contacts",	0, 12, 12, 12 },
+	{ "social-info",	0, 0, 13, 13 },
+	{ "social-location",	0, 13, 13, 13 },
+	/* v1.1 additions */
+	{ "sex-homosexuality",	0, 10, 13, 18 },
+	{ "sex-prostitution",	0, 12, 14, 18 },
+	{ "sex-adultery",	0, 8, 10, 18 },
+	{ "sex-appearance",	0, 10, 10, 15 },
+	{ "violence-worship",	0, 13, 15, 18 },
+	{ "violence-desecration", 0, 13, 15, 18 },
+	{ "violence-slavery",	0, 13, 15, 18 },
+};
+
 /**
  * as_content_rating_attribute_to_csm_age:
  * @id: the subsection ID e.g. `violence-cartoon`
@@ -218,66 +263,21 @@ as_content_rating_value_from_string (const gchar *value)
 guint
 as_content_rating_attribute_to_csm_age (const gchar *id, AsContentRatingValue value)
 {
-	/* The struct definition below assumes we don’t grow more
-	 * #AsContentRating values. */
-	G_STATIC_ASSERT (AS_CONTENT_RATING_VALUE_LAST == AS_CONTENT_RATING_VALUE_INTENSE + 1);
-
-	struct {
-		const gchar	*id;
-		guint		 csm_age_none;  /* for %AS_CONTENT_RATING_VALUE_NONE */
-		guint		 csm_age_mild;  /* for %AS_CONTENT_RATING_VALUE_MILD */
-		guint		 csm_age_moderate;  /* for %AS_CONTENT_RATING_VALUE_MODERATE */
-		guint		 csm_age_intense;  /* for %AS_CONTENT_RATING_VALUE_INTENSE */
-	} to_csm_age[] =  {
-		/* Each @id must only appear once. The set of @csm_age_* values for a
-		 * given @id must be complete and non-decreasing. */
-		/* v1.0 */
-		{ "violence-cartoon",	0, 3, 4, 6 },
-		{ "violence-fantasy",	0, 3, 7, 8 },
-		{ "violence-realistic",	0, 4, 9, 14 },
-		{ "violence-bloodshed",	0, 9, 11, 18 },
-		{ "violence-sexual",	0, 18, 18, 18 },
-		{ "drugs-alcohol",	0, 11, 13, 16 },
-		{ "drugs-narcotics",	0, 12, 14, 17 },
-		{ "drugs-tobacco",	0, 10, 13, 13 },
-		{ "sex-nudity",		0, 12, 14, 14 },
-		{ "sex-themes",		0, 13, 14, 15 },
-		{ "language-profanity",	0, 8, 11, 14 },
-		{ "language-humor",	0, 3, 8, 14 },
-		{ "language-discrimination", 0, 9, 10, 11 },
-		{ "money-advertising",	0, 7, 8, 10 },
-		{ "money-gambling",	0, 7, 10, 18 },
-		{ "money-purchasing",	0, 12, 14, 15 },
-		{ "social-chat",	0, 4, 10, 13 },
-		{ "social-audio",	0, 15, 15, 15 },
-		{ "social-contacts",	0, 12, 12, 12 },
-		{ "social-info",	0, 0, 13, 13 },
-		{ "social-location",	0, 13, 13, 13 },
-		/* v1.1 additions */
-		{ "sex-homosexuality",	0, 10, 13, 18 },
-		{ "sex-prostitution",	0, 12, 14, 18 },
-		{ "sex-adultery",	0, 8, 10, 18 },
-		{ "sex-appearance",	0, 10, 10, 15 },
-		{ "violence-worship",	0, 13, 15, 18 },
-		{ "violence-desecration", 0, 13, 15, 18 },
-		{ "violence-slavery",	0, 13, 15, 18 },
-	};
-
 	if (value == AS_CONTENT_RATING_VALUE_UNKNOWN ||
 	    value == AS_CONTENT_RATING_VALUE_LAST)
 		return 0;
 
-	for (gsize i = 0; i < G_N_ELEMENTS (to_csm_age); i++) {
-		if (g_str_equal (id, to_csm_age[i].id)) {
+	for (gsize i = 0; i < G_N_ELEMENTS (oars_to_csm_mappings); i++) {
+		if (g_str_equal (id, oars_to_csm_mappings[i].id)) {
 			switch (value) {
 			case AS_CONTENT_RATING_VALUE_NONE:
-				return to_csm_age[i].csm_age_none;
+				return oars_to_csm_mappings[i].csm_age_none;
 			case AS_CONTENT_RATING_VALUE_MILD:
-				return to_csm_age[i].csm_age_mild;
+				return oars_to_csm_mappings[i].csm_age_mild;
 			case AS_CONTENT_RATING_VALUE_MODERATE:
-				return to_csm_age[i].csm_age_moderate;
+				return oars_to_csm_mappings[i].csm_age_moderate;
 			case AS_CONTENT_RATING_VALUE_INTENSE:
-				return to_csm_age[i].csm_age_intense;
+				return oars_to_csm_mappings[i].csm_age_intense;
 			case AS_CONTENT_RATING_VALUE_UNKNOWN:
 			case AS_CONTENT_RATING_VALUE_LAST:
 			default:
