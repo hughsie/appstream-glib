@@ -299,7 +299,7 @@ as_content_rating_id_value_to_csm_age (const gchar *id, AsContentRatingValue val
 	{ "social-info",	AS_CONTENT_RATING_VALUE_MILD,		0 },
 	{ "social-info",	AS_CONTENT_RATING_VALUE_MODERATE,	13 },
 	{ "money-purchasing",	AS_CONTENT_RATING_VALUE_MILD,		12 },
-	{ "social-chat",	AS_CONTENT_RATING_VALUE_MODERATE,	14 },
+	{ "money-purchasing",	AS_CONTENT_RATING_VALUE_MODERATE,	14 },
 	{ "sex-homosexuality",	AS_CONTENT_RATING_VALUE_NONE,		0 },
 	{ "sex-homosexuality",	AS_CONTENT_RATING_VALUE_MILD,		10 },
 	{ "sex-homosexuality",	AS_CONTENT_RATING_VALUE_MODERATE,	13 },
