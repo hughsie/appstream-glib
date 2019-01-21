@@ -218,132 +218,77 @@ as_content_rating_value_from_string (const gchar *value)
 static guint
 as_content_rating_id_value_to_csm_age (const gchar *id, AsContentRatingValue value)
 {
-	guint i;
+	/* The struct definition below assumes we don’t grow more
+	 * #AsContentRating values. */
+	G_STATIC_ASSERT (AS_CONTENT_RATING_VALUE_LAST == AS_CONTENT_RATING_VALUE_INTENSE + 1);
+
 	struct {
-		const gchar		*id;
-		AsContentRatingValue	 value;
-		guint			 csm_age;
+		const gchar	*id;
+		guint		 csm_age_none;  /* for %AS_CONTENT_RATING_VALUE_NONE */
+		guint		 csm_age_mild;  /* for %AS_CONTENT_RATING_VALUE_MILD */
+		guint		 csm_age_moderate;  /* for %AS_CONTENT_RATING_VALUE_MODERATE */
+		guint		 csm_age_intense;  /* for %AS_CONTENT_RATING_VALUE_INTENSE */
 	} to_csm_age[] =  {
-	/* v1.0 */
-	{ "violence-cartoon",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "violence-cartoon",	AS_CONTENT_RATING_VALUE_MILD,		3 },
-	{ "violence-cartoon",	AS_CONTENT_RATING_VALUE_MODERATE,	4 },
-	{ "violence-cartoon",	AS_CONTENT_RATING_VALUE_INTENSE,	6 },
-	{ "violence-fantasy",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "violence-fantasy",	AS_CONTENT_RATING_VALUE_MILD,		3 },
-	{ "violence-fantasy",	AS_CONTENT_RATING_VALUE_MODERATE,	7 },
-	{ "violence-fantasy",	AS_CONTENT_RATING_VALUE_INTENSE,	8 },
-	{ "violence-realistic",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "violence-realistic",	AS_CONTENT_RATING_VALUE_MILD,		4 },
-	{ "violence-realistic",	AS_CONTENT_RATING_VALUE_MODERATE,	9 },
-	{ "violence-realistic",	AS_CONTENT_RATING_VALUE_INTENSE,	14 },
-	{ "violence-bloodshed",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "violence-bloodshed",	AS_CONTENT_RATING_VALUE_MILD,		9 },
-	{ "violence-bloodshed",	AS_CONTENT_RATING_VALUE_MODERATE,	11 },
-	{ "violence-bloodshed",	AS_CONTENT_RATING_VALUE_INTENSE,	18 },
-	{ "violence-sexual",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "violence-sexual",	AS_CONTENT_RATING_VALUE_MILD,		18 },
-	{ "violence-sexual",	AS_CONTENT_RATING_VALUE_MODERATE,	18 },
-	{ "violence-sexual",	AS_CONTENT_RATING_VALUE_INTENSE,	18 },
-	{ "drugs-alcohol",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "drugs-alcohol",	AS_CONTENT_RATING_VALUE_MILD,		11 },
-	{ "drugs-alcohol",	AS_CONTENT_RATING_VALUE_INTENSE,	16 },
-	{ "drugs-alcohol",	AS_CONTENT_RATING_VALUE_MODERATE,	13 },
-	{ "drugs-narcotics",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "drugs-narcotics",	AS_CONTENT_RATING_VALUE_MILD,		12 },
-	{ "drugs-narcotics",	AS_CONTENT_RATING_VALUE_INTENSE,	17 },
-	{ "drugs-narcotics",	AS_CONTENT_RATING_VALUE_MODERATE,	14 },
-	{ "drugs-tobacco",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "drugs-tobacco",	AS_CONTENT_RATING_VALUE_MILD,		10 },
-	{ "drugs-tobacco",	AS_CONTENT_RATING_VALUE_MODERATE,	13 },
-	{ "drugs-tobacco",	AS_CONTENT_RATING_VALUE_INTENSE,	13 },
-	{ "sex-nudity",		AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "sex-nudity",		AS_CONTENT_RATING_VALUE_MILD,		12 },
-	{ "sex-nudity",		AS_CONTENT_RATING_VALUE_MODERATE,	14 },
-	{ "sex-nudity",		AS_CONTENT_RATING_VALUE_INTENSE,	14 },
-	{ "sex-themes",		AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "sex-themes",		AS_CONTENT_RATING_VALUE_MILD,		13 },
-	{ "sex-themes",		AS_CONTENT_RATING_VALUE_MODERATE,	14 },
-	{ "sex-themes",		AS_CONTENT_RATING_VALUE_INTENSE,	15 },
-	{ "language-profanity",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "language-profanity",	AS_CONTENT_RATING_VALUE_MILD,		8 },
-	{ "language-profanity",	AS_CONTENT_RATING_VALUE_MODERATE,	11 },
-	{ "language-profanity",	AS_CONTENT_RATING_VALUE_INTENSE,	14 },
-	{ "language-humor",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "language-humor",	AS_CONTENT_RATING_VALUE_MILD,		3 },
-	{ "language-humor",	AS_CONTENT_RATING_VALUE_MODERATE,	8 },
-	{ "language-humor",	AS_CONTENT_RATING_VALUE_INTENSE,	14 },
-	{ "language-discrimination", AS_CONTENT_RATING_VALUE_NONE,	0 },
-	{ "language-discrimination", AS_CONTENT_RATING_VALUE_MILD,	9 },
-	{ "language-discrimination", AS_CONTENT_RATING_VALUE_MODERATE,	10 },
-	{ "language-discrimination", AS_CONTENT_RATING_VALUE_INTENSE,	11 },
-	{ "money-advertising",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "money-advertising",	AS_CONTENT_RATING_VALUE_MILD,		7 },
-	{ "money-advertising",	AS_CONTENT_RATING_VALUE_MODERATE,	8 },
-	{ "money-advertising",	AS_CONTENT_RATING_VALUE_INTENSE,	10 },
-	{ "money-gambling",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "money-gambling",	AS_CONTENT_RATING_VALUE_MILD,		7 },
-	{ "money-gambling",	AS_CONTENT_RATING_VALUE_MODERATE,	10 },
-	{ "money-gambling",	AS_CONTENT_RATING_VALUE_INTENSE,	18 },
-	{ "money-purchasing",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "money-purchasing",	AS_CONTENT_RATING_VALUE_INTENSE,	15 },
-	{ "social-chat",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "social-chat",	AS_CONTENT_RATING_VALUE_MILD,		4 },
-	{ "social-chat",	AS_CONTENT_RATING_VALUE_MODERATE,	10 },
-	{ "social-chat",	AS_CONTENT_RATING_VALUE_INTENSE,	13 },
-	{ "social-audio",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "social-audio",	AS_CONTENT_RATING_VALUE_MILD,		15 },
-	{ "social-audio",	AS_CONTENT_RATING_VALUE_MODERATE,	15 },
-	{ "social-audio",	AS_CONTENT_RATING_VALUE_INTENSE,	15 },
-	{ "social-contacts",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "social-contacts",	AS_CONTENT_RATING_VALUE_MILD,		12 },
-	{ "social-contacts",	AS_CONTENT_RATING_VALUE_MODERATE,	12 },
-	{ "social-contacts",	AS_CONTENT_RATING_VALUE_INTENSE,	12 },
-	{ "social-info",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "social-info",	AS_CONTENT_RATING_VALUE_INTENSE,	13 },
-	{ "social-location",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "social-location",	AS_CONTENT_RATING_VALUE_MILD,		13 },
-	{ "social-location",	AS_CONTENT_RATING_VALUE_MODERATE,	13 },
-	{ "social-location",	AS_CONTENT_RATING_VALUE_INTENSE,	13 },
-	/* v1.1 additions */
-	{ "social-info",	AS_CONTENT_RATING_VALUE_MILD,		0 },
-	{ "social-info",	AS_CONTENT_RATING_VALUE_MODERATE,	13 },
-	{ "money-purchasing",	AS_CONTENT_RATING_VALUE_MILD,		12 },
-	{ "money-purchasing",	AS_CONTENT_RATING_VALUE_MODERATE,	14 },
-	{ "sex-homosexuality",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "sex-homosexuality",	AS_CONTENT_RATING_VALUE_MILD,		10 },
-	{ "sex-homosexuality",	AS_CONTENT_RATING_VALUE_MODERATE,	13 },
-	{ "sex-homosexuality",	AS_CONTENT_RATING_VALUE_INTENSE,	18 },
-	{ "sex-prostitution",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "sex-prostitution",	AS_CONTENT_RATING_VALUE_MILD,		12 },
-	{ "sex-prostitution",	AS_CONTENT_RATING_VALUE_MODERATE,	14 },
-	{ "sex-prostitution",	AS_CONTENT_RATING_VALUE_INTENSE,	18 },
-	{ "sex-adultery",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "sex-adultery",	AS_CONTENT_RATING_VALUE_MILD,		8 },
-	{ "sex-adultery",	AS_CONTENT_RATING_VALUE_MODERATE,	10 },
-	{ "sex-adultery",	AS_CONTENT_RATING_VALUE_INTENSE,	18 },
-	{ "sex-appearance",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "sex-appearance",	AS_CONTENT_RATING_VALUE_MILD,		10 },
-	{ "sex-appearance",	AS_CONTENT_RATING_VALUE_MODERATE,	10 },
-	{ "sex-appearance",	AS_CONTENT_RATING_VALUE_INTENSE,	15 },
-	{ "violence-worship",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "violence-worship",	AS_CONTENT_RATING_VALUE_MILD,		13 },
-	{ "violence-worship",	AS_CONTENT_RATING_VALUE_MODERATE,	15 },
-	{ "violence-worship",	AS_CONTENT_RATING_VALUE_INTENSE,	18 },
-	{ "violence-desecration", AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "violence-desecration", AS_CONTENT_RATING_VALUE_MILD,		13 },
-	{ "violence-desecration", AS_CONTENT_RATING_VALUE_MODERATE,	15 },
-	{ "violence-desecration", AS_CONTENT_RATING_VALUE_INTENSE,	18 },
-	{ "violence-slavery",	AS_CONTENT_RATING_VALUE_NONE,		0 },
-	{ "violence-slavery",	AS_CONTENT_RATING_VALUE_MILD,		13 },
-	{ "violence-slavery",	AS_CONTENT_RATING_VALUE_MODERATE,	15 },
-	{ "violence-slavery",	AS_CONTENT_RATING_VALUE_INTENSE,	18 },
-	{ NULL, 0, 0 } };
-	for (i = 0; to_csm_age[i].id != NULL; i++) {
-		if (value == to_csm_age[i].value &&
-		    g_strcmp0 (id, to_csm_age[i].id) == 0)
-			return to_csm_age[i].csm_age;
+		/* Each @id must only appear once. The set of @csm_age_* values for a
+		 * given @id must be complete and non-decreasing. */
+		/* v1.0 */
+		{ "violence-cartoon",	0, 3, 4, 6 },
+		{ "violence-fantasy",	0, 3, 7, 8 },
+		{ "violence-realistic",	0, 4, 9, 14 },
+		{ "violence-bloodshed",	0, 9, 11, 18 },
+		{ "violence-sexual",	0, 18, 18, 18 },
+		{ "drugs-alcohol",	0, 11, 13, 16 },
+		{ "drugs-narcotics",	0, 12, 14, 17 },
+		{ "drugs-tobacco",	0, 10, 13, 13 },
+		{ "sex-nudity",		0, 12, 14, 14 },
+		{ "sex-themes",		0, 13, 14, 15 },
+		{ "language-profanity",	0, 8, 11, 14 },
+		{ "language-humor",	0, 3, 8, 14 },
+		{ "language-discrimination", 0, 9, 10, 11 },
+		{ "money-advertising",	0, 7, 8, 10 },
+		{ "money-gambling",	0, 7, 10, 18 },
+		{ "money-purchasing",	0, 12, 14, 15 },
+		{ "social-chat",	0, 4, 10, 13 },
+		{ "social-audio",	0, 15, 15, 15 },
+		{ "social-contacts",	0, 12, 12, 12 },
+		{ "social-info",	0, 0, 13, 13 },
+		{ "social-location",	0, 13, 13, 13 },
+		/* v1.1 additions */
+		{ "sex-homosexuality",	0, 10, 13, 18 },
+		{ "sex-prostitution",	0, 12, 14, 18 },
+		{ "sex-adultery",	0, 8, 10, 18 },
+		{ "sex-appearance",	0, 10, 10, 15 },
+		{ "violence-worship",	0, 13, 15, 18 },
+		{ "violence-desecration", 0, 13, 15, 18 },
+		{ "violence-slavery",	0, 13, 15, 18 },
+	};
+
+	if (value == AS_CONTENT_RATING_VALUE_UNKNOWN ||
+	    value == AS_CONTENT_RATING_VALUE_LAST)
+		return 0;
+
+	for (gsize i = 0; i < G_N_ELEMENTS (to_csm_age); i++) {
+		if (g_str_equal (id, to_csm_age[i].id)) {
+			switch (value) {
+			case AS_CONTENT_RATING_VALUE_NONE:
+				return to_csm_age[i].csm_age_none;
+			case AS_CONTENT_RATING_VALUE_MILD:
+				return to_csm_age[i].csm_age_mild;
+			case AS_CONTENT_RATING_VALUE_MODERATE:
+				return to_csm_age[i].csm_age_moderate;
+			case AS_CONTENT_RATING_VALUE_INTENSE:
+				return to_csm_age[i].csm_age_intense;
+			case AS_CONTENT_RATING_VALUE_UNKNOWN:
+			case AS_CONTENT_RATING_VALUE_LAST:
+			default:
+				/* Handled above. */
+				g_assert_not_reached ();
+				return 0;
+			}
+		}
 	}
+
+	/* @id not found. */
 	return 0;
 }
 
