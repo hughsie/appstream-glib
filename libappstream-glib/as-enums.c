@@ -95,6 +95,8 @@ as_url_kind_to_string (AsUrlKind url_kind)
 		return as_ref_string_new_static ("missing");
 	if (url_kind == AS_URL_KIND_TRANSLATE)
 		return as_ref_string_new_static ("translate");
+	if (url_kind == AS_URL_KIND_DETAILS)
+		return as_ref_string_new_static ("details");
 	return as_ref_string_new_static ("unknown");
 }
 
@@ -125,6 +127,8 @@ as_url_kind_from_string (const gchar *url_kind)
 		return AS_URL_KIND_MISSING;
 	if (g_strcmp0 (url_kind, "translate") == 0)
 		return AS_URL_KIND_TRANSLATE;
+	if (g_strcmp0 (url_kind, "details") == 0)
+		return AS_URL_KIND_DETAILS;
 	return AS_URL_KIND_UNKNOWN;
 }
 
