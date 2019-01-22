@@ -113,6 +113,8 @@ AsReleaseKind	 as_release_get_kind		(AsRelease	*release);
 AsReleaseState	 as_release_get_state		(AsRelease	*release);
 guint64		 as_release_get_size		(AsRelease	*release,
 						 AsSizeKind	 kind);
+const gchar	*as_release_get_url		(AsRelease	*release,
+						 AsUrlKind	 url_kind);
 
 /* setters */
 void		 as_release_set_version		(AsRelease	*release,
@@ -140,6 +142,9 @@ void		 as_release_set_state		(AsRelease	*release,
 void		 as_release_set_size		(AsRelease	*release,
 						 AsSizeKind	 kind,
 						 guint64	 size);
+void		 as_release_set_url		(AsRelease	*release,
+						 AsUrlKind	 url_kind,
+						 const gchar	*url);
 
 G_END_DECLS
 

@@ -615,6 +615,7 @@ as_test_launchable_func (void)
 static void
 as_test_release_appstream_func (void)
 {
+	const gchar *url;
 	AsChecksum *csum;
 	GError *error = NULL;
 	AsNode *n;
@@ -628,6 +629,7 @@ as_test_release_appstream_func (void)
 		"<location>http://baz.com/bar.cab</location>\n"
 		"<checksum type=\"sha1\" filename=\"firmware.cab\" target=\"container\">12345</checksum>\n"
 		"<checksum type=\"md5\" filename=\"firmware.cab\" target=\"container\">deadbeef</checksum>\n"
+		"<url type=\"details\">http://foo.bar/</url>\n"
 		"<description><p>This is a new release</p><ul><li>Point</li></ul></description>\n"
 		"<description xml:lang=\"pl\"><p>Oprogramowanie</p></description>\n"
 		"<size type=\"installed\">123456</size>\n"
@@ -682,6 +684,12 @@ as_test_release_appstream_func (void)
 	g_assert_cmpuint (sz, ==, 123456);
 	sz = as_release_get_size (release, AS_SIZE_KIND_DOWNLOAD);
 	g_assert_cmpuint (sz, ==, 654321);
+
+	/* URL */
+	url = as_release_get_url (release, AS_URL_KIND_DETAILS);
+	g_assert_cmpstr (url, ==, "http://foo.bar/");
+	url = as_release_get_url (release, AS_URL_KIND_HOMEPAGE);
+	g_assert_null (url);
 
 	/* back to node */
 	root = as_node_new ();
