@@ -74,6 +74,7 @@ typedef enum {
  * @AS_URL_KIND_TRANSLATE:		Application translation page
  * @AS_URL_KIND_DETAILS:		Release details
  * @AS_URL_KIND_SOURCE:			Link to source code
+ * @AS_URL_KIND_CONTACT:		URL to contact developer on
  *
  * The URL type.
  **/
@@ -88,6 +89,7 @@ typedef enum {
 	AS_URL_KIND_TRANSLATE,		/* Since: 0.6.1 */
 	AS_URL_KIND_DETAILS,		/* Since: 0.7.15 */
 	AS_URL_KIND_SOURCE,		/* Since: 0.7.15 */
+	AS_URL_KIND_CONTACT,		/* Since: 0.7.15 */
 	/*< private >*/
 	AS_URL_KIND_LAST
 } AsUrlKind;
