@@ -235,6 +235,9 @@ if get_option('introspection')
       'Gio-2.0',
       'GdkPixbuf-2.0'
     ],
+    extra_args : [
+      '-DAS_COMPILATION',
+    ],
     link_with : asglib,
     install : true,
   )
