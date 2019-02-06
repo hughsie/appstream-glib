@@ -2371,6 +2371,9 @@ as_test_store_local_appdata_func (void)
 			       "ignoring description '*' from */broken.appdata.xml: Unknown tag '_p'");
 
 	/* open test store */
+#ifdef _WIN32
+	g_setenv ("XDG_DATA_DIRS", "/usr/share/", TRUE);
+#endif
 	store = as_store_new ();
 	filename = as_test_get_filename (".");
 	as_store_set_destdir (store, filename);
