@@ -459,7 +459,8 @@ asb_context_add_filename (AsbContext *ctx, const gchar *filename, GError **error
 		pkg = asb_package_rpm_new ();
 #endif
 #ifdef HAVE_ALPM
-	if (g_str_has_suffix (filename, ".pkg.tar.xz"))
+	if (g_str_has_suffix (filename, ".pkg.tar") ||
+	    g_str_has_suffix (filename, ".pkg.tar.xz"))
 		pkg = asb_package_alpm_new ();
 #endif
 	if (g_str_has_suffix (filename, ".cab"))
