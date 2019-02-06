@@ -1537,23 +1537,36 @@ as_utils_guid_from_data (const gchar *namespace_id,
 	RPC_CSTR temp_guid_new;
 	UUID uu_namespace;
 	UUID uu_new;
+	u_long l;
+	u_short s;
 
 	typedef RPC_STATUS (WINAPI *t_UuidCreate) (UUID *Uuid);
 	typedef RPC_STATUS (WINAPI *t_UuidFromString) (RPC_CSTR StringUuid, UUID *Uuid);
 	typedef RPC_STATUS (WINAPI *t_UuidToString) (const UUID *Uuid, RPC_CSTR *StringUuid);
 	typedef RPC_STATUS (WINAPI *t_RpcStringFree) (RPC_CSTR *String);
 
+	typedef u_long  (WINAPI *t_htonl) (u_long hostlong);
+	typedef u_short (WINAPI *t_htons) (u_short hostlong);
+
 	t_UuidCreate p_UuidCreate;
 	t_UuidFromString p_UuidFromString;
 	t_UuidToString p_UuidToString;
 	t_RpcStringFree p_RpcStringFree;
+
+	t_htonl p_htonl;
+	t_htons p_htons;
 
 	p_UuidCreate = (t_UuidCreate) GetProcAddress (GetModuleHandle ("rpcrt4.dll"), "UuidCreate");
 	p_UuidFromString = (t_UuidFromString) GetProcAddress (GetModuleHandle ("rpcrt4.dll"), "UuidFromStringA");
 	p_UuidToString = (t_UuidToString) GetProcAddress (GetModuleHandle ("rpcrt4.dll"), "UuidToStringA");
 	p_RpcStringFree = (t_RpcStringFree) GetProcAddress (GetModuleHandle ("rpcrt4.dll"), "RpcStringFreeA");
 
+	p_htonl = (t_htonl) GetProcAddress (GetModuleHandle ("ws2_32.dll"), "htonl");
+	p_htons = (t_htons) GetProcAddress (GetModuleHandle ("ws2_32.dll"), "htons");
+
 	g_return_val_if_fail (p_UuidCreate && p_UuidFromString && p_UuidToString && p_RpcStringFree, FALSE);
+	g_return_val_if_fail (p_htonl && p_htons, FALSE);
+
 #else
 	gchar guid_new[37]; /* 36 plus NUL */
 	gint rc;
@@ -1592,9 +1605,12 @@ as_utils_guid_from_data (const gchar *namespace_id,
 
 	/* hash the namespace and then the string */
 #ifdef _WIN32
-	memcpy (temp_data, &uu_namespace.Data1, 4);
-	memcpy (temp_data + 4, &uu_namespace.Data2, 2);
-	memcpy (temp_data + 6, &uu_namespace.Data3, 2);
+	l = p_htonl (uu_namespace.Data1);
+	memcpy (temp_data, &l, 4);
+	s = p_htons (uu_namespace.Data2);
+	memcpy (temp_data + 4, &s, 2);
+	s = p_htons (uu_namespace.Data3);
+	memcpy (temp_data + 6, &s, 2);
 	memcpy (temp_data + 8, &uu_namespace.Data4[0], 1);
 	memcpy (temp_data + 9, &uu_namespace.Data4[1], 1);
 	memcpy (temp_data + 10, &uu_namespace.Data4[2], 1);
@@ -1621,10 +1637,16 @@ as_utils_guid_from_data (const gchar *namespace_id,
 					 "UuidCreate() failed");
 		return FALSE;
 	}
+
 	memcpy (&uu_new.Data1, hash, 4);
+	uu_new.Data1 = p_htonl (uu_new.Data1);
 	memcpy (&uu_new.Data2, hash + 4, 2);
+	uu_new.Data2 = p_htons (uu_new.Data2);
 	memcpy (&uu_new.Data3, hash + 6, 2);
+	uu_new.Data3 = (uu_new.Data3 & 0xFF00) | (guint8) ((uu_new.Data3 & 0x0f) | (5 << 4));
+	uu_new.Data3 = p_htons (uu_new.Data3);
 	memcpy (&uu_new.Data4[0], hash + 8, 1);
+	uu_new.Data4[0]  = (guint8) ((uu_new.Data4[0] & 0x3f) | 0x80);
 	memcpy (&uu_new.Data4[1], hash + 9, 1);
 	memcpy (&uu_new.Data4[2], hash + 10, 1);
 	memcpy (&uu_new.Data4[3], hash + 11, 1);
@@ -1632,9 +1654,6 @@ as_utils_guid_from_data (const gchar *namespace_id,
 	memcpy (&uu_new.Data4[5], hash + 13, 1);
 	memcpy (&uu_new.Data4[6], hash + 14, 1);
 	memcpy (&uu_new.Data4[7], hash + 15, 1);
-
-	uu_new.Data3 = (uu_new.Data3 & 0xFF00) | (guint8) ((uu_new.Data3 & 0x0f) | (5 << 4));
-	uu_new.Data4[0]  = (guint8) ((uu_new.Data4[0] & 0x3f) | 0x80);
 #else
 	/* copy most parts of the hash 1:1 */
 	memcpy (uu_new, hash, 16);
