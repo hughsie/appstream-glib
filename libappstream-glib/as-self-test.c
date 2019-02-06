@@ -2366,9 +2366,15 @@ as_test_store_local_appdata_func (void)
 	g_autoptr(AsStore) store = NULL;
 
 	/* this are the warnings expected */
+#ifdef _WIN32
+	g_test_expect_message (G_LOG_DOMAIN,
+			       G_LOG_LEVEL_WARNING,
+			       "ignoring description '*' from *\\broken.appdata.xml: Unknown tag '_p'");
+#else
 	g_test_expect_message (G_LOG_DOMAIN,
 			       G_LOG_LEVEL_WARNING,
 			       "ignoring description '*' from */broken.appdata.xml: Unknown tag '_p'");
+#endif
 
 	/* open test store */
 #ifdef _WIN32
