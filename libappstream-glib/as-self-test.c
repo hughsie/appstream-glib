@@ -68,7 +68,7 @@ fnmatch (const char *pattern, const char *string, int flags)
 
 	g_return_val_if_fail (p_PathMatchSpecA, 1);
 
-	return p_PathMatchSpecA(string, pattern);
+	return p_PathMatchSpecA(string, pattern) ? 0 : 1;
 }
 #define FNM_NOESCAPE 0
 #else
