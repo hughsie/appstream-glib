@@ -11,7 +11,6 @@ shared_module(
   dependencies : [
     gdkpixbuf,
   ],
-  link_with : [asbuilder, asglib],
   c_args : asb_plugins_cargs,
   install : true,
   install_dir : plugindir,
@@ -28,7 +27,6 @@ shared_module(
   dependencies : [
     gdkpixbuf,
   ],
-  link_with : [asbuilder, asglib],
   c_args : asb_plugins_cargs,
   install : true,
   install_dir : plugindir,
@@ -45,7 +43,6 @@ shared_module(
   dependencies : [
     gdkpixbuf,
   ],
-  link_with : [asbuilder, asglib],
   c_args : asb_plugins_cargs,
   install : true,
   install_dir : plugindir,
@@ -62,7 +59,6 @@ shared_module(
   dependencies : [
     gdkpixbuf,
   ],
-  link_with : [asbuilder, asglib],
   c_args : asb_plugins_cargs,
   install : true,
   install_dir : plugindir,
@@ -79,7 +75,6 @@ shared_module(
   dependencies : [
     gdkpixbuf,
   ],
-  link_with : [asbuilder, asglib],
   c_args : asb_plugins_cargs,
   install : true,
   install_dir : plugindir,
@@ -97,7 +92,6 @@ shared_module(
     gdkpixbuf,
     json_glib,
   ],
-  link_with : [asbuilder, asglib],
   c_args : asb_plugins_cargs,
   install : true,
   install_dir : plugindir,
@@ -118,7 +112,6 @@ if get_option('fonts')
       freetype,
       fontconfig,
     ],
-    link_with : [asbuilder, asglib],
     c_args : asb_plugins_cargs,
     install : true,
     install_dir : plugindir,
