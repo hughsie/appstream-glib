@@ -2363,6 +2363,7 @@ as_test_store_local_appdata_func (void)
 	gboolean ret;
 	g_autofree gchar *filename = NULL;
 	g_autofree gchar *filename_full = NULL;
+	g_autofree gchar *canonical_filename;
 	g_autoptr(AsStore) store = NULL;
 
 	/* this are the warnings expected */
@@ -2399,7 +2400,8 @@ as_test_store_local_appdata_func (void)
 	filename_full = g_build_filename (filename,
 					  "usr/share/appdata/broken.appdata.xml",
 					  NULL);
-	g_assert_cmpstr (as_format_get_filename (format), ==, filename_full);
+	canonical_filename = g_canonicalize_filename (filename_full, NULL);
+	g_assert_cmpstr (as_format_get_filename (format), ==, canonical_filename);
 }
 
 static void
