@@ -1548,12 +1548,12 @@ as_utils_guid_from_data (const gchar *namespace_id,
 	t_UuidToString p_UuidToString;
 	t_RpcStringFree p_RpcStringFree;
 
-	p_UuidCreate = (t_UuidCreate) GetProcAddress (GetModuleHandle ("Rpcrt4.dll"), "UuidCreate");
-	p_UuidFromString = (t_UuidFromString) GetProcAddress (GetModuleHandle ("Rpcrt4.dll"), "UuidFromString");
-	p_UuidToString = (t_UuidToString) GetProcAddress (GetModuleHandle ("Rpcrt4.dll"), "UuidToString");
-	p_RpcStringFree = (t_RpcStringFree) GetProcAddress (GetModuleHandle ("Rpcrt4.dll"), "RpcStringFree");
+	p_UuidCreate = (t_UuidCreate) GetProcAddress (GetModuleHandle ("rpcrt4.dll"), "UuidCreate");
+	p_UuidFromString = (t_UuidFromString) GetProcAddress (GetModuleHandle ("rpcrt4.dll"), "UuidFromStringA");
+	p_UuidToString = (t_UuidToString) GetProcAddress (GetModuleHandle ("rpcrt4.dll"), "UuidToStringA");
+	p_RpcStringFree = (t_RpcStringFree) GetProcAddress (GetModuleHandle ("rpcrt4.dll"), "RpcStringFreeA");
 
-	g_return_val_if_fail (p_UuidCreate && p_UuidFromString && p_UuidToString, FALSE);
+	g_return_val_if_fail (p_UuidCreate && p_UuidFromString && p_UuidToString && p_RpcStringFree, FALSE);
 #else
 	gchar guid_new[37]; /* 36 plus NUL */
 	gint rc;
@@ -1689,7 +1689,7 @@ as_utils_guid_is_valid (const gchar *guid)
         RPC_STATUS rc;
         UUID uu;
 
-		p_UuidFromString = (t_UuidFromString) GetProcAddress (GetModuleHandle ("Rpcrt4.dll"), "UuidFromString");
+		p_UuidFromString = (t_UuidFromString) GetProcAddress (GetModuleHandle ("rpcrt4.dll"), "UuidFromStringA");
 
 		g_return_val_if_fail (p_UuidFromString, FALSE);
 
