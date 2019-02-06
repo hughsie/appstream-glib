@@ -44,18 +44,20 @@ as_app_desktop_key_get_locale (const gchar *key)
 }
 
 static gboolean
-as_app_infer_file_key (AsApp *app,
-		       GKeyFile *kf,
-		       const gchar *key,
-		       GError **error)
+as_app_infer_kudos (AsApp *app, GKeyFile *kf, const gchar *key, GError **error)
 {
-	g_autofree gchar *tmp = NULL;
-
 	if (g_strcmp0 (key, "X-GNOME-UsesNotifications") == 0) {
 		as_app_add_kudo_kind (AS_APP (app),
 				      AS_KUDO_KIND_NOTIFICATIONS);
+	}
+	return TRUE;
+}
 
-	} else if (g_strcmp0 (key, "X-GNOME-Bugzilla-Bugzilla") == 0) {
+static gboolean
+as_app_infer_project_group (AsApp *app, GKeyFile *kf, const gchar *key, GError **error)
+{
+	g_autofree gchar *tmp = NULL;
+	if (g_strcmp0 (key, "X-GNOME-Bugzilla-Bugzilla") == 0) {
 		tmp = g_key_file_get_string (kf,
 					     G_KEY_FILE_DESKTOP_GROUP,
 					     key,
@@ -537,8 +539,12 @@ as_app_parse_desktop_file (AsApp *app,
 		if (!as_app_parse_file_key (app, kf, keys[i], flags, error))
 			return FALSE;
 		if ((flags & AS_APP_PARSE_FLAG_USE_HEURISTICS) > 0) {
-			if (!as_app_infer_file_key (app, kf, keys[i], error))
+			if (!as_app_infer_kudos (app, kf, keys[i], error))
 				return FALSE;
+			if (as_app_get_project_group (app) == NULL) {
+				if (!as_app_infer_project_group (app, kf, keys[i], error))
+					return FALSE;
+			}
 		}
 	}
 
