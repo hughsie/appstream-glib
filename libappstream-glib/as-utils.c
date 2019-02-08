@@ -32,7 +32,6 @@
 
 #include "config.h"
 
-#include <fnmatch.h>
 #include <string.h>
 #include <archive_entry.h>
 #include <archive.h>
@@ -1605,10 +1604,10 @@ gboolean
 as_utils_guid_is_valid (const gchar *guid)
 {
 #ifdef _WIN32
-	g_set_error_literal (error,
-			     AS_UTILS_ERROR,
-			     AS_UTILS_ERROR_FAILED,
-			     "not supported");
+	/* XXX Ideally we should set a GError but this was already a public
+	 * API, and it doesn't have such parameter.
+	 */
+	g_printerr ("%s: not supported\n", G_STRFUNC);
 	return FALSE;
 #else
 	gint rc;
