@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_AGREEMENT_H
-#define __AS_AGREEMENT_H
 
 #include <glib-object.h>
 
@@ -70,5 +69,3 @@ void		 as_agreement_add_section		(AsAgreement		*agreement,
 							 AsAgreementSection	*agreement_section);
 
 G_END_DECLS
-
-#endif /* __AS_AGREEMENT_H */

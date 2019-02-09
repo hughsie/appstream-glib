@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_PRIVATE_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_NODE_PRIVATE_H
-#define __AS_NODE_PRIVATE_H
 
 #include "as-app.h"
 #include "as-node.h"
@@ -57,6 +56,3 @@ AsRefString	*as_node_get_attribute_as_refstr (const AsNode	*node,
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsNodeContext, as_node_context_free)
 
 G_END_DECLS
-
-#endif /* __AS_NODE_PRIVATE_H */
-

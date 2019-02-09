@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#ifndef __ASB_UTILS_H
-#define __ASB_UTILS_H
+#pragma once
 
 #include <glib.h>
 #include <appstream-glib.h>
@@ -42,5 +41,3 @@ const gchar	*asb_glob_value_search			(GPtrArray	*array,
 GPtrArray	*asb_glob_value_array_new		(void);
 
 G_END_DECLS
-
-#endif /* __ASB_UTILS_H */

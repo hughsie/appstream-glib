@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_INF_H
-#define __AS_INF_H
 
 #include <glib.h>
 
@@ -67,5 +66,3 @@ gchar		*as_inf_get_driver_version	(GKeyFile	*keyfile,
 G_DEPRECATED;
 
 G_END_DECLS
-
-#endif /* __AS_INF_H */

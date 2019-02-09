@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_APP_GETTEXT_H
-#define __AS_APP_GETTEXT_H
 
 #include <glib.h>
 #include <gio/gio.h>
@@ -49,5 +48,3 @@ gboolean	 as_app_builder_search_provides		(AsApp		*app,
 							 GError		**error);
 
 G_END_DECLS
-
-#endif /* __AS_APP_GETTEXT_H */

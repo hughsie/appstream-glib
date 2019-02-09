@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#ifndef ASB_PACKAGE_DEB_H
-#define ASB_PACKAGE_DEB_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -28,5 +27,3 @@ struct _AsbPackageDebClass
 AsbPackage	*asb_package_deb_new		(void);
 
 G_END_DECLS
-
-#endif /* ASB_PACKAGE_DEB_H */

@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#ifndef __ASB_PLUGIN_H
-#define __ASB_PLUGIN_H
+#pragma once
 
 #include <glib-object.h>
 #include <gmodule.h>
@@ -87,5 +86,3 @@ gboolean	 asb_plugin_match_glob			(const gchar	*glob,
 							 const gchar	*value);
 
 G_END_DECLS
-
-#endif /* __ASB_PLUGIN_H */

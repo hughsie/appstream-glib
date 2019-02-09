@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#ifndef __AS_STEMMER_H
-#define __AS_STEMMER_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -23,5 +22,3 @@ AsRefString	*as_stemmer_process		(AsStemmer	*stemmer,
 						 const gchar	*value);
 
 G_END_DECLS
-
-#endif /* __AS_STEMMER_H */

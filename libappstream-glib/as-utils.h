@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_UTILS_H
-#define __AS_UTILS_H
 
 #include <glib.h>
 
@@ -182,5 +181,3 @@ gchar		*as_utils_appstream_id_build	(const gchar	*str);
 gboolean	 as_utils_appstream_id_valid	(const gchar	*str);
 
 G_END_DECLS
-
-#endif /* __AS_UTILS_H */

@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#ifndef ASB_APP_H
-#define ASB_APP_H
+#pragma once
 
 #include <stdarg.h>
 #include <glib-object.h>
@@ -63,5 +62,3 @@ gboolean	 asb_app_save_resources		(AsbApp		*app,
 
 
 G_END_DECLS
-
-#endif /* ASB_APP_H */

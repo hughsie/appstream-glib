@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_PRIVATE_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_UTILS_PRIVATE_H
-#define __AS_UTILS_PRIVATE_H
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
@@ -35,5 +34,3 @@ gboolean	 as_utils_locale_is_compatible	(const gchar	*locale1,
 GDateTime	*as_utils_iso8601_to_datetime	(const gchar	*iso_date);
 
 G_END_DECLS
-
-#endif /* __AS_UTILS_PRIVATE_H */

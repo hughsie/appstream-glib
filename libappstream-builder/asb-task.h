@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#ifndef ASB_TASK_H
-#define ASB_TASK_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -39,5 +38,3 @@ void		 asb_task_set_package		(AsbTask	*task,
 						 AsbPackage	*pkg);
 
 G_END_DECLS
-
-#endif /* ASB_TASK_H */

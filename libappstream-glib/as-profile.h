@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#ifndef __AS_PROFILE_H
-#define __AS_PROFILE_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -44,5 +43,3 @@ void		 as_profile_task_free		(AsProfileTask	*ptask);
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsProfileTask, as_profile_task_free)
 
 G_END_DECLS
-
-#endif /* __AS_PROFILE_H */

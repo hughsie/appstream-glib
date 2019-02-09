@@ -6,12 +6,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_RELEASE_H
-#define __AS_RELEASE_H
 
 #include <glib-object.h>
 
@@ -133,5 +132,3 @@ void		 as_release_set_url		(AsRelease	*release,
 						 const gchar	*url);
 
 G_END_DECLS
-
-#endif /* __AS_RELEASE_H */

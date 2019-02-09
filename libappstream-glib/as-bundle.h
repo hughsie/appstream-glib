@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_BUNDLE_H
-#define __AS_BUNDLE_H
 
 #include <glib-object.h>
 
@@ -83,5 +82,3 @@ void		 as_bundle_set_kind		(AsBundle	*bundle,
 						 AsBundleKind	 kind);
 
 G_END_DECLS
-
-#endif /* __AS_BUNDLE_H */

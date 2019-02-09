@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_STORE_H
-#define __AS_STORE_H
 
 #include <glib-object.h>
 #include <gio/gio.h>
@@ -276,5 +275,3 @@ void		 as_store_remove_filter		(AsStore	*store,
 						 AsAppKind	 kind);
 
 G_END_DECLS
-
-#endif /* __AS_STORE_H */

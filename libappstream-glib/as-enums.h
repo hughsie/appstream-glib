@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_ENUMS_H
-#define __AS_ENUMS_H
 
 #include <glib.h>
 
@@ -163,5 +162,3 @@ G_DEPRECATED_FOR(as_app_kind_from_string);
 G_GNUC_END_IGNORE_DEPRECATIONS
 
 G_END_DECLS
-
-#endif /* __AS_ENUMS_H */

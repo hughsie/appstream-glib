@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_TAG_H
-#define __AS_TAG_H
 
 #include <glib.h>
 
@@ -181,5 +180,3 @@ AsTag		 as_tag_from_string_full	(const gchar	*tag,
 const gchar	*as_tag_to_string		(AsTag		 tag);
 
 G_END_DECLS
-
-#endif /* __AS_TAG_H */

@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_CONTENT_RATING_H
-#define __AS_CONTENT_RATING_H
 
 #include <glib-object.h>
 
@@ -79,5 +78,3 @@ void		 as_content_rating_set_kind	(AsContentRating	*content_rating,
 						 const gchar		*kind);
 
 G_END_DECLS
-
-#endif /* __AS_CONTENT_RATING_H */
