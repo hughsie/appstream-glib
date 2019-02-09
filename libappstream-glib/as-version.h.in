@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 /**
  * SECTION:as-version
  * @short_description: Preprocessor macros for the libappstream-glib version
@@ -18,9 +20,6 @@
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream_glib.h> can be included directly."
 #endif
-
-#ifndef __AS_VERSION_H
-#define __AS_VERSION_H
 
 #include <glib.h>
 
@@ -40,5 +39,3 @@
       AS_MICRO_VERSION >= (micro)))
 
 const gchar	*as_version_string			(void);
-
-#endif /* __AS_VERSION_H */

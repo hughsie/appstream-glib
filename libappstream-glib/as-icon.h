@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_ICON_H
-#define __AS_ICON_H
 
 #include <glib-object.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
@@ -131,5 +130,3 @@ gboolean	 as_icon_convert_to_kind	(AsIcon		*icon,
 						 GError		**error);
 
 G_END_DECLS
-
-#endif /* __AS_ICON_H */

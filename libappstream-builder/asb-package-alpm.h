@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#ifndef ASB_PACKAGE_ALPM_H
-#define ASB_PACKAGE_ALPM_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -28,5 +27,3 @@ struct _AsbPackageAlpmClass
 AsbPackage	*asb_package_alpm_new		(void);
 
 G_END_DECLS
-
-#endif /* ASB_PACKAGE_ALPM_H */

@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_SCREENSHOT_H
-#define __AS_SCREENSHOT_H
 
 #include <glib-object.h>
 
@@ -88,5 +87,3 @@ gboolean	 as_screenshot_equal		(AsScreenshot	*screenshot1,
 						 AsScreenshot	*screenshot2);
 
 G_END_DECLS
-
-#endif /* __AS_SCREENSHOT_H */

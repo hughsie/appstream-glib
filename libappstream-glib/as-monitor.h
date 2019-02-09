@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_MONITOR_H
-#define __AS_MONITOR_H
 
 #include <glib-object.h>
 #include <gio/gio.h>
@@ -66,5 +65,3 @@ gboolean	 as_monitor_add_file		(AsMonitor	*monitor,
 						 GError		**error);
 
 G_END_DECLS
-
-#endif /* __AS_MONITOR_H */

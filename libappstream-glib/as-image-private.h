@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_PRIVATE_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_IMAGE_PRIVATE_H
-#define __AS_IMAGE_PRIVATE_H
 
 #include "as-image.h"
 #include "as-node-private.h"
@@ -32,5 +31,3 @@ void		 as_image_set_url_rstr		(AsImage	*image,
 						 AsRefString	*rstr);
 
 G_END_DECLS
-
-#endif /* __AS_IMAGE_PRIVATE_H */

@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_YAML_H
-#define __AS_YAML_H
 
 #include <gio/gio.h>
 #include <glib-object.h>
@@ -52,6 +51,3 @@ guint		 as_yaml_node_get_value_as_uint	(const AsYaml	*node);
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsYaml, as_yaml_unref)
 
 G_END_DECLS
-
-#endif /* __AS_YAML_H */
-

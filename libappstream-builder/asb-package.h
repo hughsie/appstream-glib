@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#ifndef ASB_PACKAGE_H
-#define ASB_PACKAGE_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -158,5 +157,3 @@ void		 asb_package_add_release	(AsbPackage	*pkg,
 AsbPackage	*asb_package_new		(void);
 
 G_END_DECLS
-
-#endif /* ASB_PACKAGE_H */

@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_NODE_H
-#define __AS_NODE_H
 
 #include <gio/gio.h>
 #include <glib-object.h>
@@ -194,6 +193,3 @@ void		 as_node_insert_hash		(GNode		*parent,
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(AsNode, as_node_unref)
 
 G_END_DECLS
-
-#endif /* __AS_NODE_H */
-

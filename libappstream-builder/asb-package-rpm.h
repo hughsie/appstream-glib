@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#ifndef ASB_PACKAGE_RPM_H
-#define ASB_PACKAGE_RPM_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -28,5 +27,3 @@ struct _AsbPackageRpmClass
 AsbPackage	*asb_package_rpm_new		(void);
 
 G_END_DECLS
-
-#endif /* ASB_PACKAGE_RPM_H */

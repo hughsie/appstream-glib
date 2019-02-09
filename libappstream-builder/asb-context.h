@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#ifndef ASB_CONTEXT_H
-#define ASB_CONTEXT_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -126,5 +125,3 @@ gboolean	 asb_context_find_in_cache	(AsbContext	*ctx,
 						 const gchar	*filename);
 
 G_END_DECLS
-
-#endif /* ASB_CONTEXT_H */

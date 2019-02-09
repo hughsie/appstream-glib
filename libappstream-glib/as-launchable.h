@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_LAUNCHABLE_H
-#define __AS_LAUNCHABLE_H
 
 #include <glib-object.h>
 
@@ -70,5 +69,3 @@ void		 as_launchable_set_kind		(AsLaunchable		*launchable,
 						 AsLaunchableKind	 kind);
 
 G_END_DECLS
-
-#endif /* __AS_LAUNCHABLE_H */

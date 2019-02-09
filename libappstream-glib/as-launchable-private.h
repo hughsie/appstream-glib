@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_PRIVATE_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_LAUNCHABLE_PRIVATE_H
-#define __AS_LAUNCHABLE_PRIVATE_H
 
 #include "as-launchable.h"
 #include "as-node-private.h"
@@ -30,5 +29,3 @@ gboolean	 as_launchable_node_parse_dep11	(AsLaunchable	*launchable,
 						 GError		**error);
 
 G_END_DECLS
-
-#endif /* __AS_LAUNCHABLE_PRIVATE_H */

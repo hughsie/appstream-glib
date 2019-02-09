@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_IMAGE_H
-#define __AS_IMAGE_H
 
 #include <glib-object.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
@@ -174,5 +173,3 @@ gboolean	 as_image_equal			(AsImage	*image1,
 						 AsImage	*image2);
 
 G_END_DECLS
-
-#endif /* __AS_IMAGE_H */

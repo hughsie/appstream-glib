@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#ifndef ASB_PLUGIN_LOADER_H
-#define ASB_PLUGIN_LOADER_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -51,5 +50,3 @@ AsbPlugin	*asb_plugin_loader_match_fn	(AsbPluginLoader	*plugin_loader,
 						 const gchar		*filename);
 
 G_END_DECLS
-
-#endif /* ASB_PLUGIN_LOADER_H */

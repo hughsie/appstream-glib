@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_PRIVATE_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_ICON_PRIVATE_H
-#define __AS_ICON_PRIVATE_H
 
 #include "as-icon.h"
 #include "as-node-private.h"
@@ -37,5 +36,3 @@ void		 as_icon_set_prefix_rstr	(AsIcon		*icon,
 						 AsRefString	*rstr);
 
 G_END_DECLS
-
-#endif /* __AS_ICON_PRIVATE_H */

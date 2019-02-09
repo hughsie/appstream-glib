@@ -5,12 +5,11 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
+#pragma once
+
 #if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
-
-#ifndef __AS_STORE_CAB_H
-#define __AS_STORE_CAB_H
 
 #include <glib-object.h>
 #include <gio/gio.h>
@@ -29,5 +28,3 @@ gboolean	 as_store_cab_from_bytes	(AsStore	*store,
 						 GError		**error);
 
 G_END_DECLS
-
-#endif /* __AS_STORE_CAB_H */

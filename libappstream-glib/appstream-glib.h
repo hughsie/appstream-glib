@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  */
 
-#ifndef __APPSTREAM_GLIB_H
-#define __APPSTREAM_GLIB_H
+#pragma once
 
 #define __APPSTREAM_GLIB_H_INSIDE__
 
@@ -36,6 +35,3 @@
 #include <as-utils.h>
 
 #undef __APPSTREAM_GLIB_H_INSIDE__
-
-#endif /* __APPSTREAM_GLIB_H */
-
