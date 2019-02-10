@@ -7,7 +7,7 @@
 
 #pragma once
 
-#if !defined (__APPSTREAM_GLIB_H) && !defined (AS_COMPILATION)
+#if !defined (__APPSTREAM_GLIB_H_INSIDE__) && !defined (AS_COMPILATION)
 #error "Only <appstream-glib.h> can be included directly."
 #endif
 
