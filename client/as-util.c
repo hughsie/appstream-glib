@@ -4367,7 +4367,7 @@ main (int argc, char *argv[])
 		     "appdata-from-desktop",
 		     NULL,
 		     /* TRANSLATORS: command description */
-		     _("Creates an example Appdata file from a .desktop file"),
+		     _("Creates an example AppData file from a .desktop file"),
 		     as_util_appdata_from_desktop);
 	as_util_add (priv->cmd_array,
 		     "dump",
