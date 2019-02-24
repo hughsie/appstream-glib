@@ -17,7 +17,7 @@ if get_option('dep11')
   deps += yaml
 endif
 
-if get_option('rpm')
+if get_option('builder') and get_option('rpm')
   deps += rpm
 endif
 
