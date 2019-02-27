@@ -61,10 +61,6 @@ gdkpixbuf = dependency('gdk-pixbuf-2.0', version : '>= 2.31.5')
 # builder (default enabled)
 if get_option('builder')
   gmodule = dependency('gmodule-2.0')
-  if get_option('rpm')
-    rpm = dependency('rpm')
-    conf.set('HAVE_RPM', 1)
-  endif
   if get_option('alpm')
     alpm = dependency('libalpm')
     conf.set('HAVE_ALPM', 1)
@@ -75,6 +71,12 @@ if get_option('builder')
     freetype = dependency('freetype2', version : '>= 9.10.0')
     fontconfig = dependency('fontconfig')
   endif
+endif
+
+# rpm is used for vercmp and to get the filelist in the builder
+if get_option('rpm')
+  rpm = dependency('rpm')
+  conf.set('HAVE_RPM', 1)
 endif
 
 # support loading yaml files
