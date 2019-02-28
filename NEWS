@@ -1,3 +1,28 @@
+Version 0.7.15
+~~~~~~~~~~~~~~
+Released: 2019-02-28
+
+Notes:
+ - The libappstream-builder shared library is no longer installed (Richard Hughes)
+
+New Features:
+ - Add as_content_rating_get_rating_ids() (Philip Withnall)
+ - Add as_release_set_install_duration() (Richard Hughes)
+ - Add as_utils_vercmp_full() for gnome-software (Richard Hughes, Kalev Lember)
+ - Add support for CONTACT URLs (Robert Ancell)
+ - Add support for per-release URLs (Richard Hughes)
+ - Add support for SOURCE URLs (Richard Hughes)
+ - Make as_content_rating_attribute_to_csm_age() public (Philip Withnall)
+
+Bugfixes:
+ - Add missing OARS → CSM mappings (Philip Withnall)
+ - Add some thread safety to AsApp and AsStore (Kalev Lember)
+ - Do not overwrite the project group using heuristics if already set (Richard Hughes)
+ - Recognise uncompressed Arch packages (Richard Hughes)
+ - Remove unnecessary gtk dependency for builder (Mart Raudsepp)
+ - Return G_IO_ERROR_NOT_FOUND when loading fails (Philip Withnall)
+ - Tokenize the ID when adding search tokens (Kalev Lember)
+
 Version 0.7.14
 ~~~~~~~~~~~~~~
 Released: 2018-10-16

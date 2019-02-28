@@ -9,16 +9,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-11 19:18+0100\n"
+"POT-Creation-Date: 2019-02-28 10:43+0000\n"
 "PO-Revision-Date: 2016-08-06 03:00+0000\n"
 "Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
 "Language-Team: Slovenian (http://www.transifex.com/freedesktop/appstream-glib/language/sl/)\n"
+"Language: sl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: sl\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);\n"
-"X-Generator: Zanata 4.4.5\n"
+"X-Generator: Zanata 4.6.2\n"
 
 #. TRANSLATORS: command line option
 msgid "Add a cache ID to each component"
@@ -51,10 +51,6 @@ msgstr "Ustvari dokument stanja CSV"
 #. TRANSLATORS: command description
 msgid "Create an HTML status page"
 msgstr "Ustvari stran HTML s stanjem"
-
-#. TRANSLATORS: command description
-msgid "Creates an example Appdata file from a .desktop file"
-msgstr "Ustvari primer datoteke AppData iz datoteke .desktop"
 
 #. TRANSLATORS: this is the --nonet argument
 msgid "Do not use network access"

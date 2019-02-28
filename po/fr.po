@@ -6,20 +6,21 @@
 # Claude Paroz <claude@2xlibre.net>, 2015
 # Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>, 2017. #zanata
 # José Fournier <jaaf64@zoraldia.com>, 2017. #zanata
+# Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>, 2019. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-11 19:18+0100\n"
-"PO-Revision-Date: 2017-04-24 05:43+0000\n"
-"Last-Translator: Claude Paroz <claude@2xlibre.net>\n"
+"POT-Creation-Date: 2019-02-28 10:43+0000\n"
+"PO-Revision-Date: 2019-01-21 08:07+0000\n"
+"Last-Translator: Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>\n"
 "Language-Team: French (http://www.transifex.com/freedesktop/appstream-glib/language/fr/)\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Zanata 4.4.5\n"
+"X-Generator: Zanata 4.6.2\n"
 
 #. TRANSLATORS: command line option
 msgid "Add HiDPI icons to the tarball"
@@ -34,7 +35,6 @@ msgid "Add a language to a source file"
 msgstr "Ajoute une langue à un fichier source"
 
 #. TRANSLATORS: command description
-#, fuzzy
 msgid "Add a provide to a source file"
 msgstr "Ajoute une fourniture à un fichier source"
 
@@ -70,6 +70,10 @@ msgstr "Commande introuvable, les commandes valides sont :"
 msgid "Compare the contents of two AppStream files"
 msgstr "Compare le contenu de deux fichiers AppStream"
 
+#. TRANSLATORS: command description
+msgid "Compare version numbers"
+msgstr "Compare les numéros de version"
+
 #. TRANSLATORS: the %s and %s are file types,
 #. * e.g. "appdata" to "appstream"
 #, c-format
@@ -99,10 +103,6 @@ msgstr "Crée une page HTML avec matrice"
 #. TRANSLATORS: command description
 msgid "Create an HTML status page"
 msgstr "Crée une page de synthèse HTML"
-
-#. TRANSLATORS: command description
-msgid "Creates an example Appdata file from a .desktop file"
-msgstr "Crée un fichier Appdata exemple à partir d’un fichier .desktop"
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"
@@ -160,6 +160,10 @@ msgstr "Erreur lors de l’analyse des traductions"
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
 msgstr "Erreur lors de l’enregistrement du fichier AppStream"
+
+#. TRANSLATORS: command description
+msgid "Exports the agreement to text"
+msgstr "Exporte l'accord au format texte"
 
 #. list failures
 msgid "FAILED"
@@ -222,6 +226,10 @@ msgstr "Installe les métadonnées AppStream"
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata with new origin"
 msgstr "Installe les métadonnées AppStream d’une nouvelle origine"
+
+#. TRANSLATORS: not a valid desktop filename
+msgid "Invalid desktop filename"
+msgstr "Nom de fichier desktop non valide"
 
 #. TRANSLATORS: command description
 msgid "List applications not backed by packages"
@@ -372,6 +380,10 @@ msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr "Divise un fichier AppStream en fichiers AppData et Metainfo"
 
 #. TRANSLATORS: command description
+msgid "Test a regular expression"
+msgstr "Teste une expression régulière"
+
+#. TRANSLATORS: command description
 msgid "Uninstalls AppStream metadata"
 msgstr "Désinstalle les métadonnées AppStream"
 
@@ -403,3 +415,7 @@ msgstr "Version :"
 #. TRANSLATORS: command description
 msgid "Watch AppStream locations for changes"
 msgstr "Surveille les modifications dans les emplacements AppStream"
+
+#. TRANSLATORS: command description
+msgid "check an installed application"
+msgstr "Vérifie une application installée"

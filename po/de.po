@@ -10,16 +10,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-11 19:18+0100\n"
+"POT-Creation-Date: 2019-02-28 10:43+0000\n"
 "PO-Revision-Date: 2016-09-29 07:16+0000\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German (http://www.transifex.com/freedesktop/appstream-glib/language/de/)\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 4.4.5\n"
+"X-Generator: Zanata 4.6.2\n"
 
 #. TRANSLATORS: command line option
 msgid "Add HiDPI icons to the tarball"
@@ -86,10 +86,6 @@ msgstr "HTML-Matrixseite erstellen"
 #. TRANSLATORS: command description
 msgid "Create an HTML status page"
 msgstr "HTML-Statusseite erstellen"
-
-#. TRANSLATORS: command description
-msgid "Creates an example Appdata file from a .desktop file"
-msgstr "Erstellt eine Beispiel-Appdata-Datei aus einer .desktop-Datei"
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"

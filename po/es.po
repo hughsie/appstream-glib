@@ -5,24 +5,24 @@
 # Translators:
 # Adolfo Jayme Barrientos, 2014
 # Abdel G. Martínez L. <abdel.g.martinez.l@gmail.com>, 2016. #zanata
-# Emilio Herrera <ehespinosa57@gmail.com>, 2016. #zanata
 # Silvia Sanchez <BHKohane@gmail.com>, 2016. #zanata
-# William  Moreno Reyes <williamjmorenor@gmail.com>, 2016. #zanata
 # Edgar Daniel Lopez Prieto <protoanima@hotmail.com>, 2017. #zanata
+# Emilio Herrera <ehespinosa57@gmail.com>, 2018. #zanata
+# Máximo Castañeda Riloba <mcrcctm@gmail.com>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-11 19:18+0100\n"
-"PO-Revision-Date: 2017-12-31 11:05+0000\n"
-"Last-Translator: Máximo Castañeda Riloba <mcrcctm@gmail.com>\n"
+"POT-Creation-Date: 2019-02-28 10:43+0000\n"
+"PO-Revision-Date: 2018-11-22 03:51+0000\n"
+"Last-Translator: Emilio Herrera <ehespinosa57@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/freedesktop/appstream-glib/language/es/)\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 4.4.5\n"
+"X-Generator: Zanata 4.6.2\n"
 
 #. TRANSLATORS: command line option
 msgid "Add HiDPI icons to the tarball"
@@ -107,10 +107,6 @@ msgid "Create an HTML status page"
 msgstr "Crear una página de estado en HTML"
 
 #. TRANSLATORS: command description
-msgid "Creates an example Appdata file from a .desktop file"
-msgstr "Crear un fichero de ejemplo de AppData a partir de un fichero .desktop"
-
-#. TRANSLATORS: command description
 msgid "Display application search tokens"
 msgstr "Mostrando tokens de búsqueda de aplicaciones"
 
@@ -166,6 +162,10 @@ msgstr "Error analizando traducciones"
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
 msgstr "Error guardando fichero AppStream"
+
+#. TRANSLATORS: command description
+msgid "Exports the agreement to text"
+msgstr "Exportar el acuerdo al texto"
 
 #. list failures
 msgid "FAILED"
@@ -228,6 +228,11 @@ msgstr "Instala los metadatos de AppStream"
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata with new origin"
 msgstr "Instala metadatos de AppStream con nuevo origen"
+
+#. TRANSLATORS: not a valid desktop filename
+#, fuzzy
+msgid "Invalid desktop filename"
+msgstr "Nombre de escritorio no válido"
 
 #. TRANSLATORS: command description
 msgid "List applications not backed by packages"

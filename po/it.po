@@ -9,16 +9,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-11 19:18+0100\n"
-"PO-Revision-Date: 2018-06-20 09:22+0000\n"
+"POT-Creation-Date: 2019-02-28 10:43+0000\n"
+"PO-Revision-Date: 2018-11-21 01:39+0000\n"
 "Last-Translator: Milo Casagrande <milo@milo.name>\n"
 "Language-Team: Italian (http://www.transifex.com/freedesktop/appstream-glib/language/it/)\n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 4.4.5\n"
+"X-Generator: Zanata 4.6.2\n"
 
 #. TRANSLATORS: command line option
 msgid "Add HiDPI icons to the tarball"
@@ -101,10 +101,6 @@ msgstr "Crea una pagina matrice in formato HTML"
 #. TRANSLATORS: command description
 msgid "Create an HTML status page"
 msgstr "Crea una pagina di stato in formato HTML"
-
-#. TRANSLATORS: command description
-msgid "Creates an example Appdata file from a .desktop file"
-msgstr "Crea un file AppData di esempio da un file .desktop"
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"
@@ -228,6 +224,10 @@ msgstr "Installa i metadati AppStream"
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata with new origin"
 msgstr "Installa i metadati AppStream con nuova origine"
+
+#. TRANSLATORS: not a valid desktop filename
+msgid "Invalid desktop filename"
+msgstr "Nome file desktop non valido"
 
 #. TRANSLATORS: command description
 msgid "List applications not backed by packages"

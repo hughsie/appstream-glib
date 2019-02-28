@@ -3,16 +3,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-11 19:18+0100\n"
-"PO-Revision-Date: 2018-06-26 09:31+0000\n"
+"POT-Creation-Date: 2019-02-28 10:43+0000\n"
+"PO-Revision-Date: 2018-10-08 07:11+0000\n"
 "Last-Translator: Moo <hazap@hotmail.com>\n"
 "Language-Team: Lithuanian\n"
+"Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: lt\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
-"X-Generator: Zanata 4.4.5\n"
+"X-Generator: Zanata 4.6.2\n"
 
 #. TRANSLATORS: command line option
 msgid "Add HiDPI icons to the tarball"
@@ -95,10 +95,6 @@ msgstr "Sukurti HTML matricos puslapį"
 #. TRANSLATORS: command description
 msgid "Create an HTML status page"
 msgstr "Sukurti HTML būsenos puslapį"
-
-#. TRANSLATORS: command description
-msgid "Creates an example Appdata file from a .desktop file"
-msgstr "Sukuria pavyzdinį Appdata failą iš .desktop failo"
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"
@@ -222,6 +218,10 @@ msgstr "Įdiegia AppStream metaduomenis"
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata with new origin"
 msgstr "Įdiegia AppStream metaduomenis su nauja kilme"
+
+#. TRANSLATORS: not a valid desktop filename
+msgid "Invalid desktop filename"
+msgstr "Neteisingas darbalaukio failo pavadinimas"
 
 #. TRANSLATORS: command description
 msgid "List applications not backed by packages"
