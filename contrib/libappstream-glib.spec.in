@@ -23,6 +23,7 @@ BuildRequires: gdk-pixbuf2-devel >= %{gdk_pixbuf_version}
 BuildRequires: gtk3-devel
 BuildRequires: gettext
 BuildRequires: libuuid-devel
+BuildRequires: libyaml-devel
 BuildRequires: libstemmer-devel
 BuildRequires: json-glib-devel >= %{json_glib_version}
 BuildRequires: meson

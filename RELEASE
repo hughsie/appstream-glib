@@ -5,7 +5,7 @@ Appstream-Glib Release Notes
 git shortlog appstream_glib_0_7_14.. | grep -i -v trivial | grep -v Merge > NEWS.new
 
 --------------------------------------------------------------------------------
-Version 0.7.15
+Version 0.7.16
 ~~~~~~~~~~~~~~
 Released: 2019-xx-xx
 
@@ -30,8 +30,8 @@ git add po/*.po
 
 4. Commit changes in git:
 
-git commit -a -m "Release version 0.7.15"
-git tag -s -f -m "Release 0.7.15" appstream_glib_0_7_15
+git commit -a -m "Release version 0.7.16"
+git tag -s -f -m "Release 0.7.16" appstream_glib_0_7_16
 <gpg password>
 git push --tags
 git push
