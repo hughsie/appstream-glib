@@ -147,10 +147,16 @@ as_app_validate_has_first_word_capital (AsAppValidateHelper *helper, const gchar
 static void
 as_app_validate_description_li (const gchar *text, AsAppValidateHelper *helper)
 {
-	gboolean require_sentence_case = TRUE;
+	gboolean require_sentence_case = FALSE;
 	guint str_len;
-	guint length_li_max = 100;
-	guint length_li_min = 20;
+	guint length_li_max = 500;
+	guint length_li_min = 3;
+
+	/* make the requirements more strict */
+	if ((helper->flags & AS_APP_VALIDATE_FLAG_STRICT) > 0) {
+		require_sentence_case = TRUE;
+		length_li_max = 250;
+	}
 
 	/* relax the requirements a bit */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
@@ -180,7 +186,7 @@ as_app_validate_description_li (const gchar *text, AsAppValidateHelper *helper)
 				     "<li> is too long [%s] maximum is %u chars",
 				     text, length_li_max);
 	}
-	if (ai_app_validate_fullstop_ending (text)) {
+	if (require_sentence_case && ai_app_validate_fullstop_ending (text)) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
 				     "<li> cannot end in '.' [%s]", text);
@@ -202,9 +208,9 @@ as_app_validate_description_li (const gchar *text, AsAppValidateHelper *helper)
 static void
 as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper)
 {
-	gboolean require_sentence_case = TRUE;
-	guint length_para_max = 600;
-	guint length_para_min = 50;
+	gboolean require_sentence_case = FALSE;
+	guint length_para_max = 1000;
+	guint length_para_min = 10;
 	guint str_len;
 
 	/* empty */
@@ -215,11 +221,15 @@ as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper
 		return;
 	}
 
+	/* make the requirements more strict */
+	if ((helper->flags & AS_APP_VALIDATE_FLAG_STRICT) > 0) {
+		require_sentence_case = TRUE;
+	}
+
 	/* relax the requirements a bit */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
-		length_para_max = 1000;
-		length_para_min = 10;
-		require_sentence_case = FALSE;
+		length_para_max = 2000;
+		length_para_min = 5;
 	}
 
 	/* previous was short */
@@ -261,7 +271,8 @@ as_app_validate_description_para (const gchar *text, AsAppValidateHelper *helper
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
 				     "<p> requires sentence case [%s]", text);
 	}
-	if (text[str_len - 1] != '.' &&
+	if (require_sentence_case &&
+	    text[str_len - 1] != '.' &&
 	    text[str_len - 1] != '!' &&
 	    text[str_len - 1] != ':') {
 		ai_app_validate_add (helper,
@@ -277,7 +288,7 @@ as_app_validate_description_list (const gchar *text,
 				  gboolean allow_short_para,
 				  AsAppValidateHelper *helper)
 {
-	guint length_para_before_list = 300;
+	guint length_para_before_list = 20;
 
 	/* relax the requirements a bit */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
@@ -689,8 +700,17 @@ as_app_validate_icons (AsApp *app, AsAppValidateHelper *helper)
 
 	/* just check the default icon */
 	icon = as_app_get_icon_default (app);
-	if (icon == NULL)
+	if (icon == NULL) {
+		AsFormat *fmt = as_app_get_format_default (app);
+		if (fmt != NULL &&
+		    as_format_get_kind (fmt) == AS_FORMAT_KIND_APPSTREAM &&
+		    as_app_get_kind (app) == AS_APP_KIND_DESKTOP) {
+			ai_app_validate_add (helper,
+					     AS_PROBLEM_KIND_TAG_MISSING,
+					     "desktop application has no icon");
+		}
 		return;
+	}
 
 	/* check the content is correct */
 	icon_kind = as_icon_get_kind (icon);
@@ -746,7 +766,7 @@ as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 	AsScreenshot *ss;
 	GPtrArray *screenshots;
 	gboolean screenshot_has_default = FALSE;
-	guint number_screenshots_max = 5;
+	guint number_screenshots_max = 25;
 	guint number_screenshots_min = 1;
 	guint i;
 
@@ -759,6 +779,8 @@ as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 	/* firmware does not need screenshots */
 	if (as_app_get_kind (app) == AS_APP_KIND_FIRMWARE ||
 	    as_app_get_kind (app) == AS_APP_KIND_DRIVER ||
+	    as_app_get_kind (app) == AS_APP_KIND_RUNTIME ||
+	    as_app_get_kind (app) == AS_APP_KIND_ADDON ||
 	    as_app_get_kind (app) == AS_APP_KIND_LOCALIZATION)
 		number_screenshots_min = 0;
 
@@ -812,14 +834,19 @@ as_app_validate_release (AsApp *app,
 {
 	const gchar *tmp;
 	guint64 timestamp;
-	guint number_para_max = 3;
+	guint number_para_max = 10;
 	guint number_para_min = 1;
 	gboolean required_timestamp = TRUE;
 
 	/* relax the requirements a bit */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
-		number_para_max = 4;
+		number_para_max = 20;
 		required_timestamp = FALSE;
+	}
+
+	/* make the requirements more strict */
+	if ((helper->flags & AS_APP_VALIDATE_FLAG_STRICT) > 0) {
+		number_para_max = 4;
 	}
 
 	/* check version */
@@ -907,6 +934,7 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 {
 	GPtrArray *releases;
 	AsFormat *format;
+	gboolean require_release = FALSE;
 
 	/* only for AppData */
 	format = as_app_get_format_default (app);
@@ -914,7 +942,20 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 	    as_format_get_kind (format) != AS_FORMAT_KIND_METAINFO)
 		return TRUE;
 
+	/* only for desktop and console apps */
+	if (as_app_get_kind (app) == AS_APP_KIND_DESKTOP ||
+	    as_app_get_kind (app) == AS_APP_KIND_CONSOLE) {
+		require_release = TRUE;
+	}
+
+	/* require releases */
 	releases = as_app_get_releases (app);
+	if (require_release && releases->len == 0) {
+		ai_app_validate_add (helper,
+				     AS_PROBLEM_KIND_TAG_MISSING,
+				     "<release> required");
+		return TRUE;
+	}
 	for (guint i = 0; i < releases->len; i++) {
 		AsRelease *release = g_ptr_array_index (releases, i);
 		if (!as_app_validate_release (app, release, helper, error))
@@ -1149,22 +1190,24 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 	gboolean require_appstream_spec_only = FALSE;
 	gboolean require_contactdetails = TRUE;
 	gboolean require_copyright = FALSE;
+	gboolean require_description = FALSE;
 	gboolean require_project_license = FALSE;
-	gboolean require_sentence_case = TRUE;
+	gboolean require_sentence_case = FALSE;
 	gboolean require_translations = FALSE;
 	gboolean require_url = TRUE;
 	gboolean require_content_license = TRUE;
 	gboolean require_name = TRUE;
 	gboolean require_translation = TRUE;
-	gboolean require_content_rating = TRUE;
+	gboolean require_content_rating = FALSE;
+	gboolean require_name_shorter_than_summary = FALSE;
 	gboolean validate_license = TRUE;
 	gboolean ret;
-	guint length_name_max = 30;
+	guint length_name_max = 60;
 	guint length_name_min = 3;
-	guint length_summary_max = 100;
+	guint length_summary_max = 200;
 	guint length_summary_min = 8;
-	guint number_para_max = 4;
-	guint number_para_min = 2;
+	guint number_para_max = 10;
+	guint number_para_min = 1;
 	guint str_len;
 	g_autoptr(GList) keys = NULL;
 	g_autoptr(AsAppValidateHelper) helper = g_new0 (AsAppValidateHelper, 1);
@@ -1179,6 +1222,13 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 		return NULL;
 	}
 
+	/* only for desktop and console apps */
+	if (as_app_get_kind (app) == AS_APP_KIND_DESKTOP ||
+	    as_app_get_kind (app) == AS_APP_KIND_CONSOLE) {
+		require_content_rating = TRUE;
+		require_description = TRUE;
+	}
+
 	/* relax the requirements a bit */
 	if ((flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
 		length_name_max = 100;
@@ -1187,7 +1237,7 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 		require_content_license = FALSE;
 		validate_license = FALSE;
 		require_url = FALSE;
-		number_para_max = 10;
+		number_para_max = 20;
 		number_para_min = 1;
 		require_sentence_case = FALSE;
 		require_translation = FALSE;
@@ -1210,6 +1260,10 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 		require_project_license = TRUE;
 		require_content_license = TRUE;
 		require_appstream_spec_only = TRUE;
+		require_sentence_case = TRUE;
+		require_name_shorter_than_summary = TRUE;
+		number_para_min = 2;
+		number_para_max = 4;
 	}
 
 	/* addons don't need such a long description */
@@ -1296,6 +1350,43 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 			break;
 		default:
 			break;
+		}
+	}
+
+	/* categories */
+	if (as_format_get_kind (format) == AS_FORMAT_KIND_APPSTREAM &&
+	    as_app_get_kind (app) == AS_APP_KIND_DESKTOP) {
+		GPtrArray *categories = as_app_get_categories (app);
+		guint nr_toplevel_cats = 0;
+		const gchar *cats[] = { "AudioVideo",
+					"Development",
+					"Education",
+					"Game",
+					"Graphics",
+					"Network",
+					"Office",
+					"Science",
+					"Settings",
+					"System",
+					"Utility",
+					NULL };
+		for (guint i = 0; i < categories->len; i++) {
+			const gchar *cat = g_ptr_array_index (categories, i);
+			for (guint j = 0; cats[j] != NULL; j++) {
+				if (g_strcmp0 (cats[j], cat) == 0)
+					nr_toplevel_cats++;
+			}
+		}
+		if (nr_toplevel_cats == 0) {
+			ai_app_validate_add (helper,
+					     AS_PROBLEM_KIND_TAG_MISSING,
+					     "<category> must include main categories "
+					     "from the desktop entry spec");
+		} else if (nr_toplevel_cats > 3) {
+			ai_app_validate_add (helper,
+					     AS_PROBLEM_KIND_TAG_MISSING,
+					     "too many main <category> types: %u",
+					     nr_toplevel_cats);
 		}
 	}
 
@@ -1441,12 +1532,12 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 	}
 
 	/* games require a content rating */
-	if (require_content_rating && as_app_has_category (app, "Game")) {
+	if (require_content_rating) {
 		GPtrArray *ratings = as_app_get_content_ratings (app);
 		if (ratings->len == 0) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_TAG_MISSING,
-					     "<content_rating> required for game "
+					     "<content_rating> required "
 					     "[use https://odrs.gnome.org/oars]");
 		}
 	}
@@ -1544,7 +1635,8 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 					     "<summary> is too long [%s] maximum is %u chars",
 					     summary, length_summary_max);
 		}
-		if (ai_app_validate_fullstop_ending (summary)) {
+		if (require_sentence_case &&
+		    ai_app_validate_fullstop_ending (summary)) {
 			ai_app_validate_add (helper,
 					     AS_PROBLEM_KIND_STYLE_INCORRECT,
 					     "<summary> cannot end in '.' [%s]",
@@ -1568,14 +1660,21 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 				     AS_PROBLEM_KIND_TAG_MISSING,
 				     "<summary> is not present");
 	}
-	if (summary != NULL && name != NULL &&
+	if (require_name_shorter_than_summary &&
+	    summary != NULL && name != NULL &&
 	    strlen (summary) < strlen (name)) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_STYLE_INCORRECT,
 				     "<summary> is shorter than <name>");
 	}
 	description = as_app_get_description (app, "C");
-	if (description != NULL) {
+	if (description == NULL) {
+		if (require_description) {
+			ai_app_validate_add (helper,
+					     AS_PROBLEM_KIND_TAG_MISSING,
+					     "<description> required");
+		}
+	} else {
 		ret = as_app_validate_description (description,
 						   helper,
 						   number_para_min,
