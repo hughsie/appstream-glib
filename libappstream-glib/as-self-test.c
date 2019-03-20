@@ -2251,21 +2251,15 @@ as_test_app_validate_file_bad_func (void)
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<name> cannot end in '.'");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
-				    "<summary> cannot end in '.'");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "Not enough <screenshot> tags");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<li> is too short");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
-				    "<li> cannot end in '.'");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<ul> cannot start a description");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<ul> cannot start a description");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<p> should not start with 'This application'");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
-				    "<p> does not end in '.|:|!'");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "<p> is too short");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
@@ -2279,10 +2273,6 @@ as_test_app_validate_file_bad_func (void)
 				    "<release> has no version");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
 				    "<release> has no timestamp");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
-				    "<p> requires sentence case");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
-				    "<li> requires sentence case");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<translation> not specified");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
@@ -2291,11 +2281,9 @@ as_test_app_validate_file_bad_func (void)
 				    "<release> version was duplicated");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				    "<release> timestamp is in the future");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
-				    "<content_rating> required for game");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
 				    "<id> has invalid character");
-	g_assert_cmpint (probs->len, ==, 34);
+	g_assert_cmpint (probs->len, ==, 23);
 
 	/* again, harder */
 	probs2 = as_app_validate (app, AS_APP_VALIDATE_FLAG_STRICT, &error);
@@ -2303,7 +2291,7 @@ as_test_app_validate_file_bad_func (void)
 	g_assert (probs2 != NULL);
 	as_test_app_validate_check (probs2, AS_PROBLEM_KIND_TAG_INVALID,
 				    "XML data contains unknown tag");
-	g_assert_cmpint (probs2->len, ==, 40);
+	g_assert_cmpint (probs2->len, ==, 35);
 }
 
 static void
@@ -2448,7 +2436,7 @@ as_test_app_validate_style_func (void)
 	_as_app_add_format_kind (app, AS_FORMAT_KIND_APPDATA);
 	as_app_set_metadata_license (app, "BSD");
 	as_app_set_project_license (app, "GPL-2.0+");
-	as_app_set_name (app, "C", "Test app name that is very log indeed.");
+	as_app_set_name (app, "C", "Test app name that is very long indeed although Rob forced me to relax the requirements.");
 	as_app_set_comment (app, "C", "Awesome");
 	as_app_set_update_contact (app, "someone_who_cares@upstream_project.org");
 
@@ -2475,13 +2463,17 @@ as_test_app_validate_style_func (void)
 				    "<summary> is too short");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
 				    "Not enough <screenshot> tags");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
-				    "<summary> is shorter than <name>");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<url> is not present");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<translation> not specified");
-	g_assert_cmpint (probs->len, ==, 11);
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
+				    "<content_rating> required");
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
+				    "<release> required");
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
+				    "<description> required");
+	g_assert_cmpint (probs->len, ==, 13);
 }
 
 static void
