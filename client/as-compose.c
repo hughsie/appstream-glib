@@ -82,9 +82,7 @@ add_icons (AsApp *app,
 	pixbuf = g_object_ref (as_image_get_pixbuf (im));
 
 	/* save in target directory */
-	name = g_strdup_printf ("%ix%i/%s.png",
-				64, 64,
-				as_app_get_id_filename (AS_APP (app)));
+	name = g_strdup_printf ("%s.png", as_app_get_id_filename (AS_APP (app)));
 
 	icon = as_icon_new ();
 	as_icon_set_pixbuf (icon, pixbuf);
@@ -93,7 +91,7 @@ add_icons (AsApp *app,
 	as_icon_set_prefix (icon, as_app_get_icon_path (AS_APP (app)));
 	as_app_add_icon (AS_APP (app), icon);
 
-	icon_path = g_build_filename (icons_dir, name, NULL);
+	icon_path = g_build_filename (icons_dir, "64x64", name, NULL);
 
 	icon_subdir = g_path_get_dirname (icon_path);
 	if (g_mkdir_with_parents (icon_subdir, 0755)) {
@@ -140,9 +138,7 @@ add_icons (AsApp *app,
 	as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_HI_DPI_ICON);
 
 	/* save icon */
-	name_hidpi = g_strdup_printf ("%ix%i/%s.png",
-				      128, 128,
-				      as_app_get_id_filename (AS_APP (app)));
+	name_hidpi = g_strdup_printf ("%s.png", as_app_get_id_filename (AS_APP (app)));
 	icon_hidpi = as_icon_new ();
 	as_icon_set_pixbuf (icon_hidpi, pixbuf_hidpi);
 	as_icon_set_name (icon_hidpi, name_hidpi);
@@ -150,7 +146,7 @@ add_icons (AsApp *app,
 	as_icon_set_prefix (icon_hidpi, as_app_get_icon_path (AS_APP (app)));
 	as_app_add_icon (AS_APP (app), icon_hidpi);
 
-	icon_path_hidpi = g_build_filename (icons_dir, name_hidpi, NULL);
+	icon_path_hidpi = g_build_filename (icons_dir, "128x128", name_hidpi, NULL);
 	icon_subdir_hidpi = g_path_get_dirname (icon_path_hidpi);
 	if (g_mkdir_with_parents (icon_subdir_hidpi, 0755)) {
 		int errsv = errno;
