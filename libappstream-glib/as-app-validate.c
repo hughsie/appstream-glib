@@ -941,10 +941,13 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 	    as_format_get_kind (format) != AS_FORMAT_KIND_METAINFO)
 		return TRUE;
 
-	/* only for desktop and console apps */
-	if (as_app_get_kind (app) == AS_APP_KIND_DESKTOP ||
-	    as_app_get_kind (app) == AS_APP_KIND_CONSOLE) {
-		require_release = TRUE;
+	/* make the requirements more strict */
+	if ((helper->flags & AS_APP_VALIDATE_FLAG_RELAX) == 0) {
+		/* only for desktop and console apps */
+		if (as_app_get_kind (app) == AS_APP_KIND_DESKTOP ||
+		    as_app_get_kind (app) == AS_APP_KIND_CONSOLE) {
+			require_release = TRUE;
+		}
 	}
 
 	/* require releases */
