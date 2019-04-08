@@ -996,7 +996,7 @@ as_test_icon_func (void)
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
 
-	/* convert to embeddded icon */
+	/* convert to embedded icon */
 	prefix = as_test_get_filename ("rpmbuild");
 	g_assert (prefix != NULL);
 	as_icon_set_prefix (icon, prefix);
@@ -4457,7 +4457,7 @@ as_test_utils_spdx_token_func (void)
 	g_strfreev (tok);
 	g_free (tmp);
 
-	/* multiple licences, deprectated 'and' & 'or' */
+	/* multiple licences, deprecated 'and' & 'or' */
 	tok = as_utils_spdx_license_tokenize ("LGPL-2.0+ and GPL-2.0 or LGPL-3.0");
 	tmp = g_strjoinv ("  ", tok);
 	g_assert_cmpstr (tmp, ==, "@LGPL-2.0+  &  @GPL-2.0  |  @LGPL-3.0");

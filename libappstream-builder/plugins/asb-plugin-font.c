@@ -539,7 +539,7 @@ asb_plugin_font_set_name (AsbApp *app, const gchar *name)
 				    NULL };
 	g_autofree gchar *tmp = NULL;
 
-	/* remove font foundary suffix */
+	/* remove font foundry suffix */
 	tmp = g_strdup (name);
 	for (i = 0; suffixes[i] != NULL; i++) {
 		if (g_str_has_suffix (tmp, suffixes[i])) {
@@ -548,7 +548,7 @@ asb_plugin_font_set_name (AsbApp *app, const gchar *name)
 		}
 	}
 
-	/* remove font foundary prefix */
+	/* remove font foundry prefix */
 	ptr = tmp;
 	for (i = 0; prefixes[i] != NULL; i++) {
 		if (g_str_has_prefix (tmp, prefixes[i]))

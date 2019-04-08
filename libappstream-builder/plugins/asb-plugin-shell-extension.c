@@ -67,7 +67,7 @@ as_app_parse_shell_extension_data (AsbPlugin *plugin,
 		g_set_error_literal (error,
 				     ASB_PLUGIN_ERROR,
 				     ASB_PLUGIN_ERROR_FAILED,
-				     "no obect");
+				     "no object");
 		return FALSE;
 	}
 

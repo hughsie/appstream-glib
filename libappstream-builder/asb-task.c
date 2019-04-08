@@ -10,7 +10,7 @@
  * @short_description: One specific task for building metadata.
  * @stability: Unstable
  *
- * Thsi object represents a single task, typically a package which is created
+ * This object represents a single task, typically a package which is created
  * and then processed. Typically this is done in a number of threads.
  */
 

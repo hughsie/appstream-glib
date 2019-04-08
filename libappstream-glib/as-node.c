@@ -492,7 +492,7 @@ as_node_to_xml_string (GString *xml,
  * @text_len: length of @text
  *
  * Converts pretty-formatted source text into a format suitable for AppStream.
- * This might include joining paragraphs, supressing newlines or doing other
+ * This might include joining paragraphs, suppressing newlines or doing other
  * sanity checks to the text.
  *
  * Returns: (transfer full): a new string

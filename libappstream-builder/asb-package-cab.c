@@ -32,7 +32,7 @@ asb_package_cab_open (AsbPackage *pkg, const gchar *filename, GError **error)
 	g_set_error (error,
 		     AS_STORE_ERROR,
 		     AS_STORE_ERROR_FAILED,
-		     "Loading firmware is no longer suported, see fwupd");
+		     "Loading firmware is no longer supported, see fwupd");
 	return FALSE;
 }
 
@@ -44,7 +44,7 @@ asb_package_cab_ensure (AsbPackage *pkg,
 	g_set_error (error,
 		     AS_STORE_ERROR,
 		     AS_STORE_ERROR_FAILED,
-		     "Loading firmware is no longer suported, see fwupd");
+		     "Loading firmware is no longer supported, see fwupd");
 	return FALSE;
 }
 

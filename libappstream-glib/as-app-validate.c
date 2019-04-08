@@ -1167,7 +1167,7 @@ as_app_validate_check_id (AsAppValidateHelper *helper, const gchar *id)
  * @flags: the #AsAppValidateFlags to use, e.g. %AS_APP_VALIDATE_FLAG_NONE
  * @error: A #GError or %NULL.
  *
- * Validates data in the instance for style and consitency.
+ * Validates data in the instance for style and consistency.
  *
  * Returns: (transfer container) (element-type AsProblem): A list of problems, or %NULL
  *

@@ -22,7 +22,7 @@ as_store_cab_from_bytes (AsStore *store,
 	g_set_error (error,
 		     AS_STORE_ERROR,
 		     AS_STORE_ERROR_FAILED,
-		     "Loading firmware is no longer suported, see fwupd");
+		     "Loading firmware is no longer supported, see fwupd");
 	return FALSE;
 }
 
@@ -35,6 +35,6 @@ as_store_cab_from_file (AsStore *store,
 	g_set_error (error,
 		     AS_STORE_ERROR,
 		     AS_STORE_ERROR_FAILED,
-		     "Loading firmware is no longer suported, see fwupd");
+		     "Loading firmware is no longer supported, see fwupd");
 	return FALSE;
 }

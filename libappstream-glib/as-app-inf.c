@@ -19,6 +19,6 @@ as_app_parse_inf_file (AsApp *app,
 	g_set_error (error,
 		     AS_INF_ERROR,
 		     AS_INF_ERROR_FAILED,
-		     "Loading .inf data is no longer suported, see libginf");
+		     "Loading .inf data is no longer supported, see libginf");
 	return FALSE;
 }

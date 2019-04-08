@@ -25,7 +25,7 @@
  *
  * Gets the libappstream-glib installed runtime version.
  *
- * Returns: a version numer, e.g. "0.7.8"
+ * Returns: a version number, e.g. "0.7.8"
  *
  * Since: 0.7.8
  **/

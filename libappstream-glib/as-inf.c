@@ -42,7 +42,7 @@ G_DEFINE_QUARK (as-inf-error-quark, as_inf_error)
  * Repairs .inf file data and opens it as a keyfile.
  *
  * Important: The group and keynames are all forced to lower case as INF files
- * are specified as case insensitve and GKeyFile *is* case sensitive.
+ * are specified as case insensitive and GKeyFile *is* case sensitive.
  * Any backslashes or spaces in the key name are also converted to '_'.
  *
  * Returns: %TRUE for success
@@ -58,7 +58,7 @@ as_inf_load_data (GKeyFile *keyfile,
 	g_set_error (error,
 		     AS_INF_ERROR,
 		     AS_INF_ERROR_FAILED,
-		     "Loading .inf data is no longer suported, see libginf");
+		     "Loading .inf data is no longer supported, see libginf");
 	return FALSE;
 }
 
@@ -84,7 +84,7 @@ as_inf_load_file (GKeyFile *keyfile,
 	g_set_error (error,
 		     AS_INF_ERROR,
 		     AS_INF_ERROR_FAILED,
-		     "Loading .inf files is no longer suported, see libginf");
+		     "Loading .inf files is no longer supported, see libginf");
 	return FALSE;
 }
 
@@ -106,6 +106,6 @@ as_inf_get_driver_version (GKeyFile *keyfile, guint64 *timestamp, GError **error
 	g_set_error (error,
 		     AS_INF_ERROR,
 		     AS_INF_ERROR_FAILED,
-		     "Loading .inf files is no longer suported, see libginf");
+		     "Loading .inf files is no longer supported, see libginf");
 	return NULL;
 }

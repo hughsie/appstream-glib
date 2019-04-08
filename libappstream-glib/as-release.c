@@ -1004,7 +1004,7 @@ as_release_node_parse (AsRelease *release, GNode *node,
 						    xml->str);
 		}
 
-	/* AppData: mutliple languages encoded in one <description> tag */
+	/* AppData: multiple languages encoded in one <description> tag */
 	} else {
 		n = as_node_find (node, "description");
 		if (n != NULL) {

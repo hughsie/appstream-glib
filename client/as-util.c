@@ -2304,7 +2304,7 @@ as_util_matrix_html_write_item (AsUtilPkgState *state_app,
 {
 	g_string_append (html, "<td>");
 
-	/* ab-use acronym for the mouse-over explaination */
+	/* ab-use acronym for the mouse-over explanation */
 	if (comment != NULL)
 		g_string_append_printf (html, "<acronym title=\"%s\">", comment);
 
@@ -3333,7 +3333,7 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 			g_set_error (error,
 				     AS_ERROR,
 				     AS_ERROR_FAILED,
-				     "file:// URLs like %s are not suported", url);
+				     "file:// URLs like %s are not supported", url);
 			return FALSE;
 		}
 		uri = soup_uri_new (url);

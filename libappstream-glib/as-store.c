@@ -3597,7 +3597,7 @@ as_store_get_unique_name_app_key (AsApp *app)
  * @flags: the #AsAppValidateFlags to use, e.g. %AS_APP_VALIDATE_FLAG_NONE
  * @error: A #GError or %NULL.
  *
- * Validates infomation in the store for data applicable to the defined
+ * Validates information in the store for data applicable to the defined
  * metadata version.
  *
  * Returns: (transfer container) (element-type AsProblem): A list of problems, or %NULL

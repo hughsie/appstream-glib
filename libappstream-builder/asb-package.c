@@ -487,7 +487,7 @@ asb_package_get_filelist (AsbPackage *pkg)
  * asb_package_get_deps:
  * @pkg: A #AsbPackage
  *
- * Get the package dependancy list.
+ * Get the package dependency list.
  *
  * Returns: (transfer none) (element-type utf8): deplist
  *
@@ -692,7 +692,7 @@ asb_package_set_source_pkgname (AsbPackage *pkg, const gchar *source_pkgname)
  * @pkg: A #AsbPackage
  * @dep: package dep
  *
- * Add a package dependancy.
+ * Add a package dependency.
  *
  * Since: 0.3.5
  **/

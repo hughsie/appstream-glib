@@ -739,7 +739,7 @@ New Features:
  - Remove the long-obsolete appdata-validate tool (Richard Hughes)
 
 Bugfixes:
- - Accept a '0x' hexidecimal prefix when parsing a version (Richard Hughes)
+ - Accept a '0x' hexadecimal prefix when parsing a version (Richard Hughes)
  - Adapt to DEP11 spec change (Matthias Klumpp)
  - Add AsProfile for speed profiling (Richard Hughes)
  - Allow as_markup_convert() to ignore errors (Richard Hughes)
@@ -923,7 +923,7 @@ New Features:
 Bugfixes:
  - Add more applications to the blacklist (Richard Hughes, Igor Gnatenko)
  - Allow specifying --packages-dir multiple times (Richard Hughes)
- - Alow setting the cachedir different from the outputdir (Richard Hughes)
+ - Allow setting the cachedir different from the outputdir (Richard Hughes)
  - Always return errors from the correct domain when parsing broken AppData files (Richard Hughes)
  - Assume <image>foo</image> is a source image kind for AppData files (Richard Hughes)
  - Assume that stock icons are available in HiDPI sizes (Richard Hughes)

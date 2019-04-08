@@ -2110,7 +2110,7 @@ as_utils_appstream_id_build (const gchar *str)
  * @str: a string
  *
  * Checks to see if a string is a valid AppStream ID. A valid AppStream ID only
- * contains alpha-numeric chars, dots and dashes.
+ * contains alphanumeric chars, dots and dashes.
  *
  * Returns: %TRUE if the string is a valid AppStream ID
  *

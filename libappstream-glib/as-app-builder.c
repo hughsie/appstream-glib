@@ -144,7 +144,7 @@ as_app_builder_search_locale_gettext (AsAppBuilderContext *ctx,
 	if (dir == NULL)
 		return FALSE;
 
-	/* do a first pass at this, trying to find the prefered .mo */
+	/* do a first pass at this, trying to find the preferred .mo */
 	mo_paths = g_ptr_array_new_with_free_func (g_free);
 	while ((filename = g_dir_read_name (dir)) != NULL) {
 		g_autofree gchar *path = NULL;
