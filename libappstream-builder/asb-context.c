@@ -839,8 +839,6 @@ asb_context_detect_missing_parents (AsbContext *ctx, GError **error)
 			continue;
 		if (as_app_get_pkgname_default (app) == NULL)
 			continue;
-		if (as_app_get_kind (app) != AS_APP_KIND_DESKTOP)
-			continue;
 		g_hash_table_insert (hash,
 				     (gpointer) as_app_get_id (app),
 				     app);
