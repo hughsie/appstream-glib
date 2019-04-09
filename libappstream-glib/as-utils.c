@@ -613,6 +613,7 @@ as_utils_license_to_spdx (const gchar *license)
 		{ "Python",			"Python-2.0" },
 		{ "QPL",			"QPL-1.0" },
 		{ "SPL",			"SPL-1.0" },
+		{ "UPL",			"UPL-1.0" },
 		{ "zlib",			"Zlib" },
 		{ "ZPLv2.0",			"ZPL-2.0" },
 		{ "Unlicense",			"CC0-1.0" },
