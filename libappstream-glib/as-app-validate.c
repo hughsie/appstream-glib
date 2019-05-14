@@ -1190,7 +1190,7 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 	const gchar *update_contact;
 	gboolean deprecated_failure = FALSE;
 	gboolean require_appstream_spec_only = FALSE;
-	gboolean require_contactdetails = TRUE;
+	gboolean require_contactdetails = FALSE;
 	gboolean require_copyright = FALSE;
 	gboolean require_description = FALSE;
 	gboolean require_project_license = FALSE;
@@ -1235,7 +1235,6 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 	if ((flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
 		length_name_max = 100;
 		length_summary_max = 200;
-		require_contactdetails = FALSE;
 		require_content_license = FALSE;
 		validate_license = FALSE;
 		require_url = FALSE;
@@ -1264,6 +1263,7 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 		require_appstream_spec_only = TRUE;
 		require_sentence_case = TRUE;
 		require_name_shorter_than_summary = TRUE;
+		require_contactdetails = TRUE;
 		number_para_min = 2;
 		number_para_max = 4;
 	}

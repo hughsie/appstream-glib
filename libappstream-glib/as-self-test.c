@@ -2266,8 +2266,6 @@ as_test_app_validate_file_bad_func (void)
 				    "<metadata_license> is not valid");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<project_license> is not valid");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
-				    "<update_contact> is not present");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<url> does not start with 'http://'");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
@@ -2307,7 +2305,7 @@ as_test_app_validate_file_bad_func (void)
 				    "<release> timestamp is in the future");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
 				    "<id> has invalid character");
-	g_assert_cmpint (probs->len, ==, 23);
+	g_assert_cmpint (probs->len, ==, 22);
 
 	/* again, harder */
 	probs2 = as_app_validate (app, AS_APP_VALIDATE_FLAG_STRICT, &error);
@@ -2343,15 +2341,13 @@ as_test_app_validate_meta_bad_func (void)
 		problem = g_ptr_array_index (probs, i);
 		g_debug ("%s", as_problem_get_message (problem));
 	}
-	g_assert_cmpint (probs->len, ==, 7);
+	g_assert_cmpint (probs->len, ==, 6);
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<name> is not present");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<summary> is not present");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<url> is not present");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
-				    "<update_contact> is not present");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<extends> is not present");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
