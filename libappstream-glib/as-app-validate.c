@@ -1199,7 +1199,7 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 	gboolean require_url = TRUE;
 	gboolean require_content_license = TRUE;
 	gboolean require_name = TRUE;
-	gboolean require_translation = TRUE;
+	gboolean require_translation = FALSE;
 	gboolean require_content_rating = FALSE;
 	gboolean require_name_shorter_than_summary = FALSE;
 	gboolean validate_license = TRUE;
@@ -1241,7 +1241,6 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 		number_para_max = 20;
 		number_para_min = 1;
 		require_sentence_case = FALSE;
-		require_translation = FALSE;
 		require_content_rating = FALSE;
 		switch (as_format_get_kind (format)) {
 		case AS_FORMAT_KIND_METAINFO:
@@ -1264,6 +1263,7 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 		require_sentence_case = TRUE;
 		require_name_shorter_than_summary = TRUE;
 		require_contactdetails = TRUE;
+		require_translation = TRUE;
 		number_para_min = 2;
 		number_para_max = 4;
 	}
