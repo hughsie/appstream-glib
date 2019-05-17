@@ -2295,8 +2295,6 @@ as_test_app_validate_file_bad_func (void)
 				    "<release> has no version");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
 				    "<release> has no timestamp");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
-				    "<translation> not specified");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<release> versions are not in order");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
@@ -2305,7 +2303,7 @@ as_test_app_validate_file_bad_func (void)
 				    "<release> timestamp is in the future");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
 				    "<id> has invalid character");
-	g_assert_cmpint (probs->len, ==, 22);
+	g_assert_cmpint (probs->len, ==, 21);
 
 	/* again, harder */
 	probs2 = as_app_validate (app, AS_APP_VALIDATE_FLAG_STRICT, &error);
@@ -2497,14 +2495,12 @@ as_test_app_validate_style_func (void)
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<url> is not present");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
-				    "<translation> not specified");
-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<content_rating> required");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<release> required");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<description> required");
-	g_assert_cmpint (probs->len, ==, 13);
+	g_assert_cmpint (probs->len, ==, 12);
 }
 
 static void
