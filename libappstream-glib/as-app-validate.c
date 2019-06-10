@@ -1131,6 +1131,11 @@ static gboolean
 as_app_validate_check_id_char (const gchar c)
 {
 	const gchar valid[] = { '-', '_', '.', '\0' };
+	const gchar invalid[] = { '/', '\\', '\0' };
+	for (guint i = 0; invalid[i] != '\0'; i++) {
+		if (invalid[i] == c)
+			return FALSE;
+	}
 	for (guint i = 0; valid[i] != '\0'; i++) {
 		if (valid[i] == c)
 			return TRUE;
