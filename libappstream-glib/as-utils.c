@@ -1143,8 +1143,12 @@ as_utils_install_xml (const gchar *filename,
 {
 	gchar *tmp;
 	g_autofree gchar *basename = NULL;
+	g_autofree gchar *checksum_dest = NULL;
+	g_autofree gchar *checksum_src = NULL;
 	g_autofree gchar *path_dest = NULL;
 	g_autofree gchar *path_parent = NULL;
+	g_autoptr(GBytes) blob_dest = NULL;
+	g_autoptr(GBytes) blob_src = NULL;
 	g_autoptr(GFile) file_dest = NULL;
 	g_autoptr(GFile) file_src = NULL;
 
@@ -1179,28 +1183,54 @@ as_utils_install_xml (const gchar *filename,
 		path_dest = g_build_filename (path_parent, basename, NULL);
 	}
 
-	/* actually copy file */
-	file_dest = g_file_new_for_path (path_dest);
-	if (!g_file_copy (file_src, file_dest,
-			  G_FILE_COPY_OVERWRITE |
-			  G_FILE_COPY_TARGET_DEFAULT_PERMS,
-			  NULL, NULL, NULL, error))
-		return FALSE;
-
 	/* fix the origin */
 	if (origin != NULL) {
-		g_autoptr(AsStore) store = NULL;
-		store = as_store_new ();
-		if (!as_store_from_file (store, file_dest, NULL, NULL, error))
+		g_autoptr(GString) xml = NULL;
+		g_autoptr(GOutputStream) out2 = NULL;
+		g_autoptr(GOutputStream) out = NULL;
+		g_autoptr(GZlibCompressor) compressor = NULL;
+		g_autoptr(AsStore) store = as_store_new ();
+
+		/* load file */
+		if (!as_store_from_file (store, file_src, NULL, NULL, error))
 			return FALSE;
 		as_store_set_origin (store, origin);
-		if (!as_store_to_file (store, file_dest,
-				       AS_NODE_TO_XML_FLAG_ADD_HEADER |
-				       AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE,
-				       NULL, error))
+		xml = as_store_to_xml (store, AS_NODE_TO_XML_FLAG_ADD_HEADER |
+					      AS_NODE_TO_XML_FLAG_FORMAT_MULTILINE);
+
+		/* recompress */
+		compressor = g_zlib_compressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP, -1);
+		out = g_memory_output_stream_new_resizable ();
+		out2 = g_converter_output_stream_new (out, G_CONVERTER (compressor));
+		if (!g_output_stream_write_all (out2, xml->str, xml->len, NULL, NULL, error))
+			return FALSE;
+		if (!g_output_stream_close (out2, NULL, error))
+			return FALSE;
+		blob_src = g_memory_output_stream_steal_as_bytes (G_MEMORY_OUTPUT_STREAM (out));
+	} else {
+		blob_src = g_file_load_bytes (file_src, NULL, NULL, error);
+		if (blob_src == NULL)
 			return FALSE;
 	}
-	return TRUE;
+
+	/* get the checksum of the existing file (ignoring errors) */
+	file_dest = g_file_new_for_path (path_dest);
+	blob_dest = g_file_load_bytes (file_dest, NULL, NULL, NULL);
+	if (blob_dest != NULL)
+		checksum_dest = g_compute_checksum_for_bytes (G_CHECKSUM_SHA1, blob_dest);
+
+	/* actually write the blob only if different */
+	checksum_src = g_compute_checksum_for_bytes (G_CHECKSUM_SHA1, blob_src);
+	if (g_strcmp0 (checksum_dest, checksum_src) == 0) {
+		g_debug ("skipping file copy as same contents");
+		return TRUE;
+	}
+	return g_file_replace_contents (file_dest,
+					g_bytes_get_data (blob_src, NULL),
+					g_bytes_get_size (blob_src),
+					NULL, FALSE,
+					G_FILE_CREATE_REPLACE_DESTINATION,
+					NULL, NULL, error);
 }
 
 /**
