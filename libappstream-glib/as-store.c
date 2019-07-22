@@ -1830,30 +1830,32 @@ as_store_from_root (AsStore *store,
 }
 
 static gboolean
-as_store_load_yaml_file (AsStore *store,
-			 GFile *file,
-			 AsAppScope scope,
-			 GCancellable *cancellable,
-			 GError **error)
+is_dep11_data (GBytes *bytes)
+{
+	const gchar *data;
+	gsize size;
+
+	/* look for DEP-11 header */
+	data = g_bytes_get_data (bytes, &size);
+	return g_strstr_len (data, size, "File: DEP-11") != NULL;
+}
+
+static gboolean
+load_yaml (AsStore *store,
+	   AsYaml *root,
+	   const gchar *source_filename,
+	   AsAppScope scope,
+	   GCancellable *cancellable,
+	   GError **error)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	AsNode *app_n;
 	AsNode *n;
-	AsYamlFromFlags flags = AS_YAML_FROM_FLAG_NONE;
 	const gchar *tmp;
 	g_autoptr(AsNodeContext) ctx = NULL;
 	g_autofree gchar *icon_path = NULL;
-	g_autofree gchar *source_filename = NULL;
-	g_autoptr(AsYaml) root = NULL;
 	g_autoptr(AsFormat) format = NULL;
 	_cleanup_uninhibit_ guint32 *tok = NULL;
-
-	/* load file */
-	if (priv->add_flags & AS_STORE_ADD_FLAG_ONLY_NATIVE_LANGS)
-		flags |= AS_YAML_FROM_FLAG_ONLY_NATIVE_LANGS;
-	root = as_yaml_from_file (file, flags, cancellable, error);
-	if (root == NULL)
-		return FALSE;
 
 	/* get header information */
 	ctx = as_node_context_new ();
@@ -1875,12 +1877,10 @@ as_store_load_yaml_file (AsStore *store,
 	}
 
 	/* if we have an origin either from the YAML or _set_origin() */
-	if (priv->origin != NULL) {
-		g_autofree gchar *filename = NULL;
+	if (priv->origin != NULL && source_filename != NULL) {
 		g_autofree gchar *icon_prefix1 = NULL;
 		g_autofree gchar *icon_prefix2 = NULL;
-		filename = g_file_get_path (file);
-		icon_prefix1 = g_path_get_dirname (filename);
+		icon_prefix1 = g_path_get_dirname (source_filename);
 		icon_prefix2 = g_path_get_dirname (icon_prefix1);
 		icon_path = g_build_filename (icon_prefix2,
 					      "icons",
@@ -1892,7 +1892,6 @@ as_store_load_yaml_file (AsStore *store,
 	tok = as_store_changed_inhibit (store);
 
 	/* add format to each app */
-	source_filename = g_file_get_path (file);
 	if (source_filename != NULL) {
 		format = as_format_new ();
 		as_format_set_kind (format, AS_FORMAT_KIND_APPSTREAM);
@@ -1915,7 +1914,8 @@ as_store_load_yaml_file (AsStore *store,
 		if (icon_path != NULL)
 			as_app_set_icon_path (app, icon_path);
 		as_app_set_scope (app, scope);
-		as_app_add_format (app, format);
+		if (format != NULL)
+			as_app_add_format (app, format);
 		if (!as_app_node_parse_dep11 (app, app_n, ctx, error))
 			return FALSE;
 		as_app_set_origin (app, priv->origin);
@@ -1928,6 +1928,50 @@ as_store_load_yaml_file (AsStore *store,
 	as_store_perhaps_emit_changed (store, "yaml-file");
 
 	return TRUE;
+}
+
+static gboolean
+as_store_load_yaml_file (AsStore *store,
+			 GFile *file,
+			 AsAppScope scope,
+			 GCancellable *cancellable,
+			 GError **error)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	AsYamlFromFlags flags = AS_YAML_FROM_FLAG_NONE;
+	g_autoptr(AsYaml) root = NULL;
+	g_autofree gchar *source_filename = NULL;
+
+	/* load file */
+	if (priv->add_flags & AS_STORE_ADD_FLAG_ONLY_NATIVE_LANGS)
+		flags |= AS_YAML_FROM_FLAG_ONLY_NATIVE_LANGS;
+	root = as_yaml_from_file (file, flags, cancellable, error);
+	if (root == NULL)
+		return FALSE;
+
+	source_filename = g_file_get_path (file);
+	return load_yaml (store, root, source_filename, scope, cancellable, error);
+}
+
+static gboolean
+as_store_load_yaml_data (AsStore *store,
+			 GBytes *data,
+			 AsAppScope scope,
+			 GCancellable *cancellable,
+			 GError **error)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+	AsYamlFromFlags flags = AS_YAML_FROM_FLAG_NONE;
+	g_autoptr(AsYaml) root = NULL;
+
+	/* load file */
+	if (priv->add_flags & AS_STORE_ADD_FLAG_ONLY_NATIVE_LANGS)
+		flags |= AS_YAML_FROM_FLAG_ONLY_NATIVE_LANGS;
+	root = as_yaml_from_data (g_bytes_get_data (data, NULL), g_bytes_get_size (data), flags, error);
+	if (root == NULL)
+		return FALSE;
+
+	return load_yaml (store, root, NULL, scope, cancellable, error);
 }
 
 static void
@@ -2268,6 +2312,10 @@ as_store_from_bytes (AsStore *store,
 		g_autofree gchar *tmp = g_strndup (data, size);
 		return as_store_from_xml (store, tmp, NULL, error);
 	}
+
+	/* is a DEP-11 file */
+	if (g_strcmp0 (content_type, "text/plain") == 0 && is_dep11_data (bytes))
+		return as_store_load_yaml_data (store, bytes, AS_APP_SCOPE_UNKNOWN, cancellable, error);
 
 	/* is firmware */
 	if (g_strcmp0 (content_type, "application/vnd.ms-cab-compressed") == 0) {
