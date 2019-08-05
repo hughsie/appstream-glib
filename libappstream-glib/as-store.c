@@ -2561,7 +2561,7 @@ as_store_to_file (AsStore *store,
 		if (!g_file_replace_contents (file, xml->str, xml->len,
 					      NULL,
 					      FALSE,
-					      G_FILE_CREATE_NONE,
+					      G_FILE_CREATE_REPLACE_DESTINATION,
 					      NULL,
 					      cancellable,
 					      &error_local)) {

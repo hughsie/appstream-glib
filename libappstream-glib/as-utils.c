@@ -1182,8 +1182,7 @@ as_utils_install_xml (const gchar *filename,
 	/* actually copy file */
 	file_dest = g_file_new_for_path (path_dest);
 	if (!g_file_copy (file_src, file_dest,
-			  G_FILE_COPY_OVERWRITE |
-			  G_FILE_COPY_TARGET_DEFAULT_PERMS,
+			  G_FILE_COPY_OVERWRITE,
 			  NULL, NULL, NULL, error))
 		return FALSE;
 
