@@ -33,7 +33,6 @@ BuildRequires: fontconfig-devel
 BuildRequires: freetype-devel
 BuildRequires: pango-devel
 BuildRequires: rpm-devel
-BuildRequires: sqlite-devel
 
 # for the manpages
 BuildRequires: libxslt

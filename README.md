@@ -29,7 +29,7 @@ copy. To do the latter just do:
                 gobject-introspection-devel gperf gtk-doc gtk3-devel \
                 libarchive-devel libsoup-devel \
                 libstemmer-devel libuuid-devel libyaml-devel \
-                meson rpm-devel sqlite-devel
+                meson rpm-devel
     mkdir build && cd build
     meson .. --prefix=/opt -Dbuilder=false
     ninja
@@ -90,7 +90,7 @@ binary and data files, or you can build a local copy. To do the latter just do:
                 gobject-introspection-devel gperf gtk-doc gtk3-devel \
                 libarchive-devel libsoup-devel \
                 libstemmer-devel libuuid-devel libyaml-devel \
-                meson rpm-devel sqlite-devel rpm-devel
+                meson rpm-devel rpm-devel
     mkdir build && cd build
     meson .. --prefix=/opt -Dbuilder=true
     ninja
