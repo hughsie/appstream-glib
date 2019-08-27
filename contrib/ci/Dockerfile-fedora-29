@@ -23,7 +23,6 @@ RUN dnf -y install \
 	meson \
 	pango-devel \
 	redhat-rpm-config \
-	rpm-devel \
-	sqlite-devel
+	rpm-devel
 RUN mkdir /build
 WORKDIR /build
