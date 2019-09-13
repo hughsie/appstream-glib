@@ -520,8 +520,8 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	    as_image_get_width (im) != screenshot_width) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> width did not match specified [%s]",
-				     url);
+				     "<screenshot> width (%u) did not match specified (%u) [%s]",
+				     as_image_get_width (im), screenshot_width, url);
 	}
 
 	/* check height matches */
@@ -529,16 +529,16 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	    as_image_get_height (im) != screenshot_height) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> height did not match specified [%s]",
-				     url);
+				     "<screenshot> height (%u) did not match specified (%u) [%s]",
+				     as_image_get_height (im), screenshot_height, url);
 	}
 
 	/* check size is reasonable */
 	if (screenshot_width < ss_size_width_min) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> width too small [%s] minimum is %upx",
-				     url, ss_size_width_min);
+				     "<screenshot> width (%u) too small [%s] minimum is %upx",
+				     screenshot_width, url, ss_size_width_min);
 	}
 	if (screenshot_height < ss_size_height_min) {
 		ai_app_validate_add (helper,
