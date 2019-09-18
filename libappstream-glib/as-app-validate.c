@@ -1046,6 +1046,12 @@ as_app_validate_license (const gchar *license_text, GError **error)
 static gboolean
 as_app_validate_is_content_license_id (const gchar *license_id)
 {
+	if (g_strcmp0 (license_id, "@FSFAP") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@MIT") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@0BSD") == 0)
+		return TRUE;
 	if (g_strcmp0 (license_id, "@CC0-1.0") == 0)
 		return TRUE;
 	if (g_strcmp0 (license_id, "@CC-BY-3.0") == 0)
@@ -1062,7 +1068,11 @@ as_app_validate_is_content_license_id (const gchar *license_id)
 		return TRUE;
 	if (g_strcmp0 (license_id, "@GFDL-1.3") == 0)
 		return TRUE;
-	if (g_strcmp0 (license_id, "@FSFAP") == 0)
+	if (g_strcmp0 (license_id, "@BSL-1.0") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@FTL") == 0)
+		return TRUE;
+	if (g_strcmp0 (license_id, "@FSFUL") == 0)
 		return TRUE;
 	return FALSE;
 }
