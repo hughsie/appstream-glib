@@ -456,31 +456,9 @@ as_app_parse_file_key_fallback_comment (AsApp *app,
 }
 
 gboolean
-as_app_parse_desktop_file (AsApp *app,
-			   const gchar *desktop_file,
-			   AsAppParseFlags flags,
-			   GError **error)
+as_app_parse_desktop_kf (AsApp *app, GKeyFile *kf, AsAppParseFlags flags, GError **error)
 {
-	GKeyFileFlags kf_flags = G_KEY_FILE_KEEP_TRANSLATIONS;
-	gchar *tmp;
-	guint i;
-	g_autoptr(GError) error_local = NULL;
-	g_autofree gchar *app_id = NULL;
-	g_autoptr(GKeyFile) kf = NULL;
 	g_auto(GStrv) keys = NULL;
-
-	/* load file */
-	kf = g_key_file_new ();
-	if (flags & AS_APP_PARSE_FLAG_KEEP_COMMENTS)
-		kf_flags |= G_KEY_FILE_KEEP_COMMENTS;
-	if (!g_key_file_load_from_file (kf, desktop_file, kf_flags, &error_local)) {
-		g_set_error (error,
-			     AS_APP_ERROR,
-			     AS_APP_ERROR_INVALID_TYPE,
-			     "Failed to parse %s: %s",
-			     desktop_file, error_local->message);
-		return FALSE;
-	}
 
 	/* check this is a valid desktop file */
 	if (!g_key_file_has_group (kf, G_KEY_FILE_DESKTOP_GROUP)) {
@@ -492,35 +470,12 @@ as_app_parse_desktop_file (AsApp *app,
 		return FALSE;
 	}
 
-	/* create app */
-	app_id = g_path_get_basename (desktop_file);
-	as_app_set_kind (app, AS_APP_KIND_DESKTOP);
-
-	/* is this really a web-app? */
-	if ((flags & AS_APP_PARSE_FLAG_USE_HEURISTICS) > 0) {
-		g_autofree gchar *exec = NULL;
-		exec = g_key_file_get_string (kf,
-					      G_KEY_FILE_DESKTOP_GROUP,
-					      G_KEY_FILE_DESKTOP_KEY_EXEC,
-					      NULL);
-		if (exec != NULL) {
-			if (g_str_has_prefix (exec, "epiphany --application-mode"))
-				as_app_set_kind (app, AS_APP_KIND_WEB_APP);
-		}
-	}
-
-	/* Ubuntu helpfully put the package name in the desktop file name */
-	tmp = g_strstr_len (app_id, -1, ":");
-	if (tmp != NULL)
-		as_app_set_id (app, tmp + 1);
-	else
-		as_app_set_id (app, app_id);
-
 	/* look at all the keys */
 	keys = g_key_file_get_keys (kf, G_KEY_FILE_DESKTOP_GROUP, NULL, error);
 	if (keys == NULL)
 		return FALSE;
-	for (i = 0; keys[i] != NULL; i++) {
+	as_app_set_kind (app, AS_APP_KIND_DESKTOP);
+	for (guint i = 0; keys[i] != NULL; i++) {
 		if (!as_app_parse_file_key (app, kf, keys[i], flags, error))
 			return FALSE;
 		if ((flags & AS_APP_PARSE_FLAG_USE_HEURISTICS) > 0) {
@@ -536,7 +491,7 @@ as_app_parse_desktop_file (AsApp *app,
 	/* perform any fallbacks */
 	if ((flags & AS_APP_PARSE_FLAG_USE_FALLBACKS) > 0 &&
 	    as_app_get_comment_size (app) == 0) {
-		for (i = 0; keys[i] != NULL; i++) {
+		for (guint i = 0; keys[i] != NULL; i++) {
 			if (!as_app_parse_file_key_fallback_comment (app,
 								     kf,
 								     keys[i],
@@ -547,7 +502,75 @@ as_app_parse_desktop_file (AsApp *app,
 
 	/* all applications require icons */
 	if (as_app_get_icons(app)->len == 0)
-		as_app_add_veto (app, "%s has no icon", app_id);
-
+		as_app_add_veto (app, "has no icon");
 	return TRUE;
+}
+
+gboolean
+as_app_parse_desktop_data (AsApp *app, GBytes *data, AsAppParseFlags flags, GError **error)
+{
+	GKeyFileFlags kf_flags = G_KEY_FILE_KEEP_TRANSLATIONS;
+	g_autoptr(GError) error_local = NULL;
+	g_autoptr(GKeyFile) kf = NULL;
+
+	kf = g_key_file_new ();
+	if (flags & AS_APP_PARSE_FLAG_KEEP_COMMENTS)
+		kf_flags |= G_KEY_FILE_KEEP_COMMENTS;
+	if (!g_key_file_load_from_bytes (kf, data, kf_flags, &error_local)) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "Failed to parse data: %s",
+			     error_local->message);
+		return FALSE;
+	}
+	return as_app_parse_desktop_kf (app, kf, flags, error);
+}
+
+gboolean
+as_app_parse_desktop_file (AsApp *app,
+			   const gchar *desktop_file,
+			   AsAppParseFlags flags,
+			   GError **error)
+{
+	GKeyFileFlags kf_flags = G_KEY_FILE_KEEP_TRANSLATIONS;
+	gchar *tmp;
+	g_autofree gchar *app_id = NULL;
+	g_autoptr(GError) error_local = NULL;
+	g_autoptr(GKeyFile) kf = NULL;
+
+	/* load file */
+	kf = g_key_file_new ();
+	if (flags & AS_APP_PARSE_FLAG_KEEP_COMMENTS)
+		kf_flags |= G_KEY_FILE_KEEP_COMMENTS;
+	if (!g_key_file_load_from_file (kf, desktop_file, kf_flags, &error_local)) {
+		g_set_error (error,
+			     AS_APP_ERROR,
+			     AS_APP_ERROR_INVALID_TYPE,
+			     "Failed to parse %s: %s",
+			     desktop_file, error_local->message);
+		return FALSE;
+	}
+
+	/* is this really a web-app? */
+	if ((flags & AS_APP_PARSE_FLAG_USE_HEURISTICS) > 0) {
+		g_autofree gchar *exec = NULL;
+		exec = g_key_file_get_string (kf,
+					      G_KEY_FILE_DESKTOP_GROUP,
+					      G_KEY_FILE_DESKTOP_KEY_EXEC,
+					      NULL);
+		if (exec != NULL) {
+			if (g_str_has_prefix (exec, "epiphany --application-mode"))
+				as_app_set_kind (app, AS_APP_KIND_WEB_APP);
+		}
+	}
+
+	/* Ubuntu helpfully put the package name in the desktop file name */
+	app_id = g_path_get_basename (desktop_file);
+	tmp = g_strstr_len (app_id, -1, ":");
+	if (tmp != NULL)
+		as_app_set_id (app, tmp + 1);
+	else
+		as_app_set_id (app, app_id);
+	return as_app_parse_desktop_kf (app, kf, flags, error);
 }
