@@ -6247,6 +6247,8 @@ as_app_parse_data (AsApp *app, GBytes *data, guint32 flags, GError **error)
 
 	/* validate */
 	data_raw = g_bytes_get_data (data, &len);
+	if (g_str_has_prefix (data_raw, "[Desktop Entry]"))
+		return as_app_parse_desktop_data (app, data, flags, error);
 	if (g_strstr_len (data_raw, (gssize) len, "<?xml version=") == NULL)
 		priv->problems |= AS_APP_PROBLEM_NO_XML_HEADER;
 
