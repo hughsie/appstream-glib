@@ -7,13 +7,14 @@
 # André Marcelo Alvarenga <alvarenga@kde.org>, 2016
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
 # Antonio Lisbôa  <antonion.2048@gmail.com>, 2017. #zanata
+# Vinícius Pereira Aiala <vinicius_aiala@outlook.com>, 2019. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-28 10:43+0000\n"
-"PO-Revision-Date: 2017-12-24 10:19+0000\n"
-"Last-Translator: Antonio Lisbôa  <antonion.2048@gmail.com>\n"
+"POT-Creation-Date: 2019-09-30 18:56+0100\n"
+"PO-Revision-Date: 2019-03-31 06:53+0000\n"
+"Last-Translator: Vinícius Pereira Aiala <vinicius_aiala@outlook.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/freedesktop/appstream-glib/language/pt_BR/)\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
@@ -105,6 +106,10 @@ msgid "Create an HTML status page"
 msgstr "Cria uma página de status em HTML"
 
 #. TRANSLATORS: command description
+msgid "Creates an example AppData file from a .desktop file"
+msgstr "Cria um arquivo AppData de exemplo de um arquivo .desktop"
+
+#. TRANSLATORS: command description
 msgid "Display application search tokens"
 msgstr "Exibe tokens de pesquisa por aplicativos"
 
@@ -160,6 +165,10 @@ msgstr "Erro ao analisar traduções"
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
 msgstr "Erro ao salvar o arquivo de AppStream"
+
+#. TRANSLATORS: command description
+msgid "Exports the agreement to text"
+msgstr "Exporta o contrato na forma de texto"
 
 #. list failures
 msgid "FAILED"
@@ -222,6 +231,10 @@ msgstr "Instala metadados de AppStream"
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata with new origin"
 msgstr "Instala metadados do AppStream com nova origem"
+
+#. TRANSLATORS: not a valid desktop filename
+msgid "Invalid desktop filename"
+msgstr "Nome do arquivo da área de trabalho inválido"
 
 #. TRANSLATORS: command description
 msgid "List applications not backed by packages"

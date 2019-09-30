@@ -8,12 +8,13 @@
 # Yuri Chornoivan <yurchor@ukr.net>, 2016. #zanata
 # Yuri Chornoivan <yurchor@ukr.net>, 2017. #zanata
 # Yuri Chornoivan <yurchor@ukr.net>, 2018. #zanata
+# Yuri Chornoivan <yurchor@ukr.net>, 2019. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-28 10:43+0000\n"
-"PO-Revision-Date: 2018-09-30 04:23+0000\n"
+"POT-Creation-Date: 2019-09-30 18:56+0100\n"
+"PO-Revision-Date: 2019-03-03 07:21+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/freedesktop/appstream-glib/language/uk/)\n"
 "Language: uk\n"
@@ -104,6 +105,10 @@ msgstr "Створити сторінку матриці у форматі HTML"
 #. TRANSLATORS: command description
 msgid "Create an HTML status page"
 msgstr "Створити сторінку щодо стану у форматі HTML"
+
+#. TRANSLATORS: command description
+msgid "Creates an example AppData file from a .desktop file"
+msgstr "Створити приклад файла AppData на основі файла .desktop"
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"

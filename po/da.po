@@ -104,6 +104,10 @@ msgid "Create an HTML status page"
 msgstr "Opret en HTML-statusside"
 
 #. TRANSLATORS: command description
+msgid "Creates an example AppData file from a .desktop file"
+msgstr "Opretter en eksempel AppData-fil fra en .desktop-fil"
+
+#. TRANSLATORS: command description
 msgid "Display application search tokens"
 msgstr "Vis symboler for programsøgning"
 

@@ -1,0 +1,281 @@
+# Alireza Baloochi <alirezab806@gmail.com>, 2019. #zanata
+msgid ""
+msgstr ""
+"Project-Id-Version: appstream-glib\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-09-30 18:56+0100\n"
+"PO-Revision-Date: 2019-06-22 06:20+0000\n"
+"Last-Translator: Alireza Baloochi <alirezab806@gmail.com>\n"
+"Language-Team: Persian\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"X-Generator: Zanata 4.6.2\n"
+
+#. TRANSLATORS: command line option
+msgid "Add HiDPI icons to the tarball"
+msgstr "افزودن آیکون های HiDPI به tarball"
+
+#. TRANSLATORS: command line option
+msgid "Add a cache ID to each component"
+msgstr "افزودن cache ID به هر جز‌ء"
+
+#. TRANSLATORS: command line option
+msgid "Add encoded icons to the XML"
+msgstr "افزودن آیکون های کدگزاری شده به فایل XML"
+
+#. TRANSLATORS: application was added
+msgid "Added"
+msgstr "اضافه شد"
+
+#. TRANSLATORS: this is a command alias
+#, c-format
+msgid "Alias to %s"
+msgstr "Alias to %s"
+
+#. TRANSLATORS: program name
+msgid "AppStream Utility"
+msgstr "ابزار AppStream"
+
+#. TRANSLATORS: this is when a device ctrl+c's a watch
+msgid "Cancelled"
+msgstr "کنسل شد"
+
+msgid "Command not found, valid commands are:"
+msgstr "دستور پیدا نشد، دستور های معتبر عبارتند از:"
+
+#. TRANSLATORS: the %s and %s are file types,
+#. * e.g. "appdata" to "appstream"
+#, c-format
+msgid "Conversion %s to %s is not implemented"
+msgstr "تبدیل %s به %s پیاده سازی نشده است."
+
+#. TRANSLATORS: command description
+msgid "Converts AppStream metadata from one version to another"
+msgstr "تبدیل متادیتای AppStream از یک نسخه به نسخه ی دیگر"
+
+#. TRANSLATORS: command description
+msgid "Creates an example AppData file from a .desktop file"
+msgstr "نمونه ای از  فایل AppData از یک فایل .desktop ایجاد می کند."
+
+#. TRANSLATORS: command line option
+msgid "Do not compress the icons into a tarball"
+msgstr "فشرده نکردن آیکون ها درون tarball"
+
+#. TRANSLATORS: this is the --nonet argument
+msgid "Do not use network access"
+msgstr "از دسترسی اینترنت استفاده نکن"
+
+#. success
+#. TRANSLATORS: information message
+msgid "Done!"
+msgstr "تمام!"
+
+#. TRANSLATORS: command line option
+msgid "Enable profiling"
+msgstr "فعال کردن profiling"
+
+#. TRANSLATORS: this is when the folder could
+#. * not be created
+msgid "Error creating output directory"
+msgstr "خطا در ایجاد دایرکتوری خروجی"
+
+#. TRANSLATORS: the .appdata.xml file could not
+#. * be loaded
+msgid "Error loading AppData file"
+msgstr "خطا در بارگذاری فایل AppData"
+
+#. TRANSLATORS: the .desktop file could not
+#. * be loaded
+msgid "Error loading desktop file"
+msgstr "خطا در بارگذاری فایل دسکتاپ"
+
+#. TRANSLATORS: we could not auto-add the kudo
+msgid "Error parsing kudos"
+msgstr "خطا در تجزیه kudos"
+
+#. TRANSLATORS: we could not auto-add the provides
+msgid "Error parsing provides"
+msgstr "خطا در تجزیه provides"
+
+#. TRANSLATORS: the .mo files could not be parsed
+msgid "Error parsing translations"
+msgstr "خطا در تجزیه ترجمه ها"
+
+#. TRANSLATORS: this is when the destination file
+#. * cannot be saved for some reason
+msgid "Error saving AppStream file"
+msgstr "خطا در ذخیره فایل AppStream"
+
+#. list failures
+msgid "FAILED"
+msgstr "با خطا مواجه شد"
+
+#. TRANSLATORS: error message
+msgid "Failed to add package"
+msgstr "خطا در افزودن پکیج"
+
+#. TRANSLATORS: error message
+msgid "Failed to generate metadata"
+msgstr "خطا در بوجود آوردن متادیتا"
+
+#. TRANSLATORS: error message
+msgid "Failed to open packages"
+msgstr "خطا در باز کردن پکیج ها"
+
+#. TRANSLATORS: error message
+msgid "Failed to parse arguments"
+msgstr "خطا در "
+
+#. TRANSLATORS: error message
+msgid "Failed to set up builder"
+msgstr "خطا در برپایی builder"
+
+#. TRANSLATORS: %s is a file type,
+#. * e.g. 'appdata'
+#, c-format
+msgid "File format '%s' cannot be upgraded"
+msgstr "فرمت فایل '%s' قابل ارتقا نیست"
+
+#. TRANSLATORS: not a recognised file type
+msgid "Format not recognised"
+msgstr "فرمت شناخته نشد"
+
+#. TRANSLATORS: command line option
+msgid "Ignore certain types of veto"
+msgstr "چشم پوشی از بعضی از انواع veto"
+
+#. TRANSLATORS: command line option
+msgid "Include failed results in the output"
+msgstr "ارائه نتایج خطا دار در خروجی"
+
+#. TRANSLATORS: not a valid desktop filename
+msgid "Invalid desktop filename"
+msgstr "فایل دسکتاپ نامعتبر است"
+
+#. TRANSLATORS: information message
+msgid "New API version"
+msgstr "نسخه جدید API"
+
+#. TRANSLATORS: probably wrong XML
+msgid "No desktop applications found"
+msgstr "هیچ اپلیکیشن دسکتاپی پیدا نشد"
+
+msgid "Not enough arguments, expected file.xml"
+msgstr "Argument ها کافی نیست،‌file.xml پیش بینی میشود"
+
+msgid "Not enough arguments, expected old.xml new.xml version"
+msgstr "Argument ها کافی نیست،نسخه ‌old.xml و new.xml پیشبینی می شود."
+
+#. TRANSLATORS: the file is valid
+msgid "OK"
+msgstr "OK"
+
+#. TRANSLATORS: information message
+msgid "Old API version"
+msgstr "نسخه قدیمی API"
+
+#. TRANSLATORS: information message
+#, c-format
+msgid "Parsed %u/%u files..."
+msgstr "اتمام تجزیه فایل های %u %u ..."
+
+#. TRANSLATORS: any manual changes required?
+#. * also note: FIXME is a hardcoded string
+msgid "Please review the file and fix any 'FIXME' items"
+msgstr "لطفا فایل را مجددا بازبینی کنید و آیتم های FIXME را تصحیح کنید"
+
+#. TRANSLATORS: we're generating the AppStream data
+msgid "Processing application"
+msgstr "پردازش برنامه"
+
+#. TRANSLATORS: application was removed
+msgid "Removed"
+msgstr "برداشته شد"
+
+#. TRANSLATORS: we've saving the XML file to disk
+msgid "Saving AppStream"
+msgstr "در حال ذخیره AppStream"
+
+#. TRANSLATORS: we've saving the icon file to disk
+msgid "Saving icon"
+msgstr "در حال ذخیره کردن آیکون"
+
+#. TRANSLATORS: information message
+msgid "Scanning packages..."
+msgstr "در حال اسکن پکیج ها..."
+
+#. TRANSLATORS: command description
+msgid "Search for AppStream applications"
+msgstr "جست و جو در برنامه های AppStream"
+
+#. TRANSLATORS: command line option
+msgid "Set the basenames of the output files"
+msgstr "تنظیم اسم پایه برای فایل های خروجی"
+
+#. TRANSLATORS: command line option
+msgid "Set the cache directory"
+msgstr "تنظیم دایرکتوری cache"
+
+#. TRANSLATORS: command line option
+msgid "Set the icons directory"
+msgstr "تنظیم آیکون های دایرکتوری"
+
+#. TRANSLATORS: command line option
+msgid "Set the logging directory"
+msgstr "تنظیم دایرکتوری logging"
+
+#. TRANSLATORS: command line option
+msgid "Set the minimum icon size in pixels"
+msgstr "تنظیم حداقل سایز آیکون به پیکسل"
+
+#. TRANSLATORS: command line option
+msgid "Set the number of threads"
+msgstr "تنظیم تعداد Thread ها"
+
+#. TRANSLATORS: command line option
+msgid "Set the old metadata location"
+msgstr "تنظیم محل متادیتای قدیمی"
+
+#. TRANSLATORS: command line option
+msgid "Set the origin name"
+msgstr "تنظیم اسم مبدا"
+
+#. TRANSLATORS: command line option
+msgid "Set the output directory"
+msgstr "تنظیم دایرکتوری خروجی"
+
+#. TRANSLATORS: command line option
+msgid "Set the packages directory"
+msgstr "تنظیم دایرکتوری پکیج ها"
+
+#. TRANSLATORS: command line option
+msgid "Set the prefix"
+msgstr "تنظیم پیشوند"
+
+#. TRANSLATORS: command line option
+msgid "Set the temporary directory"
+msgstr "تنظیم دایرکتوری موقت"
+
+#. TRANSLATORS: command line option
+msgid "Show extra debugging information"
+msgstr "ارائه اطلاعات بیشتر دیباگ"
+
+#. TRANSLATORS: command line option
+msgid "Show version"
+msgstr "نشان دادن نسخه"
+
+#. TRANSLATORS: command description
+msgid "Upgrade AppData metadata to the latest version"
+msgstr "ارتقای متادیتای AppData به آخرین نسخه"
+
+msgid "Validation failed"
+msgstr "بررسی صحت با خطا رو به رو شد"
+
+msgid "Validation of files failed"
+msgstr "بررسی فایل ها با خطا رو به رو شد"
+
+msgid "Version:"
+msgstr "نسخه:"

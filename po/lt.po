@@ -97,6 +97,10 @@ msgid "Create an HTML status page"
 msgstr "Sukurti HTML būsenos puslapį"
 
 #. TRANSLATORS: command description
+msgid "Creates an example AppData file from a .desktop file"
+msgstr "Sukuria pavyzdinį AppData failą iš .desktop failo"
+
+#. TRANSLATORS: command description
 msgid "Display application search tokens"
 msgstr "Rodyti programų paieškos prieigos raktus"
 

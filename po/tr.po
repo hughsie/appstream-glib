@@ -106,6 +106,10 @@ msgid "Create an HTML status page"
 msgstr "Bir HTML durum sayfası oluşturur"
 
 #. TRANSLATORS: command description
+msgid "Creates an example AppData file from a .desktop file"
+msgstr "Bir .desktop dosyasından örnek bir AppData dosyası oluşturur"
+
+#. TRANSLATORS: command description
 msgid "Display application search tokens"
 msgstr "Uygulama arama jetonlarını görüntüle"
 
@@ -227,6 +231,10 @@ msgstr "AppStream üst verisini yükler"
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata with new origin"
 msgstr "AppStream üst verisini yeni bir köken ile yükler"
+
+#. TRANSLATORS: not a valid desktop filename
+msgid "Invalid desktop filename"
+msgstr "Geçersiz masaüstü dosya adı"
 
 #. TRANSLATORS: command description
 msgid "List applications not backed by packages"

@@ -6,13 +6,14 @@
 # Ettore Atalan <atalanttore@googlemail.com>, 2014-2016
 # Mario Blättermann <mario.blaettermann@gmail.com>, 2016. #zanata
 # Richard Hughes <richard@hughsie.com>, 2016. #zanata
+# Tobias Weise <tobias.weise@web.de>, 2019. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-28 10:43+0000\n"
-"PO-Revision-Date: 2016-09-29 07:16+0000\n"
-"Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
+"POT-Creation-Date: 2019-09-30 18:56+0100\n"
+"PO-Revision-Date: 2019-05-10 12:51+0000\n"
+"Last-Translator: Tobias Weise <tobias.weise@web.de>\n"
 "Language-Team: German (http://www.transifex.com/freedesktop/appstream-glib/language/de/)\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -28,6 +29,14 @@ msgstr "HiDPI-Symbole zum Tarball hinzufügen"
 #. TRANSLATORS: command line option
 msgid "Add a cache ID to each component"
 msgstr "Cachekennung zu jeder Komponente hinzufügen"
+
+#. TRANSLATORS: command description
+msgid "Add a language to a source file"
+msgstr "Der Quelldatei eine Sprache hinzufügen"
+
+#. TRANSLATORS: command description
+msgid "Add a provide to a source file"
+msgstr "Der QWu"
 
 #. TRANSLATORS: command line option
 msgid "Add encoded icons to the XML"
@@ -46,6 +55,10 @@ msgstr "Alias zu %s"
 msgid "AppStream Utility"
 msgstr "AppStream-Dienstprogramm"
 
+#. TRANSLATORS: this is when a device ctrl+c's a watch
+msgid "Cancelled"
+msgstr "Abgebrochen"
+
 #. TRANSLATORS: command description
 msgid "Check installed application data"
 msgstr "Installierte Anwendungsdaten überprüfen"
@@ -56,6 +69,10 @@ msgstr "Befehl nicht gefunden, gültige Befehle sind:"
 #. TRANSLATORS: command description
 msgid "Compare the contents of two AppStream files"
 msgstr "Inhalt zweier AppStream-Dateien vergleichen"
+
+#. TRANSLATORS: command description
+msgid "Compare version numbers"
+msgstr "Versionsnummern vergleichen"
 
 #. TRANSLATORS: the %s and %s are file types,
 #. * e.g. "appdata" to "appstream"
@@ -86,6 +103,10 @@ msgstr "HTML-Matrixseite erstellen"
 #. TRANSLATORS: command description
 msgid "Create an HTML status page"
 msgstr "HTML-Statusseite erstellen"
+
+#. TRANSLATORS: command description
+msgid "Creates an example AppData file from a .desktop file"
+msgstr "Erstellt eine Beispiel-Appdata-Datei aus einer .desktop-Datei"
 
 #. TRANSLATORS: command description
 msgid "Display application search tokens"
@@ -143,6 +164,10 @@ msgstr "Fehler beim Auswerten der Übersetzungen"
 #. * cannot be saved for some reason
 msgid "Error saving AppStream file"
 msgstr "Fehler beim Speichern der AppStream-Datei"
+
+#. TRANSLATORS: command description
+msgid "Exports the agreement to text"
+msgstr "Exportiert die Vereinbarung als Text"
 
 #. list failures
 msgid "FAILED"
@@ -205,6 +230,10 @@ msgstr "Installiert AppStream-Metadaten"
 #. TRANSLATORS: command description
 msgid "Installs AppStream metadata with new origin"
 msgstr "Installiert AppStream-Metadaten mit neuer Quelle"
+
+#. TRANSLATORS: not a valid desktop filename
+msgid "Invalid desktop filename"
+msgstr "Ungültiger Desktop Dateiname"
 
 #. TRANSLATORS: command description
 msgid "List applications not backed by packages"
@@ -355,6 +384,10 @@ msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr "Eine AppStream-Datei in AppData- und Metainfo-Dateien aufspalten"
 
 #. TRANSLATORS: command description
+msgid "Test a regular expression"
+msgstr "Regulären Ausdruck (regex) testen"
+
+#. TRANSLATORS: command description
 msgid "Uninstalls AppStream metadata"
 msgstr "Deinstalliert AppStream-Metadaten"
 
@@ -382,3 +415,11 @@ msgstr "Validierung der Dateien ist fehlgeschlagen"
 
 msgid "Version:"
 msgstr "Version:"
+
+#. TRANSLATORS: command description
+msgid "Watch AppStream locations for changes"
+msgstr "AppStream Pfade auf Änderungen überprüfen"
+
+#. TRANSLATORS: command description
+msgid "check an installed application"
+msgstr "Installierte Anwendung überprüfen"
