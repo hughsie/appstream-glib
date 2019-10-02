@@ -1743,7 +1743,7 @@ as_test_content_rating_func (void)
 	g_assert_cmpint (as_content_rating_get_value (content_rating, "violence-cartoon"), ==,
 			 AS_CONTENT_RATING_VALUE_MILD);
 	g_assert_cmpint (as_content_rating_get_value (content_rating, "violence-bloodshed"), ==,
-			 AS_CONTENT_RATING_VALUE_UNKNOWN);
+			 AS_CONTENT_RATING_VALUE_NONE);
 
 	rating_ids = as_content_rating_get_rating_ids (content_rating);
 	g_assert_nonnull (rating_ids);
@@ -1767,6 +1767,51 @@ as_test_content_rating_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_string_free (xml, TRUE);
+	as_node_unref (root);
+}
+
+/* Test that parsing an empty content rating correctly returns `none` as the
+ * value for all the ratings defined by that particular kind of content rating,
+ * and `unknown` for everything else. */
+static void
+as_test_content_rating_empty (void)
+{
+	GError *error = NULL;
+	AsNode *n;
+	AsNode *root;
+	const gchar *src =
+		"<content_rating type=\"oars-1.0\">\n"
+		"</content_rating>\n";
+	gboolean ret;
+	g_autoptr(AsNodeContext) ctx = NULL;
+	g_autoptr(AsContentRating) content_rating = NULL;
+
+	content_rating = as_content_rating_new ();
+
+	/* to object */
+	root = as_node_from_xml (src, 0, &error);
+	g_assert_no_error (error);
+	g_assert_nonnull (root);
+	n = as_node_find (root, "content_rating");
+	g_assert_nonnull (n);
+	ctx = as_node_context_new ();
+	ret = as_content_rating_node_parse (content_rating, n, ctx, &error);
+	g_assert_no_error (error);
+	g_assert_true (ret);
+
+	/* verify */
+	g_assert_cmpstr (as_content_rating_get_kind (content_rating), ==, "oars-1.0");
+	g_assert_cmpint (as_content_rating_get_value (content_rating, "drugs-alcohol"), ==,
+			 AS_CONTENT_RATING_VALUE_NONE);
+	g_assert_cmpint (as_content_rating_get_value (content_rating, "violence-cartoon"), ==,
+			 AS_CONTENT_RATING_VALUE_NONE);
+	g_assert_cmpint (as_content_rating_get_value (content_rating, "violence-bloodshed"), ==,
+			 AS_CONTENT_RATING_VALUE_NONE);
+
+	/* This one was only added in OARS-1.1, so it shouldn’t have a value of `none`. */
+	g_assert_cmpint (as_content_rating_get_value (content_rating, "sex-adultery"), ==,
+			 AS_CONTENT_RATING_VALUE_UNKNOWN);
+
 	as_node_unref (root);
 }
 
@@ -5625,6 +5670,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/require", as_test_require_func);
 	g_test_add_func ("/AppStream/checksum", as_test_checksum_func);
 	g_test_add_func ("/AppStream/content_rating", as_test_content_rating_func);
+	g_test_add_func ("/AppStream/content_rating/empty", as_test_content_rating_empty);
 	g_test_add_func ("/AppStream/content_rating/mappings", as_test_content_rating_mappings);
 	g_test_add_func ("/AppStream/release", as_test_release_func);
 	g_test_add_func ("/AppStream/release{date}", as_test_release_date_func);

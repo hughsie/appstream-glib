@@ -38,6 +38,14 @@ G_DEFINE_TYPE_WITH_PRIVATE (AsContentRating, as_content_rating, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o) (as_content_rating_get_instance_private (o))
 
+typedef enum
+{
+	OARS_1_0,
+	OARS_1_1,
+} OarsVersion;
+
+static gboolean is_oars_key (const gchar *id, OarsVersion version);
+
 static void
 as_content_rating_finalize (GObject *object)
 {
@@ -139,7 +147,18 @@ as_content_rating_get_value (AsContentRating *content_rating, const gchar *id)
 		if (g_strcmp0 (key->id, id) == 0)
 			return key->value;
 	}
-	return AS_CONTENT_RATING_VALUE_UNKNOWN;
+
+	/* According to the
+	 * [OARS specification](https://github.com/hughsie/oars/blob/master/specification/oars-1.1.md),
+	 * return %AS_CONTENT_RATING_VALUE_NONE if the #AsContentRating exists
+	 * overall. Only return %AS_CONTENT_RATING_VALUE_UNKNOWN if the
+	 * #AsContentRating doesn’t exist at all (or for other types of content
+	 * rating). */
+	if ((g_strcmp0 (priv->kind, "oars-1.0") == 0 && is_oars_key (id, OARS_1_0)) ||
+	    (g_strcmp0 (priv->kind, "oars-1.1") == 0 && is_oars_key (id, OARS_1_1)))
+		return AS_CONTENT_RATING_VALUE_NONE;
+	else
+		return AS_CONTENT_RATING_VALUE_UNKNOWN;
 }
 
 /**
@@ -196,6 +215,7 @@ G_STATIC_ASSERT (AS_CONTENT_RATING_VALUE_LAST == AS_CONTENT_RATING_VALUE_INTENSE
 
 static const struct {
 	const gchar	*id;
+	OarsVersion	 oars_version;  /* when the key was first added */
 	guint		 csm_age_none;  /* for %AS_CONTENT_RATING_VALUE_NONE */
 	guint		 csm_age_mild;  /* for %AS_CONTENT_RATING_VALUE_MILD */
 	guint		 csm_age_moderate;  /* for %AS_CONTENT_RATING_VALUE_MODERATE */
@@ -204,36 +224,46 @@ static const struct {
 	/* Each @id must only appear once. The set of @csm_age_* values for a
 	 * given @id must be complete and non-decreasing. */
 	/* v1.0 */
-	{ "violence-cartoon",	0, 3, 4, 6 },
-	{ "violence-fantasy",	0, 3, 7, 8 },
-	{ "violence-realistic",	0, 4, 9, 14 },
-	{ "violence-bloodshed",	0, 9, 11, 18 },
-	{ "violence-sexual",	0, 18, 18, 18 },
-	{ "drugs-alcohol",	0, 11, 13, 16 },
-	{ "drugs-narcotics",	0, 12, 14, 17 },
-	{ "drugs-tobacco",	0, 10, 13, 13 },
-	{ "sex-nudity",		0, 12, 14, 14 },
-	{ "sex-themes",		0, 13, 14, 15 },
-	{ "language-profanity",	0, 8, 11, 14 },
-	{ "language-humor",	0, 3, 8, 14 },
-	{ "language-discrimination", 0, 9, 10, 11 },
-	{ "money-advertising",	0, 7, 8, 10 },
-	{ "money-gambling",	0, 7, 10, 18 },
-	{ "money-purchasing",	0, 12, 14, 15 },
-	{ "social-chat",	0, 4, 10, 13 },
-	{ "social-audio",	0, 15, 15, 15 },
-	{ "social-contacts",	0, 12, 12, 12 },
-	{ "social-info",	0, 0, 13, 13 },
-	{ "social-location",	0, 13, 13, 13 },
+	{ "violence-cartoon",	OARS_1_0, 0, 3, 4, 6 },
+	{ "violence-fantasy",	OARS_1_0, 0, 3, 7, 8 },
+	{ "violence-realistic",	OARS_1_0, 0, 4, 9, 14 },
+	{ "violence-bloodshed",	OARS_1_0, 0, 9, 11, 18 },
+	{ "violence-sexual",	OARS_1_0, 0, 18, 18, 18 },
+	{ "drugs-alcohol",	OARS_1_0, 0, 11, 13, 16 },
+	{ "drugs-narcotics",	OARS_1_0, 0, 12, 14, 17 },
+	{ "drugs-tobacco",	OARS_1_0, 0, 10, 13, 13 },
+	{ "sex-nudity",		OARS_1_0, 0, 12, 14, 14 },
+	{ "sex-themes",		OARS_1_0, 0, 13, 14, 15 },
+	{ "language-profanity",	OARS_1_0, 0, 8, 11, 14 },
+	{ "language-humor",	OARS_1_0, 0, 3, 8, 14 },
+	{ "language-discrimination", OARS_1_0, 0, 9, 10, 11 },
+	{ "money-advertising",	OARS_1_0, 0, 7, 8, 10 },
+	{ "money-gambling",	OARS_1_0, 0, 7, 10, 18 },
+	{ "money-purchasing",	OARS_1_0, 0, 12, 14, 15 },
+	{ "social-chat",	OARS_1_0, 0, 4, 10, 13 },
+	{ "social-audio",	OARS_1_0, 0, 15, 15, 15 },
+	{ "social-contacts",	OARS_1_0, 0, 12, 12, 12 },
+	{ "social-info",	OARS_1_0, 0, 0, 13, 13 },
+	{ "social-location",	OARS_1_0, 0, 13, 13, 13 },
 	/* v1.1 additions */
-	{ "sex-homosexuality",	0, 10, 13, 18 },
-	{ "sex-prostitution",	0, 12, 14, 18 },
-	{ "sex-adultery",	0, 8, 10, 18 },
-	{ "sex-appearance",	0, 10, 10, 15 },
-	{ "violence-worship",	0, 13, 15, 18 },
-	{ "violence-desecration", 0, 13, 15, 18 },
-	{ "violence-slavery",	0, 13, 15, 18 },
+	{ "sex-homosexuality",	OARS_1_1, 0, 10, 13, 18 },
+	{ "sex-prostitution",	OARS_1_1, 0, 12, 14, 18 },
+	{ "sex-adultery",	OARS_1_1, 0, 8, 10, 18 },
+	{ "sex-appearance",	OARS_1_1, 0, 10, 10, 15 },
+	{ "violence-worship",	OARS_1_1, 0, 13, 15, 18 },
+	{ "violence-desecration", OARS_1_1, 0, 13, 15, 18 },
+	{ "violence-slavery",	OARS_1_1, 0, 13, 15, 18 },
 };
+
+static gboolean
+is_oars_key (const gchar *id, OarsVersion version)
+{
+	for (gsize i = 0; i < G_N_ELEMENTS (oars_to_csm_mappings); i++) {
+		if (g_str_equal (id, oars_to_csm_mappings[i].id))
+			return (oars_to_csm_mappings[i].oars_version <= version);
+	}
+	return FALSE;
+}
 
 /**
  * as_content_rating_attribute_to_csm_age:
