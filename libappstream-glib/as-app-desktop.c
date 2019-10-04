@@ -455,7 +455,7 @@ as_app_parse_file_key_fallback_comment (AsApp *app,
 	return TRUE;
 }
 
-gboolean
+static gboolean
 as_app_parse_desktop_kf (AsApp *app, GKeyFile *kf, AsAppParseFlags flags, GError **error)
 {
 	g_auto(GStrv) keys = NULL;
