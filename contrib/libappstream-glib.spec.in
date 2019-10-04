@@ -48,6 +48,9 @@ Requires: libsoup%{?_isa} >= %{libsoup_version}
 Obsoletes: appdata-tools < 0.1.9
 Provides: appdata-tools
 
+# Removed in F30
+Obsoletes: libappstream-glib-builder-devel < 0.7.15
+
 # this is not a library version
 %define as_plugin_version               5
 
@@ -60,7 +63,6 @@ representation.
 %package devel
 Summary: GLib Libraries and headers for appstream-glib
 Requires: %{name}%{?_isa} = %{version}-%{release}
-Obsoletes: %{name}-builder-devel < 0.7.14-2
 
 %description devel
 GLib headers and libraries for appstream-glib.
@@ -68,21 +70,14 @@ GLib headers and libraries for appstream-glib.
 %package builder
 Summary: Library and command line tools for building AppStream metadata
 Requires: %{name}%{?_isa} = %{version}-%{release}
-Requires: pngquant >= 2.8
+Recommends: pngquant
 
 %description builder
 This library and command line tool is used for building AppStream metadata
 from a directory of packages.
 
-%package builder-devel
-Summary: GLib Libraries and headers for appstream-builder
-Requires: %{name}-builder%{?_isa} = %{version}-%{release}
-
-%description builder-devel
-GLib headers and libraries for appstream-builder.
-
 %prep
-%setup -q -n appstream-glib-%{version}
+%autosetup -p1 -n appstream-glib-%{version}
 
 %build
 %meson \
@@ -96,11 +91,8 @@ GLib headers and libraries for appstream-builder.
 
 %find_lang appstream-glib
 
-%post -p /sbin/ldconfig
-%post builder -p /sbin/ldconfig
-
-%postun -p /sbin/ldconfig
-%postun builder -p /sbin/ldconfig
+%ldconfig_scriptlets
+%ldconfig_scriptlets builder
 
 %files -f appstream-glib.lang
 %license COPYING
