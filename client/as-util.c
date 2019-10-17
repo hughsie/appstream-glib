@@ -3965,7 +3965,7 @@ as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 	for (i = 0; i < apps->len; i++) {
 		app = g_ptr_array_index (apps, i);
 		id = as_app_get_id (app);
-		if (as_app_get_description_size (app) > 0) {
+		if (g_hash_table_size (as_app_get_descriptions (app)) > 0) {
 			as_util_pad_strings (id, "Already has AppData", align);
 			continue;
 		}
@@ -3974,7 +3974,7 @@ as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 			as_util_pad_strings (id, "Not found", align);
 			continue;
 		}
-		if (as_app_get_description_size (app_source) == 0) {
+		if (g_hash_table_size (as_app_get_descriptions (app_source)) == 0) {
 			as_util_pad_strings (id, "No source AppData", align);
 			continue;
 		}
@@ -3994,7 +3994,7 @@ as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 
 		app = g_ptr_array_index (apps, i);
 		id = as_app_get_id (app);
-		if (as_app_get_description_size (app) > 0) {
+		if (g_hash_table_size (as_app_get_descriptions (app)) > 0) {
 			as_util_pad_strings (id, "Already has AppData", align);
 			continue;
 		}
@@ -4011,7 +4011,7 @@ as_util_incorporate (AsUtilPrivate *priv, gchar **values, GError **error)
 			as_util_pad_strings (id, "Not found", align);
 			continue;
 		}
-		if (as_app_get_description_size (app_source) == 0) {
+		if (g_hash_table_size (as_app_get_descriptions (app_source)) == 0) {
 			as_util_pad_strings (id, "No source AppData", align);
 			continue;
 		}

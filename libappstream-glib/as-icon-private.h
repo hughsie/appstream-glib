@@ -16,22 +16,28 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 GBytes		*as_icon_get_data		(AsIcon		*icon);
+G_GNUC_INTERNAL
 void		 as_icon_set_data		(AsIcon		*icon,
 						 GBytes		*data);
 
+G_GNUC_INTERNAL
 GNode		*as_icon_node_insert		(AsIcon		*icon,
 						 GNode		*parent,
 						 AsNodeContext	*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_icon_node_parse		(AsIcon		*icon,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_icon_node_parse_dep11	(AsIcon		*icon,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
 
+G_GNUC_INTERNAL
 void		 as_icon_set_prefix_rstr	(AsIcon		*icon,
 						 AsRefString	*rstr);
 

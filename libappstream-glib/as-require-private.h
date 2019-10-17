@@ -16,13 +16,16 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 GNode		*as_require_node_insert		(AsRequire	*require,
 						 GNode		*parent,
 						 AsNodeContext	*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_require_node_parse		(AsRequire	*require,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_require_node_parse_dep11	(AsRequire	*require,
 						 GNode		*node,
 						 AsNodeContext	*ctx,

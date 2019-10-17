@@ -16,17 +16,21 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 GNode		*as_image_node_insert		(AsImage	*image,
 						 GNode		*parent,
 						 AsNodeContext	*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_image_node_parse		(AsImage	*image,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_image_node_parse_dep11	(AsImage	*image,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 void		 as_image_set_url_rstr		(AsImage	*image,
 						 AsRefString	*rstr);
 

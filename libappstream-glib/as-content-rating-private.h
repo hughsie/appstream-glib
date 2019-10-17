@@ -18,9 +18,11 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 GNode		*as_content_rating_node_insert	(AsContentRating	*content_rating,
 						 GNode			*parent,
 						 AsNodeContext		*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_content_rating_node_parse	(AsContentRating	*content_rating,
 						 GNode			*node,
 						 AsNodeContext		*ctx,

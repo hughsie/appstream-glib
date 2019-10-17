@@ -16,13 +16,16 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 GNode		*as_checksum_node_insert	(AsChecksum	*checksum,
 						 GNode		*parent,
 						 AsNodeContext	*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_checksum_node_parse		(AsChecksum	*checksum,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_checksum_node_parse_dep11	(AsChecksum	*checksum,
 						 GNode		*node,
 						 AsNodeContext	*ctx,

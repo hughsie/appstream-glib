@@ -16,13 +16,16 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 GNode		*as_bundle_node_insert		(AsBundle	*bundle,
 						 GNode		*parent,
 						 AsNodeContext	*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_bundle_node_parse		(AsBundle	*bundle,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_bundle_node_parse_dep11	(AsBundle	*bundle,
 						 GNode		*node,
 						 AsNodeContext	*ctx,

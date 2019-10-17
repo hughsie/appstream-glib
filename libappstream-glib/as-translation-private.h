@@ -16,13 +16,16 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 GNode		*as_translation_node_insert	(AsTranslation	*translation,
 						 GNode		*parent,
 						 AsNodeContext	*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_translation_node_parse	(AsTranslation	*translation,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_translation_node_parse_dep11 (AsTranslation	*translation,
 						 GNode		*node,
 						 AsNodeContext	*ctx,

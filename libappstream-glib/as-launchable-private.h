@@ -16,13 +16,16 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 GNode		*as_launchable_node_insert	(AsLaunchable	*launchable,
 						 GNode		*parent,
 						 AsNodeContext	*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_launchable_node_parse	(AsLaunchable	*launchable,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_launchable_node_parse_dep11	(AsLaunchable	*launchable,
 						 GNode		*node,
 						 AsNodeContext	*ctx,

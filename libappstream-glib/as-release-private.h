@@ -16,13 +16,16 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 GNode		*as_release_node_insert		(AsRelease	*release,
 						 GNode		*parent,
 						 AsNodeContext	*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_release_node_parse		(AsRelease	*release,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_release_node_parse_dep11	(AsRelease	*release,
 						 GNode		*node,
 						 AsNodeContext	*ctx,

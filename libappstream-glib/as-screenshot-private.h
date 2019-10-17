@@ -18,13 +18,16 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 GNode		*as_screenshot_node_insert	(AsScreenshot	*screenshot,
 						 GNode		*parent,
 						 AsNodeContext	*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_screenshot_node_parse	(AsScreenshot	*screenshot,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_screenshot_node_parse_dep11	(AsScreenshot	*screenshot,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
