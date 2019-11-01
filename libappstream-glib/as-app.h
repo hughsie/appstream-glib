@@ -298,6 +298,7 @@ typedef AsFormatKind AsAppSourceKind;
  * @AS_APP_KIND_LOCALIZATION:		Localization data
  * @AS_APP_KIND_CONSOLE:		Console program
  * @AS_APP_KIND_DRIVER:			Driver for hardware support
+ * @AS_APP_KIND_ICON_THEME:		An icon theme
  *
  * The component type.
  **/
@@ -319,6 +320,7 @@ typedef enum {
 	AS_APP_KIND_LOCALIZATION,	/* Since: 0.5.11 */
 	AS_APP_KIND_CONSOLE,		/* Since: 0.6.1 */
 	AS_APP_KIND_DRIVER,		/* Since: 0.6.3 */
+	AS_APP_KIND_ICON_THEME,		/* Since: 0.7.17 */
 	/*< private >*/
 	AS_APP_KIND_LAST
 } AsAppKind;

@@ -217,6 +217,8 @@ as_app_kind_from_string (const gchar *kind)
 		return AS_APP_KIND_CONSOLE;
 	if (g_strcmp0 (kind, "driver") == 0)
 		return AS_APP_KIND_DRIVER;
+	if (g_strcmp0 (kind, "icon-theme") == 0)
+		return AS_APP_KIND_ICON_THEME;
 
 	/* legacy */
 	if (g_strcmp0 (kind, "desktop") == 0)
