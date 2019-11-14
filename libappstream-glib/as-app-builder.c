@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
  * Copyright (C) 2015 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2019 Kalev Lember <klember@redhat.com>
  *
  * SPDX-License-Identifier: LGPL-2.1+
  */
@@ -336,6 +337,7 @@ as_app_builder_search_translations_qt (AsAppBuilderContext *ctx,
 	/* search for each translation ID */
 	for (i = 0; i < ctx->translations->len; i++) {
 		AsTranslation *t;
+		const gchar *dirname;
 		const gchar *filename;
 		const gchar *install_dir;
 		g_autofree gchar *path = NULL;
@@ -361,17 +363,52 @@ as_app_builder_search_translations_qt (AsAppBuilderContext *ctx,
 		if (dir == NULL)
 			return FALSE;
 
-		/* the format is ${prefix}/share/${install_dir}/translations/${id}_${locale}.qm */
+		/* look for ${prefix}/share/${install_dir}/translations/${id}_${locale}.qm */
 		while ((filename = g_dir_read_name (dir)) != NULL) {
 			g_autofree gchar *fn = NULL;
 			g_autofree gchar *locale = NULL;
 			if (!g_str_has_prefix (filename, as_translation_get_id (t)))
 				continue;
+			if (!g_str_has_suffix (filename, ".qm"))
+				continue;
+			fn = g_build_filename (path, filename, NULL);
+			if (!g_file_test (fn, G_FILE_TEST_IS_REGULAR))
+				continue;
 			locale = g_strdup (filename + strlen (as_translation_get_id (t)) + 1);
 			g_strdelimit (locale, ".", '\0');
-			fn = g_build_filename (path, filename, NULL);
 			if (!as_app_builder_parse_file_qt (ctx, locale, fn, error))
 				return FALSE;
+		}
+
+		g_dir_rewind (dir);
+
+		/* look for ${prefix}/share/${install_dir}/translations/${id}/${locale}.qm */
+		while ((dirname = g_dir_read_name (dir)) != NULL) {
+			g_autofree gchar *path_subdir = NULL;
+			g_autoptr(GDir) subdir = NULL;
+
+			if (!g_str_equal (dirname, as_translation_get_id (t)))
+				continue;
+			path_subdir = g_build_filename (path, dirname, NULL);
+			if (!g_file_test (path_subdir, G_FILE_TEST_IS_DIR))
+				continue;
+			subdir = g_dir_open (path_subdir, 0, error);
+			if (subdir == NULL)
+				return FALSE;
+
+			while ((filename = g_dir_read_name (subdir)) != NULL) {
+				g_autofree gchar *fn = NULL;
+				g_autofree gchar *locale = NULL;
+				if (!g_str_has_suffix (filename, ".qm"))
+					continue;
+				fn = g_build_filename (path_subdir, filename, NULL);
+				if (!g_file_test (fn, G_FILE_TEST_IS_REGULAR))
+					continue;
+				locale = g_strdup (filename);
+				g_strdelimit (locale, ".", '\0');
+				if (!as_app_builder_parse_file_qt (ctx, locale, fn, error))
+					return FALSE;
+			}
 		}
 	}
 
