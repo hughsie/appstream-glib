@@ -102,10 +102,6 @@ gboolean	 as_app_parse_desktop_file	(AsApp		*app,
 						 const gchar	*filename,
 						 AsAppParseFlags flags,
 						 GError		**error);
-gboolean	 as_app_parse_desktop_data	(AsApp		*app,
-						 GBytes		*data,
-						 AsAppParseFlags flags,
-						 GError		**error);
 gboolean	 as_app_parse_inf_file		(AsApp		*app,
 						 const gchar	*filename,
 						 AsAppParseFlags flags,
