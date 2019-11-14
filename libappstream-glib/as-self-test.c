@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
  * Copyright (C) 2014-2018 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2019 Kalev Lember <klember@redhat.com>
  *
  * SPDX-License-Identifier: LGPL-2.1+
  */
@@ -411,6 +412,42 @@ as_test_app_builder_qt_func (void)
 	g_autoptr(AsApp) app = NULL;
 	g_autoptr(GList) list = NULL;
 	const gchar *gettext_domains[] = { "kdeapp", "notgoingtoexist", NULL };
+
+	app = as_app_new ();
+	fn = as_test_get_filename ("usr");
+	g_assert (fn != NULL);
+	for (i = 0; gettext_domains[i] != NULL; i++) {
+		g_autoptr(AsTranslation) translation = NULL;
+		translation = as_translation_new ();
+		as_translation_set_kind (translation, AS_TRANSLATION_KIND_QT);
+		as_translation_set_id (translation, gettext_domains[i]);
+		as_app_add_translation (app, translation);
+	}
+	ret = as_app_builder_search_translations (app, fn, 25,
+						  AS_APP_BUILDER_FLAG_NONE,
+						  NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* check langs */
+	g_assert_cmpint (as_app_get_language (app, "fr"), ==, 100);
+	g_assert_cmpint (as_app_get_language (app, "en_GB"), ==, -1);
+
+	/* check size */
+	list = as_app_get_languages (app);
+	g_assert_cmpint (g_list_length (list), ==, 1);
+}
+
+static void
+as_test_app_builder_qt_subdir_func (void)
+{
+	GError *error = NULL;
+	gboolean ret;
+	guint i;
+	g_autofree gchar *fn = NULL;
+	g_autoptr(AsApp) app = NULL;
+	g_autoptr(GList) list = NULL;
+	const gchar *gettext_domains[] = { "kdeapp2", "notgoingtoexist", NULL };
 
 	app = as_app_new ();
 	fn = as_test_get_filename ("usr");
@@ -5693,6 +5730,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/app{builder:gettext}", as_test_app_builder_gettext_func);
 	g_test_add_func ("/AppStream/app{builder:gettext-nodomain}", as_test_app_builder_gettext_nodomain_func);
 	g_test_add_func ("/AppStream/app{builder:qt}", as_test_app_builder_qt_func);
+	g_test_add_func ("/AppStream/app{builder:qt-subdir}", as_test_app_builder_qt_subdir_func);
 	g_test_add_func ("/AppStream/app{translated}", as_test_app_translated_func);
 	g_test_add_func ("/AppStream/app{validate-style}", as_test_app_validate_style_func);
 	g_test_add_func ("/AppStream/app{validate-appdata-good}", as_test_app_validate_appdata_good_func);
