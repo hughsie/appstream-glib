@@ -344,6 +344,11 @@ as_app_builder_search_translations_qt (AsAppBuilderContext *ctx,
 		/* FIXME: this path probably has to be specified as an attribute
 		 * in the <translations> tag from the AppData file */
 		t = g_ptr_array_index (ctx->translations, i);
+		if (as_translation_get_kind (t) != AS_TRANSLATION_KIND_QT &&
+		    as_translation_get_kind (t) != AS_TRANSLATION_KIND_UNKNOWN)
+			continue;
+		if (as_translation_get_id (t) == NULL)
+			continue;
 		install_dir = as_translation_get_id (t);
 		path = g_build_filename (prefix,
 					 "share",
@@ -360,11 +365,6 @@ as_app_builder_search_translations_qt (AsAppBuilderContext *ctx,
 		while ((filename = g_dir_read_name (dir)) != NULL) {
 			g_autofree gchar *fn = NULL;
 			g_autofree gchar *locale = NULL;
-			if (as_translation_get_kind (t) != AS_TRANSLATION_KIND_QT &&
-			    as_translation_get_kind (t) != AS_TRANSLATION_KIND_UNKNOWN)
-				continue;
-			if (as_translation_get_id (t) == NULL)
-				continue;
 			if (!g_str_has_prefix (filename, as_translation_get_id (t)))
 				continue;
 			locale = g_strdup (filename + strlen (as_translation_get_id (t)) + 1);
