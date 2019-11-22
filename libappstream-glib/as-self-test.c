@@ -93,15 +93,12 @@ as_test_get_filename (const gchar *filename)
 	}
 #ifdef _WIN32
 	{
-		DWORD retval;
-		TCHAR full_path[PATH_MAX];
-
-		retval = GetFullPathNameA (path, PATH_MAX, full_path, NULL);
-
-		if (retval > 0)
-			return g_strdup (full_path);
-		else
+		char full_path[PATH_MAX];
+		if (_fullpath (full_path, path, PATH_MAX) == NULL)
 			return NULL;
+		if (!g_file_test (full_path, G_FILE_TEST_EXISTS))
+			return NULL;
+		return g_strdup (full_path);
 	}
 #else
 	return realpath (path, NULL);
