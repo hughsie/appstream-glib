@@ -59,7 +59,7 @@ plugindir = join_paths(get_option('prefix'),
                        get_option('libdir'),
                        'asb-plugins-' + as_plugin_version)
 
-glib_ver = '>= 2.45.8'
+glib_ver = '>= 2.58.0'
 glib = dependency('glib-2.0', version : glib_ver)
 gmodule = dependency('gmodule-2.0', version : glib_ver)
 if platform_win32
