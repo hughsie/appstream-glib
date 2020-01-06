@@ -864,7 +864,7 @@ as_app_validate_release (AsApp *app,
 				     AS_PROBLEM_KIND_ATTRIBUTE_MISSING,
 				     "<release> has no timestamp");
 	}
-	if (timestamp > 20120101 && timestamp < 20251231) {
+	if (timestamp > 20120101 && timestamp < 20351231) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				     "<release> timestamp should be a UNIX time");
