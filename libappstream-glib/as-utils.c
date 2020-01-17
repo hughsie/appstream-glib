@@ -24,7 +24,11 @@
 #include <libsoup/soup.h>
 #include <stdlib.h>
 #ifndef _WIN32
+#ifdef __APPLE__
+#include <uuid/uuid.h>
+#else
 #include <uuid.h>
+#endif
 #endif
 
 #ifdef HAVE_RPM
