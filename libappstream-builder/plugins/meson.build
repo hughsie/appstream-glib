@@ -1,4 +1,9 @@
 asb_plugins_cargs = ['-DG_LOG_DOMAIN="Asb"']
+name_suffix = []
+
+if platform_osx
+  name_suffix = 'so'
+endif
 
 shared_module(
   'asb_plugin_icon',
@@ -12,6 +17,7 @@ shared_module(
     gdkpixbuf,
   ],
   c_args : asb_plugins_cargs,
+  name_suffix: name_suffix,
   install : true,
   install_dir : plugindir,
 )
@@ -28,6 +34,7 @@ shared_module(
     gdkpixbuf,
   ],
   c_args : asb_plugins_cargs,
+  name_suffix: name_suffix,
   install : true,
   install_dir : plugindir,
 )
@@ -44,6 +51,7 @@ shared_module(
     gdkpixbuf,
   ],
   c_args : asb_plugins_cargs,
+  name_suffix: name_suffix,
   install : true,
   install_dir : plugindir,
 )
@@ -60,6 +68,7 @@ shared_module(
     gdkpixbuf,
   ],
   c_args : asb_plugins_cargs,
+  name_suffix: name_suffix,
   install : true,
   install_dir : plugindir,
 )
@@ -76,6 +85,7 @@ shared_module(
     gdkpixbuf,
   ],
   c_args : asb_plugins_cargs,
+  name_suffix: name_suffix,
   install : true,
   install_dir : plugindir,
 )
@@ -93,6 +103,7 @@ shared_module(
     json_glib,
   ],
   c_args : asb_plugins_cargs,
+  name_suffix: name_suffix,
   install : true,
   install_dir : plugindir,
 )
@@ -113,6 +124,7 @@ if get_option('fonts')
       fontconfig,
     ],
     c_args : asb_plugins_cargs,
+    name_suffix: name_suffix,
     install : true,
     install_dir : plugindir,
   )
