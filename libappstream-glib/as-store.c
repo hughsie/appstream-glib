@@ -2469,7 +2469,7 @@ as_store_remove_apps_with_veto (AsStore *store)
 /**
  * as_store_to_xml:
  * @store: a #AsStore instance.
- * @flags: the AsNodeToXmlFlags, e.g. %AS_NODE_INSERT_FLAG_NONE.
+ * @flags: the AsNodeToXmlFlags, e.g. %AS_NODE_TO_XML_FLAG_NONE.
  *
  * Outputs an XML representation of all the applications in the store.
  *
@@ -2578,7 +2578,7 @@ as_store_convert_icons (AsStore *store, AsIconKind kind, GError **error)
  * as_store_to_file:
  * @store: a #AsStore instance.
  * @file: file
- * @flags: the AsNodeToXmlFlags, e.g. %AS_NODE_INSERT_FLAG_NONE.
+ * @flags: the AsNodeToXmlFlags, e.g. %AS_NODE_TO_XML_FLAG_NONE.
  * @cancellable: A #GCancellable, or %NULL
  * @error: A #GError or %NULL
  *

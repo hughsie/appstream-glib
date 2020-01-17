@@ -560,7 +560,7 @@ typedef struct {
 /**
  * as_node_to_xml:
  * @node: a #AsNode.
- * @flags: the AsNodeToXmlFlags, e.g. %AS_NODE_INSERT_FLAG_PRE_ESCAPED.
+ * @flags: the AsNodeToXmlFlags, e.g. %AS_NODE_TO_XML_FLAG_NONE.
  *
  * Converts a node and it's children to XML.
  *
