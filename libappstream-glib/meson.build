@@ -13,6 +13,8 @@ deps = [
 
 if platform_win32
   deps += [giowindows]
+elif platform_osx
+  deps += [giounix]
 else
   deps += [giounix, uuid]
 endif

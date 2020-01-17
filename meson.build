@@ -14,13 +14,14 @@ as_micro_version = varr[2]
 # Check the right platform.
 
 platform_win32 = false
+platform_osx   = false
 
 host_os = host_machine.system()
 
 platform_win32 = (host_os.startswith('mingw') or
                   host_os.startswith('cygwin') or
                   host_os.startswith('windows'))
-
+platform_osx = host_os.startswith('darwin')
 
 conf = configuration_data()
 conf.set('AS_MAJOR_VERSION_CONF', as_major_version)
@@ -64,6 +65,8 @@ glib = dependency('glib-2.0', version : glib_ver)
 gmodule = dependency('gmodule-2.0', version : glib_ver)
 if platform_win32
   giowindows = dependency('gio-windows-2.0', version : glib_ver)
+elif platform_osx
+  giounix = dependency('gio-unix-2.0', version : glib_ver)
 else
   giounix = dependency('gio-unix-2.0', version : glib_ver)
   uuid = dependency('uuid')
