@@ -155,6 +155,12 @@ as_format_guess_kind (const gchar *filename)
 {
 	if (g_str_has_suffix (filename, ".xml.gz"))
 		return AS_FORMAT_KIND_APPSTREAM;
+	if (g_str_has_suffix (filename, ".xml.bz2"))
+		return AS_FORMAT_KIND_APPSTREAM;
+	if (g_str_has_suffix (filename, ".xml.xz"))
+		return AS_FORMAT_KIND_APPSTREAM;
+	if (g_str_has_suffix (filename, ".xml.zst"))
+		return AS_FORMAT_KIND_APPSTREAM;
 	if (g_str_has_suffix (filename, ".yml"))
 		return AS_FORMAT_KIND_APPSTREAM;
 	if (g_str_has_suffix (filename, ".yml.gz"))

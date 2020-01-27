@@ -1275,6 +1275,24 @@ as_utils_install_filename (AsUtilsLocation location,
 			ret = as_utils_install_icon (location, filename, basename, destdir, error);
 			break;
 		}
+		tmp = g_strstr_len (basename, -1, "-icons.tar.bz2");
+		if (tmp != NULL) {
+			*tmp = '\0';
+			ret = as_utils_install_icon (location, filename, basename, destdir, error);
+			break;
+		}
+		tmp = g_strstr_len (basename, -1, "-icons.tar.xz");
+		if (tmp != NULL) {
+			*tmp = '\0';
+			ret = as_utils_install_icon (location, filename, basename, destdir, error);
+			break;
+		}
+		tmp = g_strstr_len (basename, -1, "-icons.tar.zst");
+		if (tmp != NULL) {
+			*tmp = '\0';
+			ret = as_utils_install_icon (location, filename, basename, destdir, error);
+			break;
+		}
 
 		/* unrecognised */
 		g_set_error_literal (error,
