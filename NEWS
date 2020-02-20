@@ -1,3 +1,25 @@
+Version 0.7.17
+~~~~~~~~~~~~~~
+Released: 2020-02-20
+
+Bugfixes:
+ - Add UPL short name to SPDX conversion (Salman Siddiqui)
+ - Allow building on Windows (Jehan)
+ - Allow non-desktop components to be extended (Richard Hughes)
+ - Allow parsing desktop files using as_app_parse_data() (Richard Hughes)
+ - Do not allow forward or backwards slashes in <id> values (Richard Hughes)
+ - Do not preserve restrictive permissions when installing AppStream files (Richard Hughes)
+ - Do not require <translation> for validation unless strict (Kalev Lember)
+ - Do not require <update_contact> for validation unless strict (Richard Hughes)
+ - Log expected and actual screenshot dimensions when failing (Tobias Mueller)
+ - Modernize the validation requirements (Richard Hughes)
+ - Offset future checks by UTC+14 (Peter Hutterer)
+ - Only require <release> for validate, but not validate-relax (Kalev Lember)
+ - Remove relative path from icon names (David Hewitt)
+ - Support loading YAML from as_store_from_bytes (Robert Ancell)
+ - Update list of allowed metadata licences (scx)
+ - Update the SPDX license list to v3.5 (Richard Hughes)
+
 Version 0.7.16
 ~~~~~~~~~~~~~~
 Released: 2019-09-30
