@@ -41,6 +41,9 @@ _appstream-util()
             validate|validate-relax|validate-strict)
                 ext='@(@(appdata|metainfo).@(@(x|y)ml?(.in)|@(x|y)ml.gz))'
                 ;;
+            validate-version)
+                ext='@(@(appdata|metainfo).@(@(x|y)ml?(.in)'
+                ;;
             install|install-origin|uninstall)
                 ext='@(@(appdata|metainfo).@(@(x|y)ml|@(x|y)ml.gz))'
                 ;;
