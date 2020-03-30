@@ -183,7 +183,7 @@ The current rules of inclusion are thus:
  * Codecs **MUST** have an AppData file
  * Input methods **MUST** have an AppData file
  * If included, AppData files **MUST** be valid XML
- * AppData files **MUST** be installed into `/usr/share/appdata`
+ * AppData files **MUST** be installed into `/usr/share/metainfo`
  * Application icons **CANNOT** use XPM or ICO format
  * Applications **CANNOT** use obsolete toolkits such as GTK+-1.2 or QT3
  * Applications that ship a desktop file **SHOULD** include an AppData file.
