@@ -476,6 +476,7 @@ static void
 as_app_init (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
+	g_mutex_init (&priv->unique_id_mutex);
 	priv->categories = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 	priv->compulsory_for_desktops = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 	priv->content_ratings = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
