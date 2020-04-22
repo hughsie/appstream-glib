@@ -1891,7 +1891,7 @@ as_node_get_localized_unwrap_type_li (const AsNode *node,
 						     AS_NODE_ERROR,
 						     AS_NODE_ERROR_INVALID_MARKUP,
 						     "Tag %s in %s invalid",
-						     data_c->name,
+						     as_tag_data_get_name (data_c),
 						     as_tag_data_get_name (data));
 					return FALSE;
 				}

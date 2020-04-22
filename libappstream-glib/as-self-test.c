@@ -2810,6 +2810,7 @@ as_test_node_xml_func (void)
 	AsNode *n2;
 	AsNode *root;
 	GString *xml;
+	GHashTable *hashtable;
 
 	/* invalid XML */
 	root = as_node_from_xml ("<moo>", 0, &error);
@@ -2920,6 +2921,16 @@ as_test_node_xml_func (void)
 	g_assert_cmpstr (xml->str, ==, "<!-- 1st -->\n<!-- 2nd -->\n<foo/>\n");
 	g_string_free (xml, TRUE);
 	as_node_unref (root);
+
+	/* invalid child of ul */
+	root = as_node_from_xml ("<ul><ul></ul></ul>", 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+	hashtable = as_node_get_localized_unwrap (root, &error);
+	g_assert_error (error, AS_NODE_ERROR, AS_NODE_ERROR_INVALID_MARKUP);
+	g_assert_cmpstr (error->message, ==, "Tag ul in ul invalid");
+	g_clear_error (&error);
+	g_assert (hashtable == NULL);
 }
 
 static void
