@@ -836,12 +836,14 @@ as_app_validate_release (AsApp *app,
 	guint number_para_max = 10;
 	guint number_para_min = 1;
 	gboolean required_timestamp = TRUE;
+	gboolean required_past_timestamp = TRUE;
 	const guint64 MAX_TZ_OFFSET = 14 * 60 * 60; /* UTC+14 is the biggest offset */
 
 	/* relax the requirements a bit */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_RELAX) > 0) {
 		number_para_max = 20;
 		required_timestamp = FALSE;
+		required_past_timestamp = FALSE;
 	}
 
 	/* make the requirements more strict */
@@ -871,7 +873,7 @@ as_app_validate_release (AsApp *app,
 	}
 
 	/* check the timestamp is not in the future */
-	if (timestamp > (guint64) g_get_real_time () / G_USEC_PER_SEC + MAX_TZ_OFFSET) {
+	if (required_past_timestamp && timestamp > (guint64) g_get_real_time () / G_USEC_PER_SEC + MAX_TZ_OFFSET) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
 				     "<release> timestamp is in the future");
