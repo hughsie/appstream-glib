@@ -1,3 +1,4 @@
 client/as-builder.c
 client/as-compose.c
 client/as-util.c
+libappstream-glib/as-content-rating.c
