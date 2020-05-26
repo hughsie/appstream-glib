@@ -551,3 +551,539 @@ msgstr "AppStream 实用工具"
 #: client/as-util.c:4732
 msgid "Version:"
 msgstr "版本："
+
+#. TRANSLATORS: This is the formatting of English and localized name
+#. * of the rating e.g. "Adults Only (solo adultos)"
+#: libappstream-glib/as-content-rating.c:261
+#, c-format
+msgid "%s (%s)"
+msgstr "%s（%s）"
+
+#: libappstream-glib/as-content-rating.c:407
+msgid "General"
+msgstr "常规"
+
+#: libappstream-glib/as-content-rating.c:416
+msgid "ALL"
+msgstr "全部"
+
+#: libappstream-glib/as-content-rating.c:420
+#: libappstream-glib/as-content-rating.c:496
+msgid "Adults Only"
+msgstr "仅限成人"
+
+#: libappstream-glib/as-content-rating.c:422
+#: libappstream-glib/as-content-rating.c:495
+msgid "Mature"
+msgstr "成人"
+
+#: libappstream-glib/as-content-rating.c:424
+#: libappstream-glib/as-content-rating.c:494
+msgid "Teen"
+msgstr "青少年"
+
+#: libappstream-glib/as-content-rating.c:426
+#: libappstream-glib/as-content-rating.c:493
+msgid "Everyone 10+"
+msgstr "十岁及以上"
+
+#: libappstream-glib/as-content-rating.c:428
+#: libappstream-glib/as-content-rating.c:492
+msgid "Everyone"
+msgstr "任何人"
+
+#: libappstream-glib/as-content-rating.c:430
+#: libappstream-glib/as-content-rating.c:491
+msgid "Early Childhood"
+msgstr "儿童"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:775
+msgid "No cartoon violence"
+msgstr "无动画角色暴力"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:777
+msgid "Cartoon characters in unsafe situations"
+msgstr "动画角色处于危险境地"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:779
+msgid "Cartoon characters in aggressive conflict"
+msgstr "动画角色处于激烈冲突"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:781
+msgid "Graphic violence involving cartoon characters"
+msgstr "包含动画角色的写实暴力"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:786
+msgid "No fantasy violence"
+msgstr "无幻想的暴力"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:788
+msgid "Characters in unsafe situations easily distinguishable from reality"
+msgstr "角色处于易于与现实区分的危险境地"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:790
+msgid "Characters in aggressive conflict easily distinguishable from reality"
+msgstr "角色参与易于与现实区分的激烈冲突"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:792
+msgid "Graphic violence easily distinguishable from reality"
+msgstr "角色参与易于与现实区分的写实暴力"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:797
+msgid "No realistic violence"
+msgstr "无逼真的暴力"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:799
+msgid "Mildly realistic characters in unsafe situations"
+msgstr "较逼真角色处于危险境地"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:801
+msgid "Depictions of realistic characters in aggressive conflict"
+msgstr "描写逼真角色参与激烈冲突"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:803
+msgid "Graphic violence involving realistic characters"
+msgstr "逼真角色参与的写实暴力"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:808
+msgid "No bloodshed"
+msgstr "无流血"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:810
+msgid "Unrealistic bloodshed"
+msgstr "不逼真的血"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:812
+msgid "Realistic bloodshed"
+msgstr "逼真的血"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:814
+msgid "Depictions of bloodshed and the mutilation of body parts"
+msgstr "描写流血及肢体伤害"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:819
+msgid "No sexual violence"
+msgstr "无性暴力"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:821
+msgid "Rape or other violent sexual behavior"
+msgstr "强奸及其他暴力的性行为"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:828
+msgid "No references to alcohol"
+msgstr "无对酒精的暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:830
+msgid "References to alcoholic beverages"
+msgstr "对酒精饮料的暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:832
+msgid "Use of alcoholic beverages"
+msgstr "饮用酒精饮料"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:838
+msgid "No references to illicit drugs"
+msgstr "无对非法药物的暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:840
+msgid "References to illicit drugs"
+msgstr "对非法药物的暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:842
+msgid "Use of illicit drugs"
+msgstr "吸食非法药物"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:848
+#, fuzzy
+msgid "No references to tobacco products"
+msgstr "对烟草产品的暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:850
+msgid "References to tobacco products"
+msgstr "对烟草产品的暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:852
+msgid "Use of tobacco products"
+msgstr "吸食烟草产品"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:858
+msgid "No nudity of any sort"
+msgstr "无任何形式的裸体"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:860
+msgid "Brief artistic nudity"
+msgstr "短暂且艺术性的裸体"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:862
+msgid "Prolonged nudity"
+msgstr "长时间的裸体描写"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:868
+msgid "No references to or depictions of sexual nature"
+msgstr "无性相关的暗示和描写"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:870
+msgid "Provocative references or depictions"
+msgstr "挑衅性暗示或描写"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:872
+msgid "Sexual references or depictions"
+msgstr "性暗示或描写"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:874
+msgid "Graphic sexual behavior"
+msgstr "生动的性行为"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:879
+msgid "No profanity of any kind"
+msgstr "无任何种类的粗俗语言"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:881
+msgid "Mild or infrequent use of profanity"
+msgstr "少量粗俗语言"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:883
+msgid "Moderate use of profanity"
+msgstr "中等数量的粗俗语言"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:885
+msgid "Strong or frequent use of profanity"
+msgstr "大量粗俗语言"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:890
+msgid "No inappropriate humor"
+msgstr "无不适当的笑话"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:892
+msgid "Slapstick humor"
+msgstr "闹剧式笑话"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:894
+msgid "Vulgar or bathroom humor"
+msgstr "粗俗或浴室笑话"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:896
+msgid "Mature or sexual humor"
+msgstr "荤笑话"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:901
+msgid "No discriminatory language of any kind"
+msgstr "无任何种类的歧视性语言"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:903
+msgid "Negativity towards a specific group of people"
+msgstr "对特定人群负面的语言"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:905
+msgid "Discrimination designed to cause emotional harm"
+msgstr "伤害情感的歧视性语言"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:907
+msgid "Explicit discrimination based on gender, sexuality, race or religion"
+msgstr "针对性别、性向、种族或宗教的歧视性语言"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:912
+msgid "No advertising of any kind"
+msgstr "无任何种类的广告"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:914
+msgid "Product placement"
+msgstr "植入式广告"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:916
+msgid "Explicit references to specific brands or trademarked products"
+msgstr "对特定产品的品牌或商标的明显暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:918
+msgid "Users are encouraged to purchase specific real-world items"
+msgstr "鼓励用户购买特定的真实商品"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:923
+msgid "No gambling of any kind"
+msgstr "无任何种类的赌博"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:925
+msgid "Gambling on random events using tokens or credits"
+msgstr "通过随机事件使用游戏票券赌博"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:927
+msgid "Gambling using “play” money"
+msgstr "使用游戏货币赌博"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:929
+msgid "Gambling using real money"
+msgstr "使用真实货币赌博"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:934
+msgid "No ability to spend money"
+msgstr "无花钱的功能"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:936
+msgid "Users are encouraged to donate real money"
+msgstr "鼓励用户捐赠真实货币"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:939
+msgid "Ability to spend real money in-app"
+msgstr "应用中可使用真实货币"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:944
+msgid "No way to chat with other users"
+msgstr "没有与其他用户聊天的功能"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:946
+msgid "User-to-user interactions without chat functionality"
+msgstr "在用户之间不带聊天功能的交互功能"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:948
+msgid "Moderated chat functionality between users"
+msgstr "在用户之间受监控的聊天功能"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:950
+msgid "Uncontrolled chat functionality between users"
+msgstr "在用户之间不受控制的聊天功能"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:955
+msgid "No way to talk with other users"
+msgstr "无与其他用户沟通的方式"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:957
+msgid "Uncontrolled audio or video chat functionality between users"
+msgstr "在用户之间不受控制的音频或视频聊天功能"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:964
+msgid "No sharing of social network usernames or email addresses"
+msgstr "不共享社交网络的用户名或电子邮件地址"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:966
+msgid "Sharing social network usernames or email addresses"
+msgstr "共享社交网络的用户名或电子邮件地址"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:973
+msgid "No sharing of user information with third parties"
+msgstr "不与第三方共享用户信息"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:975
+msgid "Checking for the latest application version"
+msgstr "正在检查最新应用程序版本"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:977
+msgid "Sharing diagnostic data that does not let others identify the user"
+msgstr "分享无法识别用户身份的诊断数据"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:979
+msgid "Sharing information that lets others identify the user"
+msgstr "分享可以识别用户身份的信息"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:984
+msgid "No sharing of physical location with other users"
+msgstr "不与其他用户共享物理位置"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:986
+msgid "Sharing physical location with other users"
+msgstr "与其他用户共享物理位置"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:995
+msgid "No references to homosexuality"
+msgstr "无对同性恋的暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:997
+msgid "Indirect references to homosexuality"
+msgstr "对同性恋的间接暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:999
+msgid "Kissing between people of the same gender"
+msgstr "同性别人类之间的亲吻"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1001
+msgid "Graphic sexual behavior between people of the same gender"
+msgstr "含有同性别人类之间性行为的图像"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1006
+msgid "No references to prostitution"
+msgstr "无对卖淫的暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1008
+msgid "Indirect references to prostitution"
+msgstr "对卖淫的间接暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1010
+msgid "Direct references to prostitution"
+msgstr "对卖淫的直接暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1012
+msgid "Graphic depictions of the act of prostitution"
+msgstr "卖淫行为的图像描写"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1017
+msgid "No references to adultery"
+msgstr "无对通奸的暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1019
+msgid "Indirect references to adultery"
+msgstr "对通奸的间接暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1021
+msgid "Direct references to adultery"
+msgstr "对通奸的直接暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1023
+msgid "Graphic depictions of the act of adultery"
+msgstr "通奸的图像描写"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1028
+msgid "No sexualized characters"
+msgstr "无性暗示角色"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1031
+msgid "Scantily clad human characters"
+msgstr "穿着暴露的人类角色"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1033
+msgid "Overtly sexualized human characters"
+msgstr "具有明显性暗示的人类角色"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1038
+msgid "No references to desecration"
+msgstr "无对亵渎行为的暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1040
+msgid "Depictions of or references to historical desecration"
+msgstr "亵渎历史的描写或暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1042
+msgid "Depictions of modern-day human desecration"
+msgstr "对当代人类亵渎的描写"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1044
+msgid "Graphic depictions of modern-day desecration"
+msgstr "亵渎当代社会的图像描写"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1049
+msgid "No visible dead human remains"
+msgstr "无可见死亡人类尸体"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1051
+msgid "Visible dead human remains"
+msgstr "有可见死亡人类尸体"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1053
+msgid "Dead human remains that are exposed to the elements"
+msgstr "有死亡人类尸体并展示其内容物"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1055
+msgid "Graphic depictions of desecration of human bodies"
+msgstr "对亵渎人体行为的图像描写"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1060
+msgid "No references to slavery"
+msgstr "无对奴役的暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1062
+msgid "Depictions of or references to historical slavery"
+msgstr "对历史上奴役行为的描写或暗示"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1064
+msgid "Depictions of modern-day slavery"
+msgstr "对当代奴役行为的描写"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1066
+msgid "Graphic depictions of modern-day slavery"
+msgstr "对当代奴役行为的图片描写"
