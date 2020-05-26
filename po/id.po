@@ -10,10 +10,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-28 10:43+0000\n"
+"POT-Creation-Date: 2020-05-26 12:37+0100\n"
 "PO-Revision-Date: 2017-09-01 05:13+0000\n"
 "Last-Translator: Andika Triwidada <andika@gmail.com>\n"
-"Language-Team: Indonesian (http://www.transifex.com/freedesktop/appstream-glib/language/id/)\n"
+"Language-Team: Indonesian (http://www.transifex.com/freedesktop/appstream-"
+"glib/language/id/)\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,391 +23,524 @@ msgstr ""
 "X-Generator: Zanata 4.6.2\n"
 
 #. TRANSLATORS: command line option
+#: client/as-builder.c:76 client/as-compose.c:326 client/as-util.c:4429
+msgid "Show extra debugging information"
+msgstr "Tampilkan informasi debug ekstra"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:79
+msgid "Add a cache ID to each component"
+msgstr "Tambahkan ID singgahan ke setiap komponen"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:82
+msgid "Include failed results in the output"
+msgstr "Sertakan hasil gagal dalam keluaran"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:85
 msgid "Add HiDPI icons to the tarball"
 msgstr "Tambah ikon HiDPI ke tarball"
 
 #. TRANSLATORS: command line option
-msgid "Add a cache ID to each component"
-msgstr "Tambahkan ID singgahan ke setiap komponen"
-
-#. TRANSLATORS: command description
-msgid "Add a language to a source file"
-msgstr "Tambahkan bahasa ke suatu berkas sumber"
-
-#. TRANSLATORS: command description
-msgid "Add a provide to a source file"
-msgstr "Tambahkan penyedia ke suatu berkas sumber"
-
-#. TRANSLATORS: command line option
+#: client/as-builder.c:88
 msgid "Add encoded icons to the XML"
 msgstr "Tambah ikon terenkode ke XML"
 
-#. TRANSLATORS: application was added
-msgid "Added"
-msgstr "Ditambahkan"
-
-#. TRANSLATORS: this is a command alias
-#, c-format
-msgid "Alias to %s"
-msgstr "Alias untuk %s"
-
-#. TRANSLATORS: program name
-msgid "AppStream Utility"
-msgstr "Utilitas AppStream"
-
-#. TRANSLATORS: this is when a device ctrl+c's a watch
-msgid "Cancelled"
-msgstr "Dibatalkan"
-
-#. TRANSLATORS: command description
-msgid "Check installed application data"
-msgstr "Periksa data aplikasi yang terpasang"
-
-msgid "Command not found, valid commands are:"
-msgstr "Perintah tak ditemukan, perintah yang valid adalah:"
-
-#. TRANSLATORS: command description
-msgid "Compare the contents of two AppStream files"
-msgstr "Bandingkan isi dari dua berkas AppStream"
-
-#. TRANSLATORS: command description
-msgid "Compare version numbers"
-msgstr "Bandingkan nomor-nomor versi"
-
-#. TRANSLATORS: the %s and %s are file types,
-#. * e.g. "appdata" to "appstream"
-#, c-format
-msgid "Conversion %s to %s is not implemented"
-msgstr "Konversi %s ke %s tidak diimplementasi"
-
-#. TRANSLATORS: command description
-msgid "Convert an AppData file to NEWS format"
-msgstr "Konversikan berkas AppData ke format NEWS"
-
-#. TRANSLATORS: command description
-msgid "Convert an NEWS file to AppData format"
-msgstr "Konversikan berkas NEWS ke format AppData"
-
-#. TRANSLATORS: command description
-msgid "Converts AppStream metadata from one version to another"
-msgstr "Konversikan metadata AppStream dari satu versi ke lainnya"
-
-#. TRANSLATORS: command description
-msgid "Create an CSV status document"
-msgstr "Buat sebuah dokumen status CSV"
-
-#. TRANSLATORS: command description
-msgid "Create an HTML matrix page"
-msgstr "Buat sebuah halaman matriks HTML"
-
-#. TRANSLATORS: command description
-msgid "Create an HTML status page"
-msgstr "Buat sebuah halaman status HTML"
-
-#. TRANSLATORS: command description
-msgid "Display application search tokens"
-msgstr "Tampilkan token pencarian aplikasi"
-
 #. TRANSLATORS: command line option
+#: client/as-builder.c:91
 msgid "Do not compress the icons into a tarball"
 msgstr "Jangan mampatkan ikon ke dalam tarball"
 
-#. TRANSLATORS: this is the --nonet argument
-msgid "Do not use network access"
-msgstr "Jangan pakai akses jaringan"
-
-#. success
-#. TRANSLATORS: information message
-msgid "Done!"
-msgstr "Selesai!"
-
-#. TRANSLATORS: command description
-msgid "Dumps the applications in the AppStream metadata"
-msgstr "Mencurahkan aplikasi dalam metadata AppStream"
+#. TRANSLATORS: command line option
+#: client/as-builder.c:94
+msgid "Set the logging directory"
+msgstr "Tata direktori log"
 
 #. TRANSLATORS: command line option
-msgid "Enable profiling"
-msgstr "Fungsikan pemrofilan"
+#: client/as-builder.c:97
+msgid "Set the packages directory"
+msgstr "Atur direktori paket"
 
-#. TRANSLATORS: this is when the folder could
-#. * not be created
-msgid "Error creating output directory"
-msgstr "Kesalahan saat membuat direktori keluaran"
+#. TRANSLATORS: command line option
+#: client/as-builder.c:100
+msgid "Set the temporary directory"
+msgstr "Atur direktori temporer"
 
-#. TRANSLATORS: the .appdata.xml file could not
-#. * be loaded
-msgid "Error loading AppData file"
-msgstr "Kesalahan saat memuat berkas AppData"
+#. TRANSLATORS: command line option
+#: client/as-builder.c:103 client/as-compose.c:332
+msgid "Set the output directory"
+msgstr "Atur direktori keluaran"
 
-#. TRANSLATORS: the .desktop file could not
-#. * be loaded
-msgid "Error loading desktop file"
-msgstr "Kesalahan saat memuat berkas desktop"
+#. TRANSLATORS: command line option
+#: client/as-builder.c:106 client/as-compose.c:335
+msgid "Set the icons directory"
+msgstr "Atur direktori ikon"
 
-#. TRANSLATORS: we could not auto-add the kudo
-msgid "Error parsing kudos"
-msgstr "Kesalahan mengurai pujian"
+#. TRANSLATORS: command line option
+#: client/as-builder.c:109
+msgid "Set the cache directory"
+msgstr "Atur direktori singgahan"
 
-#. TRANSLATORS: we could not auto-add the provides
-msgid "Error parsing provides"
-msgstr "Kesalahan saat mengurai penyedia"
+#. TRANSLATORS: command line option
+#: client/as-builder.c:112 client/as-compose.c:344
+msgid "Set the basenames of the output files"
+msgstr "Atur nama basis dari berkas keluaran"
 
-#. TRANSLATORS: the .mo files could not be parsed
-msgid "Error parsing translations"
-msgstr "Kesalahan saat mengurai terjemahan"
+#. TRANSLATORS: command line option
+#: client/as-builder.c:115 client/as-compose.c:338
+msgid "Set the origin name"
+msgstr "Atur nama asli"
 
-#. TRANSLATORS: this is when the destination file
-#. * cannot be saved for some reason
-msgid "Error saving AppStream file"
-msgstr "Kesalahan saat menyimpan berkas AppStream"
+#. TRANSLATORS: command line option
+#: client/as-builder.c:118
+msgid "Set the number of threads"
+msgstr "Atur cacah thread"
 
-#. list failures
-msgid "FAILED"
-msgstr "GAGAL"
+#. TRANSLATORS: command line option
+#: client/as-builder.c:121 client/as-compose.c:341
+msgid "Set the minimum icon size in pixels"
+msgstr "Atur ukuran ikon minimum dalam piksel"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:124
+msgid "Set the old metadata location"
+msgstr "Atur lokasi metadata lama"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:127
+msgid "Ignore certain types of veto"
+msgstr "Abaikan tipe veto tertentu"
 
 #. TRANSLATORS: error message
-msgid "Failed to add package"
-msgstr "Gagal menambah paket"
-
-#. TRANSLATORS: error message
-msgid "Failed to generate metadata"
-msgstr "Gagal menghasilkan metadata"
-
-#. TRANSLATORS: error message
-msgid "Failed to open packages"
-msgstr "Gagal membuka paket"
-
-#. TRANSLATORS: error message
+#: client/as-builder.c:141 client/as-compose.c:358 client/as-util.c:4714
 msgid "Failed to parse arguments"
 msgstr "Gagal mengurai argumen"
 
 #. TRANSLATORS: error message
+#: client/as-builder.c:246
 msgid "Failed to set up builder"
 msgstr "Gagal menyiapkan builder"
 
+#. TRANSLATORS: error message
+#: client/as-builder.c:265
+msgid "Failed to open packages"
+msgstr "Gagal membuka paket"
+
+#. TRANSLATORS: information message
+#: client/as-builder.c:275
+msgid "Scanning packages..."
+msgstr "Memindai paket..."
+
+#. TRANSLATORS: error message
+#: client/as-builder.c:285
+msgid "Failed to add package"
+msgstr "Gagal menambah paket"
+
+#. TRANSLATORS: information message
+#: client/as-builder.c:291
+#, c-format
+msgid "Parsed %u/%u files..."
+msgstr "Diurai %u/%u berkas..."
+
+#. TRANSLATORS: error message
+#: client/as-builder.c:301
+msgid "Failed to generate metadata"
+msgstr "Gagal menghasilkan metadata"
+
+#. success
+#. TRANSLATORS: information message
+#: client/as-builder.c:308 client/as-compose.c:537
+msgid "Done!"
+msgstr "Selesai!"
+
+#. TRANSLATORS: we've saving the icon file to disk
+#: client/as-compose.c:109 client/as-compose.c:163
+msgid "Saving icon"
+msgstr "Menyimpan ikon"
+
+#. TRANSLATORS: command line option
+#: client/as-compose.c:329
+msgid "Set the prefix"
+msgstr "Atur prefiks"
+
+#. TRANSLATORS: we're generating the AppStream data
+#: client/as-compose.c:401
+msgid "Processing application"
+msgstr "Memroses aplikasi"
+
+#. TRANSLATORS: the .appdata.xml file could not
+#. * be loaded
+#: client/as-compose.c:407
+msgid "Error loading AppData file"
+msgstr "Kesalahan saat memuat berkas AppData"
+
+#. TRANSLATORS: the .mo files could not be parsed
+#: client/as-compose.c:420
+msgid "Error parsing translations"
+msgstr "Kesalahan saat mengurai terjemahan"
+
+#. TRANSLATORS: we could not auto-add the kudo
+#: client/as-compose.c:431
+msgid "Error parsing kudos"
+msgstr "Kesalahan mengurai pujian"
+
+#. TRANSLATORS: we could not auto-add the provides
+#: client/as-compose.c:442
+msgid "Error parsing provides"
+msgstr "Kesalahan saat mengurai penyedia"
+
+#. TRANSLATORS: not a valid desktop filename
+#: client/as-compose.c:465
+#, fuzzy
+msgid "Invalid desktop filename"
+msgstr "Kesalahan saat memuat berkas desktop"
+
+#. TRANSLATORS: the .desktop file could not
+#. * be loaded
+#: client/as-compose.c:484
+msgid "Error loading desktop file"
+msgstr "Kesalahan saat memuat berkas desktop"
+
+#. TRANSLATORS: this is when the folder could
+#. * not be created
+#: client/as-compose.c:512
+msgid "Error creating output directory"
+msgstr "Kesalahan saat membuat direktori keluaran"
+
+#. TRANSLATORS: we've saving the XML file to disk
+#: client/as-compose.c:521
+msgid "Saving AppStream"
+msgstr "Menyimpan AppStream"
+
+#. TRANSLATORS: this is when the destination file
+#. * cannot be saved for some reason
+#: client/as-compose.c:531
+msgid "Error saving AppStream file"
+msgstr "Kesalahan saat menyimpan berkas AppStream"
+
+#. TRANSLATORS: this is a command alias
+#: client/as-util.c:93
+#, c-format
+msgid "Alias to %s"
+msgstr "Alias untuk %s"
+
+#: client/as-util.c:175
+msgid "Command not found, valid commands are:"
+msgstr "Perintah tak ditemukan, perintah yang valid adalah:"
+
+#. TRANSLATORS: any manual changes required?
+#. * also note: FIXME is a hardcoded string
+#: client/as-util.c:467
+msgid "Please review the file and fix any 'FIXME' items"
+msgstr "Harap periksa berkas dan perbaiki sebarang butir 'FIXME'"
+
+#. TRANSLATORS: information message
+#: client/as-util.c:485
+msgid "Old API version"
+msgstr "Versi API lama"
+
+#. TRANSLATORS: information message
+#: client/as-util.c:497
+msgid "New API version"
+msgstr "Versi API baru"
+
+#: client/as-util.c:516
+msgid "Not enough arguments, expected old.xml new.xml version"
+msgstr "Argumen tidak cukup, yang diharapkan lama.xml baru.xml versi"
+
+#. TRANSLATORS: the %s and %s are file types,
+#. * e.g. "appdata" to "appstream"
+#: client/as-util.c:552
+#, c-format
+msgid "Conversion %s to %s is not implemented"
+msgstr "Konversi %s ke %s tidak diimplementasi"
+
+#: client/as-util.c:569
+msgid "Not enough arguments, expected file.xml"
+msgstr "Argumen tidak cukup yang diharapkan berkas.xml"
+
 #. TRANSLATORS: %s is a file type,
 #. * e.g. 'appdata'
+#: client/as-util.c:595
 #, c-format
 msgid "File format '%s' cannot be upgraded"
 msgstr "Format berkas '%s' tidak bisa ditingkatkan"
 
 #. TRANSLATORS: not a recognised file type
+#: client/as-util.c:638 client/as-util.c:1038 client/as-util.c:1139
 msgid "Format not recognised"
 msgstr "Format tidak dikenali"
 
-#. TRANSLATORS: command description
-msgid "Generate a GUID from an input string"
-msgstr "Buat suatu GUID dari string masukan"
-
-#. TRANSLATORS: command line option
-msgid "Ignore certain types of veto"
-msgstr "Abaikan tipe veto tertentu"
-
-#. TRANSLATORS: command description
-msgid "Import a file to AppStream markup"
-msgstr "Impor sebuah berkas ke markup AppStream"
-
-#. TRANSLATORS: command line option
-msgid "Include failed results in the output"
-msgstr "Sertakan hasil gagal dalam keluaran"
-
-#. TRANSLATORS: command description
-msgid "Incorporate extra metadata from an external file"
-msgstr "Sertakan medatada ekstra dari berkas eksternal"
-
-#. TRANSLATORS: command description
-msgid "Installs AppStream metadata"
-msgstr "Pasang metadata AppStream"
-
-#. TRANSLATORS: command description
-msgid "Installs AppStream metadata with new origin"
-msgstr "Pasang metadata AppStream dengan origin baru"
-
-#. TRANSLATORS: command description
-msgid "List applications not backed by packages"
-msgstr "Daftar aplikasi yang tidak didukung oleh paket"
-
-#. TRANSLATORS: command description
-msgid "Merge several files to an AppStream file"
-msgstr "Gabungkan beberapa berkas ke sebuh berkas AppStream"
-
-#. TRANSLATORS: command description
-msgid "Mirror upstream screenshots"
-msgstr "Cerminkan cuplikan layar upstream"
-
-#. TRANSLATORS: command description
-msgid "Modify an AppData file"
-msgstr "Ubah berkas AppData"
-
-#. TRANSLATORS: information message
-msgid "New API version"
-msgstr "Versi API baru"
-
 #. TRANSLATORS: probably wrong XML
+#: client/as-util.c:1979
 msgid "No desktop applications found"
 msgstr "Tidak ditemukan aplikasi desktop"
 
-msgid "Not enough arguments, expected file.xml"
-msgstr "Argumen tidak cukup yang diharapkan berkas.xml"
-
-msgid "Not enough arguments, expected old.xml new.xml version"
-msgstr "Argumen tidak cukup, yang diharapkan lama.xml baru.xml versi"
-
 #. TRANSLATORS: the file is valid
+#: client/as-util.c:2711 client/as-util.c:2928
 msgid "OK"
 msgstr "OK"
 
-#. TRANSLATORS: information message
-msgid "Old API version"
-msgstr "Versi API lama"
+#. list failures
+#: client/as-util.c:2716 client/as-util.c:2920
+msgid "FAILED"
+msgstr "GAGAL"
 
-#. TRANSLATORS: information message
+#: client/as-util.c:2812
+msgid "Validation failed"
+msgstr "Validasi gagal"
+
+#: client/as-util.c:2856
+msgid "Validation of files failed"
+msgstr "Validasi berkas gagal"
+
+#: client/as-util.c:2908
 #, c-format
-msgid "Parsed %u/%u files..."
-msgstr "Diurai %u/%u berkas..."
+msgid "Cannot validate version of file format '%s'"
+msgstr ""
 
-#. TRANSLATORS: any manual changes required?
-#. * also note: FIXME is a hardcoded string
-msgid "Please review the file and fix any 'FIXME' items"
-msgstr "Harap periksa berkas dan perbaiki sebarang butir 'FIXME'"
+#: client/as-util.c:2924
+#, fuzzy
+msgid "Version validation failed"
+msgstr "Validasi gagal"
 
-#. TRANSLATORS: we're generating the AppStream data
-msgid "Processing application"
-msgstr "Memroses aplikasi"
+#: client/as-util.c:2976
+#, fuzzy
+msgid "Version validation of files failed"
+msgstr "Validasi berkas gagal"
 
 #. TRANSLATORS: application was removed
+#: client/as-util.c:4076
 msgid "Removed"
 msgstr "Dihapus"
 
-#. TRANSLATORS: command description
-msgid "Replace screenshots in source file"
-msgstr "Gantikan cuplikan layar dalam berkas sumber"
+#. TRANSLATORS: application was added
+#: client/as-util.c:4089
+msgid "Added"
+msgstr "Ditambahkan"
 
-#. TRANSLATORS: we've saving the XML file to disk
-msgid "Saving AppStream"
-msgstr "Menyimpan AppStream"
+#. TRANSLATORS: this is when a device ctrl+c's a watch
+#: client/as-util.c:4372
+msgid "Cancelled"
+msgstr "Dibatalkan"
 
-#. TRANSLATORS: we've saving the icon file to disk
-msgid "Saving icon"
-msgstr "Menyimpan ikon"
-
-#. TRANSLATORS: information message
-msgid "Scanning packages..."
-msgstr "Memindai paket..."
-
-#. TRANSLATORS: command description
-msgid "Search for AppStream applications"
-msgstr "Mencari aplikasi AppStream"
-
-#. TRANSLATORS: command description
-msgid "Search for AppStream applications by category name"
-msgstr "Cari aplikasi AppStream berdasarkan nama kategori"
-
-#. TRANSLATORS: command description
-msgid "Search for AppStream applications by package name"
-msgstr "Mencari aplikasi AppStream menurut namanya"
+#. TRANSLATORS: this is the --nonet argument
+#: client/as-util.c:4426
+msgid "Do not use network access"
+msgstr "Jangan pakai akses jaringan"
 
 #. TRANSLATORS: command line option
-msgid "Set the basenames of the output files"
-msgstr "Atur nama basis dari berkas keluaran"
-
-#. TRANSLATORS: command line option
-msgid "Set the cache directory"
-msgstr "Atur direktori singgahan"
-
-#. TRANSLATORS: command line option
-msgid "Set the icons directory"
-msgstr "Atur direktori ikon"
-
-#. TRANSLATORS: command line option
-msgid "Set the logging directory"
-msgstr "Tata direktori log"
-
-#. TRANSLATORS: command line option
-msgid "Set the minimum icon size in pixels"
-msgstr "Atur ukuran ikon minimum dalam piksel"
-
-#. TRANSLATORS: command line option
-msgid "Set the number of threads"
-msgstr "Atur cacah thread"
-
-#. TRANSLATORS: command line option
-msgid "Set the old metadata location"
-msgstr "Atur lokasi metadata lama"
-
-#. TRANSLATORS: command line option
-msgid "Set the origin name"
-msgstr "Atur nama asli"
-
-#. TRANSLATORS: command line option
-msgid "Set the output directory"
-msgstr "Atur direktori keluaran"
-
-#. TRANSLATORS: command line option
-msgid "Set the packages directory"
-msgstr "Atur direktori paket"
-
-#. TRANSLATORS: command line option
-msgid "Set the prefix"
-msgstr "Atur prefiks"
-
-#. TRANSLATORS: command line option
-msgid "Set the temporary directory"
-msgstr "Atur direktori temporer"
-
-#. TRANSLATORS: command description
-msgid "Show all installed AppStream applications"
-msgstr "Tampilkan semua aplikasi AppStream yang terpasang"
-
-#. TRANSLATORS: command line option
-msgid "Show extra debugging information"
-msgstr "Tampilkan informasi debug ekstra"
-
-#. TRANSLATORS: command line option
+#: client/as-util.c:4432
 msgid "Show version"
 msgstr "Tampilkan versi"
 
-#. TRANSLATORS: command description
-msgid "Split an AppStream file to AppData and Metainfo files"
-msgstr "Pecah berkas AppData ke berkas Metainfo dan AppData"
+#. TRANSLATORS: command line option
+#: client/as-util.c:4435
+msgid "Enable profiling"
+msgstr "Fungsikan pemrofilan"
 
 #. TRANSLATORS: command description
-msgid "Test a regular expression"
-msgstr "Uji suatu ekspresi reguler"
+#: client/as-util.c:4467
+msgid "Converts AppStream metadata from one version to another"
+msgstr "Konversikan metadata AppStream dari satu versi ke lainnya"
 
 #. TRANSLATORS: command description
-msgid "Uninstalls AppStream metadata"
-msgstr "Bongkar metadata AppStream"
-
-#. TRANSLATORS: command description
+#: client/as-util.c:4473
 msgid "Upgrade AppData metadata to the latest version"
 msgstr "Tingkatkan metadata AppData ke versi terakhir"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:4479
+msgid "Creates an example AppData file from a .desktop file"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4485
+msgid "Dumps the applications in the AppStream metadata"
+msgstr "Mencurahkan aplikasi dalam metadata AppStream"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4491
+msgid "Search for AppStream applications"
+msgstr "Mencari aplikasi AppStream"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4497
+msgid "Search for AppStream applications by package name"
+msgstr "Mencari aplikasi AppStream menurut namanya"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4503
+msgid "Show all installed AppStream applications"
+msgstr "Tampilkan semua aplikasi AppStream yang terpasang"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4509
+msgid "Search for AppStream applications by category name"
+msgstr "Cari aplikasi AppStream berdasarkan nama kategori"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4515
+msgid "Display application search tokens"
+msgstr "Tampilkan token pencarian aplikasi"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4521
+msgid "Installs AppStream metadata"
+msgstr "Pasang metadata AppStream"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4527
+msgid "Installs AppStream metadata with new origin"
+msgstr "Pasang metadata AppStream dengan origin baru"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4533
+msgid "Uninstalls AppStream metadata"
+msgstr "Bongkar metadata AppStream"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4539
+msgid "Create an HTML status page"
+msgstr "Buat sebuah halaman status HTML"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4545
+msgid "Create an CSV status document"
+msgstr "Buat sebuah dokumen status CSV"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4551
+msgid "Create an HTML matrix page"
+msgstr "Buat sebuah halaman matriks HTML"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4557
+msgid "List applications not backed by packages"
+msgstr "Daftar aplikasi yang tidak didukung oleh paket"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4563
 msgid "Validate an AppData or AppStream file"
 msgstr "Validasikan sebuah berkas AppData atau AppStream"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:4569
 msgid "Validate an AppData or AppStream file (relaxed)"
 msgstr "Validasikan sebuah berkas AppData atau AppStream (longgar)"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:4575
+msgid "Exports the agreement to text"
+msgstr ""
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4581
 msgid "Validate an AppData or AppStream file (strict)"
 msgstr "Validasikan sebuah berkas AppData atau AppSteram (ketat)"
 
-msgid "Validation failed"
-msgstr "Validasi gagal"
-
-msgid "Validation of files failed"
-msgstr "Validasi berkas gagal"
-
-msgid "Version:"
-msgstr "Versi:"
+#. TRANSLATORS: command description
+#: client/as-util.c:4587
+#, fuzzy
+msgid "Validate that AppData file includes the specified release"
+msgstr "Validasikan sebuah berkas AppData atau AppStream (longgar)"
 
 #. TRANSLATORS: command description
+#: client/as-util.c:4593
+msgid "Convert an AppData file to NEWS format"
+msgstr "Konversikan berkas AppData ke format NEWS"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4599
+msgid "Convert an NEWS file to AppData format"
+msgstr "Konversikan berkas NEWS ke format AppData"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4605
+msgid "Check installed application data"
+msgstr "Periksa data aplikasi yang terpasang"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4611
+msgid "check an installed application"
+msgstr "memeriksa suatu aplikasi yang terpasang"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4617
+msgid "Replace screenshots in source file"
+msgstr "Gantikan cuplikan layar dalam berkas sumber"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4623
+msgid "Add a provide to a source file"
+msgstr "Tambahkan penyedia ke suatu berkas sumber"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4629
+msgid "Add a language to a source file"
+msgstr "Tambahkan bahasa ke suatu berkas sumber"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4635
+msgid "Mirror upstream screenshots"
+msgstr "Cerminkan cuplikan layar upstream"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4641
+msgid "Incorporate extra metadata from an external file"
+msgstr "Sertakan medatada ekstra dari berkas eksternal"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4647
+msgid "Compare the contents of two AppStream files"
+msgstr "Bandingkan isi dari dua berkas AppStream"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4653
+msgid "Generate a GUID from an input string"
+msgstr "Buat suatu GUID dari string masukan"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4659
+msgid "Modify an AppData file"
+msgstr "Ubah berkas AppData"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4665
+msgid "Split an AppStream file to AppData and Metainfo files"
+msgstr "Pecah berkas AppData ke berkas Metainfo dan AppData"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4671
+msgid "Merge several files to an AppStream file"
+msgstr "Gabungkan beberapa berkas ke sebuh berkas AppStream"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4677
+msgid "Import a file to AppStream markup"
+msgstr "Impor sebuah berkas ke markup AppStream"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4683
 msgid "Watch AppStream locations for changes"
 msgstr "Amati lokasi AppStream atas adanya perubahan"
 
 #. TRANSLATORS: command description
-msgid "check an installed application"
-msgstr "memeriksa suatu aplikasi yang terpasang"
+#: client/as-util.c:4689
+msgid "Compare version numbers"
+msgstr "Bandingkan nomor-nomor versi"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4695
+msgid "Test a regular expression"
+msgstr "Uji suatu ekspresi reguler"
+
+#. TRANSLATORS: program name
+#: client/as-util.c:4708
+msgid "AppStream Utility"
+msgstr "Utilitas AppStream"
+
+#: client/as-util.c:4732
+msgid "Version:"
+msgstr "Versi:"
