@@ -551,3 +551,547 @@ msgstr "Устилита AppStream"
 #: client/as-util.c:4732
 msgid "Version:"
 msgstr "Версия:"
+
+#. TRANSLATORS: This is the formatting of English and localized name
+#. * of the rating e.g. "Adults Only (solo adultos)"
+#: libappstream-glib/as-content-rating.c:261
+#, c-format
+msgid "%s (%s)"
+msgstr ""
+
+#: libappstream-glib/as-content-rating.c:407
+msgid "General"
+msgstr ""
+
+#: libappstream-glib/as-content-rating.c:416
+msgid "ALL"
+msgstr ""
+
+#: libappstream-glib/as-content-rating.c:420
+#: libappstream-glib/as-content-rating.c:496
+msgid "Adults Only"
+msgstr ""
+
+#: libappstream-glib/as-content-rating.c:422
+#: libappstream-glib/as-content-rating.c:495
+#, fuzzy
+msgid "Mature"
+msgstr "Рекомендуемые"
+
+#: libappstream-glib/as-content-rating.c:424
+#: libappstream-glib/as-content-rating.c:494
+msgid "Teen"
+msgstr ""
+
+#: libappstream-glib/as-content-rating.c:426
+#: libappstream-glib/as-content-rating.c:493
+msgid "Everyone 10+"
+msgstr ""
+
+#: libappstream-glib/as-content-rating.c:428
+#: libappstream-glib/as-content-rating.c:492
+msgid "Everyone"
+msgstr ""
+
+#: libappstream-glib/as-content-rating.c:430
+#: libappstream-glib/as-content-rating.c:491
+msgid "Early Childhood"
+msgstr ""
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:775
+msgid "No cartoon violence"
+msgstr "Отсутствуют сцены мультипликационного насилия"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:777
+msgid "Cartoon characters in unsafe situations"
+msgstr "Мультипликационные персонажи в опасных ситуациях"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:779
+msgid "Cartoon characters in aggressive conflict"
+msgstr "Мультипликационные персонажи в агрессивных конфликтах"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:781
+msgid "Graphic violence involving cartoon characters"
+msgstr "Насилие в отношении мультипликационных персонажей"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:786
+msgid "No fantasy violence"
+msgstr "Отсутствуют сцены фэнтезийного насилия"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:788
+msgid "Characters in unsafe situations easily distinguishable from reality"
+msgstr "Персонажи в опасных ситуациях легко отличимых от реальности"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:790
+msgid "Characters in aggressive conflict easily distinguishable from reality"
+msgstr "Персонажи в агрессивных конфликтах легко отличимых от реальности"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:792
+msgid "Graphic violence easily distinguishable from reality"
+msgstr "Насилие легко отличимое от реальности"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:797
+msgid "No realistic violence"
+msgstr "Нереалистичное насилие"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:799
+msgid "Mildly realistic characters in unsafe situations"
+msgstr "Умеренно-реалистичные персонажи в опасных ситуациях"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:801
+msgid "Depictions of realistic characters in aggressive conflict"
+msgstr "Изображения реалистичных персонажей в агрессивных конфликтах"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:803
+msgid "Graphic violence involving realistic characters"
+msgstr "Насилие в отношении реалистичных персонажей"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:808
+msgid "No bloodshed"
+msgstr "Отсутствует кровопролитие"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:810
+msgid "Unrealistic bloodshed"
+msgstr "Нереалистичное кровопролитие"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:812
+msgid "Realistic bloodshed"
+msgstr "Реалистичное кровопролитие"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:814
+msgid "Depictions of bloodshed and the mutilation of body parts"
+msgstr "Изображения крови и увечий"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:819
+msgid "No sexual violence"
+msgstr "Отсутствует сексуальное насилие"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:821
+msgid "Rape or other violent sexual behavior"
+msgstr "Изнасилование или другое сексуальное насилие"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:828
+msgid "No references to alcohol"
+msgstr "Отсутствие упоминания алкоголя"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:830
+msgid "References to alcoholic beverages"
+msgstr "Упоминание алкогольных напитков"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:832
+msgid "Use of alcoholic beverages"
+msgstr "Употребление алкогольных напитков"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:838
+msgid "No references to illicit drugs"
+msgstr "Отсутствуют упоминания запрещенных наркотиков"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:840
+msgid "References to illicit drugs"
+msgstr "Упоминание запрещенных наркотиков"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:842
+msgid "Use of illicit drugs"
+msgstr "Употребление запрещенных наркотиков"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:848
+#, fuzzy
+msgid "No references to tobacco products"
+msgstr "Упоминание табачных изделий"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:850
+msgid "References to tobacco products"
+msgstr "Упоминание табачных изделий"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:852
+msgid "Use of tobacco products"
+msgstr "Использование табачных изделий"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:858
+msgid "No nudity of any sort"
+msgstr "Отсутствует обнажение в любом виде"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:860
+msgid "Brief artistic nudity"
+msgstr "Короткие или неоткровенные сцены обнажения в художественных целях"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:862
+msgid "Prolonged nudity"
+msgstr "Продолжительные сцены обнажения"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:868
+msgid "No references to or depictions of sexual nature"
+msgstr "Отсутствуют отсылки или описания сексуального характера"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:870
+msgid "Provocative references or depictions"
+msgstr "Содержание или упоминание провокационного характера"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:872
+msgid "Sexual references or depictions"
+msgstr "Содержание или упоминание сексуального характера"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:874
+msgid "Graphic sexual behavior"
+msgstr "Изображения сексуального поведения"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:879
+msgid "No profanity of any kind"
+msgstr "Отсутствует ненормативная лексика в любом виде"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:881
+msgid "Mild or infrequent use of profanity"
+msgstr "Незначительное или нечастое сквернословие"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:883
+msgid "Moderate use of profanity"
+msgstr "Умеренное сквернословие"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:885
+msgid "Strong or frequent use of profanity"
+msgstr "Очень грубое и частое сквернословие"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:890
+msgid "No inappropriate humor"
+msgstr "Отсутствует неприемлемый юмор"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:892
+msgid "Slapstick humor"
+msgstr "Грубый юмор"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:894
+msgid "Vulgar or bathroom humor"
+msgstr "Вульгарный или непристойный юмор"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:896
+msgid "Mature or sexual humor"
+msgstr "Юмор для взрослых или сексуального характера"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:901
+msgid "No discriminatory language of any kind"
+msgstr "Отсутствуют фразы с дискриминацией любого типа"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:903
+msgid "Negativity towards a specific group of people"
+msgstr "Негативное отношение к определенной группе людей"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:905
+msgid "Discrimination designed to cause emotional harm"
+msgstr "Дискриминация с целью причинить моральный вред"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:907
+msgid "Explicit discrimination based on gender, sexuality, race or religion"
+msgstr ""
+"Явная дискриминация по признаку пола, сексуальной ориентации, расы или "
+"религии"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:912
+msgid "No advertising of any kind"
+msgstr "Отсутствует реклама в любом виде"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:914
+msgid "Product placement"
+msgstr "Неявная реклама"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:916
+msgid "Explicit references to specific brands or trademarked products"
+msgstr "Явные упоминания конкретных брендов или торговых марок"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:918
+msgid "Users are encouraged to purchase specific real-world items"
+msgstr ""
+"Пользователям предлагается приобрести определенные предметы реального мира"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:923
+msgid "No gambling of any kind"
+msgstr "Отсутствуют азартные игры в любом виде"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:925
+msgid "Gambling on random events using tokens or credits"
+msgstr ""
+"Азартные игры с использованием жетонов, основанные на случайных событиях"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:927
+msgid "Gambling using “play” money"
+msgstr "Азартные игры с использованием «игровой» валюты"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:929
+msgid "Gambling using real money"
+msgstr "Азартные игры с использованием реальных денег"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:934
+msgid "No ability to spend money"
+msgstr "Отсутствует возможность тратить деньги"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:936
+msgid "Users are encouraged to donate real money"
+msgstr "Пользователям предлагается платить реальные деньги"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:939
+msgid "Ability to spend real money in-app"
+msgstr "Присутствует возможность тратить реальные деньги в приложении"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:944
+msgid "No way to chat with other users"
+msgstr "Отсутствует возможность общаться с другими игроками"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:946
+msgid "User-to-user interactions without chat functionality"
+msgstr "Взаимодействие между игроками без использования чата"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:948
+msgid "Moderated chat functionality between users"
+msgstr "Модерируемые функции чата между пользователями"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:950
+msgid "Uncontrolled chat functionality between users"
+msgstr "Неконтролируемые функции чата между пользователями"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:955
+msgid "No way to talk with other users"
+msgstr "Отсутствует возможность общаться с другими игроками"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:957
+msgid "Uncontrolled audio or video chat functionality between users"
+msgstr "Неконтролируемые функции аудио или видеочата между пользователями"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:964
+msgid "No sharing of social network usernames or email addresses"
+msgstr "Не распространяет имена пользователей или адреса электронной почты"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:966
+msgid "Sharing social network usernames or email addresses"
+msgstr "Распространяет имена пользователей или адреса электронной почты"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:973
+msgid "No sharing of user information with third parties"
+msgstr "Не передает информацию о пользователе третьим лицам"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:975
+msgid "Checking for the latest application version"
+msgstr "Проверка последней версии приложения"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:977
+msgid "Sharing diagnostic data that does not let others identify the user"
+msgstr ""
+"Совместное использование диагностических данных, которые не позволяют другим "
+"идентифицировать пользователя"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:979
+msgid "Sharing information that lets others identify the user"
+msgstr "Обмен информацией, позволяющей другим идентифицировать пользователя"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:984
+msgid "No sharing of physical location with other users"
+msgstr "Нет общего физического местоположения с другими пользователями"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:986
+msgid "Sharing physical location with other users"
+msgstr ""
+"Совместное использование физического местоположения с другими пользователями"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:995
+msgid "No references to homosexuality"
+msgstr "Нет ссылок на гомосексуализм"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:997
+msgid "Indirect references to homosexuality"
+msgstr "Косвенные ссылки на гомосексуализм"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:999
+msgid "Kissing between people of the same gender"
+msgstr "Поцелуи между людьми одного пола"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1001
+msgid "Graphic sexual behavior between people of the same gender"
+msgstr "Графическое сексуальное поведение между людьми одного пола"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1006
+msgid "No references to prostitution"
+msgstr "Нет ссылок на проституцию"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1008
+msgid "Indirect references to prostitution"
+msgstr "Косвенные ссылки на проституцию"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1010
+msgid "Direct references to prostitution"
+msgstr "Прямые ссылки на проституцию"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1012
+msgid "Graphic depictions of the act of prostitution"
+msgstr "Графические изображения акта проституции"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1017
+msgid "No references to adultery"
+msgstr "Нет ссылок на прелюбодеяние"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1019
+msgid "Indirect references to adultery"
+msgstr "Косвенные ссылки на прелюбодеяние"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1021
+msgid "Direct references to adultery"
+msgstr "Прямые ссылки на прелюбодеяние"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1023
+msgid "Graphic depictions of the act of adultery"
+msgstr "Графические изображения акта прелюбодеяния"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1028
+msgid "No sexualized characters"
+msgstr "Нет сексуализированных персонажей"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1031
+msgid "Scantily clad human characters"
+msgstr "Необычно одетые человеческие персонажи"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1033
+msgid "Overtly sexualized human characters"
+msgstr "Чрезмерно сексуализированные человеческие персонажи"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1038
+msgid "No references to desecration"
+msgstr "Нет упоминания осквернения"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1040
+msgid "Depictions of or references to historical desecration"
+msgstr "Изображения или ссылки на историческое осквернение"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1042
+msgid "Depictions of modern-day human desecration"
+msgstr "Изображения современного человеческого осквернения"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1044
+msgid "Graphic depictions of modern-day desecration"
+msgstr "Графические изображения современного осквернения"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1049
+msgid "No visible dead human remains"
+msgstr "Нет видимых мертвых человеческих останков"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1051
+msgid "Visible dead human remains"
+msgstr "Видимые мертвые человеческие останки"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1053
+msgid "Dead human remains that are exposed to the elements"
+msgstr "Мертвые человеческие останки, которые имеют неприкрытые части"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1055
+msgid "Graphic depictions of desecration of human bodies"
+msgstr "Графические изображения осквернения человеческих тел"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1060
+msgid "No references to slavery"
+msgstr "Отсутствие упоминания рабства"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1062
+msgid "Depictions of or references to historical slavery"
+msgstr "Изображения или упоминания исторического рабства"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1064
+msgid "Depictions of modern-day slavery"
+msgstr "Изображения современного рабства"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1066
+msgid "Graphic depictions of modern-day slavery"
+msgstr "Графические изображения современного рабства"

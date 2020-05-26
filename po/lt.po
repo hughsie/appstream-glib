@@ -536,3 +536,541 @@ msgstr "AppStream paslaugų programa"
 #: client/as-util.c:4732
 msgid "Version:"
 msgstr "Versija:"
+
+#. TRANSLATORS: This is the formatting of English and localized name
+#. * of the rating e.g. "Adults Only (solo adultos)"
+#: libappstream-glib/as-content-rating.c:261
+#, c-format
+msgid "%s (%s)"
+msgstr "%s (%s)"
+
+#: libappstream-glib/as-content-rating.c:407
+msgid "General"
+msgstr "Bendra"
+
+#: libappstream-glib/as-content-rating.c:416
+msgid "ALL"
+msgstr "VISKAS"
+
+#: libappstream-glib/as-content-rating.c:420
+#: libappstream-glib/as-content-rating.c:496
+msgid "Adults Only"
+msgstr "Tik suaugusiems"
+
+#: libappstream-glib/as-content-rating.c:422
+#: libappstream-glib/as-content-rating.c:495
+msgid "Mature"
+msgstr "Subrendusiems"
+
+#: libappstream-glib/as-content-rating.c:424
+#: libappstream-glib/as-content-rating.c:494
+msgid "Teen"
+msgstr "Paaugliams"
+
+#: libappstream-glib/as-content-rating.c:426
+#: libappstream-glib/as-content-rating.c:493
+msgid "Everyone 10+"
+msgstr "Visiems nuo 10-ies"
+
+#: libappstream-glib/as-content-rating.c:428
+#: libappstream-glib/as-content-rating.c:492
+msgid "Everyone"
+msgstr "Visiems"
+
+#: libappstream-glib/as-content-rating.c:430
+#: libappstream-glib/as-content-rating.c:491
+msgid "Early Childhood"
+msgstr "Ankstyvai vaikystei"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:775
+msgid "No cartoon violence"
+msgstr "Nėra animacinio smurto"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:777
+msgid "Cartoon characters in unsafe situations"
+msgstr "Animaciniai personažai nesaugiose situacijose"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:779
+msgid "Cartoon characters in aggressive conflict"
+msgstr "Animaciniai personažai agresyviame konflikte"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:781
+msgid "Graphic violence involving cartoon characters"
+msgstr "Grafinis smurtas, įtraukiantis animacinius personažus"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:786
+msgid "No fantasy violence"
+msgstr "Nėra fantastinio smurto"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:788
+msgid "Characters in unsafe situations easily distinguishable from reality"
+msgstr "Personažai nesaugiose, lengvai nuo realybės atskiriamose, situacijose"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:790
+msgid "Characters in aggressive conflict easily distinguishable from reality"
+msgstr "Personažai agresyviame, lengvai nuo realybės atskiriamame, konflikte"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:792
+msgid "Graphic violence easily distinguishable from reality"
+msgstr "Grafinis, lengvai nuo realybės atskiriamas, smurtas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:797
+msgid "No realistic violence"
+msgstr "Nėra tikroviško smurto"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:799
+msgid "Mildly realistic characters in unsafe situations"
+msgstr "Švelnūs tikroviški personažai nesaugiose situacijose"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:801
+msgid "Depictions of realistic characters in aggressive conflict"
+msgstr "Tikroviškų personažų vaizdavimai agresyviame konflikte"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:803
+msgid "Graphic violence involving realistic characters"
+msgstr "Grafinis smurtas, įtraukiantis tikroviškus personažus"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:808
+msgid "No bloodshed"
+msgstr "Nėra kraujo praliejimo"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:810
+msgid "Unrealistic bloodshed"
+msgstr "Netikroviškas kraujo praliejimas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:812
+msgid "Realistic bloodshed"
+msgstr "Tikroviškas kraujo praliejimas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:814
+msgid "Depictions of bloodshed and the mutilation of body parts"
+msgstr "Kraujo praliejimo ir kūno dalių sužalojimo vaizdavimai"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:819
+msgid "No sexual violence"
+msgstr "Nėra seksualinio smurto"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:821
+msgid "Rape or other violent sexual behavior"
+msgstr "Išprievartavimai ar kita smurtinė seksualinė elgsena"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:828
+msgid "No references to alcohol"
+msgstr "Nėra nuorodos į alkoholinius gėrimus"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:830
+msgid "References to alcoholic beverages"
+msgstr "Nuorodos į alkoholinius gėrimus"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:832
+msgid "Use of alcoholic beverages"
+msgstr "Alkoholinių gėrimų vartojimas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:838
+msgid "No references to illicit drugs"
+msgstr "Nėra nuorodų į uždraustus narkotikus"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:840
+msgid "References to illicit drugs"
+msgstr "Nuorodos į uždraustus narkotikus"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:842
+msgid "Use of illicit drugs"
+msgstr "Uždraustų narkotikų vartojimas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:848
+msgid "No references to tobacco products"
+msgstr "Nėra nuorodos į tabako gaminius"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:850
+msgid "References to tobacco products"
+msgstr "Nuorodos į tabako gaminius"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:852
+msgid "Use of tobacco products"
+msgstr "Tabako gaminių vartojimas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:858
+msgid "No nudity of any sort"
+msgstr "Nėra jokio tipo nuogumo"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:860
+msgid "Brief artistic nudity"
+msgstr "Trumpas meninis nuogumas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:862
+msgid "Prolonged nudity"
+msgstr "Užsitęsęs nuogumas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:868
+msgid "No references to or depictions of sexual nature"
+msgstr "Nėra nuorodų į seksualinį pobūdžio vaizdavimus"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:870
+msgid "Provocative references or depictions"
+msgstr "Provokuojančios nuorodos ar vaizdavimai"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:872
+msgid "Sexual references or depictions"
+msgstr "Seksualinės nuorodos ar vaizdavimai"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:874
+msgid "Graphic sexual behavior"
+msgstr "Grafinė seksualinė elgsena"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:879
+msgid "No profanity of any kind"
+msgstr "Nėra jokių keiksmažodžių"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:881
+msgid "Mild or infrequent use of profanity"
+msgstr "Nesmarkus ar nedažnas keiksmų naudojimas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:883
+msgid "Moderate use of profanity"
+msgstr "Vidutinis keiksmų naudojimas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:885
+msgid "Strong or frequent use of profanity"
+msgstr "Smarkus ar dažnas keiksmų naudojimas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:890
+msgid "No inappropriate humor"
+msgstr "Nėra netinkamo humoro"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:892
+msgid "Slapstick humor"
+msgstr "Papliauškų humoras"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:894
+msgid "Vulgar or bathroom humor"
+msgstr "Vulgarus ar tualeto humoras"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:896
+msgid "Mature or sexual humor"
+msgstr "Suaugusiųjų ar seksualinis humoras"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:901
+msgid "No discriminatory language of any kind"
+msgstr "Nėra jokio pobūdžio diskriminuojančios kalbos"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:903
+msgid "Negativity towards a specific group of people"
+msgstr "Priešiškumas, nukreiptas į tam tikrą žmonių grupę"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:905
+msgid "Discrimination designed to cause emotional harm"
+msgstr "Diskriminacija, sukurta sukelti emocinę žalą"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:907
+msgid "Explicit discrimination based on gender, sexuality, race or religion"
+msgstr "Atvira diskriminacija dėl lyties, rasės ar religijos"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:912
+msgid "No advertising of any kind"
+msgstr "Nėra jokio pobūdžio reklamų"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:914
+msgid "Product placement"
+msgstr "Produktų išdėstymas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:916
+msgid "Explicit references to specific brands or trademarked products"
+msgstr ""
+"Atviros nuorodos į tam tikrus prekės ženklus ar produktus su prekyženkliu"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:918
+msgid "Users are encouraged to purchase specific real-world items"
+msgstr "Naudotojai yra skatinami įsigyti tam tikrus realaus pasaulio daiktus"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:923
+msgid "No gambling of any kind"
+msgstr "Nėra jokio pobūdžio azartinių lošimų"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:925
+msgid "Gambling on random events using tokens or credits"
+msgstr "Lošimas iš atsitiktinių įvykių, naudojantis žetonais ar kreditais"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:927
+msgid "Gambling using “play” money"
+msgstr "Lošimai naudojant „žaidimo“ pinigus"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:929
+msgid "Gambling using real money"
+msgstr "Lošimai naudojant tikrus pinigus"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:934
+msgid "No ability to spend money"
+msgstr "Nėra galimybės išleisti pinigus"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:936
+msgid "Users are encouraged to donate real money"
+msgstr "Naudotojai yra skatinami aukoti realius pinigus"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:939
+msgid "Ability to spend real money in-app"
+msgstr "Galimybė žaidime išleisti tikrus pinigus"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:944
+msgid "No way to chat with other users"
+msgstr "Nėra galimybės susirašinėti su kitais žaidėjais"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:946
+msgid "User-to-user interactions without chat functionality"
+msgstr "Žaidėjo su žaidėju sąveikos žaidime be pokalbių funkcionalumo"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:948
+msgid "Moderated chat functionality between users"
+msgstr "Prižiūrimas pokalbių funkcionalumas tarp žaidėjų"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:950
+msgid "Uncontrolled chat functionality between users"
+msgstr "Neprižiūrimas pokalbių funkcionalumas tarp žaidėjų"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:955
+msgid "No way to talk with other users"
+msgstr "Nėra galimybės kalbėti su kitais žaidėjais"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:957
+msgid "Uncontrolled audio or video chat functionality between users"
+msgstr "Neprižiūrimas garso ir vaizdo pokalbių funkcionalumas tarp žaidėjų"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:964
+msgid "No sharing of social network usernames or email addresses"
+msgstr ""
+"Nėra dalinimosi socialinių tinklų naudotojų vardais ar el. pašto adresais"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:966
+msgid "Sharing social network usernames or email addresses"
+msgstr "Dalinimasis socialinių tinklų naudotojų vardais ar el. pašto adresais"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:973
+msgid "No sharing of user information with third parties"
+msgstr "Nėra dalinimosi naudotojo informacija su trečiosiomis šalimis"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:975
+msgid "Checking for the latest application version"
+msgstr "Tikrinama, ar naujausia programos versija"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:977
+msgid "Sharing diagnostic data that does not let others identify the user"
+msgstr ""
+"Dalinimasis diagnostikos duomenimis neleidžia kitiems identifikuoti naudotojų"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:979
+msgid "Sharing information that lets others identify the user"
+msgstr "Dalinimasis informacija, kuri leidžia kitiems identifikuoti naudotoją"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:984
+msgid "No sharing of physical location with other users"
+msgstr "Nėra dalinimosi savo fizine buvimo vieta su kitais naudotojais"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:986
+msgid "Sharing physical location with other users"
+msgstr "Dalinimasis savo fizine buvimo vieta su kitais naudotojais"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:995
+msgid "No references to homosexuality"
+msgstr "Nėra nuorodos į homoseksualumą"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:997
+msgid "Indirect references to homosexuality"
+msgstr "Netiesioginės nuorodos į homoseksualumą"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:999
+msgid "Kissing between people of the same gender"
+msgstr "Bučiniai tarp tos pačios lyties asmenų"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1001
+msgid "Graphic sexual behavior between people of the same gender"
+msgstr "Vazdinis seksualus elgesys tarp tos pačios lyties asmenų"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1006
+msgid "No references to prostitution"
+msgstr "Nėra nuorodų į prostituciją"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1008
+msgid "Indirect references to prostitution"
+msgstr "Netiesioginės nuorodos į prostituciją"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1010
+msgid "Direct references to prostitution"
+msgstr "Tiesioginės nuorodos į prostituciją"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1012
+msgid "Graphic depictions of the act of prostitution"
+msgstr "Vaizdinis prostitucijos akto atvaizdavimas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1017
+msgid "No references to adultery"
+msgstr "Nėra nuorodos į turinį suaugusiems"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1019
+msgid "Indirect references to adultery"
+msgstr "Netiesioginės nuorodos į turinį suaugusiems"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1021
+msgid "Direct references to adultery"
+msgstr "Tiesioginės nuorodos į turinį suaugusiems"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1023
+msgid "Graphic depictions of the act of adultery"
+msgstr "Vaizdinis turinio suaugusiems atvaizdavimas"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1028
+msgid "No sexualized characters"
+msgstr "Nėra išreikšto seksualumo veikėjų"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1031
+msgid "Scantily clad human characters"
+msgstr "Mažai apsirengę žmonės/herojai"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1033
+msgid "Overtly sexualized human characters"
+msgstr "Itin seksualūs žmonės/herojai"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1038
+msgid "No references to desecration"
+msgstr "Nėra nuorodų į išniekinimą"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1040
+msgid "Depictions of or references to historical desecration"
+msgstr "Vaizdavimai arba nuorodos į istorinį išniekinimą"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1042
+msgid "Depictions of modern-day human desecration"
+msgstr "Šiuolaikinio žmonių išniekinimo vaizdavimai"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1044
+msgid "Graphic depictions of modern-day desecration"
+msgstr "Šiuolaikinio žmonių išniekinimo vaizdai"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1049
+msgid "No visible dead human remains"
+msgstr "Nėra matomų mirusių žmonių palaikų"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1051
+msgid "Visible dead human remains"
+msgstr "Matomi mirusių žmonių palaikai"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1053
+msgid "Dead human remains that are exposed to the elements"
+msgstr "Detaliai vaizduojami mirusių žmonių palaikai"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1055
+msgid "Graphic depictions of desecration of human bodies"
+msgstr "Žmonių kūnų išniekinimo vaizdai"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1060
+msgid "No references to slavery"
+msgstr "Nėra nuorodos į vergiją"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1062
+msgid "Depictions of or references to historical slavery"
+msgstr "Vaizdavimai arba nuorodos į istorinę vergiją"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1064
+msgid "Depictions of modern-day slavery"
+msgstr "Šiuolaikinės vergijos vaizdavimai"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1066
+msgid "Graphic depictions of modern-day slavery"
+msgstr "Šiuolaikinės vergijos vaizdai"

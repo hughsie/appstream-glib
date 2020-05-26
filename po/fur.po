@@ -537,3 +537,542 @@ msgstr "Utilitât AppStream"
 #: client/as-util.c:4732
 msgid "Version:"
 msgstr "Version:"
+
+#. TRANSLATORS: This is the formatting of English and localized name
+#. * of the rating e.g. "Adults Only (solo adultos)"
+#: libappstream-glib/as-content-rating.c:261
+#, c-format
+msgid "%s (%s)"
+msgstr "%s (%s)"
+
+#: libappstream-glib/as-content-rating.c:407
+msgid "General"
+msgstr "Gjenerâl"
+
+#: libappstream-glib/as-content-rating.c:416
+msgid "ALL"
+msgstr "DUCJ"
+
+#: libappstream-glib/as-content-rating.c:420
+#: libappstream-glib/as-content-rating.c:496
+msgid "Adults Only"
+msgstr "Dome grancj"
+
+#: libappstream-glib/as-content-rating.c:422
+#: libappstream-glib/as-content-rating.c:495
+msgid "Mature"
+msgstr "Madûr"
+
+#: libappstream-glib/as-content-rating.c:424
+#: libappstream-glib/as-content-rating.c:494
+msgid "Teen"
+msgstr "Fantat"
+
+#: libappstream-glib/as-content-rating.c:426
+#: libappstream-glib/as-content-rating.c:493
+msgid "Everyone 10+"
+msgstr "Ducj parsore dai 10"
+
+#: libappstream-glib/as-content-rating.c:428
+#: libappstream-glib/as-content-rating.c:492
+msgid "Everyone"
+msgstr "Ducj"
+
+#: libappstream-glib/as-content-rating.c:430
+#: libappstream-glib/as-content-rating.c:491
+msgid "Early Childhood"
+msgstr "Prime infanzie"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:775
+msgid "No cartoon violence"
+msgstr "Nissune violence dai cartons animâts"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:777
+msgid "Cartoon characters in unsafe situations"
+msgstr "Personaçs di cartons animâts in situazions pericolosis"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:779
+msgid "Cartoon characters in aggressive conflict"
+msgstr "Personaçs di cartons animâts in conflit violent"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:781
+msgid "Graphic violence involving cartoon characters"
+msgstr "Grafiche di violence che e cjape dentri personaçs di cartons animâts"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:786
+msgid "No fantasy violence"
+msgstr "Nissune violence fantasy"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:788
+msgid "Characters in unsafe situations easily distinguishable from reality"
+msgstr "Personaçs in situazions pericolosis facilis di distingui de realtât"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:790
+msgid "Characters in aggressive conflict easily distinguishable from reality"
+msgstr "Personaçs in conflit violent facil di distingui de realtât"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:792
+msgid "Graphic violence easily distinguishable from reality"
+msgstr "Grafiche di violence facil di distingui de realtât"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:797
+msgid "No realistic violence"
+msgstr "Nissune violence realistiche"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:799
+msgid "Mildly realistic characters in unsafe situations"
+msgstr "Personaçs un pôc realistics in situazions pericolosis"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:801
+msgid "Depictions of realistic characters in aggressive conflict"
+msgstr "Figuris di personaçs realistics in conflit violent"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:803
+msgid "Graphic violence involving realistic characters"
+msgstr "Grafiche di violence che e cjape dentri personaçs realistics"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:808
+msgid "No bloodshed"
+msgstr "Nissun maçament"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:810
+msgid "Unrealistic bloodshed"
+msgstr "Maçaments no realistics"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:812
+msgid "Realistic bloodshed"
+msgstr "Maçaments realistics"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:814
+msgid "Depictions of bloodshed and the mutilation of body parts"
+msgstr "Figuris di sassinaments e mutilazions di tocs di cuarp"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:819
+msgid "No sexual violence"
+msgstr "Nissune violence sessuâl"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:821
+msgid "Rape or other violent sexual behavior"
+msgstr "Stupri o altris compuartaments sessuâi violents"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:828
+msgid "No references to alcohol"
+msgstr "Nissun riferiment a bevandis alcolichis"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:830
+msgid "References to alcoholic beverages"
+msgstr "Riferiments a bevandis alcolichis"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:832
+msgid "Use of alcoholic beverages"
+msgstr "Ûs di bevandis alcolichis"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:838
+msgid "No references to illicit drugs"
+msgstr "Nissun riferiment a droghis ilecitis"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:840
+msgid "References to illicit drugs"
+msgstr "Riferiments a droghis ilecitis"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:842
+msgid "Use of illicit drugs"
+msgstr "Ûs ilecit di droghis"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:848
+msgid "No references to tobacco products"
+msgstr "Nissun riferiment a prodots derivâts dal tabac"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:850
+msgid "References to tobacco products"
+msgstr "Riferiments a tabacs"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:852
+msgid "Use of tobacco products"
+msgstr "Ûs di tabacs"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:858
+msgid "No nudity of any sort"
+msgstr "Nissune crotarie di cualsisei gjenar"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:860
+msgid "Brief artistic nudity"
+msgstr "Curte crotarie artistiche"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:862
+msgid "Prolonged nudity"
+msgstr "Crotarie sprolungjade"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:868
+msgid "No references to or depictions of sexual nature"
+msgstr "Nissun riferiment a o rafigurazions di nature sessuâl"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:870
+msgid "Provocative references or depictions"
+msgstr "Figuris o riferiments provocants"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:872
+msgid "Sexual references or depictions"
+msgstr "Riferiments o figuris sessuâi"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:874
+msgid "Graphic sexual behavior"
+msgstr "Grafiche di compuartaments sessuâi"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:879
+msgid "No profanity of any kind"
+msgstr "Nissune blasfemie di cualsisei gjenar"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:881
+msgid "Mild or infrequent use of profanity"
+msgstr "Ûs lizêr o no frecuent di profanitâts"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:883
+msgid "Moderate use of profanity"
+msgstr "Ûs moderât di blasfemie"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:885
+msgid "Strong or frequent use of profanity"
+msgstr "Ûs frecuent e fuart di blasfemie"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:890
+msgid "No inappropriate humor"
+msgstr "Nissun umorisim sconvenient"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:892
+msgid "Slapstick humor"
+msgstr "Umorisim di comedie grese"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:894
+msgid "Vulgar or bathroom humor"
+msgstr "Umorisim volgâr o di cesso"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:896
+msgid "Mature or sexual humor"
+msgstr "Umorisim soç o par grancj"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:901
+msgid "No discriminatory language of any kind"
+msgstr "Nissun lengaç discriminatori di cualsisei gjenar"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:903
+msgid "Negativity towards a specific group of people"
+msgstr "Negativitât viers un specific grup di personis"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:905
+msgid "Discrimination designed to cause emotional harm"
+msgstr "Discriminazion pensade par fâ mâl emotivamentri"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:907
+msgid "Explicit discrimination based on gender, sexuality, race or religion"
+msgstr ""
+"Discriminazion esplicite basade su gjenar, sessualitât, raze o religjon"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:912
+msgid "No advertising of any kind"
+msgstr "Nissune publicitât di cualsisei gjenar"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:914
+msgid "Product placement"
+msgstr "Vendite di prodots"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:916
+msgid "Explicit references to specific brands or trademarked products"
+msgstr "Riferiments esplicits a marcjis specifichis o prodots firmâts"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:918
+msgid "Users are encouraged to purchase specific real-world items"
+msgstr "I utents a son incitâts a comprâ ogjets reâi specifics"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:923
+msgid "No gambling of any kind"
+msgstr "Nissun zûc di azart di cualsisei gjenar"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:925
+msgid "Gambling on random events using tokens or credits"
+msgstr "Zûc di azart su events casuâi che al dopre gjetons o credits"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:927
+msgid "Gambling using “play” money"
+msgstr "Zûc di azart che al dopre bêçs “dal zûc”"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:929
+msgid "Gambling using real money"
+msgstr "Zûc di azart che al dopre bêçs vêrs"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:934
+msgid "No ability to spend money"
+msgstr "Nissune pussibilitât di spindi bêçs"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:936
+msgid "Users are encouraged to donate real money"
+msgstr "I utents a son incitâts a donâ bêçs vêrs"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:939
+msgid "Ability to spend real money in-app"
+msgstr "Abilitât di spindi bêçs vêrs inte aplicazion"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:944
+msgid "No way to chat with other users"
+msgstr "Nissune maniere par chatâ cun altris utents"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:946
+msgid "User-to-user interactions without chat functionality"
+msgstr "Interazions tra utents cence funzionalitât di chat"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:948
+msgid "Moderated chat functionality between users"
+msgstr "Funzionalitât no controllade di chat tra utents"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:950
+msgid "Uncontrolled chat functionality between users"
+msgstr "Funzionalitât no controllade di chat tra utents"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:955
+msgid "No way to talk with other users"
+msgstr "Nissune maniere par cjacarâ cun altris utents"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:957
+msgid "Uncontrolled audio or video chat functionality between users"
+msgstr "Funzionalitât no controllade di chat video o audio tra utents"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:964
+msgid "No sharing of social network usernames or email addresses"
+msgstr "Nissune condivision di nons utent di social network o direzions e-mail"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:966
+msgid "Sharing social network usernames or email addresses"
+msgstr "Condivision di nons utent di social network o direzions e-mail"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:973
+msgid "No sharing of user information with third parties"
+msgstr "Nissune condivision di informazions dal utent cun tiercis parts"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:975
+msgid "Checking for the latest application version"
+msgstr "Control pe ultime version de aplicazion"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:977
+msgid "Sharing diagnostic data that does not let others identify the user"
+msgstr ""
+"Condivision di dâts diagnostics che no permetin a altris di identificâ "
+"l'utent"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:979
+msgid "Sharing information that lets others identify the user"
+msgstr ""
+"Condivision di dâts diagnostics che a permetin a altris di identificâ l'utent"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:984
+msgid "No sharing of physical location with other users"
+msgstr "Nissune condivision di posizion fisiche cun altris utents"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:986
+msgid "Sharing physical location with other users"
+msgstr "Condivision posizion fisiche cun altris utents"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:995
+msgid "No references to homosexuality"
+msgstr "Nissun riferiment a omosessualitât"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:997
+msgid "Indirect references to homosexuality"
+msgstr "Riferiments indirets ae omosessualitât"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:999
+msgid "Kissing between people of the same gender"
+msgstr "Bussadis tra personis dal stes ses"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1001
+msgid "Graphic sexual behavior between people of the same gender"
+msgstr "Compuartament sessuâl grafic tra personis dal stes ses"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1006
+msgid "No references to prostitution"
+msgstr "Nissun riferiment a prostituzion"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1008
+msgid "Indirect references to prostitution"
+msgstr "Riferiments indirets ae prostituzion"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1010
+msgid "Direct references to prostitution"
+msgstr "Riferiments direts ae prostituzion"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1012
+msgid "Graphic depictions of the act of prostitution"
+msgstr "Rapresentazions grafichis dal at di prostituzion"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1017
+msgid "No references to adultery"
+msgstr "Nissun riferiment a adulteri"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1019
+msgid "Indirect references to adultery"
+msgstr "Riferiments indirets al adulteri"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1021
+msgid "Direct references to adultery"
+msgstr "Riferiment direts al adulteri"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1023
+msgid "Graphic depictions of the act of adultery"
+msgstr "Rapresentazions grafichis dal at di adulteri"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1028
+msgid "No sexualized characters"
+msgstr "Nissun personaç sessuât"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1031
+msgid "Scantily clad human characters"
+msgstr "Personaçs umans pôc vistîts"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1033
+msgid "Overtly sexualized human characters"
+msgstr "Personaçs umans sessuâts in maniere anomale"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1038
+msgid "No references to desecration"
+msgstr "Nissun riferiment a profanazion"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1040
+msgid "Depictions of or references to historical desecration"
+msgstr "Rapresentazions o riferiments a profanazions storichis"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1042
+msgid "Depictions of modern-day human desecration"
+msgstr "Rapresentazion di profanazion umane moderne"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1044
+msgid "Graphic depictions of modern-day desecration"
+msgstr "Rapresentazions grafichis di profanazion moderne"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1049
+msgid "No visible dead human remains"
+msgstr "Nissun rest visibil di oms muarts"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1051
+msgid "Visible dead human remains"
+msgstr "Rescj di oms muarts visibii"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1053
+msgid "Dead human remains that are exposed to the elements"
+msgstr "Rescj di oms muarts che a son esposcj ai elements"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1055
+msgid "Graphic depictions of desecration of human bodies"
+msgstr "Rapresentazions grafichis di profanazion di cuarps umans"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1060
+msgid "No references to slavery"
+msgstr "Nissun riferiment a sclavitût"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1062
+msgid "Depictions of or references to historical slavery"
+msgstr "Rapresentazions o riferiments a sclavitût storiche"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1064
+msgid "Depictions of modern-day slavery"
+msgstr "Rapresentazions de sclavitût moderne"
+
+#. TRANSLATORS: content rating description
+#: libappstream-glib/as-content-rating.c:1066
+msgid "Graphic depictions of modern-day slavery"
+msgstr "Rapresentazions grafichis de sclavitût moderne"
