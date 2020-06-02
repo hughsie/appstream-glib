@@ -11,6 +11,7 @@
 #include <appstream-glib.h>
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 #include <stdlib.h>
 #include <locale.h>
 #include <errno.h>
@@ -48,10 +49,13 @@ add_icons (AsApp *app,
 	g_autofree gchar *fn = NULL;
 	g_autofree gchar *name_hidpi = NULL;
 	g_autofree gchar *name = NULL;
+	g_autofree gchar *name_generic = NULL;
 	g_autofree gchar *icon_path = NULL;
 	g_autofree gchar *icon_subdir = NULL;
 	g_autofree gchar *icon_path_hidpi = NULL;
 	g_autofree gchar *icon_subdir_hidpi = NULL;
+	g_autofree gchar *symlink_path = NULL;
+	g_autoptr(GFile) symlink_file = NULL;
 	g_autoptr(AsIcon) icon_hidpi = NULL;
 	g_autoptr(AsIcon) icon = NULL;
 	g_autoptr(AsImage) im = NULL;
@@ -82,7 +86,9 @@ add_icons (AsApp *app,
 	pixbuf = g_object_ref (as_image_get_pixbuf (im));
 
 	/* save in target directory */
-	name = g_strdup_printf ("%s.png", as_app_get_id_filename (AS_APP (app)));
+	name = g_strdup_printf ("%s-%s.png", as_app_get_id_filename (AS_APP (app)),
+				as_image_get_md5(im) );
+	name_generic = g_strdup_printf ("%s.png", as_app_get_id_filename (AS_APP (app)));
 
 	icon = as_icon_new ();
 	as_icon_set_pixbuf (icon, pixbuf);
@@ -108,6 +114,14 @@ add_icons (AsApp *app,
 	/* TRANSLATORS: we've saving the icon file to disk */
 	g_print ("%s %s\n", _("Saving icon"), icon_path);
 	if (!gdk_pixbuf_save (pixbuf, icon_path, "png", error, NULL))
+		return FALSE;
+
+	/* Create non-unique symbolic link for backwards compatibility */
+	symlink_path = g_build_filename (icon_subdir, name_generic, NULL);
+	symlink_file = g_file_new_for_path (symlink_path);
+
+	g_unlink(symlink_path);
+	if (!g_file_make_symbolic_link (symlink_file, name, NULL, error))
 		return FALSE;
 
 	/* try to get a HiDPI icon */
@@ -138,7 +152,9 @@ add_icons (AsApp *app,
 	as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_HI_DPI_ICON);
 
 	/* save icon */
-	name_hidpi = g_strdup_printf ("%s.png", as_app_get_id_filename (AS_APP (app)));
+	name_hidpi = g_strdup_printf ("%s-%s.png", as_app_get_id_filename (AS_APP (app)),
+				      as_image_get_md5(im) );
+
 	icon_hidpi = as_icon_new ();
 	as_icon_set_pixbuf (icon_hidpi, pixbuf_hidpi);
 	as_icon_set_name (icon_hidpi, name_hidpi);
@@ -163,6 +179,15 @@ add_icons (AsApp *app,
 	g_print ("%s %s\n", _("Saving icon"), icon_path_hidpi);
 	if (!gdk_pixbuf_save (pixbuf_hidpi, icon_path_hidpi, "png", error, NULL))
 		return FALSE;
+
+	/* Create non-unique symbolic link for backwards compatibility */
+	symlink_path = g_build_filename (icon_subdir_hidpi, name_generic, NULL);
+	symlink_file = g_file_new_for_path (symlink_path);
+
+	g_unlink(symlink_path);
+	if (!g_file_make_symbolic_link (symlink_file, name, NULL, error))
+		return FALSE;
+
 	return TRUE;
 }
 
