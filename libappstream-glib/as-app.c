@@ -525,7 +525,6 @@ as_app_init (AsApp *app)
 	priv->urls = g_hash_table_new_full (g_str_hash, g_str_equal,
 					    (GDestroyNotify) as_ref_string_unref,
 					    (GDestroyNotify) as_ref_string_unref);
-	g_mutex_init (&priv->unique_id_mutex);
 	priv->token_cache = g_hash_table_new_full (g_str_hash, g_str_equal,
 						   (GDestroyNotify) as_ref_string_unref,
 						   g_free);
