@@ -22,6 +22,9 @@
   <url type="bugtracker">www.dave.org</url>
   <updatecontact></updatecontact>
   <categories><category>Game</category></categories>
+  <launchable type="desktop-id">test.desktop</launchable>
+  <launchable type="desktop">test.desktop</launchable>
+  <launchable type="desktop-id"></launchable>
 
   <xxx>This is not a valid tag</xxx>
   <releases>

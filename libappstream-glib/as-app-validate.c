@@ -1179,6 +1179,35 @@ as_app_validate_check_id (AsAppValidateHelper *helper, const gchar *id)
 	}
 }
 
+static void
+as_app_validate_launchables (AsApp *app, AsAppValidateHelper *helper)
+{
+	GPtrArray *launchables = as_app_get_launchables (app);
+
+	/* launchable isn't required */
+	if (launchables == NULL)
+		return;
+
+	/* check each launchable in the file */
+	for (guint j = 0; j < launchables->len; j++) {
+		AsLaunchable *tmp = g_ptr_array_index (launchables, j);
+
+		if (as_launchable_get_kind (tmp) == AS_LAUNCHABLE_KIND_UNKNOWN) {
+			ai_app_validate_add (helper,
+			     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
+			     "<launchable> has invalid type attribute");
+			continue;
+		}
+
+		if (as_launchable_get_value (tmp) == NULL) {
+			ai_app_validate_add (helper,
+			     AS_PROBLEM_KIND_VALUE_MISSING,
+			     "<launchable> missing value");
+			continue;
+		}
+	}
+}
+
 /**
  * as_app_validate:
  * @app: a #AsApp instance.
@@ -1589,6 +1618,9 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 
 	/* icons */
 	as_app_validate_icons (app, helper);
+
+	/* launchables */
+	as_app_validate_launchables (app, helper);
 
 	/* releases */
 	if (!as_app_validate_releases (app, helper, error))
