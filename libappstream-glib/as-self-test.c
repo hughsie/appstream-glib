@@ -2433,7 +2433,11 @@ as_test_app_validate_file_bad_func (void)
 				    "<release> timestamp is in the future");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
 				    "<id> has invalid character");
-	g_assert_cmpint (probs->len, ==, 21);
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
+				    "<launchable> has invalid type attribute");
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_VALUE_MISSING,
+				    "<launchable> missing value");
+	g_assert_cmpint (probs->len, ==, 23);
 
 	/* again, harder */
 	probs2 = as_app_validate (app, AS_APP_VALIDATE_FLAG_STRICT, &error);
@@ -2441,7 +2445,7 @@ as_test_app_validate_file_bad_func (void)
 	g_assert (probs2 != NULL);
 	as_test_app_validate_check (probs2, AS_PROBLEM_KIND_TAG_INVALID,
 				    "XML data contains unknown tag");
-	g_assert_cmpint (probs2->len, ==, 35);
+	g_assert_cmpint (probs2->len, ==, 37);
 }
 
 static void
