@@ -1,0 +1,1073 @@
+# Croatian translation for appstream-glib.
+# Copyright (C) 2020 appstream-glib's COPYRIGHT HOLDER
+# This file is distributed under the same license as the appstream-glib package.
+# Milo Ivir <mail@milotype.de>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: appstream-glib\n"
+"Report-Msgid-Bugs-To: https://github.com/hughsie/appstream-glib/issues\n"
+"POT-Creation-Date: 2020-06-13 15:24+0000\n"
+"PO-Revision-Date: 2020-06-14 18:20+0200\n"
+"Language-Team: Croatian <hr@li.org>\n"
+"Language: hr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Last-Translator: Milo Ivir <mail@milotype.de>\n"
+"X-Generator: Poedit 2.3.1\n"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:76 client/as-compose.c:326 client/as-util.c:4429
+msgid "Show extra debugging information"
+msgstr "Prikaži dodatne podatke otklanjanja grešaka"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:79
+msgid "Add a cache ID to each component"
+msgstr "Dodaj ID oznaku predmemorije svakoj komponenti"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:82
+msgid "Include failed results in the output"
+msgstr "Uključi neuspjele rezultate u izlaznom rezultatu"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:85
+msgid "Add HiDPI icons to the tarball"
+msgstr "Dodaj HiDPI ikone tar-arhivi"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:88
+msgid "Add encoded icons to the XML"
+msgstr "Dodaj kodirane ikone XML-u"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:91
+msgid "Do not compress the icons into a tarball"
+msgstr "Ne komprimiraj ikone u tar-arhivu"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:94
+msgid "Set the logging directory"
+msgstr "Postavi mapu za log-zapise"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:97
+msgid "Set the packages directory"
+msgstr "Postavi mapu za pakete"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:100
+msgid "Set the temporary directory"
+msgstr "Postavi mapu za privremene podatke"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:103 client/as-compose.c:332
+msgid "Set the output directory"
+msgstr "Postavi mapu za rezultate"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:106 client/as-compose.c:335
+msgid "Set the icons directory"
+msgstr "Postavi mapu za ikone"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:109
+msgid "Set the cache directory"
+msgstr "Postavi mapu za predmemoriju"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:112 client/as-compose.c:344
+msgid "Set the basenames of the output files"
+msgstr "Postavi osnovna imena za datoteke rezultata"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:115 client/as-compose.c:338
+msgid "Set the origin name"
+msgstr "Postavi izvorno ime"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:118
+msgid "Set the number of threads"
+msgstr "Postavi broj tokova (threads)"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:121 client/as-compose.c:341
+msgid "Set the minimum icon size in pixels"
+msgstr "Postavi najmanju veličinu ikone u pikselima"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:124
+msgid "Set the old metadata location"
+msgstr "Postavi staro mjesto metapodataka"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:127
+msgid "Ignore certain types of veto"
+msgstr "Zanemari određene vrste sprečavanja"
+
+#. TRANSLATORS: error message
+#: client/as-builder.c:141 client/as-compose.c:358 client/as-util.c:4714
+msgid "Failed to parse arguments"
+msgstr "Neuspjela obrada argumenata"
+
+#. TRANSLATORS: error message
+#: client/as-builder.c:246
+msgid "Failed to set up builder"
+msgstr "Neuspjelo postavljanje alata za gradnju"
+
+#. TRANSLATORS: error message
+#: client/as-builder.c:265
+msgid "Failed to open packages"
+msgstr "Neuspjelo otvaranje paketa"
+
+#. TRANSLATORS: information message
+#: client/as-builder.c:275
+msgid "Scanning packages..."
+msgstr "Paketi se pretražuju …"
+
+#. TRANSLATORS: error message
+#: client/as-builder.c:285
+msgid "Failed to add package"
+msgstr "Neuspjelo dodavanje paketa"
+
+#. TRANSLATORS: information message
+#: client/as-builder.c:291
+#, c-format
+msgid "Parsed %u/%u files..."
+msgstr "Obrađene datoteke %u/%u …"
+
+#. TRANSLATORS: error message
+#: client/as-builder.c:301
+msgid "Failed to generate metadata"
+msgstr "Neuspjelo generiranje metapodataka"
+
+#. success
+#. TRANSLATORS: information message
+#: client/as-builder.c:308 client/as-compose.c:537
+msgid "Done!"
+msgstr "Gotovo!"
+
+#. TRANSLATORS: we've saving the icon file to disk
+#: client/as-compose.c:109 client/as-compose.c:163
+msgid "Saving icon"
+msgstr "Ikona se sprema"
+
+#. TRANSLATORS: command line option
+#: client/as-compose.c:329
+msgid "Set the prefix"
+msgstr "Postavi prefiks"
+
+#. TRANSLATORS: we're generating the AppStream data
+#: client/as-compose.c:401
+msgid "Processing application"
+msgstr "Program se obrađuje"
+
+#. TRANSLATORS: the .appdata.xml file could not
+#. * be loaded
+#: client/as-compose.c:407
+msgid "Error loading AppData file"
+msgstr "Greška prilikom učitavanja AppData datoteke"
+
+#. TRANSLATORS: the .mo files could not be parsed
+#: client/as-compose.c:420
+msgid "Error parsing translations"
+msgstr "Greška prilikom obrade prijevoda"
+
+#. TRANSLATORS: we could not auto-add the kudo
+#: client/as-compose.c:431
+msgid "Error parsing kudos"
+msgstr "Greška prilikom obrade zahvala"
+
+#. TRANSLATORS: we could not auto-add the provides
+#: client/as-compose.c:442
+msgid "Error parsing provides"
+msgstr "Greška prilikom obrade pružanja"
+
+#. TRANSLATORS: not a valid desktop filename
+#: client/as-compose.c:465
+msgid "Invalid desktop filename"
+msgstr "Neispravno ime desktop datoteke"
+
+#. TRANSLATORS: the .desktop file could not
+#. * be loaded
+#: client/as-compose.c:484
+msgid "Error loading desktop file"
+msgstr "Greška prilikom učitavanja desktop datoteke „%s”: %s"
+
+#. TRANSLATORS: this is when the folder could
+#. * not be created
+#: client/as-compose.c:512
+msgid "Error creating output directory"
+msgstr "Greška prilikom stvaranja mape za rezultate"
+
+#. TRANSLATORS: we've saving the XML file to disk
+#: client/as-compose.c:521
+msgid "Saving AppStream"
+msgstr "AppStream se sprema"
+
+#. TRANSLATORS: this is when the destination file
+#. * cannot be saved for some reason
+#: client/as-compose.c:531
+msgid "Error saving AppStream file"
+msgstr "Greška prilikom spremanja AppData datoteke"
+
+#. TRANSLATORS: this is a command alias
+#: client/as-util.c:93
+#, c-format
+msgid "Alias to %s"
+msgstr "Alias za %s"
+
+#: client/as-util.c:175
+msgid "Command not found, valid commands are:"
+msgstr "Naredba nije pronađena, ispravne naredbe su:"
+
+#. TRANSLATORS: any manual changes required?
+#. * also note: FIXME is a hardcoded string
+#: client/as-util.c:467
+msgid "Please review the file and fix any 'FIXME' items"
+msgstr "Pregledaj datoteku i ispravi sve „FIXME” elemente"
+
+#. TRANSLATORS: information message
+#: client/as-util.c:485
+msgid "Old API version"
+msgstr "Stara API verzija"
+
+#. TRANSLATORS: information message
+#: client/as-util.c:497
+msgid "New API version"
+msgstr "Nova verzija API sučelja"
+
+#: client/as-util.c:516
+msgid "Not enough arguments, expected old.xml new.xml version"
+msgstr "Nedovoljan broj argumenata, očekuje se old.xml new.xml verzija"
+
+#. TRANSLATORS: the %s and %s are file types,
+#. * e.g. "appdata" to "appstream"
+#: client/as-util.c:552
+#, c-format
+msgid "Conversion %s to %s is not implemented"
+msgstr "Pretvaranje %s u %s nije implementirano"
+
+#: client/as-util.c:569
+msgid "Not enough arguments, expected file.xml"
+msgstr "Nedovoljan broj argumenata, očekuje se file.xml"
+
+#. TRANSLATORS: %s is a file type,
+#. * e.g. 'appdata'
+#: client/as-util.c:595
+#, c-format
+msgid "File format '%s' cannot be upgraded"
+msgstr "Nije moguće nadograditi datotečni format „%s”"
+
+#. TRANSLATORS: not a recognised file type
+#: client/as-util.c:638 client/as-util.c:1038 client/as-util.c:1139
+msgid "Format not recognised"
+msgstr "Format nije prepoznat"
+
+#. TRANSLATORS: probably wrong XML
+#: client/as-util.c:1979
+msgid "No desktop applications found"
+msgstr "Nije pronađen niti jedan desktop program"
+
+#. TRANSLATORS: the file is valid
+#: client/as-util.c:2711 client/as-util.c:2928
+msgid "OK"
+msgstr "U redu"
+
+#. list failures
+#: client/as-util.c:2716 client/as-util.c:2920
+msgid "FAILED"
+msgstr "NEUSPJELO"
+
+#: client/as-util.c:2812
+msgid "Validation failed"
+msgstr "Neuspjela provjera"
+
+#: client/as-util.c:2856
+msgid "Validation of files failed"
+msgstr "Provjera datoteka nije uspjela"
+
+#: client/as-util.c:2908
+#, c-format
+msgid "Cannot validate version of file format '%s'"
+msgstr "Nije moguće provjeriti verziju datotečnog formata „%s”"
+
+#: client/as-util.c:2924
+msgid "Version validation failed"
+msgstr "Neuspjela provjera verzija"
+
+#: client/as-util.c:2976
+msgid "Version validation of files failed"
+msgstr "Provjera verzija datoteka nije uspjela"
+
+#. TRANSLATORS: application was removed
+#: client/as-util.c:4076
+msgid "Removed"
+msgstr "Uklonjeno"
+
+#. TRANSLATORS: application was added
+#: client/as-util.c:4089
+msgid "Added"
+msgstr "Dodano"
+
+#. TRANSLATORS: this is when a device ctrl+c's a watch
+#: client/as-util.c:4372
+msgid "Cancelled"
+msgstr "Prekinuto"
+
+#. TRANSLATORS: this is the --nonet argument
+#: client/as-util.c:4426
+msgid "Do not use network access"
+msgstr "Nemoj koristiti mrežni pristup"
+
+#. TRANSLATORS: command line option
+#: client/as-util.c:4432
+msgid "Show version"
+msgstr "Prikaži verziju"
+
+#. TRANSLATORS: command line option
+#: client/as-util.c:4435
+msgid "Enable profiling"
+msgstr "Aktiviraj profiliranje"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4467
+msgid "Converts AppStream metadata from one version to another"
+msgstr "Pretvara AppStream metapodatke iz jedne verzije u jednu drugu"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4473
+msgid "Upgrade AppData metadata to the latest version"
+msgstr "Nadogradi AppData metapodatke na najnoviju verziju"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4479
+msgid "Creates an example AppData file from a .desktop file"
+msgstr "Stvara primjer AppData datoteke iz .desktop datoteke"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4485
+msgid "Dumps the applications in the AppStream metadata"
+msgstr "Izdvaja programe u AppStream metapodacima"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4491
+msgid "Search for AppStream applications"
+msgstr "Traži AppStream programe"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4497
+msgid "Search for AppStream applications by package name"
+msgstr "Traži AppStream programe na osnovi imena paketa"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4503
+msgid "Show all installed AppStream applications"
+msgstr "Prikaži sve AppStream programe"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4509
+msgid "Search for AppStream applications by category name"
+msgstr "Traži AppStream programe na osnovi imena kategorije"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4515
+msgid "Display application search tokens"
+msgstr "Prikaži tokene za traženje programa"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4521
+msgid "Installs AppStream metadata"
+msgstr "Instalira AppStream metapodatke"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4527
+msgid "Installs AppStream metadata with new origin"
+msgstr "Instalira AppStream metapodatke s novim izvorom"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4533
+msgid "Uninstalls AppStream metadata"
+msgstr "Deinstalira AppStream metapodatke"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4539
+msgid "Create an HTML status page"
+msgstr "Stvori HTML stranicu sa stanjem"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4545
+msgid "Create an CSV status document"
+msgstr "Stvori CSV dokument sa stanjem"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4551
+msgid "Create an HTML matrix page"
+msgstr "Stvori HTML stranicu s tablicom"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4557
+msgid "List applications not backed by packages"
+msgstr "Nabroji programe, koje paketi ne pokrivaju"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4563
+msgid "Validate an AppData or AppStream file"
+msgstr "Provjeri jednu AppData ili AppStream datoteku"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4569
+msgid "Validate an AppData or AppStream file (relaxed)"
+msgstr "Provjeri jednu AppData ili AppStream datoteku (ne strogo)"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4575
+msgid "Exports the agreement to text"
+msgstr "Izvozi ugovor u tekst"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4581
+msgid "Validate an AppData or AppStream file (strict)"
+msgstr "Provjeri jednu AppData ili AppStream datoteku (strogo)"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4587
+msgid "Validate that AppData file includes the specified release"
+msgstr "Provjeri, da AppData datoteka sadrži navedeno izdanje"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4593
+msgid "Convert an AppData file to NEWS format"
+msgstr "Pretvori jednu AppData datoteku u NEWS format"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4599
+msgid "Convert an NEWS file to AppData format"
+msgstr "Pretvori jednu NEWS datoteku u AppData format"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4605
+msgid "Check installed application data"
+msgstr "Provjeri podatke instaliranog programa"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4611
+msgid "check an installed application"
+msgstr "provjeri instalirani program"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4617
+msgid "Replace screenshots in source file"
+msgstr "Zamijeni snimku ekrana u izvornoj datoteci"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4623
+msgid "Add a provide to a source file"
+msgstr "Dodaj pružanje (provide) jednoj izvornoj datoteci"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4629
+msgid "Add a language to a source file"
+msgstr "Dodaj jezik jednoj izvornoj datoteci"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4635
+msgid "Mirror upstream screenshots"
+msgstr "Zrcali snimke ekrana izvornog repozitorija"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4641
+msgid "Incorporate extra metadata from an external file"
+msgstr "Uključi dodatne metapodatke iz jedne vanjske datoteke"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4647
+msgid "Compare the contents of two AppStream files"
+msgstr "Usporedi sadržaj dviju AppStream datoteka"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4653
+msgid "Generate a GUID from an input string"
+msgstr "Generiraj GUID iz jednog niza unosa"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4659
+msgid "Modify an AppData file"
+msgstr "Promijeni jednu AppData datoteku"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4665
+msgid "Split an AppStream file to AppData and Metainfo files"
+msgstr "Podijeli AppStream datoteku u AppData i Metainfo datoteke"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4671
+msgid "Merge several files to an AppStream file"
+msgstr "Sjedini višebrojne datoteke u jednu AppStream datoteku"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4677
+msgid "Import a file to AppStream markup"
+msgstr "Uvezi jednu datoteku u AppStream označavanje"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4683
+msgid "Watch AppStream locations for changes"
+msgstr "Prati AppStream mjesta za promjene"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4689
+msgid "Compare version numbers"
+msgstr "Usporedi brojeve verzija"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4695
+msgid "Test a regular expression"
+msgstr "Testiraj regularni izraz"
+
+#. TRANSLATORS: program name
+#: client/as-util.c:4708
+msgid "AppStream Utility"
+msgstr "AppStream – uslužni program"
+
+#: client/as-util.c:4732
+msgid "Version:"
+msgstr "Verzija:"
+
+#. TRANSLATORS: This is the formatting of English and localized name
+#. * of the rating e.g. "Adults Only (solo adultos)"
+#: libappstream-glib/as-content-rating.c:261
+#, c-format
+msgid "%s (%s)"
+msgstr "%s (%s)"
+
+#: libappstream-glib/as-content-rating.c:407
+msgid "General"
+msgstr "Opće"
+
+#: libappstream-glib/as-content-rating.c:416
+msgid "ALL"
+msgstr "SVE"
+
+#: libappstream-glib/as-content-rating.c:420
+#: libappstream-glib/as-content-rating.c:496
+msgid "Adults Only"
+msgstr "Samo za odrasle osobe"
+
+#: libappstream-glib/as-content-rating.c:422
+#: libappstream-glib/as-content-rating.c:495
+msgid "Mature"
+msgstr "Zrele osobe"
+
+#: libappstream-glib/as-content-rating.c:424
+#: libappstream-glib/as-content-rating.c:494
+msgid "Teen"
+msgstr "Tinejdžeri"
+
+#: libappstream-glib/as-content-rating.c:426
+#: libappstream-glib/as-content-rating.c:493
+msgid "Everyone 10+"
+msgstr "Svatko stariji od 10 godina"
+
+#: libappstream-glib/as-content-rating.c:428
+#: libappstream-glib/as-content-rating.c:492
+msgid "Everyone"
+msgstr "Svatko"
+
+#: libappstream-glib/as-content-rating.c:430
+#: libappstream-glib/as-content-rating.c:491
+msgid "Early Childhood"
+msgstr "Rano djetinjstvo"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:775
+msgid "No cartoon violence"
+msgstr "Bez animiranog nasilja"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:777
+msgid "Cartoon characters in unsafe situations"
+msgstr "Animirani likovi u nesigurnim situacijama"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:779
+msgid "Cartoon characters in aggressive conflict"
+msgstr "Animirani likovi u agresivnim konfliktnim situacijama"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:781
+msgid "Graphic violence involving cartoon characters"
+msgstr "Grafički prikaz nasilja koje uključuje animirane likove"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:786
+msgid "No fantasy violence"
+msgstr "Bez izmišljenog nasilja"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:788
+msgid "Characters in unsafe situations easily distinguishable from reality"
+msgstr "Likovi u nesigurnim situacijama, koje se lako prepoznaju kao nestvarne"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:790
+msgid "Characters in aggressive conflict easily distinguishable from reality"
+msgstr "Likovi u agresivnim konfliktnim situacijama, koje se lako prepoznaju kao nestvarne"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:792
+msgid "Graphic violence easily distinguishable from reality"
+msgstr "Grafički prikaz nasilja, koje se lako prepoznaje kao nestvarno"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:797
+msgid "No realistic violence"
+msgstr "Bez realističnog nasilja"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:799
+msgid "Mildly realistic characters in unsafe situations"
+msgstr "Manje realistični likovi u nesigurnim situacijama"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:801
+msgid "Depictions of realistic characters in aggressive conflict"
+msgstr "Prikazi realističnih likova u agresivnim konfliktnim situacijama"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:803
+msgid "Graphic violence involving realistic characters"
+msgstr "Grafički prikaz nasilja, koje uključuje realistične likove"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:808
+msgid "No bloodshed"
+msgstr "Bez krvoprolića"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:810
+msgid "Unrealistic bloodshed"
+msgstr "Nerealistično krvoproliće"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:812
+msgid "Realistic bloodshed"
+msgstr "Realistično krvoproliće"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:814
+msgid "Depictions of bloodshed and the mutilation of body parts"
+msgstr "Prikazi krvoprolića i osakaćenih tijela"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:819
+msgid "No sexual violence"
+msgstr "Bez seksualnog nasilja"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:821
+msgid "Rape or other violent sexual behavior"
+msgstr "Silovanje ili drugo nasilno seksualno ponašanje"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:828
+msgid "No references to alcohol"
+msgstr "Bez spominjanja alkohola"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:830
+msgid "References to alcoholic beverages"
+msgstr "Spominjanje alkoholnih pića"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:832
+msgid "Use of alcoholic beverages"
+msgstr "Upotreba alkoholnih pića"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:838
+msgid "No references to illicit drugs"
+msgstr "Bez spominjanja nezakonitih droga"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:840
+msgid "References to illicit drugs"
+msgstr "Spominjanje nezakonitih droga"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:842
+msgid "Use of illicit drugs"
+msgstr "Upotreba nezakonitih droga"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:848
+msgid "No references to tobacco products"
+msgstr "Bez spominjanja duhanskih proizvoda"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:850
+msgid "References to tobacco products"
+msgstr "Spominjanje duhanskih proizvoda"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:852
+msgid "Use of tobacco products"
+msgstr "Upotreba duhanskih proizvoda"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:858
+msgid "No nudity of any sort"
+msgstr "Bez golotinje"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:860
+msgid "Brief artistic nudity"
+msgstr "Kratka umjetnička golotinja"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:862
+msgid "Prolonged nudity"
+msgstr "Duži prikaz golotinje"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:868
+msgid "No references to or depictions of sexual nature"
+msgstr "Bez spominjanja ili prikaza seksa"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:870
+msgid "Provocative references or depictions"
+msgstr "Spominjanje ili prikaz provokativnog karaktera"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:872
+msgid "Sexual references or depictions"
+msgstr "Spominjanje ili prikaz seksa"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:874
+msgid "Graphic sexual behavior"
+msgstr "Grafički prikaz seksa"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:879
+msgid "No profanity of any kind"
+msgstr "Bez vulgarnosti bilo koje vrste"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:881
+msgid "Mild or infrequent use of profanity"
+msgstr "Blaga ili rijetka upotreba vulgarnosti"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:883
+msgid "Moderate use of profanity"
+msgstr "Poneka upotreba vulgarnosti"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:885
+msgid "Strong or frequent use of profanity"
+msgstr "Jaka ili česta upotreba vulgarnosti"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:890
+msgid "No inappropriate humor"
+msgstr "Bez nepristojnog humora"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:892
+msgid "Slapstick humor"
+msgstr "Smiješni humor"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:894
+msgid "Vulgar or bathroom humor"
+msgstr "Vulgarni humor"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:896
+msgid "Mature or sexual humor"
+msgstr "Odrasli ili seksualni humor"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:901
+msgid "No discriminatory language of any kind"
+msgstr "Bez diskriminirajućeg jezika bilo koje vrste"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:903
+msgid "Negativity towards a specific group of people"
+msgstr "Negativnost prema određenoj skupini ljudi"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:905
+msgid "Discrimination designed to cause emotional harm"
+msgstr "Diskriminacija sa ciljem nanošenja emocionalne štete"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:907
+msgid "Explicit discrimination based on gender, sexuality, race or religion"
+msgstr "Izričita diskriminacija na temelju spola, seksualnosti, rase ili vjere"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:912
+msgid "No advertising of any kind"
+msgstr "Bez oglasa bilo koje vrste"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:914
+msgid "Product placement"
+msgstr "Smještanje proizvoda"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:916
+msgid "Explicit references to specific brands or trademarked products"
+msgstr "Izričito spominjanje određenih marki ili proizvoda zaštićene marke"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:918
+msgid "Users are encouraged to purchase specific real-world items"
+msgstr "Korisnike se potiče na kupnju određenih stvarnih predmeta"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:923
+msgid "No gambling of any kind"
+msgstr "Bez kockanja bilo koje vrste"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:925
+msgid "Gambling on random events using tokens or credits"
+msgstr "Sporadično kockanje sa žetonima ili kreditima"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:927
+msgid "Gambling using “play” money"
+msgstr "Kockanje s lažnim novcem"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:929
+msgid "Gambling using real money"
+msgstr "Kockanje s pravim novcem"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:934
+msgid "No ability to spend money"
+msgstr "Bez mogućnosti trošenja novca"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:936
+msgid "Users are encouraged to donate real money"
+msgstr "Korisnike se potiče na doniranje pravog novca"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:939
+msgid "Ability to spend real money in-app"
+msgstr "Mogućnost trošenja novca unutar programa"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:944
+msgid "No way to chat with other users"
+msgstr "Bez mogućnosti razgovaranja s ostalim korisnicima"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:946
+msgid "User-to-user interactions without chat functionality"
+msgstr "Međukorisnička interakcija bez mogućnosti razgovaranja"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:948
+msgid "Moderated chat functionality between users"
+msgstr "Poneka mogućnost razgovaranja s korisnicima"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:950
+msgid "Uncontrolled chat functionality between users"
+msgstr "Neograničena mogućnost razgovaranja s korisnicima"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:955
+msgid "No way to talk with other users"
+msgstr "Bez mogućnosti razgovaranja s ostalim korisnicima"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:957
+msgid "Uncontrolled audio or video chat functionality between users"
+msgstr "Neograničena mogućnost razgovaranja s korisnicima putem audio- ili videokanala"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:964
+msgid "No sharing of social network usernames or email addresses"
+msgstr "Bez dijeljenja korisničkih imena društvenih mreža ili adresa e-pošte"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:966
+msgid "Sharing social network usernames or email addresses"
+msgstr "Dijeljenje korisničkih imena društvenih mreža ili adresa e-pošte"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:973
+msgid "No sharing of user information with third parties"
+msgstr "Bez dijeljenja korisničkih podataka sa sporednim strankama"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:975
+msgid "Checking for the latest application version"
+msgstr "Traženje najnovije verzije programa"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:977
+msgid "Sharing diagnostic data that does not let others identify the user"
+msgstr "Dijeljenje dijagnostičkih podataka bez mogućnosti identificiranja korisnika"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:979
+msgid "Sharing information that lets others identify the user"
+msgstr "Dijeljenje podataka bez mogućnosti identificiranja korisnika"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:984
+msgid "No sharing of physical location with other users"
+msgstr "Bez dijeljenja stvarne lokacije s ostalim korisnicima"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:986
+msgid "Sharing physical location with other users"
+msgstr "Dijeljenje stvarne lokacije s ostalim korisnicima"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:995
+msgid "No references to homosexuality"
+msgstr "Bez spominjanja homoseksualnosti"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:997
+msgid "Indirect references to homosexuality"
+msgstr "Neizravno spominjanje homoseksualnosti"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:999
+msgid "Kissing between people of the same gender"
+msgstr "Ljubljenje između osoba istog spola"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1001
+msgid "Graphic sexual behavior between people of the same gender"
+msgstr "Grafički prikaz seksa između osoba istog spola"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1006
+msgid "No references to prostitution"
+msgstr "Bez spominjanja prostitucije"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1008
+msgid "Indirect references to prostitution"
+msgstr "Neizravno spominjanje prostitucije"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1010
+msgid "Direct references to prostitution"
+msgstr "Izravno spominjanje prostitucije"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1012
+msgid "Graphic depictions of the act of prostitution"
+msgstr "Grafički prikazi prostitucije"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1017
+msgid "No references to adultery"
+msgstr "Bez spominjanja preljuba"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1019
+msgid "Indirect references to adultery"
+msgstr "Neizravno spominjanje preljuba"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1021
+msgid "Direct references to adultery"
+msgstr "Izravno spominjanje preljuba"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1023
+msgid "Graphic depictions of the act of adultery"
+msgstr "Grafički prikazi preljuba"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1028
+msgid "No sexualized characters"
+msgstr "Bez seksualiziranih likova"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1031
+msgid "Scantily clad human characters"
+msgstr "Oskudno obučeni ljudski likovi"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1033
+msgid "Overtly sexualized human characters"
+msgstr "Jasno vidljivi seksualizirani ljudski likovi"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1038
+msgid "No references to desecration"
+msgstr "Bez spominjanja skrnavljenja"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1040
+msgid "Depictions of or references to historical desecration"
+msgstr "Prikazi ili spominjanje skrnavljenja u povijesti"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1042
+msgid "Depictions of modern-day human desecration"
+msgstr "Prikazi suvremenog skrnavljenja osoba"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1044
+msgid "Graphic depictions of modern-day desecration"
+msgstr "Grafički prikazi suvremenog skrnavljenja"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1049
+msgid "No visible dead human remains"
+msgstr "Bez vidljivih ostataka mrtvih osoba"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1051
+msgid "Visible dead human remains"
+msgstr "Vidljivi ostaci mrtvih osoba"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1053
+msgid "Dead human remains that are exposed to the elements"
+msgstr "Ostaci mrtvih osoba koji su izloženi vremenskim uvjetima"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1055
+msgid "Graphic depictions of desecration of human bodies"
+msgstr "Grafički prikazi suvremenog skrnavljenja ljudskih tijela"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1060
+msgid "No references to slavery"
+msgstr "Bez spominjanje ropstva"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1062
+msgid "Depictions of or references to historical slavery"
+msgstr "Prikazi ili spominjanje ropstva u povijesti"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1064
+msgid "Depictions of modern-day slavery"
+msgstr "Prikazi suvremenog ropstva"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1066
+msgid "Graphic depictions of modern-day slavery"
+msgstr "Grafički prikazi suvremenog ropstva"
