@@ -1721,7 +1721,6 @@ as_node_get_localized (const AsNode *node, const gchar *key)
 	AsNodeData *data;
 	AsRefString *data_unlocalized;
 	AsRefString *xml_lang;
-	const gchar *data_localized;
 	GHashTable *hash = NULL;
 	AsNode *tmp;
 	g_autoptr(AsRefString) xml_lang_c = as_ref_string_new_static ("C");
@@ -1747,13 +1746,9 @@ as_node_get_localized (const AsNode *node, const gchar *key)
 		if (g_strcmp0 (xml_lang, "x-test") == 0)
 			continue;
 
-		/* avoid storing identical strings */
-		data_localized = data->cdata;
-		if (xml_lang != NULL && g_strcmp0 (data_unlocalized, data_localized) == 0)
-			continue;
 		g_hash_table_insert (hash,
 				     as_ref_string_ref (xml_lang != NULL ? xml_lang : xml_lang_c),
-				     (gpointer) data_localized);
+				     (gpointer) data->cdata);
 	}
 	return hash;
 }
