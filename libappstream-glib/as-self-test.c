@@ -2631,7 +2631,7 @@ as_test_app_validate_style_func (void)
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<content_rating> required");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
-				    "<release> required");
+				    "<releases> required");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
 				    "<description> required");
 	g_assert_cmpint (probs->len, ==, 12);

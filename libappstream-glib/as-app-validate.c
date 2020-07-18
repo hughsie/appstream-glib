@@ -932,7 +932,7 @@ as_app_validate_kudos (AsApp *app, AsAppValidateHelper *helper, GError **error)
 }
 
 static gboolean
-as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **error)
+as_app_validate_releases (AsApp *app, AsAppProblems problems, AsAppValidateHelper *helper, GError **error)
 {
 	GPtrArray *releases;
 	AsFormat *format;
@@ -958,7 +958,8 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 	if (require_release && releases->len == 0) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_TAG_MISSING,
-				     "<release> required");
+				     (problems & AS_APP_PROBLEM_MISSING_RELEASES_TAG) > 0 ?
+				         "<releases> required" : "<release> required in <releases>");
 		return TRUE;
 	}
 	for (guint i = 0; i < releases->len; i++) {
@@ -1623,7 +1624,7 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 	as_app_validate_launchables (app, helper);
 
 	/* releases */
-	if (!as_app_validate_releases (app, helper, error))
+	if (!as_app_validate_releases (app, problems, helper, error))
 		return NULL;
 
 	/* kudos */

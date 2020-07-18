@@ -477,6 +477,7 @@ as_app_init (AsApp *app)
 {
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	g_mutex_init (&priv->unique_id_mutex);
+	priv->problems = AS_APP_PROBLEM_MISSING_RELEASES_TAG;
 	priv->categories = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 	priv->compulsory_for_desktops = g_ptr_array_new_with_free_func ((GDestroyNotify) as_ref_string_unref);
 	priv->content_ratings = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -5275,6 +5276,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 
 	/* <releases> */
 	case AS_TAG_RELEASES:
+		priv->problems &= ~AS_APP_PROBLEM_MISSING_RELEASES_TAG;
 		if (!(flags & AS_APP_PARSE_FLAG_APPEND_DATA))
 			g_ptr_array_set_size (priv->releases, 0);
 		for (c = n->children; c != NULL; c = c->next) {
