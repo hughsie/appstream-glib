@@ -1,3 +1,19 @@
+Version 0.7.18
+~~~~~~~~~~~~~~
+Released: 2020-09-07
+
+New Features:
+ - Add content rating system APIs from gnome-software (Philip Withnall)
+ - Add "validate-version" command (Florian Müllner)
+
+Bugfixes:
+ - Allow timestamp in the future in validate-relax (Bartłomiej Piotrowski)
+ - Don't ignore localized strings that are the same as original (Isaque Galdino)
+ - Fix crash with invalid children of <ul/> (Fabian Vogt)
+ - Lower the OARS/CSM mapping of sex-homosexuality/intense (Philip Withnall)
+ - Properly initialize mutexes (Laurent Bigonville)
+ - Test launchable tags in validation (Ian McInerney)
+
 Version 0.7.17
 ~~~~~~~~~~~~~~
 Released: 2020-02-20
