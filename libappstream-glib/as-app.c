@@ -5731,6 +5731,18 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 			}
 			continue;
 		}
+		if (g_strcmp0 (tmp, "Launchable") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				for (c2 = c->children; c2 != NULL; c2 = c2->next) {
+					g_autoptr(AsLaunchable) launchable = NULL;
+					launchable = as_launchable_new ();
+					as_launchable_set_kind (launchable, as_launchable_kind_from_string (as_yaml_node_get_key (c)));
+					as_launchable_set_value (launchable, as_yaml_node_get_key (c2));
+					as_app_add_launchable (app, launchable);
+				}
+			}
+			continue;
+		}
 		if (g_strcmp0 (tmp, "Screenshots") == 0) {
 			for (c = n->children; c != NULL; c = c->next) {
 				g_autoptr(AsScreenshot) ss = NULL;
