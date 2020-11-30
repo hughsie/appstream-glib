@@ -5793,6 +5793,14 @@ as_app_node_parse_dep11 (AsApp *app, GNode *node,
 			}
 			continue;
 		}
+		if (g_strcmp0 (tmp, "Custom") == 0) {
+			for (c = n->children; c != NULL; c = c->next) {
+				as_app_add_metadata (app,
+						     as_yaml_node_get_key (c),
+						     as_yaml_node_get_value (c));
+			}
+			continue;
+		}
 	}
 	if (nonfatal_str != NULL) {
 		g_debug ("nonfatal warning from %s: %s",
