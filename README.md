@@ -16,7 +16,7 @@ What this library allows you to do:
  * Efficiently interface with more heavy-weight parsers like expat
 
 For more information about what AppStream is, please see the wiki here:
-http://www.freedesktop.org/wiki/Distributions/AppStream/
+https://www.freedesktop.org/wiki/Distributions/AppStream/
 
 Getting Started
 ---------------
