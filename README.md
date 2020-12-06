@@ -177,8 +177,8 @@ The current rules of inclusion are thus:
  * Application icon **MUST** be available in 48x48 or larger
  * Applications must have at least one main or additional category listed
    in the desktop file or supply an AppData file.
-   See http://standards.freedesktop.org/menu-spec/latest/apa.html and
-   http://standards.freedesktop.org/menu-spec/latest/apas02.html for the
+   See https://specifications.freedesktop.org/menu-spec/latest/apa.html and
+   https://specifications.freedesktop.org/menu-spec/latest/apas02.html for the
    full `Categories` list.
  * Codecs **MUST** have an AppData file
  * Input methods **MUST** have an AppData file
