@@ -655,11 +655,11 @@ as_util_appdata_to_news (AsUtilPrivate *priv, gchar **values, GError **error)
 
 			rel = g_ptr_array_index (releases, i);
 
-			/* print version with underline */
+			/* print version with Markdown underline */
 			version = g_strdup_printf ("Version %s", as_release_get_version (rel));
 			g_string_append_printf (str, "%s\n", version);
 			for (j = 0; version[j] != '\0'; j++)
-				g_string_append (str, "~");
+				g_string_append (str, "=");
 			g_string_append (str, "\n");
 
 			/* print release */
