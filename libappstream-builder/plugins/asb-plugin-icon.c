@@ -99,18 +99,14 @@ asb_plugin_icon_convert_cached (AsbPlugin *plugin,
 	}
 
 	/* save in target directory */
-	if (asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS)) {
-		name = g_strdup_printf ("%ix%i/%s.png",
-					64, 64,
-					as_app_get_id_filename (AS_APP (app)));
-	} else {
-		name = g_strdup_printf ("%s.png",
-					as_app_get_id_filename (AS_APP (app)));
-	}
+	name = g_strdup_printf ("%s.png",
+				as_app_get_id_filename (AS_APP (app)));
 	icon = as_icon_new ();
 	as_icon_set_pixbuf (icon, pixbuf);
 	as_icon_set_name (icon, name);
 	as_icon_set_kind (icon, AS_ICON_KIND_CACHED);
+	as_icon_set_width (icon, 64);
+	as_icon_set_height (icon, 64);
 	as_icon_set_prefix (icon, as_app_get_icon_path (AS_APP (app)));
 	as_app_add_icon (AS_APP (app), icon);
 
@@ -137,13 +133,12 @@ asb_plugin_icon_convert_cached (AsbPlugin *plugin,
 	as_app_add_kudo_kind (AS_APP (app), AS_KUDO_KIND_HI_DPI_ICON);
 
 	/* save icon */
-	name_hidpi = g_strdup_printf ("%ix%i/%s.png",
-				      128, 128,
-				      as_app_get_id_filename (AS_APP (app)));
 	icon_hidpi = as_icon_new ();
 	as_icon_set_pixbuf (icon_hidpi, pixbuf_hidpi);
-	as_icon_set_name (icon_hidpi, name_hidpi);
+	as_icon_set_name (icon_hidpi, name);
 	as_icon_set_kind (icon_hidpi, AS_ICON_KIND_CACHED);
+	as_icon_set_width (icon_hidpi, 128);
+	as_icon_set_height (icon_hidpi, 128);
 	as_icon_set_prefix (icon_hidpi, as_app_get_icon_path (AS_APP (app)));
 	as_app_add_icon (AS_APP (app), icon_hidpi);
 	return TRUE;

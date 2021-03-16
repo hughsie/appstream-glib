@@ -662,17 +662,14 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 		}
 
 		/* add icon */
-		if (asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS)) {
-			icon_filename = g_strdup_printf ("64x64/%s.png",
-							 as_app_get_id_filename (AS_APP (app)));
-		} else {
-			icon_filename = g_strdup_printf ("%s.png",
-							 as_app_get_id_filename (AS_APP (app)));
-		}
+		icon_filename = g_strdup_printf ("%s.png",
+						 as_app_get_id_filename (AS_APP (app)));
 		icon = as_icon_new ();
 		as_icon_set_kind (icon, AS_ICON_KIND_CACHED);
 		as_icon_set_name (icon, icon_filename);
 		as_icon_set_pixbuf (icon, pixbuf);
+		as_icon_set_width (icon, 64);
+		as_icon_set_height (icon, 64);
 		as_app_add_icon (AS_APP (app), icon);
 	}
 out:
