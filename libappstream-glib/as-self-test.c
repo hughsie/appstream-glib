@@ -2238,7 +2238,7 @@ as_test_app_validate_appdata_good_func (void)
 	g_assert_cmpstr (as_app_get_url_item (app, AS_URL_KIND_HOMEPAGE), ==,
 			 "http://www.gnome.org/projects/gnome-power-manager/");
 	g_assert_cmpstr (as_app_get_description (app, "C"), !=, NULL);
-	g_assert_cmpint (as_app_get_description_size (app), ==, 1);
+	g_assert_cmpint (g_hash_table_size (as_app_get_descriptions (app)), ==, 1);
 	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NO_NETWORK, &error);
 	g_assert_no_error (error);
 	g_assert (probs != NULL);
@@ -2357,7 +2357,7 @@ as_test_app_translated_func (void)
 	/* check success */
 	g_assert_cmpstr (as_app_get_description (app, "C"), ==, "<p>Awesome</p>");
 	g_assert_cmpstr (as_app_get_description (app, "pl"), ==, "<p>Asomeski</p>");
-	g_assert_cmpint (as_app_get_description_size (app), ==, 2);
+	g_assert_cmpint (g_hash_table_size (as_app_get_descriptions (app)), ==, 2);
 }
 
 static void
@@ -2380,7 +2380,7 @@ as_test_app_validate_file_bad_func (void)
 	g_assert (ret);
 
 	g_assert_cmpstr (as_app_get_description (app, "C"), !=, NULL);
-	g_assert_cmpint (as_app_get_description_size (app), ==, 1);
+	g_assert_cmpint (g_hash_table_size (as_app_get_descriptions (app)), ==, 1);
 
 	probs = as_app_validate (app, AS_APP_VALIDATE_FLAG_NONE, &error);
 	g_assert_no_error (error);

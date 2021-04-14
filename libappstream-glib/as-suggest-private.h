@@ -16,13 +16,16 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 GNode		*as_suggest_node_insert		(AsSuggest	*suggest,
 						 GNode		*parent,
 						 AsNodeContext	*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_suggest_node_parse		(AsSuggest	*suggest,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_suggest_node_parse_dep11	(AsSuggest	*suggest,
 						 GNode		*node,
 						 AsNodeContext	*ctx,

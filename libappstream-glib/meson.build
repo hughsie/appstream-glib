@@ -178,12 +178,15 @@ pkgg.generate(
 )
 
 selftest = executable(
-  'as-self-test', 'as-self-test.c',
+  'as-self-test',
+  sources : [
+    'as-self-test.c',
+    sources,
+  ],
   include_directories : include_directories('..'),
   dependencies : deps,
   c_args : cargs + ['-DTESTDIRSRC="@0@/../data/tests"'.format(meson.current_source_dir())]
                  + ['-DTESTDIRBUILD="@0@/../data/tests"'.format(meson.current_build_dir())],
-  link_with : asglib,
 )
 test('as-self-test', selftest)
 

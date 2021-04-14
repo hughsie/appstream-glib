@@ -18,9 +18,11 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 GNode		*as_agreement_section_node_insert	(AsAgreementSection	*agreement_section,
 							 GNode			*parent,
 							 AsNodeContext		*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_agreement_section_node_parse	(AsAgreementSection	*agreement_section,
 							 GNode			*node,
 							 AsNodeContext		*ctx,

@@ -16,13 +16,16 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 GNode		*as_review_node_insert		(AsReview	*review,
 						 GNode		*parent,
 						 AsNodeContext	*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_review_node_parse		(AsReview	*review,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_review_node_parse_dep11	(AsReview	*review,
 						 GNode		*node,
 						 AsNodeContext	*ctx,

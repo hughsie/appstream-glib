@@ -80,42 +80,58 @@ typedef enum {
 /* unique */
 #define AS_APP_UNIQUE_WILDCARD			"*"
 
+G_GNUC_INTERNAL
 AsAppProblems	 as_app_get_problems		(AsApp		*app);
+G_GNUC_INTERNAL
 guint		 as_app_get_name_size		(AsApp		*app);
+G_GNUC_INTERNAL
 guint		 as_app_get_comment_size	(AsApp		*app);
+G_GNUC_INTERNAL
 guint		 as_app_get_description_size	(AsApp		*app);
+G_GNUC_INTERNAL
 GPtrArray	*as_app_get_search_tokens	(AsApp		*app);
+G_GNUC_INTERNAL
 AsBundleKind	 as_app_get_bundle_kind		(AsApp		*app);
 
+G_GNUC_INTERNAL
 GNode		*as_app_node_insert		(AsApp		*app,
 						 GNode		*parent,
 						 AsNodeContext	*ctx);
+G_GNUC_INTERNAL
 gboolean	 as_app_node_parse		(AsApp		*app,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_app_node_parse_dep11	(AsApp		*app,
 						 GNode		*node,
 						 AsNodeContext	*ctx,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_app_parse_desktop_file	(AsApp		*app,
 						 const gchar	*filename,
 						 AsAppParseFlags flags,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_app_parse_desktop_data	(AsApp		*app,
 						 GBytes		*data,
 						 AsAppParseFlags flags,
 						 GError		**error);
+G_GNUC_INTERNAL
 gboolean	 as_app_parse_inf_file		(AsApp		*app,
 						 const gchar	*filename,
 						 AsAppParseFlags flags,
 						 GError		**error);
+G_GNUC_INTERNAL
 void		 as_app_set_stemmer		(AsApp		*app,
 						 AsStemmer	*stemmer);
+G_GNUC_INTERNAL
 void		 as_app_set_search_blacklist	(AsApp		*app,
 						 GHashTable	*search_blacklist);
+G_GNUC_INTERNAL
 void		 as_app_set_icon_path_rstr	(AsApp		*app,
 						 AsRefString	*rstr);
+G_GNUC_INTERNAL
 void		 as_app_set_origin_rstr		(AsApp		*app,
 						 AsRefString	*rstr);
 
