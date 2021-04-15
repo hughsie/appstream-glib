@@ -168,6 +168,7 @@ as_suggest_add_id (AsSuggest *suggest, const gchar *id)
 {
 	AsSuggestPrivate *priv = GET_PRIVATE (suggest);
 	g_return_if_fail (AS_IS_SUGGEST (suggest));
+	g_return_if_fail (id != NULL);
 	g_ptr_array_add (priv->ids, as_ref_string_new (id));
 }
 
@@ -233,7 +234,8 @@ as_suggest_node_parse (AsSuggest *suggest, GNode *node,
 	if (tmp != NULL)
 		as_suggest_set_kind (suggest, as_suggest_kind_from_string (tmp));
 	for (c = node->children; c != NULL; c = c->next) {
-		if (as_node_get_tag (c) == AS_TAG_ID)
+		if (as_node_get_tag (c) == AS_TAG_ID &&
+		    as_node_get_data (c) != NULL)
 			as_suggest_add_id (suggest, as_node_get_data (c));
 	}
 	return TRUE;

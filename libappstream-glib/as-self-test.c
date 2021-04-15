@@ -4190,6 +4190,26 @@ as_test_store_versions_func (void)
 }
 
 static void
+as_test_store_invalid_func (void)
+{
+	gboolean ret;
+	g_autoptr(AsStore) store;
+	g_autoptr(GError) error = NULL;
+
+	/* load a file to the store */
+	store = as_store_new ();
+	ret = as_store_from_xml (store,
+		"<components version=\"0.6\">"
+		"<component type=\"desktop\">"
+		"<id>test.desktop</id>"
+		"<suggests><id/></suggests>"
+		"</component>"
+		"</components>", NULL, &error);
+	g_assert_no_error (error);
+	g_assert_true (ret);
+}
+
+static void
 as_test_store_addons_func (void)
 {
 	AsApp *app;
@@ -5851,6 +5871,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/AppStream/store{merges}", as_test_store_merges_func);
 	g_test_add_func ("/AppStream/store{merges-local}", as_test_store_merges_local_func);
 	g_test_add_func ("/AppStream/store{addons}", as_test_store_addons_func);
+	g_test_add_func ("/AppStream/store{invalid}", as_test_store_invalid_func);
 	g_test_add_func ("/AppStream/store{versions}", as_test_store_versions_func);
 	g_test_add_func ("/AppStream/store{origin}", as_test_store_origin_func);
 	g_test_add_func ("/AppStream/store{yaml}", as_test_store_yaml_func);
