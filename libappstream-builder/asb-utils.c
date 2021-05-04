@@ -99,7 +99,7 @@ asb_utils_ensure_exists (const gchar *directory, GError **error)
 {
 	if (g_file_test (directory, G_FILE_TEST_EXISTS))
 		return TRUE;
-	if (g_mkdir_with_parents (directory, 0700) != 0) {
+	if (g_mkdir_with_parents (directory, 0755) != 0) {
 		g_set_error (error,
 			     ASB_PLUGIN_ERROR,
 			     ASB_PLUGIN_ERROR_FAILED,
