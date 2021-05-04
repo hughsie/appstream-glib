@@ -975,7 +975,7 @@ as_icon_convert_to_kind (AsIcon *icon, AsIconKind kind, GError **error)
 		/* ensure the parent path exists */
 		size_str = g_strdup_printf ("%ux%u", priv->width, priv->height);
 		path = g_build_filename (priv->prefix, size_str, NULL);
-		if (g_mkdir_with_parents (path, 0700) != 0) {
+		if (g_mkdir_with_parents (path, 0755) != 0) {
 			g_set_error (error,
 				     AS_ICON_ERROR,
 				     AS_ICON_ERROR_FAILED,
