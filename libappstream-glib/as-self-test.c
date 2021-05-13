@@ -2395,7 +2395,11 @@ as_test_app_validate_file_bad_func (void)
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<metadata_license> is not valid");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "<metadata_license> was duplicated");
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<project_license> is not valid");
+	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+				    "<project_license> was duplicated");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
 				    "<url> does not start with 'http://'");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_MARKUP_INVALID,
@@ -2437,7 +2441,7 @@ as_test_app_validate_file_bad_func (void)
 				    "<launchable> has invalid type attribute");
 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_VALUE_MISSING,
 				    "<launchable> missing value");
-	g_assert_cmpint (probs->len, ==, 23);
+	g_assert_cmpint (probs->len, ==, 25);
 
 	/* again, harder */
 	probs2 = as_app_validate (app, AS_APP_VALIDATE_FLAG_STRICT, &error);
@@ -2445,7 +2449,7 @@ as_test_app_validate_file_bad_func (void)
 	g_assert (probs2 != NULL);
 	as_test_app_validate_check (probs2, AS_PROBLEM_KIND_TAG_INVALID,
 				    "XML data contains unknown tag");
-	g_assert_cmpint (probs2->len, ==, 37);
+	g_assert_cmpint (probs2->len, ==, 39);
 }
 
 static void

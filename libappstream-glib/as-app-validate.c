@@ -1525,6 +1525,16 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 					     AS_PROBLEM_KIND_TAG_INVALID,
 					     "<updatecontact> should be <update_contact>");
 		}
+		if ((problems & AS_APP_PROBLEM_DUPLICATE_PROJECT_LICENSE) > 0) {
+			ai_app_validate_add(helper,
+					    AS_PROBLEM_KIND_TAG_INVALID,
+					    "<project_license> was duplicated");
+		}
+		if ((problems & AS_APP_PROBLEM_DUPLICATE_METADATA_LICENSE) > 0) {
+			ai_app_validate_add(helper,
+					    AS_PROBLEM_KIND_TAG_INVALID,
+					    "<metadata_license> was duplicated");
+		}
 	}
 
 	/* check invalid values */

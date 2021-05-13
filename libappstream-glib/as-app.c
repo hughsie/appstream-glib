@@ -5154,15 +5154,19 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 			priv->problems |= AS_APP_PROBLEM_TRANSLATED_LICENSE;
 			break;
 		}
+		if (priv->project_license != NULL)
+			priv->problems |= AS_APP_PROBLEM_DUPLICATE_PROJECT_LICENSE;
 		as_ref_string_assign (&priv->project_license, as_node_get_data_as_refstr (n));
 		break;
 
-	/* <project_license> */
+	/* <metadata_license> */
 	case AS_TAG_METADATA_LICENSE:
 		if (as_node_get_attribute (n, "xml:lang") != NULL) {
 			priv->problems |= AS_APP_PROBLEM_TRANSLATED_LICENSE;
 			break;
 		}
+		if (priv->metadata_license != NULL)
+			priv->problems |= AS_APP_PROBLEM_DUPLICATE_METADATA_LICENSE;
 		as_app_set_metadata_license (app, as_node_get_data (n));
 		break;
 

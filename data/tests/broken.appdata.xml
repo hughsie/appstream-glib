@@ -4,6 +4,7 @@
   <metadata_license>GPLv3+</metadata_license>
   <metadata_license>BSD</metadata_license>
   <project_license>CC1</project_license>
+  <project_license>CC1</project_license>
   <project_group>GNU</project_group>
   <name>Power Statistics.</name>
   <summary>Observe power management.</summary>
