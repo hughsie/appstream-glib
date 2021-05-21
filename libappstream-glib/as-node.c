@@ -555,6 +555,8 @@ typedef struct {
 	AsNode			*current;
 	AsNodeFromXmlFlags	 flags;
 	const gchar * const	*locales;
+	guint8 is_em_text;
+	guint8 is_code_text;
 } AsNodeToXmlHelper;
 
 /**
@@ -603,6 +605,16 @@ as_node_start_element_cb (GMarkupParseContext *context,
 	AsNodeData *data_parent;
 	AsNode *current;
 	guint i;
+
+	/* do not create a child node for em and code tags */
+	if (g_strcmp0 (element_name, "em") == 0) {
+		helper->is_em_text = 1;
+		return;
+	} else if (g_strcmp0 (element_name, "code") == 0) {
+		helper->is_code_text = 1;
+		return;
+	}
+
 
 	/* check if we should ignore the locale */
 	data = g_slice_new0 (AsNodeData);
@@ -662,6 +674,15 @@ as_node_end_element_cb (GMarkupParseContext *context,
 			GError             **error)
 {
 	AsNodeToXmlHelper *helper = (AsNodeToXmlHelper *) user_data;
+
+	/* do not create a child node for em and code tags */
+	if (g_strcmp0 (element_name, "em") == 0) {
+		helper->is_em_text = 0;
+		return;
+	} else if (g_strcmp0 (element_name, "code") == 0) {
+		helper->is_code_text = 0;
+		return;
+	}
 	helper->current = helper->current->parent;
 }
 
@@ -695,6 +716,20 @@ as_node_text_cb (GMarkupParseContext *context,
 
 	/* split up into lines and add each with spaces stripped */
 	if (data->cdata != NULL) {
+		/* support em and code tags */
+		if (g_strcmp0 (as_tag_data_get_name (data), "p") == 0 ||
+			g_strcmp0 (as_tag_data_get_name (data), "li") == 0) {
+			g_autoptr(GString) str = g_string_new (data->cdata);
+			as_ref_string_unref (data->cdata);
+			if (helper->is_em_text)
+				g_string_append_printf (str, "<em>%s</em>", text);
+			else if (helper->is_code_text)
+				g_string_append_printf (str, "<code>%s</code>", text);
+			else
+				g_string_append (str, text);
+			data->cdata = as_ref_string_new_with_length (str->str, str->len);
+			return;
+		}
 		g_set_error (error,
 			     AS_NODE_ERROR,
 			     AS_NODE_ERROR_INVALID_MARKUP,
