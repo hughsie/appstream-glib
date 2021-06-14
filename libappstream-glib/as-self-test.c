@@ -2865,6 +2865,11 @@ as_test_node_xml_func (void)
 			     "<!-- this documents bar -->"
 			     "<bar key=\"value\">baz</bar>"
 			     "</foo>";
+	const gchar *valid_em_code = "<description>"
+			     "<p>"
+			     "It now also supports <em>em</em> and <code>code</code> tags."
+			     "</p>"
+			     "</description>";
 	GError *error = NULL;
 	AsNode *n2;
 	AsNode *root;
@@ -2926,6 +2931,17 @@ as_test_node_xml_func (void)
 	g_assert (xml != NULL);
 	g_assert_cmpstr (xml->str, ==, "<p>One</p><p>Two</p>");
 	g_string_free (xml, TRUE);
+	as_node_unref (root);
+
+	/* support em and code tags */
+	root = as_node_from_xml (valid_em_code, 0, &error);
+	g_assert_no_error (error);
+	g_assert (root != NULL);
+
+	n2 = as_node_find (root, "description/p");
+	g_assert (n2 != NULL);
+	printf ("<%s>\n", as_node_get_data (n2));
+	g_assert_cmpstr (as_node_get_data (n2), ==, "It now also supports<em>em</em> and <code>code</code> tags.");
 	as_node_unref (root);
 
 	/* keep comments */
