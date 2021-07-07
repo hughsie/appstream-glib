@@ -1935,7 +1935,9 @@ as_node_get_localized_unwrap_type_li (const AsNode *node,
 				     AS_NODE_ERROR_INVALID_MARKUP,
 				     "Unknown tag '%s'",
 				     as_tag_data_get_name (data));
-			return FALSE;
+			str = as_node_denorm_get_str_for_lang (hash, data, TRUE);
+			as_node_cdata_to_escaped (data);
+			g_string_append_printf (str, "%s", data->cdata);
 		}
 	}
 	return TRUE;
@@ -2011,7 +2013,9 @@ as_node_get_localized_unwrap_type_ul (const AsNode *node,
 				     AS_NODE_ERROR_INVALID_MARKUP,
 				     "Unknown tag '%s'",
 				     as_tag_data_get_name (data));
-			return FALSE;
+			str = as_node_denorm_get_str_for_lang (hash, data, TRUE);
+			as_node_cdata_to_escaped (data);
+			g_string_append_printf (str, "%s", data->cdata);
 		}
 	}
 	return TRUE;
