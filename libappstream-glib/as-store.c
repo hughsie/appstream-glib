@@ -35,7 +35,7 @@
 #include "as-yaml.h"
 #include "as-store-cab.h"
 
-#define AS_API_VERSION_NEWEST	0.8
+#define AS_API_VERSION_NEWEST	0.14
 
 typedef enum {
 	AS_STORE_PROBLEM_NONE			= 0,
