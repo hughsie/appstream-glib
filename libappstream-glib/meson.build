@@ -138,7 +138,9 @@ if platform_osx
   mapfile = 'appstream-glib.map.osx-clang'
   vflag = '-Wl,-exported_symbols_list,@0@/@1@'.format(meson.current_source_dir(), mapfile)
 else
-  vflag = '-Wl,--version-script,@0@/@1@'.format(meson.current_source_dir(), mapfile)
+  vflag = cc.get_supported_link_arguments([
+    '-Wl,--version-script,@0@/@1@'.format(meson.current_source_dir(), mapfile),
+  ])
 endif
 
 asglib = shared_library(

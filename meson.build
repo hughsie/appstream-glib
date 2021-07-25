@@ -2,8 +2,10 @@ project('appstream-glib', 'c',
   version : '0.7.19',
   license : 'LGPL-2.1+',
   default_options : ['warning_level=1', 'c_std=c99'],
-  meson_version : '>=0.37.0'
+  meson_version : '>=0.46.0'
 )
+
+cc = meson.get_compiler('c')
 
 as_version = meson.project_version()
 varr = as_version.split('.')
@@ -105,7 +107,6 @@ endif
 
 # support stemming of search tokens
 if get_option('stemmer')
-  cc = meson.get_compiler('c')
   stemmer = cc.find_library('stemmer')
   conf.set('HAVE_LIBSTEMMER', 1)
 endif
