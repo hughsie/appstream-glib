@@ -2166,7 +2166,7 @@ as_node_get_localized_unwrap (const AsNode *node, GError **error)
 struct _AsNodeContext {
 	AsFormatKind	 format_kind;
 	AsFormatKind	 output;
-	gdouble		 version;
+	gchar		*version;
 	gboolean	 output_trusted;
 	AsRefString	*media_base_url;
 };
@@ -2185,7 +2185,7 @@ as_node_context_new (void)
 {
 	AsNodeContext *ctx;
 	ctx = g_new0 (AsNodeContext, 1);
-	ctx->version = 0.f;
+	ctx->version = g_strdup ("0.0");
 	ctx->format_kind = AS_FORMAT_KIND_APPSTREAM;
 	ctx->output = AS_FORMAT_KIND_UNKNOWN;
 	return ctx;
@@ -2206,6 +2206,7 @@ as_node_context_free (AsNodeContext *ctx)
 		return;
 	if (ctx->media_base_url != NULL)
 		as_ref_string_unref (ctx->media_base_url);
+	g_clear_pointer (&ctx->version, g_free);
 	g_free (ctx);
 }
 
@@ -2215,11 +2216,11 @@ as_node_context_free (AsNodeContext *ctx)
  *
  * Gets the AppStream API version used when parsing or inserting nodes.
  *
- * Returns: version number
+ * Returns: the API version
  *
- * Since: 0.3.6
+ * Since: 0.7.19
  **/
-gdouble
+const gchar *
 as_node_context_get_version (AsNodeContext *ctx)
 {
 	return ctx->version;
@@ -2228,16 +2229,19 @@ as_node_context_get_version (AsNodeContext *ctx)
 /**
  * as_node_context_set_version: (skip)
  * @ctx: a #AsNodeContext.
- * @version: an API version number to target.
+ * @version: an API version to target.
  *
  * Sets the AppStream API version used when parsing or inserting nodes.
  *
- * Since: 0.3.6
+ * Since: 0.7.19
  **/
 void
-as_node_context_set_version (AsNodeContext *ctx, gdouble version)
+as_node_context_set_version (AsNodeContext *ctx, const gchar *version)
 {
-	ctx->version = version;
+	if (g_strcmp0 (ctx->version, version) != 0) {
+		g_free (ctx->version);
+		ctx->version = g_strdup (version);
+	}
 }
 
 /**

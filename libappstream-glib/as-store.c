@@ -35,7 +35,7 @@
 #include "as-yaml.h"
 #include "as-store-cab.h"
 
-#define AS_API_VERSION_NEWEST	0.14
+#define AS_API_VERSION_NEWEST	"0.14"
 
 typedef enum {
 	AS_STORE_PROBLEM_NONE			= 0,
@@ -48,7 +48,7 @@ typedef struct
 	gchar			*destdir;
 	gchar			*origin;
 	gchar			*builder_id;
-	gdouble			 api_version;
+	gchar			*api_version;
 	GPtrArray		*array;		/* of AsApp */
 	GHashTable		*hash_id;	/* of GPtrArray of AsApp{id} */
 	GHashTable		*hash_merge_id;	/* of GPtrArray of AsApp{id} */
@@ -116,6 +116,7 @@ as_store_finalize (GObject *object)
 	g_free (priv->destdir);
 	g_free (priv->origin);
 	g_free (priv->builder_id);
+	g_free (priv->api_version);
 	g_ptr_array_unref (priv->array);
 	g_object_unref (priv->monitor);
 	g_object_unref (priv->profile);
@@ -1667,7 +1668,7 @@ as_store_from_root (AsStore *store,
 	/* get version */
 	tmp = as_node_get_attribute (apps, "version");
 	if (tmp != NULL)
-		priv->api_version = g_ascii_strtod (tmp, NULL);
+		priv->api_version = g_strdup (tmp);
 
 	/* set in the XML file */
 	tmp = as_node_get_attribute (apps, "origin");
@@ -1867,7 +1868,7 @@ load_yaml (AsStore *store,
 		}
 		if (g_strcmp0 (tmp, "Version") == 0) {
 			if (as_yaml_node_get_value (n) != NULL)
-				as_store_set_api_version (store, g_ascii_strtod (as_yaml_node_get_value (n), NULL));
+				as_store_set_version (store, as_yaml_node_get_value (n));
 			continue;
 		}
 		if (g_strcmp0 (tmp, "MediaBaseUrl") == 0) {
@@ -2487,7 +2488,6 @@ as_store_to_xml (AsStore *store, guint32 flags)
 	GString *xml;
 	gboolean output_trusted = FALSE;
 	guint i;
-	gchar version[6];
 	g_autoptr(AsNodeContext) ctx = NULL;
 
 	g_return_val_if_fail (AS_IS_STORE (store), NULL);
@@ -2508,10 +2508,8 @@ as_store_to_xml (AsStore *store, guint32 flags)
 		as_node_add_attribute (node_apps, "builder_id", priv->builder_id);
 
 	/* set version attribute */
-	if (priv->api_version > 0.1f) {
-		g_ascii_formatd (version, sizeof (version),
-				 "%.1f", priv->api_version);
-		as_node_add_attribute (node_apps, "version", version);
+	if (as_utils_vercmp (priv->api_version, "0.1") > 0) {
+		as_node_add_attribute (node_apps, "version", priv->api_version);
 	}
 
 	/* output is trusted, so include update_contact */
@@ -2782,16 +2780,17 @@ as_store_get_destdir (AsStore *store)
  *
  * Gets the AppStream API version.
  *
- * Returns: the #AsNodeInsertFlags, or 0 if unset
+ * Returns: the API version
  *
  * Since: 0.1.1
+ * Deprecated: 0.7.19: Use as_store_get_version() instead.
  **/
 gdouble
 as_store_get_api_version (AsStore *store)
 {
 	AsStorePrivate *priv = GET_PRIVATE (store);
 	g_return_val_if_fail (AS_IS_STORE (store), 0.0);
-	return priv->api_version;
+	return g_strtod (priv->api_version, NULL);
 }
 
 /**
@@ -2802,13 +2801,59 @@ as_store_get_api_version (AsStore *store)
  * Sets the AppStream API version.
  *
  * Since: 0.1.1
+ * Deprecated: 0.7.19: Use as_store_set_version() instead.
  **/
 void
 as_store_set_api_version (AsStore *store, gdouble api_version)
 {
-	AsStorePrivate *priv = GET_PRIVATE (store);
+	gchar version[6];
+
 	g_return_if_fail (AS_IS_STORE (store));
-	priv->api_version = api_version;
+
+	g_ascii_formatd (version, sizeof (version), "%.1f", api_version);
+	as_store_set_version (store, version);
+}
+
+/**
+ * as_store_get_version:
+ * @store: a #AsStore instance.
+ *
+ * Gets the AppStream API version.
+ *
+ * Returns: the API version
+ *
+ * Since: 0.7.19
+ **/
+const gchar *
+as_store_get_version (AsStore *store)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+
+	g_return_val_if_fail (AS_IS_STORE (store), "0.0");
+
+	return priv->api_version;
+}
+
+/**
+ * as_store_set_version:
+ * @store: a #AsStore instance.
+ * @api_version: the API version
+ *
+ * Sets the AppStream API version.
+ *
+ * Since: 0.7.19
+ **/
+void
+as_store_set_version (AsStore *store, const gchar *api_version)
+{
+	AsStorePrivate *priv = GET_PRIVATE (store);
+
+	g_return_if_fail (AS_IS_STORE (store));
+
+	if (g_strcmp0 (priv->api_version, api_version) != 0) {
+		g_free (priv->api_version);
+		priv->api_version = g_strdup (api_version);
+	}
 }
 
 /**
@@ -3667,11 +3712,11 @@ as_store_validate (AsStore *store, guint32 flags, GError **error)
 	probs = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 
 	/* check the root node */
-	if (priv->api_version < 0.6) {
+	if (as_utils_vercmp (priv->api_version, "0.6") < 0) {
 		if ((priv->problems & AS_STORE_PROBLEM_LEGACY_ROOT) == 0) {
 			as_store_validate_add (probs,
 					       AS_PROBLEM_KIND_TAG_INVALID,
-					       "metadata version is v%.1f and "
+					       "metadata version is v%s and "
 					       "XML root is not <applications>",
 					       priv->api_version);
 		}
@@ -3679,14 +3724,14 @@ as_store_validate (AsStore *store, guint32 flags, GError **error)
 		if ((priv->problems & AS_STORE_PROBLEM_LEGACY_ROOT) != 0) {
 			as_store_validate_add (probs,
 					       AS_PROBLEM_KIND_TAG_INVALID,
-					       "metadata version is v%.1f and "
+					       "metadata version is v%s and "
 					       "XML root is not <components>",
 					       priv->api_version);
 		}
 		if (priv->origin == NULL) {
 			as_store_validate_add (probs,
 					       AS_PROBLEM_KIND_TAG_MISSING,
-					       "metadata version is v%.1f and "
+					       "metadata version is v%s and "
 					       "origin attribute is missing",
 					       priv->api_version);
 		}
@@ -3706,64 +3751,64 @@ as_store_validate (AsStore *store, guint32 flags, GError **error)
 		g_autoptr(GPtrArray) probs_app = NULL;
 
 		app = g_ptr_array_index (apps, i);
-		if (priv->api_version < 0.3) {
+		if (as_utils_vercmp (priv->api_version, "0.3") < 0) {
 			if (as_app_get_source_pkgname (app) != NULL) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "<source_pkgname> only introduced in v0.3",
 						       priv->api_version);
 			}
 			if (as_app_get_priority (app) != 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "<priority> only introduced in v0.3",
 						       priv->api_version);
 			}
 		}
-		if (priv->api_version < 0.4) {
+		if (as_utils_vercmp (priv->api_version, "0.4") < 0) {
 			if (as_app_get_project_group (app) != NULL) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "<project_group> only introduced in v0.4",
 						       priv->api_version);
 			}
 			if (as_app_get_mimetypes(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "<mimetypes> only introduced in v0.4",
 						       priv->api_version);
 			}
 			if (as_app_get_screenshots(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "<screenshots> only introduced in v0.4",
 						       priv->api_version);
 			}
 			if (as_app_get_compulsory_for_desktops(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "<compulsory_for_desktop> only introduced in v0.4",
 						       priv->api_version);
 			}
 			if (g_list_length (as_app_get_languages(app)) > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "<languages> only introduced in v0.4",
 						       priv->api_version);
 			}
 		}
-		if (priv->api_version < 0.6) {
+		if (as_utils_vercmp (priv->api_version, "0.6") < 0) {
 			if ((as_app_get_problems (app) & AS_APP_PROBLEM_PREFORMATTED_DESCRIPTION) == 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "<description> markup "
 						       "was introduced in v0.6",
 						       priv->api_version);
@@ -3771,21 +3816,21 @@ as_store_validate (AsStore *store, guint32 flags, GError **error)
 			if (as_app_get_architectures(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "<architectures> only introduced in v0.6",
 						       priv->api_version);
 			}
 			if (as_app_get_releases(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "<releases> only introduced in v0.6",
 						       priv->api_version);
 			}
 			if (as_app_get_provides(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "<provides> only introduced in v0.6",
 						       priv->api_version);
 			}
@@ -3793,32 +3838,32 @@ as_store_validate (AsStore *store, guint32 flags, GError **error)
 			if ((as_app_get_problems (app) & AS_APP_PROBLEM_PREFORMATTED_DESCRIPTION) != 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "%s: metadata version is v%.1f and "
+						       "%s: metadata version is v%s and "
 						       "<description> requiring markup "
 						       "was introduced in v0.6",
 						       as_app_get_id (app),
 						       priv->api_version);
 			}
 		}
-		if (priv->api_version < 0.7) {
+		if (as_utils_vercmp (priv->api_version, "0.7") < 0) {
 			if (as_app_get_kind (app) == AS_APP_KIND_ADDON) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "addon kinds only introduced in v0.7",
 						       priv->api_version);
 			}
 			if (as_app_get_developer_name (app, NULL) != NULL) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "<developer_name> only introduced in v0.7",
 						       priv->api_version);
 			}
 			if (as_app_get_extends(app)->len > 0) {
 				as_store_validate_add (probs,
 						       AS_PROBLEM_KIND_TAG_INVALID,
-						       "metadata version is v%.1f and "
+						       "metadata version is v%s and "
 						       "<extends> only introduced in v0.7",
 						       priv->api_version);
 			}
@@ -3959,7 +4004,7 @@ as_store_init (AsStore *store)
 	g_mutex_init (&priv->mutex);
 	priv->profile = as_profile_new ();
 	priv->stemmer = as_stemmer_new ();
-	priv->api_version = AS_API_VERSION_NEWEST;
+	priv->api_version = g_strdup (AS_API_VERSION_NEWEST);
 	priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	priv->watch_flags = AS_STORE_WATCH_FLAG_NONE;
 	priv->search_match = AS_APP_SEARCH_MATCH_LAST;
