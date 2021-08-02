@@ -258,6 +258,9 @@ void		 as_store_set_destdir		(AsStore	*store,
 gdouble		 as_store_get_api_version	(AsStore	*store);
 void		 as_store_set_api_version	(AsStore	*store,
 						 gdouble	 api_version);
+const gchar	*as_store_get_version		(AsStore	*store);
+void		 as_store_set_version		(AsStore	*store,
+						 const gchar	*api_version);
 guint32		 as_store_get_add_flags		(AsStore	*store);
 void		 as_store_set_add_flags		(AsStore	*store,
 						 guint32	 add_flags);

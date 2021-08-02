@@ -4831,7 +4831,7 @@ as_app_node_insert (AsApp *app, GNode *parent, AsNodeContext *ctx)
 
 	/* <custom> or <metadata> */
 	if (g_hash_table_size (priv->metadata) > 0) {
-		tmp = as_node_context_get_version (ctx) > 0.9 ? "custom" : "metadata";
+		tmp = as_utils_vercmp (as_node_context_get_version (ctx), "0.9") > 0 ? "custom" : "metadata";
 		node_tmp = as_node_insert (node_app, tmp, NULL, 0, NULL);
 		as_node_insert_hash (node_tmp, "value", "key", priv->metadata, FALSE);
 	}
@@ -6463,7 +6463,7 @@ as_app_to_xml (AsApp *app, GError **error)
 {
 	g_autoptr(AsNodeContext) ctx = as_node_context_new ();
 	g_autoptr(AsNode) root = as_node_new ();
-	as_node_context_set_version (ctx, 1.0);
+	as_node_context_set_version (ctx, "1.0");
 	as_node_context_set_output (ctx, AS_FORMAT_KIND_APPDATA);
 	as_app_node_insert (app, root, ctx);
 	return as_node_to_xml (root,

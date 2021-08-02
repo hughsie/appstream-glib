@@ -482,8 +482,7 @@ as_util_convert_appstream (GFile *file_input,
 	if (!as_store_from_file (store, file_input, NULL, NULL, error))
 		return FALSE;
 	/* TRANSLATORS: information message */
-	g_print ("%s: %.2f\n", _("Old API version"),
-		 as_store_get_api_version (store));
+	g_print (_("Old API version: %s\n"), as_store_get_version (store));
 
 	/* save file */
 	as_store_set_api_version (store, new_version);
@@ -494,7 +493,7 @@ as_util_convert_appstream (GFile *file_input,
 				NULL, error))
 		return FALSE;
 	/* TRANSLATORS: information message */
-	g_print ("%s: %.2f\n", _("New API version"), as_store_get_api_version (store));
+	g_print (_("New API version: %s\n"), as_store_get_version (store));
 	return TRUE;
 }
 
