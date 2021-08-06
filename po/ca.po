@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-26 12:37+0100\n"
-"PO-Revision-Date: 2018-10-24 09:29+0000\n"
-"Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
+"PO-Revision-Date: 2021-08-06 23:42+0000\n"
+"Last-Translator: Jordi Mas <jmas@softcatala.org>\n"
 "Language-Team: Catalan (http://www.transifex.com/freedesktop/appstream-glib/"
 "language/ca/)\n"
 "Language: ca\n"
@@ -47,7 +47,7 @@ msgstr "Afegeix les icones HiDPI als arxius tar"
 #. TRANSLATORS: command line option
 #: client/as-builder.c:88
 msgid "Add encoded icons to the XML"
-msgstr "Afegeix les icones codificades al XML"
+msgstr "Afegeix les icones codificades a l'XML"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:91
@@ -195,7 +195,7 @@ msgstr "S'ha produït un error en analitzar sintàcticament provides"
 #. TRANSLATORS: not a valid desktop filename
 #: client/as-compose.c:465
 msgid "Invalid desktop filename"
-msgstr "nom de fitxer d'escriptori no vàlid"
+msgstr "Nom de fitxer d'escriptori no vàlid"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
@@ -300,17 +300,15 @@ msgstr "Ha fallat la validació dels fitxers"
 #: client/as-util.c:2908
 #, c-format
 msgid "Cannot validate version of file format '%s'"
-msgstr ""
+msgstr "No es pot validar la versió del format de fixer «%s»"
 
 #: client/as-util.c:2924
-#, fuzzy
 msgid "Version validation failed"
-msgstr "Ha fallat la validació"
+msgstr "Ha fallat la validació de la versió"
 
 #: client/as-util.c:2976
-#, fuzzy
 msgid "Version validation of files failed"
-msgstr "Ha fallat la validació dels fitxers"
+msgstr "Ha fallat la validació de la versió dels fitxers"
 
 #. TRANSLATORS: application was removed
 #: client/as-util.c:4076
@@ -356,7 +354,7 @@ msgstr ""
 #. TRANSLATORS: command description
 #: client/as-util.c:4479
 msgid "Creates an example AppData file from a .desktop file"
-msgstr ""
+msgstr "Crea un fitxer d'exemple AppData a partir d'un fitxer .desktop"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4485
@@ -445,9 +443,8 @@ msgstr "Valida un fitxer AppData o AppStream (estricte)"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4587
-#, fuzzy
 msgid "Validate that AppData file includes the specified release"
-msgstr "Valida un fitxer AppData o AppStream (relaxat)"
+msgstr "Valida que el fitxer AppData inclou la release especificada"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4593
@@ -719,17 +716,17 @@ msgstr "Ús de drogues il·legals"
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:848
 msgid "No references to tobacco products"
-msgstr "Sense referències als productes del tàbac"
+msgstr "Sense referències als productes del tabac"
 
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:850
 msgid "References to tobacco products"
-msgstr "Referències als productes del tàbac"
+msgstr "Referències als productes del tabac"
 
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:852
 msgid "Use of tobacco products"
-msgstr "Ús de productes del tàbac"
+msgstr "Ús de productes del tabac"
 
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:858
@@ -861,7 +858,7 @@ msgstr "Apostes en esdeveniments aleatoris utilitzant testimonis o crèdits"
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:927
 msgid "Gambling using “play” money"
-msgstr "Apostes usant moneda virtual al joc"
+msgstr "Apostes usant moneda virtual"
 
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:929
@@ -881,12 +878,12 @@ msgstr "S'anima als usuaris a comprar coses específiques del món real"
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:939
 msgid "Ability to spend real money in-app"
-msgstr "Possibilitat de gastar diners de veritat al joc"
+msgstr "Possibilitat de gastar diners de veritat a l'aplicació"
 
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:944
 msgid "No way to chat with other users"
-msgstr "Sense possibilitat de fer xat amb els altres usuaris"
+msgstr "Sense possibilitat de fer xat amb altres usuaris"
 
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:946
@@ -906,7 +903,7 @@ msgstr "Funcionalitat de xat no supervisada entre usuaris"
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:955
 msgid "No way to talk with other users"
-msgstr "Sense possibilitat de parlar amb els altres usuaris"
+msgstr "Sense possibilitat de parlar amb altres usuaris"
 
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:957
