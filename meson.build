@@ -74,7 +74,13 @@ else
   uuid = dependency('uuid')
 endif
 libarchive = dependency('libarchive')
-soup = dependency('libsoup-2.4', version : '>= 2.51.92')
+if get_option('soup2')
+  soup = dependency('libsoup-2.4', version : '>= 2.51.92')
+  soupapiversion = '2.4'
+else
+  soup = dependency('libsoup-3.0', version : '>= 3.0.0')
+  soupapiversion = '3.0'
+endif
 json_glib = dependency('json-glib-1.0', version : '>= 1.1.2')
 gdkpixbuf = dependency('gdk-pixbuf-2.0', version : '>= 2.31.5')
 

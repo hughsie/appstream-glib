@@ -177,6 +177,9 @@ pkgg.generate(
   description : 'Objects and helper methods to help reading and writing AppStream metadata',
   filebase : 'appstream-glib',
   subdirs : 'libappstream-glib',
+  variables: [
+    'soupapiversion=' + soupapiversion,
+  ]
 )
 
 selftest = executable(

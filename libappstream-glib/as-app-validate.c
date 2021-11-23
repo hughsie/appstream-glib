@@ -429,9 +429,14 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	guint ss_size_width_max = 1600;
 	guint ss_size_width_min = 624;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
+	g_autoptr(GError) error_local = NULL;
 	g_autoptr(GInputStream) stream = NULL;
 	g_autoptr(SoupMessage) msg = NULL;
+#if SOUP_CHECK_VERSION (3, 0, 0)
+	g_autoptr(GUri) base_uri = NULL;
+#else
 	g_autoptr(SoupURI) base_uri = NULL;
+#endif
 
 	/* make the requirements more strict */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_STRICT) > 0) {
@@ -453,8 +458,22 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	/* GET file */
 	url = as_image_get_url (im);
 	g_debug ("checking %s", url);
+#if SOUP_CHECK_VERSION (3, 0, 0)
+	base_uri = g_uri_parse (url, SOUP_HTTP_URI_FLAGS | G_URI_FLAGS_PARSE_RELAXED, &error_local);
+	if (base_uri == NULL) {
+		ai_app_validate_add (helper,
+				     AS_PROBLEM_KIND_URL_NOT_FOUND,
+				     "<screenshot> url not valid [%s]: %s", url, error_local->message);
+		return FALSE;
+	}
+	if (g_uri_get_scheme (base_uri) == NULL ||
+	    (g_ascii_strcasecmp (g_uri_get_scheme (base_uri), "http") != 0 && g_ascii_strcasecmp (g_uri_get_scheme (base_uri), "https") != 0) ||
+	    g_uri_get_host (base_uri) == NULL ||
+	    g_uri_get_path (base_uri) == NULL) {
+#else
 	base_uri = soup_uri_new (url);
 	if (!SOUP_URI_VALID_FOR_HTTP (base_uri)) {
+#endif
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_URL_NOT_FOUND,
 				     "<screenshot> url not valid [%s]", url);
@@ -467,12 +486,17 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	}
 
 	/* send sync */
-	status_code = soup_session_send_message (helper->session, msg);
-	if (SOUP_STATUS_IS_TRANSPORT_ERROR(status_code)) {
+	stream = soup_session_send (helper->session, msg, NULL, &error_local);
+#if SOUP_CHECK_VERSION (3, 0, 0)
+	status_code = soup_message_get_status (msg);
+#else
+	status_code = msg->status_code;
+#endif
+	if (stream == NULL) {
 		ai_app_validate_add (helper,
 			AS_PROBLEM_KIND_URL_NOT_FOUND,
-			"<screenshot> failed to connect: %s [%s]",
-			soup_status_get_phrase(status_code), url);
+			"<screenshot> failed to connect: %s [%s]: %s",
+			soup_status_get_phrase (status_code), url, error_local->message);
 		return FALSE;
 	} else if (status_code != SOUP_STATUS_OK) {
 		ai_app_validate_add (helper,
@@ -482,34 +506,13 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 		return FALSE;
 	}
 
-	/* check if it's a zero sized file */
-	if (msg->response_body->length == 0) {
-		ai_app_validate_add (helper,
-				     AS_PROBLEM_KIND_FILE_INVALID,
-				     "<screenshot> url is a zero length file [%s]",
-				     url);
-		return FALSE;
-	}
-
-	/* create a buffer with the data */
-	stream = g_memory_input_stream_new_from_data (msg->response_body->data,
-						      (gssize) msg->response_body->length,
-						      NULL);
-	if (stream == NULL) {
-		ai_app_validate_add (helper,
-				     AS_PROBLEM_KIND_URL_NOT_FOUND,
-				     "<screenshot> failed to load data [%s]",
-				     url);
-		return FALSE;
-	}
-
 	/* load the image */
-	pixbuf = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
+	pixbuf = gdk_pixbuf_new_from_stream (stream, NULL, &error_local);
 	if (pixbuf == NULL) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_FILE_INVALID,
-				     "<screenshot> failed to load [%s]",
-				     url);
+				     "<screenshot> failed to load [%s] : %s",
+				     url, error_local->message);
 		return FALSE;
 	}
 
@@ -993,10 +996,8 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 static gboolean
 as_app_validate_setup_networking (AsAppValidateHelper *helper, GError **error)
 {
-	helper->session = soup_session_new_with_options (SOUP_SESSION_USER_AGENT,
-							 "libappstream-glib",
-							 SOUP_SESSION_TIMEOUT,
-							 5000,
+	helper->session = soup_session_new_with_options ("user-agent", "libappstream-glib",
+							 "timeout", 5000,
 							 NULL);
 	if (helper->session == NULL) {
 		g_set_error_literal (error,
@@ -1005,8 +1006,10 @@ as_app_validate_setup_networking (AsAppValidateHelper *helper, GError **error)
 				     "Failed to set up networking");
 		return FALSE;
 	}
+#if !SOUP_CHECK_VERSION (3, 0, 0)
 	soup_session_add_feature_by_type (helper->session,
 					  SOUP_TYPE_PROXY_RESOLVER_DEFAULT);
+#endif
 	return TRUE;
 }
 

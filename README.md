@@ -31,7 +31,7 @@ copy. To do the latter just do:
                 libstemmer-devel libuuid-devel libyaml-devel \
                 meson rpm-devel
     mkdir build && cd build
-    meson .. --prefix=/opt -Dbuilder=false
+    meson .. --prefix=/opt -Dbuilder=false -Dsoup2=true
     ninja
 
 Hacking
@@ -92,7 +92,7 @@ binary and data files, or you can build a local copy. To do the latter just do:
                 libstemmer-devel libuuid-devel libyaml-devel \
                 meson rpm-devel rpm-devel
     mkdir build && cd build
-    meson .. --prefix=/opt -Dbuilder=true
+    meson .. --prefix=/opt -Dbuilder=true -Dsoup2=true
     ninja
 
 To actually run the extractor you can do:

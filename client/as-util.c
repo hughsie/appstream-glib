@@ -3395,7 +3395,11 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	g_autoptr(AsScreenshot) ss = NULL;
 	g_autoptr(SoupMessage) msg = NULL;
 	g_autoptr(SoupSession) session = NULL;
+#if SOUP_CHECK_VERSION (3, 0, 0)
+	g_autoptr(GUri) uri = NULL;
+#else
 	g_autoptr(SoupURI) uri = NULL;
+#endif
 
 	/* fonts screenshots are auto-generated */
 	if (as_app_get_kind (app) == AS_APP_KIND_FONT) {
@@ -3413,11 +3417,13 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	}
 
 	/* set up networking */
-	session = soup_session_new_with_options (SOUP_SESSION_USER_AGENT, "appstream-util",
-						 SOUP_SESSION_TIMEOUT, 10,
+	session = soup_session_new_with_options ("user-agent", "appstream-util",
+						 "timeout", 10,
 						 NULL);
+#if !SOUP_CHECK_VERSION (3, 0, 0)
 	soup_session_add_feature_by_type (session,
 					  SOUP_TYPE_PROXY_RESOLVER_DEFAULT);
+#endif
 
 	/* download to cache if not already added */
 	basename = g_path_get_basename (url);
@@ -3430,6 +3436,13 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	} else if (priv->nonet) {
 		as_util_app_log (app, "Missing %s:%s", url, cache_filename);
 	} else {
+#if SOUP_CHECK_VERSION (3, 0, 0)
+		g_autoptr(GBytes) bytes = NULL;
+		g_autoptr(GError) error_local = NULL;
+#endif
+		gconstpointer data;
+		gsize data_len;
+
 		if (g_str_has_prefix (url, "file:")) {
 			g_set_error (error,
 				     AS_ERROR,
@@ -3437,7 +3450,11 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 				     "file:// URLs like %s are not supported", url);
 			return FALSE;
 		}
+#if SOUP_CHECK_VERSION (3, 0, 0)
+		uri = g_uri_parse (url, SOUP_HTTP_URI_FLAGS | G_URI_FLAGS_PARSE_RELAXED, NULL);
+#else
 		uri = soup_uri_new (url);
+#endif
 		if (uri == NULL) {
 			g_set_error (error,
 				     AS_ERROR,
@@ -3447,20 +3464,34 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 		}
 		msg = soup_message_new_from_uri (SOUP_METHOD_GET, uri);
 		as_util_app_log (app, "Downloading %s", url);
+#if SOUP_CHECK_VERSION (3, 0, 0)
+		bytes = soup_session_send_and_read (session, msg, NULL, &error_local);
+		status = soup_message_get_status (msg);
+#else
 		status = soup_session_send_message (session, msg);
+#endif
 		if (status != SOUP_STATUS_OK) {
 			g_set_error (error,
 				     AS_ERROR,
 				     AS_ERROR_FAILED,
 				     "Downloading failed: %s",
+#if SOUP_CHECK_VERSION (3, 0, 0)
+				     error_local != NULL ? error_local->message :
+#endif
 				     soup_status_get_phrase (status));
 			return FALSE;
 		}
+#if SOUP_CHECK_VERSION (3, 0, 0)
+		data = g_bytes_get_data (bytes, &data_len);
+#else
+		data = msg->response_body->data;
+		data_len = msg->response_body->length;
+#endif
 
 		/* save new file */
 		ret = g_file_set_contents (cache_filename,
-					   msg->response_body->data,
-					   (gssize) msg->response_body->length,
+					   data,
+					   (gssize) data_len,
 					   error);
 		if (!ret)
 			return FALSE;

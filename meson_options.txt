@@ -7,3 +7,4 @@ option('stemmer', type : 'boolean', value : true, description : 'enable stemmer 
 option('man', type : 'boolean', value : true, description : 'generate man pages')
 option('gtk-doc', type : 'boolean', value : false, description : 'generate API reference')
 option('introspection', type : 'boolean', value : true, description : 'generate GObject Introspection data')
+option('soup2', type: 'boolean', value: false, description: 'build with libsoup2')
