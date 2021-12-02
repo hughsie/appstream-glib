@@ -651,7 +651,7 @@ as_app_validate_screenshot (AsScreenshot *ss, AsAppValidateHelper *helper)
 		im = g_ptr_array_index (images, i);
 		as_app_validate_image (im, helper);
 	}
-	tmp = as_screenshot_get_caption (ss, NULL);
+	tmp = as_screenshot_get_caption (ss, "");
 	if (tmp != NULL) {
 		str_len = (guint) strlen (tmp);
 		if (str_len < length_caption_min) {
@@ -1775,7 +1775,7 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 	}
 
 	/* developer_name */
-	name = as_app_get_developer_name (app, NULL);
+	name = as_app_get_developer_name (app, "");
 	if (name != NULL) {
 		str_len = (guint) strlen (name);
 		if (str_len < length_name_min) {

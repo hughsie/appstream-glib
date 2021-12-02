@@ -80,6 +80,10 @@ as_hash_lookup_by_locale (GHashTable *hash, const gchar *locale)
 	if (locale != NULL)
 		return g_hash_table_lookup (hash, locale);
 
+	/* the user explicitly wants LANG=C */
+	if (g_strcmp0 (locale, "") == 0)
+		return g_hash_table_lookup (hash, NULL);
+
 	/* use LANGUAGE, LC_ALL, LC_MESSAGES and LANG */
 	locales = g_get_language_names ();
 	for (i = 0; locales[i] != NULL; i++) {
