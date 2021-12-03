@@ -138,7 +138,7 @@ const gchar *
 as_app_kind_to_string (AsAppKind kind)
 {
 	if (kind == AS_APP_KIND_DESKTOP)
-		return "desktop-application";
+		return "desktop";
 	if (kind == AS_APP_KIND_CODEC)
 		return "codec";
 	if (kind == AS_APP_KIND_FONT)
@@ -146,7 +146,7 @@ as_app_kind_to_string (AsAppKind kind)
 	if (kind == AS_APP_KIND_INPUT_METHOD)
 		return "inputmethod";
 	if (kind == AS_APP_KIND_WEB_APP)
-		return "web-application";
+		return "webapp";
 	if (kind == AS_APP_KIND_SOURCE)
 		return "source";
 	if (kind == AS_APP_KIND_ADDON)
