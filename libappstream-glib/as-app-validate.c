@@ -137,7 +137,7 @@ as_app_validate_has_first_word_capital (AsAppValidateHelper *helper, const gchar
 	}
 
 	/* is the first word the project name */
-	if (g_strcmp0 (first_word, as_app_get_name (helper->app, NULL)) == 0)
+	if (g_strcmp0 (first_word, as_app_get_name (helper->app, "C")) == 0)
 		return TRUE;
 
 	return FALSE;
@@ -651,7 +651,7 @@ as_app_validate_screenshot (AsScreenshot *ss, AsAppValidateHelper *helper)
 		im = g_ptr_array_index (images, i);
 		as_app_validate_image (im, helper);
 	}
-	tmp = as_screenshot_get_caption (ss, NULL);
+	tmp = as_screenshot_get_caption (ss, "C");
 	if (tmp != NULL) {
 		str_len = (guint) strlen (tmp);
 		if (str_len < length_caption_min) {
@@ -1775,7 +1775,7 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 	}
 
 	/* developer_name */
-	name = as_app_get_developer_name (app, NULL);
+	name = as_app_get_developer_name (app, "C");
 	if (name != NULL) {
 		str_len = (guint) strlen (name);
 		if (str_len < length_name_min) {
