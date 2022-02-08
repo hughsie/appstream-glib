@@ -4972,8 +4972,11 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 	/* <description> */
 	case AS_TAG_DESCRIPTION:
 	{
-		/* unwrap appdata inline */
+		/* unwrap appdata and metainfo inline */
 		AsFormat *format = as_app_get_format_by_kind (app, AS_FORMAT_KIND_APPDATA);
+		if (format == NULL)
+			format = as_app_get_format_by_kind (app, AS_FORMAT_KIND_METAINFO);
+
 		if (format != NULL) {
 			GError *error_local = NULL;
 			g_autoptr(GHashTable) unwrapped = NULL;
