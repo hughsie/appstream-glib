@@ -145,6 +145,7 @@ asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 		icons = as_app_get_icons (AS_APP (app));
 	for (i = 0; icons != NULL && i < icons->len; i++) {
 		const gchar *tmpdir;
+		g_autofree gchar *dir = NULL;
 		g_autofree gchar *filename = NULL;
 		g_autofree gchar *size_str = NULL;
 		g_autoptr(GError) error_local = NULL;
@@ -165,7 +166,9 @@ asb_app_save_resources (AsbApp *app, AsbAppSaveFlags save_flags, GError **error)
 
 		/* save to disk */
 		tmpdir = asb_package_get_config (priv->pkg, "IconsDir");
-		filename = g_build_filename (tmpdir,
+		dir = g_strdup_printf ("%ix%i", as_icon_get_width (icon),
+				       as_icon_get_height (icon));
+		filename = g_build_filename (tmpdir, dir,
 					     as_icon_get_name (icon),
 					     NULL);
 		if (!gdk_pixbuf_save (pixbuf, filename, "png", error, NULL))
