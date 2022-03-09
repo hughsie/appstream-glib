@@ -53,11 +53,13 @@ cd $RPM_BUILD_ROOT
 ln -s %{_datadir}/app/app-48x48.png usr/share/icons/hicolor/48x48/apps/app.png
 cd -
 
-# test decompressing a relative symlink destination
+# test decompressing relative symlink destinations
 install -Dp %{SOURCE18} $RPM_BUILD_ROOT%{_datadir}/app/app-128x128.png
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/128x128/apps
 cd $RPM_BUILD_ROOT
-ln -s ../../../../app/app-128x128.png usr/share/icons/hicolor/128x128/apps/app.png
+# Test links in the same directory as well as outside
+ln -s ../../../../app/app-128x128.png usr/share/icons/hicolor/128x128/apps/app-linked.png
+ln -s app-linked.png usr/share/icons/hicolor/128x128/apps/app.png
 cd -
 
 install -Dp %{SOURCE3} $RPM_BUILD_ROOT/%{_datadir}/appdata/app.appdata.xml
@@ -93,6 +95,7 @@ install -Dp %{SOURCE16} $RPM_BUILD_ROOT/%{_datadir}/applications/console2.deskto
 %{_datadir}/app/app-48x48.png
 %{_datadir}/app/app-128x128.png
 %{_datadir}/icons/hicolor/48x48/apps/app.png
+%{_datadir}/icons/hicolor/128x128/apps/app-linked.png
 %{_datadir}/icons/hicolor/128x128/apps/app.png
 
 %files extra
