@@ -155,32 +155,6 @@ asb_utils_ensure_exists_and_empty (const gchar *directory, GError **error)
 	return TRUE;
 }
 
-static guint
-asb_utils_count_directories_deep (const gchar *path)
-{
-	guint cnt = 0;
-	guint i;
-
-	for (i = 0; path[i] != '\0'; i++) {
-		if (path[i] != '/')
-			continue;
-		cnt++;
-	}
-	return cnt;
-}
-
-static gchar *
-asb_utils_get_back_to_root (guint levels)
-{
-	GString *str;
-	guint i;
-
-	str = g_string_new ("");
-	for (i = 0; i < levels; i++)
-		g_string_append (str, "../");
-	return g_string_free (str, FALSE);
-}
-
 static gchar *
 asb_utils_sanitise_path (const gchar *path)
 {
@@ -243,25 +217,12 @@ asb_utils_explode_file (struct archive_entry *entry, const gchar *dir)
 		archive_entry_update_hardlink_utf8 (entry, buf_link);
 	}
 
-	/* update symlinks */
+	/* update absolute symlinks */
 	tmp = archive_entry_symlink (entry);
-	if (tmp != NULL) {
-		g_autofree gchar *path_link = NULL;
-
-		path_link = asb_utils_sanitise_path (tmp);
-		if (g_path_is_absolute (path_link)) {
-			guint symlink_depth;
-			g_autofree gchar *back_up = NULL;
-			g_autofree gchar *buf_link = NULL;
-
-			symlink_depth = asb_utils_count_directories_deep (path) - 1;
-			back_up = asb_utils_get_back_to_root (symlink_depth);
-			buf_link = g_build_filename (back_up, tmp, NULL);
-
-			archive_entry_update_symlink_utf8 (entry, buf_link);
-		} else {
-			archive_entry_update_symlink_utf8 (entry, path_link);
-		}
+	if (tmp != NULL && g_path_is_absolute (tmp)) {
+		g_autofree gchar *buf_link = NULL;
+		buf_link = g_build_filename (dir, tmp, NULL);
+		archive_entry_update_symlink_utf8 (entry, buf_link);
 	}
 	return TRUE;
 }
