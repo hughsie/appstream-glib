@@ -345,7 +345,6 @@ asb_test_context_func (void)
 	asb_context_set_api_version (ctx, 0.9);
 	asb_context_set_flags (ctx, ASB_CONTEXT_FLAG_NO_NETWORK |
 				    ASB_CONTEXT_FLAG_INCLUDE_FAILED |
-				    ASB_CONTEXT_FLAG_HIDPI_ICONS |
 				    ASB_CONTEXT_FLAG_ADD_DEFAULT_ICONS);
 	asb_context_set_basename (ctx, "appstream");
 	asb_context_set_origin (ctx, "asb-self-test");

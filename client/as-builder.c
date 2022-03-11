@@ -80,7 +80,7 @@ main (int argc, char **argv)
 		{ "include-failed", '\0', 0, G_OPTION_ARG_NONE, &include_failed,
 			/* TRANSLATORS: command line option */
 			_("Include failed results in the output"), NULL },
-		{ "enable-hidpi", '\0', 0, G_OPTION_ARG_NONE, &hidpi_enabled,
+		{ "enable-hidpi", '\0', G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &hidpi_enabled,
 			/* TRANSLATORS: command line option */
 			_("Add HiDPI icons to the tarball"), NULL },
 		{ "enable-embed", '\0', 0, G_OPTION_ARG_NONE, &embedded_icons,
@@ -229,7 +229,7 @@ main (int argc, char **argv)
 
 	/* set build flags */
 	if (hidpi_enabled)
-		flags |= ASB_CONTEXT_FLAG_HIDPI_ICONS;
+		g_printerr ("--enable-hidpi now does nothing and will be removed in future versions\n");
 	if (add_cache_id)
 		g_print ("--add-cache-id now does nothing and will be removed in future versions\n");
 	if (embedded_icons)
