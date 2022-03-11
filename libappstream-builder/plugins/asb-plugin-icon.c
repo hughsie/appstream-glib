@@ -110,10 +110,6 @@ asb_plugin_icon_convert_cached (AsbPlugin *plugin,
 	as_icon_set_prefix (icon, as_app_get_icon_path (AS_APP (app)));
 	as_app_add_icon (AS_APP (app), icon);
 
-	/* is HiDPI disabled */
-	if (!asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_HIDPI_ICONS))
-		return TRUE;
-
 	/* try to get a HiDPI icon */
 	fn_hidpi = as_utils_find_icon_filename_full (tmpdir, key,
 						     AS_UTILS_FIND_ICON_HI_DPI,

@@ -51,8 +51,6 @@ typedef enum {
 
 AsbApp		*asb_app_new			(AsbPackage	*pkg,
 						 const gchar	*id);
-void		 asb_app_set_hidpi_enabled	(AsbApp		*app,
-						 gboolean	 hidpi_enabled);
 void		 asb_app_set_package		(AsbApp		*app,
 						 AsbPackage	*pkg);
 AsbPackage	*asb_app_get_package		(AsbApp		*app);

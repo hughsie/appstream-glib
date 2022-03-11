@@ -508,6 +508,8 @@ asb_context_setup (AsbContext *ctx, GError **error)
 {
 	AsbContextPrivate *priv = GET_PRIVATE (ctx);
 	g_autofree gchar *icons_dir = NULL;
+	g_autofree gchar *icons_dir_hidpi = NULL;
+	g_autofree gchar *icons_dir_lodpi = NULL;
 	g_autofree gchar *screenshot_dir1 = NULL;
 	g_autofree gchar *screenshot_dir2 = NULL;
 
@@ -565,16 +567,12 @@ asb_context_setup (AsbContext *ctx, GError **error)
 	/* icons is nuked; we can re-decompress from the -icons.tar.gz */
 	if (!asb_utils_ensure_exists (priv->icons_dir, error))
 		return FALSE;
-	if (priv->flags & ASB_CONTEXT_FLAG_HIDPI_ICONS) {
-		g_autofree gchar *icons_dir_hidpi = NULL;
-		g_autofree gchar *icons_dir_lodpi = NULL;
-		icons_dir_lodpi = g_build_filename (priv->icons_dir, "64x64", NULL);
-		if (!asb_utils_ensure_exists (icons_dir_lodpi, error))
-			return FALSE;
-		icons_dir_hidpi = g_build_filename (priv->icons_dir, "128x128", NULL);
-		if (!asb_utils_ensure_exists (icons_dir_hidpi, error))
-			return FALSE;
-	}
+	icons_dir_lodpi = g_build_filename (priv->icons_dir, "64x64", NULL);
+	if (!asb_utils_ensure_exists (icons_dir_lodpi, error))
+		return FALSE;
+	icons_dir_hidpi = g_build_filename (priv->icons_dir, "128x128", NULL);
+	if (!asb_utils_ensure_exists (icons_dir_hidpi, error))
+		return FALSE;
 
 	/* load plugins */
 	if (!asb_plugin_loader_setup (priv->plugin_loader, error))

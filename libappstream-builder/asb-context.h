@@ -37,7 +37,7 @@ struct _AsbContextClass
  * @ASB_CONTEXT_FLAG_IGNORE_MISSING_INFO:	Ignore missing information
  * @ASB_CONTEXT_FLAG_IGNORE_MISSING_PARENTS:	Ignore missing parents
  * @ASB_CONTEXT_FLAG_ADD_CACHE_ID:		Unused
- * @ASB_CONTEXT_FLAG_HIDPI_ICONS:		Include HiDPI icons
+ * @ASB_CONTEXT_FLAG_HIDPI_ICONS:		Unused
  * @ASB_CONTEXT_FLAG_EMBEDDED_ICONS:		Embed the icons in the XML
  * @ASB_CONTEXT_FLAG_NO_NETWORK:		Do not download files
  * @ASB_CONTEXT_FLAG_INCLUDE_FAILED:		Write the origin-ignore.xml file

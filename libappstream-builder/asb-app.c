@@ -26,7 +26,6 @@ typedef struct
 	GPtrArray	*requires_appdata;
 	AsbPackage	*pkg;
 	gboolean	 ignore_requires_appdata;
-	gboolean	 hidpi_enabled;
 } AsbAppPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsbApp, asb_app, AS_TYPE_APP)
@@ -101,22 +100,6 @@ asb_app_set_package (AsbApp *app, AsbPackage *pkg)
 	/* be helpful */
 	if (asb_package_get_kind (pkg) == ASB_PACKAGE_KIND_DEFAULT)
 		as_app_add_pkgname (AS_APP (app), asb_package_get_name (pkg));
-}
-
-/**
- * asb_app_set_hidpi_enabled:
- * @app: A #AsbApp
- * @hidpi_enabled: if HiDPI mode should be enabled
- *
- * Sets the HiDPI mode for the application.
- *
- * Since: 0.3.1
- **/
-void
-asb_app_set_hidpi_enabled (AsbApp *app, gboolean hidpi_enabled)
-{
-	AsbAppPrivate *priv = GET_PRIVATE (app);
-	priv->hidpi_enabled = hidpi_enabled;
 }
 
 /**
