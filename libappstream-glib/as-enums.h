@@ -60,6 +60,8 @@ typedef enum {
  * @AS_URL_KIND_DETAILS:		Release details
  * @AS_URL_KIND_SOURCE:			Link to source code
  * @AS_URL_KIND_CONTACT:		URL to contact developer on
+ * @AS_URL_KIND_VCS_BROWSER:	Browse the source code
+ * @AS_URL_KIND_CONTRIBUTE:		Help developing
  *
  * The URL type.
  **/
@@ -75,6 +77,8 @@ typedef enum {
 	AS_URL_KIND_DETAILS,		/* Since: 0.7.15 */
 	AS_URL_KIND_SOURCE,		/* Since: 0.7.15 */
 	AS_URL_KIND_CONTACT,		/* Since: 0.7.15 */
+	AS_URL_KIND_VCS_BROWSER,
+	AS_URL_KIND_CONTRIBUTE,
 	/*< private >*/
 	AS_URL_KIND_LAST
 } AsUrlKind;
