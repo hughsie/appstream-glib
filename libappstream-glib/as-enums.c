@@ -87,6 +87,10 @@ as_url_kind_to_string (AsUrlKind url_kind)
 		return as_ref_string_new_static ("source");
 	if (url_kind == AS_URL_KIND_CONTACT)
 		return as_ref_string_new_static ("contact");
+	if (url_kind == AS_URL_KIND_VCS_BROWSER)
+		return as_ref_string_new_static ("vcs-browser");
+	if (url_kind == AS_URL_KIND_CONTRIBUTE)
+		return as_ref_string_new_static ("contribute");
 	return as_ref_string_new_static ("unknown");
 }
 
@@ -123,6 +127,10 @@ as_url_kind_from_string (const gchar *url_kind)
 		return AS_URL_KIND_SOURCE;
 	if (g_strcmp0 (url_kind, "contact") == 0)
 		return AS_URL_KIND_CONTACT;
+	if (g_strcmp0 (url_kind, "vcs-browser") == 0)
+		return AS_URL_KIND_VCS_BROWSER;
+	if (g_strcmp0 (url_kind, "contribute") == 0)
+		return AS_URL_KIND_CONTRIBUTE;
 	return AS_URL_KIND_UNKNOWN;
 }
 
