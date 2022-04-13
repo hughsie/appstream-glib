@@ -1053,7 +1053,8 @@ asb_context_process (AsbContext *ctx, GError **error)
 					 "%s is not enabled",
 					 asb_package_get_nevr (pkg));
 			asb_context_add_app_ignore (ctx, pkg);
-			asb_package_log_flush (pkg, NULL);
+			if (!asb_package_log_flush (pkg, error))
+				return FALSE;
 			continue;
 		}
 
