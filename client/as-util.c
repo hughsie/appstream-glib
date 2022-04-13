@@ -3293,7 +3293,7 @@ as_util_mirror_screenshots_app_file (AsApp *app,
 	AsImageAlphaFlags alpha_flags;
 	guint i;
 	g_autofree gchar *basename = NULL;
-	g_autofree gchar *filename_no_path = NULL;
+	g_autofree gchar *filename_no_path = g_path_get_basename (filename);
 	g_autofree gchar *url_src = NULL;
 	g_autoptr(AsImage) im_src = NULL;
 	guint sizes[] = { AS_IMAGE_NORMAL_WIDTH,    AS_IMAGE_NORMAL_HEIGHT,
@@ -3308,15 +3308,12 @@ as_util_mirror_screenshots_app_file (AsApp *app,
 	/* is the aspect ratio of the source perfectly 16:9 */
 	if ((as_image_get_width (im_src) / 16) * 9 !=
 	     as_image_get_height (im_src)) {
-		filename_no_path = g_path_get_basename (filename);
-		g_debug ("%s is not in 16:9 aspect ratio",
-			 filename_no_path);
+		g_debug ("%s is not in 16:9 aspect ratio", filename_no_path);
 	}
 
 	/* check screenshot is reasonable in size */
 	if (as_image_get_width (im_src) * 2 < AS_IMAGE_NORMAL_WIDTH ||
 	    as_image_get_height (im_src) * 2 < AS_IMAGE_NORMAL_HEIGHT) {
-		filename_no_path = g_path_get_basename (filename);
 		g_set_error (error,
 			     AS_APP_ERROR,
 			     AS_APP_ERROR_FAILED,
@@ -3331,15 +3328,11 @@ as_util_mirror_screenshots_app_file (AsApp *app,
 	alpha_flags = as_image_get_alpha_flags (im_src);
 	if ((alpha_flags & AS_IMAGE_ALPHA_FLAG_TOP) > 0||
 	    (alpha_flags & AS_IMAGE_ALPHA_FLAG_BOTTOM) > 0) {
-		filename_no_path = g_path_get_basename (filename);
-		g_debug ("%s has vertical alpha padding",
-			 filename_no_path);
+		g_debug ("%s has vertical alpha padding", filename_no_path);
 	}
 	if ((alpha_flags & AS_IMAGE_ALPHA_FLAG_LEFT) > 0||
 	    (alpha_flags & AS_IMAGE_ALPHA_FLAG_RIGHT) > 0) {
-		filename_no_path = g_path_get_basename (filename);
-		g_debug ("%s has horizontal alpha padding",
-			 filename_no_path);
+		g_debug ("%s has horizontal alpha padding", filename_no_path);
 	}
 
 	/* include the app-id in the basename */
