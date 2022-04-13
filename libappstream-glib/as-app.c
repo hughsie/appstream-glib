@@ -2663,7 +2663,7 @@ as_app_set_update_contact (AsApp *app, const gchar *update_contact)
 					    replacements[i].search);
 			if (tmp != NULL) {
 				*tmp = replacements[i].replace;
-				g_strlcpy (tmp + 1,
+				(void)g_strlcpy (tmp + 1,
 					   tmp + strlen (replacements[i].search),
 					   len);
 				done_replacement = TRUE;

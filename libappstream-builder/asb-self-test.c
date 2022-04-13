@@ -639,8 +639,8 @@ main (int argc, char **argv)
 
 	/* only critical and error are fatal */
 	g_log_set_fatal_mask (NULL, G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL);
-	g_setenv ("ASB_IS_SELF_TEST", "", TRUE);
-	g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
+	(void)g_setenv ("ASB_IS_SELF_TEST", "", TRUE);
+	(void)g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
 
 	/* tests go here */
 	g_test_add_func ("/AppStreamBuilder/package", asb_test_package_func);

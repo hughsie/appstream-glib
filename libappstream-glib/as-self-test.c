@@ -163,8 +163,8 @@ as_test_monitor_dir_func (void)
 
 	tmpfile = g_build_filename (tmpdir, "test.txt", NULL);
 	tmpfile_new = g_build_filename (tmpdir, "newtest.txt", NULL);
-	g_unlink (tmpfile);
-	g_unlink (tmpfile_new);
+	(void)g_unlink (tmpfile);
+	(void)g_unlink (tmpfile_new);
 
 	mon = as_monitor_new ();
 	g_signal_connect (mon, "added",
@@ -180,7 +180,7 @@ as_test_monitor_dir_func (void)
 	g_assert (ret);
 
 	/* create directory */
-	g_mkdir_with_parents (tmpdir, 0700);
+	(void)g_mkdir_with_parents (tmpdir, 0700);
 
 	/* touch file */
 	cmd_touch = g_strdup_printf ("touch %s", tmpfile);
@@ -206,7 +206,7 @@ as_test_monitor_dir_func (void)
 
 	/* delete it */
 	cnt_added = cnt_removed = cnt_changed = 0;
-	g_unlink (tmpfile);
+	(void)g_unlink (tmpfile);
 	as_test_loop_run_with_timeout (2000);
 	as_test_loop_quit ();
 	g_assert_cmpint (cnt_added, ==, 0);
@@ -244,8 +244,8 @@ as_test_monitor_dir_func (void)
 	g_assert_cmpint (cnt_removed, ==, 1);
 	g_assert_cmpint (cnt_changed, ==, 0);
 
-	g_unlink (tmpfile);
-	g_unlink (tmpfile_new);
+	(void)g_unlink (tmpfile);
+	(void)g_unlink (tmpfile_new);
 }
 
 static void
@@ -261,8 +261,8 @@ as_test_monitor_file_func (void)
 	const gchar *tmpfile_new = "/tmp/two.txt";
 	g_autofree gchar *cmd_touch = NULL;
 
-	g_unlink (tmpfile);
-	g_unlink (tmpfile_new);
+	(void)g_unlink (tmpfile);
+	(void)g_unlink (tmpfile_new);
 
 	mon = as_monitor_new ();
 	g_signal_connect (mon, "added",
@@ -302,7 +302,7 @@ as_test_monitor_file_func (void)
 
 	/* delete it */
 	cnt_added = cnt_removed = cnt_changed = 0;
-	g_unlink (tmpfile);
+	(void)g_unlink (tmpfile);
 	as_test_loop_run_with_timeout (2000);
 	as_test_loop_quit ();
 	g_assert_cmpint (cnt_added, ==, 0);
@@ -2517,7 +2517,7 @@ as_test_store_local_appdata_func (void)
 
 	/* open test store */
 #ifdef _WIN32
-	g_setenv ("XDG_DATA_DIRS", "/usr/share/", TRUE);
+	(void)g_setenv ("XDG_DATA_DIRS", "/usr/share/", TRUE);
 #endif
 	store = as_store_new ();
 	filename = as_test_get_filename (".");
@@ -3470,8 +3470,8 @@ as_test_store_auto_reload_dir_func (void)
 					   AS_STORE_WATCH_FLAG_REMOVED);
 
 	as_store_set_destdir (store, "/tmp/repo-tmp");
-	g_mkdir_with_parents ("/tmp/repo-tmp/usr/share/app-info/xmls", 0700);
-	g_unlink ("/tmp/repo-tmp/usr/share/app-info/xmls/foo.xml");
+	(void)g_mkdir_with_parents ("/tmp/repo-tmp/usr/share/app-info/xmls", 0700);
+	(void)g_unlink ("/tmp/repo-tmp/usr/share/app-info/xmls/foo.xml");
 
 	/* load store */
 	ret = as_store_load (store, AS_STORE_LOAD_FLAG_APP_INFO_SYSTEM, NULL, &error);
@@ -3502,7 +3502,7 @@ as_test_store_auto_reload_dir_func (void)
 	g_assert (app != NULL);
 
 	/* remove file */
-	g_unlink ("/tmp/repo-tmp/usr/share/app-info/xmls/foo.xml");
+	(void)g_unlink ("/tmp/repo-tmp/usr/share/app-info/xmls/foo.xml");
 	as_test_loop_run_with_timeout (2000);
 	g_assert_cmpint (cnt, ==, 3);
 	g_assert_cmpint (cnt_added, ==, 1);
@@ -3597,7 +3597,7 @@ as_test_store_auto_reload_file_func (void)
 	g_assert_cmpstr (as_release_get_version (rel), ==, "0.1.0");
 
 	/* remove file */
-	g_unlink ("/tmp/foo.xml");
+	(void)g_unlink ("/tmp/foo.xml");
 	as_test_loop_run_with_timeout (2000);
 	g_assert_cmpint (cnt, ==, 3);
 	app = as_store_get_app_by_id (store, "baz.desktop");
@@ -3698,7 +3698,7 @@ as_test_store_flatpak_func (void)
 	g_autoptr(GPtrArray) apps = NULL;
 
 	/* make throws us under a bus, yet again */
-	g_setenv ("AS_SELF_TEST_PREFIX_DELIM", "_", TRUE);
+	(void)g_setenv ("AS_SELF_TEST_PREFIX_DELIM", "_", TRUE);
 
 	/* load a symlinked file to the store */
 	store = as_store_new ();

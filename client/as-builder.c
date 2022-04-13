@@ -144,7 +144,7 @@ main (int argc, char **argv)
 	}
 
 	if (verbose)
-		g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
+		(void)g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
 
 	/* set defaults */
 	if (temp_dir == NULL)
