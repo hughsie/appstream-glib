@@ -306,7 +306,7 @@ as_ref_string_sort_by_refcnt_cb (gconstpointer a, gconstpointer b)
 gchar *
 as_ref_string_debug (AsRefStringDebugFlags flags)
 {
-	GString *tmp = g_string_new (NULL);
+	g_autoptr(GString) tmp = g_string_new (NULL);
 	g_autoptr(GMutexLocker) locker = g_mutex_locker_new (&as_ref_string_mutex);
 
 	/* not yet enabled */
@@ -382,5 +382,5 @@ as_ref_string_debug (AsRefStringDebugFlags flags)
 			}
 		}
 	}
-	return g_string_free (tmp, FALSE);
+	return g_string_free (g_steal_pointer(&tmp), FALSE);
 }
