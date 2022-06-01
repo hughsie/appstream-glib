@@ -1,28 +1,29 @@
 # Alireza Baloochi <alirezab806@gmail.com>, 2019. #zanata
+# Danial Behzadi <dani.behzi@ubuntu.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-26 12:37+0100\n"
-"PO-Revision-Date: 2019-06-22 06:20+0000\n"
-"Last-Translator: Alireza Baloochi <alirezab806@gmail.com>\n"
+"PO-Revision-Date: 2022-06-01 17:27+0430\n"
+"Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian\n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0\n"
-"X-Generator: Zanata 4.6.2\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:76 client/as-compose.c:326 client/as-util.c:4429
 msgid "Show extra debugging information"
-msgstr "ارائه اطلاعات بیشتر دیباگ"
+msgstr "نمایش اطّلاعات رفع اشکال بیش‌تر"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:79
 msgid "Add a cache ID to each component"
-msgstr "افزودن cache ID به هر جز‌ء"
+msgstr "افزودن شناسهٔ انباره به هر پیمانه"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:82
@@ -32,52 +33,52 @@ msgstr "ارائه نتایج خطا دار در خروجی"
 #. TRANSLATORS: command line option
 #: client/as-builder.c:85
 msgid "Add HiDPI icons to the tarball"
-msgstr "افزودن آیکون های HiDPI به tarball"
+msgstr "افزودن نقشک‌های با تفکیک بالا به tarball"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:88
 msgid "Add encoded icons to the XML"
-msgstr "افزودن آیکون های کدگزاری شده به فایل XML"
+msgstr "افزودن نقشک‌های کدگزاری شده به XML"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:91
 msgid "Do not compress the icons into a tarball"
-msgstr "فشرده نکردن آیکون ها درون tarball"
+msgstr "فشرده نکردن نقشک‌ها درون tarball"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:94
 msgid "Set the logging directory"
-msgstr "تنظیم دایرکتوری logging"
+msgstr "تنظیم شاخهٔ گزارش‌گیری"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:97
 msgid "Set the packages directory"
-msgstr "تنظیم دایرکتوری پکیج ها"
+msgstr "تنظیم شاخهٔ بسته‌ها"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:100
 msgid "Set the temporary directory"
-msgstr "تنظیم دایرکتوری موقت"
+msgstr "تنظیم شاخهٔ موقّت"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:103 client/as-compose.c:332
 msgid "Set the output directory"
-msgstr "تنظیم دایرکتوری خروجی"
+msgstr "تنظیم شاخهٔ خروجی"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:106 client/as-compose.c:335
 msgid "Set the icons directory"
-msgstr "تنظیم آیکون های دایرکتوری"
+msgstr "تنظیم شاخهٔ نقشک‌ها"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:109
 msgid "Set the cache directory"
-msgstr "تنظیم دایرکتوری cache"
+msgstr "تنظیم شاخهٔ انباره"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:112 client/as-compose.c:344
 msgid "Set the basenames of the output files"
-msgstr "تنظیم اسم پایه برای فایل های خروجی"
+msgstr "تنظیم اسم پایه برای پرونده‌های خروجی"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:115 client/as-compose.c:338
@@ -87,17 +88,17 @@ msgstr "تنظیم اسم مبدا"
 #. TRANSLATORS: command line option
 #: client/as-builder.c:118
 msgid "Set the number of threads"
-msgstr "تنظیم تعداد Thread ها"
+msgstr "تنظیم تعداد Thread‌ها"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:121 client/as-compose.c:341
 msgid "Set the minimum icon size in pixels"
-msgstr "تنظیم حداقل سایز آیکون به پیکسل"
+msgstr "تنظیم حداقل اندازه نقشک به پیکسل"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:124
 msgid "Set the old metadata location"
-msgstr "تنظیم محل متادیتای قدیمی"
+msgstr "تنظیم محل فرادادهٔ قدیمی"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:127
@@ -107,38 +108,38 @@ msgstr "چشم پوشی از بعضی از انواع veto"
 #. TRANSLATORS: error message
 #: client/as-builder.c:141 client/as-compose.c:358 client/as-util.c:4714
 msgid "Failed to parse arguments"
-msgstr "خطا در "
+msgstr "شکست در تجزیهٔ آرگومان‌ها"
 
 #. TRANSLATORS: error message
 #: client/as-builder.c:246
 msgid "Failed to set up builder"
-msgstr "خطا در برپایی builder"
+msgstr "خطا در برپایی سازنده"
 
 #. TRANSLATORS: error message
 #: client/as-builder.c:265
 msgid "Failed to open packages"
-msgstr "خطا در باز کردن پکیج ها"
+msgstr "خطا در باز کردن بسته‌ها"
 
 #. TRANSLATORS: information message
 #: client/as-builder.c:275
 msgid "Scanning packages..."
-msgstr "در حال اسکن پکیج ها..."
+msgstr "در حال پویش بسته‌ها..."
 
 #. TRANSLATORS: error message
 #: client/as-builder.c:285
 msgid "Failed to add package"
-msgstr "خطا در افزودن پکیج"
+msgstr "خطا در افزودن بسته"
 
 #. TRANSLATORS: information message
 #: client/as-builder.c:291
 #, c-format
 msgid "Parsed %u/%u files..."
-msgstr "اتمام تجزیه فایل های %u %u ..."
+msgstr "اتمام تجزیه پرونده‌های %u %u ..."
 
 #. TRANSLATORS: error message
 #: client/as-builder.c:301
 msgid "Failed to generate metadata"
-msgstr "خطا در بوجود آوردن متادیتا"
+msgstr "شکست در ایجاد فراداده"
 
 #. success
 #. TRANSLATORS: information message
@@ -149,7 +150,7 @@ msgstr "تمام!"
 #. TRANSLATORS: we've saving the icon file to disk
 #: client/as-compose.c:109 client/as-compose.c:163
 msgid "Saving icon"
-msgstr "در حال ذخیره کردن آیکون"
+msgstr "ذخیره کردن نقشک"
 
 #. TRANSLATORS: command line option
 #: client/as-compose.c:329
@@ -165,12 +166,12 @@ msgstr "پردازش برنامه"
 #. * be loaded
 #: client/as-compose.c:407
 msgid "Error loading AppData file"
-msgstr "خطا در بارگذاری فایل AppData"
+msgstr "خطا در بارگذاری پرونده AppData"
 
 #. TRANSLATORS: the .mo files could not be parsed
 #: client/as-compose.c:420
 msgid "Error parsing translations"
-msgstr "خطا در تجزیه ترجمه ها"
+msgstr "خطا در تجزیه ترجمه‌ها"
 
 #. TRANSLATORS: we could not auto-add the kudo
 #: client/as-compose.c:431
@@ -185,19 +186,19 @@ msgstr "خطا در تجزیه provides"
 #. TRANSLATORS: not a valid desktop filename
 #: client/as-compose.c:465
 msgid "Invalid desktop filename"
-msgstr "فایل دسکتاپ نامعتبر است"
+msgstr "پرونده میزکار نامعتبر است"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
 #: client/as-compose.c:484
 msgid "Error loading desktop file"
-msgstr "خطا در بارگذاری فایل دسکتاپ"
+msgstr "خطا در بارگذاری پرونده میزکار"
 
 #. TRANSLATORS: this is when the folder could
 #. * not be created
 #: client/as-compose.c:512
 msgid "Error creating output directory"
-msgstr "خطا در ایجاد دایرکتوری خروجی"
+msgstr "خطا در ایجاد شاخه خروجی"
 
 #. TRANSLATORS: we've saving the XML file to disk
 #: client/as-compose.c:521
@@ -208,7 +209,7 @@ msgstr "در حال ذخیره AppStream"
 #. * cannot be saved for some reason
 #: client/as-compose.c:531
 msgid "Error saving AppStream file"
-msgstr "خطا در ذخیره فایل AppStream"
+msgstr "خطا در ذخیره پرونده AppStream"
 
 #. TRANSLATORS: this is a command alias
 #: client/as-util.c:93
@@ -218,60 +219,60 @@ msgstr "Alias to %s"
 
 #: client/as-util.c:175
 msgid "Command not found, valid commands are:"
-msgstr "دستور پیدا نشد، دستور های معتبر عبارتند از:"
+msgstr "دستور پیدا نشد، دستور‌های معتبر عبارتند از:"
 
 #. TRANSLATORS: any manual changes required?
 #. * also note: FIXME is a hardcoded string
 #: client/as-util.c:467
 msgid "Please review the file and fix any 'FIXME' items"
-msgstr "لطفا فایل را مجددا بازبینی کنید و آیتم های FIXME را تصحیح کنید"
+msgstr "لطفا پرونده را مجددا بازبینی کنید و موردهای FIXME را تصحیح کنید"
 
 #. TRANSLATORS: information message
 #: client/as-util.c:485
 msgid "Old API version"
-msgstr "نسخه قدیمی API"
+msgstr "نگارش قدیمی API"
 
 #. TRANSLATORS: information message
 #: client/as-util.c:497
 msgid "New API version"
-msgstr "نسخه جدید API"
+msgstr "نگارش جدید API"
 
 #: client/as-util.c:516
 msgid "Not enough arguments, expected old.xml new.xml version"
-msgstr "Argument ها کافی نیست،نسخه ‌old.xml و new.xml پیشبینی می شود."
+msgstr "به قدر کافی آرگومان وجود ندارد.انتظار ‪old.xml new.xml version‬ می‌رفت"
 
 #. TRANSLATORS: the %s and %s are file types,
 #. * e.g. "appdata" to "appstream"
 #: client/as-util.c:552
 #, c-format
 msgid "Conversion %s to %s is not implemented"
-msgstr "تبدیل %s به %s پیاده سازی نشده است."
+msgstr "تبدیل %s به %s پیاده سازی نشده"
 
 #: client/as-util.c:569
 msgid "Not enough arguments, expected file.xml"
-msgstr "Argument ها کافی نیست،‌file.xml پیش بینی میشود"
+msgstr "Argument‌ها کافی نیست،‌file.xml پیش بینی می‌شود"
 
 #. TRANSLATORS: %s is a file type,
 #. * e.g. 'appdata'
 #: client/as-util.c:595
 #, c-format
 msgid "File format '%s' cannot be upgraded"
-msgstr "فرمت فایل '%s' قابل ارتقا نیست"
+msgstr "قالب پرونده '%s' قابل ارتقا نیست"
 
 #. TRANSLATORS: not a recognised file type
 #: client/as-util.c:638 client/as-util.c:1038 client/as-util.c:1139
 msgid "Format not recognised"
-msgstr "فرمت شناخته نشد"
+msgstr "قالب شناخته نشد"
 
 #. TRANSLATORS: probably wrong XML
 #: client/as-util.c:1979
 msgid "No desktop applications found"
-msgstr "هیچ اپلیکیشن دسکتاپی پیدا نشد"
+msgstr "هیچ برنامه میزکاری پیدا نشد"
 
 #. TRANSLATORS: the file is valid
 #: client/as-util.c:2711 client/as-util.c:2928
 msgid "OK"
-msgstr "OK"
+msgstr "تأیید"
 
 #. list failures
 #: client/as-util.c:2716 client/as-util.c:2920
@@ -284,22 +285,20 @@ msgstr "بررسی صحت با خطا رو به رو شد"
 
 #: client/as-util.c:2856
 msgid "Validation of files failed"
-msgstr "بررسی فایل ها با خطا رو به رو شد"
+msgstr "بررسی پرونده‌ها با خطا رو به رو شد"
 
 #: client/as-util.c:2908
 #, c-format
 msgid "Cannot validate version of file format '%s'"
-msgstr ""
+msgstr "نمی‌توان نگارش قالب پروندهٔ «%s» را اعتبارسنجی کرد"
 
 #: client/as-util.c:2924
-#, fuzzy
 msgid "Version validation failed"
-msgstr "بررسی صحت با خطا رو به رو شد"
+msgstr "اعتبارسنجی نگارش شکست خورد"
 
 #: client/as-util.c:2976
-#, fuzzy
 msgid "Version validation of files failed"
-msgstr "بررسی فایل ها با خطا رو به رو شد"
+msgstr "اعتبارسنجی نگارش پرونده شکست خورد"
 
 #. TRANSLATORS: application was removed
 #: client/as-util.c:4076
@@ -324,27 +323,27 @@ msgstr "از دسترسی اینترنت استفاده نکن"
 #. TRANSLATORS: command line option
 #: client/as-util.c:4432
 msgid "Show version"
-msgstr "نشان دادن نسخه"
+msgstr "نمایش نگارش"
 
 #. TRANSLATORS: command line option
 #: client/as-util.c:4435
 msgid "Enable profiling"
-msgstr "فعال کردن profiling"
+msgstr "به کار انداختن profiling"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4467
 msgid "Converts AppStream metadata from one version to another"
-msgstr "تبدیل متادیتای AppStream از یک نسخه به نسخه ی دیگر"
+msgstr "تبدیل فرادادهٔ AppStream از یک نگارش به نگارش ی دیگر"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4473
 msgid "Upgrade AppData metadata to the latest version"
-msgstr "ارتقای متادیتای AppData به آخرین نسخه"
+msgstr "ارتقای فرادادهٔ AppData به آخرین نگارش"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4479
 msgid "Creates an example AppData file from a .desktop file"
-msgstr "نمونه ای از  فایل AppData از یک فایل .desktop ایجاد می کند."
+msgstr "پروندهٔ AppData مثالی از یک پروندهٔ ‪.desktop‬ ایجاد می کند"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4485
@@ -354,61 +353,57 @@ msgstr ""
 #. TRANSLATORS: command description
 #: client/as-util.c:4491
 msgid "Search for AppStream applications"
-msgstr "جست و جو در برنامه های AppStream"
+msgstr "جست و جو در برنامه‌های AppStream"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4497
-#, fuzzy
 msgid "Search for AppStream applications by package name"
-msgstr "جست و جو در برنامه های AppStream"
+msgstr "جست‌وجوی برنامه‌های AppStream با نام بسته"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4503
-#, fuzzy
 msgid "Show all installed AppStream applications"
-msgstr "جست و جو در برنامه های AppStream"
+msgstr "نمایش همهٔ برنامه‌های AppStream نصب شده"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4509
-#, fuzzy
 msgid "Search for AppStream applications by category name"
-msgstr "جست و جو در برنامه های AppStream"
+msgstr "جست‌وجوی برنامه‌های AppStream با نام دسته"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4515
 msgid "Display application search tokens"
-msgstr ""
+msgstr "نمایش ژتون‌های جست‌وجوی برنامه"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4521
 msgid "Installs AppStream metadata"
-msgstr ""
+msgstr "نصب فرادادهٔ AppStream"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4527
-#, fuzzy
 msgid "Installs AppStream metadata with new origin"
-msgstr "تبدیل متادیتای AppStream از یک نسخه به نسخه ی دیگر"
+msgstr "نصب فرادادهٔ AppStream با خاستگاه جدید"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4533
 msgid "Uninstalls AppStream metadata"
-msgstr ""
+msgstr "حذف نصب فرادادهٔ AppStream"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4539
 msgid "Create an HTML status page"
-msgstr ""
+msgstr "ایجاد یک صفحهٔ وضعیت HTML"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4545
 msgid "Create an CSV status document"
-msgstr ""
+msgstr "ایجاد یک سند وضعیت CSV"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4551
 msgid "Create an HTML matrix page"
-msgstr ""
+msgstr "ایجاد یک صفحهٔ ماتریس HTML"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4557
@@ -457,9 +452,8 @@ msgstr ""
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4611
-#, fuzzy
 msgid "check an installed application"
-msgstr "پردازش برنامه"
+msgstr "بررسی برنامه‌ای نصب شده"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4617
@@ -498,9 +492,8 @@ msgstr ""
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4659
-#, fuzzy
 msgid "Modify an AppData file"
-msgstr "خطا در بارگذاری فایل AppData"
+msgstr "تغییر یک پروندهٔ AppData"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4665
@@ -509,9 +502,8 @@ msgstr ""
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4671
-#, fuzzy
 msgid "Merge several files to an AppStream file"
-msgstr "خطا در ذخیره فایل AppStream"
+msgstr "ادغام چند پرونده به به پروندهٔ AppStream"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4677
@@ -520,19 +512,18 @@ msgstr ""
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4683
-#, fuzzy
 msgid "Watch AppStream locations for changes"
-msgstr "جست و جو در برنامه های AppStream"
+msgstr "نگریستن مکان‌های AppStream برای تغییرات"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4689
 msgid "Compare version numbers"
-msgstr ""
+msgstr "مقایسهٔ شماره‌های نگارش"
 
 #. TRANSLATORS: command description
 #: client/as-util.c:4695
 msgid "Test a regular expression"
-msgstr ""
+msgstr "آزمودن یک عبارت باقاعده"
 
 #. TRANSLATORS: program name
 #: client/as-util.c:4708
@@ -541,7 +532,7 @@ msgstr "ابزار AppStream"
 
 #: client/as-util.c:4732
 msgid "Version:"
-msgstr "نسخه:"
+msgstr "نگارش:"
 
 #. TRANSLATORS: This is the formatting of English and localized name
 #. * of the rating e.g. "Adults Only (solo adultos)"
@@ -596,7 +587,7 @@ msgstr "بدون خشونت کارتونی"
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:777
 msgid "Cartoon characters in unsafe situations"
-msgstr "شخصیت‌های کارتونی در وضعیت‌های نا امن"
+msgstr "شخصیت‌های کارتونی در وضعیت‌های ناامن"
 
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:779
@@ -606,7 +597,7 @@ msgstr "شخصیت‌های کارتونی در وضعیت‌های درگیری
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:781
 msgid "Graphic violence involving cartoon characters"
-msgstr "خشونت شامل شخصیت‌های کارتونی"
+msgstr "خشونت تصویری شامل شخصیت‌های کارتونی"
 
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:786
@@ -621,8 +612,7 @@ msgstr "شخصیت‌ها در موقعیت‌های نا امن که به را�
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:790
 msgid "Characters in aggressive conflict easily distinguishable from reality"
-msgstr ""
-"شخصیت‌های کارتونی در وضعیت‌های درگیری که به راحتی از واقعیت قابل تشخیص هستند"
+msgstr "شخصیت‌های کارتونی در وضعیت‌های درگیری که به راحتی از واقعیت قابل تشخیص هستند"
 
 #. TRANSLATORS: content rating description
 #: libappstream-glib/as-content-rating.c:792
