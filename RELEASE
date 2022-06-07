@@ -5,9 +5,9 @@ Appstream-Glib Release Notes
 git shortlog appstream_glib_0_7_18.. | grep -i -v trivial | grep -v Merge > NEWS.new
 
 --------------------------------------------------------------------------------
-Version 0.7.19
-~~~~~~~~~~~~~~
-Released: 2020-xx-xx
+Version 0.8.0
+~~~~~~~~~~~~~
+Released: 2021-xx-xx
 
 Notes:
 
@@ -20,8 +20,8 @@ Bugfixes:
 
 4. Commit changes in git:
 
-git commit -a -m "Release version 0.7.19"
-git tag -s -f -m "Release 0.7.19" appstream_glib_0_7_19
+git commit -a -m "Release version 0.8.0"
+git tag -s -f -m "Release 0.8.0" appstream_glib_0_8_0
 <gpg password>
 git push --tags
 git push
