@@ -15,7 +15,7 @@ RUN dnf -y install \
 	gtk-doc \
 	json-glib-devel \
 	libarchive-devel \
-	libsoup-devel \
+	libcurl-devel \
 	libstemmer-devel \
 	libuuid-devel \
 	libxslt \

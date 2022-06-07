@@ -6,11 +6,10 @@ asbuilder_cargs = [
 ]
 
 deps = [
-  glib,
+  gio,
   gmodule,
   gdkpixbuf,
   libarchive,
-  soup,
 ]
 
 if get_option('dep11')
@@ -68,7 +67,7 @@ asb_self_test = executable(
     include_directories('..'),
     asglib_incdir,
   ],
-  dependencies : [glib, gdkpixbuf, soup],
+  dependencies : [gio, gdkpixbuf],
   c_args : cargs + [
     '-DTESTDIRSRC="@0@/../data/tests"'.format(meson.current_source_dir()),
     '-DTESTDIRBUILD="@0@/../data/tests"'.format(meson.current_build_dir()),

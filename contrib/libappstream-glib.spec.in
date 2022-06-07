@@ -1,5 +1,4 @@
 %global glib2_version 2.45.8
-%global libsoup_version 2.51.92
 %global json_glib_version 1.1.1
 %global gdk_pixbuf_version 2.31.5
 %define alphatag                #ALPHATAG#
@@ -18,7 +17,7 @@ BuildRequires: gtk-doc
 BuildRequires: gobject-introspection-devel
 BuildRequires: gperf
 BuildRequires: libarchive-devel
-BuildRequires: libsoup-devel >= %{libsoup_version}
+BuildRequires: libcurl-devel
 BuildRequires: gdk-pixbuf2-devel >= %{gdk_pixbuf_version}
 BuildRequires: gtk3-devel
 BuildRequires: gettext
@@ -42,7 +41,6 @@ BuildRequires: docbook-style-xsl
 Requires: gdk-pixbuf2%{?_isa} >= %{gdk_pixbuf_version}
 Requires: glib2%{?_isa} >= %{glib2_version}
 Requires: json-glib%{?_isa} >= %{json_glib_version}
-Requires: libsoup%{?_isa} >= %{libsoup_version}
 
 # no longer required
 Obsoletes: appdata-tools < 0.1.9
