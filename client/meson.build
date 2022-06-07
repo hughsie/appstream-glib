@@ -10,9 +10,9 @@ if get_option('builder')
       asbuilder_incdir,
     ],
     dependencies : [
-      glib,
+      gio,
       gdkpixbuf,
-      soup,
+      libcurl,
       libarchive
     ],
     link_with : [
@@ -33,9 +33,9 @@ appstream_util = executable(
     asglib_incdir,
   ],
   dependencies : [
-    glib,
+    gio,
     gdkpixbuf,
-    soup,
+    libcurl,
     libarchive,
   ],
   link_with : asglib,
@@ -52,9 +52,9 @@ appstream_compose = executable(
     asglib_incdir,
   ],
   dependencies : [
-    glib,
+    gio,
     gdkpixbuf,
-    soup,
+    libcurl,
     libarchive,
   ],
   link_with : asglib,

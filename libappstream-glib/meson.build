@@ -6,9 +6,9 @@ cargs = [
 
 deps = [
   gdkpixbuf,
-  glib,
+  gio,
   libarchive,
-  soup,
+  libcurl,
 ]
 
 if platform_win32

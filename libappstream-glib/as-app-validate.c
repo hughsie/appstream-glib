@@ -8,8 +8,7 @@
 #include "config.h"
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
-#include <libsoup/soup.h>
-#include <libsoup/soup-status.h>
+#include <curl/curl.h>
 #include <string.h>
 
 #include "as-app-private.h"
@@ -22,7 +21,7 @@ typedef struct {
 	AsAppValidateFlags	 flags;
 	GPtrArray		*screenshot_urls;
 	GPtrArray		*probs;
-	SoupSession		*session;
+	CURL			*curl;
 	gboolean		 previous_para_was_short;
 	gchar			*previous_para_was_short_str;
 	guint			 para_chars_before_list;
@@ -413,15 +412,25 @@ as_app_validate_image_url_already_exists (AsAppValidateHelper *helper,
 	return FALSE;
 }
 
+static size_t
+as_app_validate_download_write_callback_cb(char *ptr, size_t size, size_t nmemb, void *userdata)
+{
+	GByteArray *buf = (GByteArray *)userdata;
+	gsize realsize = size * nmemb;
+	g_byte_array_append(buf, (const guint8 *)ptr, realsize);
+	return realsize;
+}
+
 static gboolean
 ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 {
 	AsImageAlphaFlags alpha_flags;
+	CURLcode res;
 	const gchar *url;
 	gboolean require_correct_aspect_ratio = FALSE;
 	gdouble desired_aspect = 1.777777778;
 	gdouble screenshot_aspect;
-	guint status_code;
+	gchar errbuf[CURL_ERROR_SIZE] = {'\0'};
 	guint screenshot_height;
 	guint screenshot_width;
 	guint ss_size_height_max = 900;
@@ -429,9 +438,8 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	guint ss_size_width_max = 1600;
 	guint ss_size_width_min = 624;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
+	g_autoptr(GByteArray) buf = g_byte_array_new();
 	g_autoptr(GInputStream) stream = NULL;
-	g_autoptr(SoupMessage) msg = NULL;
-	g_autoptr(SoupURI) base_uri = NULL;
 
 	/* make the requirements more strict */
 	if ((helper->flags & AS_APP_VALIDATE_FLAG_STRICT) > 0) {
@@ -453,37 +461,28 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	/* GET file */
 	url = as_image_get_url (im);
 	g_debug ("checking %s", url);
-	base_uri = soup_uri_new (url);
-	if (!SOUP_URI_VALID_FOR_HTTP (base_uri)) {
+	(void)curl_easy_setopt(helper->curl, CURLOPT_URL, url);
+	(void)curl_easy_setopt(helper->curl, CURLOPT_ERRORBUFFER, errbuf);
+	(void)curl_easy_setopt(helper->curl,
+			       CURLOPT_WRITEFUNCTION,
+			       as_app_validate_download_write_callback_cb);
+	(void)curl_easy_setopt(helper->curl, CURLOPT_WRITEDATA, buf);
+	res = curl_easy_perform(helper->curl);
+	if (res != CURLE_OK) {
+		if (errbuf[0] != '\0') {
+			ai_app_validate_add (helper,
+					     AS_PROBLEM_KIND_URL_NOT_FOUND,
+					     "<screenshot> url not valid [%s]: %s", url, errbuf);
+			return FALSE;
+		}
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_URL_NOT_FOUND,
-				     "<screenshot> url not valid [%s]", url);
-		return FALSE;
-	}
-	msg = soup_message_new_from_uri (SOUP_METHOD_GET, base_uri);
-	if (msg == NULL) {
-		g_warning ("Failed to setup message");
-		return FALSE;
-	}
-
-	/* send sync */
-	status_code = soup_session_send_message (helper->session, msg);
-	if (SOUP_STATUS_IS_TRANSPORT_ERROR(status_code)) {
-		ai_app_validate_add (helper,
-			AS_PROBLEM_KIND_URL_NOT_FOUND,
-			"<screenshot> failed to connect: %s [%s]",
-			soup_status_get_phrase(status_code), url);
-		return FALSE;
-	} else if (status_code != SOUP_STATUS_OK) {
-		ai_app_validate_add (helper,
-			AS_PROBLEM_KIND_URL_NOT_FOUND,
-			"<screenshot> failed to download (HTTP %d: %s) [%s]",
-			status_code, soup_status_get_phrase(status_code), url);
+				     "<screenshot> url not valid [%s]: %s", url, curl_easy_strerror(res));
 		return FALSE;
 	}
 
 	/* check if it's a zero sized file */
-	if (msg->response_body->length == 0) {
+	if (buf->len == 0) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_FILE_INVALID,
 				     "<screenshot> url is a zero length file [%s]",
@@ -492,8 +491,8 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	}
 
 	/* create a buffer with the data */
-	stream = g_memory_input_stream_new_from_data (msg->response_body->data,
-						      (gssize) msg->response_body->length,
+	stream = g_memory_input_stream_new_from_data (buf->data,
+						      (gssize) buf->len,
 						      NULL);
 	if (stream == NULL) {
 		ai_app_validate_add (helper,
@@ -993,20 +992,9 @@ as_app_validate_releases (AsApp *app, AsAppValidateHelper *helper, GError **erro
 static gboolean
 as_app_validate_setup_networking (AsAppValidateHelper *helper, GError **error)
 {
-	helper->session = soup_session_new_with_options (SOUP_SESSION_USER_AGENT,
-							 "libappstream-glib",
-							 SOUP_SESSION_TIMEOUT,
-							 5000,
-							 NULL);
-	if (helper->session == NULL) {
-		g_set_error_literal (error,
-				     AS_APP_ERROR,
-				     AS_APP_ERROR_FAILED,
-				     "Failed to set up networking");
-		return FALSE;
-	}
-	soup_session_add_feature_by_type (helper->session,
-					  SOUP_TYPE_PROXY_RESOLVER_DEFAULT);
+	helper->curl = curl_easy_init();
+	(void)curl_easy_setopt(helper->curl, CURLOPT_USERAGENT, "libappstream-glib");
+	(void)curl_easy_setopt(helper->curl, CURLOPT_CONNECTTIMEOUT, 5L);
 	return TRUE;
 }
 
@@ -1133,8 +1121,8 @@ as_app_validate_helper_free (AsAppValidateHelper *helper)
 {
 	g_ptr_array_unref (helper->screenshot_urls);
 	g_free (helper->previous_para_was_short_str);
-	if (helper->session != NULL)
-		g_object_unref (helper->session);
+	if (helper->curl != NULL)
+		curl_easy_cleanup (helper->curl);
 	g_free (helper);
 }
 

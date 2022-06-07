@@ -63,7 +63,7 @@ plugindir = join_paths(get_option('prefix'),
                        'asb-plugins-' + as_plugin_version)
 
 glib_ver = '>= 2.58.0'
-glib = dependency('glib-2.0', version : glib_ver)
+gio = dependency('gio-2.0', version : glib_ver)
 gmodule = dependency('gmodule-2.0', version : glib_ver)
 if platform_win32
   giowindows = dependency('gio-windows-2.0', version : glib_ver)
@@ -74,7 +74,7 @@ else
   uuid = dependency('uuid')
 endif
 libarchive = dependency('libarchive')
-soup = dependency('libsoup-2.4', version : '>= 2.51.92')
+libcurl = dependency('libcurl', version : '>= 7.56.0')
 json_glib = dependency('json-glib-1.0', version : '>= 1.1.2')
 gdkpixbuf = dependency('gdk-pixbuf-2.0', version : '>= 2.31.5')
 

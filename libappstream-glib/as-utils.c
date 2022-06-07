@@ -21,7 +21,6 @@
 #include <string.h>
 #include <archive_entry.h>
 #include <archive.h>
-#include <libsoup/soup.h>
 #include <stdlib.h>
 #ifndef _WIN32
 #ifdef __APPLE__

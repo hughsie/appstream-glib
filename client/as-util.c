@@ -18,7 +18,7 @@
 #include <appstream-glib.h>
 #include <archive_entry.h>
 #include <archive.h>
-#include <libsoup/soup.h>
+#include <curl/curl.h>
 #include <locale.h>
 #include <stdlib.h>
 
@@ -38,6 +38,7 @@ typedef struct {
 	GMainLoop		*loop;
 	GCancellable		*cancellable;
 	AsProfile		*profile;
+	CURL			*curl;
 } AsUtilPrivate;
 
 typedef gboolean (*AsUtilPrivateCb)	(AsUtilPrivate	*util,
@@ -3370,6 +3371,15 @@ as_util_mirror_screenshots_app_file (AsApp *app,
 	return TRUE;
 }
 
+static size_t
+as_util_download_write_callback_cb(char *ptr, size_t size, size_t nmemb, void *userdata)
+{
+	GByteArray *buf = (GByteArray *)userdata;
+	gsize realsize = size * nmemb;
+	g_byte_array_append(buf, (const guint8 *)ptr, realsize);
+	return realsize;
+}
+
 static gboolean
 as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 				    AsApp *app,
@@ -3379,16 +3389,15 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 				    const gchar *output_dir,
 				    GError **error)
 {
+	CURLcode res;
 	gboolean is_default;
 	gboolean ret = TRUE;
-	SoupStatus status;
+	gchar errbuf[CURL_ERROR_SIZE] = {'\0'};
 	g_autofree gchar *basename = NULL;
 	g_autofree gchar *cache_filename = NULL;
 	g_autoptr(AsImage) im = NULL;
 	g_autoptr(AsScreenshot) ss = NULL;
-	g_autoptr(SoupMessage) msg = NULL;
-	g_autoptr(SoupSession) session = NULL;
-	g_autoptr(SoupURI) uri = NULL;
+	g_autoptr(GByteArray) buf = g_byte_array_new();
 
 	/* fonts screenshots are auto-generated */
 	if (as_app_get_kind (app) == AS_APP_KIND_FONT) {
@@ -3404,13 +3413,6 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 		as_app_add_screenshot (app, ss);
 		return TRUE;
 	}
-
-	/* set up networking */
-	session = soup_session_new_with_options (SOUP_SESSION_USER_AGENT, "appstream-util",
-						 SOUP_SESSION_TIMEOUT, 10,
-						 NULL);
-	soup_session_add_feature_by_type (session,
-					  SOUP_TYPE_PROXY_RESOLVER_DEFAULT);
 
 	/* download to cache if not already added */
 	basename = g_path_get_basename (url);
@@ -3430,30 +3432,36 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 				     "file:// URLs like %s are not supported", url);
 			return FALSE;
 		}
-		uri = soup_uri_new (url);
-		if (uri == NULL) {
-			g_set_error (error,
-				     AS_ERROR,
-				     AS_ERROR_FAILED,
-				     "Could not parse '%s' as a URL", url);
-			return FALSE;
-		}
-		msg = soup_message_new_from_uri (SOUP_METHOD_GET, uri);
 		as_util_app_log (app, "Downloading %s", url);
-		status = soup_session_send_message (session, msg);
-		if (status != SOUP_STATUS_OK) {
+
+		(void)curl_easy_setopt(priv->curl, CURLOPT_URL, url);
+		(void)curl_easy_setopt(priv->curl, CURLOPT_ERRORBUFFER, errbuf);
+		(void)curl_easy_setopt(priv->curl,
+				       CURLOPT_WRITEFUNCTION,
+				       as_util_download_write_callback_cb);
+		(void)curl_easy_setopt(priv->curl, CURLOPT_WRITEDATA, buf);
+		res = curl_easy_perform(priv->curl);
+		if (res != CURLE_OK) {
+			if (errbuf[0] != '\0') {
+				g_set_error (error,
+					     AS_ERROR,
+					     AS_ERROR_FAILED,
+					     "Downloading %s failed: %s",
+					     url, errbuf);
+				return FALSE;
+			}
 			g_set_error (error,
 				     AS_ERROR,
 				     AS_ERROR_FAILED,
-				     "Downloading failed: %s",
-				     soup_status_get_phrase (status));
+				     "Downloading %s failed",
+				     url);
 			return FALSE;
 		}
 
 		/* save new file */
 		ret = g_file_set_contents (cache_filename,
-					   msg->response_body->data,
-					   (gssize) msg->response_body->length,
+					   (const gchar *) buf->data,
+					   (gssize) buf->len,
 					   error);
 		if (!ret)
 			return FALSE;
@@ -4437,6 +4445,11 @@ main (int argc, char *argv[])
 	priv = g_new0 (AsUtilPrivate, 1);
 	priv->profile = as_profile_new ();
 
+	/* networking */
+	priv->curl = curl_easy_init();
+	(void)curl_easy_setopt(priv->curl, CURLOPT_USERAGENT, "appstream-util");
+	(void)curl_easy_setopt(priv->curl, CURLOPT_CONNECTTIMEOUT, 10L);
+
 	/* do stuff on ctrl+c */
 	priv->loop = g_main_loop_new (NULL, FALSE);
 	priv->cancellable = g_cancellable_new ();
@@ -4752,6 +4765,8 @@ out:
 	if (priv != NULL) {
 		if (priv->cmd_array != NULL)
 			g_ptr_array_unref (priv->cmd_array);
+		if (priv->curl != NULL)
+			curl_easy_cleanup (priv->curl);
 		g_object_unref (priv->profile);
 		g_object_unref (priv->cancellable);
 		g_main_loop_unref (priv->loop);
