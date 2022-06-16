@@ -22,6 +22,7 @@ typedef struct {
 	GPtrArray		*screenshot_urls;
 	GPtrArray		*probs;
 	CURL			*curl;
+	GProxyResolver		*proxy_resolver;
 	gboolean		 previous_para_was_short;
 	gchar			*previous_para_was_short_str;
 	guint			 para_chars_before_list;
@@ -437,8 +438,10 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	guint ss_size_height_min = 351;
 	guint ss_size_width_max = 1600;
 	guint ss_size_width_min = 624;
+	g_auto(GStrv) proxies = NULL;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
 	g_autoptr(GByteArray) buf = g_byte_array_new();
+	g_autoptr(GError) error_proxy = NULL;
 	g_autoptr(GInputStream) stream = NULL;
 
 	/* make the requirements more strict */
@@ -466,6 +469,15 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	(void)curl_easy_setopt(helper->curl,
 			       CURLOPT_WRITEFUNCTION,
 			       as_app_validate_download_write_callback_cb);
+
+	/* set proxy if required */
+	proxies = g_proxy_resolver_lookup(helper->proxy_resolver, url, NULL, &error_proxy);
+	if (proxies == NULL) {
+		g_warning("failed to lookup proxy for %s: %s", url, error_proxy->message);
+	} else if (g_strcmp0(proxies[0], "direct://") != 0) {
+		(void)curl_easy_setopt(helper->curl, CURLOPT_PROXY, proxies[0]);
+	}
+
 	(void)curl_easy_setopt(helper->curl, CURLOPT_WRITEDATA, buf);
 	res = curl_easy_perform(helper->curl);
 	if (res != CURLE_OK) {
