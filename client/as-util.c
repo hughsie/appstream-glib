@@ -39,6 +39,7 @@ typedef struct {
 	GCancellable		*cancellable;
 	AsProfile		*profile;
 	CURL			*curl;
+	GProxyResolver		*proxy_resolver;
 } AsUtilPrivate;
 
 typedef gboolean (*AsUtilPrivateCb)	(AsUtilPrivate	*util,
@@ -3425,6 +3426,9 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 	} else if (priv->nonet) {
 		as_util_app_log (app, "Missing %s:%s", url, cache_filename);
 	} else {
+		g_auto(GStrv) proxies = NULL;
+		g_autoptr(GError) error_proxy = NULL;
+
 		if (g_str_has_prefix (url, "file:")) {
 			g_set_error (error,
 				     AS_ERROR,
@@ -3434,6 +3438,13 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 		}
 		as_util_app_log (app, "Downloading %s", url);
 
+		/* set proxy if required */
+		proxies = g_proxy_resolver_lookup(priv->proxy_resolver, url, NULL, &error_proxy);
+		if (proxies == NULL) {
+			g_warning("failed to lookup proxy for %s: %s", url, error_proxy->message);
+		} else if (g_strcmp0(proxies[0], "direct://") != 0) {
+			(void)curl_easy_setopt(priv->curl, CURLOPT_PROXY, proxies[0]);
+		}
 		(void)curl_easy_setopt(priv->curl, CURLOPT_URL, url);
 		(void)curl_easy_setopt(priv->curl, CURLOPT_ERRORBUFFER, errbuf);
 		(void)curl_easy_setopt(priv->curl,
@@ -4446,6 +4457,7 @@ main (int argc, char *argv[])
 	priv->profile = as_profile_new ();
 
 	/* networking */
+	priv->proxy_resolver = g_proxy_resolver_get_default();
 	priv->curl = curl_easy_init();
 	(void)curl_easy_setopt(priv->curl, CURLOPT_USERAGENT, "appstream-util");
 	(void)curl_easy_setopt(priv->curl, CURLOPT_CONNECTTIMEOUT, 10L);
