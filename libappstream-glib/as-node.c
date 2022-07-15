@@ -555,8 +555,8 @@ typedef struct {
 	AsNode			*current;
 	AsNodeFromXmlFlags	 flags;
 	const gchar * const	*locales;
-	guint8			 is_em_text;
-	guint8			 is_code_text;
+	guint8			 is_em_text:1;
+	guint8			 is_code_text:1;
 } AsNodeToXmlHelper;
 
 /**
