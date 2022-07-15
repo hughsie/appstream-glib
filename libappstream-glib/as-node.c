@@ -674,6 +674,7 @@ as_node_end_element_cb (GMarkupParseContext *context,
 			GError             **error)
 {
 	AsNodeToXmlHelper *helper = (AsNodeToXmlHelper *) user_data;
+	AsNodeData *data = helper->current->data;
 
 	/* do not create a child node for em and code tags */
 	if (g_strcmp0 (element_name, "em") == 0) {
@@ -684,6 +685,42 @@ as_node_end_element_cb (GMarkupParseContext *context,
 		helper->is_code_text = 0;
 		return;
 	}
+
+	if (data->cdata != NULL) {
+		/* split up into lines and add each with spaces stripped */
+		if ((helper->flags & AS_NODE_FROM_XML_FLAG_LITERAL_TEXT) == 0) {
+			AsRefString *cdata = data->cdata;
+			data->cdata = as_node_reflow_text (cdata, strlen (cdata));
+			as_ref_string_unref (cdata);
+		}
+
+		/* intern commonly duplicated tag values and save a bit of memory */
+		if (data->is_tag_valid) {
+			AsNode *root = g_node_get_root (helper->current);
+			switch (data->tag) {
+			case AS_TAG_CATEGORY:
+			case AS_TAG_COMPULSORY_FOR_DESKTOP:
+			case AS_TAG_CONTENT_ATTRIBUTE:
+			case AS_TAG_DEVELOPER_NAME:
+			case AS_TAG_EXTENDS:
+			case AS_TAG_ICON:
+			case AS_TAG_ID:
+			case AS_TAG_KUDO:
+			case AS_TAG_LANG:
+			case AS_TAG_METADATA_LICENSE:
+			case AS_TAG_MIMETYPE:
+			case AS_TAG_PROJECT_GROUP:
+			case AS_TAG_PROJECT_LICENSE:
+			case AS_TAG_SOURCE_PKGNAME:
+			case AS_TAG_URL:
+				as_node_cdata_to_intern (root, data);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 	helper->current = helper->current->parent;
 }
 
@@ -715,22 +752,9 @@ as_node_text_cb (GMarkupParseContext *context,
 	if (i >= text_len)
 		return;
 
-	/* split up into lines and add each with spaces stripped */
-	if (data->cdata != NULL) {
-		/* support em and code tags */
-		if (g_strcmp0 (as_tag_data_get_name (data), "p") == 0 ||
-			g_strcmp0 (as_tag_data_get_name (data), "li") == 0) {
-			g_autoptr(GString) str = g_string_new (data->cdata);
-			as_ref_string_unref (data->cdata);
-			if (helper->is_em_text)
-				g_string_append_printf (str, "<em>%s</em>", text);
-			else if (helper->is_code_text)
-				g_string_append_printf (str, "<code>%s</code>", text);
-			else
-				g_string_append (str, text);
-			data->cdata = as_ref_string_new_with_length (str->str, str->len);
-			return;
-		}
+	if (data->cdata != NULL &&
+	    g_strcmp0 (as_tag_data_get_name (data), "p") != 0 &&
+	    g_strcmp0 (as_tag_data_get_name (data), "li") != 0) {
 		g_set_error (error,
 			     AS_NODE_ERROR,
 			     AS_NODE_ERROR_INVALID_MARKUP,
@@ -739,37 +763,33 @@ as_node_text_cb (GMarkupParseContext *context,
 			     data->cdata, text);
 		return;
 	}
-	if ((helper->flags & AS_NODE_FROM_XML_FLAG_LITERAL_TEXT) > 0) {
-		data->cdata = as_ref_string_new_with_length (text, text_len + 1);
-	} else {
-		data->cdata = as_node_reflow_text (text, (gssize) text_len);
+
+	/* support em and code tags */
+	if (helper->is_em_text || helper->is_code_text || data->cdata != NULL) {
+		g_autoptr(GString) str = g_string_new (NULL);
+
+		if (data->cdata != NULL) {
+			g_string_append (str, data->cdata);
+			as_ref_string_unref (data->cdata);
+		}
+
+		if (helper->is_em_text)
+			g_string_append (str, "<em>");
+		if (helper->is_code_text)
+			g_string_append (str, "<code>");
+
+		g_string_append_len (str, text, text_len);
+
+		if (helper->is_code_text)
+			g_string_append (str, "</code>");
+		if (helper->is_em_text)
+			g_string_append (str, "</em>");
+
+		data->cdata = as_ref_string_new_with_length (str->str, str->len);
+		return;
 	}
 
-	/* intern commonly duplicated tag values and save a bit of memory */
-	if (data->is_tag_valid && data->cdata != NULL) {
-		AsNode *root = g_node_get_root (helper->current);
-		switch (data->tag) {
-		case AS_TAG_CATEGORY:
-		case AS_TAG_COMPULSORY_FOR_DESKTOP:
-		case AS_TAG_CONTENT_ATTRIBUTE:
-		case AS_TAG_DEVELOPER_NAME:
-		case AS_TAG_EXTENDS:
-		case AS_TAG_ICON:
-		case AS_TAG_ID:
-		case AS_TAG_KUDO:
-		case AS_TAG_LANG:
-		case AS_TAG_METADATA_LICENSE:
-		case AS_TAG_MIMETYPE:
-		case AS_TAG_PROJECT_GROUP:
-		case AS_TAG_PROJECT_LICENSE:
-		case AS_TAG_SOURCE_PKGNAME:
-		case AS_TAG_URL:
-			as_node_cdata_to_intern (root, data);
-			break;
-		default:
-			break;
-		}
-	}
+	data->cdata = as_ref_string_new_with_length (text, text_len);
 }
 
 static void
