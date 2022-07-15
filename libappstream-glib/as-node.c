@@ -826,7 +826,7 @@ as_node_from_xml_internal (const gchar *data, gssize data_sz,
 			   AsNodeFromXmlFlags flags,
 			   GError **error)
 {
-	AsNodeToXmlHelper helper;
+	AsNodeToXmlHelper helper = {0};
 	AsNode *root = NULL;
 	gboolean ret;
 	g_autoptr(GError) error_local = NULL;
@@ -963,7 +963,7 @@ as_node_from_file (GFile *file,
 		   GCancellable *cancellable,
 		   GError **error)
 {
-	AsNodeToXmlHelper helper;
+	AsNodeToXmlHelper helper = {0};
 	GError *error_local = NULL;
 	AsNode *root = NULL;
 	const gchar *content_type = NULL;
