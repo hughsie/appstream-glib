@@ -1,3 +1,29 @@
+Version 0.8.0
+~~~~~~~~~~~~~
+Released: 2022-07-15
+
+New Features:
+ - Add validation for duplicate license xml elements (Otto Urpelainen)
+ - Add vcs-browser and contribute URL type (JakobDev)
+ - Port from libsoup to libcurl (Richard Hughes)
+ - Support em/code tags (Philip Müller)
+ - Use GProxyResolver to auto-detect the correct proxy (Richard Hughes)
+
+Bugfixes:
+ - Align the OARS/CSM mappings (Philip Withnall)
+ - Also unwrap description in metainfo files (Fabian Vogt)
+ - Check --version-script linker option before using (Biswapriyo Nath)
+ - Consider the AppStream version as a string (Corentin Noël)
+ - Do not show a critical warning on <suggests><id/></suggests> (Richard Hughes)
+ - Fix extracting relative symlinks and file paths in icon tarball (Fabian Vogt, Philip Withnall)
+ - Fix Markdown underlining in appdata-to-news (Philip Withnall)
+ - Fix validation of translated captions when LANG is not C (Richard Hughes)
+ - Make directories as 0755 && umask (Pavel Raiskup)
+ - Parse custom and launchables from DEP-11 (Sebastian Krzyszkowiak)
+ - Sync the ITS file with appstream (Piotr Drąg)
+ - Update current version in AsStore (Corentin Noël)
+ - Update to SPDX 3.16 (Nick Richards)
+
 Version 0.7.18
 ~~~~~~~~~~~~~~
 Released: 2020-09-07
