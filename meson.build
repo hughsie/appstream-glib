@@ -1,5 +1,5 @@
 project('appstream-glib', 'c',
-  version : '0.8.0',
+  version : '0.8.1',
   license : 'LGPL-2.1+',
   default_options : ['warning_level=1', 'c_std=c99'],
   meson_version : '>=0.46.0'
