@@ -1453,7 +1453,7 @@ as_app_get_suggests (AsApp *app)
  * as_app_get_requires:
  * @app: a #AsApp instance.
  *
- * Gets any requires the application has defined. A rquirement could be that
+ * Gets any requires the application has defined. A requirement could be that
  * a firmware version has to be below a defined version or that another
  * application is required to be installed.
  *
@@ -2839,7 +2839,7 @@ as_app_set_developer_name (AsApp *app,
  * @locale: (nullable): the locale. e.g. "en_GB"
  * @description: the application description.
  *
- * Sets the application descrption markup for a specific locale.
+ * Sets the application description markup for a specific locale.
  *
  * Since: 0.1.0
  **/
