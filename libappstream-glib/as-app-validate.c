@@ -1330,6 +1330,7 @@ as_app_validate (AsApp *app, guint32 flags, GError **error)
 	helper->probs = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	helper->screenshot_urls = g_ptr_array_new_with_free_func (g_free);
 	helper->flags = flags;
+	helper->proxy_resolver = g_proxy_resolver_get_default ();
 	if (!as_app_validate_setup_networking (helper, error))
 		return NULL;
 
