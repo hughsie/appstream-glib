@@ -1,0 +1,1080 @@
+# Georgian translation for appstream-glib.
+# Copyright (C) 2022 appstream-glib's COPYRIGHT HOLDER
+# This file is distributed under the same license as the appstream-glib's package.
+# Temuri Doghonadze <temuri.doghonadze@gmail.com>, 2022
+
+msgid ""
+msgstr ""
+"Project-Id-Version: appstream-glib\n"
+"Report-Msgid-Bugs-To: https://github.com/hughsie/appstream-glib/issues\n"
+"POT-Creation-Date: 2022-01-25 15:24+0000\n"
+"PO-Revision-Date: 2022-07-28 07:18+0200\n"
+"Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
+"Language-Team: Georgian <(nothing)>\n"
+"Language: ka\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.1.1\n"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:76 client/as-compose.c:326 client/as-util.c:4428
+msgid "Show extra debugging information"
+msgstr "გამართვის დამატებითი ინფორმაციის ჩვენება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:79
+msgid "Add a cache ID to each component"
+msgstr "თითოეული კომპონენტისთვის ქეშის ID-ის დამატება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:82
+msgid "Include failed results in the output"
+msgstr "პასუხი ასევე შეიცავს შეცდომიან პასუხებს"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:85
+msgid "Add HiDPI icons to the tarball"
+msgstr "Tar ფაილში HiDPI ხატულების დამატება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:88
+msgid "Add encoded icons to the XML"
+msgstr "XML-ისთვის კოდირებული ხატულების დამატება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:91
+msgid "Do not compress the icons into a tarball"
+msgstr "Tar ფაილში ხატულები არ შეიკუმშება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:94
+msgid "Set the logging directory"
+msgstr "ჟურნალის საქაღალდის დაყენება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:97
+msgid "Set the packages directory"
+msgstr "პაკეტების საქაღალდის დაყენება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:100
+msgid "Set the temporary directory"
+msgstr "დროებითი საქაღალდის დაყენება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:103 client/as-compose.c:332
+msgid "Set the output directory"
+msgstr "გამოტანის საქაღალდის დაყენება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:106 client/as-compose.c:335
+msgid "Set the icons directory"
+msgstr "ხატულების საქაღალდის დაყენება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:109
+msgid "Set the cache directory"
+msgstr "ქეშის საქაღალდის დაყენება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:112 client/as-compose.c:344
+msgid "Set the basenames of the output files"
+msgstr "გამოტანის ფაილების საბაზისო სახელის დაყენება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:115 client/as-compose.c:338
+msgid "Set the origin name"
+msgstr "საწყისი სახელის დაყენება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:118
+msgid "Set the number of threads"
+msgstr "ნაკადების რაოდენობის დაყენება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:121 client/as-compose.c:341
+msgid "Set the minimum icon size in pixels"
+msgstr "ხატულის მინიმალური ზომა პიქსელებში"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:124
+msgid "Set the old metadata location"
+msgstr "ძველი მეტამონაცემების მდებარეობის დაყენება"
+
+#. TRANSLATORS: command line option
+#: client/as-builder.c:127
+msgid "Ignore certain types of veto"
+msgstr "ზოგიერთი ტიპის ვეტოს იგნორი"
+
+#. TRANSLATORS: error message
+#: client/as-builder.c:141 client/as-compose.c:358 client/as-util.c:4713
+msgid "Failed to parse arguments"
+msgstr "არგუმენტების დამუშავების შეცდომა"
+
+#. TRANSLATORS: error message
+#: client/as-builder.c:246
+msgid "Failed to set up builder"
+msgstr "ამგების მორგების შეცდომა"
+
+#. TRANSLATORS: error message
+#: client/as-builder.c:265
+msgid "Failed to open packages"
+msgstr "პაკეტების გახსნის შეცდომა"
+
+#. TRANSLATORS: information message
+#: client/as-builder.c:275
+msgid "Scanning packages..."
+msgstr "პაკეტების სკანირება..."
+
+#. TRANSLATORS: error message
+#: client/as-builder.c:285
+msgid "Failed to add package"
+msgstr "პაკეტების დამატების შეცდომა"
+
+#. TRANSLATORS: information message
+#: client/as-builder.c:291
+#, c-format
+msgid "Parsed %u/%u files..."
+msgstr "%u/%u ფაილის დამუშავება..."
+
+#. TRANSLATORS: error message
+#: client/as-builder.c:301
+msgid "Failed to generate metadata"
+msgstr "მეტამონაცემების გენერაციის შეცდომა"
+
+#. success
+#. TRANSLATORS: information message
+#: client/as-builder.c:308 client/as-compose.c:537
+msgid "Done!"
+msgstr "შესრულებულია!"
+
+#. TRANSLATORS: we've saving the icon file to disk
+#: client/as-compose.c:109 client/as-compose.c:163
+msgid "Saving icon"
+msgstr "ხატულის შენახვა"
+
+#. TRANSLATORS: command line option
+#: client/as-compose.c:329
+msgid "Set the prefix"
+msgstr "პრეფიქსის დაყენება"
+
+#. TRANSLATORS: we're generating the AppStream data
+#: client/as-compose.c:401
+msgid "Processing application"
+msgstr "აპლიკაციის დამუშავება"
+
+#. TRANSLATORS: the .appdata.xml file could not
+#. * be loaded
+#: client/as-compose.c:407
+msgid "Error loading AppData file"
+msgstr "AppData-ის ფაილის ჩატვირთვის შეცდომა"
+
+#. TRANSLATORS: the .mo files could not be parsed
+#: client/as-compose.c:420
+msgid "Error parsing translations"
+msgstr "თარგმანის დამუშავების შეცდომა"
+
+#. TRANSLATORS: we could not auto-add the kudo
+#: client/as-compose.c:431
+msgid "Error parsing kudos"
+msgstr "შექების დამუშავების შეცდომა"
+
+#. TRANSLATORS: we could not auto-add the provides
+#: client/as-compose.c:442
+msgid "Error parsing provides"
+msgstr "მომწოდებლების დამუშავების შეცდომა"
+
+#. TRANSLATORS: not a valid desktop filename
+#: client/as-compose.c:465
+msgid "Invalid desktop filename"
+msgstr "სამუშაო მაგიდის არასწორი ფაილის სახელი"
+
+#. TRANSLATORS: the .desktop file could not
+#. * be loaded
+#: client/as-compose.c:484
+msgid "Error loading desktop file"
+msgstr "სამუშაო მაგიდის ფაილის ჩატვირთვის შეცდომა"
+
+#. TRANSLATORS: this is when the folder could
+#. * not be created
+#: client/as-compose.c:512
+msgid "Error creating output directory"
+msgstr "გამოსატანი საქაღალდის შექმნის შეცდომა"
+
+#. TRANSLATORS: we've saving the XML file to disk
+#: client/as-compose.c:521
+msgid "Saving AppStream"
+msgstr "AppStream-ის შენახვა"
+
+#. TRANSLATORS: this is when the destination file
+#. * cannot be saved for some reason
+#: client/as-compose.c:531
+msgid "Error saving AppStream file"
+msgstr "AppStream-ის ფაილის შენახვის შეცდომა"
+
+#. TRANSLATORS: this is a command alias
+#: client/as-util.c:93
+#, c-format
+msgid "Alias to %s"
+msgstr "%s-ის მეტსახელი"
+
+#: client/as-util.c:175
+msgid "Command not found, valid commands are:"
+msgstr "ბრძანება ვერ ვიპოვე. სწორი ბრძანებებია:"
+
+#. TRANSLATORS: any manual changes required?
+#. * also note: FIXME is a hardcoded string
+#: client/as-util.c:467
+msgid "Please review the file and fix any 'FIXME' items"
+msgstr "გადახედეთ ფაილს და ჩაასწორეთ ყველა FIXME ჩანაწერი"
+
+#. TRANSLATORS: information message
+#: client/as-util.c:485
+#, c-format
+msgid "Old API version: %s\n"
+msgstr "API-ის ძველი ვერსია: %s\n"
+
+#. TRANSLATORS: information message
+#: client/as-util.c:496
+#, c-format
+msgid "New API version: %s\n"
+msgstr "API-ის ახალი ვერსია: %s\n"
+
+#: client/as-util.c:515
+msgid "Not enough arguments, expected old.xml new.xml version"
+msgstr "არგუმენტები საკმარისი არაა. მოველოდი old.xml new.xl ვერსია"
+
+#. TRANSLATORS: the %s and %s are file types,
+#. * e.g. "appdata" to "appstream"
+#: client/as-util.c:551
+#, c-format
+msgid "Conversion %s to %s is not implemented"
+msgstr "%s-ის %s-ად გარდაქმნა განხორციელებული არაა"
+
+#: client/as-util.c:568
+msgid "Not enough arguments, expected file.xml"
+msgstr "არასაკმარისი არგუმენტები. მოველოდი file.xml"
+
+#. TRANSLATORS: %s is a file type,
+#. * e.g. 'appdata'
+#: client/as-util.c:594
+#, c-format
+msgid "File format '%s' cannot be upgraded"
+msgstr "ფაილის ფორმატის გაუმჯობესება შეუძლებელია: %s"
+
+#. TRANSLATORS: not a recognised file type
+#: client/as-util.c:637 client/as-util.c:1037 client/as-util.c:1138
+msgid "Format not recognised"
+msgstr "უცნობი ფორმატი"
+
+#. TRANSLATORS: probably wrong XML
+#: client/as-util.c:1978
+msgid "No desktop applications found"
+msgstr "აპლიკაციები ნაპოვნი არაა"
+
+#. TRANSLATORS: the file is valid
+#: client/as-util.c:2710 client/as-util.c:2927
+msgid "OK"
+msgstr "OK"
+
+#. list failures
+#: client/as-util.c:2715 client/as-util.c:2919
+msgid "FAILED"
+msgstr "წარუმატებელი"
+
+#: client/as-util.c:2811
+msgid "Validation failed"
+msgstr "შემოწმების შეცდომა"
+
+#: client/as-util.c:2855
+msgid "Validation of files failed"
+msgstr "ფაილების შემოწმების შეცდომა"
+
+#: client/as-util.c:2907
+#, c-format
+msgid "Cannot validate version of file format '%s'"
+msgstr "ფაილის ფორმატის შემოწმების შეცდომა: %s"
+
+#: client/as-util.c:2923
+msgid "Version validation failed"
+msgstr "ვერსიის შემოწმების შეცდომა"
+
+#: client/as-util.c:2975
+msgid "Version validation of files failed"
+msgstr "ფაილების ვერსიების შემოწმების შეცდომა"
+
+#. TRANSLATORS: application was removed
+#: client/as-util.c:4075
+msgid "Removed"
+msgstr "ამოღებულია"
+
+#. TRANSLATORS: application was added
+#: client/as-util.c:4088
+msgid "Added"
+msgstr "დამატებულია"
+
+#. TRANSLATORS: this is when a device ctrl+c's a watch
+#: client/as-util.c:4371
+msgid "Cancelled"
+msgstr "შეწყვეტილია"
+
+#. TRANSLATORS: this is the --nonet argument
+#: client/as-util.c:4425
+msgid "Do not use network access"
+msgstr "ქსელთან წვდომა აკრძალულია"
+
+#. TRANSLATORS: command line option
+#: client/as-util.c:4431
+msgid "Show version"
+msgstr "ვერსიის ჩვენება"
+
+#. TRANSLATORS: command line option
+#: client/as-util.c:4434
+msgid "Enable profiling"
+msgstr "პროფილირების ჩართვა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4466
+msgid "Converts AppStream metadata from one version to another"
+msgstr "AppStream-ის მეტამონაცემების ერთი ვერსიიდან მეორეში გადაყვანა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4472
+msgid "Upgrade AppData metadata to the latest version"
+msgstr "AppStream-ის მეტამონაცემების უახლეს ვერსიამდე განახლება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4478
+msgid "Creates an example AppData file from a .desktop file"
+msgstr "მაგალითისთვის .desktop ფაილიდან AppDატა ფაილის შექმნა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4484
+msgid "Dumps the applications in the AppStream metadata"
+msgstr "AppStream-ის მეტამონაცემებიდან აპლიკაციების ჩვენება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4490
+msgid "Search for AppStream applications"
+msgstr "AppStream-ის აპლიკაციების ძებნა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4496
+msgid "Search for AppStream applications by package name"
+msgstr "AppStream-ის აპლიკაციების ძებნა პაკეტის სახელით"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4502
+msgid "Show all installed AppStream applications"
+msgstr "AppStream-ის ყველა დაყენებული აპლიკაციის ჩვენება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4508
+msgid "Search for AppStream applications by category name"
+msgstr "AppStream-ის აპლიკაციების ძებნა კატეგორიის სახელით"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4514
+msgid "Display application search tokens"
+msgstr "აპლიკაციის ძებნის კოდების ჩვენება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4520
+msgid "Installs AppStream metadata"
+msgstr "AppStream-ის მეტამონაცემების დაყენება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4526
+msgid "Installs AppStream metadata with new origin"
+msgstr "AppStream-ის მეტამონაცემების დაყენება ახალი წყაროთი"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4532
+msgid "Uninstalls AppStream metadata"
+msgstr "AppStream-ის მეტამონაცემების წაშლა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4538
+msgid "Create an HTML status page"
+msgstr "HTML სტატუსის გვერდის შექმნა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4544
+msgid "Create an CSV status document"
+msgstr "CSV სტატუსის დოკუმენტის შექმნა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4550
+msgid "Create an HTML matrix page"
+msgstr "HTML მატრიცის შექმნა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4556
+msgid "List applications not backed by packages"
+msgstr "აპლიკაციების სია, რომლებსაც პაკეტები არ გააჩნიათ"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4562
+msgid "Validate an AppData or AppStream file"
+msgstr "AppData-ის ან AppStream ფაილის დადასტურება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4568
+msgid "Validate an AppData or AppStream file (relaxed)"
+msgstr "AppData-ის ან AppStream ფაილის დადასტურება (მოშვებული)"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4574
+msgid "Exports the agreement to text"
+msgstr "სა&ლიცენზიო შეთანხმების ტექსტში გატანა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4580
+msgid "Validate an AppData or AppStream file (strict)"
+msgstr "AppData-ის ან AppStream ფაილის დადასტურება (მკაცრი)"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4586
+msgid "Validate that AppData file includes the specified release"
+msgstr "შემოწმება, AppData-ის ფაილი მითითებულ ვერსიას შეიცავს თუ არა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4592
+msgid "Convert an AppData file to NEWS format"
+msgstr "AppData-ის ფაილის NEWS ფორმატში გადაყვანა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4598
+msgid "Convert an NEWS file to AppData format"
+msgstr "NEWS ფაილის AppData -ის ფორმატში გადაყვანა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4604
+msgid "Check installed application data"
+msgstr "დაყენებული აპლიკაციის მონაცემების შემოწმება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4610
+msgid "check an installed application"
+msgstr "დაყენებული აპლიკაციის შემოწმება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4616
+msgid "Replace screenshots in source file"
+msgstr "წყაროს ფაილში ეკრანის ანაბეჭდების ჩანაცვლება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4622
+msgid "Add a provide to a source file"
+msgstr "წყაროს ფაილის მომწოდებლის დამატება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4628
+msgid "Add a language to a source file"
+msgstr "წყაროს ფაილის ენის დამატება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4634
+msgid "Mirror upstream screenshots"
+msgstr "აღმავლის ეკრანის ანაბეჭდების სარკისებური ასლი"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4640
+msgid "Incorporate extra metadata from an external file"
+msgstr "გარე ფაილიდან დამატებითი მეტამონაცემების ჩასმა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4646
+msgid "Compare the contents of two AppStream files"
+msgstr "ორი AppStream ფაილის შემცველობის შედარება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4652
+msgid "Generate a GUID from an input string"
+msgstr "შეყვანილი სტრიქონიდან GUID-ის გენერაცია"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4658
+msgid "Modify an AppData file"
+msgstr "AppData ფაილის ჩასწორება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4664
+msgid "Split an AppStream file to AppData and Metainfo files"
+msgstr "AppStream failis AppData-ის და Metainfo-ის ფაილებად დაყოფა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4670
+msgid "Merge several files to an AppStream file"
+msgstr "რამდენიმე ფაილის AppStream ფაილში შერწყმა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4676
+msgid "Import a file to AppStream markup"
+msgstr "ფაილის AppsStream-ის მარქაფში შემოტანა"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4682
+msgid "Watch AppStream locations for changes"
+msgstr "AppStream-ის მდებარეობების ცვლილებები მონიტორინგი"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4688
+msgid "Compare version numbers"
+msgstr "ვერსიის რიცხვების შედარება"
+
+#. TRANSLATORS: command description
+#: client/as-util.c:4694
+msgid "Test a regular expression"
+msgstr "რეგულარული გამოსახულების დატესტვა"
+
+#. TRANSLATORS: program name
+#: client/as-util.c:4707
+msgid "AppStream Utility"
+msgstr "ხელსაწყო AppStream"
+
+#: client/as-util.c:4731
+msgid "Version:"
+msgstr "ვერსია:"
+
+#. TRANSLATORS: This is the formatting of English and localized name
+#. * of the rating e.g. "Adults Only (solo adultos)"
+#: libappstream-glib/as-content-rating.c:261
+#, c-format
+msgid "%s (%s)"
+msgstr "%s (%s)"
+
+#: libappstream-glib/as-content-rating.c:407
+msgid "General"
+msgstr "მთავარი"
+
+#: libappstream-glib/as-content-rating.c:416
+msgid "ALL"
+msgstr "ყველა"
+
+#: libappstream-glib/as-content-rating.c:420
+#: libappstream-glib/as-content-rating.c:496
+msgid "Adults Only"
+msgstr "მხოლოდ დიდებისთვის"
+
+#: libappstream-glib/as-content-rating.c:422
+#: libappstream-glib/as-content-rating.c:495
+msgid "Mature"
+msgstr "ასაკიანები"
+
+#: libappstream-glib/as-content-rating.c:424
+#: libappstream-glib/as-content-rating.c:494
+msgid "Teen"
+msgstr "მოზარდები"
+
+#: libappstream-glib/as-content-rating.c:426
+#: libappstream-glib/as-content-rating.c:493
+msgid "Everyone 10+"
+msgstr "ყველა 10+"
+
+#: libappstream-glib/as-content-rating.c:428
+#: libappstream-glib/as-content-rating.c:492
+msgid "Everyone"
+msgstr "ყველა"
+
+#: libappstream-glib/as-content-rating.c:430
+#: libappstream-glib/as-content-rating.c:491
+msgid "Early Childhood"
+msgstr "პტარა ბავშვები"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:775
+msgid "No cartoon violence"
+msgstr "მულტფილმში ძალადობის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:777
+msgid "Cartoon characters in unsafe situations"
+msgstr "მულტფილმის გმირები საშიშ სიტუაციებში"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:779
+msgid "Cartoon characters in aggressive conflict"
+msgstr "მულტფილმის გმირები აგრესიულ კონფლიქტში"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:781
+msgid "Graphic violence involving cartoon characters"
+msgstr "გრაფიკული ძალადობა მულტფილმის პერსონაჟების მონაწილეობით"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:786
+msgid "No fantasy violence"
+msgstr "წარმოსადგენი ძალადობის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:788
+msgid "Characters in unsafe situations easily distinguishable from reality"
+msgstr "სახიფათო სიტუაციებში პერსონაჟები ადვილად გამოირჩევიან რეალობისგან"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:790
+msgid "Characters in aggressive conflict easily distinguishable from reality"
+msgstr "აგრესიულ კონფლიქტში მყოფი პერსონაჟები ადვილად გამოირჩევიან რეალობისგან"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:792
+msgid "Graphic violence easily distinguishable from reality"
+msgstr "გრაფიკული ძალადობა ადვილად გამოირჩევა რეალობისგან"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:797
+msgid "No realistic violence"
+msgstr "რეალისტური ძალადობის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:799
+msgid "Mildly realistic characters in unsafe situations"
+msgstr "რბილად რეალისტური პერსონაჟები სახიფათო სიტუაციებში"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:801
+msgid "Depictions of realistic characters in aggressive conflict"
+msgstr "რეალისტური პერსონაჟების გამოსახულებები აგრესიულ კონფლიქტში"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:803
+msgid "Graphic violence involving realistic characters"
+msgstr "გრაფიკული ძალადობა, რომელიც მოიცავს რეალისტურ პერსონაჟებს"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:808
+msgid "No bloodshed"
+msgstr "სისხლიანი სცენების გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:810
+msgid "Unrealistic bloodshed"
+msgstr "არარეალური სისხლიანი სცენები"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:812
+msgid "Realistic bloodshed"
+msgstr "რეალისტური სისხლიანი სცენები"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:814
+msgid "Depictions of bloodshed and the mutilation of body parts"
+msgstr "სისხლისღვრის და სხეულის ნაწილების დასახიჩრების ამსახველი"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:819
+msgid "No sexual violence"
+msgstr "სექსუალური ძალადობის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:821
+msgid "Rape or other violent sexual behavior"
+msgstr "გაუპატიურება ან სხვა სექსუალური ძალადობრივი ქცევა"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:828
+msgid "No references to alcohol"
+msgstr "ალკოჰოლის ხსენების გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:830
+msgid "References to alcoholic beverages"
+msgstr "ნახსენებია ალკოჰოლი"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:832
+msgid "Use of alcoholic beverages"
+msgstr "ალკოჰოლური სასმელების გამოყენება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:838
+msgid "No references to illicit drugs"
+msgstr "ნარკოტიკების ხსენების გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:840
+msgid "References to illicit drugs"
+msgstr "ნარკოტიკების ხსენება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:842
+msgid "Use of illicit drugs"
+msgstr "ნარკოტიკების გამოყენება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:848
+msgid "No references to tobacco products"
+msgstr "თამბაქოს ხსენების გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:850
+msgid "References to tobacco products"
+msgstr "თამბაქოს ხსენება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:852
+msgid "Use of tobacco products"
+msgstr "თამბაქოს გამოყენება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:858
+msgid "No nudity of any sort"
+msgstr "ყოველგვარი სიშიშვლის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:860
+msgid "Brief artistic nudity"
+msgstr "მოკლეხნიანი არტისტული სიშიშვლე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:862
+msgid "Prolonged nudity"
+msgstr "გრძელხნიანი სიშიშვლე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:868
+msgid "No references to or depictions of sexual nature"
+msgstr "არ არის მითითება ან ასახავს სექსუალური ხასიათის"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:870
+msgid "Provocative references or depictions"
+msgstr "პროვოკაციული ცნობები ან გამოსახულებები"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:872
+msgid "Sexual references or depictions"
+msgstr "სექსუალური ცნობები ან გამოსახულებები"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:874
+msgid "Graphic sexual behavior"
+msgstr "გრაფიკული სექსუალური ქცევა"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:879
+msgid "No profanity of any kind"
+msgstr "არანაირი სახის პროფანაცია"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:881
+msgid "Mild or infrequent use of profanity"
+msgstr "რბილი ან იშვიათი პროფანაცია"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:883
+msgid "Moderate use of profanity"
+msgstr "პროფანაციის ზომიერი გამოყენება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:885
+msgid "Strong or frequent use of profanity"
+msgstr "პროფანაციის ძლიერი ან ხშირი გამოყენება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:890
+msgid "No inappropriate humor"
+msgstr "შეუსაბამო იუმორის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:892
+msgid "Slapstick humor"
+msgstr "უხეში იუმორი"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:894
+msgid "Vulgar or bathroom humor"
+msgstr "ვულგარული ან ტუალეტის იუმორი"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:896
+msgid "Mature or sexual humor"
+msgstr "უფროსების ან სექსუალური იუმორი"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:901
+msgid "No discriminatory language of any kind"
+msgstr "დისკრიმინაციული ენის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:903
+msgid "Negativity towards a specific group of people"
+msgstr "უარყოფითი დამოკიდებულება ადამიანების სპეციფიკური ჯგუფის მიმართ"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:905
+msgid "Discrimination designed to cause emotional harm"
+msgstr "დისკრიმინაცია, რომელიც მიზნად ემოციური ზიანის მიყენებას ისახავს"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:907
+msgid "Explicit discrimination based on gender, sexuality, race or religion"
+msgstr "აშკარა დისკრიმინაცია სქესის, სექსუალობის, რასის ან რელიგიის საფუძველზე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:912
+msgid "No advertising of any kind"
+msgstr "რეკლამების გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:914
+msgid "Product placement"
+msgstr "პროდუქტის განლაგება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:916
+msgid "Explicit references to specific brands or trademarked products"
+msgstr "კონკრეტული ბრენდებზე ან სავაჭრო ნიშნებზე პირდაპირი მითითება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:918
+msgid "Users are encouraged to purchase specific real-world items"
+msgstr "მომხმარებლებს საშუალება ეძლევათ შეიძინონ კონკრეტული რეალურ ნივთები"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:923
+msgid "No gambling of any kind"
+msgstr "გემბლინგის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:925
+msgid "Gambling on random events using tokens or credits"
+msgstr "შემთხვევით მოვლენებზე კოდებით ან კრედიტებით თამაში"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:927
+msgid "Gambling using “play” money"
+msgstr "მხოლოდ \"სათამაშო\" ფულით თამაში"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:929
+msgid "Gambling using real money"
+msgstr "რეალურ ფულზე თამაში"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:934
+msgid "No ability to spend money"
+msgstr "ფულის ხარჯვის საშუალების გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:936
+msgid "Users are encouraged to donate real money"
+msgstr "მომხმარებლებს საშუალება ეძლევათ, გაიღონ რეალური ფული"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:939
+msgid "Ability to spend real money in-app"
+msgstr "აპლიკაციაში რეალური ფულის დახარჯვის შესაძლებლობა"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:944
+msgid "No way to chat with other users"
+msgstr "სხვა მომხმარებლებთან საუბრის შესაძლებლობის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:946
+msgid "User-to-user interactions without chat functionality"
+msgstr "მომხმარებლების ურთიერთობა ჩატის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:948
+msgid "Moderated chat functionality between users"
+msgstr "მომხმარებლებს შორის კონტროლირებადი ჩატი"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:950
+msgid "Uncontrolled chat functionality between users"
+msgstr "მომხმარებლებს შორის უკონტროლო ჩატი"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:955
+msgid "No way to talk with other users"
+msgstr "სხვა მომხმარებლებთან საუბრის შესაძლებლობის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:957
+msgid "Uncontrolled audio or video chat functionality between users"
+msgstr "მომხმარებლებს შორის უკონტროლო აუდიო/ვიდეო ჩატი"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:964
+msgid "No sharing of social network usernames or email addresses"
+msgstr ""
+"სოციალური ქსელების მომხმარებლების ან ელფოსტის მისამართების გაზიარების გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:966
+msgid "Sharing social network usernames or email addresses"
+msgstr "სოციალური ქსელების მომხმარებლების ან ელფოსტის მისამართების გაზიარება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:973
+msgid "No sharing of user information with third parties"
+msgstr "მომხმარებლის ინფორმაციის მესამე პირზე გადაცემის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:975
+msgid "Checking for the latest application version"
+msgstr "აპლიკაციის უახლოესი ვერსიის შემოწმება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:977
+msgid "Sharing diagnostic data that does not let others identify the user"
+msgstr ""
+"დიაგნოსტიკური მონაცემების გაზიარება, რომელიც სხვებს მომხმარებლის "
+"იდენტიფიკაციის საშუალებას არ აძლევს"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:979
+msgid "Sharing information that lets others identify the user"
+msgstr ""
+"დიაგნოსტიკური მონაცემების გაზიარება, რომელიც სხვებს მომხმარებლის "
+"იდენტიფიკაციის საშუალებას აძლევს"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:984
+msgid "No sharing of physical location with other users"
+msgstr "სხვა მომხმარებლებთან ფიზიკური მდებარეობა არ გაზიარდება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:986
+msgid "Sharing physical location with other users"
+msgstr "სხვა მომხმარებლებისთვის ფიზიკური მდებარეობის გაზიარება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1009
+msgid "No references to homosexuality"
+msgstr "ჰომოსექსუალიზმის ხსენება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1011
+msgid "Indirect references to homosexuality"
+msgstr "ჰომოსექსუალიზმის არაპირდაპირი ხსენება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1013
+msgid "Kissing between people of the same gender"
+msgstr "ერთი და იგივე სქესის მქონე ადამიანების კოცნა"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1015
+msgid "Graphic sexual behavior between people of the same gender"
+msgstr "გრაფიკული სექსუალური ქცევა იგივე სქესის მქონე პირებს შორის"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1020
+msgid "No references to prostitution"
+msgstr "პროსტიტუციის ხსენების გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1022
+msgid "Indirect references to prostitution"
+msgstr "პროსტიტუციის არაპირდაპირი ხსენება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1024
+msgid "Direct references to prostitution"
+msgstr "პროსტიტუციის პირდაპირი ხსენება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1026
+msgid "Graphic depictions of the act of prostitution"
+msgstr "პროსტიტუციის აქტის გრაფიკული დადგმა"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1031
+msgid "No references to adultery"
+msgstr "მრუშობის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1033
+msgid "Indirect references to adultery"
+msgstr "მრუშობის არაპირდაპირი ხსენება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1035
+msgid "Direct references to adultery"
+msgstr "მრუშობის პირდაპირი ხსენება"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1037
+msgid "Graphic depictions of the act of adultery"
+msgstr "მრუშობის აქტის გრაფიკული დადგმა"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1042
+msgid "No sexualized characters"
+msgstr "სექსუალიზებული პერსონაჟების გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1045
+msgid "Scantily clad human characters"
+msgstr "მწირად ჩაცმული ადამიანის პერსონაჟები"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1047
+msgid "Overtly sexualized human characters"
+msgstr "ზედეტად სექსუალიზებული ადამიანის პერსონაჟები"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1052
+msgid "No references to desecration"
+msgstr "შეურაცხყოფის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1054
+msgid "Depictions of or references to historical desecration"
+msgstr "ისტორიული განუკითხაობის ან ცნობების გამოსახვა"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1056
+msgid "Depictions of modern-day human desecration"
+msgstr "ასახავს თანამედროვე ადამიანის შეურაცხყოფას"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1058
+msgid "Graphic depictions of modern-day desecration"
+msgstr "თანამედროვე შეურაცხყოფის გრაფიკული გამოხატვა"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1063
+msgid "No visible dead human remains"
+msgstr "ადამიანის ხილული ნარჩენების გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1065
+msgid "Visible dead human remains"
+msgstr "ადამიანის ხილული ნარჩენების ჩატვლით"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1067
+msgid "Dead human remains that are exposed to the elements"
+msgstr "მკვდარი ადამიანის ნაშთები, რომლებიც ექვემდებარება ელემენტებს"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1069
+msgid "Graphic depictions of desecration of human bodies"
+msgstr "ადამიანის სხეულის შეურაცხყოფის გრაფიკული დადგმა"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1074
+msgid "No references to slavery"
+msgstr "მონობის გარეშე"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1076
+msgid "Depictions of or references to historical slavery"
+msgstr "ისტორიული მონობის ამსახველი ან ცნობები"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1078
+msgid "Depictions of modern-day slavery"
+msgstr "თანამედროვე მონობის დადგმა"
+
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1080
+msgid "Graphic depictions of modern-day slavery"
+msgstr "თანამედროვე მონობის გრაფიკული გამოსახულებები"
