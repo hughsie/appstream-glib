@@ -1,3 +1,13 @@
+Version 0.8.1
+~~~~~~~~~~~~~
+Released: 2022-08-10
+
+Bugfixes:
+ - Correct typos in as-app.c (Felix Yan)
+ - Improve handling of <em> and <code> tags (Jan Alexander Steffens)
+ - Initialize proxy resolver in appstream-validate (Michael Catanzaro)
+ - Properly initialize AsNodeToXmlHelper (Jan Alexander Steffens)
+
 Version 0.8.0
 ~~~~~~~~~~~~~
 Released: 2022-07-15
