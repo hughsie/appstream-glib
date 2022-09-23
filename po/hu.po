@@ -1,29 +1,25 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Hungarian translation for appstream-glib.
+# Copyright (C) 2014, 2016, 2017, 2018, 2022 Free Software Foundation, Inc.
+# This file is distributed under the same license as the appstream-glib package.
 #
-# Translators:
-# Balázs Úr <urbalazs@gmail.com>, 2014-2016
-# kelemeng <kelemeng@ubuntu.com>, 2016
-# Meskó Balázs <meskobalazs@gmail.com>, 2016. #zanata
-# Meskó Balázs <meskobalazs@gmail.com>, 2017. #zanata
-# Zoltan Hoppar <zoltanh721@fedoraproject.org>, 2017. #zanata
-# Meskó Balázs <meskobalazs@gmail.com>, 2018. #zanata
+# Balázs Úr <ur.balazs at fsf dot hu>, 2014, 2015, 2016, 2022.
+# Balázs Meskó <mesko.balazs at fsf dot hu>, 2016, 2017, 2018.
+# Gabor Kelemen <kelemeng at ubuntu dot com>, 2016.
+# Zoltan Hoppar <zoltanh721 at fedoraproject dot org>, 2017.
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-26 12:37+0100\n"
-"PO-Revision-Date: 2018-12-06 06:30+0000\n"
-"Last-Translator: Meskó Balázs <meskobalazs@gmail.com>\n"
-"Language-Team: Hungarian (http://www.transifex.com/freedesktop/appstream-"
-"glib/language/hu/)\n"
+"Report-Msgid-Bugs-To: https://github.com/hughsie/appstream-glib/issues\n"
+"POT-Creation-Date: 2022-07-08 03:24+0000\n"
+"PO-Revision-Date: 2022-09-23 23:51+0200\n"
+"Last-Translator: Balázs Úr <ur.balazs at fsf dot hu>\n"
+"Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 4.6.2\n"
+"X-Generator: Lokalize 19.12.3\n"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:76 client/as-compose.c:326 client/as-util.c:4429
@@ -116,7 +112,7 @@ msgid "Ignore certain types of veto"
 msgstr "Bizonyos vétótípusok mellőzése"
 
 #. TRANSLATORS: error message
-#: client/as-builder.c:141 client/as-compose.c:358 client/as-util.c:4714
+#: client/as-builder.c:141 client/as-compose.c:358 client/as-util.c:4719
 msgid "Failed to parse arguments"
 msgstr "Nem sikerült az argumentumok feldolgozása"
 
@@ -222,30 +218,32 @@ msgid "Error saving AppStream file"
 msgstr "Hiba az AppStream fájl mentésekor"
 
 #. TRANSLATORS: this is a command alias
-#: client/as-util.c:93
+#: client/as-util.c:94
 #, c-format
 msgid "Alias to %s"
 msgstr "Álnév erre: %s"
 
-#: client/as-util.c:175
+#: client/as-util.c:176
 msgid "Command not found, valid commands are:"
 msgstr "A parancs nem található, az érvényes parancsok:"
 
 #. TRANSLATORS: any manual changes required?
 #. * also note: FIXME is a hardcoded string
-#: client/as-util.c:467
+#: client/as-util.c:468
 msgid "Please review the file and fix any 'FIXME' items"
 msgstr "Nézze át a fájlt, és javítson minden „FIXME” elemet"
 
 #. TRANSLATORS: information message
-#: client/as-util.c:485
-msgid "Old API version"
-msgstr "Régi API verzió"
+#: client/as-util.c:486
+#, c-format
+msgid "Old API version: %s\n"
+msgstr "Régi API-verzió: %s\n"
 
 #. TRANSLATORS: information message
 #: client/as-util.c:497
-msgid "New API version"
-msgstr "Új API verzió"
+#, c-format
+msgid "New API version: %s\n"
+msgstr "Új API-verzió: %s\n"
 
 #: client/as-util.c:516
 msgid "Not enough arguments, expected old.xml new.xml version"
@@ -300,17 +298,15 @@ msgstr "A fájlok ellenőrzése nem sikerült"
 #: client/as-util.c:2908
 #, c-format
 msgid "Cannot validate version of file format '%s'"
-msgstr ""
+msgstr "Nem lehet ellenőrizni a(z) „%s” fájlformátum verzióját"
 
 #: client/as-util.c:2924
-#, fuzzy
 msgid "Version validation failed"
-msgstr "Az ellenőrzés nem sikerült"
+msgstr "A verzió ellenőrzése nem sikerült"
 
 #: client/as-util.c:2976
-#, fuzzy
 msgid "Version validation of files failed"
-msgstr "A fájlok ellenőrzése nem sikerült"
+msgstr "A fájlok verziójának ellenőrzése nem sikerült"
 
 #. TRANSLATORS: application was removed
 #: client/as-util.c:4076
@@ -343,207 +339,207 @@ msgid "Enable profiling"
 msgstr "Profilalkotás engedélyezése"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4467
+#: client/as-util.c:4472
 msgid "Converts AppStream metadata from one version to another"
 msgstr "Átalakítja az AppStream metaadatokat az egyik verzióról a másikra"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4473
+#: client/as-util.c:4478
 msgid "Upgrade AppData metadata to the latest version"
 msgstr "Az AppData metaadatok frissítése a legújabb verzióra"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4479
+#: client/as-util.c:4484
 msgid "Creates an example AppData file from a .desktop file"
 msgstr "Egy példa AppData fájlt hoz létre egy .desktop fájlból"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4485
+#: client/as-util.c:4490
 msgid "Dumps the applications in the AppStream metadata"
 msgstr "Kiírja az alkalmazásokat az AppStream metaadatokba"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4491
+#: client/as-util.c:4496
 msgid "Search for AppStream applications"
 msgstr "AppStream alkalmazások keresése"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4497
+#: client/as-util.c:4502
 msgid "Search for AppStream applications by package name"
 msgstr "AppStream alkalmazások keresése csomagnév alapján"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4503
+#: client/as-util.c:4508
 msgid "Show all installed AppStream applications"
 msgstr "Megjeleníti a telepített AppStream alkalmazásokat"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4509
+#: client/as-util.c:4514
 msgid "Search for AppStream applications by category name"
 msgstr "Appstream alkalmazások keresése kategória nevek alapján"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4515
+#: client/as-util.c:4520
 msgid "Display application search tokens"
 msgstr "Alkalmazáskeresési jelsorok megjelenítése"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4521
+#: client/as-util.c:4526
 msgid "Installs AppStream metadata"
 msgstr "Telepíti az AppStream metaadatokat"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4527
+#: client/as-util.c:4532
 msgid "Installs AppStream metadata with new origin"
 msgstr "Telepíti az AppStream metaadatokat egy új eredettel"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4533
+#: client/as-util.c:4538
 msgid "Uninstalls AppStream metadata"
 msgstr "Eltávolítja az AppStream metaadatokat"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4539
+#: client/as-util.c:4544
 msgid "Create an HTML status page"
 msgstr "Egy HTML állapotoldal létrehozása"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4545
+#: client/as-util.c:4550
 msgid "Create an CSV status document"
 msgstr "Egy CSV állapotdokumentum létrehozása"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4551
+#: client/as-util.c:4556
 msgid "Create an HTML matrix page"
 msgstr "Egy HTML mátrixoldal létrehozása"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4557
+#: client/as-util.c:4562
 msgid "List applications not backed by packages"
 msgstr "Alkalmazások felsorolása, melyek mögött nincsenek csomagok"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4563
+#: client/as-util.c:4568
 msgid "Validate an AppData or AppStream file"
 msgstr "Egy AppData vagy AppStream fájl ellenőrzése"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4569
+#: client/as-util.c:4574
 msgid "Validate an AppData or AppStream file (relaxed)"
 msgstr "Egy AppData vagy AppStream fájl ellenőrzése (megengedő)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4575
+#: client/as-util.c:4580
 msgid "Exports the agreement to text"
 msgstr "A megállapodás exportálása szövegként"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4581
+#: client/as-util.c:4586
 msgid "Validate an AppData or AppStream file (strict)"
 msgstr "Egy AppData vagy AppStream fájl ellenőrzése (szigorú)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4587
-#, fuzzy
+#: client/as-util.c:4592
 msgid "Validate that AppData file includes the specified release"
-msgstr "Egy AppData vagy AppStream fájl ellenőrzése (megengedő)"
+msgstr ""
+"Annak ellenőrzése, hogy az AppData fájl tartalmazza-e a megadott kiadást"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4593
+#: client/as-util.c:4598
 msgid "Convert an AppData file to NEWS format"
 msgstr "Egy AppData fájl átalakítása NEWS formátumra"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4599
+#: client/as-util.c:4604
 msgid "Convert an NEWS file to AppData format"
 msgstr "Egy NEWS fájl átalakítása AppData formátumra"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4605
+#: client/as-util.c:4610
 msgid "Check installed application data"
 msgstr "Telepített alkalmazások adatainak ellenőrzése"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4611
+#: client/as-util.c:4616
 msgid "check an installed application"
 msgstr "egy telepített alkalmazás ellenőrzése"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4617
+#: client/as-util.c:4622
 msgid "Replace screenshots in source file"
 msgstr "Képernyőképek cseréje a forrásfájlban"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4623
+#: client/as-util.c:4628
 msgid "Add a provide to a source file"
 msgstr "Hozzáadás a forrásfájlhoz fájlt"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4629
+#: client/as-util.c:4634
 msgid "Add a language to a source file"
 msgstr "Nyelv hozzáadása a forrásfájlhoz"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4635
+#: client/as-util.c:4640
 msgid "Mirror upstream screenshots"
 msgstr "Az upstream képernyőképek tükrözése"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4641
+#: client/as-util.c:4646
 msgid "Incorporate extra metadata from an external file"
 msgstr "További metaadatok használata külső fájlból"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4647
+#: client/as-util.c:4652
 msgid "Compare the contents of two AppStream files"
 msgstr "Két AppStream fájl tartalmának összehasonlítása"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4653
+#: client/as-util.c:4658
 msgid "Generate a GUID from an input string"
 msgstr "GUID előállítása egy bemeneti szövegből"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4659
+#: client/as-util.c:4664
 msgid "Modify an AppData file"
 msgstr "Egy AppData fájl módosítása"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4665
+#: client/as-util.c:4670
 msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr "Egy AppStream fájl felosztása AppData és Metainfo fájlokká"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4671
+#: client/as-util.c:4676
 msgid "Merge several files to an AppStream file"
 msgstr "Több fájl egy AppStream fájlba fésülése"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4677
+#: client/as-util.c:4682
 msgid "Import a file to AppStream markup"
 msgstr "Fájl importálása AppStream jelölőnyelvbe"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4683
+#: client/as-util.c:4688
 msgid "Watch AppStream locations for changes"
 msgstr "AppStream helyek változásainak figyelése"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4689
+#: client/as-util.c:4694
 msgid "Compare version numbers"
 msgstr "Verziószámok összehasonlítása"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4695
+#: client/as-util.c:4700
 msgid "Test a regular expression"
 msgstr "Egy reguláris kifejezés tesztelése"
 
 #. TRANSLATORS: program name
-#: client/as-util.c:4708
+#: client/as-util.c:4713
 msgid "AppStream Utility"
 msgstr "AppStream segédprogram"
 
-#: client/as-util.c:4732
+#: client/as-util.c:4737
 msgid "Version:"
 msgstr "Verzió:"
 
@@ -592,507 +588,507 @@ msgstr "Mindenki"
 msgid "Early Childhood"
 msgstr "Fiatal gyermekkor"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:775
 msgid "No cartoon violence"
 msgstr "Nincs rajzfilmes erőszak"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:777
 msgid "Cartoon characters in unsafe situations"
 msgstr "Rajzfilmfigurák veszélyes helyzetekben"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:779
 msgid "Cartoon characters in aggressive conflict"
 msgstr "Rajzfilmfigurák agresszív konfliktusban"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:781
 msgid "Graphic violence involving cartoon characters"
 msgstr "Rajzfilmfigurákat érintő grafikus erőszak"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:786
 msgid "No fantasy violence"
 msgstr "Nincs kitalált erőszak"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:788
 msgid "Characters in unsafe situations easily distinguishable from reality"
 msgstr ""
 "Karakterek veszélyes helyzetekben, amely könnyen megkülönböztethető a "
 "valóságtól"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:790
 msgid "Characters in aggressive conflict easily distinguishable from reality"
 msgstr ""
 "Karakterek agresszív konfliktusban, amely könnyen megkülönböztethető a "
 "valóságtól"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:792
 msgid "Graphic violence easily distinguishable from reality"
 msgstr "Grafikus erőszak, amely könnyen megkülönböztethető a valóságtól"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:797
 msgid "No realistic violence"
 msgstr "Nincs valósághű erőszak"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:799
 msgid "Mildly realistic characters in unsafe situations"
 msgstr "Enyhén valósághű karakterek veszélyes helyzetekben"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:801
 msgid "Depictions of realistic characters in aggressive conflict"
 msgstr "Valósághű karakterek ábrázolása agresszív konfliktusban"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:803
 msgid "Graphic violence involving realistic characters"
 msgstr "Valósághű karaktereket érintő grafikus erőszak"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:808
 msgid "No bloodshed"
 msgstr "Nincs vérontás"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:810
 msgid "Unrealistic bloodshed"
 msgstr "Nem valósághű vérontás"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:812
 msgid "Realistic bloodshed"
 msgstr "Valósághű vérontás"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:814
 msgid "Depictions of bloodshed and the mutilation of body parts"
 msgstr "Várontás és a testrészek megcsonkításának ábrázolása"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:819
 msgid "No sexual violence"
 msgstr "Nincs szexuális erőszak"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:821
 msgid "Rape or other violent sexual behavior"
 msgstr "Megerőszakolás vagy egyéb erőszakos szexuális viselkedés"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:828
 msgid "No references to alcohol"
 msgstr "Nincs alkoholtartalmú italokra való hivatkozás"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:830
 msgid "References to alcoholic beverages"
 msgstr "Alkoholtartalmú italokra való hivatkozások"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:832
 msgid "Use of alcoholic beverages"
 msgstr "Alkoholtartalmú italok használata"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:838
 msgid "No references to illicit drugs"
 msgstr "Nincs tiltott kábítószerekre való hivatkozás"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:840
 msgid "References to illicit drugs"
 msgstr "Tiltott kábítószerekre való hivatkozások"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:842
 msgid "Use of illicit drugs"
 msgstr "Tiltott kábítószerek használata"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:848
 msgid "No references to tobacco products"
 msgstr "Nincs dohánytermékekre való hivatkozás"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:850
 msgid "References to tobacco products"
 msgstr "Dohánytermékekre való hivatkozások"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:852
 msgid "Use of tobacco products"
 msgstr "Dohánytermékek használata"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:858
 msgid "No nudity of any sort"
 msgstr "Nincs semmiféle meztelenség"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:860
 msgid "Brief artistic nudity"
 msgstr "Rövid művészi meztelenség"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:862
 msgid "Prolonged nudity"
 msgstr "Hosszan tartó meztelenség"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:868
 msgid "No references to or depictions of sexual nature"
 msgstr "Nincs szexuális természetű hivatkozás vagy annak ábrázolása"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:870
 msgid "Provocative references or depictions"
 msgstr "Kihívó hivatkozások vagy ábrázolások"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:872
 msgid "Sexual references or depictions"
 msgstr "Szexuális hivatkozások vagy ábrázolások"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:874
 msgid "Graphic sexual behavior"
 msgstr "Grafikus szexuális viselkedés"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:879
 msgid "No profanity of any kind"
 msgstr "Nincs káromkodás"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:881
 msgid "Mild or infrequent use of profanity"
 msgstr "Enyhe vagy ritka káromkodáshasználat"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:883
 msgid "Moderate use of profanity"
 msgstr "Mérsékelt káromkodáshasználat"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:885
 msgid "Strong or frequent use of profanity"
 msgstr "Erős vagy gyakori káromkodáshasználat"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:890
 msgid "No inappropriate humor"
 msgstr "Nincs helytelen humor"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:892
 msgid "Slapstick humor"
 msgstr "Helyzethumor"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:894
 msgid "Vulgar or bathroom humor"
 msgstr "Vulgáris vagy fürdőszoba humor"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:896
 msgid "Mature or sexual humor"
 msgstr "Felnőtt vagy szexuális humor"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:901
 msgid "No discriminatory language of any kind"
 msgstr "Nincs semmiféle diszkriminatív nyelvezet"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:903
 msgid "Negativity towards a specific group of people"
 msgstr "Negatívság egy bizonyos embercsoport felé"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:905
 msgid "Discrimination designed to cause emotional harm"
 msgstr "Érzelmi károsodást okozó tervezett diszkrimináció"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:907
 msgid "Explicit discrimination based on gender, sexuality, race or religion"
 msgstr "Kifejezetten nemi, szexuális, faji vagy vallási alapú diszkrimináció"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:912
 msgid "No advertising of any kind"
 msgstr "Nincs semmiféle hirdetés"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:914
 msgid "Product placement"
 msgstr "Termékelhelyezés"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:916
 msgid "Explicit references to specific brands or trademarked products"
 msgstr ""
 "Közvetlen utalások egy bizonyos márkára vagy védjeggyel védett termékre"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:918
 msgid "Users are encouraged to purchase specific real-world items"
 msgstr ""
 "A felhasználókat arra ösztönzik, hogy a valódi világban bizonyos tárgyakat "
 "vásároljanak"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:923
 msgid "No gambling of any kind"
 msgstr "Nincs semmiféle szerencsejáték"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:925
 msgid "Gambling on random events using tokens or credits"
 msgstr ""
 "Szerencsejáték véletlenszerű eseményeken zsetonok vagy kreditek használatával"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:927
 msgid "Gambling using “play” money"
 msgstr "Szerencsejáték „játékpénz” használatával"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:929
 msgid "Gambling using real money"
 msgstr "Szerencsejáték valódi pénz használatával"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:934
 msgid "No ability to spend money"
 msgstr "Nem lehet valódi pénzt elkölteni"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:936
 msgid "Users are encouraged to donate real money"
 msgstr "A felhasználókat arra ösztönzik, hogy valós pénzt adományozzanak"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:939
 msgid "Ability to spend real money in-app"
 msgstr "Lehetőség az alkalmazáson belül valódi pénzt elkölteni"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:944
 msgid "No way to chat with other users"
 msgstr "Nincs mód a csevegésre más felhasználókkal"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:946
 msgid "User-to-user interactions without chat functionality"
 msgstr "Felhasználók közötti interakciók, csevegés funkcionalitás nélkül"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:948
 msgid "Moderated chat functionality between users"
 msgstr "Moderált csevegés funkcionalitás a felhasználók között"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:950
 msgid "Uncontrolled chat functionality between users"
 msgstr "Ellenőrizetlen csevegés funkcionalitás a felhasználók között"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:955
 msgid "No way to talk with other users"
 msgstr "Nincs mód a beszélgetésre más felhasználókkal"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:957
 msgid "Uncontrolled audio or video chat functionality between users"
 msgstr ""
 "Ellenőrizetlen hang- vagy videocsevegés funkcionalitás a felhasználók között"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:964
 msgid "No sharing of social network usernames or email addresses"
 msgstr ""
 "Nincs közösségi hálózatokon használt felhasználónevek vagy e-mail címek "
 "megosztása"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:966
 msgid "Sharing social network usernames or email addresses"
 msgstr ""
 "Közösségi hálózatokon használt felhasználónevek vagy e-mail címek megosztása"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:973
 msgid "No sharing of user information with third parties"
 msgstr "Nincs felhasználói információk megosztása harmadik féllel"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:975
 msgid "Checking for the latest application version"
 msgstr "A legfrissebb alkalmazásverzió ellenőrzése"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:977
 msgid "Sharing diagnostic data that does not let others identify the user"
 msgstr ""
 "Diagnosztikai adatok megosztása, amelyek mások számára nem azonosítják a "
 "felhasználót"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:979
 msgid "Sharing information that lets others identify the user"
 msgstr ""
 "Információk megosztása, amelyek mások számára azonosítják a felhasználót"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:984
 msgid "No sharing of physical location with other users"
 msgstr "Nincs fizikai hely megosztása más felhasználók számára"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:986
 msgid "Sharing physical location with other users"
 msgstr "Fizikai hely megosztása más felhasználók számára"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:995
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1009
 msgid "No references to homosexuality"
 msgstr "Nincs homoszexualitásra való hivatkozás"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:997
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1011
 msgid "Indirect references to homosexuality"
 msgstr "Közvetett homoszexualitásra való hivatkozás"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:999
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1013
 msgid "Kissing between people of the same gender"
 msgstr "Csókolózás azonos nemű emberek között"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1001
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1015
 msgid "Graphic sexual behavior between people of the same gender"
 msgstr "Grafikus szexuális viselkedés azonos nemű emberek között"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1006
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1020
 msgid "No references to prostitution"
 msgstr "Nincs prostitúcióra való hivatkozás"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1008
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1022
 msgid "Indirect references to prostitution"
 msgstr "Közvetett prostitúcióra való hivatkozás"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1010
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1024
 msgid "Direct references to prostitution"
 msgstr "Közvetlen prostitúcióra való hivatkozás"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1012
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1026
 msgid "Graphic depictions of the act of prostitution"
 msgstr "Prostitúció grafikus ábrázolása"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1017
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1031
 msgid "No references to adultery"
 msgstr "Nincs házasságtörésre való hivatkozás"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1019
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1033
 msgid "Indirect references to adultery"
 msgstr "Közvetett házasságtörésre való hivatkozás"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1021
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1035
 msgid "Direct references to adultery"
 msgstr "Közvetlen házasságtörésre való hivatkozás"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1023
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1037
 msgid "Graphic depictions of the act of adultery"
 msgstr "Házasságtörés grafikus ábrázolása"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1028
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1042
 msgid "No sexualized characters"
 msgstr "Nincsenek szexualizált karakterek"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1031
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1045
 msgid "Scantily clad human characters"
 msgstr "Hiányosan öltözött emberi karakterek"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1033
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1047
 msgid "Overtly sexualized human characters"
 msgstr "Nyíltan szexualizált emberi karakterek"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1038
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1052
 msgid "No references to desecration"
 msgstr "Nincs gyalázásra való hivatkozás"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1040
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1054
 msgid "Depictions of or references to historical desecration"
 msgstr "Gyalázás történelmi ábrázolása vagy arra való hivatkozás"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1042
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1056
 msgid "Depictions of modern-day human desecration"
 msgstr "Modern kori emberi gyalázás ábrázolása"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1044
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1058
 msgid "Graphic depictions of modern-day desecration"
 msgstr "Modern kori emberi gyalázás grafikus ábrázolása"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1049
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1063
 msgid "No visible dead human remains"
 msgstr "Nincsenek látható emberi maradványok"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1051
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1065
 msgid "Visible dead human remains"
 msgstr "Látható emberi maradványok"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1053
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1067
 msgid "Dead human remains that are exposed to the elements"
 msgstr "Emberi maradványok, kitéve az időjárási viszonyoknak"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1055
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1069
 msgid "Graphic depictions of desecration of human bodies"
 msgstr "Emberi testek gyalázásának grafikus ábrázolása"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1060
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1074
 msgid "No references to slavery"
 msgstr "Nincs rabszolgaságra való hivatkozás"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1062
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1076
 msgid "Depictions of or references to historical slavery"
 msgstr "Rabszolgaság történelmi ábrázolása vagy arra való hivatkozás"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1064
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1078
 msgid "Depictions of modern-day slavery"
 msgstr "Modern kori rabszolgaság ábrázolása"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1066
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1080
 msgid "Graphic depictions of modern-day slavery"
 msgstr "Modern kori rabszolgaság grafikus ábrázolása"
