@@ -790,6 +790,7 @@ as_app_validate_screenshots (AsApp *app, AsAppValidateHelper *helper)
 	if (as_app_get_kind (app) == AS_APP_KIND_FIRMWARE ||
 	    as_app_get_kind (app) == AS_APP_KIND_DRIVER ||
 	    as_app_get_kind (app) == AS_APP_KIND_RUNTIME ||
+	    as_app_get_kind (app) == AS_APP_KIND_CONSOLE ||
 	    as_app_get_kind (app) == AS_APP_KIND_ADDON ||
 	    as_app_get_kind (app) == AS_APP_KIND_LOCALIZATION)
 		number_screenshots_min = 0;
