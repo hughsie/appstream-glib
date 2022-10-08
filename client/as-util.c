@@ -3447,6 +3447,7 @@ as_util_mirror_screenshots_app_url (AsUtilPrivate *priv,
 		}
 		(void)curl_easy_setopt(priv->curl, CURLOPT_URL, url);
 		(void)curl_easy_setopt(priv->curl, CURLOPT_ERRORBUFFER, errbuf);
+		(void)curl_easy_setopt(priv->curl, CURLOPT_FOLLOWLOCATION, 1);
 		(void)curl_easy_setopt(priv->curl,
 				       CURLOPT_WRITEFUNCTION,
 				       as_util_download_write_callback_cb);
