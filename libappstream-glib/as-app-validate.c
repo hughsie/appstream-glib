@@ -465,6 +465,7 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	url = as_image_get_url (im);
 	g_debug ("checking %s", url);
 	(void)curl_easy_setopt(helper->curl, CURLOPT_URL, url);
+	(void)curl_easy_setopt(helper->curl, CURLOPT_FOLLOWLOCATION, 1);
 	(void)curl_easy_setopt(helper->curl, CURLOPT_ERRORBUFFER, errbuf);
 	(void)curl_easy_setopt(helper->curl,
 			       CURLOPT_WRITEFUNCTION,
