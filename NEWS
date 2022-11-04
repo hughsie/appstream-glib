@@ -1,3 +1,11 @@
+Version 0.8.2
+~~~~~~~~~~~~~
+Released: 2022-11-04
+
+Bugfixes:
+ - Tell CURL to follow http redirects (Hubert Figuière)
+ - Never add default icons to firmware, IMs or codecs (Philip Withnall)
+
 Version 0.8.1
 ~~~~~~~~~~~~~
 Released: 2022-08-10
