@@ -555,8 +555,8 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	if (screenshot_height < ss_size_height_min) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> height too small [%s] minimum is %upx",
-				     url, ss_size_height_min);
+				     "<screenshot> height (%u) too small [%s] minimum is %upx",
+				     screenshot_height, url, ss_size_height_min);
 	}
 	if (screenshot_width > ss_size_width_max) {
 		ai_app_validate_add (helper,
