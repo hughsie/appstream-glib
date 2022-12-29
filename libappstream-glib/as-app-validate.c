@@ -561,14 +561,14 @@ ai_app_validate_image_check (AsImage *im, AsAppValidateHelper *helper)
 	if (screenshot_width > ss_size_width_max) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> width too large [%s] maximum is %upx",
-				     url, ss_size_width_max);
+				     "<screenshot> width (%u) too large [%s] maximum is %upx",
+				     screenshot_width, url, ss_size_width_max);
 	}
 	if (screenshot_height > ss_size_height_max) {
 		ai_app_validate_add (helper,
 				     AS_PROBLEM_KIND_ATTRIBUTE_INVALID,
-				     "<screenshot> height too large [%s] maximum is %upx",
-				     url, ss_size_height_max);
+				     "<screenshot> height (%u) too large [%s] maximum is %upx",
+				     screenshot_height, url, ss_size_height_max);
 	}
 
 	/* check padding */
