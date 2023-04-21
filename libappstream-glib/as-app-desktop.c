@@ -53,9 +53,6 @@ as_app_infer_project_group (AsApp *app, GKeyFile *kf, const gchar *key, GError *
 	} else if (g_strcmp0 (key, "X-MATE-Bugzilla-Product") == 0) {
 		as_app_set_project_group (app, "MATE");
 
-	} else if (g_strcmp0 (key, "X-KDE-StartupNotify") == 0) {
-		as_app_set_project_group (app, "KDE");
-
 	} else if (g_strcmp0 (key, "X-DocPath") == 0) {
 		tmp = g_key_file_get_string (kf,
 					     G_KEY_FILE_DESKTOP_GROUP,
