@@ -28,8 +28,7 @@ asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 static gboolean
 _asb_plugin_check_filename (const gchar *filename)
 {
-	if (asb_plugin_match_glob ("*.metainfo.xml", filename) ||
-	    asb_plugin_match_glob ("/usr/share/appdata/*.metainfo.xml", filename) ||
+	if (asb_plugin_match_glob ("/usr/share/appdata/*.metainfo.xml", filename) ||
 	    asb_plugin_match_glob ("/usr/share/appdata/*.appdata.xml", filename) ||
 	    asb_plugin_match_glob ("/usr/share/metainfo/*.metainfo.xml", filename) ||
 	    asb_plugin_match_glob ("/usr/share/metainfo/*.appdata.xml", filename))
