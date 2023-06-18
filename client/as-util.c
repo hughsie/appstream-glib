@@ -2861,6 +2861,88 @@ as_util_validate_files (gchar **filenames,
 }
 
 static gboolean
+as_util_get_latest_version_file (gchar   *filename,
+				 GError **error)
+{
+	g_autoptr(AsApp) app = NULL;
+	AsRelease *release = NULL;
+	AsFormatKind kind;
+
+	/* is AppStream */
+	kind = as_format_guess_kind (filename);
+
+	if (kind == AS_FORMAT_KIND_APPSTREAM || kind == AS_FORMAT_KIND_DESKTOP) {
+		g_set_error (error,
+			     AS_ERROR,
+			     AS_ERROR_INVALID_ARGUMENTS,
+			     _("Cannot validate version of file format '%s'"),
+			     as_format_kind_to_string (kind));
+		return FALSE;
+	}
+
+	/* load file */
+	app = as_app_new ();
+	if (!as_app_parse_file (app, filename, AS_APP_PARSE_FLAG_NONE, error))
+		return FALSE;
+	release = as_app_get_release_default (app);
+
+	if (release == NULL) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     _("Failed to fetch latest release"));
+		return FALSE;
+	}
+
+	g_print ("%s\n", as_release_get_version (release));
+	return TRUE;
+
+}
+
+static gboolean
+as_util_get_latest_version_files (gchar **filenames,
+				  GError **error)
+{
+	GError *error_local = NULL;
+	guint i;
+	guint n_failed = 0;
+
+	/* check args */
+	if (g_strv_length (filenames) < 1) {
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     "Not enough arguments, "
+				     "expected example.appdata.xml");
+		return FALSE;
+	}
+
+	/* check each file */
+	for (i = 0; filenames[i] != NULL; i++) {
+		if (as_util_get_latest_version_file (filenames[i], &error_local))
+			continue;
+
+		/* anything other than AsProblems bail */
+		n_failed++;
+		if (!g_error_matches (error_local, AS_ERROR,
+				      AS_ERROR_INVALID_ARGUMENTS)) {
+			g_propagate_error (error, error_local);
+			return FALSE;
+		}
+		g_clear_error (&error_local);
+	}
+	if (n_failed > 0) {
+		/* TRANSLATORS: error message */
+		g_set_error_literal (error,
+				     AS_ERROR,
+				     AS_ERROR_INVALID_ARGUMENTS,
+				     _("Parsing of files failed"));
+		return FALSE;
+	}
+	return n_failed == 0;
+}
+
+static gboolean
 as_util_validate (AsUtilPrivate *priv, gchar **values, GError **error)
 {
 	AsAppValidateFlags flags = AS_APP_VALIDATE_FLAG_NONE;
@@ -2987,6 +3069,12 @@ as_util_validate_version (AsUtilPrivate *priv, gchar **values, GError **error)
 	if (priv->nonet)
 		flags |= AS_APP_VALIDATE_FLAG_NO_NETWORK;
 	return as_util_version_validate_files (values, flags, error);
+}
+
+static gboolean
+as_util_get_latest_version (AsUtilPrivate *priv, gchar **values, GError **error)
+{
+	return as_util_get_latest_version_files (values, error);
 }
 
 static gboolean
@@ -4604,6 +4692,12 @@ main (int argc, char *argv[])
 		     /* TRANSLATORS: command description */
 		     _("Validate that AppData file includes the specified release"),
 		     as_util_validate_version);
+	as_util_add (priv->cmd_array,
+		     "get-latest-version",
+		     NULL,
+		     /* TRANSLATORS: command description */
+		     _("Get the latest version from the AppData file"),
+		     as_util_get_latest_version);
 	as_util_add (priv->cmd_array,
 		     "appdata-to-news",
 		     NULL,
