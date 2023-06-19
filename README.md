@@ -1,3 +1,6 @@
+| ⚠️ WARNING: appstream-glib is heavy maintenance mode, use [appstream](https://github.com/ximion/appstream) instead |
+| --- |
+
 AppStream-Glib
 ==============
 
