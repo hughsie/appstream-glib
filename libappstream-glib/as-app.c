@@ -5366,6 +5366,7 @@ as_app_node_parse_child (AsApp *app, GNode *n, guint32 flags,
 			priv->problems |= AS_APP_PROBLEM_EXPECTED_CHILDREN;
 		break;
 	default:
+		g_warning ("Unknown tag: <%s>", as_node_get_name (n));
 		priv->problems |= AS_APP_PROBLEM_INVALID_XML_TAG;
 		break;
 	}
