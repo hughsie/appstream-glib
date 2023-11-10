@@ -34,6 +34,7 @@ void
 asb_plugin_add_globs (AsbPlugin *plugin, GPtrArray *globs)
 {
 	asb_plugin_add_glob (globs, "/usr/share/fonts/*/*.otf");
+	asb_plugin_add_glob (globs, "/usr/share/fonts/*/*.ttc");
 	asb_plugin_add_glob (globs, "/usr/share/fonts/*/*.ttf");
 }
 
@@ -41,6 +42,8 @@ static gboolean
 _asb_plugin_check_filename (const gchar *filename)
 {
 	if (asb_plugin_match_glob ("/usr/share/fonts/*/*.otf", filename))
+		return TRUE;
+	if (asb_plugin_match_glob ("/usr/share/fonts/*/*.ttc", filename))
 		return TRUE;
 	if (asb_plugin_match_glob ("/usr/share/fonts/*/*.ttf", filename))
 		return TRUE;
