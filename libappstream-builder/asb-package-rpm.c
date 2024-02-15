@@ -54,10 +54,6 @@ asb_package_rpm_init (AsbPackageRpm *pkg)
 static void
 asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 {
-	guint i;
-	g_autofree gchar *new = NULL;
-	g_auto(GStrv) tokens = NULL;
-
 	/* this isn't supposed to happen */
 	if (license == NULL) {
 		asb_package_log (pkg, ASB_PACKAGE_LOG_LEVEL_WARNING,
@@ -65,29 +61,7 @@ asb_package_rpm_set_license (AsbPackage *pkg, const gchar *license)
 		return;
 	}
 
-	/* tokenize the license string and log non SPDX licenses */
-	new = as_utils_license_to_spdx (license);
-	tokens = as_utils_spdx_license_tokenize (new);
-	for (i = 0; tokens[i] != NULL; i++) {
-
-		/* ignore */
-		if (tokens[i][0] == '(' ||
-		    tokens[i][0] == ')' ||
-		    tokens[i][0] == '&' ||
-		    tokens[i][0] == '|')
-			continue;
-
-		/* already SPDX */
-		if (tokens[i][0] == '@')
-			continue;
-
-		/* no matching SPDX entry */
-		asb_package_log (pkg,
-				 ASB_PACKAGE_LOG_LEVEL_WARNING,
-				 "Unable to currently map Fedora "
-				 "license '%s' to SPDX", tokens[i]);
-	}
-	asb_package_set_license (pkg, new);
+	asb_package_set_license (pkg, license);
 }
 
 static void
