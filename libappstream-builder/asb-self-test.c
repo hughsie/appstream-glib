@@ -108,7 +108,7 @@ asb_test_package_rpm_func (void)
 	g_assert_cmpstr (asb_package_get_nevr (pkg), ==, "test-0.1-1.fc21");
 	g_assert_cmpstr (asb_package_get_evr (pkg), ==, "0.1-1.fc21");
 	g_assert_cmpstr (asb_package_get_url (pkg), ==, "http://people.freedesktop.org/~hughsient/");
-	g_assert_cmpstr (asb_package_get_license (pkg), ==, "GPL-2.0+");
+	g_assert_cmpstr (asb_package_get_license (pkg), ==, "GPLv2+");
 	g_assert_cmpstr (asb_package_get_source	(pkg), ==, "test-0.1-1.fc21");
 	g_assert_cmpstr (asb_package_get_source_pkgname (pkg), ==, "test");
 
