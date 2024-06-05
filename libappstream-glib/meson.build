@@ -27,10 +27,6 @@ if get_option('rpm')
   deps += rpm
 endif
 
-if get_option('stemmer')
-  deps += stemmer
-endif
-
 asresources = gnome.compile_resources(
   'as-resources', 'appstream-glib.gresource.xml',
   c_name : 'as'
