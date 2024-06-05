@@ -1,3 +1,19 @@
+Version 0.8.3
+~~~~~~~~~~~~~
+Released: 2024-06-05
+
+New Features:
+ - Drop support for libstemmer (Richard Hughes)
+
+Bugfixes:
+ - Add font glob match for .ttc files (Joey Riches)
+ - Do not veto the extension if the parent cannot be found (Richard Hughes)
+ - Include screenshot height in "too small" and "too large" error (suve)
+ - Make the appdata filename check match the plugin globs (Richard Hughes)
+ - Remove Check for X-KDE-StartupNotify (JakobDev)
+ - Stop trying to convert Fedora licenses into SPDX (Richard Hughes)
+ - Support RFC9512 registration for application/yaml (David Mohammed)
+
 Version 0.8.2
 ~~~~~~~~~~~~~
 Released: 2022-11-04
