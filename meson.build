@@ -105,12 +105,6 @@ if get_option('dep11')
   conf.set('AS_BUILD_DEP11', 1)
 endif
 
-# support stemming of search tokens
-if get_option('stemmer')
-  stemmer = cc.find_library('stemmer')
-  conf.set('HAVE_LIBSTEMMER', 1)
-endif
-
 # use gperf for faster string -> enum matching
 gperf = find_program('gperf', required : true)
 

@@ -3,9 +3,7 @@ set -e
 
 mkdir -p build && cd build
 rm * -rf
-meson .. \
-    -Dgtk-doc=true \
-    -Dstemmer=true $@
+meson .. -Dgtk-doc=true $@
 ninja -v
 ninja test -v
 DESTDIR=/tmp/install-ninja ninja install

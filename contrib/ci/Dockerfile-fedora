@@ -16,7 +16,6 @@ RUN dnf -y install \
 	json-glib-devel \
 	libarchive-devel \
 	libcurl-devel \
-	libstemmer-devel \
 	libuuid-devel \
 	libxslt \
 	libyaml-devel \

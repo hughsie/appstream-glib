@@ -31,7 +31,7 @@ copy. To do the latter just do:
     dnf install docbook-utils gettext-devel glib-devel \
                 gobject-introspection-devel gperf gtk-doc gtk3-devel \
                 json-glib-devel libarchive-devel libcurl-devel \
-                libstemmer-devel libuuid-devel libyaml-devel \
+                libuuid-devel libyaml-devel \
                 meson rpm-devel
     mkdir build && cd build
     meson .. --prefix=/opt -Dbuilder=false
@@ -92,7 +92,7 @@ binary and data files, or you can build a local copy. To do the latter just do:
     dnf install docbook-utils gettext-devel glib-devel \
                 gobject-introspection-devel gperf gtk-doc gtk3-devel \
                 libarchive-devel libsoup-devel \
-                libstemmer-devel libuuid-devel libyaml-devel \
+                libuuid-devel libyaml-devel \
                 meson rpm-devel rpm-devel
     mkdir build && cd build
     meson .. --prefix=/opt -Dbuilder=true

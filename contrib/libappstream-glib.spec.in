@@ -23,7 +23,6 @@ BuildRequires: gtk3-devel
 BuildRequires: gettext
 BuildRequires: libuuid-devel
 BuildRequires: libyaml-devel
-BuildRequires: libstemmer-devel
 BuildRequires: json-glib-devel >= %{json_glib_version}
 BuildRequires: meson
 
@@ -80,7 +79,6 @@ from a directory of packages.
 %build
 %meson \
     -Dgtk-doc=true \
-    -Dstemmer=true \
     -Ddep11=true
 %meson_build
 
