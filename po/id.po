@@ -9,9 +9,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: appstream-glib\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-26 12:37+0100\n"
-"PO-Revision-Date: 2017-09-01 05:13+0000\n"
+"Report-Msgid-Bugs-To: https://github.com/hughsie/appstream-glib/issues\n"
+"POT-Creation-Date: 2023-08-15 21:54+0000\n"
+"PO-Revision-Date: 2024-10-26 10:40+0700\n"
 "Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: Indonesian (http://www.transifex.com/freedesktop/appstream-"
 "glib/language/id/)\n"
@@ -20,10 +20,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Zanata 4.6.2\n"
+"X-Generator: Poedit 3.5\n"
 
 #. TRANSLATORS: command line option
-#: client/as-builder.c:76 client/as-compose.c:326 client/as-util.c:4429
+#: client/as-builder.c:76 client/as-compose.c:326 client/as-util.c:4441
 msgid "Show extra debugging information"
 msgstr "Tampilkan informasi debug ekstra"
 
@@ -55,57 +55,57 @@ msgstr "Jangan mampatkan ikon ke dalam tarball"
 #. TRANSLATORS: command line option
 #: client/as-builder.c:94
 msgid "Set the logging directory"
-msgstr "Tata direktori log"
+msgstr "Menata direktori log"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:97
 msgid "Set the packages directory"
-msgstr "Atur direktori paket"
+msgstr "Menata direktori paket"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:100
 msgid "Set the temporary directory"
-msgstr "Atur direktori temporer"
+msgstr "Menata direktori temporer"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:103 client/as-compose.c:332
 msgid "Set the output directory"
-msgstr "Atur direktori keluaran"
+msgstr "Menata direktori keluaran"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:106 client/as-compose.c:335
 msgid "Set the icons directory"
-msgstr "Atur direktori ikon"
+msgstr "Menata direktori ikon"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:109
 msgid "Set the cache directory"
-msgstr "Atur direktori singgahan"
+msgstr "Menata direktori singgahan"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:112 client/as-compose.c:344
 msgid "Set the basenames of the output files"
-msgstr "Atur nama basis dari berkas keluaran"
+msgstr "Menata nama dasar dari berkas keluaran"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:115 client/as-compose.c:338
 msgid "Set the origin name"
-msgstr "Atur nama asli"
+msgstr "Menata nama asli"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:118
 msgid "Set the number of threads"
-msgstr "Atur cacah thread"
+msgstr "Menata cacah thread"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:121 client/as-compose.c:341
 msgid "Set the minimum icon size in pixels"
-msgstr "Atur ukuran ikon minimum dalam piksel"
+msgstr "Menata ukuran ikon minimum dalam piksel"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:124
 msgid "Set the old metadata location"
-msgstr "Atur lokasi metadata lama"
+msgstr "Menata lokasi metadata lama"
 
 #. TRANSLATORS: command line option
 #: client/as-builder.c:127
@@ -113,7 +113,7 @@ msgid "Ignore certain types of veto"
 msgstr "Abaikan tipe veto tertentu"
 
 #. TRANSLATORS: error message
-#: client/as-builder.c:141 client/as-compose.c:358 client/as-util.c:4714
+#: client/as-builder.c:141 client/as-compose.c:358 client/as-util.c:4732
 msgid "Failed to parse arguments"
 msgstr "Gagal mengurai argumen"
 
@@ -192,9 +192,8 @@ msgstr "Kesalahan saat mengurai penyedia"
 
 #. TRANSLATORS: not a valid desktop filename
 #: client/as-compose.c:465
-#, fuzzy
 msgid "Invalid desktop filename"
-msgstr "Kesalahan saat memuat berkas desktop"
+msgstr "Nama berkas desktop tidak valid"
 
 #. TRANSLATORS: the .desktop file could not
 #. * be loaded
@@ -220,328 +219,327 @@ msgid "Error saving AppStream file"
 msgstr "Kesalahan saat menyimpan berkas AppStream"
 
 #. TRANSLATORS: this is a command alias
-#: client/as-util.c:93
+#: client/as-util.c:95
 #, c-format
 msgid "Alias to %s"
 msgstr "Alias untuk %s"
 
-#: client/as-util.c:175
+#: client/as-util.c:177
 msgid "Command not found, valid commands are:"
 msgstr "Perintah tak ditemukan, perintah yang valid adalah:"
 
 #. TRANSLATORS: any manual changes required?
 #. * also note: FIXME is a hardcoded string
-#: client/as-util.c:467
+#: client/as-util.c:469
 msgid "Please review the file and fix any 'FIXME' items"
 msgstr "Harap periksa berkas dan perbaiki sebarang butir 'FIXME'"
 
 #. TRANSLATORS: information message
-#: client/as-util.c:485
-msgid "Old API version"
-msgstr "Versi API lama"
+#: client/as-util.c:487
+#, c-format
+msgid "Old API version: %s\n"
+msgstr "Versi API lama: %s\n"
 
 #. TRANSLATORS: information message
-#: client/as-util.c:497
-msgid "New API version"
-msgstr "Versi API baru"
+#: client/as-util.c:498
+#, c-format
+msgid "New API version: %s\n"
+msgstr "Versi API baru: %s\n"
 
-#: client/as-util.c:516
+#: client/as-util.c:517
 msgid "Not enough arguments, expected old.xml new.xml version"
 msgstr "Argumen tidak cukup, yang diharapkan lama.xml baru.xml versi"
 
 #. TRANSLATORS: the %s and %s are file types,
 #. * e.g. "appdata" to "appstream"
-#: client/as-util.c:552
+#: client/as-util.c:553
 #, c-format
 msgid "Conversion %s to %s is not implemented"
 msgstr "Konversi %s ke %s tidak diimplementasi"
 
-#: client/as-util.c:569
+#: client/as-util.c:570
 msgid "Not enough arguments, expected file.xml"
 msgstr "Argumen tidak cukup yang diharapkan berkas.xml"
 
 #. TRANSLATORS: %s is a file type,
 #. * e.g. 'appdata'
-#: client/as-util.c:595
+#: client/as-util.c:596
 #, c-format
 msgid "File format '%s' cannot be upgraded"
 msgstr "Format berkas '%s' tidak bisa ditingkatkan"
 
 #. TRANSLATORS: not a recognised file type
-#: client/as-util.c:638 client/as-util.c:1038 client/as-util.c:1139
+#: client/as-util.c:639 client/as-util.c:1039 client/as-util.c:1140
 msgid "Format not recognised"
 msgstr "Format tidak dikenali"
 
 #. TRANSLATORS: probably wrong XML
-#: client/as-util.c:1979
+#: client/as-util.c:1980
 msgid "No desktop applications found"
 msgstr "Tidak ditemukan aplikasi desktop"
 
 #. TRANSLATORS: the file is valid
-#: client/as-util.c:2711 client/as-util.c:2928
+#: client/as-util.c:2712 client/as-util.c:2929
 msgid "OK"
 msgstr "OK"
 
 #. list failures
-#: client/as-util.c:2716 client/as-util.c:2920
+#: client/as-util.c:2717 client/as-util.c:2921
 msgid "FAILED"
 msgstr "GAGAL"
 
-#: client/as-util.c:2812
+#: client/as-util.c:2813
 msgid "Validation failed"
 msgstr "Validasi gagal"
 
-#: client/as-util.c:2856
+#: client/as-util.c:2857
 msgid "Validation of files failed"
 msgstr "Validasi berkas gagal"
 
-#: client/as-util.c:2908
+#: client/as-util.c:2909
 #, c-format
 msgid "Cannot validate version of file format '%s'"
-msgstr ""
+msgstr "Tidak bisa memvalidasi versi format berkas '%s'"
 
-#: client/as-util.c:2924
-#, fuzzy
+#: client/as-util.c:2925
 msgid "Version validation failed"
-msgstr "Validasi gagal"
+msgstr "Validasi versi gagal"
 
-#: client/as-util.c:2976
-#, fuzzy
+#: client/as-util.c:2977
 msgid "Version validation of files failed"
-msgstr "Validasi berkas gagal"
+msgstr "Validasi versi berkas gagal"
 
 #. TRANSLATORS: application was removed
-#: client/as-util.c:4076
+#: client/as-util.c:4088
 msgid "Removed"
 msgstr "Dihapus"
 
 #. TRANSLATORS: application was added
-#: client/as-util.c:4089
+#: client/as-util.c:4101
 msgid "Added"
 msgstr "Ditambahkan"
 
 #. TRANSLATORS: this is when a device ctrl+c's a watch
-#: client/as-util.c:4372
+#: client/as-util.c:4384
 msgid "Cancelled"
 msgstr "Dibatalkan"
 
 #. TRANSLATORS: this is the --nonet argument
-#: client/as-util.c:4426
+#: client/as-util.c:4438
 msgid "Do not use network access"
 msgstr "Jangan pakai akses jaringan"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4432
+#: client/as-util.c:4444
 msgid "Show version"
 msgstr "Tampilkan versi"
 
 #. TRANSLATORS: command line option
-#: client/as-util.c:4435
+#: client/as-util.c:4447
 msgid "Enable profiling"
 msgstr "Fungsikan pemrofilan"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4467
+#: client/as-util.c:4485
 msgid "Converts AppStream metadata from one version to another"
 msgstr "Konversikan metadata AppStream dari satu versi ke lainnya"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4473
+#: client/as-util.c:4491
 msgid "Upgrade AppData metadata to the latest version"
 msgstr "Tingkatkan metadata AppData ke versi terakhir"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4479
+#: client/as-util.c:4497
 msgid "Creates an example AppData file from a .desktop file"
-msgstr ""
+msgstr "Membuat contoh berkas AppData dari suatu berkas .desktop"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4485
+#: client/as-util.c:4503
 msgid "Dumps the applications in the AppStream metadata"
 msgstr "Mencurahkan aplikasi dalam metadata AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4491
+#: client/as-util.c:4509
 msgid "Search for AppStream applications"
 msgstr "Mencari aplikasi AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4497
+#: client/as-util.c:4515
 msgid "Search for AppStream applications by package name"
 msgstr "Mencari aplikasi AppStream menurut namanya"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4503
+#: client/as-util.c:4521
 msgid "Show all installed AppStream applications"
 msgstr "Tampilkan semua aplikasi AppStream yang terpasang"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4509
+#: client/as-util.c:4527
 msgid "Search for AppStream applications by category name"
 msgstr "Cari aplikasi AppStream berdasarkan nama kategori"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4515
+#: client/as-util.c:4533
 msgid "Display application search tokens"
 msgstr "Tampilkan token pencarian aplikasi"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4521
+#: client/as-util.c:4539
 msgid "Installs AppStream metadata"
 msgstr "Pasang metadata AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4527
+#: client/as-util.c:4545
 msgid "Installs AppStream metadata with new origin"
 msgstr "Pasang metadata AppStream dengan origin baru"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4533
+#: client/as-util.c:4551
 msgid "Uninstalls AppStream metadata"
 msgstr "Bongkar metadata AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4539
+#: client/as-util.c:4557
 msgid "Create an HTML status page"
 msgstr "Buat sebuah halaman status HTML"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4545
+#: client/as-util.c:4563
 msgid "Create an CSV status document"
 msgstr "Buat sebuah dokumen status CSV"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4551
+#: client/as-util.c:4569
 msgid "Create an HTML matrix page"
 msgstr "Buat sebuah halaman matriks HTML"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4557
+#: client/as-util.c:4575
 msgid "List applications not backed by packages"
 msgstr "Daftar aplikasi yang tidak didukung oleh paket"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4563
+#: client/as-util.c:4581
 msgid "Validate an AppData or AppStream file"
 msgstr "Validasikan sebuah berkas AppData atau AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4569
+#: client/as-util.c:4587
 msgid "Validate an AppData or AppStream file (relaxed)"
 msgstr "Validasikan sebuah berkas AppData atau AppStream (longgar)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4575
+#: client/as-util.c:4593
 msgid "Exports the agreement to text"
-msgstr ""
+msgstr "Mengekspor perjanjian ke teks"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4581
+#: client/as-util.c:4599
 msgid "Validate an AppData or AppStream file (strict)"
 msgstr "Validasikan sebuah berkas AppData atau AppSteram (ketat)"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4587
-#, fuzzy
+#: client/as-util.c:4605
 msgid "Validate that AppData file includes the specified release"
-msgstr "Validasikan sebuah berkas AppData atau AppStream (longgar)"
+msgstr "Memvalidasi bahwa berkas AppData menyertakan rilis yang ditentukan"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4593
+#: client/as-util.c:4611
 msgid "Convert an AppData file to NEWS format"
 msgstr "Konversikan berkas AppData ke format NEWS"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4599
+#: client/as-util.c:4617
 msgid "Convert an NEWS file to AppData format"
 msgstr "Konversikan berkas NEWS ke format AppData"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4605
+#: client/as-util.c:4623
 msgid "Check installed application data"
 msgstr "Periksa data aplikasi yang terpasang"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4611
+#: client/as-util.c:4629
 msgid "check an installed application"
 msgstr "memeriksa suatu aplikasi yang terpasang"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4617
+#: client/as-util.c:4635
 msgid "Replace screenshots in source file"
 msgstr "Gantikan cuplikan layar dalam berkas sumber"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4623
+#: client/as-util.c:4641
 msgid "Add a provide to a source file"
 msgstr "Tambahkan penyedia ke suatu berkas sumber"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4629
+#: client/as-util.c:4647
 msgid "Add a language to a source file"
 msgstr "Tambahkan bahasa ke suatu berkas sumber"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4635
+#: client/as-util.c:4653
 msgid "Mirror upstream screenshots"
 msgstr "Cerminkan cuplikan layar upstream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4641
+#: client/as-util.c:4659
 msgid "Incorporate extra metadata from an external file"
 msgstr "Sertakan medatada ekstra dari berkas eksternal"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4647
+#: client/as-util.c:4665
 msgid "Compare the contents of two AppStream files"
 msgstr "Bandingkan isi dari dua berkas AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4653
+#: client/as-util.c:4671
 msgid "Generate a GUID from an input string"
 msgstr "Buat suatu GUID dari string masukan"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4659
+#: client/as-util.c:4677
 msgid "Modify an AppData file"
 msgstr "Ubah berkas AppData"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4665
+#: client/as-util.c:4683
 msgid "Split an AppStream file to AppData and Metainfo files"
 msgstr "Pecah berkas AppData ke berkas Metainfo dan AppData"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4671
+#: client/as-util.c:4689
 msgid "Merge several files to an AppStream file"
 msgstr "Gabungkan beberapa berkas ke sebuh berkas AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4677
+#: client/as-util.c:4695
 msgid "Import a file to AppStream markup"
 msgstr "Impor sebuah berkas ke markup AppStream"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4683
+#: client/as-util.c:4701
 msgid "Watch AppStream locations for changes"
 msgstr "Amati lokasi AppStream atas adanya perubahan"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4689
+#: client/as-util.c:4707
 msgid "Compare version numbers"
 msgstr "Bandingkan nomor-nomor versi"
 
 #. TRANSLATORS: command description
-#: client/as-util.c:4695
+#: client/as-util.c:4713
 msgid "Test a regular expression"
 msgstr "Uji suatu ekspresi reguler"
 
 #. TRANSLATORS: program name
-#: client/as-util.c:4708
+#: client/as-util.c:4726
 msgid "AppStream Utility"
 msgstr "Utilitas AppStream"
 
-#: client/as-util.c:4732
+#: client/as-util.c:4750
 msgid "Version:"
 msgstr "Versi:"
 
@@ -590,497 +588,497 @@ msgstr "Semua orang"
 msgid "Early Childhood"
 msgstr "Anak usia dini"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:775
 msgid "No cartoon violence"
 msgstr "Tidak ada kekerasan kartun"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:777
 msgid "Cartoon characters in unsafe situations"
 msgstr "Karakter kartun dalam situasi yang tidak aman"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:779
 msgid "Cartoon characters in aggressive conflict"
 msgstr "Karakter kartun dalam konflik agresif"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:781
 msgid "Graphic violence involving cartoon characters"
 msgstr "Kekerasan grafis yang melibatkan karakter kartun"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:786
 msgid "No fantasy violence"
 msgstr "Tidak ada kekerasan fantasi"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:788
 msgid "Characters in unsafe situations easily distinguishable from reality"
 msgstr ""
 "Karakter dalam situasi yang tidak aman dengan mudah dibedakan dari realitas"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:790
 msgid "Characters in aggressive conflict easily distinguishable from reality"
 msgstr "Karakter dalam konflik agresif dengan mudah dibedakan dari realitas"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:792
 msgid "Graphic violence easily distinguishable from reality"
 msgstr "Kekerasan grafis dengan mudah dibedakan dari realitas"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:797
 msgid "No realistic violence"
 msgstr "Tidak ada kekerasan realistis"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:799
 msgid "Mildly realistic characters in unsafe situations"
 msgstr "Sedikit karakter realistis dalam situasi yang tidak aman"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:801
 msgid "Depictions of realistic characters in aggressive conflict"
 msgstr "Penggambaran karakter yang realistis dalam konflik agresif"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:803
 msgid "Graphic violence involving realistic characters"
 msgstr "Kekerasan grafis yang melibatkan karakter yang realistis"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:808
 msgid "No bloodshed"
 msgstr "Tidak ada pertumpahan darah"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:810
 msgid "Unrealistic bloodshed"
 msgstr "Pertumpahan darah yang tidak realistis"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:812
 msgid "Realistic bloodshed"
 msgstr "Pertumpahan darah yang realistis"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:814
 msgid "Depictions of bloodshed and the mutilation of body parts"
 msgstr "Penggambaran pertumpahan darah dan mutilasi bagian tubuh"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:819
 msgid "No sexual violence"
 msgstr "Tidak ada kekerasan seksual"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:821
 msgid "Rape or other violent sexual behavior"
 msgstr "Perkosaan atau perilaku seksual kekerasan lainnya"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:828
 msgid "No references to alcohol"
 msgstr "Tidak ada referensi untuk alkohol"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:830
 msgid "References to alcoholic beverages"
 msgstr "Referensi untuk minuman beralkohol"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:832
 msgid "Use of alcoholic beverages"
 msgstr "Penggunaan minuman beralkohol"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:838
 msgid "No references to illicit drugs"
 msgstr "Tidak ada referensi untuk obat-obatan terlarang"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:840
 msgid "References to illicit drugs"
 msgstr "Referensi untuk obat-obatan terlarang"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:842
 msgid "Use of illicit drugs"
 msgstr "Penggunaan obat-obatan terlarang"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:848
 msgid "No references to tobacco products"
 msgstr "Tidak ada referensi untuk produk tembakau"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:850
 msgid "References to tobacco products"
 msgstr "Referensi untuk produk tembakau"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:852
 msgid "Use of tobacco products"
 msgstr "Penggunaan produk tembakau"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:858
 msgid "No nudity of any sort"
 msgstr "Tidak ada ketelanjangan apapun"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:860
 msgid "Brief artistic nudity"
 msgstr "Ketelanjangan artistik singkat"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:862
 msgid "Prolonged nudity"
 msgstr "Ketelanjangan berkepanjangan"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:868
 msgid "No references to or depictions of sexual nature"
 msgstr "Tidak ada referensi atau penggambaran sifat seksual"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:870
 msgid "Provocative references or depictions"
 msgstr "Referensi provokatif atau penggambaran"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:872
 msgid "Sexual references or depictions"
 msgstr "Referensi seksual atau penggambaran"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:874
 msgid "Graphic sexual behavior"
 msgstr "Perilaku seksual grafis"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:879
 msgid "No profanity of any kind"
 msgstr "Tidak ada kata-kata tidak senonoh apapun"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:881
 msgid "Mild or infrequent use of profanity"
 msgstr "Penggunaan ringan atau jarang kata-kata tidak senonoh"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:883
 msgid "Moderate use of profanity"
 msgstr "Penggunaan sedang kata-kata tidak senonoh"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:885
 msgid "Strong or frequent use of profanity"
 msgstr "Penggunaan kuat atau sering kata-kata tidak senonoh"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:890
 msgid "No inappropriate humor"
 msgstr "Tidak ada humor yang tidak pantas"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:892
 msgid "Slapstick humor"
 msgstr "Humor slapstick"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:894
 msgid "Vulgar or bathroom humor"
 msgstr "Vulgar atau humor kamar mandi"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:896
 msgid "Mature or sexual humor"
 msgstr "Humor dewasa atau seksual"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:901
 msgid "No discriminatory language of any kind"
 msgstr "Tidak ada bahasa diskriminatif apapun"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:903
 msgid "Negativity towards a specific group of people"
 msgstr "Negatif terhadap sekelompok orang tertentu"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:905
 msgid "Discrimination designed to cause emotional harm"
 msgstr "Diskriminasi dirancang untuk menyebabkan kerusakan emosional"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:907
 msgid "Explicit discrimination based on gender, sexuality, race or religion"
 msgstr "Diskriminasi eksplisit berdasarkan gender, seksualitas, ras atau agama"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:912
 msgid "No advertising of any kind"
 msgstr "Tidak ada iklan jenis apapun"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:914
 msgid "Product placement"
 msgstr "Penempatan produk"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:916
 msgid "Explicit references to specific brands or trademarked products"
 msgstr ""
 "Referensi eksplisit untuk merek tertentu atau produk dengan merek dagang"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:918
 msgid "Users are encouraged to purchase specific real-world items"
 msgstr "Pengguna dianjurkan untuk membeli barang dunia nyata tertentu"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:923
 msgid "No gambling of any kind"
 msgstr "Tidak ada perjudian jenis apapun"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:925
 msgid "Gambling on random events using tokens or credits"
 msgstr "Perjudian pada peristiwa acak menggunakan token atau kredit"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:927
 msgid "Gambling using “play” money"
 msgstr "Perjudian menggunakan \"permainan\" uang"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:929
 msgid "Gambling using real money"
 msgstr "Perjudian menggunakan uang riil"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:934
 msgid "No ability to spend money"
 msgstr "Tidak ada kemampuan membelanjakan uang"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:936
 msgid "Users are encouraged to donate real money"
 msgstr "Pengguna dianjurkan untuk menyumbangkan uang sungguhan"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:939
 msgid "Ability to spend real money in-app"
 msgstr "Kemampuan untuk menghabiskan uang riil dalam aplikasi"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:944
 msgid "No way to chat with other users"
 msgstr "Tidak ada cara untuk mengobrol dengan pengguna lain"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:946
 msgid "User-to-user interactions without chat functionality"
 msgstr "Interaksi antar pengguna tanpa fungsi obrolan"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:948
 msgid "Moderated chat functionality between users"
 msgstr "Moderasi fungsi obrolan antar pengguna"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:950
 msgid "Uncontrolled chat functionality between users"
 msgstr "Fungsi obrolan yang tidak terkontrol antara pengguna"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:955
 msgid "No way to talk with other users"
 msgstr "Tidak ada cara untuk berbicara dengan pengguna lain"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:957
 msgid "Uncontrolled audio or video chat functionality between users"
 msgstr "Fungsi obrolan audio atau video yang tidak terkontrol antara pengguna"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:964
 msgid "No sharing of social network usernames or email addresses"
 msgstr "Tidak berbagi alamat surel atau nama pengguna media sosial"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:966
 msgid "Sharing social network usernames or email addresses"
 msgstr "Berbagai nama pengguna jejaring sosial atau alamat surel"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:973
 msgid "No sharing of user information with third parties"
 msgstr "Tidak berbagi informasi pengguna dengan pihak ketiga"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:975
 msgid "Checking for the latest application version"
 msgstr "Memeriksa versi aplikasi terbaru"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:977
 msgid "Sharing diagnostic data that does not let others identify the user"
 msgstr ""
 "Berbagi data diagnostik yang tidak membiarkan orang lain mengidentifikasi "
 "pengguna"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:979
 msgid "Sharing information that lets others identify the user"
 msgstr ""
 "Berbagi informasi yang memungkinkan orang lain mengidentifikasi pengguna"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:984
 msgid "No sharing of physical location with other users"
 msgstr "Tidak berbagi lokasi fisik dengan pengguna lain"
 
-#. TRANSLATORS: content rating description
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
 #: libappstream-glib/as-content-rating.c:986
 msgid "Sharing physical location with other users"
 msgstr "Berbagi lokasi fisik dengan pengguna lain"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:995
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1009
 msgid "No references to homosexuality"
 msgstr "Tidak ada referensi untuk homoseksualitas"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:997
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1011
 msgid "Indirect references to homosexuality"
 msgstr "Tidak ada referensi untuk homoseksualitas"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:999
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1013
 msgid "Kissing between people of the same gender"
 msgstr "Berciuman antara orang-orang dengan jenis kelamin yang sama"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1001
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1015
 msgid "Graphic sexual behavior between people of the same gender"
 msgstr "Perilaku seksual grafis antara orang dengan jenis kelamin yang sama"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1006
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1020
 msgid "No references to prostitution"
 msgstr "Tidak ada referensi untuk prostitusi"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1008
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1022
 msgid "Indirect references to prostitution"
 msgstr "Referensi tidak langsung untuk prostitusi"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1010
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1024
 msgid "Direct references to prostitution"
 msgstr "Referensi langsung ke prostitusi"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1012
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1026
 msgid "Graphic depictions of the act of prostitution"
 msgstr "Penggambaran grafis dari prostitusi"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1017
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1031
 msgid "No references to adultery"
 msgstr "Tidak ada referensi untuk perzinaan"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1019
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1033
 msgid "Indirect references to adultery"
 msgstr "Referensi tidak langsung untuk perzinaan"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1021
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1035
 msgid "Direct references to adultery"
 msgstr "Referensi langsung ke perzinaan"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1023
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1037
 msgid "Graphic depictions of the act of adultery"
 msgstr "Penggambaran grafis dari tindakan perzinaan"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1028
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1042
 msgid "No sexualized characters"
 msgstr "Tidak ada karakter seksual"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1031
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1045
 msgid "Scantily clad human characters"
 msgstr "Karakter manusia berpakaian minim"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1033
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1047
 msgid "Overtly sexualized human characters"
 msgstr "Karakter manusia seksual secara menyeluruh"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1038
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1052
 msgid "No references to desecration"
 msgstr "Tidak ada referensi untuk penodaan"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1040
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1054
 msgid "Depictions of or references to historical desecration"
 msgstr "Penggambaran atau referensi tentang penodaan sejarah"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1042
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1056
 msgid "Depictions of modern-day human desecration"
 msgstr "Penggambaran tentang penodaan manusia zaman modern"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1044
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1058
 msgid "Graphic depictions of modern-day desecration"
 msgstr "Penggambaran grafis tentang penodaan modern"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1049
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1063
 msgid "No visible dead human remains"
 msgstr "Tidak ada sisa manusia mati yang terlihat"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1051
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1065
 msgid "Visible dead human remains"
 msgstr "Sisa manusia mati yang terlihat"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1053
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1067
 msgid "Dead human remains that are exposed to the elements"
 msgstr "Sisa manusia mati yang terpapar unsur"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1055
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1069
 msgid "Graphic depictions of desecration of human bodies"
 msgstr "Penggambaran grafis penodaan tubuh manusia"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1060
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1074
 msgid "No references to slavery"
 msgstr "Tidak ada referensi untuk perbudakan"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1062
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1076
 msgid "Depictions of or references to historical slavery"
 msgstr "Penggambaran atau referensi tentang perbudakan sejarah"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1064
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1078
 msgid "Depictions of modern-day slavery"
 msgstr "Penggambaran perbudakan modern"
 
-#. TRANSLATORS: content rating description
-#: libappstream-glib/as-content-rating.c:1066
+#. TRANSLATORS: content rating description, see https://hughsie.github.io/oars/
+#: libappstream-glib/as-content-rating.c:1080
 msgid "Graphic depictions of modern-day slavery"
 msgstr "Penggambaran grafis tentang perbudakan modern"
