@@ -549,7 +549,7 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	const gchar *tmp;
 	gboolean ret = TRUE;
 	guint i;
-	const FcPattern *pattern = NULL;
+	FcPattern *pattern = NULL;
 	g_autofree gchar *cache_id = NULL;
 	g_autofree gchar *comment = NULL;
 	g_autofree gchar *icon_filename = NULL;
@@ -580,7 +580,7 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 				     "FcConfigGetFonts failed");
 		goto out;
 	}
-	pattern = fonts->fonts[0];
+	pattern = FcPatternDuplicate (fonts->fonts[0]);
 
 	/* use the filename as the cache-id */
 	cache_id = g_path_get_basename (filename);
@@ -664,6 +664,8 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 		as_app_add_icon (AS_APP (app), icon);
 	}
 out:
+	if (pattern)
+		FcPatternDestroy (pattern);
 	FcConfigAppFontClear (config);
 	FcConfigDestroy (config);
 	return ret;
