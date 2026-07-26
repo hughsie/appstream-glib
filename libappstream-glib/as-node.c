@@ -1024,7 +1024,7 @@ as_node_from_file (GFile *file,
 			g_strcmp0 (mime_type, "application/x-gzip") == 0) {
 			conv = G_CONVERTER (g_zlib_decompressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP));
 			stream_data = g_converter_input_stream_new (file_stream, conv);
-		} else if (g_strcmp0 (mime_type, "application/xml") == 0 ||
+		} else if (g_content_type_is_a (mime_type, "application/xml") ||
 				   g_strcmp0 (mime_type, "text/xml") == 0) {
 			stream_data = g_object_ref (file_stream);
 		}
