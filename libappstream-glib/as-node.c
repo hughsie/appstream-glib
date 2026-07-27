@@ -1602,7 +1602,6 @@ as_node_insert (AsNode *parent,
 	const gchar *value;
 	AsNodeData *data;
 	AsNode *root = g_node_get_root (parent);
-	guint i;
 	va_list args;
 
 	g_return_val_if_fail (name != NULL, NULL);
@@ -1619,7 +1618,7 @@ as_node_insert (AsNode *parent,
 
 	/* process the attrs valist */
 	va_start (args, insert_flags);
-	for (i = 0;; i++) {
+	while (TRUE) {
 		key = va_arg (args, const gchar *);
 		if (key == NULL)
 			break;

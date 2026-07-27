@@ -306,7 +306,6 @@ asb_task_process (AsbTask *task, GError **error)
 	GPtrArray *array;
 	gboolean ret;
 	guint i;
-	guint nr_added = 0;
 	g_autofree gchar *basename = NULL;
 
 	/* reset the profile timer */
@@ -338,7 +337,6 @@ asb_task_process (AsbTask *task, GError **error)
 			app2 = asb_app_new (priv->pkg, as_app_get_id (app_tmp));
 			as_app_subsume (AS_APP (app2), app_tmp);
 			asb_context_add_app (priv->ctx, app2);
-			nr_added++;
 		}
 		g_debug ("added %u apps from archive", apps_tmp->len);
 		goto skip;
@@ -507,7 +505,6 @@ asb_task_process (AsbTask *task, GError **error)
 
 		/* all okay */
 		asb_context_add_app (priv->ctx, app);
-		nr_added++;
 	}
 skip:
 	/* delete tree */

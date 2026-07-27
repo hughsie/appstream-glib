@@ -2627,7 +2627,6 @@ as_app_set_update_contact (AsApp *app, const gchar *update_contact)
 	AsAppPrivate *priv = GET_PRIVATE (app);
 	gboolean done_replacement = TRUE;
 	gchar *tmp;
-	gsize len;
 	guint i;
 	struct {
 		const gchar	*search;
@@ -2655,7 +2654,6 @@ as_app_set_update_contact (AsApp *app, const gchar *update_contact)
 		return;
 
 	/* keep going until we have no more matches */
-	len = (guint) strlen (priv->update_contact);
 	while (done_replacement) {
 		done_replacement = FALSE;
 		for (i = 0; replacements[i].search != NULL; i++) {
