@@ -1774,7 +1774,6 @@ GHashTable *
 as_node_get_localized (const AsNode *node, const gchar *key)
 {
 	AsNodeData *data;
-	AsRefString *data_unlocalized;
 	AsRefString *xml_lang;
 	GHashTable *hash = NULL;
 	AsNode *tmp;
@@ -1784,7 +1783,6 @@ as_node_get_localized (const AsNode *node, const gchar *key)
 	tmp = as_node_get_child_node (node, key, NULL, NULL);
 	if (tmp == NULL)
 		return NULL;
-	data_unlocalized = as_node_get_data_as_refstr (tmp);
 
 	/* find a node called name */
 	hash = g_hash_table_new_full (g_str_hash, g_str_equal,
