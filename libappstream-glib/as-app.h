@@ -286,7 +286,7 @@ typedef AsFormatKind AsAppSourceKind;
  * @AS_APP_KIND_FONT:			A font add-on
  * @AS_APP_KIND_CODEC:			A codec add-on
  * @AS_APP_KIND_INPUT_METHOD:		A input method add-on
- * @AS_APP_KIND_WEB_APP:		A web appication
+ * @AS_APP_KIND_WEB_APP:		A web application
  * @AS_APP_KIND_SOURCE:			A software source
  * @AS_APP_KIND_ADDON:			An addon, e.g. a plugin
  * @AS_APP_KIND_FIRMWARE:		A firmware update
