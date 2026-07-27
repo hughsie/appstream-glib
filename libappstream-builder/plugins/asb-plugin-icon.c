@@ -42,7 +42,7 @@ asb_app_load_icon (AsbPlugin *plugin,
 	g_autoptr(GError) error_local = NULL;
 	AsImageLoadFlags load_flags = AS_IMAGE_LOAD_FLAG_ALWAYS_RESIZE;
 
-	/* is icon in a unsupported format */
+	/* is icon in an unsupported format */
 	if (!asb_context_get_flag (plugin->ctx, ASB_CONTEXT_FLAG_IGNORE_LEGACY_ICONS))
 		load_flags |= AS_IMAGE_LOAD_FLAG_ONLY_SUPPORTED;
 

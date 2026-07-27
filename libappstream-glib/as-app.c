@@ -1341,7 +1341,7 @@ as_app_get_agreements (AsApp *app)
  * @app: a #AsApp instance.
  * @kind: an agreement kind, e.g. %AS_AGREEMENT_KIND_EULA
  *
- * Gets a agreement the application has defined of a specific type.
+ * Gets an agreement the application has defined of a specific type.
  *
  * Returns: (transfer none): a #AsAgreement or NULL for not found
  *
@@ -3488,7 +3488,7 @@ as_app_add_content_rating (AsApp *app, AsContentRating *content_rating)
  * @app: a #AsApp instance.
  * @agreement: a #AsAgreement instance.
  *
- * Adds a agreement to an application.
+ * Adds an agreement to an application.
  *
  * Since: 0.7.8
  **/
@@ -3550,7 +3550,7 @@ as_app_check_translation_duplicate (AsTranslation *translation1, AsTranslation *
  * @app: a #AsApp instance.
  * @icon: a #AsIcon instance.
  *
- * Adds a icon to an application.
+ * Adds an icon to an application.
  *
  * Since: 0.3.1
  **/
@@ -3925,7 +3925,7 @@ as_app_add_extends (AsApp *app, const gchar *extends)
  * @app: a #AsApp instance.
  * @addon: a #AsApp instance.
  *
- * Adds a addon to an application.
+ * Adds an addon to an application.
  *
  * Since: 0.1.7
  **/
