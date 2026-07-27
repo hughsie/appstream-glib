@@ -120,7 +120,7 @@ as_ref_string_new_copy (const gchar *str)
  * @str: a string
  * @len: length of @str, not including the NUL byte
  *
- * Returns a immutable refcounted string. The returned string cannot be modified
+ * Returns an immutable refcounted string. The returned string cannot be modified
  * without affecting other refcounted versions.
  *
  * Returns: a %AsRefString
@@ -155,7 +155,7 @@ as_ref_string_new_with_length (const gchar *str, gsize len)
  * as_ref_string_new:
  * @str: a string
  *
- * Returns a immutable refcounted string. The returned string cannot be modified
+ * Returns an immutable refcounted string. The returned string cannot be modified
  * without affecting other refcounted versions.
  *
  * Returns: a %AsRefString

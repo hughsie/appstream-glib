@@ -11,7 +11,7 @@
  * @include: appstream-glib.h
  * @stability: Stable
  *
- * Problems have a unlocalized message and also contain a line number and kind.
+ * Problems have an unlocalized message and also contain a line number and kind.
  *
  * See also: #AsApp
  */

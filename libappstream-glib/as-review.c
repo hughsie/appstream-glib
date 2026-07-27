@@ -494,7 +494,7 @@ as_review_get_rating (AsReview *review)
 /**
  * as_review_set_rating:
  * @review: a #AsReview
- * @rating: a integer as a percentage, or 0 for unset
+ * @rating: an integer as a percentage, or 0 for unset
  *
  * Sets the star rating of the review, where 100 is 5 stars..
  *
