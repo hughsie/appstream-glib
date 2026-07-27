@@ -1,3 +1,15 @@
+Version 0.8.4
+~~~~~~~~~~~~~
+Released: 2026-07-27
+
+New Features:
+ - Add symbol and sample text for Amharic and Inuktitut (Akira TAGOH)
+ - Add symbol text for N'Ko and Yi script (Akira TAGOH)
+
+Bugfixes:
+ - Fix building the silo when shared-mime-info >= 2.5.1 is installed (Richard Hughes)
+ - Fix RISC-V test failure (Felix Yan)
+
 Version 0.8.3
 ~~~~~~~~~~~~~
 Released: 2024-06-05
