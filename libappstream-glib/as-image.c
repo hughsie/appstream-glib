@@ -586,7 +586,7 @@ as_image_load_filename_full (AsImage *image,
 		g_autofree gchar *md5_tmp = NULL;
 
 		/* get the contents so we can hash the predictable file data,
-		 * rather than the unpredicatable (for JPEG) pixel data */
+		 * rather than the unpredictable (for JPEG) pixel data */
 		if (!g_file_get_contents (filename, &data, &len, error))
 			return FALSE;
 		md5_tmp = g_compute_checksum_for_data (G_CHECKSUM_MD5,
