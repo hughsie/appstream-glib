@@ -4133,7 +4133,7 @@ as_test_store_provides_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 
-	/* get an appication by the provide value */
+	/* get an application by the provide value */
 	app = as_store_get_app_by_provide (store,
 					   AS_PROVIDE_KIND_FIRMWARE_FLASHED,
 					   "deadbeef");
