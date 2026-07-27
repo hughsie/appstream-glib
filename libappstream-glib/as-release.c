@@ -807,7 +807,7 @@ as_release_set_url (AsRelease *release,
 /**
  * as_release_node_insert: (skip)
  * @release: a #AsRelease instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the release into the DOM tree.

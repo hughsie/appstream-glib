@@ -175,7 +175,7 @@ as_suggest_add_id (AsSuggest *suggest, const gchar *id)
 /**
  * as_suggest_node_insert: (skip)
  * @suggest: a #AsSuggest instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the suggest into the DOM tree.

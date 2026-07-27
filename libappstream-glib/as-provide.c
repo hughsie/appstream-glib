@@ -209,7 +209,7 @@ as_provide_set_kind (AsProvide *provide, AsProvideKind kind)
 /**
  * as_provide_node_insert: (skip)
  * @provide: a #AsProvide instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the provide into the DOM tree.

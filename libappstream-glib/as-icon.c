@@ -564,7 +564,7 @@ as_icon_node_insert_embedded (AsIcon *icon, GNode *parent, AsNodeContext *ctx)
 /**
  * as_icon_node_insert: (skip)
  * @icon: a #AsIcon instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the icon into the DOM tree.

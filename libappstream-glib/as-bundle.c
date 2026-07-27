@@ -268,7 +268,7 @@ as_bundle_set_kind (AsBundle *bundle, AsBundleKind kind)
 /**
  * as_bundle_node_insert: (skip)
  * @bundle: a #AsBundle instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the bundle into the DOM tree.

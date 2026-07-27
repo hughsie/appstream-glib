@@ -202,7 +202,7 @@ as_agreement_section_set_description (AsAgreementSection *agreement_section,
 /**
  * as_agreement_section_node_insert: (skip)
  * @agreement_section: a #AsAgreementSection instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the agreement_section into the DOM tree.

@@ -459,7 +459,7 @@ as_require_equal (AsRequire *require1, AsRequire *require2)
 /**
  * as_require_node_insert: (skip)
  * @require: a #AsRequire instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the require into the DOM tree.
