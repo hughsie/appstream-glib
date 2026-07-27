@@ -710,7 +710,7 @@ as_review_set_date (AsReview *review, GDateTime *date)
  * @key: a string
  *
  * Gets some metadata from a review object.
- * It is left for the the plugin to use this method as required, but a
+ * It is left for the plugin to use this method as required, but a
  * typical use would be to retrieve some secure authentication token.
  *
  * Returns: A string value, or %NULL for not found
@@ -733,7 +733,7 @@ as_review_get_metadata_item (AsReview *review, const gchar *key)
  * @value: a string
  *
  * Adds metadata to the review object.
- * It is left for the the plugin to use this method as required, but a
+ * It is left for the plugin to use this method as required, but a
  * typical use would be to store some secure authentication token.
  *
  * Since: 0.6.1
