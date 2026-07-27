@@ -67,7 +67,7 @@ typedef enum {
  * @AS_NODE_INSERT_FLAG_NO_MARKUP:		Preformat the 'description' markup
  * @AS_NODE_INSERT_FLAG_DEDUPE_LANG:		No xml:lang keys where text matches 'C'
  * @AS_NODE_INSERT_FLAG_MARK_TRANSLATABLE:	Mark the tag name as translatable
- * @AS_NODE_INSERT_FLAG_BASE64_ENCODED:		The data is Base64 enoded
+ * @AS_NODE_INSERT_FLAG_BASE64_ENCODED:		The data is Base64 encoded
  *
  * The flags to use when inserting a node.
  **/
