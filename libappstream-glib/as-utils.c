@@ -406,7 +406,7 @@ as_utils_spdx_license_3to2 (const gchar *license3)
  * Tokenizes the SPDX license string (or any similarly formatted string)
  * into parts. Any licence parts of the string e.g. "LGPL-2.0+" are prefixed
  * with "@", the conjunctive replaced with "&" and the disjunctive replaced
- * with "|". Brackets are added as indervidual tokens and other strings are
+ * with "|". Brackets are added as individual tokens and other strings are
  * appended into single tokens where possible.
  *
  * Returns: (transfer full): array of strings, or %NULL for invalid
