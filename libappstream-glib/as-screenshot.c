@@ -404,7 +404,7 @@ as_screenshot_set_caption (AsScreenshot *screenshot,
 /**
  * as_screenshot_node_insert: (skip)
  * @screenshot: a #AsScreenshot instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the screenshot into the DOM tree.

@@ -496,7 +496,7 @@ as_review_get_rating (AsReview *review)
  * @review: a #AsReview
  * @rating: an integer as a percentage, or 0 for unset
  *
- * Sets the star rating of the review, where 100 is 5 stars..
+ * Sets the star rating of the review, where 100 is 5 stars.
  *
  * Since: 0.6.1
  **/
@@ -653,7 +653,7 @@ as_review_set_version (AsReview *review, const gchar *version)
  * as_review_get_version:
  * @review: a #AsReview
  *
- * Gets the version string for the application being reviewed..
+ * Gets the version string for the application being reviewed.
  *
  * Returns: the version string, e.g. "0.1.2", or %NULL for unset
  *
@@ -794,7 +794,7 @@ as_review_equal (AsReview *review1, AsReview *review2)
 /**
  * as_review_node_insert: (skip)
  * @review: a #AsReview instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the review into the DOM tree.

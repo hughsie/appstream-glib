@@ -404,7 +404,7 @@ as_image_set_pixbuf (AsImage *image, GdkPixbuf *pixbuf)
 /**
  * as_image_node_insert: (skip)
  * @image: a #AsImage instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the image into the DOM tree.

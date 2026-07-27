@@ -286,7 +286,7 @@ _g_checksum_type_to_string (GChecksumType checksum_type)
 /**
  * as_checksum_node_insert: (skip)
  * @checksum: a #AsChecksum instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the checksum into the DOM tree.

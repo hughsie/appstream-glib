@@ -175,7 +175,7 @@ as_translation_set_kind (AsTranslation *translation, AsTranslationKind kind)
 /**
  * as_translation_node_insert: (skip)
  * @translation: a #AsTranslation instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the translation into the DOM tree.

@@ -182,7 +182,7 @@ as_launchable_set_kind (AsLaunchable *launchable, AsLaunchableKind kind)
 /**
  * as_launchable_node_insert: (skip)
  * @launchable: a #AsLaunchable instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the launchable into the DOM tree.

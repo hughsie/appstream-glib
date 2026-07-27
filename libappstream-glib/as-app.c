@@ -4526,7 +4526,7 @@ as_app_node_insert_keywords (AsApp *app, GNode *parent, AsNodeContext *ctx)
 /**
  * as_app_node_insert: (skip)
  * @app: a #AsApp instance.
- * @parent: the parent #GNode to use..
+ * @parent: the parent #GNode to use.
  * @ctx: the #AsNodeContext
  *
  * Inserts the application into the DOM tree.
