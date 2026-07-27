@@ -12,7 +12,7 @@
  * @stability: Stable
  *
  * These functions will convert a tag enum such as %AS_TAG_COMPONENT to
- * it's string form, and also vice-versa.
+ * its string form, and also vice-versa.
  *
  * These helper functions may be useful if implementing an AppStream parser.
  */
