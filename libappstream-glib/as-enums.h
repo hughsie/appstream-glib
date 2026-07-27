@@ -22,7 +22,7 @@ G_BEGIN_DECLS
  * @AS_ID_KIND_FONT:			A font add-on
  * @AS_ID_KIND_CODEC:			A codec add-on
  * @AS_ID_KIND_INPUT_METHOD:		A input method add-on
- * @AS_ID_KIND_WEB_APP:			A web appication
+ * @AS_ID_KIND_WEB_APP:			A web application
  * @AS_ID_KIND_SOURCE:			A software source
  * @AS_ID_KIND_ADDON:			An addon, e.g. a plugin
  * @AS_ID_KIND_FIRMWARE:		A firmware update
