@@ -117,7 +117,7 @@ asb_context_set_flags (AsbContext *ctx, AsbContextFlags flags)
  * @max_threads: integer
  *
  * Sets the maximum number of threads to use when processing packages.
- * This function now has no affect as only one thread is ever used.
+ * This function now has no effect as only one thread is ever used.
  *
  * Since: 0.1.0
  **/
@@ -165,7 +165,7 @@ asb_context_get_min_icon_size (AsbContext *ctx)
  * @old_metadata: filename, or %NULL
  *
  * Sets the filename location of the old metadata file.
- * This function now has no affect as no cache ID is available.
+ * This function now has no effect as no cache ID is available.
  *
  * Since: 0.1.0
  **/
