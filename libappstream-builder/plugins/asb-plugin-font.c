@@ -10,14 +10,11 @@
 #include <gdk/gdk.h>
 
 #include <cairo/cairo.h>
-#include <cairo/cairo-ft.h>
-#include <ft2build.h>
-#include FT_SFNT_NAMES_H
-#include FT_TRUETYPE_IDS_H
-#include FT_MODULE_H
 #include <pango/pango.h>
 #include <pango/pangofc-fontmap.h>
 #include <fontconfig/fontconfig.h>
+#include <hb.h>
+#include <hb-cairo.h>
 
 #include <asb-plugin.h>
 
@@ -214,64 +211,46 @@ asb_font_fix_metadata (AsbApp *app)
 }
 
 static gboolean
-asb_font_string_is_valid (const gchar *text)
+asb_font_is_sfnt(const FcPattern *pat)
 {
-	guint i;
+	gchar *fontwrapper = NULL;
+	gchar *fontformat = NULL;
 
-	if (text == NULL || text[0] == '\0')
-		return FALSE;
-	for (i = 0; text[i] != '\0'; i++) {
-		if (g_ascii_iscntrl (text[i]))
-			return FALSE;
+	if (FcPatternGetString (pat, FC_FONT_WRAPPER, 0,
+				(FcChar8 **) &fontwrapper) == FcResultMatch) {
+		return g_strcmp0(fontwrapper, "SFNT") == 0;
 	}
-	return TRUE;
+	if (FcPatternGetString (pat, FC_FONTFORMAT, 0,
+				(FcChar8 **) &fontformat) == FcResultMatch) {
+		if (g_ascii_strcasecmp (fontformat, "TrueType") == 0 ||
+		    g_ascii_strcasecmp (fontformat, "CFF") == 0)
+			return TRUE;
+	}
+	return FALSE;
 }
 
 static void
-asb_font_add_metadata (AsbApp *app, FT_Face ft_face)
+asb_font_add_metadata (AsbApp *app, const FcPattern *pat, const gchar *filename)
 {
-	FT_SfntName sfname;
-	guint i;
-	guint j;
-	guint len;
-	struct {
-		FT_UShort	 idx;
-		const gchar	*key;
-	} tt_idx_to_md_name[] =  {
-		{ TT_NAME_ID_FONT_FAMILY,		"FontFamily" },
-		{ TT_NAME_ID_FONT_SUBFAMILY,		"FontSubFamily" },
-		{ TT_NAME_ID_FULL_NAME,			"FontFullName" },
-		{ TT_NAME_ID_PREFERRED_FAMILY,		"FontParent" },
-		{ 0, NULL } };
+	gchar *family = NULL, *fullname = NULL, *style = NULL;
 
-	if (!FT_IS_SFNT (ft_face))
+	if (!asb_font_is_sfnt (pat))
 		return;
 
-	/* look at the metadata table */
-	len = FT_Get_Sfnt_Name_Count (ft_face);
-	for (i = 0; i < len; i++) {
-		FT_Get_Sfnt_Name (ft_face, i, &sfname);
-		for (j = 0; tt_idx_to_md_name[j].key != NULL; j++) {
-			g_autofree gchar *val = NULL;
-			if (sfname.name_id != tt_idx_to_md_name[j].idx)
-				continue;
-			val = g_locale_to_utf8 ((gchar *) sfname.string,
-						sfname.string_len,
-						NULL, NULL, NULL);
-			if (val == NULL)
-				continue;
-			if (asb_font_string_is_valid (val)) {
-				as_app_add_metadata (AS_APP (app),
-						     tt_idx_to_md_name[j].key,
-						     val);
-			} else {
-				asb_package_log (asb_app_get_package (app),
-						 ASB_PACKAGE_LOG_LEVEL_WARNING,
-						 "Ignoring %s value: '%s'",
-						 tt_idx_to_md_name[j].key, val);
-			}
-		}
+        /* look at the metadata table */
+	FcPatternGetString (pat, FC_FAMILY, 0, (FcChar8 **) &family);
+	FcPatternGetString (pat, FC_STYLE, 0, (FcChar8 **) &style);
+	FcPatternGetString (pat, FC_FULLNAME, 0, (FcChar8 **) &fullname);
+	if (family == NULL || style == NULL || fullname == NULL) {
+		asb_package_log(
+				asb_app_get_package (app), ASB_PACKAGE_LOG_LEVEL_WARNING,
+				"Unable to find out family or style or fullname from a font %s",
+				filename);
+            return;
 	}
+	as_app_add_metadata (AS_APP (app), "FontFamily", family);
+	as_app_add_metadata (AS_APP (app), "FontSubFamily", style);
+	as_app_add_metadata (AS_APP (app), "FontFullName", fullname);
 }
 
 static gboolean
@@ -302,12 +281,13 @@ asb_font_is_pixbuf_empty (const GdkPixbuf *pixbuf)
 }
 
 static GdkPixbuf *
-asb_font_get_pixbuf (FT_Face ft_face,
+asb_font_get_pixbuf (const FcPattern *pat,
 		     guint width,
 		     guint height,
 		     const gchar *text,
 		     GError **error)
 {
+	hb_face_t *hb_face;
 	cairo_font_face_t *font_face;
 	cairo_surface_t *surface;
 	cairo_t *cr;
@@ -315,12 +295,23 @@ asb_font_get_pixbuf (FT_Face ft_face,
 	GdkPixbuf *pixbuf;
 	guint text_size = 64;
 	guint border_width = 8;
+	const gchar *filename = NULL;
+	gint idx = -1;
 
 	/* set up font */
+	FcPatternGetString (pat, FC_FILE, 0, (FcChar8 **) &filename);
+	FcPatternGetInteger (pat, FC_INDEX, 0, &idx);
+	if (filename == NULL || idx == -1) {
+		g_set_error_literal (error, ASB_PLUGIN_ERROR, ASB_PLUGIN_ERROR_FAILED,
+				     "Unable to get filename or index from pattern");
+		return NULL;
+	}
+
+	hb_face = hb_face_create_from_file_or_fail (filename, idx);
+	font_face = hb_cairo_font_face_create_for_face (hb_face);
 	surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
 					      (gint) width, (gint) height);
 	cr = cairo_create (surface);
-	font_face = cairo_ft_font_face_create_for_ft_face (ft_face, FT_LOAD_DEFAULT);
 	cairo_set_font_face (cr, font_face);
 
 	/* calculate best font size */
@@ -335,9 +326,7 @@ asb_font_get_pixbuf (FT_Face ft_face,
 	}
 
 	/* center text and blit to a pixbuf */
-	cairo_move_to (cr,
-		       (width / 2) - te.width / 2 - te.x_bearing,
-		       (height / 2) - te.height / 2 - te.y_bearing);
+	cairo_move_to (cr, (width - te.width) / 2., (height - te.height) / 2. - te.y_bearing);
 	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
 	cairo_show_text (cr, text);
 	pixbuf = gdk_pixbuf_get_from_surface (surface, 0, 0, (gint) width, (gint) height);
@@ -351,6 +340,7 @@ asb_font_get_pixbuf (FT_Face ft_face,
 	cairo_destroy (cr);
 	cairo_font_face_destroy (font_face);
 	cairo_surface_destroy (surface);
+	hb_face_destroy (hb_face);
 	return pixbuf;
 }
 
@@ -372,7 +362,7 @@ asb_font_get_caption (AsbApp *app)
 }
 
 static gboolean
-asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
+asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, const FcPattern *pat,
 			 const gchar *cache_id, GError **error)
 {
 	AsImage *im_tmp;
@@ -404,7 +394,7 @@ asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
 		if (pixbuf == NULL)
 			return FALSE;
 	} else {
-		pixbuf = asb_font_get_pixbuf (ft_face, 640, 48, tmp, error);
+		pixbuf = asb_font_get_pixbuf (pat, 640, 48, tmp, error);
 		if (pixbuf == NULL)
 			return FALSE;
 	}
@@ -472,8 +462,8 @@ asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
 
 	/* find screenshot priority */
 	tmp = as_app_get_metadata_item (AS_APP (app), "FontSubFamily");
-	if (tmp != NULL) {
-		gint priority = 0;
+	if (tmp != NULL && g_ascii_strcasecmp (tmp, "Regular") != 0) {
+		gint priority = -1;
 
 		/* negative */
 		if (g_strstr_len (tmp, -1, "Italic") != NULL)
@@ -488,8 +478,10 @@ asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
 			priority -= 32;
 		if (g_strstr_len (tmp, -1, "Medium") != NULL)
 			priority -= 64;
-		if (g_strstr_len (tmp, -1, "Fallback") != NULL)
+		if (g_strstr_len (tmp, -1, "Black") != NULL)
 			priority -= 128;
+		if (g_strstr_len (tmp, -1, "Fallback") != NULL)
+			priority -= 256;
 		if (priority != 0)
 			as_screenshot_set_priority (ss, priority);
 	}
@@ -572,16 +564,14 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 {
 	FcConfig *config;
 	FcFontSet *fonts;
-	FT_Error rc;
-	FT_Face ft_face = NULL;
-	FT_Library library = NULL;
 	const gchar *tmp;
 	gboolean ret = TRUE;
 	guint i;
-	const FcPattern *pattern;
+	FcPattern *pattern = NULL;
 	g_autofree gchar *cache_id = NULL;
 	g_autofree gchar *comment = NULL;
 	g_autofree gchar *icon_filename = NULL;
+	const gchar *family, *style;
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	/* create a new fontconfig configuration */
@@ -608,18 +598,7 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 				     "FcConfigGetFonts failed");
 		goto out;
 	}
-	pattern = fonts->fonts[0];
-	FT_Init_FreeType (&library);
-	rc = FT_New_Face (library, filename, 0, &ft_face);
-	if (rc != 0) {
-		ret = FALSE;
-		g_set_error (error,
-			     ASB_PLUGIN_ERROR,
-			     ASB_PLUGIN_ERROR_FAILED,
-			     "FT_Open_Face failed to open %s: %i",
-			     filename, rc);
-		goto out;
-	}
+	pattern = FcPatternDuplicate (fonts->fonts[0]);
 
 	/* use the filename as the cache-id */
 	cache_id = g_path_get_basename (filename);
@@ -634,18 +613,39 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 		as_app_add_category (AS_APP (app), "Addons");
 		as_app_add_category (AS_APP (app), "Fonts");
 	}
+	if (FcPatternGetString (pattern, FC_FAMILY, 0,
+				(FcChar8 **) &family) != FcResultMatch) {
+		ret = FALSE;
+		g_set_error (error,
+			     ASB_PLUGIN_ERROR,
+			     ASB_PLUGIN_ERROR_FAILED,
+			     "Could not get a family name from %s",
+			     filename);
+		goto out;
+	}
 	if (as_app_get_name (AS_APP (app), NULL) == NULL)
-		asb_plugin_font_set_name (app, ft_face->family_name);
-	if (as_app_get_comment (AS_APP (app), NULL) == NULL) {
+		asb_plugin_font_set_name (app, family);
+	tmp = as_app_get_comment (AS_APP (app), NULL);
+	if (tmp == NULL ||
+	    g_ascii_strncasecmp (tmp, "A Regular font", 14) != 0) {
+		if (FcPatternGetString (pattern, FC_STYLE, 0,
+					(FcChar8 **)&style) != FcResultMatch) {
+			ret = FALSE;
+			g_set_error (error,
+				     ASB_PLUGIN_ERROR,
+				     ASB_PLUGIN_ERROR_FAILED,
+				     "Could not get a style name from %s",
+				     filename);
+			goto out;
+		}
 		comment = g_strdup_printf ("A %s font from %s",
-					   ft_face->style_name,
-					   ft_face->family_name);
+					   style, family);
 		as_app_set_comment (AS_APP (app), "C", comment);
 	}
 	asb_font_add_languages (app, pattern);
-	asb_font_add_metadata (app, ft_face);
+	asb_font_add_metadata (app, pattern, filename);
 	asb_font_fix_metadata (app);
-	ret = asb_font_add_screenshot (plugin, app, ft_face, cache_id, error);
+	ret = asb_font_add_screenshot (plugin, app, pattern, cache_id, error);
 	if (!ret)
 		goto out;
 
@@ -653,7 +653,7 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	tmp = as_app_get_metadata_item (AS_APP (app), "FontIconText");
 	if (tmp != NULL) {
 		g_autoptr(AsIcon) icon = NULL;
-		pixbuf = asb_font_get_pixbuf (ft_face, 64, 64, tmp, error);
+		pixbuf = asb_font_get_pixbuf (pattern, 64, 64, tmp, error);
 		if (pixbuf == NULL) {
 			ret = FALSE;
 			goto out;
@@ -682,12 +682,10 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 		as_app_add_icon (AS_APP (app), icon);
 	}
 out:
+	if (pattern)
+		FcPatternDestroy (pattern);
 	FcConfigAppFontClear (config);
 	FcConfigDestroy (config);
-	if (ft_face != NULL)
-		FT_Done_Face (ft_face);
-	if (library != NULL)
-		FT_Done_Library (library);
 	return ret;
 }
 

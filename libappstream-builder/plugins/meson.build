@@ -120,8 +120,8 @@ if get_option('fonts')
     dependencies : [
       gdkpixbuf,
       gdk,
-      freetype,
       fontconfig,
+      harfbuzz,
     ],
     c_args : asb_plugins_cargs,
     name_suffix: name_suffix,
