@@ -88,7 +88,6 @@ if get_option('builder')
   if get_option('fonts')
     gdk = dependency('gdk-3.0')
     conf.set('HAVE_FONTS', 1)
-    freetype = dependency('freetype2', version : '>= 9.10.0')
     fontconfig = dependency('fontconfig')
   endif
 endif

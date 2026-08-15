@@ -120,7 +120,6 @@ if get_option('fonts')
     dependencies : [
       gdkpixbuf,
       gdk,
-      freetype,
       fontconfig,
     ],
     c_args : asb_plugins_cargs,
