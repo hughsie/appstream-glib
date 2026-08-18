@@ -865,7 +865,7 @@ as_node_from_xml_internal (const gchar *data, gssize data_sz,
 	helper.current = root;
 	helper.locales = g_get_language_names ();
 	ctx = g_markup_parse_context_new (&parser,
-					  G_MARKUP_PREFIX_ERROR_POSITION,
+					  G_MARKUP_PREFIX_ERROR_POSITION | G_MARKUP_TREAT_CDATA_AS_TEXT,
 					  &helper,
 					  NULL);
 	ret = g_markup_parse_context_parse (ctx, data, data_sz, &error_local);
@@ -1043,7 +1043,7 @@ as_node_from_file (GFile *file,
 	helper.current = root;
 	helper.locales = g_get_language_names ();
 	ctx = g_markup_parse_context_new (&parser,
-					  G_MARKUP_PREFIX_ERROR_POSITION,
+					  G_MARKUP_PREFIX_ERROR_POSITION | G_MARKUP_TREAT_CDATA_AS_TEXT,
 					  &helper,
 					  NULL);
 

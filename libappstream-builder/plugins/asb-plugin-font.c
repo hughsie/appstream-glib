@@ -301,10 +301,16 @@ asb_font_is_pixbuf_empty (const GdkPixbuf *pixbuf)
 	return TRUE;
 }
 
+typedef enum {
+	ENVIRONMENT_KIND_LIGHT,
+	ENVIRONMENT_KIND_DARK
+} EnvironmentKind;
+
 static GdkPixbuf *
 asb_font_get_pixbuf (FT_Face ft_face,
 		     guint width,
 		     guint height,
+		     EnvironmentKind env_kind,
 		     const gchar *text,
 		     GError **error)
 {
@@ -338,7 +344,10 @@ asb_font_get_pixbuf (FT_Face ft_face,
 	cairo_move_to (cr,
 		       (width / 2) - te.width / 2 - te.x_bearing,
 		       (height / 2) - te.height / 2 - te.y_bearing);
-	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
+	if (env_kind == ENVIRONMENT_KIND_DARK)
+		cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
+	else
+		cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
 	cairo_show_text (cr, text);
 	pixbuf = gdk_pixbuf_get_from_surface (surface, 0, 0, (gint) width, (gint) height);
 	if (pixbuf == NULL) {
@@ -373,7 +382,7 @@ asb_font_get_caption (AsbApp *app)
 
 static gboolean
 asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
-			 const gchar *cache_id, GError **error)
+			 const gchar *cache_id, EnvironmentKind env_kind, GError **error)
 {
 	AsImage *im_tmp;
 	AsScreenshot *ss_tmp;
@@ -397,14 +406,15 @@ asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
 
 	/* is in the cache */
 	cache_dir = asb_context_get_cache_dir (plugin->ctx);
-	cache_fn = g_strdup_printf ("%s/screenshots/%s.png",
-				    cache_dir, cache_id);
+	cache_fn = g_strdup_printf ("%s/screenshots/%s%s.png",
+				    cache_dir, cache_id,
+				    env_kind == ENVIRONMENT_KIND_DARK ? "-dark" : "");
 	if (g_file_test (cache_fn, G_FILE_TEST_EXISTS)) {
 		pixbuf = gdk_pixbuf_new_from_file (cache_fn, error);
 		if (pixbuf == NULL)
 			return FALSE;
 	} else {
-		pixbuf = asb_font_get_pixbuf (ft_face, 640, 48, tmp, error);
+		pixbuf = asb_font_get_pixbuf (ft_face, 640, 48, env_kind, tmp, error);
 		if (pixbuf == NULL)
 			return FALSE;
 	}
@@ -428,8 +438,9 @@ asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
 	im = as_image_new ();
 	as_image_set_pixbuf (im, pixbuf);
 	as_image_set_kind (im, AS_IMAGE_KIND_SOURCE);
-	basename = g_strdup_printf ("%s-%s.png",
+	basename = g_strdup_printf ("%s%s-%s.png",
 				    as_app_get_id_filename (AS_APP (app)),
+				    env_kind == ENVIRONMENT_KIND_DARK ? "-dark" : "",
 				    as_image_get_md5 (im));
 	as_image_set_basename (im, basename);
 	url_tmp = g_build_filename ("file://",
@@ -469,6 +480,8 @@ asb_font_add_screenshot (AsbPlugin *plugin, AsbApp *app, FT_Face ft_face,
 	if (caption != NULL)
 		as_screenshot_set_caption (ss, NULL, caption);
 	as_app_add_screenshot (AS_APP (app), ss);
+	if (env_kind == ENVIRONMENT_KIND_DARK)
+		as_screenshot_set_environment (ss, "gnome:dark");
 
 	/* find screenshot priority */
 	tmp = as_app_get_metadata_item (AS_APP (app), "FontSubFamily");
@@ -645,7 +658,10 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	asb_font_add_languages (app, pattern);
 	asb_font_add_metadata (app, ft_face);
 	asb_font_fix_metadata (app);
-	ret = asb_font_add_screenshot (plugin, app, ft_face, cache_id, error);
+	ret = asb_font_add_screenshot (plugin, app, ft_face, cache_id, ENVIRONMENT_KIND_LIGHT, error);
+	if (!ret)
+		goto out;
+	ret = asb_font_add_screenshot (plugin, app, ft_face, cache_id, ENVIRONMENT_KIND_DARK, error);
 	if (!ret)
 		goto out;
 
@@ -653,7 +669,7 @@ asb_plugin_font_app (AsbPlugin *plugin, AsbApp *app,
 	tmp = as_app_get_metadata_item (AS_APP (app), "FontIconText");
 	if (tmp != NULL) {
 		g_autoptr(AsIcon) icon = NULL;
-		pixbuf = asb_font_get_pixbuf (ft_face, 64, 64, tmp, error);
+		pixbuf = asb_font_get_pixbuf (ft_face, 64, 64, ENVIRONMENT_KIND_LIGHT, tmp, error);
 		if (pixbuf == NULL) {
 			ret = FALSE;
 			goto out;

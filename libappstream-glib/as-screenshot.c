@@ -33,6 +33,7 @@ typedef struct
 	GHashTable		*captions;
 	GPtrArray		*images;
 	gint			 priority;
+	gchar			*environment;
 } AsScreenshotPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (AsScreenshot, as_screenshot, G_TYPE_OBJECT)
@@ -48,6 +49,7 @@ as_screenshot_finalize (GObject *object)
 	g_ptr_array_unref (priv->images);
 	if (priv->captions != NULL)
 		g_hash_table_unref (priv->captions);
+	g_free (priv->environment);
 
 	G_OBJECT_CLASS (as_screenshot_parent_class)->finalize (object);
 }
@@ -444,6 +446,8 @@ as_screenshot_node_insert (AsScreenshot *screenshot,
 	}
 	if (priv->priority != 0)
 		as_node_add_attribute_as_int (n, "priority", priv->priority);
+	if (priv->environment != NULL)
+		as_node_add_attribute (n, "environment", priv->environment);
 	for (i = 0; i < priv->images->len; i++) {
 		image = g_ptr_array_index (priv->images, i);
 		as_image_node_insert (image, n, ctx);
@@ -528,6 +532,11 @@ as_screenshot_node_parse (AsScreenshot *screenshot, GNode *node,
 		if (!as_image_node_parse (image, c, ctx, error))
 			return FALSE;
 		g_ptr_array_add (priv->images, g_object_ref (image));
+	}
+	/* add environment */
+	tmp = as_node_get_attribute (node, "environment");
+	if (tmp != NULL) {
+		as_screenshot_set_environment (screenshot, tmp);
 	}
 	return TRUE;
 }
@@ -618,6 +627,8 @@ as_screenshot_equal (AsScreenshot *screenshot1, AsScreenshot *screenshot2)
 	if (g_strcmp0 (as_screenshot_get_caption (screenshot1, NULL),
 		       as_screenshot_get_caption (screenshot2, NULL)) != 0)
 		return FALSE;
+	if (g_strcmp0 (priv1->environment, priv2->environment) != 0)
+		return FALSE;
 
 	/* check source images */
 	im1 = as_screenshot_get_source (screenshot1);
@@ -629,6 +640,50 @@ as_screenshot_equal (AsScreenshot *screenshot1, AsScreenshot *screenshot2)
 
 	/* success */
 	return TRUE;
+}
+
+/**
+ * as_screenshot_get_environment:
+ * @screenshot: an #AsScreenshot instance.
+ *
+ * Returns previously set environment value.
+ *
+ * Returns: environment value
+ *
+ * Since: 0.8.4
+ **/
+const gchar *
+as_screenshot_get_environment (AsScreenshot *screenshot)
+{
+	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+
+	g_return_val_if_fail (AS_IS_SCREENSHOT (screenshot), NULL);
+
+	return priv->environment;
+}
+
+/**
+ * as_screenshot_set_environment:
+ * @screenshot: an #AsScreenshot instance.
+ * @env_id: (nullable): an environment identificator.
+ *
+ * Set @env_id as an environment, for whichthe screenshot is suitable.
+ * A %NULL or empty @env_id unsets any previously set value.
+ *
+ * Since: 0.8.4
+ **/
+void
+as_screenshot_set_environment (AsScreenshot *screenshot,
+			       const gchar *env_id)
+{
+	AsScreenshotPrivate *priv = GET_PRIVATE (screenshot);
+
+	g_return_if_fail (AS_IS_SCREENSHOT (screenshot));
+
+	g_clear_pointer (&priv->environment, g_free);
+
+	if (env_id != NULL && *env_id != '\0')
+		priv->environment = g_strdup (env_id);
 }
 
 /**

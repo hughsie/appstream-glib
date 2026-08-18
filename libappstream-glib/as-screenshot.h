@@ -72,6 +72,7 @@ AsImage		*as_screenshot_get_image_for_locale (AsScreenshot	*screenshot,
 						 guint		 width,
 						 guint		 height);
 AsImage		*as_screenshot_get_source	(AsScreenshot	*screenshot);
+const gchar	*as_screenshot_get_environment	(AsScreenshot	*screenshot);
 
 /* setters */
 void		 as_screenshot_set_kind		(AsScreenshot	*screenshot,
@@ -83,6 +84,8 @@ void		 as_screenshot_set_caption	(AsScreenshot	*screenshot,
 						 const gchar	*caption);
 void		 as_screenshot_add_image	(AsScreenshot	*screenshot,
 						 AsImage	*image);
+void		 as_screenshot_set_environment	(AsScreenshot	*screenshot,
+						 const gchar	*env_id);
 gboolean	 as_screenshot_equal		(AsScreenshot	*screenshot1,
 						 AsScreenshot	*screenshot2);
 
